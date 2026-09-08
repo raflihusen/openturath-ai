@@ -3,42 +3,42 @@ import 'package:google_fonts/google_fonts.dart';
 
 // OpenTurath AI: Google NotebookLM Design System
 class AppTheme {
-  // ── 1. Light Mode Tokens (NotebookLM Live Verified) ───────────────────────
-  static const Color canvasLight          = Color(0xFFF0F4F9); // Soft Gemini Lavender/Blue-grey Canvas
+  // ── 1. Light Mode Tokens (Claude Minimalist Aesthetic) ───────────────────
+  static const Color canvasLight          = Color(0xFFFFFFFF); // Putih Pekat Murni
   static const Color surfaceCardLight     = Color(0xFFFFFFFF); // Pure White Floating Card
-  static const Color surfaceHeaderLight   = Color(0xFFF0F4F9); // Header Bar Canvas
-  static const Color borderLight          = Color(0xFFE1E3E1); // 1px Subtle Outline
-  static const Color borderSubtleLight    = Color(0xFFE0E3E7); 
-  static const Color textPrimaryLight     = Color(0xFF1F1F1F); // Main Title & Body
-  static const Color textSecondaryLight   = Color(0xFF5E5E5E); // Metadata & Subtitles
-  static const Color textTertiaryLight    = Color(0xFF747775); // Disclaimers & Placeholders
-  static const Color accentLight          = Color(0xFF0B57D0); // Google Gemini Blue
-  static const Color pillActionBgLight    = Color(0xFF1F1F1F); // Solid Black Action Pill
+  static const Color surfaceHeaderLight   = Color(0xFFFFFFFF); // Header Bar Canvas
+  static const Color borderLight          = Color(0xFFE5E7EB); // 1px Subtle Outline (Abu-abu Tipis)
+  static const Color borderSubtleLight    = Color(0xFFF1F5F9); 
+  static const Color textPrimaryLight     = Color(0xFF18181B); // Main Title & Body
+  static const Color textSecondaryLight   = Color(0xFF71717A); // Metadata & Subtitles
+  static const Color textTertiaryLight    = Color(0xFFA1A1AA); // Disclaimers & Placeholders
+  static const Color accentLight          = Color(0xFF0B57D0); // Brand Accent
+  static const Color pillActionBgLight    = Color(0xFF18181B); // Solid Black Action Pill
   static const Color pillActionTextLight  = Color(0xFFFFFFFF);
-  static const Color pillSecondaryBgLight = Color(0xFFE1E3E1);
-  static const Color citationBgLight      = Color(0xFFD3E3FD); // [1] Soft Blue Chip
-  static const Color citationTextLight    = Color(0xFF041E49); // Deep Navy Citation Text
-  static const Color queryBoxBgLight      = Color(0xFFF0F4F9); // Stadium Chat Input
-  static const Color queryBoxBorderLight  = Color(0xFFC4C7C5);
+  static const Color pillSecondaryBgLight = Color(0xFFF4F4F5);
+  static const Color citationBgLight      = Color(0xFFF1F5F9); // Soft Chip
+  static const Color citationTextLight    = Color(0xFF18181B); // Citation Text
+  static const Color queryBoxBgLight      = Color(0xFFFFFFFF); // Stadium Chat Input
+  static const Color queryBoxBorderLight  = Color(0xFFE5E7EB);
 
-  // ── 2. Dark Mode Tokens (Figma Master Palette Verified) ───────────────────
-  static const Color canvasDark           = Color(0xFF0B1118); // Deep Midnight Slate Canvas
-  static const Color surfaceCardDark      = Color(0xFF131C26); // Figma Elevated Surface Card
-  static const Color surfaceHeaderDark    = Color(0xFF0B1118); // Header Bar Canvas
-  static const Color borderDark           = Color(0xFF1E2D3D); // Subtle 1px Dark Outline
-  static const Color borderSubtleDark     = Color(0xFF172330);
-  static const Color textPrimaryDark      = Color(0xFFF8FAFC); // Main Title & Body
-  static const Color textSecondaryDark    = Color(0xFF94A3B8); // Slate 400 Subtitles
-  static const Color textTertiaryDark     = Color(0xFF64748B); // Slate 500
-  static const Color accentDark           = Color(0xFF22D3EE); // Figma Glowing Electric Cyan
-  static const Color pillActionBgDark     = Color(0xFF22D3EE); // Solid Cyan Action Pill
-  static const Color pillActionTextDark   = Color(0xFF0B1118);
-  static const Color pillSecondaryBgDark  = Color(0xFF182330);
-  static const Color citationBgDark       = Color(0xFF0E3047); // Soft Deep Cyan Pill
-  static const Color citationTextDark     = Color(0xFF67E8F9); // Electric Cyan Citation Text
-  static const Color queryBoxBgDark       = Color(0xFF131C26); // Stadium Chat Input
-  static const Color queryBoxBorderDark   = Color(0xFF1E2D3D);
-  static const Color surfaceElevated      = Color(0xFF182330); // Elevated chip / pill container
+  // ── 2. Dark Mode Tokens (Claude Pure Deep Black) ─────────────────────────
+  static const Color canvasDark           = Color(0xFF0E0E10); // Hitam Pekat Murni
+  static const Color surfaceCardDark      = Color(0xFF18181B); // Elevated Surface Card
+  static const Color surfaceHeaderDark    = Color(0xFF0E0E10); // Header Bar Canvas
+  static const Color borderDark           = Color(0xFF27272A); // Subtle 1px Dark Outline (Abu-abu Tipis)
+  static const Color borderSubtleDark     = Color(0xFF1E1E22);
+  static const Color textPrimaryDark      = Color(0xFFFAFAFA); // Main Title & Body
+  static const Color textSecondaryDark    = Color(0xFFA1A1AA); // Muted Subtitles
+  static const Color textTertiaryDark     = Color(0xFF71717A); // Disclaimers
+  static const Color accentDark           = Color(0xFF22D3EE); // Neon Cyan Accent
+  static const Color pillActionBgDark     = Color(0xFFFFFFFF); // Solid White Action Pill
+  static const Color pillActionTextDark   = Color(0xFF18181B);
+  static const Color pillSecondaryBgDark  = Color(0xFF18181B);
+  static const Color citationBgDark       = Color(0xFF1E1E22); // Deep Pill
+  static const Color citationTextDark     = Color(0xFF67E8F9); // Cyan Citation Text
+  static const Color queryBoxBgDark       = Color(0xFF18181B); // Stadium Chat Input
+  static const Color queryBoxBorderDark   = Color(0xFF27272A);
+  static const Color surfaceElevated      = Color(0xFF18181B); // Elevated chip / pill container
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
   static const Color lmLightCanvas        = canvasLight;
