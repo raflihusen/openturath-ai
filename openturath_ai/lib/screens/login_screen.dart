@@ -25,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
   bool _isGooglePressed = false;
-  bool _isEmailPressed = false;
   late final TapGestureRecognizer _termsRecognizer;
   late final TapGestureRecognizer _privacyRecognizer;
 
@@ -94,14 +93,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Claude Palette:
-    // Dark: Hitam pekat murni (#0E0E10), abu-abu tipis (#27272A)
-    // Light: Putih pekat murni (#FFFFFF), abu-abu tipis (#E5E7EB)
+    // Claude Aesthetic Palette:
+    // Dark: Hitam pekat murni (#0E0E10)
+    // Light: Putih pekat murni (#FFFFFF)
     final bg = isDark ? const Color(0xFF0E0E10) : const Color(0xFFFFFFFF);
     final textPrimary = isDark ? const Color(0xFFFAFAFA) : const Color(0xFF18181B);
     final textMuted = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
-    final borderHairline = isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB);
-    final inputBg = isDark ? const Color(0xFF141417) : const Color(0xFFFFFFFF);
 
     return Scaffold(
       backgroundColor: bg,
@@ -116,52 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // ── 1. Top Brand Mark (Claude-style subtle header) ──
-                  _stagger(
-                    delayMs: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(
-                          width: 26,
-                          height: 26,
-                          child: SvgPicture.asset(
-                            'assets/images/notebooklm_round.svg',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text.rich(
-                          TextSpan(
-                            text: 'OpenTurath ',
-                            style: GoogleFonts.outfit(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.5,
-                              color: textPrimary,
-                            ),
-                            children: const [
-                              TextSpan(
-                                text: 'AI',
-                                style: TextStyle(
-                                  color: Color(0xFF22D3EE),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 32),
 
-                  // ── 2. Centerpiece Arch Artwork (Seamless Floating Graphic) ──
+                  // ── 1. Visual Symbol: Arch Artwork (Seamless Floating Graphic) ──
                   _stagger(
-                    delayMs: 80,
+                    delayMs: 40,
                     child: SizedBox(
-                      height: 180,
-                      width: 180,
+                      height: 160,
+                      width: 160,
                       child: Image.asset(
                         isDark
                             ? 'assets/images/arch_dark_transparent.png'
@@ -170,26 +129,44 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 24),
 
-                  // ── 3. Official Slogan: "Bridging Turath and Intelligence" (Editorial Serif) ──
+                  // ── 2. Brand Wordmark: "OpenTurath" ──
                   _stagger(
-                    delayMs: 140,
+                    delayMs: 90,
                     child: Text(
-                      'Bridging Turath and Intelligence',
+                      'OpenTurath',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
-                        fontSize: 27,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.3,
+                        fontSize: 34,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.6,
                         color: textPrimary,
-                        height: 1.25,
+                        height: 1.15,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 52),
+                  const SizedBox(height: 10),
 
-                  // ── 4. Continue with Google Button (Pill shape, High-contrast) ──
+                  // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
+                  _stagger(
+                    delayMs: 140,
+                    child: Text(
+                      'AI for Islamic Scholarship',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.italic,
+                        letterSpacing: 0.1,
+                        color: textMuted,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 72),
+
+                  // ── 4. High-Contrast Google Action Pill ──
                   _stagger(
                     delayMs: 200,
                     child: GestureDetector(
@@ -201,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         duration: const Duration(milliseconds: 120),
                         curve: Curves.easeOutCubic,
                         child: SizedBox(
-                          height: 50,
+                          height: 52,
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: _isLoading ? null : _signIn,
@@ -229,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       _GoogleGVector(),
                                       const SizedBox(width: 12),
                                       Text(
-                                        'Continue with Google',
+                                        'Lanjutkan dengan Google',
                                         style: GoogleFonts.outfit(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
@@ -243,73 +220,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 28),
 
-                  // ── 5. Claude-style Minimalist Divider: "OR" ──
+                  // ── 5. Minimalist Legal Disclaimer ──
                   _stagger(
-                    delayMs: 240,
-                    child: Row(
-                      children: [
-                        Expanded(child: Container(height: 1, color: borderHairline)),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          child: Text(
-                            'OR',
-                            style: GoogleFonts.outfit(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.8,
-                              color: textMuted,
-                            ),
-                          ),
-                        ),
-                        Expanded(child: Container(height: 1, color: borderHairline)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-
-                  // ── 6. Secondary Action: "Enter your email" (Claude Minimal Shape with subtle gray hairline) ──
-                  _stagger(
-                    delayMs: 280,
-                    child: GestureDetector(
-                      onTapDown: (_) => setState(() => _isEmailPressed = true),
-                      onTapUp: (_) => setState(() => _isEmailPressed = false),
-                      onTapCancel: () => setState(() => _isEmailPressed = false),
-                      onTap: _signIn,
-                      child: AnimatedScale(
-                        scale: _isEmailPressed ? 0.98 : 1.0,
-                        duration: const Duration(milliseconds: 120),
-                        curve: Curves.easeOutCubic,
-                        child: Container(
-                          height: 50,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: inputBg,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: borderHairline, width: 1.0),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Enter your email',
-                            style: GoogleFonts.outfit(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w400,
-                              color: textMuted,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // ── 7. Minimalist Legal Footer ──
-                  _stagger(
-                    delayMs: 320,
+                    delayMs: 260,
                     child: Text.rich(
                       TextSpan(
-                        text: 'By continuing, you agree to OpenTurath\'s ',
+                        text: 'Dengan masuk, Anda menyetujui ',
                         style: GoogleFonts.outfit(
                           color: textMuted,
                           fontSize: 11.5,
@@ -317,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         children: [
                           TextSpan(
-                            text: 'Consumer Terms',
+                            text: 'Ketentuan Layanan',
                             style: TextStyle(
                               color: textPrimary,
                               decoration: TextDecoration.underline,
@@ -325,19 +243,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             recognizer: _termsRecognizer,
                           ),
-                          const TextSpan(text: ' and '),
+                          const TextSpan(text: ' & '),
                           TextSpan(
-                            text: 'Usage Policy',
-                            style: TextStyle(
-                              color: textPrimary,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            recognizer: _termsRecognizer,
-                          ),
-                          const TextSpan(text: ', and acknowledge their '),
-                          TextSpan(
-                            text: 'Privacy Policy',
+                            text: 'Kebijakan Privasi',
                             style: TextStyle(
                               color: textPrimary,
                               decoration: TextDecoration.underline,
@@ -351,6 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
