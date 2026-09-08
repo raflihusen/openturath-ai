@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
-import '../widgets/openturath_brand.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -101,26 +100,38 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                OpenTurathMark(size: 68, color: accent),
-                const SizedBox(height: 22),
+                SizedBox(
+                  width: 110,
+                  height: 110,
+                  child: Image.asset(
+                    isDark
+                        ? 'assets/images/arch_dark_transparent.png'
+                        : 'assets/images/arch_light_transparent.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Text(
-                  'OpenTurath AI',
-                  style: GoogleFonts.outfit(
-                    fontSize: 28,
+                  'OpenTurath',
+                  style: GoogleFonts.newsreader(
+                    fontSize: 32,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: -0.6,
+                    letterSpacing: -0.5,
                     color: textPrimary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 Text(
-                  'Ruang Riset Turats Berbasis Kitab',
-                  style: GoogleFonts.outfit(
-                    fontSize: 13.5,
+                  'AI for Islamic Scholarship',
+                  style: GoogleFonts.newsreader(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.italic,
+                    letterSpacing: 0.1,
                     color: textSecondary,
                   ),
                 ),
-                const SizedBox(height: 44),
+                const SizedBox(height: 48),
                 _PulsingDots(color: accent),
               ],
             ),

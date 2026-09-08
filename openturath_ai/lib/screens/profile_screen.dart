@@ -175,10 +175,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: canvas,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
         title: Text(
-          'Profil & Akun',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
+          'Settings',
+          style: GoogleFonts.newsreader(
+            fontSize: 21,
             fontWeight: FontWeight.w600,
             color: textPrimary,
           ),
@@ -197,12 +199,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
                 : (fbUser?.email ?? 'peneliti@openturath.ai');
-            final photoUrl = userModel?.photoUrl.isNotEmpty == true
-                ? userModel!.photoUrl
-                : fbUser?.photoURL;
-            final isGuest = fbUser?.isAnonymous == true ||
-                (userModel != null && userModel.uid.startsWith('guest_'));
-
             final plan = userModel?.plan ?? 'trial';
             final isSubscribed =
                 userModel?.isSubscriptionActive ?? (userModel?.isPremium ?? false);
@@ -222,267 +218,214 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 subscriptionSubtitle = 'Langganan Aktif$expStr';
               }
             } else {
-              subscriptionSubtitle = 'Belum Berlangganan · Aktifkan Paket Riset';
+              subscriptionSubtitle = 'Belum Berlangganan · Aktifkan Akses Penuh';
             }
 
-            String initials = 'RH';
-            if (displayName.trim().isNotEmpty) {
-              final parts = displayName.trim().split(RegExp(r'\s+'));
-              if (parts.length >= 2 && parts[0].isNotEmpty && parts[1].isNotEmpty) {
-                initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-              } else if (parts.isNotEmpty && parts[0].isNotEmpty) {
-                initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
-              }
-            }
-
-            return TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0.0, end: 1.0),
-              duration: const Duration(milliseconds: 360),
-              curve: Curves.easeOutCubic,
-              builder: (context, value, child) {
-                return Transform.translate(
-                  offset: Offset(0, 20 * (1 - value)),
-                  child: Opacity(
-                    opacity: value.clamp(0.0, 1.0),
-                    child: child,
+            return ListView(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 108),
+              physics: const BouncingScrollPhysics(),
+              children: [
+                // ── Card 1: User Identity (Claude Style) ──
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
                   ),
-                );
-              },
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 108),
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  // ── User Identity Card ──
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          email.isNotEmpty ? email : displayName,
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.1,
+                            color: textPrimary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 3.5),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white : const Color(0xFF18181B),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Text(
+                          isSubscribed ? 'Pro' : 'Free',
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? const Color(0xFF18181B) : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ── Card 2: Upgrade Card (Claude Style, if not Pro) ──
+                if (!isSubscribed) ...[
+                  const SizedBox(height: 14),
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: surface,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: border, width: 1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: border, width: 1.0),
                     ),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 58,
-                          height: 58,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: accent, width: 2),
-                          ),
-                          child: CircleAvatar(
-                            backgroundColor: isDark
-                                ? AppTheme.surfaceHeaderDark
-                                : AppTheme.surfaceHeaderLight,
-                            backgroundImage:
-                                photoUrl != null && photoUrl.isNotEmpty ? NetworkImage(photoUrl) : null,
-                            onBackgroundImageError: photoUrl != null && photoUrl.isNotEmpty
-                                ? (_, __) {}
-                                : null,
-                            child: photoUrl == null || photoUrl.isEmpty
-                                ? Text(
-                                    initials,
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      color: accent,
-                                    ),
-                                  )
-                                : null,
+                        Text(
+                          'Want more OpenTurath?',
+                          style: GoogleFonts.outfit(
+                            fontSize: 15.5,
+                            fontWeight: FontWeight.w700,
+                            color: textPrimary,
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      displayName,
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        color: textPrimary,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: accent.withValues(alpha: 0.12),
-                                      borderRadius: BorderRadius.circular(100),
-                                      border: Border.all(
-                                        color: accent.withValues(alpha: 0.35),
-                                        width: 0.8,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      isSubscribed ? 'Pro' : (isGuest ? 'Tamu' : 'Gratis'),
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        color: accent,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                        const SizedBox(height: 4),
+                        Text(
+                          'Upgrade for unlimited access and full research capabilities.',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            color: textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        SizedBox(
+                          height: 38,
+                          child: FilledButton(
+                            onPressed: _openSubscription,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
                               ),
-                              const SizedBox(height: 3),
-                              Text(
-                                email,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12.5,
-                                  color: textSecondary,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                            child: Text(
+                              'Upgrade',
+                              style: GoogleFonts.outfit(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-
-            const SizedBox(height: 24),
-
-            // ── Section 1: Langganan & Pembayaran ──
-            Text(
-              'Langganan & Pembayaran',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textSecondary,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            Container(
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: border, width: 1),
-              ),
-              child: _SettingsTile(
-                icon: Icons.credit_card_rounded,
-                title: 'Kelola Langganan & Paket',
-                subtitle: subscriptionSubtitle,
-                trailing: Icon(Icons.chevron_right_rounded, color: textSecondary),
-                onTap: _openSubscription,
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // ── Section 2: Pengaturan Tampilan ──
-            Text(
-              'Pengaturan Tampilan',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textSecondary,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            Container(
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: border, width: 1),
-              ),
-              child: Column(
-                children: [
-                  ValueListenableBuilder<ThemeMode>(
-                    valueListenable: AppConfig.themeNotifier,
-                    builder: (context, currentMode, _) {
-                      final isCurrentDark = currentMode == ThemeMode.dark;
-                      return _SettingsTile(
-                        icon: isCurrentDark
-                            ? Icons.dark_mode_rounded
-                            : Icons.light_mode_rounded,
-                        title: 'Tema Tampilan',
-                        subtitle: isCurrentDark ? 'Mode Gelap' : 'Mode Terang',
-                        trailing: Switch.adaptive(
-                          value: isCurrentDark,
-                          activeTrackColor: accent,
-                          activeThumbColor: isDark ? AppTheme.canvasDark : Colors.white,
-                          onChanged: (val) {
-                            AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  const Divider(height: 1),
-                  const _SettingsTile(
-                    icon: Icons.language_rounded,
-                    title: 'Bahasa Antarmuka',
-                    subtitle: 'Bahasa Indonesia (Utama)',
-                  ),
                 ],
-              ),
-            ),
 
+                const SizedBox(height: 20),
 
-
-            const SizedBox(height: 24),
-
-            // ── Section: Bantuan & Informasi ──
-            Text(
-              'Bantuan & Legalitas',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: textSecondary,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            Container(
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: border, width: 1),
-              ),
-              child: Column(
-                children: [
-                  _SettingsTile(
-                    icon: Icons.help_outline_rounded,
-                    title: 'Panduan Peneliti Turats',
-                    subtitle: 'Metodologi sitasi & riset berbasis AI',
-                    trailing: Icon(Icons.chevron_right_rounded, color: textSecondary),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          backgroundColor: surface,
-                          title: Text('Panduan OpenTurath', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-                          content: Text(
-                            'OpenTurath AI menyajikan jawaban dengan rujukan langsung ke naskah kitab kuning mu\'tabarah. Anda dapat memverifikasi dalil dengan memeriksa nomor rujukan sitasi pada teks jawaban.',
-                            style: GoogleFonts.outfit(fontSize: 13.5, height: 1.4),
-                          ),
-                          actions: [
-                            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Tutup')),
-                          ],
-                        ),
-                      );
-                    },
+                // ── Section 1: Account & Billing (Claude Grouped Style) ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
                   ),
-                  const Divider(height: 1),
-
-                  _SettingsTile(
-                    icon: Icons.info_outline_rounded,
-                    title: 'Tentang OpenTurath AI',
-                    subtitle: 'Versi $_appVersion · Platform Riset Turats Islam Berbasis AI',
+                  child: Column(
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.person_outline_rounded,
+                        title: 'Profile',
+                        subtitle: displayName,
+                      ),
+                      Divider(height: 1, color: border),
+                      _SettingsTile(
+                        icon: Icons.credit_card_outlined,
+                        title: 'Billing & Plan',
+                        subtitle: subscriptionSubtitle,
+                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                        onTap: _openSubscription,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ── Section 2: Display & Appearance ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: Column(
+                    children: [
+                      ValueListenableBuilder<ThemeMode>(
+                        valueListenable: AppConfig.themeNotifier,
+                        builder: (context, currentMode, _) {
+                          final isCurrentDark = currentMode == ThemeMode.dark;
+                          return _SettingsTile(
+                            icon: Icons.dark_mode_outlined,
+                            title: 'Color mode',
+                            subtitle: isCurrentDark ? 'Dark' : 'Light',
+                            trailing: Switch.adaptive(
+                              value: isCurrentDark,
+                              activeTrackColor: accent,
+                              activeThumbColor: isDark ? AppTheme.canvasDark : Colors.white,
+                              onChanged: (val) {
+                                AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                      Divider(height: 1, color: border),
+                      const _SettingsTile(
+                        icon: Icons.translate_rounded,
+                        title: 'Language',
+                        subtitle: 'Bahasa Indonesia (Utama)',
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ── Section 3: Legal & About ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: Column(
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.article_outlined,
+                        title: 'Ketentuan Layanan',
+                        subtitle: 'Syarat dan ketentuan riset OpenTurath',
+                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                        onTap: () {},
+                      ),
+                      Divider(height: 1, color: border),
+                      _SettingsTile(
+                        icon: Icons.privacy_tip_outlined,
+                        title: 'Kebijakan Privasi',
+                        subtitle: 'Perlindungan kerahasiaan data riset',
+                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                        onTap: () {},
+                      ),
+                      Divider(height: 1, color: border),
+                      _SettingsTile(
+                        icon: Icons.info_outline_rounded,
+                        title: 'About OpenTurath',
+                        subtitle: 'Version $_appVersion · AI for Islamic Scholarship',
+                      ),
+                    ],
+                  ),
+                ),
 
             const SizedBox(height: 24),
 
@@ -541,14 +484,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-          ],
+                ],
+              );
+            },
+          ),
         ),
       );
-    },
-  ),
-),
-    );
-  }
+    }
 }
 
 class _SettingsTile extends StatelessWidget {

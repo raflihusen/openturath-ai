@@ -216,26 +216,19 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 child: Container(
                   height: 44,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1F20) : const Color(0xFFF1F5F9),
+                    color: surface,
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: border, width: 1),
+                    border: Border.all(color: border, width: 1.0),
                   ),
                   child: TextField(
                     controller: _searchCtrl,
-                    autofocus: true,
                     onChanged: _onSearchChanged,
-                    style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
+                    autofocus: true,
+                    style: GoogleFonts.outfit(fontSize: 14, color: textPrimary),
                     decoration: InputDecoration(
-                      hintText: 'Cari spesialis, matan, atau syarah...',
-                      hintStyle: GoogleFonts.outfit(
-                        fontSize: 13,
-                        color: isDark ? AppTheme.textTertiaryDark : AppTheme.textTertiaryLight,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.search_rounded,
-                        size: 20,
-                        color: isDark ? AppTheme.textTertiaryDark : AppTheme.textTertiaryLight,
-                      ),
+                      hintText: 'Cari spesialis, kitab, atau bab...',
+                      hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
+                      prefixIcon: Icon(Icons.search_rounded, size: 18, color: textSecondary),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
                               icon: Icon(Icons.close_rounded, size: 18, color: textSecondary),
@@ -281,12 +274,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? (isDark ? AppTheme.surfaceElevated : const Color(0xFFE2E8F0))
+                              ? (isDark ? Colors.white : const Color(0xFF18181B))
                               : surface,
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: isSelected ? accent : border,
-                            width: 1,
+                            color: isSelected
+                                ? (isDark ? Colors.white : const Color(0xFF18181B))
+                                : border,
+                            width: 1.0,
                           ),
                         ),
                         child: Center(
@@ -295,7 +290,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                              color: isSelected ? accent : textSecondary,
+                              color: isSelected
+                                  ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                  : textSecondary,
                             ),
                           ),
                         ),
@@ -433,7 +430,7 @@ class _SlimSpecialistRowState extends State<_SlimSpecialistRow> {
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: widget.border, width: 0.8),
+                border: Border.all(color: widget.border, width: 1.0),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,

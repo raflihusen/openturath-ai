@@ -189,15 +189,15 @@ class _MainShellScreenState extends State<MainShellScreen> {
                         color: surface,
                         borderRadius: BorderRadius.circular(100),
                         border: Border.all(
-                          color: border.withValues(alpha: isDark ? 0.8 : 0.5),
-                          width: 0.8,
+                          color: border,
+                          width: 1.0,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.08),
-                            blurRadius: 24,
+                            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+                            blurRadius: 16,
                             spreadRadius: 0,
-                            offset: const Offset(0, 6),
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),

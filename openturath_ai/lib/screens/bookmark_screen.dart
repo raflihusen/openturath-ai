@@ -295,14 +295,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                           horizontal: 14, vertical: 6),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? (isDark
-                                ? AppTheme.surfaceElevated
-                                : const Color(0xFFE2E8F0))
+                            ? (isDark ? Colors.white : const Color(0xFF18181B))
                             : surface,
                         borderRadius: BorderRadius.circular(100),
                         border: Border.all(
-                          color: isSelected ? accent : border,
-                          width: 1,
+                          color: isSelected
+                              ? (isDark ? Colors.white : const Color(0xFF18181B))
+                              : border,
+                          width: 1.0,
                         ),
                       ),
                       child: Center(
@@ -312,7 +312,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             fontSize: 12,
                             fontWeight:
                                 isSelected ? FontWeight.w600 : FontWeight.w400,
-                            color: isSelected ? accent : textSecondary,
+                            color: isSelected
+                                ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                : textSecondary,
                           ),
                         ),
                       ),

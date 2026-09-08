@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -180,30 +179,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Top Bar: OpenTurath AI Brand & Settings ──
+                    // ── 1. Top Bar: OpenTurath Brand Mark ──
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: accent.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: accent.withValues(alpha: 0.25),
-                                  width: 0.8,
-                                ),
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/images/notebooklm_round.svg',
-                                  width: 22,
-                                  height: 22,
-                                  fit: BoxFit.contain,
-                                ),
+                            SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: Image.asset(
+                                isDark
+                                    ? 'assets/images/arch_dark_transparent.png'
+                                    : 'assets/images/arch_light_transparent.png',
+                                fit: BoxFit.contain,
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -211,34 +200,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'OpenTurath AI',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                  'OpenTurath',
+                                  style: GoogleFonts.newsreader(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w600,
                                     letterSpacing: -0.4,
                                     color: textPrimary,
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFF10B981),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      'Ruang Riset Aktif',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w500,
-                                        color: textSecondary,
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  'AI for Islamic Scholarship',
+                                  style: GoogleFonts.newsreader(
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                    color: textSecondary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -251,12 +227,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           },
                           borderRadius: BorderRadius.circular(100),
                           child: Container(
-                            padding: const EdgeInsets.all(3),
+                            padding: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: accent.withValues(alpha: 0.35),
-                                width: 1.2,
+                                color: border,
+                                width: 1.0,
                               ),
                             ),
                             child: CircleAvatar(
@@ -267,9 +243,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ? Text(
                                       user.name.isNotEmpty ? user.name[0].toUpperCase() : 'P',
                                       style: GoogleFonts.outfit(
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w600,
                                         fontSize: 13,
-                                        color: accent,
+                                        color: textPrimary,
                                       ),
                                     )
                                   : null,
@@ -279,25 +255,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 24),
 
                     // ── 2. Pembaruan Otomatis Siap Pasang (Jika Ada) ──
                     const UpdateReadyBanner(),
 
-                    // ── 3. Greeting 1-Baris Material 3 Expressive ──
+                    // ── 3. Academic Greeting ──
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
-                          style: GoogleFonts.outfit(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.4,
+                          user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti',
+                          style: GoogleFonts.newsreader(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: -0.3,
                             color: textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 4),
                         Text(
                           'Kaji naskah primer turats dengan asisten riset cerdas.',
                           style: GoogleFonts.outfit(
@@ -308,9 +284,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
-                    // ── 4. Expressive M3 Search Bar ──
+                    // ── 4. Minimalist Search Bar (Claude / Apple style) ──
                     InkWell(
                       onTap: () {
                         final shell = MainShellController.of(context);
@@ -328,16 +304,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           color: surface,
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: border.withValues(alpha: isDark ? 0.9 : 0.6),
-                            width: 0.8,
+                            color: border,
+                            width: 1.0,
                           ),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.search_rounded,
-                              size: 20,
-                              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                              size: 19,
+                              color: textSecondary,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -346,21 +322,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 style: GoogleFonts.outfit(
                                   fontSize: 13.5,
                                   color: textSecondary,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: accent.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Text(
-                                'Cari',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: accent,
                                 ),
                               ),
                             ),
@@ -469,8 +430,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: border.withValues(alpha: isDark ? 0.8 : 0.5),
-                                    width: 0.8,
+                                    color: border,
+                                    width: 1.0,
                                   ),
                                 ),
                                 child: Row(
@@ -611,8 +572,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: border.withValues(alpha: isDark ? 0.8 : 0.5),
-                                      width: 0.8,
+                                      color: border,
+                                      width: 1.0,
                                     ),
                                   ),
                                   child: Row(

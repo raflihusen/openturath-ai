@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -169,10 +168,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           titleSpacing: 16,
           title: Row(
             children: [
-              SvgPicture.asset(
-                'assets/images/notebooklm_round.svg',
+              Image.asset(
+                isDark
+                    ? 'assets/images/arch_dark_transparent.png'
+                    : 'assets/images/arch_light_transparent.png',
                 width: 24,
                 height: 24,
+                fit: BoxFit.contain,
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -181,14 +183,15 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                   children: [
                     Text(
                       'Hubungkan Akun Google',
-                      style: GoogleFonts.outfit(
-                        fontSize: 15,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
+                        letterSpacing: -0.2,
                       ),
                     ),
                     Text(
-                      'Login sekali di awal agar riset AI tidak terputus',
+                      'Autentikasi sesi riset OpenTurath',
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         color: textSecondary,

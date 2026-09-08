@@ -584,7 +584,6 @@ class _PricingCardState extends State<_PricingCard> {
         : (isDark ? AppTheme.borderDark : AppTheme.borderLight);
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
@@ -597,20 +596,15 @@ class _PricingCardState extends State<_PricingCard> {
         child: Container(
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: border, width: widget.isRecommended ? 1.8 : 0.8),
-            boxShadow: widget.isRecommended
-                ? [
-                    BoxShadow(
-                      color: accent.withValues(alpha: isDark ? 0.22 : 0.12),
-                      blurRadius: 22,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : null,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: widget.isRecommended
+                  ? (isDark ? Colors.white : const Color(0xFF18181B))
+                  : border,
+              width: 1.0,
+            ),
           ),
-          padding: const EdgeInsets.all(22),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -619,26 +613,24 @@ class _PricingCardState extends State<_PricingCard> {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: widget.isRecommended
-                        ? accent.withValues(alpha: 0.15)
-                        : (isDark ? const Color(0xFF262626) : const Color(0xFFE2E8F0)),
+                    color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
-                    widget.badge ?? 'REKOMENDASI',
+                    widget.badge ?? 'PILIHAN UTAMA',
                     style: GoogleFonts.outfit(
-                      fontSize: 11,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.4,
-                      color: widget.isRecommended ? accent : textSecondary,
+                      color: textPrimary,
                     ),
                   ),
                 ),
               Text(
                 widget.title,
-                style: GoogleFonts.outfit(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                style: GoogleFonts.newsreader(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
               ),
