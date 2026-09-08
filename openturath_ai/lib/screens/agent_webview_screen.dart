@@ -53,34 +53,55 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   static const String _hideElementsCss = """
-    /* Header bar atas Google (Logo & Profil Akun Google) */
-    mat-toolbar .logo-container,
-    mat-toolbar a.logo-link,
-    mat-toolbar labs-tailwind-logo,
-    mat-toolbar a[aria-label*="Homepage" i],
-    mat-toolbar a[aria-label*="NotebookLM" i],
-    mat-toolbar a[aria-label*="Gemini" i],
-    mat-toolbar .title-container,
-    mat-toolbar input.title-input,
-    mat-toolbar button[aria-label*="Copy" i],
-    mat-toolbar button[aria-label*="Salin" i],
-    mat-toolbar a[aria-label*="Google" i],
-    mat-toolbar #gb,
-    mat-toolbar #gbwa,
+    /* Header bar & top navigation containers */
+    top-bar,
+    .top-bar,
+    header,
+    .header,
+    .app-header,
+    app-header,
+    mat-toolbar,
+    [role="banner"],
+    .header-container,
+    .header-row,
+    div[class*="header" i],
+    div[class*="top-bar" i],
+    div[class*="topbar" i],
+
+    /* Logos & brand links */
+    labs-tailwind-logo,
+    a.logo-link,
+    .logo-container,
+    a[aria-label*="Homepage" i],
+    a[aria-label*="NotebookLM" i],
+    a[aria-label*="Gemini" i],
+
+    /* Notebook Title input & containers */
+    .title-input,
+    input.title-input,
+    .title-container,
+    .notebook-title,
+    div[class*="title-input"],
+
+    /* Action buttons in header */
+    button[aria-label*="Copy" i],
+    button[aria-label*="Salin" i],
+    button[aria-label*="Create" i],
+    button[aria-label*="Buat" i],
+    button[aria-label*="Settings" i],
+    button[aria-label*="Setelan" i],
+    button[aria-label*="Pengaturan" i],
+    button.mat-tonal-button[aria-label*="Create" i],
+
+    /* Google apps (9-dots) & Google account profile */
+    a[aria-label*="Google" i],
+    .gb_C,
     #gb,
     #gbwa,
-    .gb_C,
     .gb_9a,
     .gb_8,
     .gb_U,
     div[id*="gb"],
-
-    /* Logos & brand links di luar toolbar */
-    labs-tailwind-logo,
-    a.logo-link,
-    a[aria-label*="Homepage" i],
-    a[aria-label*="NotebookLM" i],
-    a[aria-label*="Gemini" i],
 
     /* Badges & disclaimers */
     .pro-badge,
@@ -102,28 +123,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       border: none !important;
     }
 
-    /* Sembunyikan top banner Google jika ada, tapi pastikan chat panel aman */
-    mat-toolbar:not(:has(chat-view)),
-    [role="banner"]:not(:has(chat-view)) {
-      display: none !important;
-      height: 0px !important;
-      min-height: 0px !important;
-    }
-
-    /* JAMINAN: Tombol Titik Tiga (Chat Options) & Header Panel Chat WAJIB tampak */
-    button[aria-label*="Chat options" i],
-    button[aria-label*="Opsi chat" i],
-    button[aria-label*="options" i],
-    [aria-label*="Chat options" i],
-    .chat-panel-header,
-    .chat-panel-header * {
-      display: inline-flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-    }
-
-    /* Sembunyikan scrollbar browser WebKit agar tampilan 100% native */
+    /* Sembunyikan scrollbar browser secara total agar tampilan 100% native seperti aplikasi resmi */
     ::-webkit-scrollbar {
       display: none !important;
       width: 0px !important;
@@ -142,22 +142,19 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       -ms-overflow-style: none !important;
     }
 
-    /* Auto-fit Responsif: Pastikan tampilan chat besar dan normal di layar ponsel */
-    html, body {
-      width: 100% !important;
-      max-width: 100vw !important;
-      overflow-x: hidden !important;
-      -webkit-text-size-adjust: 100% !important;
-      font-size: 15px !important;
-    }
+    /* Hilangkan padding kosong atas agar chat menempel rapi ke batas atas */
+    .chat-panel-content,
+    .chat-panel-content > div:first-child,
+    .chat-panel-content > *:first-child,
     chat-view,
+    chat-view .chat-container,
     .chat-view,
+    .chat-scroll-container,
     .chat-container,
     .conversation-container,
-    .chat-panel-content {
-      width: 100% !important;
-      max-width: 100% !important;
-      box-sizing: border-box !important;
+    .message-list,
+    main,
+    .main-content {
       padding-top: 0px !important;
       margin-top: 0px !important;
     }
@@ -166,19 +163,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   static final _cloakScript = UserScript(
     source: """
       (function() {
-        function ensureViewportAndStyles() {
-          // 1. Pastikan meta viewport terpasang agar tidak mengecil di HP
-          var meta = document.querySelector('meta[name="viewport"]');
-          if (!meta) {
-            meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes';
-            document.head.appendChild(meta);
-          } else {
-            meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes');
-          }
-
-          // 2. Injeksi style cloaking
+        function injectHideStyle() {
           if (!document.getElementById('ot-hide-controls')) {
             var style = document.createElement('style');
             style.id = 'ot-hide-controls';
@@ -190,22 +175,23 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             }
           }
         }
-        ensureViewportAndStyles();
-        document.addEventListener('DOMContentLoaded', ensureViewportAndStyles);
+        injectHideStyle();
+        document.addEventListener('DOMContentLoaded', injectHideStyle);
 
-        // Persistent MutationObserver to neutralize Google branding
+        // Persistent MutationObserver to immediately neutralize Google DOM before Angular paints
         try {
           var observer = new MutationObserver(function(mutations) {
-            ensureViewportAndStyles();
+            injectHideStyle();
             var selectors = [
-              'mat-toolbar:not(:has(chat-view))', '[role="banner"]:not(:has(chat-view))',
-              'a.logo-link', 'labs-tailwind-logo',
-              '#gb', '#gbwa', '.gb_C', '.pro-badge', '.disclaimer'
+              'header', '.header', '.header-container', 'mat-toolbar', '[role="banner"]',
+              'a.logo-link', 'labs-tailwind-logo', '.title-input',
+              'button[aria-label*="Copy" i]', 'button[aria-label*="Salin" i]',
+              'button[aria-label*="Create" i]', 'button[aria-label*="Buat" i]',
+              '#gb', '#gbwa', '.pro-badge', '.disclaimer'
             ];
             for (var s = 0; s < selectors.length; s++) {
               var els = document.querySelectorAll(selectors[s]);
               for (var i = 0; i < els.length; i++) {
-                if (els[i].closest && els[i].closest('chat-view')) continue;
                 els[i].style.setProperty('display', 'none', 'important');
                 els[i].style.setProperty('visibility', 'hidden', 'important');
               }
@@ -274,7 +260,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         return;
       }
       setState(() {
-        _agentUrl = url.replaceAll('/preview', '');
+        _agentUrl = url;
         _isLoadingUrl = false;
       });
     } catch (e) {
@@ -328,20 +314,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     try {
       await _webController!.evaluateJavascript(source: """
         (function() {
-          // 1. Pastikan meta viewport responsif
-          var meta = document.querySelector('meta[name="viewport"]');
-          if (!meta) {
-            meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes';
-            document.head.appendChild(meta);
-          } else {
-            meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes');
-          }
-
           var sel = [
-            'mat-toolbar:not(:has(chat-view))',
-            '[role="banner"]:not(:has(chat-view))',
+            'top-bar',
+            '.top-bar',
+            'header',
+            '.header',
+            '.app-header',
+            'app-header',
+            'mat-toolbar',
+            '[role="banner"]',
+            '.header-container',
+            '.header-row',
+            'div[class*="header" i]',
+            'div[class*="top-bar" i]',
+            'div[class*="topbar" i]',
             'labs-tailwind-logo',
             'a.logo-link',
             '.logo-container',
@@ -350,8 +336,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             'a[aria-label*="Gemini" i]',
             '.title-input',
             'input.title-input',
+            '.title-container',
+            '.notebook-title',
             'button[aria-label*="Copy" i]',
             'button[aria-label*="Salin" i]',
+            'button[aria-label*="Create" i]',
+            'button[aria-label*="Buat" i]',
+            'button[aria-label*="Settings" i]',
+            'button[aria-label*="Setelan" i]',
+            'button.mat-tonal-button',
             'a[aria-label*="Google" i]',
             '.gb_C',
             '#gb',
@@ -372,10 +365,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 var els = document.querySelectorAll(sel[i]);
                 for (var j = 0; j < els.length; j++) {
                   var el = els[j];
-                  if (el.getAttribute && (el.getAttribute('aria-label') || '').toLowerCase().includes('chat')) {
-                    continue;
-                  }
-                  if (el.closest && el.closest('chat-view')) {
+                  if (el.tagName === 'BUTTON' && (el.getAttribute('aria-label') || '').toLowerCase().includes('chat')) {
                     continue;
                   }
                   el.style.setProperty('display', 'none', 'important');
@@ -396,8 +386,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               gaps.forEach(function(el) {
                 el.style.setProperty('padding-top', '0px', 'important');
                 el.style.setProperty('margin-top', '0px', 'important');
-                el.style.setProperty('width', '100%', 'important');
-                el.style.setProperty('max-width', '100%', 'important');
               });
             } catch(_) {}
           }
@@ -498,67 +486,59 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _executeDeleteChatHistory() async {
     if (_webController == null) return;
 
-    // Script interaktif untuk memicu aksi hapus chat native NotebookLM (Desktop & Mobile)
+    // Script presisi NotebookLM (pemicu langsung tombol delete / opsi menu chat)
     const jsDelete = """
       (async function() {
         try {
-          // 1. Cari tombol menu opsi chat (titik tiga)
-          let optBtn = document.querySelector('button[aria-label*="Chat options" i], button[aria-label*="Opsi chat" i], button[aria-label*="options" i]');
-          if (!optBtn) {
-            const allBtns = Array.from(document.querySelectorAll('button, [role="button"]'));
-            optBtn = allBtns.find(b => {
-              const aria = (b.getAttribute('aria-label') || '').toLowerCase();
-              const icon = b.querySelector('mat-icon');
-              const iconTxt = icon ? (icon.textContent || '').toLowerCase() : '';
-              return aria.includes('chat options') || aria.includes('opsi chat') || 
-                     iconTxt.includes('more_vert') || (aria.includes('chat') && iconTxt.includes('more'));
+          const elements = Array.from(document.querySelectorAll('button, [role="menuitem"], [role="button"], a'));
+          
+          let target = elements.find(el => {
+            const txt = (el.textContent || '').toLowerCase();
+            const aria = (el.getAttribute('aria-label') || '').toLowerCase();
+            return txt.includes('delete chat') || txt.includes('clear chat') || txt.includes('hapus riwayat') || txt.includes('hapus chat') ||
+                   aria.includes('delete chat') || aria.includes('clear chat') || aria.includes('hapus riwayat') || aria.includes('hapus chat');
+          });
+          if (target) {
+            target.click();
+            await new Promise(r => setTimeout(r, 350));
+            const confirmBtn = Array.from(document.querySelectorAll('mat-dialog-actions button, .mat-mdc-dialog-actions button, [role="dialog"] button')).find(b => {
+              const t = (b.textContent || '').toLowerCase();
+              return t.includes('delete') || t.includes('hapus') || t.includes('clear') || t.includes('confirm');
             });
+            if (confirmBtn) confirmBtn.click();
+            return 'deleted_button';
           }
-
-          if (optBtn) {
-            optBtn.click();
-            await new Promise(r => setTimeout(r, 260));
-
-            // 2. Cari menu item "Delete chat history" di overlay menu Angular Material
-            const menuItems = Array.from(document.querySelectorAll('.cdk-overlay-container [role="menuitem"], .mat-mdc-menu-item, [role="menuitem"]'));
-            const deleteItem = menuItems.find(m => {
-              const t = (m.textContent || '').toLowerCase();
-              const a = (m.getAttribute('aria-label') || '').toLowerCase();
-              return t.includes('delete chat') || t.includes('delete history') || 
-                     t.includes('clear chat') || t.includes('clear history') ||
-                     t.includes('hapus chat') || t.includes('hapus riwayat') || t.includes('hapus histori') ||
-                     t.includes('hapus percakapan') || t.includes('bersihkan percakapan') ||
-                     a.includes('delete chat') || a.includes('hapus chat');
+          const moreBtn = elements.find(el => {
+            const aria = (el.getAttribute('aria-label') || '').toLowerCase();
+            return aria.includes('more') || aria.includes('options') || aria.includes('menu') || aria.includes('lainnya');
+          });
+          if (moreBtn) {
+            moreBtn.click();
+            await new Promise(r => setTimeout(r, 250));
+            const menuItems = Array.from(document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-item, button'));
+            const deleteItem = menuItems.find(i => {
+              const txt = (i.textContent || '').toLowerCase();
+              const aria = (i.getAttribute('aria-label') || '').toLowerCase();
+              return txt.includes('delete chat') || txt.includes('clear') || txt.includes('hapus') ||
+                     aria.includes('delete chat') || aria.includes('clear') || aria.includes('hapus');
             });
-
             if (deleteItem) {
               deleteItem.click();
-              await new Promise(r => setTimeout(r, 320));
-
-              // 3. Konfirmasi di dialog Google ("Delete")
-              const dialogBtns = Array.from(document.querySelectorAll('.cdk-overlay-container button, mat-dialog-actions button, [role="dialog"] button, .mat-mdc-dialog-actions button'));
-              const confirmBtn = dialogBtns.find(b => {
+              await new Promise(r => setTimeout(r, 350));
+              const confirmBtn = Array.from(document.querySelectorAll('mat-dialog-actions button, .mat-mdc-dialog-actions button, [role="dialog"] button')).find(b => {
                 const t = (b.textContent || '').toLowerCase();
-                return (t.includes('delete') || t.includes('hapus') || t.includes('clear') || t.includes('ya') || t.includes('ok')) &&
-                       !t.includes('cancel') && !t.includes('batal') && !t.includes('kembali');
+                return t.includes('delete') || t.includes('hapus') || t.includes('clear');
               });
-
-              if (confirmBtn) {
-                confirmBtn.click();
-                await new Promise(r => setTimeout(r, 350));
-                return 'deleted_native';
-              }
-            } else {
-              // Tutup menu jika tidak ada aksi delete
-              const backdrop = document.querySelector('.cdk-overlay-backdrop');
-              if (backdrop) backdrop.click();
+              if (confirmBtn) confirmBtn.click();
+              return 'deleted_menu';
             }
           }
-
-          // Fallback pembersihan DOM
-          document.querySelectorAll('chat-turn, conversation-turn, [class*="turn"], [class*="chat-turn"]').forEach(el => el.remove());
-          try { sessionStorage.clear(); } catch(e) {}
-          return 'fallback_cleared';
+          const container = document.querySelector('.chat-container, .conversation-container, chat-view');
+          if (container) {
+            const messages = container.querySelectorAll('.chat-message, .message-list, chat-message');
+            messages.forEach(m => m.remove());
+          }
+          return 'cleared_fallback';
         } catch (e) {
           return 'error: ' + e.toString();
         }
@@ -567,11 +547,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
     try {
       final res = await _webController!.evaluateJavascript(source: jsDelete);
-      if (res == 'deleted_native') {
+      if (res == 'deleted_button' || res == 'deleted_menu') {
         if (mounted) {
           AppSnackBar.success(context, 'Riwayat chat telah dihapus');
         }
       } else {
+        // Bersihkan cache sesi dan reload URL bersih
         await InAppWebViewController.clearAllCache();
         if (_agentUrl != null) {
           await _webController!.loadUrl(urlRequest: URLRequest(url: WebUri(_agentUrl!)));
@@ -620,37 +601,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             onPressed: _handleBackPress,
           ),
           titleSpacing: 0,
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  _agent?.title ?? 'Ruang Telaah AI',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.outfit(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.1,
-                    color: textPrimary,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                splashRadius: 18,
-                padding: const EdgeInsets.all(4),
-                constraints: const BoxConstraints(),
-                icon: Icon(
-                  Icons.delete_outline_rounded,
-                  color: isDark ? Colors.red.shade300 : Colors.red.shade600,
-                  size: 20,
-                ),
-                tooltip: 'Hapus Riwayat Chat',
-                onPressed: _confirmDeleteChatHistory,
-              ),
-            ],
+          title: Text(
+            _agent?.title ?? 'Ruang Telaah AI',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.outfit(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.1,
+              color: textPrimary,
+            ),
           ),
           actions: [
             IconButton(
@@ -788,7 +748,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 initialUrlRequest: URLRequest(url: WebUri(_agentUrl!)),
                 initialUserScripts: UnmodifiableListView<UserScript>([_cloakScript]),
                 initialSettings: InAppWebViewSettings(
-                  userAgent: AppConstants.chromeDesktopUserAgent,
+                  userAgent: AppConstants.chromeMobileUserAgent,
                   javaScriptEnabled: true,
                   domStorageEnabled: true,
                   databaseEnabled: true,
@@ -805,9 +765,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   supportZoom: true,
                   builtInZoomControls: true,
                   displayZoomControls: false,
-                  useWideViewPort: true,
-                  loadWithOverviewMode: false,
-                  textZoom: 100,
                   mediaPlaybackRequiresUserGesture: false,
                   allowsInlineMediaPlayback: true,
                   forceDark: isDark ? ForceDark.ON : ForceDark.OFF,

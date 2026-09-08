@@ -7,9 +7,7 @@ class AppConstants {
   // ── Trial Limit Config ────────────────────────────────────────
   static const int trialQuestionLimit = 10;
 
-  // ── Chrome User Agent Resmi (Desktop & Mobile) ──
-  static const String chromeDesktopUserAgent =
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.127 Safari/537.36';
+  // ── Chrome Mobile User Agent Resmi (Mitigasi Error 403 Google) ──
   static const String chromeMobileUserAgent =
       'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.127 Mobile Safari/537.36';
 
