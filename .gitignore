@@ -1,0 +1,75 @@
+# ──────────────────────────────────────────────────────────────────────
+# OpenTurath Root .gitignore
+# ──────────────────────────────────────────────────────────────────────
+
+# Firebase Service Account Credentials & Sensitive Tokens (CRITICAL SECURITY)
+service-account*.json
+master_token.json
+storage_state.json
+env.yaml
+key.properties
+*.keystore
+*.jks
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.staging
+*.apkm
+
+# Google Chrome Persistent Sessions (Puppeteer)
+chrome_session/
+chrome_session_*/
+.chrome_session/
+
+# Android Compiled Binaries (APK, AAB) & Archive
+*.apk
+*.aab
+*.apkm
+binaries_archive/
+archive_experiments/
+data_corpus/
+scraping_and_notebooks/
+creative_assets/
+docs_archive/
+openturath-release.apk
+app-release.apk
+
+# Logs and Debug Databases
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# OS System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Dependencies (Node)
+node_modules/
+dist/
+lib-cov/
+.grunt/
+.lock-wscript
+.nyc_output/
+.npm/
+
+# IDEs & Editor Configuration
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
