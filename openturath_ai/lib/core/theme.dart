@@ -12,7 +12,7 @@ class AppTheme {
   static const Color textPrimaryLight     = Color(0xFF18181B); // Main Title & Body
   static const Color textSecondaryLight   = Color(0xFF71717A); // Metadata & Subtitles
   static const Color textTertiaryLight    = Color(0xFFA1A1AA); // Disclaimers & Placeholders
-  static const Color accentLight          = Color(0xFF0B57D0); // Brand Accent
+  static const Color accentLight          = Color(0xFF18181B); // Refined Monochrome Black
   static const Color pillActionBgLight    = Color(0xFF18181B); // Solid Black Action Pill
   static const Color pillActionTextLight  = Color(0xFFFFFFFF);
   static const Color pillSecondaryBgLight = Color(0xFFF4F4F5);

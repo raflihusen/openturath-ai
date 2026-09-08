@@ -272,6 +272,10 @@ class _ExpressiveNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeBg = isDark ? Colors.white : const Color(0xFF18181B);
+    final activeFg = isDark ? const Color(0xFF18181B) : Colors.white;
+
     return InkWell(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -286,22 +290,20 @@ class _ExpressiveNavItem extends StatelessWidget {
           vertical: 8,
         ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? accent.withValues(alpha: 0.16)
-              : Colors.transparent,
+          color: isSelected ? activeBg : Colors.transparent,
           borderRadius: BorderRadius.circular(100),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             AnimatedScale(
-              scale: isSelected ? 1.08 : 0.94,
+              scale: isSelected ? 1.05 : 0.94,
               duration: const Duration(milliseconds: 220),
               curve: Curves.easeOutBack,
               child: Icon(
                 isSelected ? activeIcon : icon,
-                color: isSelected ? accent : unselected,
-                size: 21,
+                color: isSelected ? activeFg : unselected,
+                size: 20,
               ),
             ),
             AnimatedSize(
@@ -316,9 +318,9 @@ class _ExpressiveNavItem extends StatelessWidget {
                           label,
                           style: GoogleFonts.outfit(
                             fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: -0.2,
-                            color: accent,
+                            color: activeFg,
                           ),
                         ),
                       ],
@@ -353,6 +355,10 @@ class _RailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final activeBg = isDark ? Colors.white : const Color(0xFF18181B);
+    final activeFg = isDark ? const Color(0xFF18181B) : Colors.white;
+
     return InkWell(
       onTap: () {
         HapticFeedback.selectionClick();
@@ -367,16 +373,16 @@ class _RailItem extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: isSelected ? accent.withValues(alpha: 0.16) : Colors.transparent,
+                color: isSelected ? activeBg : Colors.transparent,
                 borderRadius: BorderRadius.circular(100),
               ),
               child: AnimatedScale(
-                scale: isSelected ? 1.08 : 0.94,
+                scale: isSelected ? 1.05 : 0.94,
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOutBack,
                 child: Icon(
                   isSelected ? activeIcon : icon,
-                  color: isSelected ? accent : unselected,
+                  color: isSelected ? activeFg : unselected,
                   size: 22,
                 ),
               ),
@@ -386,8 +392,8 @@ class _RailItem extends StatelessWidget {
               label,
               style: GoogleFonts.outfit(
                 fontSize: 10.5,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? accent : unselected,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected ? (isDark ? Colors.white : const Color(0xFF18181B)) : unselected,
               ),
             ),
           ],

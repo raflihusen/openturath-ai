@@ -9,6 +9,7 @@ import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
+import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final FieldModel? field; // Nullable if opened as general Specialist tab
@@ -146,10 +147,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             : null);
 
     final filteredAgents = _computeFilteredAgents();
-    final title = currentField?.name ?? 'Koleksi AI Spesialis';
+    final title = currentField?.name ?? 'Koleksi Spesialis';
     final subtitle = currentField != null
-        ? '${filteredAgents.length} AI Spesialis Turats'
-        : 'Pilih AI spesialis sesuai rujukan kitab primer';
+        ? '${filteredAgents.length} Spesialis Turats'
+        : 'Pilih spesialis sesuai rujukan kitab primer';
 
     final isRootTab = widget.field == null;
 
@@ -162,7 +163,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             ? null
             : IconButton(
                 icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    final shell = MainShellController.of(context);
+                    shell?.switchTab(0);
+                  }
+                },
               ),
         title: Column(
           crossAxisAlignment:
@@ -170,9 +178,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           children: [
             Text(
               title,
-              style: GoogleFonts.outfit(
-                fontSize: 18,
+              style: GoogleFonts.newsreader(
+                fontSize: 22,
                 fontWeight: FontWeight.w600,
+                letterSpacing: -0.3,
                 color: textPrimary,
               ),
             ),
@@ -437,93 +446,47 @@ class _SlimSpecialistRowState extends State<_SlimSpecialistRow> {
                 children: [
                   // Typography-First Title & Metadata
                   Expanded(
-                    child: Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            widget.agent.title,
-                            style: GoogleFonts.outfit(
-                              fontSize: 15.5,
-                              fontWeight: FontWeight.w600,
-                              color: widget.textPrimary,
-                              letterSpacing: -0.2,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (isComingSoon) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: widget.isDark
-                                  ? const Color(0xFF3B2818)
-                                  : const Color(0xFFFEF3C7),
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Text(
-                              'Segera',
-                              style: GoogleFonts.outfit(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFF59E0B),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
+                    child: Text(
+                      widget.agent.title,
+                      style: GoogleFonts.outfit(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w600,
+                        color: widget.textPrimary,
+                        letterSpacing: -0.2,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
 
                   const SizedBox(width: 14),
 
-                  // Elegant Action: Tombol 'Segera' (Coming Soon) atau Panah (Active)
+                  // Minimalist Claude Action: Label 'Segera' halus atau Panah Minimalis
                   if (isComingSoon)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: widget.isDark ? const Color(0xFF2B2012) : const Color(0xFFFEF3C7),
-                        borderRadius: BorderRadius.circular(20),
+                        color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                        borderRadius: BorderRadius.circular(100),
                         border: Border.all(
-                          color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                          color: widget.border,
                           width: 0.8,
                         ),
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.lock_clock_rounded,
-                            size: 13,
-                            color: Color(0xFFF59E0B),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Segera',
-                            style: GoogleFonts.outfit(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFFF59E0B),
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        'Segera',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: widget.textSecondary,
+                        ),
                       ),
                     )
                   else
-                    Container(
-                      width: 32,
-                      height: 32,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: widget.isDark ? const Color(0xFF1E2D3D) : const Color(0xFFEDF2F7),
-                      ),
-                      child: Icon(
-                        Icons.arrow_outward_rounded,
-                        size: 16,
-                        color: widget.accent,
-                      ),
+                    Icon(
+                      Icons.arrow_outward_rounded,
+                      size: 18,
+                      color: widget.textSecondary,
                     ),
                 ],
               ),

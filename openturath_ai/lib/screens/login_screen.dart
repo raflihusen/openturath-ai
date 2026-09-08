@@ -91,14 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Claude Aesthetic Palette:
-    // Dark: Hitam pekat murni (#0E0E10)
-    // Light: Putih pekat murni (#FFFFFF)
-    final bg = isDark ? const Color(0xFF0E0E10) : const Color(0xFFFFFFFF);
-    final textPrimary = isDark ? const Color(0xFFFAFAFA) : const Color(0xFF18181B);
-    final textMuted = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
+    // Dipaksa selalu tema gelap murni (Claude Pure Deep Black)
+    const bg = Color(0xFF0E0E10);
+    const textPrimary = Color(0xFFFAFAFA);
+    const textMuted = Color(0xFFA1A1AA);
 
     return Scaffold(
       backgroundColor: bg,
@@ -106,30 +102,39 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Center(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 380),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 12),
 
-                  // ── 1. Visual Symbol: Arch Artwork (Seamless Floating Graphic) ──
+                  // ── 1. Visual Symbol: Arch Artwork dengan Fade Bawah Mulus ──
                   _stagger(
                     delayMs: 40,
                     child: SizedBox(
-                      height: 160,
-                      width: 160,
-                      child: Image.asset(
-                        isDark
-                            ? 'assets/images/arch_dark_transparent.png'
-                            : 'assets/images/arch_light_transparent.png',
-                        fit: BoxFit.contain,
+                      height: 170,
+                      width: 170,
+                      child: ShaderMask(
+                        shaderCallback: (rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.black, Colors.black, Colors.transparent],
+                            stops: [0.0, 0.86, 1.0],
+                          ).createShader(rect);
+                        },
+                        blendMode: BlendMode.dstIn,
+                        child: Image.asset(
+                          'assets/images/arch_dark_transparent.png',
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
                   // ── 2. Brand Wordmark: "OpenTurath" ──
                   _stagger(
@@ -138,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       'OpenTurath',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
-                        fontSize: 34,
+                        fontSize: 35,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.6,
                         color: textPrimary,
@@ -146,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
                   // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
                   _stagger(
@@ -155,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       'AI for Islamic Scholarship',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
-                        fontSize: 18,
+                        fontSize: 17.5,
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.italic,
                         letterSpacing: 0.1,
@@ -164,9 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 72),
+                  const SizedBox(height: 56),
 
-                  // ── 4. High-Contrast Google Action Pill ──
+                  // ── 4. High-Contrast Solid White Action Pill ──
                   _stagger(
                     delayMs: 200,
                     child: GestureDetector(
@@ -183,8 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: FilledButton(
                             onPressed: _isLoading ? null : _signIn,
                             style: FilledButton.styleFrom(
-                              backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
-                              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF0E0E10),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),
                               ),
@@ -192,12 +197,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 20),
                             ),
                             child: _isLoading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     width: 20,
                                     height: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: isDark ? const Color(0xFF18181B) : Colors.white,
+                                      color: Color(0xFF0E0E10),
                                     ),
                                   )
                                 : Row(
@@ -211,6 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: -0.1,
+                                          color: const Color(0xFF0E0E10),
                                         ),
                                       ),
                                     ],
@@ -222,41 +228,44 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 28),
 
-                  // ── 5. Minimalist Legal Disclaimer ──
+                  // ── 5. Minimalist Legal Disclaimer (Proporsional 2-Baris Seimbang) ──
                   _stagger(
                     delayMs: 260,
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'Dengan masuk, Anda menyetujui ',
-                        style: GoogleFonts.outfit(
-                          color: textMuted,
-                          fontSize: 11.5,
-                          height: 1.5,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 320),
+                      child: Text.rich(
+                        TextSpan(
+                          text: 'Dengan masuk, Anda menyetujui\n',
+                          style: GoogleFonts.outfit(
+                            color: textMuted,
+                            fontSize: 12,
+                            height: 1.5,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'Ketentuan Layanan',
+                              style: const TextStyle(
+                                color: textPrimary,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              recognizer: _termsRecognizer,
+                            ),
+                            const TextSpan(text: ' & '),
+                            TextSpan(
+                              text: 'Kebijakan Privasi',
+                              style: const TextStyle(
+                                color: textPrimary,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              recognizer: _privacyRecognizer,
+                            ),
+                            const TextSpan(text: '.'),
+                          ],
                         ),
-                        children: [
-                          TextSpan(
-                            text: 'Ketentuan Layanan',
-                            style: TextStyle(
-                              color: textPrimary,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            recognizer: _termsRecognizer,
-                          ),
-                          const TextSpan(text: ' & '),
-                          TextSpan(
-                            text: 'Kebijakan Privasi',
-                            style: TextStyle(
-                              color: textPrimary,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            recognizer: _privacyRecognizer,
-                          ),
-                          const TextSpan(text: '.'),
-                        ],
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 16),

@@ -15,6 +15,7 @@ import '../services/auth_service.dart';
 import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
 import 'main_shell_screen.dart';
+import 'specialist_list_screen.dart';
 
 /// Beranda OpenTurath AI (Figma Screen 6)
 /// Menampilkan salam, kutipan ibadah thalabul ilmi, 6 grid rumpun bidang ilmu,
@@ -183,40 +184,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: 28,
-                              height: 28,
-                              child: Image.asset(
-                                isDark
-                                    ? 'assets/images/arch_dark_transparent.png'
-                                    : 'assets/images/arch_light_transparent.png',
-                                fit: BoxFit.contain,
+                            Text(
+                              'OpenTurath',
+                              style: GoogleFonts.newsreader(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.5,
+                                color: textPrimary,
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'OpenTurath',
-                                  style: GoogleFonts.newsreader(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: -0.4,
-                                    color: textPrimary,
-                                  ),
-                                ),
-                                Text(
-                                  'AI for Islamic Scholarship',
-                                  style: GoogleFonts.newsreader(
-                                    fontSize: 11,
-                                    fontStyle: FontStyle.italic,
-                                    color: textSecondary,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              'AI for Islamic Scholarship',
+                              style: GoogleFonts.newsreader(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                color: textSecondary,
+                              ),
                             ),
                           ],
                         ),
@@ -368,13 +354,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Navigator.pushNamed(context, AppRoutes.specialistList);
                             }
                           },
-                          child: Text(
-                            'Lihat Semua',
-                            style: GoogleFonts.outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w600,
-                              color: accent,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Lihat Semua',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: textSecondary,
+                                ),
+                              ),
+                              const SizedBox(width: 2),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                size: 16,
+                                color: textSecondary,
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -414,16 +411,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(16),
                               onTap: () {
-                                final shell = MainShellController.of(context);
-                                if (shell != null) {
-                                  shell.switchTab(1, fieldId: field.id);
-                                } else {
-                                  Navigator.pushNamed(
-                                    context,
-                                    AppRoutes.specialistList,
-                                    arguments: field,
-                                  );
-                                }
+                                Navigator.of(context, rootNavigator: true).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => SpecialistListScreen(field: field),
+                                  ),
+                                );
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -440,13 +432,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       width: 36,
                                       height: 36,
                                       decoration: BoxDecoration(
-                                        color: accent.withValues(alpha: 0.12),
+                                        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                                         borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: border, width: 0.8),
                                       ),
                                       child: Icon(
                                         field.icon,
-                                        size: 19,
-                                        color: accent,
+                                        size: 18,
+                                        color: textPrimary,
                                       ),
                                     ),
                                     const SizedBox(width: 10),
@@ -633,6 +626,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           );
                         },
                       ),
+                    const SizedBox(height: 110),
                   ],
                 ),
               ),
