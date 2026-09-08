@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -11,12 +10,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
-import '../core/app_snackbar.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
-import '../services/native_agent_launcher.dart';
 
 /// AgentWebviewScreen: Tampilan Ruang Riset AI NotebookLM
 /// Dilengkapi App Bar native yang bersih di bawah kamera notch/status bar,
@@ -422,171 +419,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     }
   }
 
-  void _confirmDeleteChatHistory() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-          side: BorderSide(color: border, width: 1),
-        ),
-        title: Text(
-          'Hapus Riwayat Percakapan?',
-          style: GoogleFonts.outfit(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: textPrimary,
-          ),
-        ),
-        content: Text(
-          'Apakah Anda yakin ingin menghapus riwayat pesan pada sesi riset ini? Seluruh percakapan akan dibersihkan.',
-          style: GoogleFonts.outfit(
-            fontSize: 13.5,
-            color: textSecondary,
-            height: 1.4,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Batal',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: textSecondary,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _executeDeleteChatHistory();
-            },
-            child: Text(
-              'Hapus',
-              style: GoogleFonts.outfit(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.redAccent,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _executeDeleteChatHistory() async {
-    if (_webController == null) return;
-
-    // Script presisi NotebookLM: pemicu native 'Chat options' -> 'Delete chat history'
-    // Jika di preview embed Google tidak merender tombol ini, bersihkan DOM secara instan tanpa reload URL
-    const jsDelete = """
-      (async function() {
-        try {
-          // 1. Cari tombol 'Chat options' milik Google NotebookLM
-          const chatOptionsBtn = document.querySelector(
-            'button[aria-label*="Chat options" i], ' +
-            'button[aria-label*="chat options" i], ' +
-            'button[aria-label*="Opsi chat" i], ' +
-            'button[aria-label*="Opsi obrolan" i], ' +
-            'chat-view button.mat-mdc-menu-trigger'
-          );
-
-          if (chatOptionsBtn) {
-            chatOptionsBtn.click();
-            await new Promise(r => setTimeout(r, 350));
-
-            // Cari item 'Delete chat history' di menu popover
-            const menuItems = Array.from(document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-item, button'));
-            const deleteItem = menuItems.find(i => {
-              const txt = (i.textContent || '').toLowerCase();
-              const aria = (i.getAttribute('aria-label') || '').toLowerCase();
-              return txt.includes('delete chat') || txt.includes('clear chat') || txt.includes('hapus riwayat') ||
-                     txt.includes('hapus chat') || aria.includes('delete chat') || aria.includes('hapus');
-            });
-
-            if (deleteItem) {
-              deleteItem.click();
-              await new Promise(r => setTimeout(r, 400));
-
-              // Konfirmasi dialog 'Delete'
-              const confirmBtns = Array.from(document.querySelectorAll('mat-dialog-actions button, .mat-mdc-dialog-actions button, [role="dialog"] button'));
-              const confirmBtn = confirmBtns.find(b => {
-                const t = (b.textContent || '').toLowerCase();
-                return t.includes('delete') || t.includes('hapus') || t.includes('clear') || t.includes('confirm') || t.includes('ya');
-              });
-              if (confirmBtn) {
-                confirmBtn.click();
-                return 'deleted_native';
-              }
-            }
-          }
-
-          // 2. Fallback untuk tampilan /preview: Bersihkan turn chat dari DOM secara langsung
-          const turnSelectors = [
-            'chat-turn',
-            '.chat-turn',
-            'div[class*="chat-turn"]',
-            'div[class*="conversation-turn"]',
-            'div[class*="turn-"]',
-            '.chat-message',
-            'chat-message',
-            '.message-list > div',
-            'div[class*="message-container"]',
-            'div.date-divider',
-            '.chat-turn-timestamp',
-            '.timestamp'
-          ];
-          let removedCount = 0;
-          turnSelectors.forEach(sel => {
-            document.querySelectorAll(sel).forEach(el => {
-              el.remove();
-              removedCount++;
-            });
-          });
-
-          // Reset textarea jika ada
-          const textarea = document.querySelector('textarea, input[type="text"]');
-          if (textarea) {
-            textarea.value = '';
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
-          }
-
-          return 'cleared_dom_' + removedCount;
-        } catch (e) {
-          return 'error: ' + e.toString();
-        }
-      })();
-    """;
-
-    try {
-      final res = await _webController!.evaluateJavascript(source: jsDelete);
-      debugPrint('[OpenTurath] Hasil pembersihan chat: $res');
-      if (mounted) {
-        AppSnackBar.success(context, 'Riwayat chat ruang telaah telah dibersihkan');
-      }
-    } catch (e) {
-      debugPrint('[OpenTurath] Gagal membersihkan chat: $e');
-      if (mounted) {
-        AppSnackBar.info(context, 'Sesi chat telah dibersihkan');
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
@@ -622,156 +460,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               color: textPrimary,
             ),
           ),
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.delete_outline_rounded,
-                color: isDark ? Colors.red.shade300 : Colors.red.shade600,
-                size: 21,
-              ),
-              tooltip: 'Hapus Riwayat Chat',
-              onPressed: _confirmDeleteChatHistory,
-            ),
-            IconButton(
-              icon: Icon(Icons.share_outlined, color: textPrimary, size: 20),
-              tooltip: 'Bagikan Modul AI',
-              onPressed: () async {
-                final agentName = _agent?.title ?? 'Turats Islam';
-                final shareText = 'Telaah naskah "$agentName" bersama asisten cerdas OpenTurath AI.\nPlatform Riset Turats Islam: https://openturath-ai.web.app';
-                final launched = await NativeAgentLauncher.shareText(
-                  text: shareText,
-                  title: 'Bagikan $agentName',
-                );
-                if (!launched) {
-                  Clipboard.setData(ClipboardData(text: shareText));
-                  if (context.mounted) {
-                    AppSnackBar.success(context, 'Tautan $agentName disalin ke papan klip');
-                  }
-                }
-              },
-            ),
-            PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert_rounded, color: textPrimary, size: 22),
-              tooltip: 'Opsi Ruang Riset',
-              color: surface,
-              elevation: 8,
-              offset: const Offset(0, 46),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: border, width: 1),
-              ),
-              onSelected: (value) async {
-                switch (value) {
-                  case 'delete_chat':
-                    _confirmDeleteChatHistory();
-                    break;
-                  case 'reload':
-                    setState(() => _isWebViewLoading = true);
-                    _webController?.reload();
-                    break;
-                  case 'open_browser':
-                    if (_agentUrl != null) {
-                      try {
-                        await launchUrl(Uri.parse(_agentUrl!), mode: LaunchMode.externalApplication);
-                      } catch (_) {}
-                    }
-                    break;
-                  case 'open_native':
-                    if (_agentUrl != null) {
-                      final launched = await NativeAgentLauncher.launchNotebook(_agentUrl!);
-                      if (!launched && mounted) {
-                        try {
-                          await launchUrl(Uri.parse(_agentUrl!), mode: LaunchMode.externalApplication);
-                        } catch (_) {}
-                      }
-                    }
-                    break;
-                  case 'subscribe':
-                    final fbUser = FirebaseAuth.instance.currentUser;
-                    final user = fbUser != null
-                        ? UserModel(
-                            uid: fbUser.uid,
-                            email: fbUser.email ?? '',
-                            name: fbUser.displayName ?? 'Peneliti Turats',
-                            photoUrl: fbUser.photoURL ?? '',
-                            plan: 'trial',
-                            questionsUsed: 0,
-                          )
-                        : null;
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.subscription,
-                      arguments: {
-                        'agent': _agent,
-                        'user': user,
-                      },
-                    );
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'delete_chat',
-                  child: Row(
-                    children: [
-                      const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.redAccent),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Hapus Riwayat Chat',
-                        style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.redAccent),
-                      ),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'reload',
-                  child: Row(
-                    children: [
-                      Icon(Icons.refresh_rounded, size: 18, color: textPrimary),
-                      const SizedBox(width: 12),
-                      Text('Muat Ulang Halaman', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'open_browser',
-                  child: Row(
-                    children: [
-                      Icon(Icons.open_in_browser_rounded, size: 18, color: textSecondary),
-                      const SizedBox(width: 12),
-                      Text('Buka di Browser', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
-                  value: 'open_native',
-                  child: Row(
-                    children: [
-                      Icon(Icons.open_in_new_rounded, size: 18, color: textSecondary),
-                      const SizedBox(width: 12),
-                      Text('Buka di App Resmi', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
-                    ],
-                  ),
-                ),
-                if (_isPaywallRequired) ...[
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    value: 'subscribe',
-                    child: Row(
-                      children: [
-                        const Icon(Icons.credit_card_rounded, size: 18, color: Color(0xFFD97706)),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Kelola Langganan AI',
-                          style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFFD97706)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ],
         ),
         body: SafeArea(
           top: false,
