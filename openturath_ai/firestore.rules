@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ================================================================
+    // USERS: perangkat hanya boleh membuat profil trial. Kuota, plan, masa
+    // berlaku, dan entitlement hanya boleh diubah oleh Admin SDK/Cloud Functions.
+    // ================================================================
+    match /users/{userId} {
+      // Boleh baca jika login dan uid sama
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // CREATE: AuthService membuat profil trial ketika login pertama.
+      // Nilai akses harus terkunci sejak dokumen pertama dibuat. Entitlements TIDAK boleh disuntik klien.
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'name', 'email', 'photo_url', 'plan', 'questions_used',
+          'subscription_expiry', 'entitlements'
+        ])
+        && (request.resource.data.email == request.auth.token.email || request.auth.token.firebase.sign_in_provider == 'anonymous')
+        && request.resource.data.plan == 'trial'
+        && request.resource.data.questions_used == 0
+        && request.resource.data.subscription_expiry == null
+        && (!('entitlements' in request.resource.data) || request.resource.data.entitlements == {});
+
+      allow update: if false;
+
+      // DELETE: Pengguna boleh menghapus datanya sendiri untuk kepatuhan Google Play
+      allow delete: if request.auth != null && request.auth.uid == userId;
+
+      // Sub-koleksi chat / conversations milik user
+      match /conversations/{convId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        match /messages/{msgId} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
+    }
+
+    // ================================================================
+    // APP CONFIG (Termasuk Dynamic Script & Info Aplikasi)
+    // ================================================================
+    match /app_config/{configId} {
+      // Semua pengguna (bahkan yang belum login) bisa membaca config
+      allow read: if true;
+      allow write: if false; // Hanya admin
+    }
+
+    // ================================================================
+    // TRANSACTIONS: Hanya server / webhook yang boleh create/update
+    // ================================================================
+    match /transactions/{transactionId} {
+      allow read: if request.auth != null && (resource == null || resource.data.uid == request.auth.uid);
+      allow write: if false;
+    }
+
+    // ================================================================
+    // DEFAULT: Tolak akses lainnya
+    // ================================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

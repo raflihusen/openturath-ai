@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "255541559800",
+    "project_id": "open-turath",
+    "storage_bucket": "open-turath.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255541559800:android:dbc2844e0ea68e02d2960d",
+        "android_client_info": {
+          "package_name": "com.example.openturath_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255541559800-h2t98n5ulqktd0cul5o4tgl399akn00p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.openturath_ai",
+            "certificate_hash": "130eb43e337db3b85564250b9183f3acaf96e6e4"
+          }
+        },
+        {
+          "client_id": "255541559800-pkbslqda5hllg0qvllkbut98pblmpict.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.openturath_ai",
+            "certificate_hash": "5ef79c6149e61112c33525422bfd6b10a63d353a"
+          }
+        },
+        {
+          "client_id": "255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBz789Y0qGeGmKIGGyWt02cKKX9_MUHiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.openturathAi"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255541559800:android:503d489eac3b009fd2960d",
+        "android_client_info": {
+          "package_name": "com.openturath.ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255541559800-0fvjklft7t5i8peu8heelis6cbqp2vva.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.openturath.ai",
+            "certificate_hash": "cb7f1a9f1bb0e75aab44fa6ed3458fbdf3136a09"
+          }
+        },
+        {
+          "client_id": "255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBz789Y0qGeGmKIGGyWt02cKKX9_MUHiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.openturathAi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

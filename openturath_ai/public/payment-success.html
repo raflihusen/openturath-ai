@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pembayaran Berhasil — OpenTurath AI</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #050505;
+      color: #fff;
+    }
+    .success-wrapper {
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+    .success-card {
+      background: #111111;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 2rem;
+      padding: 4rem 3rem;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      animation: fadeUp 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: relative;
+      overflow: hidden;
+    }
+    .success-card::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 300px;
+      background: rgba(16, 185, 129, 0.08);
+      filter: blur(80px);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .success-icon svg {
+      width: 36px;
+      height: 36px;
+      color: #10B981;
+    }
+    .success-card h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.75rem;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+    }
+    .success-card p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .order-id {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 2rem;
+      border-radius: 9999px;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      background: #fff;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      transition: all 300ms ease;
+      text-decoration: none;
+      position: relative;
+      z-index: 1;
+    }
+    .btn-back:hover {
+      opacity: 0.85;
+      transform: translateY(-2px);
+    }
+    .footer-minimal {
+      background: #050505;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .footer-minimal p {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #333;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="is-dark">
+
+  <nav class="navbar scrolled dark-mode">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo" style="color:#fff;"><img src="logo_open_ai.png" alt="Logo" class="logo-img"><span>Open<span class="logo-dim" style="color:rgba(255,255,255,0.4);">Turath</span></span></a>
+    </div>
+  </nav>
+
+  <div class="success-wrapper">
+    <div class="success-card">
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1>Pembayaran Berhasil!</h1>
+      <p>Terima kasih telah berlangganan OpenTurath AI. Akun Anda akan segera diaktifkan. Silakan unduh aplikasi dan login dengan email yang terdaftar.</p>
+      <div class="order-id" id="orderIdDisplay"></div>
+      <br><br>
+      <a href="index.html" class="btn-back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Kembali ke Beranda
+      </a>
+    </div>
+  </div>
+
+  <footer class="footer-minimal" style="text-align: center; padding: 2rem;">
+    <a href="index.html" class="logo" style="justify-content: center; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-size: 1.1rem; color: #fff;">
+      <img src="logo_open_ai.png" alt="Logo" class="logo-img" style="height: 32px; width: auto; vertical-align: middle;">
+      <span style="font-weight: 700;">Open<span class="logo-dim" style="color: rgba(255,255,255,0.4);">Turath</span></span>
+    </a>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get('order_id');
+    if (orderId) {
+      document.getElementById('orderIdDisplay').textContent = 'Order ID: ' + orderId;
+    }
+  </script>
+</body>
+</html>

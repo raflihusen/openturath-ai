@@ -1,0 +1,11 @@
+class AppRoutes {
+  static const String splash = '/';
+  static const String login = '/login';
+  static const String dashboard = '/dashboard';
+  static const String specialistList = '/specialists';
+  static const String bookmark = '/bookmarks';
+  static const String profile = '/profile';
+  static const String agentWebview = '/agent';
+  static const String subscription = '/subscription';
+  static const String googleSessionAuth = '/google_session_auth';
+}

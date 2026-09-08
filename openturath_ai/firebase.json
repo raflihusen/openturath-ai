@@ -1,0 +1,55 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
+  "hosting": {
+    "site": "openturath",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/chat/**",
+        "function": "chatGate"
+      },
+      {
+        "source": "/login",
+        "function": "chatGate"
+      },
+      {
+        "source": "/logout",
+        "function": "chatGate"
+      },
+      {
+        "source": "/doku-webhook",
+        "function": "dokuWebhook"
+      }
+    ]
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "open-turath",
+          "appId": "1:255541559800:android:dbc2844e0ea68e02d2960d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "open-turath",
+          "configurations": {
+            "android": "1:255541559800:android:dbc2844e0ea68e02d2960d"
+          }
+        }
+      }
+    }
+  }
+}

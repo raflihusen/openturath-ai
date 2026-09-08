@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants.dart';
@@ -486,59 +487,81 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _executeDeleteChatHistory() async {
     if (_webController == null) return;
 
-    // Script presisi NotebookLM (pemicu langsung tombol delete / opsi menu chat)
+    // Script presisi NotebookLM: pemicu native 'Chat options' -> 'Delete chat history'
+    // Jika di preview embed Google tidak merender tombol ini, bersihkan DOM secara instan tanpa reload URL
     const jsDelete = """
       (async function() {
         try {
-          const elements = Array.from(document.querySelectorAll('button, [role="menuitem"], [role="button"], a'));
-          
-          let target = elements.find(el => {
-            const txt = (el.textContent || '').toLowerCase();
-            const aria = (el.getAttribute('aria-label') || '').toLowerCase();
-            return txt.includes('delete chat') || txt.includes('clear chat') || txt.includes('hapus riwayat') || txt.includes('hapus chat') ||
-                   aria.includes('delete chat') || aria.includes('clear chat') || aria.includes('hapus riwayat') || aria.includes('hapus chat');
-          });
-          if (target) {
-            target.click();
+          // 1. Cari tombol 'Chat options' milik Google NotebookLM
+          const chatOptionsBtn = document.querySelector(
+            'button[aria-label*="Chat options" i], ' +
+            'button[aria-label*="chat options" i], ' +
+            'button[aria-label*="Opsi chat" i], ' +
+            'button[aria-label*="Opsi obrolan" i], ' +
+            'chat-view button.mat-mdc-menu-trigger'
+          );
+
+          if (chatOptionsBtn) {
+            chatOptionsBtn.click();
             await new Promise(r => setTimeout(r, 350));
-            const confirmBtn = Array.from(document.querySelectorAll('mat-dialog-actions button, .mat-mdc-dialog-actions button, [role="dialog"] button')).find(b => {
-              const t = (b.textContent || '').toLowerCase();
-              return t.includes('delete') || t.includes('hapus') || t.includes('clear') || t.includes('confirm');
-            });
-            if (confirmBtn) confirmBtn.click();
-            return 'deleted_button';
-          }
-          const moreBtn = elements.find(el => {
-            const aria = (el.getAttribute('aria-label') || '').toLowerCase();
-            return aria.includes('more') || aria.includes('options') || aria.includes('menu') || aria.includes('lainnya');
-          });
-          if (moreBtn) {
-            moreBtn.click();
-            await new Promise(r => setTimeout(r, 250));
+
+            // Cari item 'Delete chat history' di menu popover
             const menuItems = Array.from(document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-item, button'));
             const deleteItem = menuItems.find(i => {
               const txt = (i.textContent || '').toLowerCase();
               const aria = (i.getAttribute('aria-label') || '').toLowerCase();
-              return txt.includes('delete chat') || txt.includes('clear') || txt.includes('hapus') ||
-                     aria.includes('delete chat') || aria.includes('clear') || aria.includes('hapus');
+              return txt.includes('delete chat') || txt.includes('clear chat') || txt.includes('hapus riwayat') ||
+                     txt.includes('hapus chat') || aria.includes('delete chat') || aria.includes('hapus');
             });
+
             if (deleteItem) {
               deleteItem.click();
-              await new Promise(r => setTimeout(r, 350));
-              const confirmBtn = Array.from(document.querySelectorAll('mat-dialog-actions button, .mat-mdc-dialog-actions button, [role="dialog"] button')).find(b => {
+              await new Promise(r => setTimeout(r, 400));
+
+              // Konfirmasi dialog 'Delete'
+              const confirmBtns = Array.from(document.querySelectorAll('mat-dialog-actions button, .mat-mdc-dialog-actions button, [role="dialog"] button'));
+              const confirmBtn = confirmBtns.find(b => {
                 const t = (b.textContent || '').toLowerCase();
-                return t.includes('delete') || t.includes('hapus') || t.includes('clear');
+                return t.includes('delete') || t.includes('hapus') || t.includes('clear') || t.includes('confirm') || t.includes('ya');
               });
-              if (confirmBtn) confirmBtn.click();
-              return 'deleted_menu';
+              if (confirmBtn) {
+                confirmBtn.click();
+                return 'deleted_native';
+              }
             }
           }
-          const container = document.querySelector('.chat-container, .conversation-container, chat-view');
-          if (container) {
-            const messages = container.querySelectorAll('.chat-message, .message-list, chat-message');
-            messages.forEach(m => m.remove());
+
+          // 2. Fallback untuk tampilan /preview: Bersihkan turn chat dari DOM secara langsung
+          const turnSelectors = [
+            'chat-turn',
+            '.chat-turn',
+            'div[class*="chat-turn"]',
+            'div[class*="conversation-turn"]',
+            'div[class*="turn-"]',
+            '.chat-message',
+            'chat-message',
+            '.message-list > div',
+            'div[class*="message-container"]',
+            'div.date-divider',
+            '.chat-turn-timestamp',
+            '.timestamp'
+          ];
+          let removedCount = 0;
+          turnSelectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => {
+              el.remove();
+              removedCount++;
+            });
+          });
+
+          // Reset textarea jika ada
+          const textarea = document.querySelector('textarea, input[type="text"]');
+          if (textarea) {
+            textarea.value = '';
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
           }
-          return 'cleared_fallback';
+
+          return 'cleared_dom_' + removedCount;
         } catch (e) {
           return 'error: ' + e.toString();
         }
@@ -547,27 +570,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
     try {
       final res = await _webController!.evaluateJavascript(source: jsDelete);
-      if (res == 'deleted_button' || res == 'deleted_menu') {
-        if (mounted) {
-          AppSnackBar.success(context, 'Riwayat chat telah dihapus');
-        }
-      } else {
-        // Bersihkan cache sesi dan reload URL bersih
-        await InAppWebViewController.clearAllCache();
-        if (_agentUrl != null) {
-          await _webController!.loadUrl(urlRequest: URLRequest(url: WebUri(_agentUrl!)));
-        }
-        if (mounted) {
-          AppSnackBar.success(context, 'Riwayat chat telah dibersihkan');
-        }
-      }
-    } catch (_) {
-      await InAppWebViewController.clearAllCache();
-      if (_agentUrl != null) {
-        await _webController!.loadUrl(urlRequest: URLRequest(url: WebUri(_agentUrl!)));
-      }
+      debugPrint('[OpenTurath] Hasil pembersihan chat: $res');
       if (mounted) {
-        AppSnackBar.success(context, 'Sesi chat telah dimuat ulang');
+        AppSnackBar.success(context, 'Riwayat chat ruang telaah telah dibersihkan');
+      }
+    } catch (e) {
+      debugPrint('[OpenTurath] Gagal membersihkan chat: $e');
+      if (mounted) {
+        AppSnackBar.info(context, 'Sesi chat telah dibersihkan');
       }
     }
   }
@@ -614,39 +624,58 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.open_in_new_rounded, color: textPrimary, size: 20),
-              tooltip: 'Buka di Gemini Notebook Native',
+              icon: Icon(
+                Icons.delete_outline_rounded,
+                color: isDark ? Colors.red.shade300 : Colors.red.shade600,
+                size: 21,
+              ),
+              tooltip: 'Hapus Riwayat Chat',
+              onPressed: _confirmDeleteChatHistory,
+            ),
+            IconButton(
+              icon: Icon(Icons.share_outlined, color: textPrimary, size: 20),
+              tooltip: 'Bagikan Modul AI',
               onPressed: () async {
-                if (_agentUrl != null) {
-                  final launched = await NativeAgentLauncher.launchNotebook(_agentUrl!);
-                  if (!launched && mounted) {
-                    try {
-                      await launchUrl(Uri.parse(_agentUrl!), mode: LaunchMode.externalApplication);
-                    } catch (_) {}
+                final agentName = _agent?.title ?? 'Turats Islam';
+                final shareText = 'Telaah naskah "$agentName" bersama asisten cerdas OpenTurath AI.\nPlatform Riset Turats Islam: https://openturath-ai.web.app';
+                final launched = await NativeAgentLauncher.shareText(
+                  text: shareText,
+                  title: 'Bagikan $agentName',
+                );
+                if (!launched) {
+                  Clipboard.setData(ClipboardData(text: shareText));
+                  if (context.mounted) {
+                    AppSnackBar.success(context, 'Tautan $agentName disalin ke papan klip');
                   }
                 }
               },
             ),
-            IconButton(
-              icon: Icon(Icons.share_outlined, color: textPrimary, size: 20),
-              tooltip: 'Bagikan Informasi Modul',
-              onPressed: () {
-                final agentName = _agent?.title ?? 'Turats Islam';
-                final shareText = 'Telaah kitab "$agentName" bersama OpenTurath AI - Platform Riset Turats Islam.\nhttps://openturath-ai.web.app';
-                Clipboard.setData(ClipboardData(text: shareText));
-                AppSnackBar.success(context, 'Tautan OpenTurath disalin ke papan klip');
-              },
-            ),
             PopupMenuButton<String>(
               icon: Icon(Icons.more_vert_rounded, color: textPrimary, size: 22),
-              tooltip: 'Opsi Notebook',
+              tooltip: 'Opsi Ruang Riset',
               color: surface,
+              elevation: 8,
+              offset: const Offset(0, 46),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(16),
                 side: BorderSide(color: border, width: 1),
               ),
               onSelected: (value) async {
                 switch (value) {
+                  case 'delete_chat':
+                    _confirmDeleteChatHistory();
+                    break;
+                  case 'reload':
+                    setState(() => _isWebViewLoading = true);
+                    _webController?.reload();
+                    break;
+                  case 'open_browser':
+                    if (_agentUrl != null) {
+                      try {
+                        await launchUrl(Uri.parse(_agentUrl!), mode: LaunchMode.externalApplication);
+                      } catch (_) {}
+                    }
+                    break;
                   case 'open_native':
                     if (_agentUrl != null) {
                       final launched = await NativeAgentLauncher.launchNotebook(_agentUrl!);
@@ -656,13 +685,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         } catch (_) {}
                       }
                     }
-                    break;
-                  case 'delete_chat':
-                    _confirmDeleteChatHistory();
-                    break;
-                  case 'reload':
-                    setState(() => _isWebViewLoading = true);
-                    _webController?.reload();
                     break;
                   case 'subscribe':
                     final fbUser = FirebaseAuth.instance.currentUser;
@@ -689,22 +711,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               },
               itemBuilder: (context) => [
                 PopupMenuItem(
-                  value: 'open_native',
-                  child: Row(
-                    children: [
-                      Icon(Icons.open_in_new_rounded, size: 18, color: textPrimary),
-                      const SizedBox(width: 10),
-                      Text('Buka di Aplikasi Resmi', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
-                    ],
-                  ),
-                ),
-                PopupMenuItem(
                   value: 'delete_chat',
                   child: Row(
                     children: [
-                      Icon(Icons.speaker_notes_off_outlined, size: 18, color: textPrimary),
-                      const SizedBox(width: 10),
-                      Text('Hapus Riwayat Chat', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
+                      const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.redAccent),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Hapus Riwayat Chat',
+                        style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.redAccent),
+                      ),
                     ],
                   ),
                 ),
@@ -712,9 +727,29 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   value: 'reload',
                   child: Row(
                     children: [
-                      Icon(Icons.refresh_rounded, size: 18, color: textSecondary),
-                      const SizedBox(width: 10),
+                      Icon(Icons.refresh_rounded, size: 18, color: textPrimary),
+                      const SizedBox(width: 12),
                       Text('Muat Ulang Halaman', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'open_browser',
+                  child: Row(
+                    children: [
+                      Icon(Icons.open_in_browser_rounded, size: 18, color: textSecondary),
+                      const SizedBox(width: 12),
+                      Text('Buka di Browser', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'open_native',
+                  child: Row(
+                    children: [
+                      Icon(Icons.open_in_new_rounded, size: 18, color: textSecondary),
+                      const SizedBox(width: 12),
+                      Text('Buka di App Resmi', style: GoogleFonts.outfit(fontSize: 13, color: textPrimary)),
                     ],
                   ),
                 ),
@@ -725,7 +760,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     child: Row(
                       children: [
                         const Icon(Icons.credit_card_rounded, size: 18, color: Color(0xFFD97706)),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 12),
                         Text(
                           'Kelola Langganan AI',
                           style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFFD97706)),
@@ -825,11 +860,11 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   }
                 },
                 onProgressChanged: (controller, progress) async {
-                  if (progress >= 30) {
+                  if (progress >= 25) {
                     await _applyHideScript();
                     await _detectGoogleAccessDenied();
                   }
-                  if (progress >= 70) {
+                  if (progress >= 45) {
                     await _detectGoogleAccessDenied();
                     if (_isWebViewLoading && mounted) {
                       setState(() => _isWebViewLoading = false);
@@ -846,7 +881,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 },
               ),
 
-            // ── Loading Indicator Screen ──
+            // ── Loading Indicator Screen (Minimalist Lottie) ──
             if (_isLoadingUrl || (_isWebViewLoading && _errorMessage == null))
               Positioned.fill(
                 child: Container(
@@ -855,29 +890,41 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
-                          width: 38,
-                          height: 38,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(accent),
-                          ),
+                        Lottie.asset(
+                          isDark
+                              ? 'assets/animations/thinking_ux_icon_looping_darkmode.json'
+                              : 'assets/animations/thinking_ux_icon_looping.json',
+                          width: 64,
+                          height: 64,
+                          repeat: true,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         Text(
-                          'Menyiapkan Ruang Telaah Kitab...',
+                          _agent?.title ?? 'Ruang Riset AI',
                           style: GoogleFonts.outfit(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          _agent?.title ?? 'Modul Turats AI',
+                          'Menyiapkan ruang telaah naskah...',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             color: textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: 100,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: LinearProgressIndicator(
+                              minHeight: 2,
+                              backgroundColor: border.withValues(alpha: 0.3),
+                              valueColor: AlwaysStoppedAnimation<Color>(accent),
+                            ),
                           ),
                         ),
                       ],
