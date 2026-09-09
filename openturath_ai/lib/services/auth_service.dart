@@ -121,9 +121,12 @@ class AuthService {
     }
   }
 
+  static String? _cachedGuestUid;
+
   UserModel _localGuestUser() {
+    _cachedGuestUid ??= 'guest_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}';
     return UserModel(
-      uid: 'guest_user',
+      uid: _cachedGuestUid!,
       name: 'Peneliti Tamu',
       email: 'tamu@openturath.ai',
       photoUrl: '',
