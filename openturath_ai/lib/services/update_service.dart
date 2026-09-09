@@ -146,11 +146,14 @@ class UpdateService extends ChangeNotifier {
 
   /// Unduh APK di latar belakang tanpa mengganggu user
   Future<void> _startSilentDownload(String url, File targetFile) async {
+    final client = HttpClient();
     try {
       _status = UpdateStatus.downloading;
       notifyListeners();
 
-      final client = HttpClient();
+      // Bersihkan file update lama sebelum mulai unduh baru
+      await _cleanOldUpdates(targetFile.path);
+
       final request = await client.getUrl(Uri.parse(url));
       final response = await request.close();
 
@@ -181,6 +184,16 @@ class UpdateService extends ChangeNotifier {
       await sink.flush();
       await sink.close();
 
+      // Validasi integritas ukuran file sebelum dipindahkan ke APK final
+      final tempLength = await tempFile.length();
+      if (tempLength < 10 * 1024 * 1024 || (contentLength > 0 && tempLength < contentLength)) {
+        debugPrint('[UpdateService] Unduhan tidak lengkap ($tempLength bytes)');
+        if (await tempFile.exists()) await tempFile.delete();
+        _status = UpdateStatus.idle;
+        notifyListeners();
+        return;
+      }
+
       // Rename dari temp ke final APK
       if (await targetFile.exists()) {
         await targetFile.delete();
@@ -199,7 +212,27 @@ class UpdateService extends ChangeNotifier {
       debugPrint('[UpdateService] Background download error: $e');
       _status = UpdateStatus.idle;
       notifyListeners();
+    } finally {
+      client.close();
     }
+  }
+
+  /// Bersihkan file APK atau file sementara lama di direktori update
+  Future<void> _cleanOldUpdates(String currentPath) async {
+    try {
+      final dir = await getApplicationSupportDirectory();
+      final updateDir = Directory('${dir.path}/updates');
+      if (await updateDir.exists()) {
+        final list = updateDir.listSync();
+        for (final entity in list) {
+          if (entity.path != currentPath && (entity.path.endsWith('.apk') || entity.path.endsWith('.tmp'))) {
+            try {
+              entity.deleteSync();
+            } catch (_) {}
+          }
+        }
+      }
+    } catch (_) {}
   }
 
   /// Lokasi file APK di penyimpanan privat aplikasi
