@@ -89,7 +89,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppTheme.radiusL),
           side: BorderSide(color: border, width: 1),
         ),
         title: Text(
@@ -370,7 +370,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           id: 'all_ai',
                           title: 'Paket Akses Penuh Semua AI',
                           description: 'Akses ke seluruh modul AI OpenTurath',
-                          emoji: '👑',
+                          emoji: '✨',
                           category: 'All Access',
                           status: 'active',
                           sortOrder: 0,
