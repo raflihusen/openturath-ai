@@ -522,8 +522,6 @@ class _SovereignTahawwulatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const gold = Color(0xFFD97706);
-
     return AppleInteractiveWrapper(
       onTap: onTap,
       hapticType: HapticFeedbackType.medium,
@@ -531,115 +529,102 @@ class _SovereignTahawwulatCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 6),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF191611) : const Color(0xFFFFFDF5),
-          borderRadius: BorderRadius.circular(18),
+          color: isDark ? const Color(0xFF14171F) : const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: gold.withValues(alpha: isDark ? 0.45 : 0.6),
-            width: 1.2,
+            color: isDark ? const Color(0xFF263042) : const Color(0xFFE2E8F0),
+            width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: gold.withValues(alpha: isDark ? 0.08 : 0.05),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Badge Row: Crown Badge + Price
+            // Top Badge Row: Minimalist Icon + Discipline Tag
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: gold.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: gold.withValues(alpha: 0.4), width: 0.8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('👑', style: TextStyle(fontSize: 12)),
-                      const SizedBox(width: 5),
-                      Text(
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark ? const Color(0xFF1E283A) : const Color(0xFFEEF4FF),
+                      ),
+                      child: Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 14,
+                        color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF2563EB),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                          width: 0.6,
+                        ),
+                      ),
+                      child: Text(
                         'SPESIALIS UTAMA • RUKUN KEEMPAT',
                         style: GoogleFonts.outfit(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: gold,
-                          letterSpacing: 0.5,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.4,
+                          color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Rp 300.000 / bln',
-                  style: GoogleFonts.outfit(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    color: gold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-
-            // Title & Arabic Calligraphy
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        agent.title,
-                        style: GoogleFonts.newsreader(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w700,
-                          color: textPrimary,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        '1.500+ Muhadharah Suara & Kitab Lengkap Al-Habib Abu Bakar Al-Masyhur',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: textSecondary,
-                          height: 1.35,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
                 Text(
                   'فقه التحولات',
                   textDirection: TextDirection.rtl,
                   style: GoogleFonts.amiri(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: gold,
+                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+
+            // Title & Description
+            Text(
+              agent.title,
+              style: GoogleFonts.newsreader(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: textPrimary,
+                letterSpacing: -0.3,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              '1.500+ Muhadharah Suara & Kitab Lengkap Al-Habib Abu Bakar Al-Masyhur',
+              style: GoogleFonts.outfit(
+                fontSize: 12,
+                color: textSecondary,
+                height: 1.35,
+              ),
+            ),
             const SizedBox(height: 14),
 
-            // CTA Button
+            // Minimalist Action
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                   decoration: BoxDecoration(
-                    color: gold,
-                    borderRadius: BorderRadius.circular(10),
+                    color: isDark ? Colors.white : const Color(0xFF18181B),
+                    borderRadius: BorderRadius.circular(100),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -649,11 +634,15 @@ class _SovereignTahawwulatCard extends StatelessWidget {
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: isDark ? const Color(0xFF18181B) : Colors.white,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.white),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 13,
+                        color: isDark ? const Color(0xFF18181B) : Colors.white,
+                      ),
                     ],
                   ),
                 ),
