@@ -252,7 +252,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Text(
                               HijriDateUtils.formatDualDate(),
                               style: GoogleFonts.outfit(
-                                fontSize: 11.5,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: textSecondary,
                                 letterSpacing: 0.1,
@@ -370,99 +370,100 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 18),
-
-                    // ── 5. Refined Pro Subscription Card ──
-                    AppleInteractiveWrapper(
-                      onTap: () {
-                        Navigator.pushNamed(context, AppRoutes.subscription);
-                      },
-                      hapticType: HapticFeedbackType.light,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF14171F) : const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isDark ? const Color(0xFF263042) : const Color(0xFFE2E8F0),
-                            width: 1.0,
+                    // ── 5. Refined Pro Subscription Card (Only shown if not subscribed) ──
+                    if (!user.isSubscriptionActive && !user.isPremium) ...[
+                      AppleInteractiveWrapper(
+                        onTap: () {
+                          Navigator.pushNamed(context, AppRoutes.subscription);
+                        },
+                        hapticType: HapticFeedbackType.light,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: surface,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: border,
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                ),
+                                child: Icon(
+                                  Icons.auto_awesome_rounded,
+                                  size: 17,
+                                  color: textPrimary,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'OpenTurath Pro',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: textPrimary,
+                                            letterSpacing: -0.2,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: border,
+                                              width: 0.6,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'AKSES PENUH',
+                                            style: GoogleFonts.outfit(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 0.4,
+                                              color: textSecondary,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Akses korpus kitab primer tanpa batas telaah.',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12,
+                                        color: textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                size: 20,
+                                color: textSecondary,
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isDark ? const Color(0xFF1E283A) : const Color(0xFFEEF4FF),
-                              ),
-                              child: Icon(
-                                Icons.auto_awesome_rounded,
-                                size: 17,
-                                color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF2563EB),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'OpenTurath Pro',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: textPrimary,
-                                          letterSpacing: -0.2,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-                                        decoration: BoxDecoration(
-                                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                                          borderRadius: BorderRadius.circular(5),
-                                          border: Border.all(
-                                            color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
-                                            width: 0.6,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'AKSES PENUH',
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.4,
-                                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 2.5),
-                                  Text(
-                                    'Akses korpus kitab primer tanpa batas telaah.',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12,
-                                      color: textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 13,
-                              color: textSecondary,
-                            ),
-                          ],
-                        ),
                       ),
-                    ),
+                      const SizedBox(height: 18),
+                    ],
 
                     const SizedBox(height: 18),
 
@@ -520,7 +521,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Text(
                                 'Lihat Semua',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 12.5,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                   color: textSecondary,
                                 ),
@@ -689,7 +690,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       child: Text(
                                                         agent.category.toUpperCase(),
                                                         style: GoogleFonts.outfit(
-                                                          fontSize: 9.5,
+                                                          fontSize: 11,
                                                           fontWeight: FontWeight.w700,
                                                           letterSpacing: 0.3,
                                                           color: accent,
@@ -933,7 +934,7 @@ class _DashboardAnnouncementCarouselState
                   child: Text(
                     'Mengerti & Tutup',
                     style: GoogleFonts.outfit(
-                      fontSize: 13.5,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1000,7 +1001,7 @@ class _DashboardAnnouncementCarouselState
                             child: Text(
                               slide.badge,
                               style: GoogleFonts.outfit(
-                                fontSize: 9.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.3,
                                 color: widget.accent,
@@ -1020,8 +1021,8 @@ class _DashboardAnnouncementCarouselState
                               ),
                               const SizedBox(width: 4),
                               Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 12,
+                                Icons.chevron_right_rounded,
+                                size: 14,
                                 color: widget.textSecondary,
                               ),
                             ],
@@ -1031,7 +1032,7 @@ class _DashboardAnnouncementCarouselState
                       Text(
                         slide.title,
                         style: GoogleFonts.newsreader(
-                          fontSize: 16.5,
+                          fontSize: 17,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                           color: widget.textPrimary,
@@ -1042,7 +1043,7 @@ class _DashboardAnnouncementCarouselState
                       Text(
                         slide.summary,
                         style: GoogleFonts.outfit(
-                          fontSize: 11.5,
+                          fontSize: 12,
                           color: widget.textSecondary,
                           height: 1.35,
                         ),
