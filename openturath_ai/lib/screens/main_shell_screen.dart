@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -178,73 +179,78 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   index: _currentIndex,
                   children: screens,
                 ),
-                extendBody: false,
-                bottomNavigationBar: Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    border: Border(
-                      top: BorderSide(
-                        color: border,
-                        width: 1.0,
+                extendBody: true,
+                bottomNavigationBar: ClipRect(
+                  child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? AppTheme.navBarDark : AppTheme.navBarLight,
+                        border: Border(
+                          top: BorderSide(
+                            color: isDark ? AppTheme.navBarBorderDark : AppTheme.navBarBorderLight,
+                            width: 0.5,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: SizedBox(
-                      height: 60,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.home_outlined,
-                              activeIcon: Icons.home_rounded,
-                              label: 'Beranda',
-                              isSelected: _currentIndex == 0,
-                              accent: accent,
-                              unselected: unselected,
-                              onTap: () => _onTabSelected(0),
-                            ),
+                      child: SafeArea(
+                        top: false,
+                        child: SizedBox(
+                          height: 60,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _ExpressiveNavItem(
+                                  icon: Icons.home_outlined,
+                                  activeIcon: Icons.home_rounded,
+                                  label: 'Beranda',
+                                  isSelected: _currentIndex == 0,
+                                  accent: accent,
+                                  unselected: unselected,
+                                  onTap: () => _onTabSelected(0),
+                                ),
+                              ),
+                              Expanded(
+                                child: _ExpressiveNavItem(
+                                  icon: Icons.auto_awesome_outlined,
+                                  activeIcon: Icons.auto_awesome_rounded,
+                                  label: 'Spesialis',
+                                  isSelected: _currentIndex == 1,
+                                  accent: accent,
+                                  unselected: unselected,
+                                  onTap: () => _onTabSelected(1),
+                                ),
+                              ),
+                              Expanded(
+                                child: _ExpressiveNavItem(
+                                  icon: Icons.bookmark_border_rounded,
+                                  activeIcon: Icons.bookmark_rounded,
+                                  label: 'Bookmark',
+                                  isSelected: _currentIndex == 2,
+                                  accent: accent,
+                                  unselected: unselected,
+                                  onTap: () => _onTabSelected(2),
+                                ),
+                              ),
+                              Expanded(
+                                child: _ExpressiveNavItem(
+                                  icon: Icons.person_outline_rounded,
+                                  activeIcon: Icons.person_rounded,
+                                  label: 'Profil',
+                                  isSelected: _currentIndex == 3,
+                                  accent: accent,
+                                  unselected: unselected,
+                                  onTap: () => _onTabSelected(3),
+                                ),
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.auto_awesome_outlined,
-                              activeIcon: Icons.auto_awesome_rounded,
-                              label: 'Spesialis',
-                              isSelected: _currentIndex == 1,
-                              accent: accent,
-                              unselected: unselected,
-                              onTap: () => _onTabSelected(1),
-                            ),
-                          ),
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.bookmark_border_rounded,
-                              activeIcon: Icons.bookmark_rounded,
-                              label: 'Bookmark',
-                              isSelected: _currentIndex == 2,
-                              accent: accent,
-                              unselected: unselected,
-                              onTap: () => _onTabSelected(2),
-                            ),
-                          ),
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.person_outline_rounded,
-                              activeIcon: Icons.person_rounded,
-                              label: 'Profil',
-                              isSelected: _currentIndex == 3,
-                              accent: accent,
-                              unselected: unselected,
-                              onTap: () => _onTabSelected(3),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-            ),
+              ),
       ),
     );
   }
