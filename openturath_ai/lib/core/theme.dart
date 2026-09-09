@@ -480,10 +480,10 @@ class AppTheme {
     final tertiary = isDark ? textTertiaryDark : textTertiaryLight;
 
     return TextTheme(
-      displayLarge: GoogleFonts.newsreader(fontSize: 34, fontWeight: FontWeight.w700, color: primary, letterSpacing: -0.6),
-      displayMedium: GoogleFonts.newsreader(fontSize: 28, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.4),
-      headlineLarge: GoogleFonts.newsreader(fontSize: 24, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.3),
-      headlineMedium: GoogleFonts.newsreader(fontSize: 20, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.2),
+      displayLarge: GoogleFonts.outfit(fontSize: 34, fontWeight: FontWeight.w700, color: primary, letterSpacing: -0.6),
+      displayMedium: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.4),
+      headlineLarge: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.3),
+      headlineMedium: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.2),
       titleLarge: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.1),
       titleMedium: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600, color: primary),
       titleSmall: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: secondary),
