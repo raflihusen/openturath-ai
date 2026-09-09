@@ -17,17 +17,26 @@ class FieldModel {
     required this.agentIds,
   });
 
-  /// 8 Bidang Keilmuan Utama Turats Islam
+  /// 9 Bidang Keilmuan Utama Turats Islam
   static const List<FieldModel> defaultFields = [
+    FieldModel(
+      id: 'fiqh_tahawwulat',
+      name: 'Fikih Tahawwulat',
+      description: 'Manhaj eskatologi Islam, rukun keempat, tanda-tanda zaman, dan sanad Al-Habib Abu Bakar Al-Masyhur.',
+      icon: Icons.hourglass_bottom_rounded,
+      specialistCount: 1,
+      agentIds: [
+        'fiqh_tahawwulat',
+      ],
+    ),
     FieldModel(
       id: 'fiqh',
       name: 'Fikih',
       description: 'Hukum ibadah, muamalah, fatwa, dan perbandingan mazhab mu\'tabar.',
       icon: Icons.balance_rounded,
-      specialistCount: 6,
+      specialistCount: 5,
       agentIds: [
         'fiqh_syafii',
-        'fiqh_tahawwulat',
         'fiqh_hanafi',
         'fiqh_maliki',
         'fiqh_hanbali',

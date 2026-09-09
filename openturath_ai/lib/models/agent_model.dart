@@ -73,17 +73,17 @@ class AgentModel {
 
   // ── Hardcoded fallback terstruktur berbasis 8 Bidang Keilmuan ──
   static List<AgentModel> get defaultAgents => [
-        // ── 1. FIKIH (6 SPESIALIS) ────────────────────────────
+        // ── 1. FIKIH TAHAWWULAT (SOVEREIGN FLAGSHIP) ─────────
         AgentModel(
           id: 'fiqh_tahawwulat',
           title: 'Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
-              'AI khusus karya Habib Abu Bakar Al-Masyhur. Ribuan muhadoroh + kitab lengkap dengan ibarah asli.',
-          emoji: '⚖️',
-          category: 'Fiqih',
-          fieldId: 'fiqh',
-          subtitleAcademic: 'Manhaj Fiqh Fitnah & Tanda Zaman',
+              'AI khusus karya Al-Habib Abu Bakar Al-Masyhur. 1.500+ muhadharah suara & naskah kitab lengkap dengan ibarah primer.',
+          emoji: '👑',
+          category: 'Fikih Tahawwulat',
+          fieldId: 'fiqh_tahawwulat',
+          subtitleAcademic: 'Manhaj Fiqh Fitnah & Tanda Zaman • Rukun Keempat',
           suggestedPrompts: [
             'Jelaskan konsep Rukun Keempat dalam Fikih Tahawwulat!',
             'Bagaimana ibarah tentang tanda zaman kubra dan sughra?',
@@ -91,9 +91,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 1,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 300000,
+          price6m: 1500000,
+          price1y: 2700000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',

@@ -138,7 +138,11 @@ class UserModel {
   }
 
   bool hasAccessToAgent(String agentId) {
-    return isAgentSubscriptionActive(agentId);
+    // 1. Cek hak akses langganan aktif (modul spesifik atau all-access)
+    if (isAgentSubscriptionActive(agentId)) return true;
+    // 2. Cek hak akses pengguna trial dengan sisa kuota pertanyaan
+    if (isTrial && questionsUsed < AppConstants.trialQuestionLimit) return true;
+    return false;
   }
 
   int questionsRemainingForAgent(String agentId) {
