@@ -79,8 +79,8 @@ class AgentModel {
           title: 'Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
-              'AI khusus karya Al-Habib Abu Bakar Al-Masyhur. 1.500+ muhadharah suara & naskah kitab lengkap dengan ibarah primer.',
-          emoji: '👑',
+              'Kajian komprehensif naskah dan muhadharah Al-Habib Abu Bakar Al-Masyhur disertai telaah ibarah primer.',
+          emoji: '📜',
           category: 'Fikih Tahawwulat',
           fieldId: 'fiqh_tahawwulat',
           subtitleAcademic: 'Manhaj Fiqh Fitnah & Tanda Zaman • Rukun Keempat',
@@ -223,7 +223,7 @@ class AgentModel {
               title: 'Radd Al-Muhtar \'ala Ad-Durr Al-Mukhtar (Hasyiyah Ibnu Abidin)',
               titleArabic: 'رد المحتار على الدر المختار',
               author: 'Ibnu \'Abidin',
-              description: 'Rujukan fatwa pamungkas mazhab Hanafi.',
+              description: 'Rujukan fatwa mu\'tamad muta\'akhkhirin mazhab Hanafi.',
             ),
           ],
         ),
@@ -355,7 +355,7 @@ class AgentModel {
               title: 'Bidayatul Mujtahid wa Nihayatul Muqtashid',
               titleArabic: 'بداية المجتهد ونهاية المقتصد',
               author: 'Ibnu Rusyd Al-Hafid',
-              description: 'Karya agung perbandingan mazhab beserta analisis sebab perbedaan hukum.',
+              description: 'Kajian perbandingan mazhab empat beserta analisis dalil dan sebab perbedaan hukum.',
             ),
             BookModel(
               title: 'Al-Fiqh Al-Islami wa Adillatuh',
@@ -404,7 +404,7 @@ class AgentModel {
               title: 'Shahih Al-Bukhari',
               titleArabic: 'صحيح البخاري',
               author: 'Imam Al-Bukhari',
-              description: 'Kitab hadits paling shahih rujukan utama umat Islam.',
+              description: 'Kitab hadis shahih rujukan induk umat Islam.',
             ),
             BookModel(
               title: 'Shahih Muslim',
@@ -421,7 +421,7 @@ class AgentModel {
           title: 'Tafsir Al-Qur\'an',
           titleArabic: 'تفسير القرآن',
           description:
-              'Khazanah tafsir Al-Qur\'an komprehensif berbasis korpus kitab tafsir mu\'tabarah.',
+              'Penelusuran makna ayat, asbabun nuzul, dan istinbath hukum dari kitab-kitab tafsir mu\'tabarah.',
           emoji: '🌟',
           category: 'Tafsir',
           fieldId: 'tafsir',
@@ -453,7 +453,7 @@ class AgentModel {
               title: 'Tafsir Al-Qur\'an Al-\'Azhim',
               titleArabic: 'تفسير ابن كثير',
               author: 'Al-Hafizh Ibnu Katsir',
-              description: 'Tafsir bil ma\'tsur paling muktamad dan masyhur di dunia Islam.',
+              description: 'Rujukan tafsir bil-ma\'tsur dengan penekanan pada riwayat shahih dan asbabun nuzul.',
             ),
             BookModel(
               title: 'Al-Jami\' li Ahkam Al-Qur\'an',
