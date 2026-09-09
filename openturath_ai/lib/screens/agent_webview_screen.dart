@@ -146,44 +146,73 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             background-color: #0E0E10 !important;
             background: #0E0E10 !important;
             color: #FAFAFA !important;
-            --mdc-elevated-card-container-color: #18181B !important;
-            --mdc-plain-card-container-color: #18181B !important;
-            --mat-card-background-color: #18181B !important;
+            --mdc-elevated-card-container-color: transparent !important;
+            --mdc-plain-card-container-color: transparent !important;
+            --mat-card-background-color: transparent !important;
             --mdc-theme-surface: #0E0E10 !important;
             --mdc-theme-background: #0E0E10 !important;
           }
-          mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i] {
-            background-color: #18181B !important;
-            background: #18181B !important;
+          /* Hilangkan bingkai dan background kotak abu-abu pada pesan agar teks mengalir mulus ala Claude */
+          mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i]:not(.query-box):not([class*="query" i]) {
+            background-color: transparent !important;
+            background: transparent !important;
             color: #FAFAFA !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border: none !important;
+            box-shadow: none !important;
           }
-          .chat-message, .message, [role="article"], .bubble, .model-turn, .user-turn, .assistant-turn, div[class*="message" i] {
-            background-color: #18181B !important;
-            background: #18181B !important;
+          .chat-message, .message, [role="article"], .bubble, .model-turn, .assistant-turn, div[class*="message" i] {
+            background-color: transparent !important;
+            background: transparent !important;
             color: #FAFAFA !important;
-            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border: none !important;
+            box-shadow: none !important;
           }
-          .chat-input-container, .query-box, div[class*="query-box" i],
-          div[class*="chat-input" i], .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper {
+          /* Bubble pesan pengguna dengan aksen halus */
+          .user-turn, div[class*="user-turn" i] {
             background-color: #18181B !important;
             background: #18181B !important;
-            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border: 1px solid #27272A !important;
+            border-radius: 18px !important;
+            padding: 10px 16px !important;
+          }
+          /* Container input luar: transparan tanpa garis kotak ganda */
+          .chat-input-container, div[class*="chat-input-container" i], div[class*="chat-input" i] {
+            background-color: transparent !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 6px 12px 14px 12px !important;
+          }
+          /* Kotak input tunggal yang bersih (Single capsule pill) */
+          .query-box, div[class*="query-box" i] {
+            background-color: #18181B !important;
+            background: #18181B !important;
+            border: 1px solid #27272A !important;
             border-radius: 28px !important;
+            box-shadow: none !important;
             color: #FAFAFA !important;
+          }
+          /* Hilangkan border bersarang dari Material wrapper internal */
+          .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper, .mat-mdc-form-field-infix {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
           }
           .cdk-text-field-autofill-monitored, textarea, input, .query-box-input {
             background-color: transparent !important;
             background: transparent !important;
             color: #FAFAFA !important;
+            border: none !important;
           }
           textarea::placeholder, input::placeholder, .query-box-input::placeholder {
             color: #71717A !important;
           }
           ::-webkit-scrollbar { display: none !important; width: 0px !important; height: 0px !important; }
           html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+          /* Padding atas yang cukup agar pesan teratas tidak terpotong */
           .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
-            padding-top: 0px !important;
+            padding-top: 18px !important;
             margin-top: 0px !important;
           }
         `;
@@ -674,9 +703,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   background-color: #0E0E10 !important;
                   background: #0E0E10 !important;
                   color: #FAFAFA !important;
-                  --mdc-elevated-card-container-color: #18181B !important;
-                  --mdc-plain-card-container-color: #18181B !important;
-                  --mat-card-background-color: #18181B !important;
+                  --mdc-elevated-card-container-color: transparent !important;
+                  --mdc-plain-card-container-color: transparent !important;
+                  --mat-card-background-color: transparent !important;
                   --mdc-theme-surface: #0E0E10 !important;
                   --mdc-theme-background: #0E0E10 !important;
                 }
@@ -691,33 +720,66 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   overflow: hidden !important;
                   visibility: hidden !important;
                 }
-                mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i] {
-                  background-color: #18181B !important;
-                  background: #18181B !important;
+                /* Hilangkan bingkai dan background kotak abu-abu pada pesan agar teks mengalir mulus ala Claude */
+                mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i]:not(.query-box):not([class*="query" i]) {
+                  background-color: transparent !important;
+                  background: transparent !important;
                   color: #FAFAFA !important;
-                  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                  border: none !important;
+                  box-shadow: none !important;
                 }
-                .chat-message, .message, [role="article"], .bubble, .model-turn, .user-turn, .assistant-turn, div[class*="message" i] {
-                  background-color: #18181B !important;
-                  background: #18181B !important;
+                .chat-message, .message, [role="article"], .bubble, .model-turn, .assistant-turn, div[class*="message" i] {
+                  background-color: transparent !important;
+                  background: transparent !important;
                   color: #FAFAFA !important;
-                  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                  border: none !important;
+                  box-shadow: none !important;
                 }
-                .chat-input-container, .query-box, div[class*="query-box" i],
-                div[class*="chat-input" i], .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper {
+                /* Bubble pesan pengguna dengan aksen halus */
+                .user-turn, div[class*="user-turn" i] {
                   background-color: #18181B !important;
                   background: #18181B !important;
-                  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+                  border: 1px solid #27272A !important;
+                  border-radius: 18px !important;
+                  padding: 10px 16px !important;
+                }
+                /* Container input luar: transparan tanpa garis kotak ganda */
+                .chat-input-container, div[class*="chat-input-container" i], div[class*="chat-input" i] {
+                  background-color: transparent !important;
+                  background: transparent !important;
+                  border: none !important;
+                  box-shadow: none !important;
+                  padding: 6px 12px 14px 12px !important;
+                }
+                /* Kotak input tunggal yang bersih (Single capsule pill) */
+                .query-box, div[class*="query-box" i] {
+                  background-color: #18181B !important;
+                  background: #18181B !important;
+                  border: 1px solid #27272A !important;
                   border-radius: 28px !important;
+                  box-shadow: none !important;
                   color: #FAFAFA !important;
+                }
+                /* Hilangkan border bersarang dari Material wrapper internal */
+                .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper, .mat-mdc-form-field-infix {
+                  background: transparent !important;
+                  border: none !important;
+                  box-shadow: none !important;
+                  padding: 0 !important;
                 }
                 .cdk-text-field-autofill-monitored, textarea, input, .query-box-input {
                   background-color: transparent !important;
                   background: transparent !important;
                   color: #FAFAFA !important;
+                  border: none !important;
                 }
                 textarea::placeholder, input::placeholder, .query-box-input::placeholder {
                   color: #71717A !important;
+                }
+                /* Padding atas yang cukup agar pesan teratas tidak terpotong */
+                .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
+                  padding-top: 18px !important;
+                  margin-top: 0px !important;
                 }
               `;
               (document.head || document.documentElement).appendChild(darkStyle);
@@ -916,16 +978,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.outfit(
-              fontSize: 15,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
-              letterSpacing: 0.1,
+              letterSpacing: -0.2,
               color: textPrimary,
             ),
           ),
           actions: [
             if (_user != null && _user!.plan == 'trial')
               Padding(
-                padding: const EdgeInsets.only(right: 4),
+                padding: const EdgeInsets.only(right: 2),
                 child: Center(
                   child: InkWell(
                     onTap: () {
@@ -937,7 +999,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     },
                     borderRadius: BorderRadius.circular(100),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                         borderRadius: BorderRadius.circular(100),
@@ -946,10 +1008,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.bolt_rounded, size: 13, color: accent),
-                          const SizedBox(width: 4),
+                          Icon(Icons.bolt_rounded, size: 12, color: accent),
+                          const SizedBox(width: 3),
                           Text(
-                            'Trial: ${_user!.questionsRemaining}',
+                            '${_user!.questionsRemaining}',
                             style: GoogleFonts.outfit(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
@@ -963,6 +1025,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 ),
               ),
             IconButton(
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: Icon(
                 _hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded,
                 color: _hasCopied ? const Color(0xFF10B981) : textPrimary,
@@ -972,6 +1036,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               onPressed: _isCopying ? null : _copyLatestResponse,
             ),
             IconButton(
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: Icon(
                 _hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                 color: _hasBookmarked ? const Color(0xFFD97706) : textPrimary,
@@ -981,6 +1047,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               onPressed: _isBookmarking ? null : _bookmarkLatestResponse,
             ),
             IconButton(
+              visualDensity: VisualDensity.compact,
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
               tooltip: 'Ukuran Huruf',
               onPressed: _showFontScalePicker,
@@ -1020,7 +1088,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       mediaPlaybackRequiresUserGesture: false,
                       allowsInlineMediaPlayback: true,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                      algorithmicDarkeningAllowed: true,
+                      algorithmicDarkeningAllowed: false,
                       transparentBackground: true,
                     ),
                 onWebViewCreated: (controller) {
