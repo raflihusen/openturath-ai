@@ -182,144 +182,132 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Top Bar: Hairline Framed Brandmark & Dual Calendar Badge ──
-                    Container(
-                      margin: const EdgeInsets.only(top: 4, bottom: 18),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: border, width: 1.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'OpenTurath',
-                            style: GoogleFonts.newsreader(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.4,
-                              color: textPrimary,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: border.withValues(alpha: 0.6),
-                                width: 0.8,
+                    // ── 1. Top Bar: OpenTurath Brand & Dual Calendar ──
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'OpenTurath',
+                              style: GoogleFonts.newsreader(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.5,
+                                color: textPrimary,
                               ),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.calendar_today_rounded,
-                                  size: 12,
-                                  color: accent,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  HijriDateUtils.formatDualDate(),
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: textPrimary,
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(height: 2),
+                            Text(
+                              HijriDateUtils.formatDualDate(),
+                              style: GoogleFonts.outfit(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w400,
+                                color: textSecondary,
+                                letterSpacing: 0.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        AppleInteractiveWrapper(
+                          onTap: () {
+                            final shell = MainShellController.of(context);
+                            shell?.switchTab(3);
+                          },
+                          hapticType: HapticFeedbackType.selection,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: border,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: surface,
+                              backgroundImage: user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
+                              child: user.photoUrl.isEmpty
+                                  ? Text(
+                                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'P',
+                                      style: GoogleFonts.outfit(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                        color: textPrimary,
+                                      ),
+                                    )
+                                  : null,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
+
+                    const SizedBox(height: 22),
 
                     // ── 2. Pembaruan Otomatis Siap Pasang (Jika Ada) ──
                     const UpdateReadyBanner(),
 
                     // ── 3. Academic Greeting ──
-                    Padding(
-                      padding: const EdgeInsets.only(left: 2, bottom: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.name.isNotEmpty ? 'Ahlan wa Sahlan, ${user.name}' : 'Ahlan wa Sahlan, Peneliti Turats',
-                            style: GoogleFonts.newsreader(
-                              fontSize: 25,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.3,
-                              color: textPrimary,
-                            ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
+                          style: GoogleFonts.newsreader(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: -0.3,
+                            color: textPrimary,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Khazanah naskah primer turats Islam dengan asisten riset cerdas.',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              color: textSecondary,
-                            ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Kaji naskah primer turats dengan asisten riset cerdas.',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            color: textSecondary,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
 
-                    // ── 4. Enticing Pro Subscription Banner (Menonjol & Memikat) ──
+                    const SizedBox(height: 18),
+
+                    // ── 4. Refined Pro Subscription Card (Minimalist & Enticing) ──
                     AppleInteractiveWrapper(
                       onTap: () {
                         Navigator.pushNamed(context, AppRoutes.subscription);
                       },
-                      hapticType: HapticFeedbackType.medium,
+                      hapticType: HapticFeedbackType.light,
                       child: Container(
-                        margin: const EdgeInsets.only(bottom: 18),
-                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(bottom: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: isDark
-                                ? [
-                                    const Color(0xFF221C11),
-                                    const Color(0xFF131E18),
-                                  ]
-                                : [
-                                    const Color(0xFFFFFBEB),
-                                    const Color(0xFFECFDF5),
-                                  ],
-                          ),
-                          borderRadius: BorderRadius.circular(18),
+                          color: isDark ? const Color(0xFF14171F) : const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFD97706).withValues(alpha: isDark ? 0.35 : 0.4),
-                            width: 1.2,
+                            color: isDark ? const Color(0xFF263042) : const Color(0xFFE2E8F0),
+                            width: 1.0,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFD97706).withValues(alpha: isDark ? 0.08 : 0.05),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
-                              width: 42,
-                              height: 42,
+                              width: 36,
+                              height: 36,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: const Color(0xFFD97706).withValues(alpha: 0.15),
-                                border: Border.all(
-                                  color: const Color(0xFFD97706).withValues(alpha: 0.4),
-                                  width: 1,
-                                ),
+                                color: isDark ? const Color(0xFF1E283A) : const Color(0xFFEEF4FF),
                               ),
-                              child: const Center(
-                                child: Text('👑', style: TextStyle(fontSize: 19)),
+                              child: Icon(
+                                Icons.auto_awesome_rounded,
+                                size: 17,
+                                color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF2563EB),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -330,60 +318,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   Row(
                                     children: [
                                       Text(
-                                        'OpenTurath AI Pro',
+                                        'OpenTurath Pro',
                                         style: GoogleFonts.outfit(
-                                          fontSize: 14.5,
-                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
                                           color: textPrimary,
                                           letterSpacing: -0.2,
                                         ),
                                       ),
                                       const SizedBox(width: 6),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFFD97706),
-                                          borderRadius: BorderRadius.circular(6),
+                                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                                          borderRadius: BorderRadius.circular(5),
+                                          border: Border.all(
+                                            color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                                            width: 0.6,
+                                          ),
                                         ),
                                         child: Text(
                                           'AKSES PENUH',
                                           style: GoogleFonts.outfit(
-                                            fontSize: 9.5,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w600,
                                             letterSpacing: 0.4,
+                                            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 3),
+                                  const SizedBox(height: 2.5),
                                   Text(
-                                    'Buka korpus naskah tanpa batas kuota & telaah lintas madzhab.',
+                                    'Akses korpus kitab primer tanpa batas telaah.',
                                     style: GoogleFonts.outfit(
                                       fontSize: 12,
                                       color: textSecondary,
-                                      height: 1.35,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFD97706),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                'Buka →',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 13,
+                              color: textSecondary,
                             ),
                           ],
                         ),

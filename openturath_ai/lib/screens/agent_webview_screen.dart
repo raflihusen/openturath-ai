@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -113,6 +112,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           labs-tailwind-logo, a.logo-link, .logo-container,
           a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
           .title-input, input.title-input, .title-container, .notebook-title,
+          .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+          div[class*="title-card" i], div[class*="notebook-header" i],
+          div[class*="source-summary" i], div[class*="source-count" i],
+          div[class*="notebook-info" i], .project-header, div.source-badge-container,
+          div[class*="notebook-title" i], [class*="artifact-card" i],
+          .mobile-header, div[class*="mobile-header" i],
           button[aria-label*="Copy" i], button[aria-label*="Salin" i],
           button[aria-label*="Create" i], button[aria-label*="Buat" i],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
@@ -134,6 +139,46 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             opacity: 0 !important;
             pointer-events: none !important;
             border: none !important;
+          }
+          :root, html, body, app-root, .app-root, mat-sidenav-container, mat-sidenav-content,
+          main, [role="main"], .conversation-container, .chat-view, .chat-panel-content,
+          .message-list, div[class*="chat-panel" i], div[class*="conversation" i] {
+            background-color: #0E0E10 !important;
+            background: #0E0E10 !important;
+            color: #FAFAFA !important;
+            --mdc-elevated-card-container-color: #18181B !important;
+            --mdc-plain-card-container-color: #18181B !important;
+            --mat-card-background-color: #18181B !important;
+            --mdc-theme-surface: #0E0E10 !important;
+            --mdc-theme-background: #0E0E10 !important;
+          }
+          mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i] {
+            background-color: #18181B !important;
+            background: #18181B !important;
+            color: #FAFAFA !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+          }
+          .chat-message, .message, [role="article"], .bubble, .model-turn, .user-turn, .assistant-turn, div[class*="message" i] {
+            background-color: #18181B !important;
+            background: #18181B !important;
+            color: #FAFAFA !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+          }
+          .chat-input-container, .query-box, div[class*="query-box" i],
+          div[class*="chat-input" i], .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper {
+            background-color: #18181B !important;
+            background: #18181B !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            border-radius: 28px !important;
+            color: #FAFAFA !important;
+          }
+          .cdk-text-field-autofill-monitored, textarea, input, .query-box-input {
+            background-color: transparent !important;
+            background: transparent !important;
+            color: #FAFAFA !important;
+          }
+          textarea::placeholder, input::placeholder, .query-box-input::placeholder {
+            color: #71717A !important;
           }
           ::-webkit-scrollbar { display: none !important; width: 0px !important; height: 0px !important; }
           html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
@@ -217,6 +262,27 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 parent.style.setProperty('height', '0px', 'important');
                 parent.style.setProperty('overflow', 'hidden', 'important');
                 parent.style.setProperty('visibility', 'hidden', 'important');
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 2b. Sembunyikan Kartu Metadata/Landing NotebookLM (SUPER AI, 0 sources, dll)
+      function sweepNotebookLandingCard() {
+        try {
+          var cards = document.querySelectorAll('mat-card, .mat-mdc-card, [role="region"], div[class*="card" i], div[class*="header" i], div[class*="title" i], div');
+          for (var i = 0; i < cards.length; i++) {
+            var el = cards[i];
+            var txt = (el.innerText || '').toLowerCase();
+            if ((txt.includes('sources ·') || txt.includes('0 sources') || txt.includes('super ai') || txt.includes('feb 22') || txt.includes('feb 2026')) && el.clientHeight < 450 && el.clientHeight > 20) {
+              if (!el.querySelector('textarea, input, [role="article"]')) {
+                el.style.setProperty('display', 'none', 'important');
+                el.style.setProperty('visibility', 'hidden', 'important');
+                el.style.setProperty('height', '0px', 'important');
+                el.style.setProperty('overflow', 'hidden', 'important');
+                el.style.setProperty('margin', '0px', 'important');
+                el.style.setProperty('padding', '0px', 'important');
               }
             }
           }
@@ -457,6 +523,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       // 5. Master loop & observer
       function runLoop() {
         eradicateDisclaimer();
+        sweepNotebookLandingCard();
         injectChatActions();
       }
 
@@ -603,19 +670,54 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               darkStyle = document.createElement('style');
               darkStyle.id = 'turath-dark-mode-override';
               darkStyle.textContent = `
-                html, body, .app-root, app-root, main, .chat-panel-content, .chat-view, .conversation-container {
+                :root, html, body, .app-root, app-root, main, .chat-panel-content, .chat-view, .conversation-container, mat-sidenav-container, mat-sidenav-content {
                   background-color: #0E0E10 !important;
+                  background: #0E0E10 !important;
                   color: #FAFAFA !important;
+                  --mdc-elevated-card-container-color: #18181B !important;
+                  --mdc-plain-card-container-color: #18181B !important;
+                  --mat-card-background-color: #18181B !important;
+                  --mdc-theme-surface: #0E0E10 !important;
+                  --mdc-theme-background: #0E0E10 !important;
                 }
-                .chat-message, .message, [role="article"], .bubble {
+                .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+                div[class*="title-card" i], div[class*="notebook-header" i],
+                div[class*="source-summary" i], div[class*="source-count" i],
+                div[class*="notebook-info" i], .project-header, div.source-badge-container,
+                div[class*="notebook-title" i], [class*="artifact-card" i],
+                .mobile-header, div[class*="mobile-header" i] {
+                  display: none !important;
+                  height: 0px !important;
+                  overflow: hidden !important;
+                  visibility: hidden !important;
+                }
+                mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i] {
                   background-color: #18181B !important;
+                  background: #18181B !important;
                   color: #FAFAFA !important;
                   border: 1px solid rgba(255, 255, 255, 0.08) !important;
                 }
-                textarea, input, .input-box {
+                .chat-message, .message, [role="article"], .bubble, .model-turn, .user-turn, .assistant-turn, div[class*="message" i] {
                   background-color: #18181B !important;
+                  background: #18181B !important;
                   color: #FAFAFA !important;
-                  border-color: rgba(255, 255, 255, 0.15) !important;
+                  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+                }
+                .chat-input-container, .query-box, div[class*="query-box" i],
+                div[class*="chat-input" i], .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper {
+                  background-color: #18181B !important;
+                  background: #18181B !important;
+                  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+                  border-radius: 28px !important;
+                  color: #FAFAFA !important;
+                }
+                .cdk-text-field-autofill-monitored, textarea, input, .query-box-input {
+                  background-color: transparent !important;
+                  background: transparent !important;
+                  color: #FAFAFA !important;
+                }
+                textarea::placeholder, input::placeholder, .query-box-input::placeholder {
+                  color: #71717A !important;
                 }
               `;
               (document.head || document.documentElement).appendChild(darkStyle);
@@ -823,7 +925,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           actions: [
             if (_user != null && _user!.plan == 'trial')
               Padding(
-                padding: const EdgeInsets.only(right: 6),
+                padding: const EdgeInsets.only(right: 4),
                 child: Center(
                   child: InkWell(
                     onTap: () {
@@ -835,7 +937,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     },
                     borderRadius: BorderRadius.circular(100),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                         borderRadius: BorderRadius.circular(100),
@@ -860,6 +962,24 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                 ),
               ),
+            IconButton(
+              icon: Icon(
+                _hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded,
+                color: _hasCopied ? const Color(0xFF10B981) : textPrimary,
+                size: 19,
+              ),
+              tooltip: 'Salin Jawaban',
+              onPressed: _isCopying ? null : _copyLatestResponse,
+            ),
+            IconButton(
+              icon: Icon(
+                _hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                color: _hasBookmarked ? const Color(0xFFD97706) : textPrimary,
+                size: 20,
+              ),
+              tooltip: 'Bookmark',
+              onPressed: _isBookmarking ? null : _bookmarkLatestResponse,
+            ),
             IconButton(
               icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
               tooltip: 'Ukuran Huruf',
@@ -1055,106 +1175,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 },
               ),
             ),
-
-            // ── Native Frosted Quick Action Bar (Apple Glassmorphism) ──
-            if (!_isLoadingUrl && !_isWebViewLoading && _errorMessage == null)
-              Positioned(
-                top: 12,
-                right: 16,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF18181B).withValues(alpha: 0.88)
-                            : Colors.white.withValues(alpha: 0.92),
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.15)
-                              : Colors.black.withValues(alpha: 0.08),
-                          width: 0.8,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
-                            blurRadius: 14,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Copy Action
-                          InkWell(
-                            onTap: _isCopying ? null : _copyLatestResponse,
-                            borderRadius: BorderRadius.circular(100),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    _hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded,
-                                    size: 14,
-                                    color: _hasCopied ? const Color(0xFF10B981) : textPrimary,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    _hasCopied ? 'Tersalin' : 'Salin',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: _hasCopied ? const Color(0xFF10B981) : textPrimary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 14,
-                            color: border,
-                            margin: const EdgeInsets.symmetric(horizontal: 2),
-                          ),
-                          // Bookmark Action
-                          InkWell(
-                            onTap: _isBookmarking ? null : _bookmarkLatestResponse,
-                            borderRadius: BorderRadius.circular(100),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    _hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                                    size: 15,
-                                    color: _hasBookmarked ? const Color(0xFFD97706) : textPrimary,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    _hasBookmarked ? 'Tersimpan' : 'Bookmark',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: _hasBookmarked ? const Color(0xFFD97706) : textPrimary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
 
             // ── Loading Indicator Screen (Three Dots Minimal Pulse) ──
             if (_isLoadingUrl || (_isWebViewLoading && _errorMessage == null))
