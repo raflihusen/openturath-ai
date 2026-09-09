@@ -27,7 +27,13 @@ class ModuleEntitlement {
 
   bool get isActive {
     if (status != 'active') return false;
-    if (expiry == null) return true;
+    if (plan == 'lifetime' || plan == 'sultan_lifetime' || plan == 'all_access_lifetime') {
+      return true;
+    }
+    if (expiry == null) {
+      // Paket bertenggat tanpa expiry date dianggap data tidak lengkap
+      return false;
+    }
     return expiry!.isAfter(DateTime.now());
   }
 
@@ -114,10 +120,14 @@ class UserModel {
     if (entitlements.containsKey(agentId)) {
       return entitlements[agentId];
     }
-    // 2. Normalisasi ID (misal fiqh_tahawwulat_muhaqqiq -> fiqh_tahawwulat)
-    for (final key in entitlements.keys) {
-      if (agentId.startsWith(key)) {
-        return entitlements[key];
+    // 2. Normalisasi sub-agen (misal fiqh_tahawwulat_muhaqqiq -> fiqh_tahawwulat)
+    for (final entry in entitlements.entries) {
+      if (agentId == entry.key || agentId.startsWith('${entry.key}_')) {
+        // Khusus fiqh_tahawwulat merupakan field independen, jangan tertukar dengan rumpun fiqh umum
+        if (entry.key == 'fiqh' && agentId.startsWith('fiqh_tahawwulat')) {
+          continue;
+        }
+        return entry.value;
       }
     }
     return null;
