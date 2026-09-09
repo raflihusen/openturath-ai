@@ -447,16 +447,34 @@ class _SlimSpecialistRowState extends State<_SlimSpecialistRow> {
                 children: [
                   // Typography-First Title & Metadata
                   Expanded(
-                    child: Text(
-                      widget.agent.title,
-                      style: GoogleFonts.outfit(
-                        fontSize: 15.5,
-                        fontWeight: FontWeight.w600,
-                        color: widget.textPrimary,
-                        letterSpacing: -0.2,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.agent.title,
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: widget.textPrimary,
+                            letterSpacing: -0.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (widget.agent.subtitleAcademic.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            widget.agent.subtitleAcademic,
+                            style: GoogleFonts.outfit(
+                              fontSize: 12,
+                              color: widget.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
                     ),
                   ),
 
@@ -529,10 +547,10 @@ class _SovereignTahawwulatCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 6),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF14171F) : const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(16),
+          color: surface,
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isDark ? const Color(0xFF263042) : const Color(0xFFE2E8F0),
+            color: border,
             width: 1.0,
           ),
         ),
@@ -552,32 +570,32 @@ class _SovereignTahawwulatCard extends StatelessWidget {
                       height: 28,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isDark ? const Color(0xFF1E283A) : const Color(0xFFEEF4FF),
+                        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                       ),
                       child: Icon(
                         Icons.auto_awesome_rounded,
                         size: 14,
-                        color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF2563EB),
+                        color: textPrimary,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                          color: border,
                           width: 0.6,
                         ),
                       ),
                       child: Text(
                         'SPESIALIS UTAMA • RUKUN KEEMPAT',
                         style: GoogleFonts.outfit(
-                          fontSize: 9.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 0.4,
-                          color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                          letterSpacing: 0.3,
+                          color: textSecondary,
                         ),
                       ),
                     ),
@@ -589,8 +607,8 @@ class _SovereignTahawwulatCard extends StatelessWidget {
                   style: GoogleFonts.amiri(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-                    height: 1.2,
+                    color: textSecondary,
+                    height: 1.55,
                   ),
                 ),
               ],
