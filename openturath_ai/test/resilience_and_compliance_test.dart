@@ -80,16 +80,16 @@ void main() {
     });
 
     test('AppTheme Obsidian standard does not leak gold color #D4AF37', () {
-      expect(AppTheme.lmDarkCanvas, equals(const Color(0xFF0B1118)));
-      expect(AppTheme.lmDarkSurface, equals(const Color(0xFF131C26)));
-      expect(AppTheme.lmDarkBorder, equals(const Color(0xFF1E2D3D)));
-      expect(AppTheme.lmDarkAccent, equals(const Color(0xFF22D3EE)));
+      expect(AppTheme.lmDarkCanvas, equals(AppTheme.canvasDark));
+      expect(AppTheme.lmDarkSurface, equals(AppTheme.surfaceCardDark));
+      expect(AppTheme.lmDarkBorder, equals(AppTheme.borderDark));
+      expect(AppTheme.lmDarkAccent, equals(AppTheme.accentDark));
 
       // Light mode
-      expect(AppTheme.lmLightCanvas, equals(const Color(0xFFF0F4F9)));
-      expect(AppTheme.lmLightSurface, equals(const Color(0xFFFFFFFF)));
-      expect(AppTheme.lmLightBorder, equals(const Color(0xFFE1E3E1)));
-      expect(AppTheme.lmLightAccent, equals(const Color(0xFF0B57D0)));
+      expect(AppTheme.lmLightCanvas, equals(AppTheme.canvasLight));
+      expect(AppTheme.lmLightSurface, equals(AppTheme.surfaceCardLight));
+      expect(AppTheme.lmLightBorder, equals(AppTheme.borderLight));
+      expect(AppTheme.lmLightAccent, equals(AppTheme.accentLight));
     });
 
     test('AgentAccessException encapsulates code, message, and string representation', () {

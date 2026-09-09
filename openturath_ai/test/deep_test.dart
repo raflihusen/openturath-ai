@@ -69,16 +69,16 @@ void main() {
 
   group('2. Design System & Theme Engine Invariants', () {
     test('Official Google NotebookLM color tokens are exact', () {
-      expect(AppTheme.canvasLight, equals(const Color(0xFFF0F4F9)));
-      expect(AppTheme.canvasDark, equals(const Color(0xFF0B1118)));
+      expect(AppTheme.canvasLight, equals(const Color(0xFFFFFFFF)));
+      expect(AppTheme.canvasDark, equals(const Color(0xFF0E0E10)));
       expect(AppTheme.surfaceCardLight, equals(const Color(0xFFFFFFFF)));
-      expect(AppTheme.surfaceCardDark, equals(const Color(0xFF131C26)));
-      expect(AppTheme.borderLight, equals(const Color(0xFFE1E3E1)));
-      expect(AppTheme.borderDark, equals(const Color(0xFF1E2D3D)));
-      expect(AppTheme.accentLight, equals(const Color(0xFF0B57D0)));
+      expect(AppTheme.surfaceCardDark, equals(const Color(0xFF18181B)));
+      expect(AppTheme.borderLight, equals(const Color(0xFFE5E7EB)));
+      expect(AppTheme.borderDark, equals(const Color(0xFF27272A)));
+      expect(AppTheme.accentLight, equals(const Color(0xFF18181B)));
       expect(AppTheme.accentDark, equals(const Color(0xFF22D3EE)));
-      expect(AppTheme.citationBgLight, equals(const Color(0xFFD3E3FD)));
-      expect(AppTheme.citationBgDark, equals(const Color(0xFF0E3047)));
+      expect(AppTheme.citationBgLight, equals(const Color(0xFFF1F5F9)));
+      expect(AppTheme.citationBgDark, equals(const Color(0xFF1E1E22)));
     });
 
     test('Radius tokens conform to Material 3 / Google Notebook standards', () {
