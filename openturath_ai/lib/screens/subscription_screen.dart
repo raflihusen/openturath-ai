@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,7 +93,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           side: BorderSide(color: border, width: 1),
         ),
         title: Text(
-          'Nomor WhatsApp / HP',
+          'Nomor WhatsApp Bukti Aktivasi',
           style: GoogleFonts.outfit(
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -104,11 +105,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Masukkan nomor aktif untuk penerimaan bukti invoice pembayaran resmi dari sistem DOKU.',
+              'Masukkan nomor WhatsApp aktif Anda untuk pengiriman konfirmasi aktivasi langganan dan rincian transaksi resmi secara instan.',
               style: GoogleFonts.outfit(
                 fontSize: 13,
                 color: textSecondary,
-                height: 1.4,
+                height: 1.45,
               ),
             ),
             const SizedBox(height: 16),
@@ -128,7 +129,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx, null),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.pop(ctx, null);
+            },
             child: Text('Batal', style: GoogleFonts.outfit(color: textSecondary)),
           ),
           FilledButton(
@@ -138,9 +142,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 AppSnackBar.warning(ctx, 'Masukkan nomor telepon yang valid.');
                 return;
               }
+              HapticFeedback.mediumImpact();
               Navigator.pop(ctx, val);
             },
-            child: Text('Lanjutkan', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+            child: Text('Lanjutkan Pembayaran', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -264,28 +269,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildStaggeredItem(int index, Widget child) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 320 + (index * 70)),
-      curve: Curves.easeOutCubic,
-      builder: (context, val, ch) {
-        return Transform.translate(
-          offset: Offset(0, 18 * (1.0 - val)),
-          child: Opacity(
-            opacity: val.clamp(0.0, 1.0),
-            child: ch,
-          ),
-        );
-      },
-      child: child,
-    );
+    return child;
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
@@ -343,7 +333,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Beli paket 1 AI satuan seharga Rp 50.000/bulan, atau pilih Paket Promo Semua AI seharga Rp 99.000/bulan.',
+                          'Akses komprehensif ke korpus naskah primer turats Islam dengan analisis komparatif instan.',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             color: textSecondary,
@@ -353,36 +343,77 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 20),
 
-                  // ── AI Module Selector Box ──
+                  // ── Paket 1 (Unggulan): Paket Akses Penuh (Semua AI - Rp 99.000 / bulan) ──
                   _buildStaggeredItem(
                     1,
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: border, width: 0.8),
-                      ),
-                      child: Column(
+                    _PricingCard(
+                      badge: 'AKSES LENGKAP · REKOMENDASI',
+                      title: 'Paket Akses Penuh (Semua AI)',
+                      price: 'Rp 99.000',
+                      period: '/ bulan',
+                      description:
+                          'Akses tanpa batas ke seluruh 11+ modul riset AI OpenTurath sekaligus secara simultan.',
+                      features: const [
+                        'Akses ke seluruh spesialis fikih 4 mazhab, hadits, tafsir, aqidah, ushul & bahasa',
+                        'Penelusuran lintas korpus naskah primer tanpa batas kuota harian',
+                        'Sitasi teks ibarah asli, nomor halaman, dan perbandingan syarah',
+                        'Prioritas kurasi naskah kitab dan pembaruan berkala',
+                      ],
+                      buttonLabel: 'Langganan Akses Penuh (Rp 99.000)',
+                      isRecommended: true,
+                      isDark: isDark,
+                      isProcessing: _isProcessing && _selectedPlan == 'all_ai_1m',
+                      onTap: () {
+                        final allAiAgent = AgentModel(
+                          id: 'all_ai',
+                          title: 'Paket Akses Penuh Semua AI',
+                          description: 'Akses ke seluruh modul AI OpenTurath',
+                          emoji: '👑',
+                          category: 'All Access',
+                          status: 'active',
+                          sortOrder: 0,
+                        );
+                        _handleSubscribe(
+                          'all_ai_1m',
+                          'Paket Akses Penuh Semua AI',
+                          99000,
+                          targetAgent: allAiAgent,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ── Paket 2: Spesialis Satuan Terpilih (Rp 50.000 / bulan) ──
+                  _buildStaggeredItem(
+                    2,
+                    _PricingCard(
+                      badge: 'SPESIALIS SATUAN',
+                      title: '1 Bulan — ${_agent?.title ?? "AI Spesialis"}',
+                      price: 'Rp ${_formatPrice(singlePrice)}',
+                      period: '/ bulan',
+                      description:
+                          'Akses fokus ke ${_agent?.title ?? "modul ini"} tanpa batas pertanyaan harian.',
+                      features: [
+                        'Akses penuh korpus kitab ${_agent?.title ?? "modul terpilih"}',
+                        'Tanya jawab tanpa batas pertanyaan harian pada modul ini',
+                        'Sitasi ibarah kitab asli dan nomor halaman',
+                        'Dukungan asistensi teknis santri',
+                      ],
+                      extraWidget: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Icon(Icons.tune_rounded, size: 18, color: accent),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Pilih AI Spesialis yang Ingin Dibeli:',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: textPrimary,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Pilih Cabang Keilmuan / Spesialis:',
+                            style: GoogleFonts.outfit(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: textPrimary,
+                            ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           DropdownButtonFormField<String>(
                             initialValue: _agent?.id ?? 'fiqh_tahawwulat',
                             isExpanded: true,
@@ -403,14 +434,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               ),
                             ),
                             dropdownColor:
-                                isDark ? const Color(0xFF131C26) : Colors.white,
+                                isDark ? const Color(0xFF18181B) : Colors.white,
                             items: activeList.map((a) {
                               return DropdownMenuItem<String>(
                                 value: a.id,
                                 child: Text(
                                   '${a.title}  ·  ${a.category}',
                                   style: GoogleFonts.outfit(
-                                    fontSize: 13.5,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w500,
                                     color: textPrimary,
                                   ),
@@ -428,27 +459,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // ── Paket 1: Beli 1 AI Spesialis Terpilih (Rp 50.000 / bulan) ──
-                  _buildStaggeredItem(
-                    2,
-                    _PricingCard(
-                      badge: 'PAKET SATUAN (1 MODUL)',
-                      title: '1 Bulan — ${_agent?.title ?? "AI Spesialis"}',
-                      price: 'Rp ${_formatPrice(singlePrice)}',
-                      period: '/ bulan',
-                      description:
-                          'Akses khusus ke ${_agent?.title ?? "modul ini"} tanpa batas pertanyaan harian.',
-                      features: [
-                        'Akses penuh korpus kitab ${_agent?.title ?? "modul terpilih"}',
-                        'Tanya jawab tanpa batas pertanyaan harian',
-                        'Sitasi ibarah kitab asli dan nomor halaman',
-                        'Dukungan asistensi teknis santri',
-                      ],
-                      buttonLabel: 'Beli ${_agent?.title ?? "AI Ini"} (Rp 50.000)',
+                      buttonLabel: 'Langganan ${_agent?.title ?? "Modul Ini"} (Rp 50.000)',
                       isDark: isDark,
                       isProcessing:
                           _isProcessing && _selectedPlan == AppConstants.planTholib1m,
@@ -461,65 +472,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Paket 2: Paket Promo (Semua AI Sekaligus - Rp 99.000 / bulan) ──
-                  _buildStaggeredItem(
-                    3,
-                    _PricingCard(
-                      badge: 'PALING HEMAT & LENGKAP',
-                      title: 'Paket Promo (Semua AI)',
-                      price: 'Rp 99.000',
-                      period: '/ bulan',
-                      description:
-                          'Akses tanpa batas ke seluruh modul riset AI OpenTurath sekaligus secara simultan.',
-                      features: const [
-                        'Akses ke seluruh modul AI OpenTurath sekaligus',
-                        'Mencakup seluruh Spesialis Mazhab Fikih, Hadits, Tafsir, dan Bahasa Arab',
-                        'Bebas batas kuota pertanyaan pada semua modul',
-                        'Harga promo: Rp 99.000 untuk semua AI (lebih hemat dibanding satuan)',
-                        'Prioritas penambahan kitab dan naskah riset baru',
-                      ],
-                      buttonLabel: 'Beli Paket Semua AI (Rp 99.000)',
-                      isRecommended: true,
-                      isDark: isDark,
-                      isProcessing: _isProcessing && _selectedPlan == 'all_ai_1m',
-                      onTap: () {
-                        final allAiAgent = AgentModel(
-                          id: 'all_ai',
-                          title: 'Paket Promo Semua AI',
-                          description: 'Akses ke seluruh modul AI OpenTurath',
-                          emoji: '👑',
-                          category: 'All Access',
-                          status: 'active',
-                          sortOrder: 0,
-                        );
-                        _handleSubscribe(
-                          'all_ai_1m',
-                          'Paket Promo Semua AI',
-                          99000,
-                          targetAgent: allAiAgent,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
                   // ── Paket 3: Akses 1 Tahun Modul Terpilih (Rp 450.000 / tahun) ──
                   _buildStaggeredItem(
-                    4,
+                    3,
                     _PricingCard(
                       badge: 'PAKET TAHUNAN',
                       title: '1 Tahun — ${_agent?.title ?? "AI Spesialis"}',
                       price: 'Rp ${_formatPrice(annualPrice)}',
                       period: '/ tahun',
                       description:
-                          'Pilihan hemat 1 tahun untuk pengajar, santri, dan peneliti.',
+                          'Pilihan hemat 1 tahun untuk pengajar, asatidz, santri, dan peneliti.',
                       features: [
                         'Seluruh fitur akses penuh ${_agent?.title ?? "modul terpilih"}',
                         'Hemat dibanding membayar bulanan selama 12 bulan',
                         'Akses prioritas pembaruan kitab dan ibarah',
                         'Dukungan asistensi teknis berkelanjutan',
                       ],
-                      buttonLabel: 'Beli 1 Tahun ${_agent?.title ?? "AI Ini"} (Rp 450.000)',
+                      buttonLabel: 'Langganan 1 Tahun (Rp 450.000)',
                       isDark: isDark,
                       isProcessing:
                           _isProcessing && _selectedPlan == AppConstants.planBahits1y,
@@ -553,6 +522,7 @@ class _PricingCard extends StatefulWidget {
   final bool isProcessing;
   final String? badge;
   final String? buttonLabel;
+  final Widget? extraWidget;
 
   const _PricingCard({
     required this.title,
@@ -566,6 +536,7 @@ class _PricingCard extends StatefulWidget {
     required this.isProcessing,
     this.badge,
     this.buttonLabel,
+    this.extraWidget,
   });
 
   @override
@@ -580,7 +551,7 @@ class _PricingCardState extends State<_PricingCard> {
     final isDark = widget.isDark;
     final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = widget.isRecommended
-        ? (isDark ? AppTheme.accentDark : AppTheme.accentLight)
+        ? (isDark ? Colors.white : const Color(0xFF18181B))
         : (isDark ? AppTheme.borderDark : AppTheme.borderLight);
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
@@ -697,6 +668,11 @@ class _PricingCardState extends State<_PricingCard> {
                 ),
                 const SizedBox(height: 8),
               ],
+              if (widget.extraWidget != null) ...[
+                const SizedBox(height: 12),
+                widget.extraWidget!,
+                const SizedBox(height: 4),
+              ],
               const SizedBox(height: 14),
               SizedBox(
                 width: double.infinity,
@@ -705,19 +681,24 @@ class _PricingCardState extends State<_PricingCard> {
                   onPressed: widget.isProcessing ? null : widget.onTap,
                   style: FilledButton.styleFrom(
                     backgroundColor: widget.isRecommended
-                        ? (isDark ? AppTheme.accentDark : AppTheme.accentLight)
-                        : (isDark ? AppTheme.lmDarkPillAction : AppTheme.lmLightPillAction),
+                        ? (isDark ? Colors.white : const Color(0xFF18181B))
+                        : (isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7)),
                     foregroundColor: widget.isRecommended
-                        ? (isDark ? AppTheme.canvasDark : Colors.white)
-                        : (isDark ? AppTheme.lmDarkCanvas : Colors.white),
+                        ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                        : (isDark ? Colors.white : const Color(0xFF18181B)),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                     elevation: 0,
                   ),
                   child: widget.isProcessing
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: widget.isRecommended
+                                ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                : (isDark ? Colors.white : const Color(0xFF18181B)),
+                          ),
                         )
                       : Text(
                           widget.buttonLabel ?? 'Pilih Paket Ini',

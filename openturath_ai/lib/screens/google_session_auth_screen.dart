@@ -166,38 +166,23 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           elevation: 0,
           scrolledUnderElevation: 0,
           titleSpacing: 16,
-          title: Row(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
-                isDark
-                    ? 'assets/images/arch_dark_transparent.png'
-                    : 'assets/images/arch_light_transparent.png',
-                width: 24,
-                height: 24,
-                fit: BoxFit.contain,
+              Text(
+                'Hubungkan Akun Google',
+                style: GoogleFonts.newsreader(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: textPrimary,
+                  letterSpacing: -0.2,
+                ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hubungkan Akun Google',
-                      style: GoogleFonts.newsreader(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: textPrimary,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    Text(
-                      'Autentikasi sesi riset OpenTurath',
-                      style: GoogleFonts.outfit(
-                        fontSize: 11,
-                        color: textSecondary,
-                      ),
-                    ),
-                  ],
+              Text(
+                'Autentikasi sesi riset naskah turats',
+                style: GoogleFonts.outfit(
+                  fontSize: 11.5,
+                  color: textSecondary,
                 ),
               ),
             ],

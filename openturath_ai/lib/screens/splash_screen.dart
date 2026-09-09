@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
-import '../core/theme.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -85,55 +85,40 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppTheme.lmDarkTextPrimary : AppTheme.lmLightTextPrimary;
-    final textSecondary = isDark ? AppTheme.lmDarkTextSecondary : AppTheme.lmLightTextSecondary;
-    final accent = isDark ? AppTheme.lmDarkAccent : AppTheme.lmLightAccent;
+    const bg = Color(0xFF0E0E10);
+    const textPrimary = Color(0xFFFAFAFA);
+    const accent = Color(0xFFA1A1AA);
 
-    return Scaffold(
-      backgroundColor: isDark ? AppTheme.lmDarkCanvas : AppTheme.lmLightCanvas,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: ScaleTransition(
-            scale: _scaleAnimation,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 110,
-                  height: 110,
-                  child: Image.asset(
-                    isDark
-                        ? 'assets/images/arch_dark_transparent.png'
-                        : 'assets/images/arch_light_transparent.png',
-                    fit: BoxFit.contain,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: bg,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: bg,
+        body: Center(
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'OpenTurath',
+                    style: GoogleFonts.newsreader(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.6,
+                      color: textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'OpenTurath',
-                  style: GoogleFonts.newsreader(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.5,
-                    color: textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'AI for Islamic Scholarship',
-                  style: GoogleFonts.newsreader(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.italic,
-                    letterSpacing: 0.1,
-                    color: textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 48),
-                _PulsingDots(color: accent),
-              ],
+                  const SizedBox(height: 36),
+                  const _PulsingDots(color: accent),
+                ],
+              ),
             ),
           ),
         ),

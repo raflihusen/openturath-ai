@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
 import '../models/bookmark_model.dart';
@@ -30,8 +29,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     'Fikih',
     'Hadis',
     'Tafsir',
+    'Aqidah',
     'Usul Fiqh',
     'Bahasa Arab',
+    'Sejarah & Sirah',
+    'Tasawuf & Akhlaq',
   ];
 
   @override
@@ -110,6 +112,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
     if (confirm != true) return;
 
+    HapticFeedback.mediumImpact();
     await _bookmarkService.deleteBookmark(item.id);
     await _loadBookmarks();
 
@@ -121,6 +124,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         label: 'Urungkan',
         textColor: const Color(0xFFFBBF24),
         onPressed: () async {
+          HapticFeedback.lightImpact();
           await _bookmarkService.addBookmark(item);
           await _loadBookmarks();
         },
@@ -129,8 +133,37 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   }
 
   void _copyIbarah(String ibarah) {
+    HapticFeedback.lightImpact();
     Clipboard.setData(ClipboardData(text: ibarah));
     AppSnackBar.success(context, 'Kutipan ibarah berhasil disalin ke clipboard.');
+  }
+
+  void _shareBookmark(BookmarkModel item) {
+    final buffer = StringBuffer();
+    buffer.writeln('📖 *${item.title}*');
+    buffer.writeln('Disiplin: ${item.fieldName} | ${item.agentTitle}');
+    if (item.bookReference.isNotEmpty) {
+      buffer.writeln('Marja\'/Rujukan: ${item.bookReference}${item.pageNumber.isNotEmpty ? " (Hlm. ${item.pageNumber})" : ""}');
+    }
+    buffer.writeln();
+    if (item.arabicExcerpt.isNotEmpty) {
+      buffer.writeln('نص العبارة:');
+      buffer.writeln('« ${item.arabicExcerpt} »');
+      buffer.writeln();
+    }
+    if (item.fullAnswer.isNotEmpty) {
+      buffer.writeln('Kajian & Penjelasan:');
+      buffer.writeln(item.fullAnswer);
+      buffer.writeln();
+    }
+    buffer.writeln('—');
+    buffer.writeln('Ditelusuri via *OpenTurath AI* (Kecerdasan Buatan Turats Islam)');
+
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+    AppSnackBar.success(
+      context,
+      'Format kutipan ilmiah berhasil disalin & siap dibagikan.',
+    );
   }
 
   void _showEvidence(BookmarkModel item) {
@@ -339,31 +372,32 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: 88,
-                                height: 88,
-                                padding: const EdgeInsets.all(16),
+                                width: 72,
+                                height: 72,
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: accent.withValues(alpha: isDark ? 0.12 : 0.08),
+                                  color: isDark ? const Color(0xFF18181B) : const Color(0xFFF4F4F5),
+                                  borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: accent.withValues(alpha: 0.2),
-                                    width: 1.2,
+                                    color: border,
+                                    width: 1.0,
                                   ),
                                 ),
-                                child: Lottie.asset(
-                                  isDark
-                                      ? 'assets/animations/thinking_ux_icon_looping_darkmode.json'
-                                      : 'assets/animations/thinking_ux_icon_looping.json',
-                                  fit: BoxFit.contain,
+                                child: Center(
+                                  child: Icon(
+                                    Icons.bookmark_border_rounded,
+                                    size: 32,
+                                    color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 18),
                               Text(
                                 'Belum Ada Rujukan Tersimpan',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16.5,
+                                  fontWeight: FontWeight.w600,
                                   color: textPrimary,
+                                  letterSpacing: -0.2,
                                 ),
                               ),
                               const SizedBox(height: 6),
@@ -375,7 +409,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   style: GoogleFonts.outfit(
                                     fontSize: 13,
                                     color: textSecondary,
-                                    height: 1.4,
+                                    height: 1.45,
                                   ),
                                 ),
                               ),
@@ -389,32 +423,18 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                           separatorBuilder: (_, __) => const SizedBox(height: 14),
                           itemBuilder: (context, index) {
                             final item = _filteredBookmarks[index];
-                            return TweenAnimationBuilder<double>(
-                              key: ValueKey(item.id),
-                              tween: Tween(begin: 0.0, end: 1.0),
-                              duration: Duration(milliseconds: 240 + (index * 40)),
-                              curve: Curves.easeOutCubic,
-                              builder: (context, value, child) {
-                                return Transform.translate(
-                                  offset: Offset(0, 18 * (1 - value)),
-                                  child: Opacity(
-                                    opacity: value.clamp(0.0, 1.0),
-                                    child: child,
-                                  ),
-                                );
-                              },
-                              child: _BookmarkCard(
-                                item: item,
-                                isDark: isDark,
-                                surface: surface,
-                                border: border,
-                                textPrimary: textPrimary,
-                                textSecondary: textSecondary,
-                                accent: accent,
-                                onCopy: () => _copyIbarah(item.arabicExcerpt),
-                                onOpen: () => _showEvidence(item),
-                                onDelete: () => _deleteBookmark(item),
-                              ),
+                            return _BookmarkCard(
+                              item: item,
+                              isDark: isDark,
+                              surface: surface,
+                              border: border,
+                              textPrimary: textPrimary,
+                              textSecondary: textSecondary,
+                              accent: accent,
+                              onCopy: () => _copyIbarah(item.arabicExcerpt),
+                              onOpen: () => _showEvidence(item),
+                              onShare: () => _shareBookmark(item),
+                              onDelete: () => _deleteBookmark(item),
                             );
                           },
                         ),
@@ -436,6 +456,7 @@ class _BookmarkCard extends StatelessWidget {
   final Color accent;
   final VoidCallback onCopy;
   final VoidCallback onOpen;
+  final VoidCallback onShare;
   final VoidCallback onDelete;
 
   const _BookmarkCard({
@@ -448,6 +469,7 @@ class _BookmarkCard extends StatelessWidget {
     required this.accent,
     required this.onCopy,
     required this.onOpen,
+    required this.onShare,
     required this.onDelete,
   });
 
@@ -613,6 +635,15 @@ class _BookmarkCard extends StatelessWidget {
                   textStyle: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
+              ),
+              const Spacer(),
+              IconButton(
+                onPressed: onShare,
+                icon: const Icon(Icons.share_outlined, size: 18),
+                tooltip: 'Bagikan Rujukan Ilmiah',
+                color: textSecondary,
+                padding: const EdgeInsets.all(8),
+                constraints: const BoxConstraints(),
               ),
             ],
           ),

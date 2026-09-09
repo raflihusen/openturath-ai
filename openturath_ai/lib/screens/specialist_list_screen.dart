@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/arabic_utils.dart';
 import '../core/theme.dart';
@@ -9,6 +10,7 @@ import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
+import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -93,6 +95,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   }
 
   Future<void> _openAgent(AgentModel agent) async {
+    HapticFeedback.mediumImpact();
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
@@ -275,6 +278,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
                     return GestureDetector(
                       onTap: () {
+                        HapticFeedback.selectionClick();
                         setState(() {
                           _selectedFieldId = isAll ? 'all' : field?.id;
                         });
@@ -350,31 +354,28 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                           separatorBuilder: (_, __) => const SizedBox(height: 10),
                           itemBuilder: (context, index) {
                             final agent = filteredAgents[index];
-                            return TweenAnimationBuilder<double>(
-                              key: ValueKey(agent.id),
-                              tween: Tween(begin: 0.0, end: 1.0),
-                              duration: Duration(milliseconds: 240 + (index * 35)),
-                              curve: Curves.easeOutCubic,
-                              builder: (context, value, child) {
-                                return Transform.translate(
-                                  offset: Offset(0, 16 * (1 - value)),
-                                  child: Opacity(
-                                    opacity: value.clamp(0.0, 1.0),
-                                    child: child,
-                                  ),
-                                );
-                              },
-                              child: _SlimSpecialistRow(
+                            if (agent.id == 'fiqh_tahawwulat') {
+                              return _SovereignTahawwulatCard(
                                 agent: agent,
                                 isDark: isDark,
                                 surface: surface,
                                 border: border,
                                 textPrimary: textPrimary,
                                 textSecondary: textSecondary,
-                                accent: accent,
                                 onTap: () => _openAgent(agent),
                                 onOrder: () => _openSubscriptionForAgent(agent),
-                              ),
+                              );
+                            }
+                            return _SlimSpecialistRow(
+                              agent: agent,
+                              isDark: isDark,
+                              surface: surface,
+                              border: border,
+                              textPrimary: textPrimary,
+                              textSecondary: textSecondary,
+                              accent: accent,
+                              onTap: () => _openAgent(agent),
+                              onOrder: () => _openSubscriptionForAgent(agent),
                             );
                           },
                         ),
@@ -492,6 +493,173 @@ class _SlimSpecialistRowState extends State<_SlimSpecialistRow> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SovereignTahawwulatCard extends StatelessWidget {
+  final AgentModel agent;
+  final bool isDark;
+  final Color surface;
+  final Color border;
+  final Color textPrimary;
+  final Color textSecondary;
+  final VoidCallback onTap;
+  final VoidCallback onOrder;
+
+  const _SovereignTahawwulatCard({
+    required this.agent,
+    required this.isDark,
+    required this.surface,
+    required this.border,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.onTap,
+    required this.onOrder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const gold = Color(0xFFD97706);
+
+    return AppleInteractiveWrapper(
+      onTap: onTap,
+      hapticType: HapticFeedbackType.medium,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 6),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF191611) : const Color(0xFFFFFDF5),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: gold.withValues(alpha: isDark ? 0.45 : 0.6),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: gold.withValues(alpha: isDark ? 0.08 : 0.05),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Badge Row: Crown Badge + Price
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: gold.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: gold.withValues(alpha: 0.4), width: 0.8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('👑', style: TextStyle(fontSize: 12)),
+                      const SizedBox(width: 5),
+                      Text(
+                        'SPESIALIS UTAMA • RUKUN KEEMPAT',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: gold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  'Rp 300.000 / bln',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: gold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // Title & Arabic Calligraphy
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        agent.title,
+                        style: GoogleFonts.newsreader(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w700,
+                          color: textPrimary,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        '1.500+ Muhadharah Suara & Kitab Lengkap Al-Habib Abu Bakar Al-Masyhur',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          color: textSecondary,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'فقه التحولات',
+                  textDirection: TextDirection.rtl,
+                  style: GoogleFonts.amiri(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: gold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // CTA Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: gold,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Buka Ruang Riset',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.white),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

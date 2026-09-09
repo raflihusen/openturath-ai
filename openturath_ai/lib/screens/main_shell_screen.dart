@@ -178,31 +178,23 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   index: _currentIndex,
                   children: screens,
                 ),
-                extendBody: true,
-                bottomNavigationBar: SafeArea(
-                  bottom: true,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                    child: Container(
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: border,
-                          width: 1.0,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
-                            blurRadius: 16,
-                            spreadRadius: 0,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+                extendBody: false,
+                bottomNavigationBar: Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    border: Border(
+                      top: BorderSide(
+                        color: border,
+                        width: 1.0,
                       ),
+                    ),
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: SizedBox(
+                      height: 58,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _ExpressiveNavItem(
                             icon: Icons.home_outlined,

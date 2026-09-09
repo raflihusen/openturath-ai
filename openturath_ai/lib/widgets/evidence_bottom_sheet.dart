@@ -50,6 +50,29 @@ class EvidenceBottomSheet extends StatelessWidget {
     AppSnackBar.success(context, 'Ibarah asli berhasil disalin ke clipboard.');
   }
 
+  void _shareEvidence(BuildContext context) {
+    final buffer = StringBuffer();
+    buffer.writeln('📖 *Rujukan Ilmiah: $bookName*');
+    buffer.writeln('Musannif/Pengarang: $author');
+    buffer.writeln('Disiplin: $category | Halaman: $pageNumber');
+    buffer.writeln();
+    if (arabicExcerpt.isNotEmpty) {
+      buffer.writeln('نص العبارة:');
+      buffer.writeln('« $arabicExcerpt »');
+      buffer.writeln();
+    }
+    if (explanation.isNotEmpty) {
+      buffer.writeln('Taqrir & Syarah:');
+      buffer.writeln(explanation);
+      buffer.writeln();
+    }
+    buffer.writeln('—');
+    buffer.writeln('Ditelusuri via *OpenTurath AI* (Kecerdasan Buatan Turats Islam)');
+
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+    AppSnackBar.success(context, 'Format kutipan ilmiah rujukan berhasil disalin.');
+  }
+
   Widget _stagger(int index, Widget child) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
@@ -351,6 +374,18 @@ class EvidenceBottomSheet extends StatelessWidget {
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton.filledTonal(
+                            onPressed: () => _shareEvidence(context),
+                            icon: const Icon(Icons.share_outlined, size: 18),
+                            tooltip: 'Bagikan Kutipan Rujukan',
+                            style: IconButton.styleFrom(
+                              padding: const EdgeInsets.all(13),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
                               ),
                             ),
                           ),

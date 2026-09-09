@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -375,6 +376,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               activeTrackColor: accent,
                               activeThumbColor: isDark ? AppTheme.canvasDark : Colors.white,
                               onChanged: (val) {
+                                HapticFeedback.selectionClick();
                                 AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
                               },
                             ),
@@ -382,10 +384,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                       Divider(height: 1, color: border),
-                      const _SettingsTile(
+                      _SettingsTile(
                         icon: Icons.translate_rounded,
                         title: 'Language',
                         subtitle: 'Bahasa Indonesia (Utama)',
+                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                        onTap: () => _showLanguageModal(
+                          context,
+                          isDark,
+                          textPrimary,
+                          textSecondary,
+                          surface,
+                          border,
+                        ),
                       ),
                     ],
                   ),
@@ -407,7 +418,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: 'Ketentuan Layanan',
                         subtitle: 'Syarat dan ketentuan riset OpenTurath',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () {},
+                        onTap: () => _showTermsOfService(
+                          context,
+                          isDark,
+                          textPrimary,
+                          textSecondary,
+                          surface,
+                          border,
+                        ),
                       ),
                       Divider(height: 1, color: border),
                       _SettingsTile(
@@ -415,82 +433,483 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: 'Kebijakan Privasi',
                         subtitle: 'Perlindungan kerahasiaan data riset',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () {},
+                        onTap: () => _showPrivacyPolicy(
+                          context,
+                          isDark,
+                          textPrimary,
+                          textSecondary,
+                          surface,
+                          border,
+                        ),
                       ),
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
                         title: 'About OpenTurath',
                         subtitle: 'Version $_appVersion · AI for Islamic Scholarship',
+                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                        onTap: () => _showAboutModal(
+                          context,
+                          isDark,
+                          textPrimary,
+                          textSecondary,
+                          surface,
+                          border,
+                        ),
                       ),
                     ],
                   ),
                 ),
 
-            const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
-            // ── Logout Button ──
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: OutlinedButton.icon(
-                onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
-                icon: _isLoggingOut
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.logout_rounded, color: Color(0xFFEF4444), size: 18),
-                label: Text(
-                  _isLoggingOut ? 'Sedang keluar...' : 'Keluar dari Akun',
-                  style: GoogleFonts.outfit(
-                    color: const Color(0xFFEF4444),
-                    fontWeight: FontWeight.w600,
+                // ── Section 4: Log Out Container (Claude Style) ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: ListTile(
+                    onTap: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+                    leading: _isLoggingOut
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFF87171)),
+                          )
+                        : const Icon(Icons.logout_rounded, size: 21, color: Color(0xFFF87171)),
+                    title: Text(
+                      _isLoggingOut ? 'Sedang keluar...' : 'Log out',
+                      style: GoogleFonts.outfit(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFFF87171),
+                      ),
+                    ),
                   ),
                 ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0x55EF4444)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                ),
-              ),
-            ),
 
-            const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
-            // ── Delete Account Button (Google Play Requirement) ──
-            SizedBox(
-              width: double.infinity,
-              height: 44,
-              child: TextButton.icon(
-                onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _deleteAccount,
-                icon: _isDeletingAccount
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFDC2626)),
-                      )
-                    : const Icon(Icons.delete_forever_rounded, color: Color(0xFF9CA3AF), size: 18),
-                label: Text(
-                  _isDeletingAccount ? 'Sedang menghapus akun...' : 'Hapus Akun & Data Riset',
-                  style: GoogleFonts.outfit(
-                    color: const Color(0xFF9CA3AF),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                // ── Delete Account Button (Google Play Requirement) ──
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: TextButton.icon(
+                    onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _deleteAccount,
+                    icon: _isDeletingAccount
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFDC2626)),
+                          )
+                        : const Icon(Icons.delete_forever_rounded, color: Color(0xFF9CA3AF), size: 18),
+                    label: Text(
+                      _isDeletingAccount ? 'Sedang menghapus akun...' : 'Hapus Akun & Data Riset',
+                      style: GoogleFonts.outfit(
+                        color: const Color(0xFF9CA3AF),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
                   ),
                 ),
-                style: TextButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                ),
-              ),
-            ),
-                ],
-              );
-            },
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showAboutModal(
+    BuildContext context,
+    bool isDark,
+    Color textPrimary,
+    Color textSecondary,
+    Color surface,
+    Color border,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: border, width: 1.0),
+        ),
+        title: Text(
+          'Tentang OpenTurath',
+          style: GoogleFonts.newsreader(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: textPrimary,
           ),
         ),
-      );
-    }
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Versi $_appVersion · AI for Islamic Scholarship',
+              style: GoogleFonts.outfit(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: textSecondary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'OpenTurath adalah asisten riset naskah primer keilmuan Islam yang menggabungkan ribuan halaman kitab kuning mu\'tabar dengan teknologi penelaahan cerdas.',
+              style: GoogleFonts.outfit(
+                fontSize: 13.5,
+                height: 1.5,
+                color: textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Prinsip Ilmiah: Berbasis sanad, penelusuran ibarah naskah asli, dan kehati-hatian dalam istinbath. Bukan pengganti proses talaqqi dengan masyayikh.',
+              style: GoogleFonts.outfit(
+                fontSize: 12.5,
+                height: 1.45,
+                color: textSecondary,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx),
+            style: FilledButton.styleFrom(
+              backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+            ),
+            child: Text(
+              'Tutup',
+              style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTermsOfService(
+    BuildContext context,
+    bool isDark,
+    Color textPrimary,
+    Color textSecondary,
+    Color surface,
+    Color border,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.8,
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(color: border, width: 1.0),
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 18),
+                decoration: BoxDecoration(
+                  color: textSecondary.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Ketentuan Layanan',
+                  style: GoogleFonts.newsreader(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: textPrimary,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLegalSection(
+                      title: '1. Ruang Lingkup & Tujuan Riset',
+                      content:
+                          'OpenTurath AI adalah platform penelaahan komputasi naskah primer keilmuan Islam (turats). Layanan ini dirancang khusus untuk mempermudah santri, akademisi, asatidz, dan peneliti dalam mencari ibarah, membandingkan matan dan syarah, serta melacak rujukan kitab muktamad.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const SizedBox(height: 14),
+                    _buildLegalSection(
+                      title: '2. Batasan Tanggung Jawab & Penafian Fatwa',
+                      content:
+                          'Hasil analisis, transkripsi, dan kutipan teks yang disajikan oleh sistem kecerdasan buatan bersifat sebagai referensi riset awal. OpenTurath BUKAN mufti dan tidak berwenang mengeluarkan fatwa syar\'i mandiri. Pengguna diwajibkan untuk mengonfirmasi hasil telaah dengan ulama dan guru yang bersanad (talaqqi) serta merujuk ke naskah fisik kitab primer.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const SizedBox(height: 14),
+                    _buildLegalSection(
+                      title: '3. Akun Pengguna & Hak Akses',
+                      content:
+                          'Pengguna bertanggung jawab menjaga keamanan kredensial akun Google yang digunakan. Setiap paket langganan (Akses Penuh maupun Modul Spesialis) bersifat personal dan tidak diperkenankan untuk diperjualbelikan kembali atau dieksploitasi melalui bot otomatis tanpa izin tertulis.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const SizedBox(height: 14),
+                    _buildLegalSection(
+                      title: '4. Ketentuan Pembayaran & Berlangganan',
+                      content:
+                          'Seluruh transaksi langganan diproses secara resmi melalui payment gateway terverifikasi (DOKU). Pengguna berhak mengakses ruang riset sesuai paket dan durasi yang dipilih.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: FilledButton(
+                onPressed: () => Navigator.pop(ctx),
+                style: FilledButton.styleFrom(
+                  backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                  foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                ),
+                child: Text('Saya Pahami & Setuju', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPrivacyPolicy(
+    BuildContext context,
+    bool isDark,
+    Color textPrimary,
+    Color textSecondary,
+    Color surface,
+    Color border,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.8,
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(color: border, width: 1.0),
+        ),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 18),
+                decoration: BoxDecoration(
+                  color: textSecondary.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Kebijakan Privasi',
+                  style: GoogleFonts.newsreader(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: textPrimary,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLegalSection(
+                      title: '1. Pengumpulan & Penggunaan Data',
+                      content:
+                          'OpenTurath hanya mengumpulkan data profil dasar (nama, alamat email, dan foto profil publik) yang diotorisasi saat Anda masuk menggunakan Akun Google. Data ini digunakan secara eksklusif untuk otentikasi sesi riset dan personalisasi akun.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const SizedBox(height: 14),
+                    _buildLegalSection(
+                      title: '2. Kerahasiaan Sesi & Catatan Riset',
+                      content:
+                          'Pertanyaan kajian, kutipan ibarah, dan riwayat bookmark naskah kitab yang Anda telusuri dienkripsi dengan standar keamanan industri. OpenTurath tidak membagikan, mempublikasikan, ataupun memperjualbelikan data riset Anda kepada pihak ketiga manapun.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const SizedBox(height: 14),
+                    _buildLegalSection(
+                      title: '3. Keamanan Sesi Google & NotebookLM',
+                      content:
+                          'Koneksi sesi telaah dengan Google NotebookLM berjalan di lingkungan aman melalui enkripsi SSL/TLS. Kredensial kata sandi Anda tidak pernah disimpan di server OpenTurath.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const SizedBox(height: 14),
+                    _buildLegalSection(
+                      title: '4. Hak Penghapusan Data Pengguna',
+                      content:
+                          'Anda memiliki hak mutlak untuk menghapus akun Anda beserta seluruh riwayat telaah dan bookmark kapan saja melalui menu Pengaturan > Hapus Akun & Data.',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: FilledButton(
+                onPressed: () => Navigator.pop(ctx),
+                style: FilledButton.styleFrom(
+                  backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                  foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                ),
+                child: Text('Tutup', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageModal(
+    BuildContext context,
+    bool isDark,
+    Color textPrimary,
+    Color textSecondary,
+    Color surface,
+    Color border,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: border, width: 1.0),
+        ),
+        title: Text(
+          'Bahasa Aplikasi',
+          style: GoogleFonts.newsreader(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: textPrimary,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Antarmuka aplikasi saat ini dioptimalkan untuk Bahasa Indonesia dengan dukungan penuh teks Arab gundul/berharakat pada naskah kitab kuning primer.',
+              style: GoogleFonts.outfit(fontSize: 13.5, height: 1.45, color: textPrimary),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Dukungan antarmuka penuh Bahasa Arab (العربية) dan Inggris (English) sedang dalam proses finalisasi kurasi kebahasaan.',
+              style: GoogleFonts.outfit(fontSize: 12.5, height: 1.4, color: textSecondary),
+            ),
+          ],
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx),
+            style: FilledButton.styleFrom(
+              backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+            ),
+            child: Text('Mengerti', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegalSection({
+    required String title,
+    required String content,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.outfit(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: textPrimary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          content,
+          style: GoogleFonts.outfit(
+            fontSize: 12.5,
+            height: 1.5,
+            color: textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _SettingsTile extends StatelessWidget {
@@ -513,19 +932,19 @@ class _SettingsTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     return ListTile(
-      onTap: onTap,
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap!();
+            }
+          : null,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-      leading: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF28292A) : const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, size: 20, color: accent),
+      leading: Icon(
+        icon,
+        size: 21,
+        color: isDark ? Colors.white : const Color(0xFF18181B),
       ),
       title: Text(
         title,
