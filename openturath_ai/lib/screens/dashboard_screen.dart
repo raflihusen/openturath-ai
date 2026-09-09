@@ -915,7 +915,7 @@ class _DashboardAnnouncementCarouselState
     return Column(
       children: [
         SizedBox(
-          height: 132,
+          height: 146,
           child: NotificationListener<ScrollNotification>(
             onNotification: (notification) {
               if (notification is ScrollStartNotification) {
