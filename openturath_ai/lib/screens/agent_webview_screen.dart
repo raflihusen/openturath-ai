@@ -237,65 +237,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         }
       }
 
-      // 2. Eradicate Google Disclaimer Secara Total
-      function eradicateDisclaimer() {
-        try {
-          // Direct element sweep
-          var allCandidates = document.querySelectorAll('mat-hint, .mat-hint, footer, [role="contentinfo"], .disclaimer, [class*="disclaimer" i], [class*="footnote" i], [class*="compliance" i], p, div, span, small');
-          for (var c = 0; c < allCandidates.length; c++) {
-            var el = allCandidates[c];
-            var txt = (el.innerText || el.textContent || '').trim().toLowerCase();
-            if (txt.length > 0 && txt.length < 250 && (
-                txt.includes('inaccurate') || 
-                txt.includes('double check') || 
-                txt.includes('gemini notebook can be') || 
-                txt.includes('notebooklm can make') || 
-                txt.includes('can make mistakes') ||
-                txt.includes('bisa saja tidak akurat') ||
-                txt.includes('dapat membuat kesalahan'))) {
-              
-              el.style.setProperty('display', 'none', 'important');
-              el.style.setProperty('visibility', 'hidden', 'important');
-              el.style.setProperty('height', '0px', 'important');
-              el.style.setProperty('min-height', '0px', 'important');
-              el.style.setProperty('max-height', '0px', 'important');
-              el.style.setProperty('padding', '0px', 'important');
-              el.style.setProperty('margin', '0px', 'important');
-              el.style.setProperty('font-size', '0px', 'important');
-              el.style.setProperty('line-height', '0px', 'important');
-              el.style.setProperty('overflow', 'hidden', 'important');
-              el.style.setProperty('opacity', '0', 'important');
-              el.style.setProperty('pointer-events', 'none', 'important');
-              
-              var p = el.parentElement;
-              if (p && p !== document.body && p.clientHeight < 70 && !p.querySelector('textarea, input, button')) {
-                p.style.setProperty('display', 'none', 'important');
-                p.style.setProperty('height', '0px', 'important');
-                p.style.setProperty('min-height', '0px', 'important');
-                p.style.setProperty('margin', '0px', 'important');
-                p.style.setProperty('padding', '0px', 'important');
-                p.style.setProperty('overflow', 'hidden', 'important');
-              }
-            }
-          }
-
-          // TreeWalker sweep for detached text nodes
-          var walker = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT, null, false);
-          var node;
-          while ((node = walker.nextNode())) {
-            var v = (node.nodeValue || '').toLowerCase();
-            if (v.includes('inaccurate') || v.includes('double check') || v.includes('gemini notebook can be')) {
-              var parent = node.parentElement;
-              if (parent) {
-                parent.style.setProperty('display', 'none', 'important');
-                parent.style.setProperty('height', '0px', 'important');
-                parent.style.setProperty('overflow', 'hidden', 'important');
-                parent.style.setProperty('visibility', 'hidden', 'important');
-              }
-            }
-          }
-        } catch(e) {}
-      }
+      // 2. Deference: Menghormati disclaimer akurasi bawaan secara transparan
+      function eradicateDisclaimer() {}
 
       // 2b. Sembunyikan Kartu Metadata/Landing NotebookLM (SUPER AI, 0 sources, dll)
       function sweepNotebookLandingCard() {
@@ -938,7 +881,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.error(context, 'Gagal menyalin telaah: $e');
+        AppSnackBar.error(context, 'Tidak dapat menyalin telaah saat ini. Silakan coba kembali.');
       }
     } finally {
       if (mounted) setState(() => _isCopying = false);
@@ -1026,7 +969,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.error(context, 'Gagal menyimpan bookmark: $e');
+        AppSnackBar.error(context, 'Tidak dapat menyimpan bookmark saat ini. Silakan coba kembali.');
       }
     } finally {
       if (mounted) setState(() => _isBookmarking = false);
@@ -1126,8 +1069,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 ),
               ),
             IconButton(
-              visualDensity: VisualDensity.compact,
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
               icon: Icon(
                 _hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded,
                 color: _hasCopied ? const Color(0xFF10B981) : textPrimary,
@@ -1137,8 +1079,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               onPressed: _isCopying ? null : _copyLatestResponse,
             ),
             IconButton(
-              visualDensity: VisualDensity.compact,
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
               icon: Icon(
                 _hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                 color: _hasBookmarked ? const Color(0xFFD97706) : textPrimary,
@@ -1148,8 +1089,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               onPressed: _isBookmarking ? null : _bookmarkLatestResponse,
             ),
             IconButton(
-              visualDensity: VisualDensity.compact,
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
               icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
               tooltip: 'Ukuran Huruf',
               onPressed: _showFontScalePicker,
@@ -1338,7 +1278,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   if (mounted && (request.isForMainFrame == true)) {
                     setState(() {
                       _isWebViewLoading = false;
-                      _errorMessage = 'Gagal memuat laman riset (${error.description})';
+                      _errorMessage = 'Tidak dapat memuat sesi riset. Periksa koneksi internet Anda lalu coba kembali.';
                     });
                   }
                 },
