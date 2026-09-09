@@ -119,8 +119,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.grid_view_outlined,
-                            activeIcon: Icons.grid_view_rounded,
+                            icon: Icons.auto_awesome_outlined,
+                            activeIcon: Icons.auto_awesome_rounded,
                             label: 'Spesialis',
                             isSelected: _currentIndex == 1,
                             accent: accent,
@@ -192,45 +192,52 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   child: SafeArea(
                     top: false,
                     child: SizedBox(
-                      height: 58,
+                      height: 60,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _ExpressiveNavItem(
-                            icon: Icons.home_outlined,
-                            activeIcon: Icons.home_rounded,
-                            label: 'Beranda',
-                            isSelected: _currentIndex == 0,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(0),
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.home_outlined,
+                              activeIcon: Icons.home_rounded,
+                              label: 'Beranda',
+                              isSelected: _currentIndex == 0,
+                              accent: accent,
+                              unselected: unselected,
+                              onTap: () => _onTabSelected(0),
+                            ),
                           ),
-                          _ExpressiveNavItem(
-                            icon: Icons.auto_awesome_outlined,
-                            activeIcon: Icons.auto_awesome_rounded,
-                            label: 'Spesialis',
-                            isSelected: _currentIndex == 1,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(1),
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.auto_awesome_outlined,
+                              activeIcon: Icons.auto_awesome_rounded,
+                              label: 'Spesialis',
+                              isSelected: _currentIndex == 1,
+                              accent: accent,
+                              unselected: unselected,
+                              onTap: () => _onTabSelected(1),
+                            ),
                           ),
-                          _ExpressiveNavItem(
-                            icon: Icons.bookmark_border_rounded,
-                            activeIcon: Icons.bookmark_rounded,
-                            label: 'Bookmark',
-                            isSelected: _currentIndex == 2,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(2),
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.bookmark_border_rounded,
+                              activeIcon: Icons.bookmark_rounded,
+                              label: 'Bookmark',
+                              isSelected: _currentIndex == 2,
+                              accent: accent,
+                              unselected: unselected,
+                              onTap: () => _onTabSelected(2),
+                            ),
                           ),
-                          _ExpressiveNavItem(
-                            icon: Icons.person_outline_rounded,
-                            activeIcon: Icons.person_rounded,
-                            label: 'Profil',
-                            isSelected: _currentIndex == 3,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(3),
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.person_outline_rounded,
+                              activeIcon: Icons.person_rounded,
+                              label: 'Profil',
+                              isSelected: _currentIndex == 3,
+                              accent: accent,
+                              unselected: unselected,
+                              onTap: () => _onTabSelected(3),
+                            ),
                           ),
                         ],
                       ),
@@ -265,59 +272,38 @@ class _ExpressiveNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeBg = isDark ? Colors.white : const Color(0xFF18181B);
-    final activeFg = isDark ? const Color(0xFF18181B) : Colors.white;
+    final activeColor = isDark ? Colors.white : const Color(0xFF18181B);
 
     return InkWell(
       onTap: () {
         HapticFeedback.selectionClick();
         onTap();
       },
-      borderRadius: BorderRadius.circular(100),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 260),
-        curve: Curves.easeOutCubic,
-        padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 16 : 12,
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ? activeBg : Colors.transparent,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Row(
+      borderRadius: BorderRadius.circular(12),
+      child: Center(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedScale(
-              scale: isSelected ? 1.05 : 0.94,
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOutBack,
+              scale: isSelected ? 1.08 : 1.0,
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOutCubic,
               child: Icon(
                 isSelected ? activeIcon : icon,
-                color: isSelected ? activeFg : unselected,
-                size: 20,
+                color: isSelected ? activeColor : unselected,
+                size: 21,
               ),
             ),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 240),
-              curve: Curves.easeOutCubic,
-              child: isSelected
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(width: 8),
-                        Text(
-                          label,
-                          style: GoogleFonts.outfit(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.2,
-                            color: activeFg,
-                          ),
-                        ),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: GoogleFonts.outfit(
+                fontSize: 10.5,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                letterSpacing: -0.1,
+                color: isSelected ? activeColor : unselected,
+              ),
             ),
           ],
         ),
