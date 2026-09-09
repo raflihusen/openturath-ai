@@ -694,96 +694,197 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       try {
         await _webController!.evaluateJavascript(source: """
           (function() {
+            var lightStyle = document.getElementById('turath-light-mode-override');
+            if (lightStyle && lightStyle.parentNode) {
+              lightStyle.parentNode.removeChild(lightStyle);
+            }
             var darkStyle = document.getElementById('turath-dark-mode-override');
             if (!darkStyle) {
               darkStyle = document.createElement('style');
               darkStyle.id = 'turath-dark-mode-override';
-              darkStyle.textContent = `
-                :root, html, body, .app-root, app-root, main, .chat-panel-content, .chat-view, .conversation-container, mat-sidenav-container, mat-sidenav-content {
-                  background-color: #0E0E10 !important;
-                  background: #0E0E10 !important;
-                  color: #FAFAFA !important;
-                  --mdc-elevated-card-container-color: transparent !important;
-                  --mdc-plain-card-container-color: transparent !important;
-                  --mat-card-background-color: transparent !important;
-                  --mdc-theme-surface: #0E0E10 !important;
-                  --mdc-theme-background: #0E0E10 !important;
-                }
-                .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
-                div[class*="title-card" i], div[class*="notebook-header" i],
-                div[class*="source-summary" i], div[class*="source-count" i],
-                div[class*="notebook-info" i], .project-header, div.source-badge-container,
-                div[class*="notebook-title" i], [class*="artifact-card" i],
-                .mobile-header, div[class*="mobile-header" i] {
-                  display: none !important;
-                  height: 0px !important;
-                  overflow: hidden !important;
-                  visibility: hidden !important;
-                }
-                /* Hilangkan bingkai dan background kotak abu-abu pada pesan agar teks mengalir mulus ala Claude */
-                mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i]:not(.query-box):not([class*="query" i]) {
-                  background-color: transparent !important;
-                  background: transparent !important;
-                  color: #FAFAFA !important;
-                  border: none !important;
-                  box-shadow: none !important;
-                }
-                .chat-message, .message, [role="article"], .bubble, .model-turn, .assistant-turn, div[class*="message" i] {
-                  background-color: transparent !important;
-                  background: transparent !important;
-                  color: #FAFAFA !important;
-                  border: none !important;
-                  box-shadow: none !important;
-                }
-                /* Bubble pesan pengguna dengan aksen halus */
-                .user-turn, div[class*="user-turn" i] {
-                  background-color: #18181B !important;
-                  background: #18181B !important;
-                  border: 1px solid #27272A !important;
-                  border-radius: 18px !important;
-                  padding: 10px 16px !important;
-                }
-                /* Container input luar: transparan tanpa garis kotak ganda */
-                .chat-input-container, div[class*="chat-input-container" i], div[class*="chat-input" i] {
-                  background-color: transparent !important;
-                  background: transparent !important;
-                  border: none !important;
-                  box-shadow: none !important;
-                  padding: 6px 12px 14px 12px !important;
-                }
-                /* Kotak input tunggal yang bersih (Single capsule pill) */
-                .query-box, div[class*="query-box" i] {
-                  background-color: #18181B !important;
-                  background: #18181B !important;
-                  border: 1px solid #27272A !important;
-                  border-radius: 28px !important;
-                  box-shadow: none !important;
-                  color: #FAFAFA !important;
-                }
-                /* Hilangkan border bersarang dari Material wrapper internal */
-                .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper, .mat-mdc-form-field-infix {
-                  background: transparent !important;
-                  border: none !important;
-                  box-shadow: none !important;
-                  padding: 0 !important;
-                }
-                .cdk-text-field-autofill-monitored, textarea, input, .query-box-input {
-                  background-color: transparent !important;
-                  background: transparent !important;
-                  color: #FAFAFA !important;
-                  border: none !important;
-                }
-                textarea::placeholder, input::placeholder, .query-box-input::placeholder {
-                  color: #71717A !important;
-                }
-                /* Padding atas yang cukup agar pesan teratas tidak terpotong */
-                .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
-                  padding-top: 18px !important;
-                  margin-top: 0px !important;
-                }
-              `;
               (document.head || document.documentElement).appendChild(darkStyle);
             }
+            darkStyle.textContent = `
+              :root, html, body, .app-root, app-root, main, .chat-panel-content, .chat-view, .conversation-container, mat-sidenav-container, mat-sidenav-content {
+                background-color: #0E0E10 !important;
+                background: #0E0E10 !important;
+                color: #FAFAFA !important;
+                --mdc-elevated-card-container-color: transparent !important;
+                --mdc-plain-card-container-color: transparent !important;
+                --mat-card-background-color: transparent !important;
+                --mdc-theme-surface: #0E0E10 !important;
+                --mdc-theme-background: #0E0E10 !important;
+              }
+              .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+              div[class*="title-card" i], div[class*="notebook-header" i],
+              div[class*="source-summary" i], div[class*="source-count" i],
+              div[class*="notebook-info" i], .project-header, div.source-badge-container,
+              div[class*="notebook-title" i], [class*="artifact-card" i],
+              .mobile-header, div[class*="mobile-header" i] {
+                display: none !important;
+                height: 0px !important;
+                overflow: hidden !important;
+                visibility: hidden !important;
+              }
+              /* Hilangkan bingkai dan background kotak abu-abu pada pesan agar teks mengalir mulus ala Claude */
+              mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i]:not(.query-box):not([class*="query" i]) {
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #FAFAFA !important;
+                border: none !important;
+                box-shadow: none !important;
+              }
+              .chat-message, .message, [role="article"], .bubble, .model-turn, .assistant-turn, div[class*="message" i] {
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #FAFAFA !important;
+                border: none !important;
+                box-shadow: none !important;
+              }
+              /* Bubble pesan pengguna dengan aksen halus */
+              .user-turn, div[class*="user-turn" i] {
+                background-color: #18181B !important;
+                background: #18181B !important;
+                border: 1px solid #27272A !important;
+                border-radius: 18px !important;
+                padding: 10px 16px !important;
+                color: #FAFAFA !important;
+              }
+              /* Container input luar: transparan tanpa garis kotak ganda */
+              .chat-input-container, div[class*="chat-input-container" i], div[class*="chat-input" i] {
+                background-color: transparent !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 6px 12px 14px 12px !important;
+              }
+              /* Kotak input tunggal yang bersih (Single capsule pill) */
+              .query-box, div[class*="query-box" i] {
+                background-color: #18181B !important;
+                background: #18181B !important;
+                border: 1px solid #27272A !important;
+                border-radius: 28px !important;
+                box-shadow: none !important;
+                color: #FAFAFA !important;
+              }
+              /* Hilangkan border bersarang dari Material wrapper internal */
+              .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper, .mat-mdc-form-field-infix {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+              }
+              .cdk-text-field-autofill-monitored, textarea, input, .query-box-input {
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #FAFAFA !important;
+                border: none !important;
+              }
+              textarea::placeholder, input::placeholder, .query-box-input::placeholder {
+                color: #71717A !important;
+              }
+              /* Padding atas yang cukup agar pesan teratas tidak terpotong */
+              .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
+                padding-top: 18px !important;
+                margin-top: 0px !important;
+              }
+            `;
+          })();
+        """);
+      } catch (_) {}
+    } else {
+      try {
+        await _webController!.evaluateJavascript(source: """
+          (function() {
+            var darkStyle = document.getElementById('turath-dark-mode-override');
+            if (darkStyle && darkStyle.parentNode) {
+              darkStyle.parentNode.removeChild(darkStyle);
+            }
+            var lightStyle = document.getElementById('turath-light-mode-override');
+            if (!lightStyle) {
+              lightStyle = document.createElement('style');
+              lightStyle.id = 'turath-light-mode-override';
+              (document.head || document.documentElement).appendChild(lightStyle);
+            }
+            lightStyle.textContent = `
+              :root, html, body, .app-root, app-root, main, .chat-panel-content, .chat-view, .conversation-container, mat-sidenav-container, mat-sidenav-content {
+                background-color: #FFFFFF !important;
+                background: #FFFFFF !important;
+                color: #18181B !important;
+                --mdc-elevated-card-container-color: transparent !important;
+                --mdc-plain-card-container-color: transparent !important;
+                --mat-card-background-color: transparent !important;
+                --mdc-theme-surface: #FFFFFF !important;
+                --mdc-theme-background: #FFFFFF !important;
+              }
+              .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+              div[class*="title-card" i], div[class*="notebook-header" i],
+              div[class*="source-summary" i], div[class*="source-count" i],
+              div[class*="notebook-info" i], .project-header, div.source-badge-container,
+              div[class*="notebook-title" i], [class*="artifact-card" i],
+              .mobile-header, div[class*="mobile-header" i] {
+                display: none !important;
+                height: 0px !important;
+                overflow: hidden !important;
+                visibility: hidden !important;
+              }
+              mat-card, .mat-mdc-card, .mdc-card, div[class*="card" i]:not(.query-box):not([class*="query" i]) {
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #18181B !important;
+                border: none !important;
+                box-shadow: none !important;
+              }
+              .chat-message, .message, [role="article"], .bubble, .model-turn, .assistant-turn, div[class*="message" i] {
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #18181B !important;
+                border: none !important;
+                box-shadow: none !important;
+              }
+              .user-turn, div[class*="user-turn" i] {
+                background-color: #F4F4F5 !important;
+                background: #F4F4F5 !important;
+                border: 1px solid #E5E7EB !important;
+                border-radius: 18px !important;
+                padding: 10px 16px !important;
+                color: #18181B !important;
+              }
+              .chat-input-container, div[class*="chat-input-container" i], div[class*="chat-input" i] {
+                background-color: transparent !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 6px 12px 14px 12px !important;
+              }
+              .query-box, div[class*="query-box" i] {
+                background-color: #FFFFFF !important;
+                background: #FFFFFF !important;
+                border: 1px solid #E5E7EB !important;
+                border-radius: 28px !important;
+                box-shadow: none !important;
+                color: #18181B !important;
+              }
+              .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper, .mat-mdc-form-field-infix {
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+              }
+              .cdk-text-field-autofill-monitored, textarea, input, .query-box-input {
+                background-color: transparent !important;
+                background: transparent !important;
+                color: #18181B !important;
+                border: none !important;
+              }
+              textarea::placeholder, input::placeholder, .query-box-input::placeholder {
+                color: #71717A !important;
+              }
+              .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
+                padding-top: 18px !important;
+                margin-top: 0px !important;
+              }
+            `;
           })();
         """);
       } catch (_) {}
