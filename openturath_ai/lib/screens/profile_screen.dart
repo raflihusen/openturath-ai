@@ -179,7 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         scrolledUnderElevation: 0,
         centerTitle: true,
         title: Text(
-          'Settings',
+          'Profil Pengguna',
           style: GoogleFonts.newsreader(
             fontSize: 21,
             fontWeight: FontWeight.w600,
@@ -256,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Text(
-                          isSubscribed ? 'Pro' : 'Free',
+                          isSubscribed ? 'Pro' : 'Trial',
                           style: GoogleFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -282,7 +282,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Want more OpenTurath?',
+                          'Tingkatkan Riset dengan OpenTurath Pro',
                           style: GoogleFonts.outfit(
                             fontSize: 15.5,
                             fontWeight: FontWeight.w700,
@@ -291,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Upgrade for unlimited access and full research capabilities.',
+                          'Buka akses seluruh korpus naskah primer kitab tanpa batas telaah dan tanpa kuota harian.',
                           style: GoogleFonts.outfit(
                             fontSize: 13,
                             color: textSecondary,
@@ -311,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 20),
                             ),
                             child: Text(
-                              'Upgrade',
+                              'Langganan Pro',
                               style: GoogleFonts.outfit(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w600,
@@ -337,13 +337,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       _SettingsTile(
                         icon: Icons.person_outline_rounded,
-                        title: 'Profile',
+                        title: 'Profil Pengguna',
                         subtitle: displayName,
                       ),
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.credit_card_outlined,
-                        title: 'Billing & Plan',
+                        title: 'Paket & Langganan',
                         subtitle: subscriptionSubtitle,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: _openSubscription,
@@ -369,8 +369,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           final isCurrentDark = currentMode == ThemeMode.dark;
                           return _SettingsTile(
                             icon: Icons.dark_mode_outlined,
-                            title: 'Color mode',
-                            subtitle: isCurrentDark ? 'Dark' : 'Light',
+                            title: 'Tema Tampilan',
+                            subtitle: isCurrentDark ? 'Mode Gelap' : 'Mode Terang',
                             trailing: Switch.adaptive(
                               value: isCurrentDark,
                               activeTrackColor: accent,
@@ -386,7 +386,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.translate_rounded,
-                        title: 'Language',
+                        title: 'Bahasa Aplikasi',
                         subtitle: 'Bahasa Indonesia (Utama)',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showLanguageModal(
@@ -445,8 +445,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
-                        title: 'About OpenTurath',
-                        subtitle: 'Version $_appVersion · AI for Islamic Scholarship',
+                        title: 'Tentang OpenTurath',
+                        subtitle: 'Versi $_appVersion · AI for Islamic Scholarship',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showAboutModal(
                           context,
