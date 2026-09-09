@@ -12,6 +12,7 @@ class AppleInteractiveWrapper extends StatefulWidget {
   final bool enableHaptic;
   final HapticFeedbackType hapticType;
   final BorderRadius? borderRadius;
+  final String? semanticLabel;
 
   const AppleInteractiveWrapper({
     super.key,
@@ -23,6 +24,7 @@ class AppleInteractiveWrapper extends StatefulWidget {
     this.enableHaptic = true,
     this.hapticType = HapticFeedbackType.light,
     this.borderRadius,
+    this.semanticLabel,
   });
 
   @override
@@ -105,35 +107,43 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
   @override
   Widget build(BuildContext context) {
     final hasAction = widget.onTap != null || widget.onLongPress != null;
+    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
-    Widget result = AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
-      },
-      child: widget.child,
-    );
+    Widget result = reduceMotion
+        ? widget.child
+        : AnimatedBuilder(
+            animation: _scaleAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _scaleAnimation.value,
+                child: child,
+              );
+            },
+            child: widget.child,
+          );
 
     if (hasAction) {
-      result = GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: _handleTapDown,
-        onTapUp: _handleTapUp,
-        onTapCancel: _handleTapCancel,
-        onTap: () {
-          _triggerHaptic();
-          widget.onTap?.call();
-        },
-        onLongPress: widget.onLongPress != null
-            ? () {
-                HapticFeedback.mediumImpact();
-                widget.onLongPress?.call();
-              }
-            : null,
-        child: result,
+      result = Semantics(
+        button: true,
+        enabled: true,
+        label: widget.semanticLabel,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: reduceMotion ? null : _handleTapDown,
+          onTapUp: reduceMotion ? null : _handleTapUp,
+          onTapCancel: reduceMotion ? null : _handleTapCancel,
+          onTap: () {
+            _triggerHaptic();
+            widget.onTap?.call();
+          },
+          onLongPress: widget.onLongPress != null
+              ? () {
+                  HapticFeedback.mediumImpact();
+                  widget.onLongPress?.call();
+                }
+              : null,
+          child: result,
+        ),
       );
     }
 
