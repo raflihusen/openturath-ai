@@ -164,12 +164,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
+    final canvas = isDark ? AppTheme.groupedCanvasDark : AppTheme.groupedCanvasLight;
     final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     return Scaffold(
       backgroundColor: canvas,
@@ -177,13 +176,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: canvas,
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: true,
-        title: Text(
-          'Profil Pengguna',
-          style: GoogleFonts.newsreader(
-            fontSize: 21,
-            fontWeight: FontWeight.w600,
-            color: textPrimary,
+        centerTitle: false,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            'Pengaturan & Akun',
+            style: GoogleFonts.newsreader(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+              letterSpacing: -0.3,
+            ),
           ),
         ),
       ),
@@ -223,124 +226,147 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 108),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 108),
               physics: const BouncingScrollPhysics(),
               children: [
-                // ── Card 1: User Identity (Claude Style) ──
+                // ── Apple ID Unified Profile Card ──
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          email.isNotEmpty ? email : displayName,
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.1,
-                            color: textPrimary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 3.5),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white : const Color(0xFF18181B),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Text(
-                          isSubscribed ? 'Pro' : 'Trial',
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? const Color(0xFF18181B) : Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // ── Card 2: Upgrade Card (Claude Style, if not Pro) ──
-                if (!isSubscribed) ...[
-                  const SizedBox(height: 14),
-                  Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: border, width: 1.0),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Tingkatkan Riset dengan OpenTurath Pro',
-                          style: GoogleFonts.outfit(
-                            fontSize: 15.5,
-                            fontWeight: FontWeight.w700,
-                            color: textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Buka akses seluruh korpus naskah primer kitab tanpa batas telaah dan tanpa kuota harian.',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            color: textSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        SizedBox(
-                          height: 38,
-                          child: FilledButton(
-                            onPressed: _openSubscription,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
-                              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                            ),
-                            child: Text(
-                              'Langganan Pro',
-                              style: GoogleFonts.outfit(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-
-                const SizedBox(height: 20),
-
-                // ── Section 1: Account & Billing (Claude Grouped Style) ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
                     children: [
-                      _SettingsTile(
-                        icon: Icons.person_outline_rounded,
-                        title: 'Profil Pengguna',
-                        subtitle: displayName,
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 26,
+                            backgroundColor: isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7),
+                            backgroundImage: userModel?.photoUrl.isNotEmpty == true
+                                ? NetworkImage(userModel!.photoUrl)
+                                : null,
+                            child: userModel?.photoUrl.isEmpty != false
+                                ? Text(
+                                    displayName.isNotEmpty ? displayName[0].toUpperCase() : 'P',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      color: textPrimary,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  displayName,
+                                  style: GoogleFonts.newsreader(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: textPrimary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  email,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12.5,
+                                    color: textSecondary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.white : const Color(0xFF18181B),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Text(
+                              isSubscribed ? 'PRO' : 'TRIAL',
+                              style: GoogleFonts.outfit(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Divider(height: 1, color: border),
+                      if (!isSubscribed) ...[
+                        const SizedBox(height: 14),
+                        Divider(height: 1, color: border),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Tingkatkan ke OpenTurath Pro',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Akses korpus kitab tanpa batas kuota.',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 11.5,
+                                      color: textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            FilledButton(
+                              onPressed: _openSubscription,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                                foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                              ),
+                              child: Text(
+                                'Upgrade',
+                                style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Section 1: Account & Billing (Apple Grouped Style) ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: Column(
+                    children: [
                       _SettingsTile(
                         icon: Icons.credit_card_outlined,
                         title: 'Paket & Langganan',
@@ -358,7 +384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -373,8 +399,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             subtitle: isCurrentDark ? 'Mode Gelap' : 'Mode Terang',
                             trailing: Switch.adaptive(
                               value: isCurrentDark,
-                              activeTrackColor: accent,
-                              activeThumbColor: isDark ? AppTheme.canvasDark : Colors.white,
+                              activeTrackColor: AppTheme.appleGreen,
+                              activeThumbColor: Colors.white,
                               onChanged: (val) {
                                 HapticFeedback.selectionClick();
                                 AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
@@ -383,7 +409,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
                         },
                       ),
-                      Divider(height: 1, color: border),
+                      Divider(height: 1, color: border, indent: AppTheme.dividerIndent, endIndent: 16),
                       _SettingsTile(
                         icon: Icons.translate_rounded,
                         title: 'Bahasa Aplikasi',
@@ -408,7 +434,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -427,7 +453,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border,
                         ),
                       ),
-                      Divider(height: 1, color: border),
+                      Divider(height: 1, color: border, indent: AppTheme.dividerIndent, endIndent: 16),
                       _SettingsTile(
                         icon: Icons.privacy_tip_outlined,
                         title: 'Kebijakan Privasi',
@@ -442,7 +468,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border,
                         ),
                       ),
-                      Divider(height: 1, color: border),
+                      Divider(height: 1, color: border, indent: AppTheme.dividerIndent, endIndent: 16),
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
                         title: 'Tentang OpenTurath',
@@ -463,11 +489,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 20),
 
-                // ── Section 4: Log Out Container (Claude Style) ──
+                // ── Section 4: Log Out Container ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: ListTile(
@@ -477,15 +503,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFF87171)),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.appleRed),
                           )
-                        : const Icon(Icons.logout_rounded, size: 21, color: Color(0xFFF87171)),
+                        : const Icon(Icons.logout_rounded, size: 21, color: AppTheme.appleRed),
                     title: Text(
-                      _isLoggingOut ? 'Sedang keluar...' : 'Log out',
+                      _isLoggingOut ? 'Sedang keluar...' : 'Keluar dari Akun',
                       style: GoogleFonts.outfit(
                         fontSize: 14.5,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFFF87171),
+                        color: AppTheme.appleRed,
                       ),
                     ),
                   ),
