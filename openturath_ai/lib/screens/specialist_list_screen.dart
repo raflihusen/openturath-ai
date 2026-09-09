@@ -137,7 +137,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
+    final canvas = isDark ? AppTheme.groupedCanvasDark : AppTheme.groupedCanvasLight;
     final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
@@ -485,8 +485,8 @@ class _SlimSpecialistRowState extends State<_SlimSpecialistRow> {
                     )
                   else
                     Icon(
-                      Icons.arrow_outward_rounded,
-                      size: 18,
+                      Icons.chevron_right_rounded,
+                      size: 20,
                       color: widget.textSecondary,
                     ),
                 ],
@@ -542,6 +542,7 @@ class _SovereignTahawwulatCard extends StatelessWidget {
             // Top Badge Row: Minimalist Icon + Discipline Tag
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -589,6 +590,7 @@ class _SovereignTahawwulatCard extends StatelessWidget {
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                    height: 1.2,
                   ),
                 ),
               ],
