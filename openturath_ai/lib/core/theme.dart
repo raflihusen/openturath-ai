@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTheme {
   // ── 1. Light Mode Tokens (Claude Minimalist Aesthetic) ───────────────────
   static const Color canvasLight          = Color(0xFFFFFFFF); // Putih Pekat Murni
+  static const Color groupedCanvasLight   = Color(0xFFF6F6F8); // Apple System Grouped Gray Canvas
   static const Color surfaceCardLight     = Color(0xFFFFFFFF); // Pure White Floating Card
   static const Color surfaceHeaderLight   = Color(0xFFFFFFFF); // Header Bar Canvas
   static const Color borderLight          = Color(0xFFE5E7EB); // 1px Subtle Outline (Abu-abu Tipis)
@@ -21,8 +22,18 @@ class AppTheme {
   static const Color queryBoxBgLight      = Color(0xFFFFFFFF); // Stadium Chat Input
   static const Color queryBoxBorderLight  = Color(0xFFE5E7EB);
 
+  // ── 1b. Apple HIG Specific Tokens ─────────────────────────────────────────
+  static const Color appleGreen          = Color(0xFF34C759); // Apple System Green Toggle
+  static const Color appleRed            = Color(0xFFFF3B30); // Apple System Destructive Red
+  static const Color navBarDark          = Color(0xCC0E0E10); // Translucent 80% Dark Canvas
+  static const Color navBarLight         = Color(0xD9FFFFFF); // Translucent 85% Light Canvas
+  static const Color navBarBorderDark    = Color(0x26FFFFFF); // 15% Hairline White
+  static const Color navBarBorderLight   = Color(0x1F000000); // 12% Hairline Black
+  static const double dividerIndent      = 54.0;              // iOS Inset Divider
+
   // ── 2. Dark Mode Tokens (Claude Pure Deep Black) ─────────────────────────
   static const Color canvasDark           = Color(0xFF0E0E10); // Hitam Pekat Murni
+  static const Color groupedCanvasDark    = Color(0xFF0E0E10); // Hitam Pekat Murni Grouped
   static const Color surfaceCardDark      = Color(0xFF18181B); // Elevated Surface Card
   static const Color surfaceHeaderDark    = Color(0xFF0E0E10); // Header Bar Canvas
   static const Color borderDark           = Color(0xFF27272A); // Subtle 1px Dark Outline (Abu-abu Tipis)
