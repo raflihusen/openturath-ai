@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,7 +18,6 @@ import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
-import 'specialist_list_screen.dart';
 
 /// Beranda OpenTurath AI (Figma Screen 6)
 /// Menampilkan salam, kutipan ibadah thalabul ilmi, 6 grid rumpun bidang ilmu,
@@ -112,6 +112,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  String? _selectedFieldId;
+
   List<AgentModel> _getRecentAgents() {
     final List<AgentModel> recents = [];
 
@@ -125,7 +127,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     // Default core active agents
     for (final a in _agents) {
-      if (recents.length >= 3) break;
+      if (recents.length >= 4) break;
       if (!recents.any((r) => r.id == a.id) && a.isActive) {
         recents.add(a);
       }
@@ -133,16 +135,66 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (recents.isEmpty && _agents.isNotEmpty) {
       final activeAgents = _agents.where((a) => a.isActive).toList();
-      recents.addAll(activeAgents.take(2));
+      recents.addAll(activeAgents.take(3));
     }
 
     return recents;
   }
 
+  List<AgentModel> _getDisplayAgents() {
+    if (_selectedFieldId != null) {
+      final fieldAgents = _agents.where((a) => a.fieldId == _selectedFieldId).toList();
+      if (fieldAgents.isNotEmpty) return fieldAgents;
+      return AgentModel.defaultAgents.where((a) => a.fieldId == _selectedFieldId).toList();
+    }
+    return _getRecentAgents();
+  }
+
+  Widget _buildDisciplinePill({
+    required String label,
+    required bool isSelected,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    final activeBg = isDark ? Colors.white : const Color(0xFF18181B);
+    final activeFg = isDark ? const Color(0xFF18181B) : Colors.white;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(100),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: isSelected ? activeBg : surface,
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(
+            color: isSelected ? activeBg : border,
+            width: 0.8,
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            letterSpacing: -0.1,
+            color: isSelected ? activeFg : textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
+    final canvas = isDark ? AppTheme.groupedCanvasDark : AppTheme.groupedCanvasLight;
     final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
@@ -165,9 +217,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               plan: AppConstants.planTrial,
               questionsUsed: 0,
             );
-
-        final recentAgents = _getRecentAgents();
-        final displayFields = FieldModel.defaultFields.take(6).toList();
 
         return Scaffold(
           backgroundColor: canvas,
@@ -275,16 +324,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
 
+                    const SizedBox(height: 16),
+
+                    // ── 4. Ergonomic Search Bar (Apple / Spotlight First) ──
+                    InkWell(
+                      onTap: () {
+                        final shell = MainShellController.of(context);
+                        if (shell != null) {
+                          shell.switchTab(1);
+                        } else {
+                          Navigator.pushNamed(context, AppRoutes.specialistList);
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(100),
+                      child: Container(
+                        height: 46,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: surface,
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: border,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.search_rounded,
+                              size: 19,
+                              color: textSecondary,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Cari spesialis, bab fikih, atau kitab...',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13.5,
+                                  color: textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                     const SizedBox(height: 18),
 
-                    // ── 4. Refined Pro Subscription Card (Minimalist & Enticing) ──
+                    // ── 5. Refined Pro Subscription Card ──
                     AppleInteractiveWrapper(
                       onTap: () {
                         Navigator.pushNamed(context, AppRoutes.subscription);
                       },
                       hapticType: HapticFeedbackType.light,
                       child: Container(
-                        margin: const EdgeInsets.only(bottom: 20),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
                           color: isDark ? const Color(0xFF14171F) : const Color(0xFFF8FAFC),
@@ -370,7 +464,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    // ── 4. Carousel Banner Pengumuman & Adab Riset ──
+                    const SizedBox(height: 18),
+
+                    // ── 6. Carousel Banner Pengumuman & Adab Riset ──
                     _DashboardAnnouncementCarousel(
                       isDark: isDark,
                       surface: surface,
@@ -380,55 +476,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       accent: accent,
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
 
-                    // ── 5. Minimalist Search Bar (Claude / Apple style) ──
-                    InkWell(
-                      onTap: () {
-                        final shell = MainShellController.of(context);
-                        if (shell != null) {
-                          shell.switchTab(1);
-                        } else {
-                          Navigator.pushNamed(context, AppRoutes.specialistList);
-                        }
-                      },
-                      borderRadius: BorderRadius.circular(100),
-                      child: Container(
-                        height: 48,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: surface,
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            color: border,
-                            width: 1.0,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.search_rounded,
-                              size: 19,
-                              color: textSecondary,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Cari spesialis, bab fikih, atau kitab...',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13.5,
-                                  color: textSecondary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 22),
-
-                    // ── 4. Section: Pilih bidang ilmu untuk memulai ──
+                    // ── 7. Unified Exploration & Research Hub ──
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -437,7 +487,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Pilih Bidang Ilmu',
+                              'Eksplorasi Keilmuan',
                               style: GoogleFonts.outfit(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -447,7 +497,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Eksplorasi modul spesialis berdasarkan rumpun',
+                              'Pilih rumpun kajian naskah primer turats',
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 color: textSecondary,
@@ -487,108 +537,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
 
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
 
-                    // 6 Grid Cards M3 Expressive with Stagger Cascade
-                    GridView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 1.65,
-                      ),
-                      itemCount: displayFields.length,
-                      itemBuilder: (context, index) {
-                        final field = displayFields[index];
-                        final fieldAgents = AgentModel.defaultAgents.where((a) => a.fieldId == field.id).toList();
-
-                        return AppleInteractiveWrapper(
-                          onTap: () {
-                            if (fieldAgents.length == 1) {
-                              Navigator.of(context, rootNavigator: true).pushNamed(
-                                AppRoutes.agentWebview,
-                                arguments: fieldAgents.first,
-                              );
-                            } else {
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute(
-                                  builder: (_) => SpecialistListScreen(field: field),
-                                ),
-                              );
-                            }
-                          },
-                          hapticType: HapticFeedbackType.light,
-                          child: Material(
-                            color: surface,
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: border,
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    field.name,
-                                    style: GoogleFonts.newsreader(
-                                      fontSize: 16.5,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.2,
-                                      color: textPrimary,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    field.specialistCount == 1 ? '1 Spesialis AI' : '${field.specialistCount} spesialis',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 11.5,
-                                      color: textSecondary,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
+                    // Horizontal Discipline Chips
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: [
+                          _buildDisciplinePill(
+                            label: 'Semua',
+                            isSelected: _selectedFieldId == null,
+                            isDark: isDark,
+                            surface: surface,
+                            border: border,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              setState(() => _selectedFieldId = null);
+                            },
                           ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 28),
-
-                    // ── 5. Section: Mulai Riset (Active research notebooks) ──
-                    Text(
-                      'Mulai Riset',
-                      style: GoogleFonts.outfit(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2,
-                        color: textPrimary,
+                          ...FieldModel.defaultFields.take(6).map((field) {
+                            final isSelected = _selectedFieldId == field.id;
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: _buildDisciplinePill(
+                                label: field.name,
+                                isSelected: isSelected,
+                                isDark: isDark,
+                                surface: surface,
+                                border: border,
+                                textPrimary: textPrimary,
+                                textSecondary: textSecondary,
+                                onTap: () {
+                                  HapticFeedback.selectionClick();
+                                  setState(() {
+                                    _selectedFieldId = isSelected ? null : field.id;
+                                  });
+                                },
+                              ),
+                            );
+                          }),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Pilih modul spesialis untuk memulai kajian kitab',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: textSecondary,
-                      ),
-                    ),
 
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
 
+                    // Curated Research Modules List
                     if (_isLoading)
                       Center(
                         child: Padding(
@@ -596,123 +593,162 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           child: CircularProgressIndicator(color: accent, strokeWidth: 2),
                         ),
                       )
-                    else if (recentAgents.isEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: surface,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: border.withValues(alpha: isDark ? 0.8 : 0.5),
-                            width: 0.8,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Belum ada riwayat sesi riset.',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              color: textSecondary,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: recentAgents.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final agent = recentAgents[index];
-                          final isFirst = index == 0;
-                          final timeLabel = isFirst ? 'Modul Aktif' : 'Siap Dikaji';
-
-                          return TweenAnimationBuilder<double>(
-                            tween: Tween(begin: 0.0, end: 1.0),
-                            duration: Duration(milliseconds: 320 + (index * 60)),
-                            curve: Curves.easeOutCubic,
-                            builder: (context, value, child) {
-                              return Transform.translate(
-                                offset: Offset(20 * (1 - value), 0),
-                                child: Opacity(
-                                  opacity: value.clamp(0.0, 1.0),
-                                  child: child,
-                                ),
-                              );
-                            },
-                            child: Material(
-                              color: surface,
-                              borderRadius: BorderRadius.circular(16),
-                              child: InkWell(
+                    else ...[
+                      Builder(
+                        builder: (context) {
+                          final displayAgents = _getDisplayAgents();
+                          if (displayAgents.isEmpty) {
+                            return Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: surface,
                                 borderRadius: BorderRadius.circular(16),
-                                onTap: () => _openNotebook(agent, user),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: border,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    agent.title,
-                                                    style: GoogleFonts.outfit(
-                                                      fontSize: 15.5,
-                                                      fontWeight: FontWeight.w600,
-                                                      letterSpacing: -0.2,
-                                                      color: textPrimary,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                                  decoration: BoxDecoration(
-                                                    color: accent.withValues(alpha: isFirst ? 0.14 : 0.08),
-                                                    borderRadius: BorderRadius.circular(100),
-                                                  ),
-                                                  child: Text(
-                                                    timeLabel,
-                                                    style: GoogleFonts.outfit(
-                                                      fontSize: 10.5,
-                                                      fontWeight: FontWeight.w600,
-                                                      color: accent,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Icon(
-                                        Icons.arrow_outward_rounded,
-                                        size: 18,
-                                        color: accent,
-                                      ),
-                                    ],
+                                border: Border.all(
+                                  color: border.withValues(alpha: isDark ? 0.8 : 0.5),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Belum ada modul pada rumpun ini.',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    color: textSecondary,
                                   ),
                                 ),
                               ),
-                            ),
+                            );
+                          }
+
+                          return ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: displayAgents.length,
+                            separatorBuilder: (_, __) => const SizedBox(height: 10),
+                            itemBuilder: (context, index) {
+                              final agent = displayAgents[index];
+                              final isComingSoon = agent.isComingSoon;
+
+                              return TweenAnimationBuilder<double>(
+                                tween: Tween(begin: 0.0, end: 1.0),
+                                duration: Duration(milliseconds: 280 + (index * 40)),
+                                curve: Curves.easeOutCubic,
+                                builder: (context, value, child) {
+                                  return Transform.translate(
+                                    offset: Offset(16 * (1 - value), 0),
+                                    child: Opacity(
+                                      opacity: value.clamp(0.0, 1.0),
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: Material(
+                                  color: surface,
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(16),
+                                    onTap: () => _openNotebook(agent, user),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                          color: border,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        agent.title,
+                                                        style: GoogleFonts.newsreader(
+                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.w600,
+                                                          letterSpacing: -0.2,
+                                                          color: textPrimary,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                                      decoration: BoxDecoration(
+                                                        color: accent.withValues(alpha: 0.08),
+                                                        borderRadius: BorderRadius.circular(100),
+                                                      ),
+                                                      child: Text(
+                                                        agent.category.toUpperCase(),
+                                                        style: GoogleFonts.outfit(
+                                                          fontSize: 9.5,
+                                                          fontWeight: FontWeight.w700,
+                                                          letterSpacing: 0.3,
+                                                          color: accent,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 3),
+                                                Text(
+                                                  agent.description,
+                                                  style: GoogleFonts.outfit(
+                                                    fontSize: 12,
+                                                    color: textSecondary,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          if (isComingSoon)
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                              decoration: BoxDecoration(
+                                                color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                                borderRadius: BorderRadius.circular(100),
+                                                border: Border.all(
+                                                  color: border,
+                                                  width: 0.8,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'Segera',
+                                                style: GoogleFonts.outfit(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: textSecondary,
+                                                ),
+                                              ),
+                                            )
+                                          else
+                                            Icon(
+                                              Icons.chevron_right_rounded,
+                                              size: 20,
+                                              color: textSecondary,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
+                    ],
                     const SizedBox(height: 20),
                   ],
                 ),
