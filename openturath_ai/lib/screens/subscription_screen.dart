@@ -231,7 +231,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (!mounted) return;
       AppSnackBar.error(
         context,
-        'Gagal membuat pembayaran DOKU: $err',
+        'Terjadi kendala saat menyiapkan sesi pembayaran. Periksa koneksi internet Anda lalu coba kembali.',
       );
       if (mounted) setState(() => _isProcessing = false);
       return;
@@ -261,7 +261,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (!mounted) return;
       AppSnackBar.error(
         context,
-        'Terjadi kendala menampilkan sesi pembayaran: $e',
+        'Tidak dapat membuka sesi pembayaran saat ini. Silakan coba kembali.',
       );
     } finally {
       if (mounted) setState(() => _isProcessing = false);
@@ -604,6 +604,8 @@ class _PricingCardState extends State<_PricingCard> {
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 6),
               Row(
@@ -613,9 +615,9 @@ class _PricingCardState extends State<_PricingCard> {
                   Text(
                     widget.price,
                     style: GoogleFonts.outfit(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.4,
                       color: textPrimary,
                     ),
                   ),
