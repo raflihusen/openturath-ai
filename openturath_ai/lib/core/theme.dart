@@ -12,7 +12,7 @@ class AppTheme {
   static const Color borderSubtleLight    = Color(0xFFF1F5F9); 
   static const Color textPrimaryLight     = Color(0xFF18181B); // Main Title & Body
   static const Color textSecondaryLight   = Color(0xFF71717A); // Metadata & Subtitles
-  static const Color textTertiaryLight    = Color(0xFFA1A1AA); // Disclaimers & Placeholders
+  static const Color textTertiaryLight    = Color(0xFF6B7280); // WCAG AA Compliant (4.8:1) Placeholders & Subtitles
   static const Color accentLight          = Color(0xFF18181B); // Refined Monochrome Black
   static const Color pillActionBgLight    = Color(0xFF18181B); // Solid Black Action Pill
   static const Color pillActionTextLight  = Color(0xFFFFFFFF);
@@ -40,7 +40,7 @@ class AppTheme {
   static const Color borderSubtleDark     = Color(0xFF1E1E22);
   static const Color textPrimaryDark      = Color(0xFFFAFAFA); // Main Title & Body
   static const Color textSecondaryDark    = Color(0xFFA1A1AA); // Muted Subtitles
-  static const Color textTertiaryDark     = Color(0xFF71717A); // Disclaimers
+  static const Color textTertiaryDark     = Color(0xFFA1A1AA); // WCAG AA Compliant (7.3:1) Disclaimers
   static const Color accentDark           = Color(0xFF22D3EE); // Neon Cyan Accent
   static const Color pillActionBgDark     = Color(0xFFFFFFFF); // Solid White Action Pill
   static const Color pillActionTextDark   = Color(0xFF18181B);
@@ -480,17 +480,17 @@ class AppTheme {
     final tertiary = isDark ? textTertiaryDark : textTertiaryLight;
 
     return TextTheme(
-      displayLarge: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.8),
-      displayMedium: GoogleFonts.outfit(fontSize: 26, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.5),
-      headlineLarge: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.4),
-      headlineMedium: GoogleFonts.outfit(fontSize: 19, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.3),
-      titleLarge: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.2),
+      displayLarge: GoogleFonts.newsreader(fontSize: 34, fontWeight: FontWeight.w700, color: primary, letterSpacing: -0.6),
+      displayMedium: GoogleFonts.newsreader(fontSize: 28, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.4),
+      headlineLarge: GoogleFonts.newsreader(fontSize: 24, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.3),
+      headlineMedium: GoogleFonts.newsreader(fontSize: 20, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.2),
+      titleLarge: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.1),
       titleMedium: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600, color: primary),
-      titleSmall: GoogleFonts.outfit(fontSize: 13.5, fontWeight: FontWeight.w600, color: secondary),
+      titleSmall: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: secondary),
       bodyLarge: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w400, color: primary, height: 1.55),
-      bodyMedium: GoogleFonts.outfit(fontSize: 13.5, fontWeight: FontWeight.w400, color: secondary, height: 1.45),
+      bodyMedium: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w400, color: secondary, height: 1.45),
       bodySmall: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w400, color: tertiary, height: 1.4),
-      labelLarge: GoogleFonts.outfit(fontSize: 13.5, fontWeight: FontWeight.w600, color: primary),
+      labelLarge: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: primary),
       labelSmall: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w500, color: tertiary, letterSpacing: 0.2),
     );
   }
