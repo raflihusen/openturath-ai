@@ -122,7 +122,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 hintText: 'Contoh: 081234567890',
                 prefixIcon: const Icon(Icons.phone_iphone_rounded, size: 20),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
               ),
             ),
           ],
@@ -408,7 +408,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           Text(
                             'Pilih Cabang Keilmuan / Spesialis:',
                             style: GoogleFonts.outfit(
-                              fontSize: 12.5,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: textPrimary,
                             ),
@@ -425,11 +425,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   ? const Color(0xFF131C26)
                                   : const Color(0xFFF8FAFC),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                                 borderSide: BorderSide(color: border),
                               ),
                               enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                                 borderSide: BorderSide(color: border),
                               ),
                             ),
@@ -567,7 +567,7 @@ class _PricingCardState extends State<_PricingCard> {
         child: Container(
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(AppTheme.radiusCard),
             border: Border.all(
               color: widget.isRecommended
                   ? (isDark ? Colors.white : const Color(0xFF18181B))
@@ -585,12 +585,12 @@ class _PricingCardState extends State<_PricingCard> {
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                   ),
                   child: Text(
                     widget.badge ?? 'PILIHAN UTAMA',
                     style: GoogleFonts.outfit(
-                      fontSize: 10.5,
+                      fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.4,
                       color: textPrimary,
@@ -635,7 +635,7 @@ class _PricingCardState extends State<_PricingCard> {
               Text(
                 widget.description,
                 style: GoogleFonts.outfit(
-                  fontSize: 12.5,
+                  fontSize: 12,
                   color: textSecondary,
                   height: 1.35,
                 ),
@@ -660,7 +660,7 @@ class _PricingCardState extends State<_PricingCard> {
                       child: Text(
                         f,
                         style: GoogleFonts.outfit(
-                          fontSize: 12.5,
+                          fontSize: 12,
                           color: textPrimary,
                           height: 1.35,
                         ),
@@ -688,7 +688,7 @@ class _PricingCardState extends State<_PricingCard> {
                     foregroundColor: widget.isRecommended
                         ? (isDark ? const Color(0xFF18181B) : Colors.white)
                         : (isDark ? Colors.white : const Color(0xFF18181B)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
                     elevation: 0,
                   ),
                   child: widget.isProcessing
@@ -705,7 +705,7 @@ class _PricingCardState extends State<_PricingCard> {
                       : Text(
                           widget.buttonLabel ?? 'Pilih Paket Ini',
                           style: GoogleFonts.outfit(
-                            fontSize: 13.5,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
