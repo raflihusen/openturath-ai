@@ -16,6 +16,7 @@ import 'firebase_options.dart';
 
 import 'core/app_config.dart';
 import 'core/localization.dart';
+import 'widgets/app_error_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,9 +28,11 @@ Future<void> main() async {
   ]);
 
   // Load configuration
-  await AppConfig.init();
+  try {
+    await AppConfig.init();
+  } catch (_) {}
 
-  // ── Status bar transparan ──
+  // ── Status bar transparan awal ──
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -43,18 +46,17 @@ Future<void> main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     runApp(const OpenTurathApp());
-  } catch (e) {
-    runApp(const MaterialApp(
+  } catch (_) {
+    runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.darkTheme,
       home: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(24.0),
-            child: Text(
-              'Aplikasi belum terhubung ke server Firebase.\n\nSilakan jalankan "flutterfire configure" di terminal komputer Anda, lalu periksa koneksi Firebase.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.red, fontWeight: FontWeight.bold),
-            ),
+        backgroundColor: AppTheme.canvasDark,
+        body: SafeArea(
+          child: AppErrorState(
+            title: 'Koneksi Server Terputus',
+            message: 'Tidak dapat terhubung ke server layanan. Pastikan perangkat Anda terhubung ke internet lalu coba kembali.',
+            onRetry: () => main(),
           ),
         ),
       ),
@@ -73,35 +75,34 @@ class OpenTurathApp extends StatelessWidget {
         return ValueListenableBuilder<String>(
           valueListenable: AppConfig.localeNotifier,
           builder: (context, currentLocale, _) {
-            // Apply dynamic status bar theme based on mode (safe fallback)
             final platformBrightness = MediaQuery.maybePlatformBrightnessOf(context) ??
                 WidgetsBinding.instance.platformDispatcher.platformBrightness;
             final isDark = currentTheme == ThemeMode.dark || 
                            (currentTheme == ThemeMode.system && platformBrightness == Brightness.dark);
-            
-            SystemChrome.setSystemUIOverlayStyle(
-              SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-                systemNavigationBarColor: isDark ? AppTheme.canvasDark : AppTheme.canvasLight,
-                systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-                systemNavigationBarDividerColor: Colors.transparent,
-              ),
+
+            final overlayStyle = SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+              systemNavigationBarColor: isDark ? AppTheme.canvasDark : AppTheme.canvasLight,
+              systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+              systemNavigationBarDividerColor: Colors.transparent,
             );
 
-            return MaterialApp(
-              title: Loc.tr('app_name'),
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: currentTheme,
-              locale: Locale(currentLocale),
-              builder: (context, child) => Directionality(
-                textDirection: currentLocale == 'ar'
-                    ? TextDirection.rtl
-                    : TextDirection.ltr,
-                child: child ?? const SizedBox.shrink(),
-              ),
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: overlayStyle,
+              child: MaterialApp(
+                title: Loc.tr('app_name'),
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: currentTheme,
+                locale: Locale(currentLocale),
+                builder: (context, child) => Directionality(
+                  textDirection: currentLocale == 'ar'
+                      ? TextDirection.rtl
+                      : TextDirection.ltr,
+                  child: child ?? const SizedBox.shrink(),
+                ),
 
               // ── Initial Route ──
               initialRoute: AppRoutes.splash,
@@ -190,10 +191,11 @@ class OpenTurathApp extends StatelessWidget {
                   },
                 );
               },
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 }
