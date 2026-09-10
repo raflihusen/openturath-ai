@@ -13,6 +13,13 @@
 migrate_working_dir/
 
 # Sensitive Credentials & Tokens
+.env
+.env.*
+*.env
+functions/.env
+functions/.env.*
+!.env.example
+!functions/.env.example
 service-account*.json
 master_token.json
 storage_state.json

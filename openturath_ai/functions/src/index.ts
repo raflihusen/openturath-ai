@@ -273,9 +273,12 @@ export const recordQuestion = functions
 function getDokuConfig() {
   const env = process.env.DOKU_ENV || "sandbox";
   const baseUrl = env === "production" ? "https://api.doku.com" : "https://api-sandbox.doku.com";
-  const clientId = process.env.DOKU_CLIENT_ID || "BRN-0284-1788546176993";
-  const secretKey = process.env.DOKU_SECRET_KEY || "SK-kWCZd3D5uGI3jfkGuiNj";
-  const apiKey = process.env.DOKU_API_KEY || "doku_key_sandbox_d2b8d2827a02422cbf4d65ac1923ed88";
+  const clientId = process.env.DOKU_CLIENT_ID || "";
+  const secretKey = process.env.DOKU_SECRET_KEY || "";
+  const apiKey = process.env.DOKU_API_KEY || "";
+  if (!clientId || !secretKey) {
+    console.error("[DOKU Config] Peringatan kritis: DOKU_CLIENT_ID atau DOKU_SECRET_KEY belum dikonfigurasi di environment!");
+  }
   return { env, baseUrl, clientId, secretKey, apiKey };
 }
 
