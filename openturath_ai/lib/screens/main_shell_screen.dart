@@ -285,7 +285,7 @@ class _ExpressiveNavItem extends StatelessWidget {
         HapticFeedback.selectionClick();
         onTap();
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppTheme.radiusXS),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -305,7 +305,7 @@ class _ExpressiveNavItem extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.outfit(
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 letterSpacing: -0.1,
                 color: isSelected ? activeColor : unselected,
@@ -348,20 +348,22 @@ class _RailItem extends StatelessWidget {
         HapticFeedback.selectionClick();
         onTap();
       },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+      child: Center(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.all(8),
+              curve: Curves.easeOutCubic,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
                 color: isSelected ? activeBg : Colors.transparent,
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: AnimatedScale(
-                scale: isSelected ? 1.05 : 0.94,
+                scale: isSelected ? 1.0 : 0.95,
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOutBack,
                 child: Icon(
@@ -375,7 +377,7 @@ class _RailItem extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.outfit(
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected ? (isDark ? Colors.white : const Color(0xFF18181B)) : unselected,
               ),
