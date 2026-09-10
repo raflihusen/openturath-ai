@@ -8,10 +8,11 @@
 ---
 
 ## DAFTAR ISI
-1. [Visi Produk, Domain Ilmiah & Mental Model Pengguna](#1-visi-produk-domain-ilmiah--mental-model-pengguna)
-2. [Filosofi Desain & Standar Desain Sistem](#2-filosofi-desain--standar-desain-sistem)
-3. [Spesifikasi Fondasi Desain & Token Sistem (`AppTheme`)](#3-spesifikasi-fondasi-desain--token-sistem-apptheme)
-4. [Anatomi & Alur Pengalaman Layar per Layar (Screen-by-Screen Deep Dive)](#4-anatomi--alur-pengalaman-layar-per-layar-screen-by-screen-deep-dive)
+
+1. [Visi Produk, Domain Ilmiah &amp; Mental Model Pengguna](#1-visi-produk-domain-ilmiah--mental-model-pengguna)
+2. [Filosofi Desain &amp; Standar Desain Sistem](#2-filosofi-desain--standar-desain-sistem)
+3. [Spesifikasi Fondasi Desain &amp; Token Sistem (`AppTheme`)](#3-spesifikasi-fondasi-desain--token-sistem-apptheme)
+4. [Anatomi &amp; Alur Pengalaman Layar per Layar (Screen-by-Screen Deep Dive)](#4-anatomi--alur-pengalaman-layar-per-layar-screen-by-screen-deep-dive)
    - 4.1 Shell Navigasi Utama (`MainShellScreen`)
    - 4.2 Beranda / Dashboard Akademik (`DashboardScreen`)
    - 4.3 Direktori Spesialis Ilmiah (`SpecialistListScreen`)
@@ -19,29 +20,33 @@
    - 4.5 Buku Catatan Rujukan & Riset (`BookmarkScreen`)
    - 4.6 Profil Peneliti & Pengaturan Bergaya Apple Settings (`ProfileScreen`)
    - 4.7 Antarmuka Langganan & Gerbang Pembayaran (`SubscriptionScreen`)
-5. [Arsitektur Rekayasa, Keamanan & Pengelolaan State](#5-arsitektur-rekayasa-keamanan--pengelolaan-state)
-6. [Aksesibilitas (A11y), Tipografi Bilingual & Skalabilitas Tampilan](#6-aksesibilitas-a11y-tipografi-bilingual--skalabilitas-tampilan)
-7. [Pertanyaan Kritis & Panduan Analisis untuk AI Pengkaji](#7-pertanyaan-kritis--panduan-analisis-untuk-ai-pengkaji)
+5. [Arsitektur Rekayasa, Keamanan &amp; Pengelolaan State](#5-arsitektur-rekayasa-keamanan--pengelolaan-state)
+6. [Aksesibilitas (A11y), Tipografi Bilingual &amp; Skalabilitas Tampilan](#6-aksesibilitas-a11y-tipografi-bilingual--skalabilitas-tampilan)
+7. [Pertanyaan Kritis &amp; Panduan Analisis untuk AI Pengkaji](#7-pertanyaan-kritis--panduan-analisis-untuk-ai-pengkaji)
 
 ---
 
 ## 1. Visi Produk, Domain Ilmiah & Mental Model Pengguna
 
 ### 1.1 Apa itu OpenTurath AI?
-OpenTurath AI **bukan** aplikasi chatbot konvensional, bukan wrapper GPT biasa, dan bukan platform tanya jawab agama umum. OpenTurath AI adalah **stasiun kerja riset naskah primer keilmuan Islam klasik (*Kutub at-Turats*)** berbasis kecerdasan buatan (*Retrieval-Augmented Generation / RAG* tingkat tinggi). 
+
+OpenTurath AI **bukan** aplikasi chatbot konvensional, bukan wrapper GPT biasa, dan bukan platform tanya jawab agama umum. OpenTurath AI adalah **stasiun kerja riset naskah primer keilmuan Islam klasik (*Kutub at-Turats*)** berbasis kecerdasan buatan (*Retrieval-Augmented Generation / RAG* tingkat tinggi).
 
 Aplikasi ini mendigitalkan, mengindeks, dan memproses korpus naskah ratusan kitab kuning rujukan otoritatif lintas disiplin:
+
 - **Fikih 4 Mazhab**: Syafi'i, Hanafi, Maliki, Hanbali (dengan spesialisasi kitab *mu'tamad* seperti *Tuhfatul Muhtaj*, *Nihayatul Muhtaj*, *Al-Majmu'*, *Al-Hidayah*, *Mukhtashar Khalil*, *Kasyful Qina'*).
 - **Fikih Kontemporer & Eskatologi Terapan**: Fikih Tahawwulat (*Fiqh at-Tahawwulat*) berbasis 1.500+ rekaman ceramah suara dan seluruh naskah karya Allamah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.
 - **Rumpun Keilmuan Komplementer**: Ushul Fiqh & Qawa'id Fiqhiyyah, Hadits & Takhrij Sanad, Tafsir & Ulumul Quran, Aqidah Ahlussunnah wal Jama'ah (Asy'ariyyah & Maturidiyyah), Nahwu & Sharaf (Balaghah), serta Tasawwuf & Akhlaq (*Ihya Ulumiddin*, *Al-Hikam*).
 
 ### 1.2 Persona Pengguna & Ekspektasi Emosional
+
 1. **Santri Senior / Mahasantri Ma'had Aly**: Terbiasa membaca *ibarah* kitab gundul tanpa harakat, membutuhkan kecepatan mencari rujukan halaman (*maraji'*), nomor jilid, dan nama fasal/bab untuk keperluan musyawarah *bahtsul masa'il*.
 2. **Asatidz & Kyai Pesantren**: Memerlukan kehati-hatian (*ihtiyath*), verifikasi fatwa yang ketat, tidak menyukai klaim instan tanpa landasan teks Arab orisinal, serta menuntut integritas sanad keilmuan.
 3. **Akademisi Perguruan Tinggi Islam (UIN/IAIN/PTIQ)**: Menuntut perbandingan komparatif lintas mazhab (*al-fiqh al-muqaran*), catatan kaki akademis, serta kemampuan menyalin teks terjemahan dan kutipan Arab sekaligus.
 4. **Masyarakat Umum / Penuntut Ilmu Pemula**: Membutuhkan kejelasan navigasi, bahasa yang santun, antarmuka yang bersih tanpa intimidasi teknis, serta jaminan bahwa fatwa yang disajikan berafiliasi dengan tradisi *Ahlussunnah wal Jama'ah*.
 
 ### 1.3 Nada Suara & Bahasa (*Tone of Voice*)
+
 - **Dignified, Sober & Reverent**: Tidak ada bahasa pemasaran murahan (*hype-free*). Kata-kata seperti *"Fatwa pamungkas"*, *"AI paling sakti"*, atau penggunaan emoji mahkota `👑` diharamkan dari aplikasi.
 - **Istilah Ilmiah Baku**: Menggunakan terminologi tradisi pesantren dan universitas Islam: *Tahqiq*, *Mu'tamad*, *Istidlal*, *Naskah Primer*, *Thalabul Ilmi*, *Ahlan wa Sahlan*.
 - **Etika Keilmuan (*Adab al-Bahits*)**: Aplikasi selalu menyajikan dialog etika sebelum riset dibuka, mengingatkan peneliti bahwa AI adalah alat bantu telaah (*khadim al-bahits*), bukan mujtahid independen.
@@ -65,11 +70,12 @@ OpenTurath AI memadukan dua paradigma desain kelas atas dunia:
 ```
 
 1. **Apple Human Interface Guidelines (HIG)**:
+
    - *Clarity*: Tipografi hierarkis tajam, kontras tinggi yang ramah mata santri yang membaca di malam hari, dan ikonografi SF-style yang bermakna.
    - *Deference*: Antarmuka mengabdi pada konten teks kitab. Warna aksen digunakan secara hemat agar teks arab dan ibarah tetap menjadi titik fokus utama.
    - *Depth & Materials*: Memanfaatkan *translucent blur* (frosted glass) pada bilah navigasi bawah, memisahkan kanvas datar menjadi *grouped elevated surfaces* sehingga elemen mengambang secara alami.
-
 2. **Google NotebookLM Studio Aesthetic**:
+
    - Antarmuka riset berdaulat di mana ruang percakapan RAG berada di tengah, bersih dari *clutter* tombol komersial, logo vendor yang mengganggu, atau iklan.
 
 ---
@@ -80,24 +86,25 @@ Implementasi kode sumber berpusat pada [lib/core/theme.dart](file:///Users/apple
 
 ### 3.1 Palet Warna & Kontras WCAG AA
 
-| Token Desain | Mode Terang (*Light*) | Mode Gelap (*Dark Obsidian*) | Peran Semantik & Standar Aksesibilitas |
-|---|---|---|---|
-| `canvas` | `#FFFFFF` | `#0E0E10` | Latar belakang dasar kanvas utama aplikasi |
-| `groupedCanvas` | `#F6F6F8` (iOS Grouped) | `#0E0E10` | Kanvas latar bertekstur untuk grouped cards |
-| `surfaceCard` | `#FFFFFF` | `#18181B` (Zinc-900) | Permukaan kartu mengambang (*floating surfaces*) |
-| `surfaceHeader` | `#FFFFFF` | `#0E0E10` | Bilah judul atas / status bar canvas |
-| `border` | `#E5E7EB` (Gray-200) | `#27272A` (Zinc-800) | Hairline border 1px pemisah struktur |
-| `borderSubtle` | `#F1F5F9` | `#1E1E22` | Garis batas sangat tipis untuk pemisah sekunder |
-| `textPrimary` | `#18181B` (Zinc-900) | `#FAFAFA` (Zinc-50) | Teks judul utama & body naskah (Kontras $\ge 12:1$) |
-| `textSecondary` | `#71717A` (Zinc-500) | `#A1A1AA` (Zinc-400) | Metadata, tanggal hijri, & rujukan |
-| `textTertiary` | `#6B7280` (WCAG 4.8:1) | `#A1A1AA` (WCAG 7.3:1) | Placeholder pencarian & keterangan kaki legal |
-| `accent` | `#18181B` (Monochrome) | `#22D3EE` (Neon Cyan) | Indikator fokus aktif & pemanis interaktif |
-| `appleGreen` | `#34C759` | `#34C759` | Switch toggle aktif standar iOS resmi |
-| `appleRed` | `#FF3B30` | `#FF3B30` | Aksi destruktif (Logout, Hapus Akun, Batal) |
-| `navBarBg` | `0xD9FFFFFF` (85% Blur) | `0xCC0E0E10` (80% Blur) | Frosted glass material navigasi bawah |
-| `navBarBorder` | `0x1F000000` (12% Black) | `0x26FFFFFF` (15% White) | Hairline 0.5px border atas bilah navigasi |
+| Token Desain      | Mode Terang (*Light*)    | Mode Gelap (*Dark Obsidian*) | Peran Semantik & Standar Aksesibilitas               |
+| ----------------- | -------------------------- | ------------------------------ | ---------------------------------------------------- |
+| `canvas`        | `#FFFFFF`                | `#0E0E10`                    | Latar belakang dasar kanvas utama aplikasi           |
+| `groupedCanvas` | `#F6F6F8` (iOS Grouped)  | `#0E0E10`                    | Kanvas latar bertekstur untuk grouped cards          |
+| `surfaceCard`   | `#FFFFFF`                | `#18181B` (Zinc-900)         | Permukaan kartu mengambang (*floating surfaces*)   |
+| `surfaceHeader` | `#FFFFFF`                | `#0E0E10`                    | Bilah judul atas / status bar canvas                 |
+| `border`        | `#E5E7EB` (Gray-200)     | `#27272A` (Zinc-800)         | Hairline border 1px pemisah struktur                 |
+| `borderSubtle`  | `#F1F5F9`                | `#1E1E22`                    | Garis batas sangat tipis untuk pemisah sekunder      |
+| `textPrimary`   | `#18181B` (Zinc-900)     | `#FAFAFA` (Zinc-50)          | Teks judul utama & body naskah (Kontras$\ge 12:1$) |
+| `textSecondary` | `#71717A` (Zinc-500)     | `#A1A1AA` (Zinc-400)         | Metadata, tanggal hijri, & rujukan                   |
+| `textTertiary`  | `#6B7280` (WCAG 4.8:1)   | `#A1A1AA` (WCAG 7.3:1)       | Placeholder pencarian & keterangan kaki legal        |
+| `accent`        | `#18181B` (Monochrome)   | `#22D3EE` (Neon Cyan)        | Indikator fokus aktif & pemanis interaktif           |
+| `appleGreen`    | `#34C759`                | `#34C759`                    | Switch toggle aktif standar iOS resmi                |
+| `appleRed`      | `#FF3B30`                | `#FF3B30`                    | Aksi destruktif (Logout, Hapus Akun, Batal)          |
+| `navBarBg`      | `0xD9FFFFFF` (85% Blur)  | `0xCC0E0E10` (80% Blur)      | Frosted glass material navigasi bawah                |
+| `navBarBorder`  | `0x1F000000` (12% Black) | `0x26FFFFFF` (15% White)     | Hairline 0.5px border atas bilah navigasi            |
 
 ### 3.2 Triad Tipografi Akademik
+
 Aplikasi menggunakan 3 keluarga font yang saling melengkapi peran masing-masing:
 
 ```
@@ -119,7 +126,9 @@ Aplikasi menggunakan 3 keluarga font yang saling melengkapi peran masing-masing:
 ```
 
 #### Skala Modular Tipografi (Modular Typographic Scale)
+
 Menghindari ukuran font pecahan acak, seluruh UI mematuhi skala matematis Apple HIG:
+
 - **Display Large**: `34pt` / Bold (w700) / Tracking `-0.6`
 - **Display Medium**: `28pt` / SemiBold (w600) / Tracking `-0.4`
 - **Headline Large**: `24pt` / SemiBold (w600) / Tracking `-0.3`
@@ -133,6 +142,7 @@ Menghindari ukuran font pecahan acak, seluruh UI mematuhi skala matematis Apple 
 - **Caption / Label Small**: `11pt` / Medium (w500) / Tracking `+0.2`
 
 ### 3.3 Sistem Geometri & Spasial
+
 - **Radius Skala Expressive**:
   - `radiusXS`: `8.0pt` (Tag kecil, badge chip)
   - `radiusS`: `12.0pt` (Input field, dialog alert)
@@ -146,7 +156,9 @@ Menghindari ukuran font pecahan acak, seluruh UI mematuhi skala matematis Apple 
   - Menghindari *drop shadows* hitam pekat bergaya Android lama. Kedalaman dibangun menggunakan *subtle border outlines* (`1px` border ber-opacity) dan diferensiasi warna kanvas (`#0E0E10` vs `#18181B`).
 
 ### 3.4 Komponen Interaksi Mikro: `AppleInteractiveWrapper`
+
 Semua kartu, pill, dan item daftar yang dapat disentuh dibungkus dalam [lib/widgets/apple_interactive_wrapper.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/widgets/apple_interactive_wrapper.dart):
+
 - **Animasi Pegas (*Spring Feedback*)**: Saat ditekan (*tap down*), skala mengecil halus ke `0.97` (durasi 120ms, kurva `Curves.easeInOutCubic`). Saat dilepas, membal kembali ke `1.0`.
 - **Haptic Taktil**: Memanggil `HapticFeedback.lightImpact()` atau `selectionClick()` secara presisi.
 - **Aksesibilitas Reduced Motion**: Jika pengguna mengaktifkan *Reduce Motion* pada setelan sistem perangkat (`MediaQuery.of(context).disableAnimations == true`), efek scale otomatis dinonaktifkan tanpa merusak fungsi klik.
@@ -157,9 +169,11 @@ Semua kartu, pill, dan item daftar yang dapat disentuh dibungkus dalam [lib/widg
 ## 4. Anatomi & Alur Pengalaman Layar per Layar (Screen-by-Screen Deep Dive)
 
 ### 4.1 Shell Navigasi Utama (`MainShellScreen`)
+
 Berkas: [lib/screens/main_shell_screen.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/screens/main_shell_screen.dart)
 
 #### Desain Responsif Adaptif:
+
 - **Mobile (< 768pt)**: Menggunakan bilah navigasi bawah (*Bottom Navigation Bar*) berciri *frosted glass*.
   - `extendBody: true` memungkinkan konten layar mengalir anggun di balik bilah kaca translusen.
   - Efek blur: `BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20))`.
@@ -168,6 +182,7 @@ Berkas: [lib/screens/main_shell_screen.dart](file:///Users/apple/Downloads/ramad
 - **Tablet / Desktop ($\ge 768\text{pt}$)**: Secara otomatis bertransformasi menjadi **Navigation Rail** di sisi kiri dengan tombol pengalih tema gelap/terang cepat di pojok bawah.
 
 #### 4 Tab Utama:
+
 1. **Beranda (`Icons.home_outlined` $\rightarrow$ `Icons.home_rounded`)**: Dashboard eksplorasi & search-first.
 2. **Spesialis (`Icons.auto_awesome_outlined` $\rightarrow$ `Icons.auto_awesome_rounded`)**: Direktori modul per mazhab dan rumpun ilmu.
 3. **Bookmark (`Icons.bookmark_border_rounded` $\rightarrow$ `Icons.bookmark_rounded`)**: Rujukan teks kitab & jawaban AI yang tersimpan.
@@ -176,6 +191,7 @@ Berkas: [lib/screens/main_shell_screen.dart](file:///Users/apple/Downloads/ramad
 ---
 
 ### 4.2 Beranda / Dashboard Akademik (`DashboardScreen`)
+
 Berkas: [lib/screens/dashboard_screen.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/screens/dashboard_screen.dart)
 
 ```
@@ -207,6 +223,7 @@ Berkas: [lib/screens/dashboard_screen.dart](file:///Users/apple/Downloads/ramadh
 ```
 
 #### Komponen Kunci UX:
+
 1. **Header Kalender Ganda**: Menghadirkan penanggalan Hijriyah berdampingan dengan Masehi menggunakan algoritma konversi presisi di [lib/core/hijri_date_utils.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/core/hijri_date_utils.dart).
 2. **Spotlight Search-First Bar**: Terletak ergonomis di sepertiga atas layar. Sekali ketuk langsung membuka mode pencarian interaktif instan.
 3. **Gating Kartu Langganan Pintar**: Kartu penawaran upgrade Pro tidak ditampilkan secara agresif bagi pengguna yang sudah memiliki status `isSubscriptionActive` atau `isPremium`.
@@ -216,9 +233,11 @@ Berkas: [lib/screens/dashboard_screen.dart](file:///Users/apple/Downloads/ramadh
 ---
 
 ### 4.3 Direktori Spesialis Ilmiah (`SpecialistListScreen`)
+
 Berkas: [lib/screens/specialist_list_screen.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/screens/specialist_list_screen.dart)
 
 #### Fitur & Desain Unggulan:
+
 1. **Kartu Berdaulat Fikih Tahawwulat (`_SovereignTahawwulatCard`)**:
    - Ditempatkan di baris teratas dengan visual mewah namun bersahaja.
    - Header kaligrafi Arab resmi: `فقه التحولات` menggunakan font *Amiri* dengan line-height `1.55`.
@@ -234,6 +253,7 @@ Berkas: [lib/screens/specialist_list_screen.dart](file:///Users/apple/Downloads/
 ---
 
 ### 4.4 Ruang Riset & Telaah Naskah AI (`AgentWebviewScreen`)
+
 Berkas: [lib/screens/agent_webview_screen.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/screens/agent_webview_screen.dart)
 
 Layar ini adalah jantung operasional aplikasi. Menghubungkan peneliti dengan instans Google NotebookLM RAG yang telah diisi ribuan halaman kitab turats.
@@ -265,6 +285,7 @@ Layar ini adalah jantung operasional aplikasi. Menghubungkan peneliti dengan ins
 ```
 
 #### Arsitektur Injeksi & Kepatuhan:
+
 1. **Bilah Navigasi Atas Asli (*Native Top Bar*)**:
    - Ditempatkan tepat di bawah status bar/notch kamera, memberikan rasa kendali penuh.
    - Tombol aksi dengan touch target $\ge 44\text{pt}$:
@@ -283,9 +304,11 @@ Layar ini adalah jantung operasional aplikasi. Menghubungkan peneliti dengan ins
 ---
 
 ### 4.5 Buku Catatan Rujukan & Riset (`BookmarkScreen`)
+
 Berkas: [lib/screens/bookmark_screen.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/screens/bookmark_screen.dart)
 
 #### Fitur & Desain:
+
 1. **Penyimpanan Berstruktur (*Structured Citations*)**:
    - Menyimpan judul masalah, nama spesialis, naskah kitab rujukan, kutipan teks Arab (*ibarah*), serta jawaban utuh.
 2. **Kategori Filter Chip**:
@@ -298,6 +321,7 @@ Berkas: [lib/screens/bookmark_screen.dart](file:///Users/apple/Downloads/ramadha
 ---
 
 ### 4.6 Profil Peneliti & Pengaturan Bergaya Apple Settings (`ProfileScreen`)
+
 Berkas: [lib/screens/profile_screen.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/screens/profile_screen.dart)
 
 ```
@@ -339,6 +363,7 @@ Berkas: [lib/screens/profile_screen.dart](file:///Users/apple/Downloads/ramadhan
 ```
 
 #### Ciri Khas Apple HIG:
+
 1. **Apple ID Unified Profile Card**: Informasi nama, email, avatar, dan status langganan dipadukan dalam satu kartu rounded (`18pt`).
 2. **Gaya Inset Grouped Table**:
    - Setiap grup setelan dibungkus dalam kontainer ber-radius `18pt` dengan latar `surfaceCard`.
@@ -349,9 +374,11 @@ Berkas: [lib/screens/profile_screen.dart](file:///Users/apple/Downloads/ramadhan
 ---
 
 ### 4.7 Antarmuka Langganan & Gerbang Pembayaran (`SubscriptionScreen`)
+
 Berkas: [lib/screens/subscription_screen.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/screens/subscription_screen.dart)
 
 #### Opsi Paket & *Price Anchoring*:
+
 1. **Paket Unggulan — Akses Penuh (Semua AI)**:
    - Harga: **Rp 99.000 / bulan**.
    - Akses tak terbatas ke seluruh modul fikih 4 mazhab, tahawwulat, hadits, tafsir, dll.
@@ -361,6 +388,7 @@ Berkas: [lib/screens/subscription_screen.dart](file:///Users/apple/Downloads/ram
    - Dilengkapi *dropdown* pemilihan cabang spesialis yang diinginkan.
 
 #### Alur Transaksi Ramah Peneliti:
+
 - **Pengumpulan WhatsApp untuk Bukti Aktivasi**: Menampilkan dialog nomor WA untuk pengiriman kwitansi resmi dan notifikasi masa aktif.
 - **Gerbang Pembayaran DOKU (QRIS, Virtual Account, E-Wallet)**: Integrasi melalui [lib/widgets/doku_checkout_sheet.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/widgets/doku_checkout_sheet.dart) dengan penanganan pesan error yang manusiawi tanpa menampilkan kode galat teknis mentah.
 
@@ -377,23 +405,24 @@ graph TD
     B --> D[SpecialistListScreen]
     B --> E[BookmarkScreen]
     B --> F[ProfileScreen]
-    
+  
     C -->|Buka Modul| G{Verifikasi Entitlement}
     D -->|Buka Modul| G
-    
+  
     G -->|Belum Berlangganan| H[SubscriptionScreen]
     G -->|Akses Sah| I[AgentWebviewScreen]
-    
+  
     H -->|DOKU Checkout| J[DokuService]
     J -->|Webhook Pembayaran| K[(Firestore / Backend)]
     K -->|Sync Status| L[UserModel & AuthStream]
-    
+  
     I -->|RAG Query| M[Google NotebookLM Engine]
     I -->|Simpan Jawaban| N[BookmarkService]
     N -->|Local Cache| O[(SQLite / SharedPreferences)]
 ```
 
 ### 5.2 Pengerasan Keamanan (Security Hardening Terverifikasi)
+
 1. **Isolasi Sesi Pengguna Tamu (*Guest Session Isolation*)**:
    - Menghapus kerentanan UID `'guest'` statis. Setiap sesi anonim baru di-generate dengan `guest_${timestamp}_${random}` di [lib/services/auth_service.dart](file:///Users/apple/Downloads/ramadhan/openturath_ai/lib/services/auth_service.dart), mencegah tabrakan data antar-perangkat.
 2. **Pencegahan Kebocoran Socket Pembaruan (*Socket Leak Prevention*)**:
@@ -436,4 +465,5 @@ Mohon berikan analisis, kritik tajam, dan rekomendasi konkrit untuk 6 aspek beri
    - Bagaimana menilai cara OpenTurath AI mengkomunikasikan nilai langganan Pro (Rp 99.000)? Apakah transisi dari free trial (5 pertanyaan) ke paywall terasa elegan dan bermartabat, atau masih ada kesan menghalangi penuntut ilmu (*barrier to knowledge*)? Bagaimana rekayasa copywriting-nya agar lebih beradab?
 
 ---
+
 *Dokumen ini disusun sebagai cetak biru resmi arsitektur antarmuka OpenTurath AI versi 1.0.16+17.*
