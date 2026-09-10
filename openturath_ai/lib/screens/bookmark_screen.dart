@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/theme.dart';
+
 import '../core/app_snackbar.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_motion.dart';
+import '../core/design/ot_spacing.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../widgets/evidence_bottom_sheet.dart';
+import 'main_shell_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
@@ -24,16 +30,16 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   bool _isLoading = true;
   bool _showSearch = false;
 
-  final List<String> _categories = [
+  static const List<String> _categories = [
     'Semua',
     'Fikih',
-    'Hadis',
+    'Hadits',
     'Tafsir',
     'Aqidah',
-    'Usul Fiqh',
+    'Ushul Fiqh',
     'Bahasa Arab',
-    'Sejarah & Sirah',
-    'Tasawuf & Akhlaq',
+    'Tarikh',
+    'Tasawwuf',
   ];
 
   @override
@@ -75,35 +81,43 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   }
 
   Future<void> _deleteBookmark(BookmarkModel item) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) {
-        final isDark = Theme.of(ctx).brightness == Brightness.dark;
         return AlertDialog(
-          backgroundColor:
-              isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+          backgroundColor: surface,
+          shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
             'Hapus Rujukan?',
-            style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+            style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
             'Rujukan "${item.title}" akan dihapus dari daftar tersimpan.',
-            style: GoogleFonts.outfit(fontSize: 13),
+            style: OTTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child:
-                  Text('Batal', style: GoogleFonts.outfit(color: Colors.grey)),
+              child: Text(
+                'Batal',
+                style: OTTypography.button(color: textSecondary),
+              ),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
-                  backgroundColor: AppTheme.appleRed),
-              child: Text('Hapus',
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+                backgroundColor: OTColors.destructive,
+                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+              ),
+              child: Text(
+                'Hapus',
+                style: OTTypography.button(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -112,7 +126,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
     if (confirm != true) return;
 
-    HapticFeedback.mediumImpact();
+    OTMotion.success();
     await _bookmarkService.deleteBookmark(item.id);
     await _loadBookmarks();
 
@@ -124,7 +138,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         label: 'Urungkan',
         textColor: const Color(0xFFFBBF24),
         onPressed: () async {
-          HapticFeedback.lightImpact();
+          OTMotion.light();
           await _bookmarkService.addBookmark(item);
           await _loadBookmarks();
         },
@@ -133,7 +147,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   }
 
   void _copyIbarah(String ibarah) {
-    HapticFeedback.lightImpact();
+    OTMotion.light();
     Clipboard.setData(ClipboardData(text: ibarah));
     AppSnackBar.success(context, 'Kutipan ibarah berhasil disalin ke clipboard.');
   }
@@ -186,39 +200,33 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
-    final surface =
-        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary =
-        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary =
-        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final accent = OTColors.accent(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
       appBar: AppBar(
         backgroundColor: canvas,
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Rujukan',
-              style: GoogleFonts.newsreader(
+              style: OTTypography.corpusTitle(color: textPrimary).copyWith(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
-                letterSpacing: -0.3,
-                color: textPrimary,
               ),
             ),
             Text(
               'Catatan ibarah dan referensi naskah tersimpan',
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                color: textSecondary,
-              ),
+              style: OTTypography.caption(color: textSecondary),
             ),
           ],
         ),
@@ -230,6 +238,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             ),
             tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari Rujukan',
             onPressed: () {
+              OTMotion.selection();
               setState(() {
                 _showSearch = !_showSearch;
                 if (!_showSearch) {
@@ -240,7 +249,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               });
             },
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: OTSpacing.sm),
         ],
       ),
       body: SafeArea(
@@ -249,14 +258,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             // ── Search Field (collapsible) ──
             if (_showSearch)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: OTSpacing.lg,
+                  vertical: OTSpacing.xs + 2,
+                ),
                 child: Container(
-                  height: 42,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF1E1F20)
-                        : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                    color: surfaceSubtle,
+                    borderRadius: OTRadius.inputBorder,
                     border: Border.all(color: border, width: 1),
                   ),
                   child: TextField(
@@ -268,26 +278,22 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         _filter();
                       });
                     },
-                    style: GoogleFonts.outfit(fontSize: 13, color: textPrimary),
+                    style: OTTypography.body(color: textPrimary),
                     decoration: InputDecoration(
                       hintText: 'Cari dalam kutipan, kitab, atau topik...',
-                      hintStyle: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: isDark
-                            ? AppTheme.textTertiaryDark
-                            : AppTheme.textTertiaryLight,
-                      ),
+                      hintStyle: OTTypography.body(color: textSecondary),
                       prefixIcon: Icon(
                         Icons.search_rounded,
                         size: 18,
-                        color: isDark
-                            ? AppTheme.textTertiaryDark
-                            : AppTheme.textTertiaryLight,
+                        color: textSecondary,
                       ),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
-                              icon: Icon(Icons.close_rounded,
-                                  size: 16, color: textSecondary),
+                              icon: Icon(
+                                Icons.close_rounded,
+                                size: 16,
+                                color: textSecondary,
+                              ),
                               onPressed: () {
                                 _searchCtrl.clear();
                                 setState(() {
@@ -298,7 +304,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             )
                           : null,
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 11),
                     ),
                   ),
                 ),
@@ -307,43 +313,47 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             // ── Horizontal Filter Pills ──
             Container(
               height: 38,
-              margin: const EdgeInsets.symmetric(vertical: 6),
+              margin: const EdgeInsets.symmetric(vertical: OTSpacing.xs + 2),
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
                 itemCount: _categories.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                separatorBuilder: (_, __) => const SizedBox(width: OTSpacing.sm),
                 itemBuilder: (context, index) {
                   final cat = _categories[index];
                   final isSelected = _selectedCategory == cat;
 
                   return GestureDetector(
                     onTap: () {
-                      HapticFeedback.selectionClick();
+                      OTMotion.selection();
                       setState(() {
                         _selectedCategory = cat;
                         _filter();
                       });
                     },
-                    child: Container(
+                    child: AnimatedContainer(
+                      duration: OTMotion.fast,
+                      curve: OTMotion.curve,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 6),
+                        horizontal: OTSpacing.md + 2,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? (isDark ? Colors.white : const Color(0xFF18181B))
-                            : (isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7)),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                        color: isSelected ? textPrimary : surface,
+                        borderRadius: OTRadius.chipBorder,
+                        border: Border.all(
+                          color: isSelected ? textPrimary : border.withValues(alpha: 0.7),
+                          width: 0.8,
+                        ),
                       ),
                       child: Center(
                         child: Text(
                           cat,
-                          style: GoogleFonts.outfit(
+                          style: OTTypography.caption(
+                            color: isSelected ? canvas : textSecondary,
+                          ).copyWith(
                             fontSize: 12,
-                            fontWeight:
-                                isSelected ? FontWeight.w600 : FontWeight.w400,
-                            color: isSelected
-                                ? (isDark ? const Color(0xFF18181B) : Colors.white)
-                                : textSecondary,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                           ),
                         ),
                       ),
@@ -364,65 +374,84 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                     )
                   : _filteredBookmarks.isEmpty
                       ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 72,
-                                height: 72,
-                                decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF18181B) : const Color(0xFFF4F4F5),
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                                  border: Border.all(
-                                    color: border,
-                                    width: 1.0,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.xl),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 68,
+                                  height: 68,
+                                  decoration: BoxDecoration(
+                                    color: surfaceSubtle,
+                                    borderRadius: OTRadius.cardBorder,
+                                    border: Border.all(color: border, width: 1.0),
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.collections_bookmark_outlined,
+                                      size: 30,
+                                      color: textSecondary,
+                                    ),
                                   ),
                                 ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.collections_bookmark_outlined,
-                                    size: 32,
-                                    color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                const SizedBox(height: OTSpacing.lg),
+                                Text(
+                                  'Belum Ada Rujukan Tersimpan',
+                                  style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                                    fontSize: 16,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 18),
-                              Text(
-                                'Belum Ada Rujukan Tersimpan',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: textPrimary,
-                                  letterSpacing: -0.2,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 40),
-                                child: Text(
+                                const SizedBox(height: OTSpacing.xs + 2),
+                                Text(
                                   'Tandai ibarah kitab dari ruang riset AI untuk menelaah dan menyimpannya di sini.',
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.outfit(
+                                  style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 13,
-                                    color: textSecondary,
-                                    height: 1.45,
                                   ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: OTSpacing.xl),
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    OTMotion.light();
+                                    final shell = MainShellController.of(context);
+                                    shell?.switchTab(0);
+                                  },
+                                  icon: const Icon(Icons.search_rounded, size: 16),
+                                  label: const Text('Mulai Menelusuri'),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: textPrimary,
+                                    side: BorderSide(color: border, width: 1.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: OTSpacing.lg,
+                                      vertical: OTSpacing.md,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: OTRadius.buttonBorder,
+                                    ),
+                                    textStyle: OTTypography.button(),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       : ListView.separated(
                           physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 108),
+                          padding: const EdgeInsets.fromLTRB(
+                            OTSpacing.lg,
+                            OTSpacing.sm,
+                            OTSpacing.lg,
+                            108,
+                          ),
                           itemCount: _filteredBookmarks.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 14),
+                          separatorBuilder: (_, __) => const SizedBox(height: OTSpacing.md),
                           itemBuilder: (context, index) {
                             final item = _filteredBookmarks[index];
                             return _BookmarkCard(
                               item: item,
-                              isDark: isDark,
                               surface: surface,
+                              surfaceSubtle: surfaceSubtle,
                               border: border,
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
@@ -444,8 +473,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
 class _BookmarkCard extends StatelessWidget {
   final BookmarkModel item;
-  final bool isDark;
   final Color surface;
+  final Color surfaceSubtle;
   final Color border;
   final Color textPrimary;
   final Color textSecondary;
@@ -457,8 +486,8 @@ class _BookmarkCard extends StatelessWidget {
 
   const _BookmarkCard({
     required this.item,
-    required this.isDark,
     required this.surface,
+    required this.surfaceSubtle,
     required this.border,
     required this.textPrimary,
     required this.textSecondary,
@@ -472,11 +501,11 @@ class _BookmarkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(OTSpacing.base),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-        border: Border.all(color: border, width: 1),
+        borderRadius: OTRadius.cardBorder,
+        border: Border.all(color: border, width: 0.8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,29 +518,23 @@ class _BookmarkCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: accent.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusXS),
+                        borderRadius: OTRadius.chipBorder,
                       ),
                       child: Text(
                         item.fieldName,
-                        style: GoogleFonts.outfit(
+                        style: OTTypography.captionMedium(color: accent).copyWith(
                           fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: accent,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: OTSpacing.sm),
                     Flexible(
                       child: Text(
                         item.agentTitle,
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: textSecondary,
-                        ),
+                        style: OTTypography.caption(color: textSecondary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -533,75 +556,68 @@ class _BookmarkCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: OTSpacing.sm),
 
           // Title
           Text(
             item.title,
-            style: GoogleFonts.outfit(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: textPrimary,
-              height: 1.3,
-            ),
+            style: OTTypography.cardTitle(color: textPrimary),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: OTSpacing.sm),
 
           // Book Reference Pill
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF28292A) : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(AppTheme.radiusXS),
-              border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.menu_book_rounded, size: 14, color: accent),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    '${item.bookReference} · ${item.pageNumber}',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: textPrimary,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Arabic Excerpt Box
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF131314) : const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(AppTheme.radiusXS),
-              border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
-            ),
-            child: Text(
-              item.arabicExcerpt,
-              textDirection: TextDirection.rtl,
-              style: GoogleFonts.amiri(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                height: 1.6,
-                color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
+          if (item.bookReference.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: surfaceSubtle,
+                borderRadius: OTRadius.chipBorder,
+                border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
               ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.menu_book_rounded, size: 14, color: accent),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
+                      style: OTTypography.captionMedium(color: textPrimary),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+          if (item.arabicExcerpt.isNotEmpty) ...[
+            const SizedBox(height: OTSpacing.md),
+            // Arabic Excerpt Box
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: surfaceSubtle,
+                borderRadius: BorderRadius.circular(OTRadius.input),
+                border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
+              ),
+              child: Text(
+                item.arabicExcerpt,
+                textDirection: TextDirection.rtl,
+                style: GoogleFonts.amiri(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  height: 1.7,
+                  color: textPrimary,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+
+          const SizedBox(height: OTSpacing.md),
 
           // Action Buttons
           Row(
@@ -611,25 +627,25 @@ class _BookmarkCard extends StatelessWidget {
                 icon: const Icon(Icons.copy_rounded, size: 14),
                 label: const Text('Salin Ibarah'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: accent,
-                  side: BorderSide(color: accent.withValues(alpha: 0.5)),
+                  foregroundColor: textPrimary,
+                  side: BorderSide(color: border, width: 0.8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusXS)),
+                  textStyle: OTTypography.captionMedium(),
+                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: OTSpacing.sm),
               FilledButton.icon(
                 onPressed: onOpen,
                 icon: const Icon(Icons.menu_book, size: 14),
                 label: const Text('Lihat Bukti'),
                 style: FilledButton.styleFrom(
-                  backgroundColor: isDark ? const Color(0xFF28292A) : const Color(0xFFE2E8F0),
+                  backgroundColor: surfaceSubtle,
                   foregroundColor: textPrimary,
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusXS)),
+                  textStyle: OTTypography.captionMedium(),
+                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                 ),
               ),
               const Spacer(),
