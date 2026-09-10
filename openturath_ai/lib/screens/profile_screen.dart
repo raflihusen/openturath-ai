@@ -181,10 +181,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Padding(
           padding: const EdgeInsets.only(left: 4),
           child: Text(
-            'Pengaturan & Akun',
+            'Pengaturan',
             style: GoogleFonts.newsreader(
               fontSize: 24,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: textPrimary,
               letterSpacing: -0.3,
             ),
@@ -526,72 +526,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 20),
 
-                // ── Section 4: Log Out Container ──
-                Padding(
-                  padding: const EdgeInsets.only(left: 4, bottom: 6),
-                  child: Text(
-                    'SESI MASUK',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.6,
-                      color: textSecondary,
-                    ),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: ListTile(
-                    onTap: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
-                    leading: _isLoggingOut
+                const SizedBox(height: 28),
+
+                // ── Quiet Text Actions (Logout & Delete Account) ──
+                Center(
+                  child: TextButton(
+                    onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
+                    child: _isLoggingOut
                         ? const SizedBox(
-                            width: 20,
-                            height: 20,
+                            width: 18,
+                            height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.appleRed),
                           )
-                        : const Icon(Icons.logout_rounded, size: 21, color: AppTheme.appleRed),
-                    title: Text(
-                      _isLoggingOut ? 'Sedang keluar...' : 'Keluar dari Akun',
-                      style: GoogleFonts.outfit(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w500,
-                        color: AppTheme.appleRed,
-                      ),
-                    ),
+                        : Text(
+                            'Keluar dari Akun',
+                            style: GoogleFonts.outfit(
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w500,
+                              color: AppTheme.appleRed,
+                            ),
+                          ),
                   ),
                 ),
-
-                const SizedBox(height: 16),
-
-                // ── Delete Account Button (Google Play Requirement) ──
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: TextButton.icon(
+                const SizedBox(height: 4),
+                Center(
+                  child: TextButton(
                     onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _deleteAccount,
-                    icon: _isDeletingAccount
+                    child: _isDeletingAccount
                         ? const SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFDC2626)),
                           )
-                        : const Icon(Icons.delete_forever_rounded, color: Color(0xFF9CA3AF), size: 18),
-                    label: Text(
-                      _isDeletingAccount ? 'Sedang menghapus akun...' : 'Hapus Akun & Data Riset',
-                      style: GoogleFonts.outfit(
-                        color: const Color(0xFF9CA3AF),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    ),
+                        : Text(
+                            'Hapus Akun & Data Riset',
+                            style: GoogleFonts.outfit(
+                              color: textSecondary.withValues(alpha: 0.7),
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
                   ),
                 ),
               ],
