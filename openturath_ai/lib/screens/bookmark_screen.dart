@@ -205,15 +205,16 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Bookmark',
-              style: GoogleFonts.outfit(
-                fontSize: 18,
+              'Rujukan & Catatan Riset',
+              style: GoogleFonts.newsreader(
+                fontSize: 22,
                 fontWeight: FontWeight.w600,
+                letterSpacing: -0.3,
                 color: textPrimary,
               ),
             ),
             Text(
-              'Koleksi kutipan ibarah dan referensi tersimpan',
+              'Koleksi kutipan ibarah dan referensi naskah tersimpan',
               style: GoogleFonts.outfit(
                 fontSize: 11.5,
                 color: textSecondary,
@@ -227,7 +228,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
               color: textPrimary,
             ),
-            tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari Bookmark',
+            tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari Rujukan',
             onPressed: () {
               setState(() {
                 _showSearch = !_showSearch;
@@ -384,7 +385,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                 ),
                                 child: Center(
                                   child: Icon(
-                                    Icons.bookmark_border_rounded,
+                                    Icons.collections_bookmark_outlined,
                                     size: 32,
                                     color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
                                   ),
