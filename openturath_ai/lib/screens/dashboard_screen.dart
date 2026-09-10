@@ -302,27 +302,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(height: 20),
 
                     // ── 3. Research Command Surface ──
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Apa yang ingin Anda teliti hari ini?',
-                          style: GoogleFonts.newsreader(
-                            fontSize: 23,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.4,
-                            color: textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Telusuri korpus naskah primer, istilah, hadits, dan fatwa mu\'tabar.',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            color: textSecondary,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      'Apa yang ingin Anda telusuri?',
+                      style: GoogleFonts.newsreader(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.4,
+                        color: textPrimary,
+                      ),
                     ),
 
                     const SizedBox(height: 14),
@@ -346,7 +333,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: border,
-                            width: 1.0,
+                            width: 0.8,
                           ),
                         ),
                         child: Row(
@@ -359,7 +346,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Telusuri kitab, istilah, hadits, atau persoalan...',
+                                'Kitab, istilah, hadits, atau persoalan...',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13.5,
                                   color: textSecondary,
@@ -371,7 +358,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    // ── 4. Lanjutkan Penelitian (Resume active research session) ──
+                    // ── 4. Lanjutkan Penelitian (Unboxed Resume Session) ──
                     Builder(
                       builder: (context) {
                         final recents = _getRecentAgents();
@@ -381,108 +368,143 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 22),
-                            Row(
-                              children: [
-                                Text(
-                                  'LANJUTKAN PENELITIAN',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.8,
-                                    color: textSecondary,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Text(
-                                  'Sesi Terakhir',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11.5,
-                                    color: textSecondary.withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(height: 28),
+                            Text(
+                              'Lanjutkan',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.6,
+                                color: textSecondary,
+                              ),
                             ),
-                            const SizedBox(height: 10),
-                            Material(
-                              color: surface,
-                              borderRadius: BorderRadius.circular(16),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(16),
-                                onTap: () => _openNotebook(lastActiveAgent, user),
-                                child: Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: border,
-                                      width: 1.0,
+                            const SizedBox(height: 8),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(12),
+                              onTap: () => _openNotebook(lastActiveAgent, user),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            lastActiveAgent.title,
+                                            style: GoogleFonts.outfit(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: -0.2,
+                                              color: textPrimary,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            '${lastActiveAgent.subtitleAcademic.isNotEmpty ? lastActiveAgent.subtitleAcademic : lastActiveAgent.description} · Sesi Terakhir',
+                                            style: GoogleFonts.outfit(
+                                              fontSize: 12.5,
+                                              color: textSecondary,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                    const SizedBox(width: 12),
+                                    Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 16,
+                                      color: textSecondary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Divider(height: 24, color: border.withValues(alpha: 0.5)),
+                          ],
+                        );
+                      },
+                    ),
+
+                    // ── 5. Ruang Riset Unggulan (Fikih Tahawwulat Dignified Card) ──
+                    Builder(
+                      builder: (context) {
+                        final tahawwulatAgent = _agents.firstWhere(
+                          (a) => a.id == 'fiqh_tahawwulat',
+                          orElse: () => AgentModel.defaultAgents.first,
+                        );
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 12),
+                            Text(
+                              'Korpus Khusus',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.6,
+                                color: textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () => _openNotebook(tahawwulatAgent, user),
+                              child: Container(
+                                padding: const EdgeInsets.all(18),
+                                decoration: BoxDecoration(
+                                  color: surface,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: border,
+                                    width: 0.8,
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 42,
-                                        height: 42,
-                                        decoration: BoxDecoration(
-                                          color: isDark ? const Color(0xFF242731) : const Color(0xFFEFF4FF),
-                                          borderRadius: BorderRadius.circular(12),
-                                          border: Border.all(
-                                            color: isDark ? const Color(0xFF2E3547) : const Color(0xFFDBEAFE),
-                                            width: 0.8,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Fikih Tahawwulat & Eskatologi',
+                                      style: GoogleFonts.newsreader(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.3,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Korpus khusus eskatologi Islam dan fikih kontemporer berbasis naskah dan muhadharah Al-Habib Abu Bakar Al-Adni Al-Masyhur.',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 13,
+                                        color: textSecondary,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 14),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          '1.500+ muhadharah · naskah lengkap · takhrij',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: textSecondary.withValues(alpha: 0.8),
                                           ),
                                         ),
-                                        child: Icon(
-                                          Icons.history_edu_rounded,
-                                          size: 20,
-                                          color: accent,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 14),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              lastActiveAgent.title,
-                                              style: GoogleFonts.newsreader(
-                                                fontSize: 16.5,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: -0.2,
-                                                color: textPrimary,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              lastActiveAgent.subtitleAcademic.isNotEmpty
-                                                  ? lastActiveAgent.subtitleAcademic
-                                                  : lastActiveAgent.description,
-                                              style: GoogleFonts.outfit(
-                                                fontSize: 12,
-                                                color: textSecondary,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Row(
+                                        const Spacer(),
+                                        Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Text(
-                                              'Buka',
+                                              'Masuk',
                                               style: GoogleFonts.outfit(
-                                                fontSize: 12,
+                                                fontSize: 12.5,
                                                 fontWeight: FontWeight.w600,
                                                 color: textPrimary,
                                               ),
@@ -495,9 +517,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -506,209 +528,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       },
                     ),
 
-                    // ── 5. Ruang Riset Unggulan (Fikih Tahawwulat Signature Card) ──
-                    Builder(
-                      builder: (context) {
-                        final tahawwulatAgent = _agents.firstWhere(
-                          (a) => a.id == 'fiqh_tahawwulat',
-                          orElse: () => AgentModel.defaultAgents.first,
-                        );
+                    const SizedBox(height: 28),
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 22),
-                            Row(
-                              children: [
-                                Text(
-                                  'KORPUS KHUSUS',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.8,
-                                    color: textSecondary,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: accent.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    'UNGGULAN',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
-                                      color: accent,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Material(
-                              color: surface,
-                              borderRadius: BorderRadius.circular(18),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(18),
-                                onTap: () => _openNotebook(tahawwulatAgent, user),
-                                child: Container(
-                                  padding: const EdgeInsets.all(18),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(18),
-                                    border: Border.all(
-                                      color: isDark ? const Color(0xFF333846) : const Color(0xFFE2E8F0),
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 44,
-                                            height: 44,
-                                            decoration: BoxDecoration(
-                                              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
-                                              borderRadius: BorderRadius.circular(12),
-                                              border: Border.all(
-                                                color: accent.withValues(alpha: 0.3),
-                                                width: 0.8,
-                                              ),
-                                            ),
-                                            child: Icon(
-                                              Icons.auto_stories_outlined,
-                                              size: 22,
-                                              color: accent,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 14),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Fikih Tahawwulat & Eskatologi',
-                                                  style: GoogleFonts.newsreader(
-                                                    fontSize: 17.5,
-                                                    fontWeight: FontWeight.w600,
-                                                    letterSpacing: -0.3,
-                                                    color: textPrimary,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 3),
-                                                Text(
-                                                  'Koleksi Naskah Lengkap & 1.500+ Rekaman Muhadharah Al-Habib Abu Bakar Al-Adni Al-Masyhur',
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 12.5,
-                                                    color: textSecondary,
-                                                    height: 1.35,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 14),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                            decoration: BoxDecoration(
-                                              color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Text(
-                                              'Audio & Naskah',
-                                              style: GoogleFonts.outfit(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w500,
-                                                color: textSecondary,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                            decoration: BoxDecoration(
-                                              color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Text(
-                                              'Takhrij Mandiri',
-                                              style: GoogleFonts.outfit(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w500,
-                                                color: textSecondary,
-                                              ),
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                'Masuk Ruang Riset',
-                                                style: GoogleFonts.outfit(
-                                                  fontSize: 12.5,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: accent,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Icon(
-                                                Icons.arrow_forward_rounded,
-                                                size: 14,
-                                                color: accent,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── 6. Unified Exploration & Research Hub ──
+                    // ── 6. Keilmuan (Discipline Navigation) ──
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Khazanah Keilmuan',
-                              style: GoogleFonts.outfit(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.2,
-                                color: textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Pilih rumpun kajian naskah primer turats',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: textSecondary,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          'Keilmuan',
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.2,
+                            color: textPrimary,
+                          ),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -723,7 +557,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Lihat Semua',
+                                'Semua',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -744,7 +578,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 12),
 
-                    // Horizontal Discipline Chips
+                    // Horizontal Discipline Filter
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       physics: const BouncingScrollPhysics(),
@@ -788,9 +622,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
 
-                    // Curated Research Modules List
+                    // Curated Research Modules List (Continuous Unboxed List with hairlines)
                     if (_isLoading)
                       Center(
                         child: Padding(
@@ -803,16 +637,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context) {
                           final displayAgents = _getDisplayAgents();
                           if (displayAgents.isEmpty) {
-                            return Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: surface,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: border.withValues(alpha: isDark ? 0.8 : 0.5),
-                                  width: 0.8,
-                                ),
-                              ),
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 24),
                               child: Center(
                                 child: Text(
                                   'Belum ada modul pada rumpun ini.',
@@ -829,123 +655,70 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: displayAgents.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 10),
+                            separatorBuilder: (_, __) => Divider(
+                              height: 1,
+                              color: border.withValues(alpha: 0.5),
+                            ),
                             itemBuilder: (context, index) {
                               final agent = displayAgents[index];
                               final isComingSoon = agent.isComingSoon;
 
-                              return TweenAnimationBuilder<double>(
-                                tween: Tween(begin: 0.0, end: 1.0),
-                                duration: Duration(milliseconds: 280 + (index * 40)),
-                                curve: Curves.easeOutCubic,
-                                builder: (context, value, child) {
-                                  return Transform.translate(
-                                    offset: Offset(16 * (1 - value), 0),
-                                    child: Opacity(
-                                      opacity: value.clamp(0.0, 1.0),
-                                      child: child,
-                                    ),
-                                  );
-                                },
-                                child: Material(
-                                  color: surface,
-                                  borderRadius: BorderRadius.circular(16),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(16),
-                                    onTap: () => _openNotebook(agent, user),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16),
-                                        border: Border.all(
-                                          color: border,
-                                          width: 1.0,
+                              return InkWell(
+                                onTap: () => _openNotebook(agent, user),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              agent.title,
+                                              style: GoogleFonts.outfit(
+                                                fontSize: 15.5,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: -0.2,
+                                                color: textPrimary,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              (agent.referenceBooks != null && agent.referenceBooks!.isNotEmpty)
+                                                  ? agent.referenceBooks!.map((b) => b.title).take(2).join(' · ')
+                                                  : agent.subtitleAcademic.isNotEmpty
+                                                      ? agent.subtitleAcademic
+                                                      : agent.description,
+                                              style: GoogleFonts.outfit(
+                                                fontSize: 12.5,
+                                                color: textSecondary,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Flexible(
-                                                      child: Text(
-                                                        agent.title,
-                                                        style: GoogleFonts.newsreader(
-                                                          fontSize: 16,
-                                                          fontWeight: FontWeight.w600,
-                                                          letterSpacing: -0.2,
-                                                          color: textPrimary,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Container(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                                      decoration: BoxDecoration(
-                                                        color: accent.withValues(alpha: 0.08),
-                                                        borderRadius: BorderRadius.circular(100),
-                                                      ),
-                                                      child: Text(
-                                                        agent.category.toUpperCase(),
-                                                        style: GoogleFonts.outfit(
-                                                          fontSize: 11,
-                                                          fontWeight: FontWeight.w700,
-                                                          letterSpacing: 0.3,
-                                                          color: accent,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 3),
-                                                Text(
-                                                  agent.description,
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 12,
-                                                    color: textSecondary,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ],
-                                            ),
+                                      const SizedBox(width: 12),
+                                      if (isComingSoon)
+                                        Text(
+                                          'Kurasi Naskah',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w400,
+                                            color: textSecondary.withValues(alpha: 0.65),
                                           ),
-                                          const SizedBox(width: 12),
-                                          if (isComingSoon)
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                                                borderRadius: BorderRadius.circular(100),
-                                                border: Border.all(
-                                                  color: border,
-                                                  width: 0.8,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                'Segera',
-                                                style: GoogleFonts.outfit(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: textSecondary,
-                                                ),
-                                              ),
-                                            )
-                                          else
-                                            Icon(
-                                              Icons.chevron_right_rounded,
-                                              size: 20,
-                                              color: textSecondary,
-                                            ),
-                                        ],
-                                      ),
-                                    ),
+                                        )
+                                      else
+                                        Icon(
+                                          Icons.chevron_right_rounded,
+                                          size: 18,
+                                          color: textSecondary.withValues(alpha: 0.7),
+                                        ),
+                                    ],
                                   ),
                                 ),
                               );
