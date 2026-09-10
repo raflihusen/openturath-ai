@@ -228,7 +228,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                   height: 44,
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: TextField(
@@ -238,7 +238,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                     style: GoogleFonts.outfit(fontSize: 14, color: textPrimary),
                     decoration: InputDecoration(
                       hintText: 'Cari spesialis, kitab, atau bab...',
-                      hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
+                      hintStyle: GoogleFonts.outfit(fontSize: 13, color: textSecondary),
                       prefixIcon: Icon(Icons.search_rounded, size: 18, color: textSecondary),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
@@ -288,13 +288,13 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                           color: isSelected
                               ? (isDark ? Colors.white : const Color(0xFF18181B))
                               : (isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7)),
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                         ),
                         child: Center(
                           child: Text(
                             isAll ? 'Semua' : field!.name,
                             style: GoogleFonts.outfit(
-                              fontSize: 12.5,
+                              fontSize: 12,
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                               color: isSelected
                                   ? (isDark ? const Color(0xFF18181B) : Colors.white)
@@ -421,7 +421,7 @@ class _UnboxedSpecialistRow extends StatelessWidget {
                   Text(
                     agent.title,
                     style: GoogleFonts.outfit(
-                      fontSize: 15.5,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
                       letterSpacing: -0.2,
@@ -434,7 +434,7 @@ class _UnboxedSpecialistRow extends StatelessWidget {
                     Text(
                       referenceText,
                       style: GoogleFonts.outfit(
-                        fontSize: 12.5,
+                        fontSize: 12,
                         color: textSecondary,
                       ),
                       maxLines: 1,
@@ -449,7 +449,7 @@ class _UnboxedSpecialistRow extends StatelessWidget {
               Text(
                 'Kurasi Naskah',
                 style: GoogleFonts.outfit(
-                  fontSize: 11.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: textSecondary.withValues(alpha: 0.65),
                 ),
@@ -539,7 +539,7 @@ class _DignifiedTahawwulatRow extends StatelessWidget {
             Text(
               '1.500+ muhadharah · naskah lengkap · takhrij sanad al-habib abu bakar al-masyhur',
               style: GoogleFonts.outfit(
-                fontSize: 12.5,
+                fontSize: 12,
                 color: textSecondary,
                 height: 1.35,
               ),
@@ -550,7 +550,7 @@ class _DignifiedTahawwulatRow extends StatelessWidget {
                 Text(
                   'Masuk ke Ruang Riset',
                   style: GoogleFonts.outfit(
-                    fontSize: 12.5,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: accent,
                   ),
