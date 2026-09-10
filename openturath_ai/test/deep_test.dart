@@ -76,7 +76,7 @@ void main() {
       expect(AppTheme.borderLight, equals(const Color(0xFFE5E7EB)));
       expect(AppTheme.borderDark, equals(const Color(0xFF27272A)));
       expect(AppTheme.accentLight, equals(const Color(0xFF18181B)));
-      expect(AppTheme.accentDark, equals(const Color(0xFF22D3EE)));
+      expect(AppTheme.accentDark, equals(const Color(0xFF60A5FA)));
       expect(AppTheme.citationBgLight, equals(const Color(0xFFF1F5F9)));
       expect(AppTheme.citationBgDark, equals(const Color(0xFF1E1E22)));
     });
