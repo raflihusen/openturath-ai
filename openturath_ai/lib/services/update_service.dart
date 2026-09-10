@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum UpdateStatus {
   idle,
@@ -19,6 +21,7 @@ class UpdateInfo {
   final int latestVersionCode;
   final String apkUrl;
   final String releaseNotes;
+  final String? sha256Hash;
   final bool isDownloaded;
   final String? localFilePath;
   final double downloadProgress; // 0.0 to 1.0
@@ -28,6 +31,7 @@ class UpdateInfo {
     required this.latestVersionCode,
     required this.apkUrl,
     required this.releaseNotes,
+    this.sha256Hash,
     this.isDownloaded = false,
     this.localFilePath,
     this.downloadProgress = 0.0,
@@ -38,6 +42,7 @@ class UpdateInfo {
     int? latestVersionCode,
     String? apkUrl,
     String? releaseNotes,
+    String? sha256Hash,
     bool? isDownloaded,
     String? localFilePath,
     double? downloadProgress,
@@ -47,6 +52,7 @@ class UpdateInfo {
       latestVersionCode: latestVersionCode ?? this.latestVersionCode,
       apkUrl: apkUrl ?? this.apkUrl,
       releaseNotes: releaseNotes ?? this.releaseNotes,
+      sha256Hash: sha256Hash ?? this.sha256Hash,
       isDownloaded: isDownloaded ?? this.isDownloaded,
       localFilePath: localFilePath ?? this.localFilePath,
       downloadProgress: downloadProgress ?? this.downloadProgress,
@@ -55,8 +61,9 @@ class UpdateInfo {
 }
 
 /// UpdateService: Background Auto-Downloader & Instant One-Click Installer
-/// - Mengunduh file APK di latar belakang secara diam-diam (silent download)
-/// - Saat selesai, tombol "Pasang Pembaruan" langsung memicu instalasi tanpa perlu unduh lagi
+/// - Mengunduh file APK di latar belakang secara diam-diam (silent download) di Android
+/// - Di macOS/Windows: Membuka laman unduh rilis desktop via browser eksternal
+/// - Dilengkapi mutex unduhan, sanitasi sink I/O, dan verifikasi integritas SHA-256
 class UpdateService extends ChangeNotifier {
   static final UpdateService _instance = UpdateService._internal();
   factory UpdateService() => _instance;
@@ -68,17 +75,21 @@ class UpdateService extends ChangeNotifier {
   UpdateInfo? _updateInfo;
   UpdateInfo? get updateInfo => _updateInfo;
 
-  bool get isUpdateReady =>
-      _status == UpdateStatus.readyToInstall &&
-      _updateInfo != null &&
-      _updateInfo!.isDownloaded &&
-      _updateInfo!.localFilePath != null;
+  bool get isUpdateReady {
+    if (_status != UpdateStatus.readyToInstall || _updateInfo == null) return false;
+    if (!kIsWeb && !Platform.isAndroid) {
+      // Desktop: siap membuka URL unduhan desktop
+      return true;
+    }
+    return _updateInfo!.isDownloaded && _updateInfo!.localFilePath != null;
+  }
 
   bool _isChecking = false;
+  bool _isDownloading = false;
 
   /// Memulai pengecekan versi dan unduhan otomatis di background
   Future<void> checkForUpdatesSilently() async {
-    if (_isChecking) return;
+    if (_isChecking || _isDownloading) return;
     _isChecking = true;
 
     try {
@@ -106,20 +117,32 @@ class UpdateService extends ChangeNotifier {
       final latestVersion = (data['latest_version'] as String?) ?? packageInfo.version;
       final apkUrl = (data['apk_url'] as String?) ?? '';
       final releaseNotes = (data['release_notes'] as String?) ?? 'Pembaruan aplikasi OpenTurath AI';
+      final sha256Hash = (data['sha256'] as String?)?.trim();
 
-      // Jika versi di server lebih baru dari versi yang sedang terpasang di HP
+      // Jika versi di server lebih baru dari versi yang sedang terpasang
       if (latestCode > currentCode && apkUrl.isNotEmpty) {
         _updateInfo = UpdateInfo(
           latestVersion: latestVersion,
           latestVersionCode: latestCode,
           apkUrl: apkUrl,
           releaseNotes: releaseNotes,
+          sha256Hash: sha256Hash,
         );
 
-        // Periksa apakah APK versi tersebut SUDAH pernah terunduh sebelumnya di cache
+        if (!kIsWeb && !Platform.isAndroid) {
+          // macOS / Windows Desktop: tampilkan banner siap update (buka URL)
+          _updateInfo = _updateInfo!.copyWith(
+            isDownloaded: true,
+            downloadProgress: 1.0,
+          );
+          _status = UpdateStatus.readyToInstall;
+          notifyListeners();
+          return;
+        }
+
+        // Android: Periksa apakah APK versi tersebut SUDAH pernah terunduh sebelumnya di cache
         final localFile = await _getLocalApkFile(latestCode);
         if (await localFile.exists() && (await localFile.length()) > 5 * 1024 * 1024) {
-          // Sudah terunduh dan ukuran valid
           _updateInfo = _updateInfo!.copyWith(
             isDownloaded: true,
             localFilePath: localFile.path,
@@ -129,7 +152,7 @@ class UpdateService extends ChangeNotifier {
           notifyListeners();
         } else {
           // Belum terunduh: Jalankan silent background download otomatis
-          _startSilentDownload(apkUrl, localFile);
+          _startSilentDownload(apkUrl, localFile, sha256Hash);
         }
       } else {
         _status = UpdateStatus.idle;
@@ -144,8 +167,11 @@ class UpdateService extends ChangeNotifier {
     }
   }
 
-  /// Unduh APK di latar belakang tanpa mengganggu user
-  Future<void> _startSilentDownload(String url, File targetFile) async {
+  /// Unduh APK di latar belakang tanpa mengganggu user dengan mutex dan try-finally sink
+  Future<void> _startSilentDownload(String url, File targetFile, String? expectedSha256) async {
+    if (_isDownloading) return;
+    _isDownloading = true;
+
     final client = HttpClient();
     try {
       _status = UpdateStatus.downloading;
@@ -172,26 +198,41 @@ class UpdateService extends ChangeNotifier {
       final sink = tempFile.openWrite();
       int receivedBytes = 0;
 
-      await for (final chunk in response) {
-        sink.add(chunk);
-        receivedBytes += chunk.length;
-        if (contentLength > 0) {
-          final progress = receivedBytes / contentLength;
-          _updateInfo = _updateInfo?.copyWith(downloadProgress: progress);
+      try {
+        await for (final chunk in response) {
+          sink.add(chunk);
+          receivedBytes += chunk.length;
+          if (contentLength > 0) {
+            final progress = receivedBytes / contentLength;
+            _updateInfo = _updateInfo?.copyWith(downloadProgress: progress);
+          }
         }
+        await sink.flush();
+      } finally {
+        await sink.close();
       }
 
-      await sink.flush();
-      await sink.close();
-
-      // Validasi integritas ukuran file sebelum dipindahkan ke APK final
+      // Validasi integritas ukuran file
       final tempLength = await tempFile.length();
-      if (tempLength < 10 * 1024 * 1024 || (contentLength > 0 && tempLength < contentLength)) {
+      if (tempLength < 5 * 1024 * 1024 || (contentLength > 0 && tempLength < contentLength)) {
         debugPrint('[UpdateService] Unduhan tidak lengkap ($tempLength bytes)');
         if (await tempFile.exists()) await tempFile.delete();
         _status = UpdateStatus.idle;
         notifyListeners();
         return;
+      }
+
+      // Validasi SHA-256 jika disediakan oleh Firestore app_config/version
+      if (expectedSha256 != null && expectedSha256.isNotEmpty) {
+        final bytes = await tempFile.readAsBytes();
+        final calculatedSha256 = sha256.convert(bytes).toString();
+        if (calculatedSha256.toLowerCase() != expectedSha256.toLowerCase()) {
+          debugPrint('[UpdateService] SHA256 checksum mismatch: $calculatedSha256 vs $expectedSha256');
+          if (await tempFile.exists()) await tempFile.delete();
+          _status = UpdateStatus.idle;
+          notifyListeners();
+          return;
+        }
       }
 
       // Rename dari temp ke final APK
@@ -213,6 +254,7 @@ class UpdateService extends ChangeNotifier {
       _status = UpdateStatus.idle;
       notifyListeners();
     } finally {
+      _isDownloading = false;
       client.close();
     }
   }
@@ -245,13 +287,25 @@ class UpdateService extends ChangeNotifier {
     return File('${updateDir.path}/OpenTurath_v$versionCode.apk');
   }
 
-  /// Tombol "Pasang Sekarang" dipanggil: Langsung buka Package Installer sistem
+  /// Tombol "Pasang Sekarang" dipanggil:
+  /// - Android: Langsung buka Package Installer sistem
+  /// - Desktop (macOS/Windows): Buka tautan pembaruan langsung di browser
   Future<void> installNow() async {
-    if (!isUpdateReady || _updateInfo?.localFilePath == null) return;
+    if (!isUpdateReady || _updateInfo == null) return;
 
-    final filePath = _updateInfo!.localFilePath!;
+    if (!kIsWeb && !Platform.isAndroid) {
+      final downloadUrl = _updateInfo!.apkUrl;
+      final uri = Uri.tryParse(downloadUrl);
+      if (uri != null) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+      return;
+    }
+
+    final filePath = _updateInfo!.localFilePath;
+    if (filePath == null) return;
+
     final file = File(filePath);
-
     if (!await file.exists()) {
       _status = UpdateStatus.idle;
       notifyListeners();

@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
@@ -17,6 +19,7 @@ class UpdateReadyBanner extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
+        final isDesktop = !kIsWeb && !Platform.isAndroid && !Platform.isIOS;
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
         final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
@@ -57,7 +60,7 @@ class UpdateReadyBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Pembaruan v$version Siap Dipasang',
+                      isDesktop ? 'Pembaruan v$version Tersedia' : 'Pembaruan v$version Siap Dipasang',
                       style: GoogleFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -66,7 +69,9 @@ class UpdateReadyBanner extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
+                      isDesktop
+                          ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
+                          : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
@@ -91,7 +96,7 @@ class UpdateReadyBanner extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  'Pasang',
+                  isDesktop ? 'Perbarui' : 'Pasang',
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
