@@ -18,12 +18,17 @@ class ModuleEntitlement {
   });
 
   bool get isPremium =>
-      plan == AppConstants.planTholib1m ||
-      plan == AppConstants.planTholib6m ||
-      plan == AppConstants.planBahits1y ||
-      plan == 'all_ai_1m' ||
-      plan == 'all_access' ||
-      plan.startsWith('all_ai');
+      plan != AppConstants.planTrial &&
+      (plan == AppConstants.planTholib1m ||
+          plan == AppConstants.planTholib6m ||
+          plan == AppConstants.planBahits1y ||
+          plan == 'all_ai_1m' ||
+          plan == 'all_access' ||
+          plan == 'full' ||
+          plan.startsWith('all_ai') ||
+          plan.startsWith('redeem') ||
+          plan.startsWith('voucher') ||
+          plan == 'custom');
 
   bool get isActive {
     if (status != 'active') return false;
@@ -89,9 +94,17 @@ class UserModel {
   bool get isTrial => plan == AppConstants.planTrial;
   bool get isGuest => email.isEmpty || uid.startsWith('guest_');
   bool get isPremium =>
-      plan == AppConstants.planTholib1m ||
-      plan == AppConstants.planTholib6m ||
-      plan == AppConstants.planBahits1y;
+      plan != AppConstants.planTrial &&
+      (plan == AppConstants.planTholib1m ||
+          plan == AppConstants.planTholib6m ||
+          plan == AppConstants.planBahits1y ||
+          plan == 'all_ai_1m' ||
+          plan == 'all_access' ||
+          plan == 'full' ||
+          plan.startsWith('all_ai') ||
+          plan.startsWith('redeem') ||
+          plan.startsWith('voucher') ||
+          plan == 'custom');
 
   bool get isSubscriptionActive {
     if (isPremium && subscriptionExpiry != null) {
