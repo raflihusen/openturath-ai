@@ -123,7 +123,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
             widget.subtitle!,
             textAlign: TextAlign.center,
             style: GoogleFonts.outfit(
-              fontSize: 12.5,
+              fontSize: 12,
               color: textSecondary,
             ),
           ),
