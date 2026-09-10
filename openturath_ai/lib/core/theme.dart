@@ -243,18 +243,18 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: surfaceElevated,
         contentTextStyle: GoogleFonts.outfit(
           color: textPrimaryDark,
-          fontSize: 13.5,
+          fontSize: 13,
           fontWeight: FontWeight.w400,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(radiusCard),
           side: const BorderSide(color: borderDark, width: 1),
         ),
         behavior: SnackBarBehavior.floating,
@@ -268,22 +268,22 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderDark, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderDark, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: accentDark, width: 1.5),
         ),
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
           color: surfaceElevated,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(radiusXS),
           border: Border.all(color: borderDark, width: 1),
         ),
         textStyle: GoogleFonts.outfit(
@@ -304,7 +304,7 @@ class AppTheme {
           color: textSecondaryDark,
         ),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
+          borderRadius: BorderRadius.all(Radius.circular(radiusCard)),
           side: BorderSide(color: borderDark, width: 1),
         ),
       ),
@@ -410,18 +410,18 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: textPrimaryLight,
         contentTextStyle: GoogleFonts.outfit(
           color: Colors.white,
-          fontSize: 13.5,
+          fontSize: 13,
           fontWeight: FontWeight.w400,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(radiusCard),
         ),
         behavior: SnackBarBehavior.floating,
       ),
@@ -434,22 +434,22 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderLight, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderLight, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: accentLight, width: 1.5),
         ),
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
           color: textPrimaryLight,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(radiusXS),
         ),
         textStyle: GoogleFonts.outfit(
           color: Colors.white,
@@ -469,7 +469,7 @@ class AppTheme {
           color: textSecondaryLight,
         ),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(24)),
+          borderRadius: BorderRadius.all(Radius.circular(radiusCard)),
           side: BorderSide(color: borderLight, width: 1),
         ),
       ),
