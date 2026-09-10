@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/routes.dart';
 import '../core/theme.dart';
 import '../services/auth_service.dart';
+import '../widgets/app_loader.dart';
 
 /// Gerbang Sesi Google (Pre-Auth Gate)
 /// Memastikan kuki autentikasi Google aktif di WebView sehingga pengguna
@@ -22,13 +22,20 @@ class GoogleSessionAuthScreen extends StatefulWidget {
 class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
-  double _loadProgress = 0.0;
+  final ValueNotifier<double> _loadProgress = ValueNotifier<double>(0.0);
 
   static const String _chromeUserAgent =
       "Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.127 Mobile Safari/537.36";
 
   static const String _targetLoginUrl =
       "https://accounts.google.com/ServiceLogin?continue=https://notebook.google.com/";
+
+  @override
+  void dispose() {
+    _loadProgress.dispose();
+    _webController = null;
+    super.dispose();
+  }
 
   /// Simpan status sesi dan arahkan ke Dashboard
   Future<void> _onSessionAuthenticated() async {
@@ -41,8 +48,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     } catch (_) {}
 
     if (!mounted) return;
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
     Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
   }
 
@@ -52,7 +57,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
         title: Text(
           'Batal Hubungkan Google?',
           style: GoogleFonts.outfit(
@@ -61,7 +66,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
         ),
         content: Text(
-          'Akun Google wajib dihubungkan agar ruang riset AI dapat langsung digunakan tanpa meminta login berulang kali.',
+          'Akun Google diperlukan agar ruang riset manuskrip AI dapat langsung digunakan tanpa meminta login berulang kali.',
           style: GoogleFonts.outfit(
             fontSize: 13.5,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
@@ -81,8 +86,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFDC2626),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              backgroundColor: AppTheme.appleRed,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text(
               'Keluar Akun',
@@ -114,36 +119,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (_isSessionReady) {
       return Scaffold(
         backgroundColor: canvas,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 72,
-                height: 72,
-                child: Lottie.asset(
-                  'assets/animations/thinking_ux_icon_looping.json',
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Sesi Google Terhubung',
-                style: GoogleFonts.outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: textPrimary,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Menyiapkan akses korpus riset kitab...',
-                style: GoogleFonts.outfit(
-                  fontSize: 13,
-                  color: textSecondary,
-                ),
-              ),
-            ],
+        body: const Center(
+          child: AppLoader(
+            title: 'Sesi Google Terhubung',
+            subtitle: 'Menyiapkan akses korpus riset kitab...',
+            dotSize: 10,
           ),
         ),
       );
@@ -195,26 +175,57 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             ),
             const SizedBox(width: 8),
           ],
-          bottom: _loadProgress < 1.0
-              ? PreferredSize(
-                  preferredSize: const Size.fromHeight(2),
-                  child: LinearProgressIndicator(
-                    value: _loadProgress,
-                    backgroundColor: Colors.transparent,
-                    valueColor: AlwaysStoppedAnimation<Color>(accent),
-                  ),
-                )
-              : null,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(2),
+            child: ValueListenableBuilder<double>(
+              valueListenable: _loadProgress,
+              builder: (context, progress, child) {
+                if (progress >= 1.0) return const SizedBox(height: 2);
+                return LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation<Color>(accent),
+                );
+              },
+            ),
+          ),
         ),
         body: SafeArea(
           child: Column(
             children: [
+              // Banner Penjelasan Transparan
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+                  border: Border.all(color: border, width: 0.8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline_rounded, size: 18, color: accent),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Masuk ke akun Google Anda agar ruang riset AI langsung aktif tanpa meminta login berulang.',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          height: 1.35,
+                          color: textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                     border: Border.all(color: border, width: 1),
                   ),
                   clipBehavior: Clip.antiAlias,
@@ -235,7 +246,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     ),
                     onWebViewCreated: (controller) => _webController = controller,
                     onProgressChanged: (controller, progress) {
-                      setState(() => _loadProgress = progress / 100);
+                      _loadProgress.value = progress / 100;
                     },
                     onLoadStop: (controller, url) async {
                       if (url == null) return;
