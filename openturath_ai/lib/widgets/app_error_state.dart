@@ -67,7 +67,7 @@ class AppErrorState extends StatelessWidget {
                 message,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
-                  fontSize: 13.5,
+                  fontSize: 13,
                   height: 1.45,
                   color: textSecondary,
                 ),
@@ -86,7 +86,7 @@ class AppErrorState extends StatelessWidget {
                     ),
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                       ),
                     ),
                   ),
