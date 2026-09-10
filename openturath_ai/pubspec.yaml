@@ -19,6 +19,9 @@ dependencies:
   # Google Sign In
   google_sign_in: ^6.2.1
 
+  # State Management
+  flutter_riverpod: ^2.5.1
+
   # WebView with JS Injection support
   flutter_inappwebview: ^6.0.0
 
