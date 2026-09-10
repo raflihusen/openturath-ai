@@ -108,7 +108,7 @@ class EvidenceBottomSheet extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
             border: Border.all(color: border, width: 1),
             boxShadow: [
               BoxShadow(
@@ -128,7 +128,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                   height: 4,
                   decoration: BoxDecoration(
                     color: border,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                   ),
                 ),
               ),
@@ -192,8 +192,8 @@ class EvidenceBottomSheet extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF131C26) : const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(12),
+                          color: isDark ? AppTheme.surfaceCardDark : AppTheme.groupedCanvasLight,
+                          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                           border: Border.all(color: border, width: 1),
                         ),
                         child: Column(
@@ -201,7 +201,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Penulis', style: GoogleFonts.outfit(fontSize: 12.5, color: textSecondary)),
+                                Text('Penulis', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
                                 Flexible(
                                   child: Text(
                                     author,
@@ -218,7 +218,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Halaman', style: GoogleFonts.outfit(fontSize: 12.5, color: textSecondary)),
+                                Text('Halaman', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
                                 Text(
                                   pageNumber,
                                   style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
@@ -232,7 +232,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Kategori', style: GoogleFonts.outfit(fontSize: 12.5, color: textSecondary)),
+                                Text('Kategori', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
                                 Text(
                                   category,
                                   style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
@@ -259,7 +259,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                               Text(
                                 'Kutipan Ibarah Asli (Arab)',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 13.5,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                   color: textPrimary,
                                 ),
@@ -271,8 +271,8 @@ class EvidenceBottomSheet extends StatelessWidget {
                             width: double.infinity,
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF131314) : const Color(0xFFF8FAFC),
-                              borderRadius: BorderRadius.circular(14),
+                              color: isDark ? AppTheme.surfaceElevated : AppTheme.citationBgLight,
+                              borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                               border: Border.all(
                                 color: accent.withValues(alpha: isDark ? 0.35 : 0.25),
                                 width: 1.2,
@@ -311,7 +311,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           Text(
                             'Intisari & Analisis Kontekstual',
                             style: GoogleFonts.outfit(
-                              fontSize: 13.5,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: textPrimary,
                             ),
@@ -320,7 +320,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           Text(
                             explanation,
                             style: GoogleFonts.outfit(
-                              fontSize: 13.5,
+                              fontSize: 13,
                               color: textSecondary,
                               height: 1.5,
                             ),
@@ -346,7 +346,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                                 side: BorderSide(color: accent.withValues(alpha: 0.6)),
                                 padding: const EdgeInsets.symmetric(vertical: 13),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                                 ),
                                 textStyle: GoogleFonts.outfit(
                                   fontSize: 13,
@@ -368,7 +368,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                                     : Colors.white,
                                 padding: const EdgeInsets.symmetric(vertical: 13),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                                 ),
                                 textStyle: GoogleFonts.outfit(
                                   fontSize: 13,
@@ -385,7 +385,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             style: IconButton.styleFrom(
                               padding: const EdgeInsets.all(13),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                               ),
                             ),
                           ),
