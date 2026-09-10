@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
 import '../models/user_model.dart';
 import 'doku_service.dart';
@@ -6,6 +7,23 @@ import 'doku_service.dart';
 class SubscriptionService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final DokuService _dokuService = DokuService();
+
+  // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
+  Future<Map<String, dynamic>> redeemAccessCode(String code) async {
+    try {
+      final callable = FirebaseFunctions.instance.httpsCallable('redeemCode');
+      final result = await callable.call({'code': code.trim().toUpperCase()});
+      final data = result.data;
+      if (data is Map) {
+        return Map<String, dynamic>.from(data);
+      }
+      return {'success': true, 'message': 'Kode akses berhasil diaktifkan!'};
+    } on FirebaseFunctionsException catch (e) {
+      return {'success': false, 'message': e.message ?? 'Gagal menukarkan kode akses.'};
+    } catch (e) {
+      return {'success': false, 'message': 'Terjadi kendala koneksi: $e'};
+    }
+  }
 
   // ── Buat Payment Request resmi ke DOKU Payment Gateway ───────
   Future<Map<String, dynamic>> createPayment({

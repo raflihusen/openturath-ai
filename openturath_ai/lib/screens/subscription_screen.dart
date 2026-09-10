@@ -11,6 +11,7 @@ import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/subscription_service.dart';
 import '../widgets/doku_checkout_sheet.dart';
+import '../widgets/redeem_code_sheet.dart';
 
 /// Halaman Langganan Ruang Riset OpenTurath AI
 class SubscriptionScreen extends StatefulWidget {
@@ -302,6 +303,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             color: textPrimary,
           ),
         ),
+        actions: [
+          TextButton.icon(
+            onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
+              if (mounted) setState(() {});
+            }),
+            icon: Icon(Icons.card_giftcard_rounded, size: 18, color: accent),
+            label: Text(
+              'Kode Akses',
+              style: GoogleFonts.outfit(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: accent,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: AbsorbPointer(
         absorbing: _isProcessing,
@@ -343,7 +361,57 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
+                  _buildStaggeredItem(
+                    1,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: accent.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+                        border: Border.all(color: accent.withValues(alpha: 0.2)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.card_giftcard_rounded, color: accent, size: 22),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Punya Kode Akses Santri?',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: textPrimary,
+                                  ),
+                                ),
+                                Text(
+                                  'Tukarkan voucher khusus untuk membuka akses modul.',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    color: textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
+                              if (mounted) setState(() {});
+                            }),
+                            style: TextButton.styleFrom(
+                              foregroundColor: accent,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            ),
+                            child: const Text('Klaim', style: TextStyle(fontWeight: FontWeight.w700)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
                   // ── Paket 1 (Unggulan): Paket Akses Penuh (Semua AI - Rp 99.000 / bulan) ──
                   _buildStaggeredItem(

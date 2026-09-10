@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.chatGate = exports.dailyRevoke = exports.onUserCreate = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = void 0;
+exports.chatGate = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = void 0;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
@@ -162,13 +162,7 @@ exports.getAgentUrl = functions
     if (entitlementAccess.active) {
         return { url };
     }
-    if (entitlementAccess.premiumPlan) {
-        throw new functions.https.HttpsError("permission-denied", "Langganan Anda untuk modul ini telah berakhir atau belum memiliki masa berlaku.");
-    }
-    if (questionsUsed >= TRIAL_QUESTION_LIMIT) {
-        throw new functions.https.HttpsError("permission-denied", "Kuota trial Anda telah habis. Berlangganan untuk melanjutkan.");
-    }
-    return { url };
+    throw new functions.https.HttpsError("permission-denied", "Akses modul riset ini membutuhkan langganan aktif atau kode redeem santri. Silakan berlangganan atau masukkan kode akses untuk melanjutkan.");
 });
 // ================================================================
 // FUNCTION 1b: recordQuestion
@@ -218,9 +212,12 @@ exports.recordQuestion = functions
 function getDokuConfig() {
     const env = process.env.DOKU_ENV || "sandbox";
     const baseUrl = env === "production" ? "https://api.doku.com" : "https://api-sandbox.doku.com";
-    const clientId = process.env.DOKU_CLIENT_ID || "BRN-0284-1788546176993";
-    const secretKey = process.env.DOKU_SECRET_KEY || "SK-kWCZd3D5uGI3jfkGuiNj";
-    const apiKey = process.env.DOKU_API_KEY || "doku_key_sandbox_d2b8d2827a02422cbf4d65ac1923ed88";
+    const clientId = process.env.DOKU_CLIENT_ID || "";
+    const secretKey = process.env.DOKU_SECRET_KEY || "";
+    const apiKey = process.env.DOKU_API_KEY || "";
+    if (!clientId || !secretKey) {
+        console.error("[DOKU Config] Peringatan kritis: DOKU_CLIENT_ID atau DOKU_SECRET_KEY belum dikonfigurasi di environment!");
+    }
     return { env, baseUrl, clientId, secretKey, apiKey };
 }
 function generateDokuSignature(clientId, requestId, timestamp, targetPath, rawBody, secretKey) {
@@ -396,16 +393,7 @@ async function processSuccessfulPayment(invoiceNumber) {
     const durationMonths = txData.duration_months || 1;
     const entitlementKey = txData.entitlement_key || "fiqh_tahawwulat";
     const plan = txData.plan || "premium";
-    const now = new Date();
-    const expiryDate = new Date(now);
-    expiryDate.setMonth(expiryDate.getMonth() + durationMonths);
-    // 1. Update Dokumen Transaksi
-    await txDoc.ref.update({
-        status: "success",
-        paid_at: admin.firestore.FieldValue.serverTimestamp(),
-        subscription_expires_at: admin.firestore.Timestamp.fromDate(expiryDate),
-    });
-    // 2. Hubungkan & Update Dokumen User
+    // 1. Hubungkan & Dapatkan Dokumen User Terlebih Dahulu
     let userRef;
     if (uid) {
         userRef = db.collection("users").doc(uid);
@@ -422,9 +410,30 @@ async function processSuccessfulPayment(invoiceNumber) {
     const uSnap = await userRef.get();
     const uData = uSnap.exists ? uSnap.data() : {};
     const entitlements = uData.entitlements || {};
+    const currentEnt = entitlements[entitlementKey];
+    // Hitung tanggal kedaluwarsa secara adil: jika masih aktif, tambahkan di atas tanggal kedaluwarsa saat ini!
+    const now = new Date();
+    let baseDate = now;
+    if (currentEnt && currentEnt.expiry) {
+        const curExpDate = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
+        if (curExpDate > now) {
+            baseDate = curExpDate;
+        }
+    }
+    const expiryDate = new Date(baseDate);
+    expiryDate.setMonth(expiryDate.getMonth() + durationMonths);
+    // 2. Update Dokumen Transaksi
+    await txDoc.ref.update({
+        status: "success",
+        paid_at: admin.firestore.FieldValue.serverTimestamp(),
+        subscription_expires_at: admin.firestore.Timestamp.fromDate(expiryDate),
+        uid: userRef.id,
+    });
+    // 3. Update Dokumen User
     const updatedEntitlements = Object.assign(Object.assign({}, entitlements), { [entitlementKey]: {
             plan: plan,
             status: "active",
+            source: "doku_payment",
             expiry: admin.firestore.Timestamp.fromDate(expiryDate),
             updated_at: admin.firestore.FieldValue.serverTimestamp(),
         } });
@@ -434,7 +443,6 @@ async function processSuccessfulPayment(invoiceNumber) {
         plan: plan,
         subscription_expiry: admin.firestore.Timestamp.fromDate(expiryDate),
         entitlements: updatedEntitlements,
-        questions_used: 0,
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
     console.log(`[Activation] Akses berhasil diaktifkan untuk ${email} (Modul: ${entitlementKey}) hingga ${expiryDate.toISOString()}`);
@@ -522,12 +530,37 @@ exports.dokuWebhook = functions
             res.status(401).send("Invalid signature");
             return;
         }
+        // Verifikasi skew timestamp jika ada (toleransi 15 menit)
+        if (timestamp) {
+            const reqTime = new Date(timestamp).getTime();
+            if (!isNaN(reqTime)) {
+                const skewMs = Math.abs(Date.now() - reqTime);
+                if (skewMs > 15 * 60 * 1000) {
+                    console.warn(`[DOKU Webhook] Request-Timestamp skew terlampau jauh: ${timestamp}`);
+                }
+            }
+        }
         const invoiceNumber = ((_a = body.order) === null || _a === void 0 ? void 0 : _a.invoice_number) || body.invoice_number;
         const status = ((_b = body.transaction) === null || _b === void 0 ? void 0 : _b.status) || body.transactionStatus || body.status;
         if (!invoiceNumber) {
             console.warn("[DOKU Webhook] Missing invoice_number in notification.");
             res.status(400).send("Missing invoice_number");
             return;
+        }
+        // Idempotensi: Cek apakah Request-Id ini sudah pernah diproses sebelumnya
+        if (requestId) {
+            const eventRef = db.collection("webhook_events").doc(requestId);
+            const eventSnap = await eventRef.get();
+            if (eventSnap.exists) {
+                console.log(`[DOKU Webhook] Request ID ${requestId} sudah pernah diproses. Mengembalikan 200 OK.`);
+                res.status(200).json({ status: "ALREADY_PROCESSED", requestId });
+                return;
+            }
+            await eventRef.set({
+                invoice_number: invoiceNumber,
+                status: status,
+                received_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
         }
         if (status !== "SUCCESS") {
             console.log(`[DOKU Webhook] Status: ${status}, skipping activation.`);
@@ -550,6 +583,11 @@ exports.checkPaymentStatus = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
     var _a, _b, _c;
+    // 0. Wajibkan pengguna terotentikasi
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk memeriksa status pembayaran.");
+    }
+    const callerUid = context.auth.uid;
     const invoiceNumber = data.invoiceNumber;
     if (!invoiceNumber) {
         throw new functions.https.HttpsError("invalid-argument", "Invoice number diperlukan.");
@@ -564,6 +602,10 @@ exports.checkPaymentStatus = functions
     }
     const txDoc = txQuery.docs[0];
     const txData = txDoc.data();
+    // Verifikasi kepemilikan transaksi
+    if (txData.uid && txData.uid !== callerUid) {
+        throw new functions.https.HttpsError("permission-denied", "Anda tidak memiliki akses untuk memeriksa transaksi ini.");
+    }
     if (txData.status === "success") {
         return { success: true, status: "SUCCESS", message: "Akses langganan sudah aktif." };
     }
@@ -614,6 +656,100 @@ exports.checkPaymentStatus = functions
     }
 });
 // ================================================================
+// FUNCTION 2d: redeemCode
+// Menukarkan Kode Redeem Santri (Voucher Akses 7 Hari, dsb)
+// Mengaktifkan entitlement berbatas waktu & trigger email sharing
+// ================================================================
+exports.redeemCode = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
+    .https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk menukarkan kode akses.");
+    }
+    const rawCode = (data.code || "").trim().toUpperCase();
+    if (!rawCode) {
+        throw new functions.https.HttpsError("invalid-argument", "Kode redeem tidak boleh kosong.");
+    }
+    const uid = context.auth.uid;
+    const userEmail = (context.auth.token.email || "").trim().toLowerCase();
+    return await db.runTransaction(async (transaction) => {
+        const codeRef = db.collection("redeem_codes").doc(rawCode);
+        const codeDoc = await transaction.get(codeRef);
+        if (!codeDoc.exists) {
+            throw new functions.https.HttpsError("not-found", "Kode redeem tidak ditemukan atau salah.");
+        }
+        const codeData = codeDoc.data();
+        if (codeData.is_active === false) {
+            throw new functions.https.HttpsError("failed-precondition", "Kode redeem ini sudah tidak aktif.");
+        }
+        const maxUses = codeData.max_uses || 1;
+        const timesUsed = codeData.times_used || 0;
+        if (timesUsed >= maxUses) {
+            throw new functions.https.HttpsError("resource-exhausted", "Batas pemakaian kode redeem ini sudah tercapai.");
+        }
+        if (codeData.expires_at && codeData.expires_at.toDate() < new Date()) {
+            throw new functions.https.HttpsError("deadline-exceeded", "Masa berlaku penukaran kode ini telah kedaluwarsa.");
+        }
+        // Periksa apakah pengguna sudah pernah menukarkan kode ini
+        const redemptionRef = codeRef.collection("redemptions").doc(uid);
+        const redemptionDoc = await transaction.get(redemptionRef);
+        if (redemptionDoc.exists) {
+            throw new functions.https.HttpsError("already-exists", "Anda sudah pernah menukarkan kode ini sebelumnya.");
+        }
+        const entitlementKey = codeData.entitlement_key || "fiqh_syafii";
+        const durationDays = codeData.duration_days || 7;
+        // Ambil user saat ini
+        const userRef = db.collection("users").doc(uid);
+        const userDoc = await transaction.get(userRef);
+        const userData = userDoc.exists ? userDoc.data() : {};
+        const entitlements = userData.entitlements || {};
+        const currentEnt = entitlements[entitlementKey];
+        let baseDate = new Date();
+        if (currentEnt && currentEnt.expiry) {
+            const curExp = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
+            if (curExp > baseDate) {
+                baseDate = curExp;
+            }
+        }
+        const newExpiry = new Date(baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+        // 1. Simpan catatan penukaran
+        transaction.set(redemptionRef, {
+            uid,
+            email: userEmail,
+            redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        // 2. Increment pemakaian kode
+        transaction.update(codeRef, {
+            times_used: timesUsed + 1,
+        });
+        // 3. Update profil dan entitlement pengguna
+        const updatedEntitlements = Object.assign(Object.assign({}, entitlements), { [entitlementKey]: {
+                plan: "voucher_access",
+                status: "active",
+                source: "redeem_code",
+                code: rawCode,
+                expiry: admin.firestore.Timestamp.fromDate(newExpiry),
+                updated_at: admin.firestore.FieldValue.serverTimestamp(),
+            } });
+        transaction.set(userRef, {
+            email: userEmail || userData.email || "",
+            name: userData.name || "Santri OpenTurath",
+            plan: "voucher_access",
+            subscription_expiry: admin.firestore.Timestamp.fromDate(newExpiry),
+            entitlements: updatedEntitlements,
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+        console.log(`[Redeem] Kode ${rawCode} berhasil ditukarkan oleh ${uid} (${userEmail}). Akses ${entitlementKey} aktif s/d ${newExpiry.toISOString()}`);
+        return {
+            success: true,
+            entitlementKey,
+            durationDays,
+            expiry: newExpiry.toISOString(),
+            message: `Alhamdulillah! Akses ${durationDays} hari untuk modul ini berhasil diaktifkan.`,
+        };
+    });
+});
+// ================================================================
 // FUNCTION 3.5: onUserCreate
 // Dipanggil otomatis saat user pertama kali register di app
 // Menghubungkan transaksi sukses sebelumnya berdasarkan email
@@ -621,17 +757,24 @@ exports.checkPaymentStatus = functions
 exports.onUserCreate = functions.firestore
     .document("users/{uid}")
     .onCreate(async (snapshot, context) => {
+    var _a;
     try {
         const userData = snapshot.data();
         const email = userData.email;
         const uid = context.params.uid;
-        if (!email)
+        if (!email || typeof email !== "string" || !email.includes("@"))
             return null;
-        console.log(`onUserCreate: Checking transactions for email: ${email}`);
+        // Verifikasi bahwa user bukan akun anonim via Firebase Auth record
+        const userRecord = await admin.auth().getUser(uid).catch(() => null);
+        if (!userRecord || userRecord.providerData.length === 0 || ((_a = userRecord.email) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== email.toLowerCase()) {
+            console.warn(`onUserCreate: Melewati klaim transaksi untuk akun anonim/tidak terverifikasi: ${uid}`);
+            return null;
+        }
+        console.log(`onUserCreate: Checking verified transactions for email: ${email}`);
         // Cari semua transaksi sukses untuk email ini
         const trxQuery = await db
             .collection("transactions")
-            .where("customer_email", "==", email)
+            .where("customer_email", "==", email.toLowerCase())
             .where("status", "==", "success")
             .get();
         if (trxQuery.empty) {
@@ -960,15 +1103,30 @@ exports.chatGate = functions
 });
 // ── HELPERS FOR CHAT GATE ──
 async function handleLogin(req, res, secret, apiKey) {
-    const email = (req.body.email || "").trim().toLowerCase();
+    const idToken = (req.body.id_token || (req.headers.authorization ? req.headers.authorization.split("Bearer ")[1] : "") || "").trim();
     const csrfTokenForm = req.body.csrf_token || "";
     const ref = req.body.ref || "fikih-tahawwulat-muhaqqiq";
-    if (!email || !email.includes("@")) {
-        res.redirect(`/login?ref=${ref}&error=invalid_email`);
-        return;
-    }
     if (!verifyCsrfToken(csrfTokenForm, secret)) {
         res.redirect(`/login?ref=${ref}&error=invalid_request`);
+        return;
+    }
+    // Wajib memiliki idToken terverifikasi dari Firebase Authentication
+    if (!idToken) {
+        res.redirect(`/login?ref=${ref}&error=auth_required`);
+        return;
+    }
+    let email = "";
+    try {
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        email = (decodedToken.email || "").trim().toLowerCase();
+        if (!email) {
+            res.redirect(`/login?ref=${ref}&error=unverified_email`);
+            return;
+        }
+    }
+    catch (err) {
+        console.error(`[Auth] Gagal memverifikasi idToken Firebase: ${err.message}`);
+        res.redirect(`/login?ref=${ref}&error=invalid_token`);
         return;
     }
     if (!apiKey) {

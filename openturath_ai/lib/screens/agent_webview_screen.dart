@@ -909,8 +909,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       clearCache: false,
                       clearSessionCache: false,
                       useHybridComposition: true,
-                      mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
-                      allowFileAccess: true,
+                      mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                      allowFileAccess: false,
                       allowContentAccess: true,
                       javaScriptCanOpenWindowsAutomatically: true,
                       supportZoom: true,
@@ -1008,11 +1008,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   final uri = navigationAction.request.url;
                   if (uri == null) return NavigationActionPolicy.ALLOW;
 
+                  // Wajib skema HTTPS
+                  if (uri.scheme != 'https') {
+                    return NavigationActionPolicy.CANCEL;
+                  }
+
                   final host = uri.host.toLowerCase();
-                  if (host.contains('google.com') ||
-                      host.contains('gstatic.com') ||
-                      host.contains('googleapis.com') ||
-                      host.contains('googleusercontent.com')) {
+                  const allowedDomains = [
+                    'google.com',
+                    'gstatic.com',
+                    'googleapis.com',
+                    'googleusercontent.com',
+                  ];
+                  final isAllowed = allowedDomains.any((d) => host == d || host.endsWith('.$d'));
+                  if (isAllowed) {
                     return NavigationActionPolicy.ALLOW;
                   }
 
@@ -1022,32 +1031,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       return NavigationActionPolicy.CANCEL;
                     }
                   } catch (_) {}
-                  return NavigationActionPolicy.ALLOW;
+                  return NavigationActionPolicy.CANCEL;
                 },
                 onLoadStop: (controller, url) async {
                   await _applyHideScript();
                   await _applyCurrentFontScale();
                   await _detectGoogleAccessDenied();
-                  Future.delayed(const Duration(milliseconds: 500), () async {
-                    await _applyHideScript();
-                    await _applyCurrentFontScale();
-                    await _detectGoogleAccessDenied();
-                  });
-                  Future.delayed(const Duration(milliseconds: 1200), () async {
-                    await _applyHideScript();
-                    await _applyCurrentFontScale();
-                    await _detectGoogleAccessDenied();
-                  });
-                  Future.delayed(const Duration(milliseconds: 2500), () async {
-                    await _applyHideScript();
-                    await _applyCurrentFontScale();
-                    await _detectGoogleAccessDenied();
-                  });
-                  Future.delayed(const Duration(milliseconds: 4000), () async {
-                    await _applyHideScript();
-                    await _applyCurrentFontScale();
-                    await _detectGoogleAccessDenied();
-                  });
                   if (mounted && _isWebViewLoading) {
                     setState(() => _isWebViewLoading = false);
                   }

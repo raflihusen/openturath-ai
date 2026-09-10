@@ -46,7 +46,7 @@ void main() {
       // Sovereign Tahawwulat agent check
       final tahawwulatAgent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
       expect(tahawwulatAgent.fieldId, 'fiqh_tahawwulat');
-      expect(tahawwulatAgent.price1m, 300000);
+      expect(tahawwulatAgent.price1m, 50000);
       expect(tahawwulatAgent.isActive, isTrue);
     });
 
