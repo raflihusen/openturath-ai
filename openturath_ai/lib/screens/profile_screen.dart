@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import '../core/theme.dart';
+
 import '../core/routes.dart';
 import '../core/app_config.dart';
 import '../core/app_snackbar.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_motion.dart';
+import '../core/design/ot_spacing.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
@@ -43,30 +46,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _logout() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
         return AlertDialog(
-          backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+          backgroundColor: surface,
+          shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
             'Konfirmasi Keluar',
-            style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+            style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
             'Apakah Anda yakin ingin keluar dari akun OpenTurath AI?',
-            style: GoogleFonts.outfit(fontSize: 14),
+            style: OTTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Batal', style: GoogleFonts.outfit(color: Colors.grey)),
+              child: Text('Batal', style: OTTypography.button(color: textSecondary)),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(backgroundColor: AppTheme.appleRed),
-              child: Text('Keluar', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+              style: FilledButton.styleFrom(
+                backgroundColor: OTColors.destructive,
+                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+              ),
+              child: Text('Keluar', style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -87,38 +97,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _deleteAccount() async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
         return AlertDialog(
-          backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+          backgroundColor: surface,
+          shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: AppTheme.appleRed, size: 24),
-              const SizedBox(width: 8),
+              const Icon(Icons.warning_amber_rounded, color: OTColors.destructive, size: 24),
+              const SizedBox(width: OTSpacing.sm),
               Expanded(
                 child: Text(
                   'Hapus Akun & Data',
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: AppTheme.appleRed),
+                  style: OTTypography.cardTitle(color: OTColors.destructive).copyWith(fontSize: 18),
                 ),
               ),
             ],
           ),
           content: Text(
             'PERINGATAN: Tindakan ini permanen dan tidak dapat dibatalkan.\n\nSeluruh data profil, histori riset, bookmark kitab, dan lisensi akses di perangkat ini akan dihapus secara menyeluruh dari server.',
-            style: GoogleFonts.outfit(fontSize: 13, height: 1.45),
+            style: OTTypography.body(color: OTColors.textSecondary(isDark)),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Batal', style: GoogleFonts.outfit(color: Colors.grey)),
+              child: Text('Batal', style: OTTypography.button(color: OTColors.textSecondary(isDark))),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(backgroundColor: AppTheme.appleRed),
-              child: Text('Hapus Akun Permanen', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
+              style: FilledButton.styleFrom(
+                backgroundColor: OTColors.destructive,
+                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+              ),
+              child: Text('Hapus Akun Permanen', style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -162,15 +177,154 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showThemeModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final currentMode = AppConfig.themeNotifier.value;
+        final surface = OTColors.surface(isDark);
+        final border = OTColors.border(isDark);
+        final textPrimary = OTColors.textPrimary(isDark);
+        final textSecondary = OTColors.textSecondary(isDark);
+        final accent = OTColors.accent(isDark);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: OTRadius.sheetBorder,
+            border: Border.all(color: border, width: 0.8),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: textSecondary.withValues(alpha: 0.3),
+                    borderRadius: OTRadius.chipBorder,
+                  ),
+                ),
+              ),
+              Text(
+                'Tema Tampilan',
+                style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
+              ),
+              const SizedBox(height: OTSpacing.md),
+              _buildThemeChoiceTile(
+                title: 'Ikuti Pengaturan Sistem',
+                subtitle: 'Otomatis menyesuaikan tema perangkat Anda',
+                icon: Icons.brightness_auto_rounded,
+                isSelected: currentMode == ThemeMode.system,
+                isDark: isDark,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                accent: accent,
+                onTap: () {
+                  OTMotion.selection();
+                  AppConfig.setThemeMode(ThemeMode.system);
+                  Navigator.pop(ctx);
+                },
+              ),
+              Divider(height: 1, color: border.withValues(alpha: 0.5)),
+              _buildThemeChoiceTile(
+                title: 'Mode Terang (Warm Off-White)',
+                subtitle: 'Kertas alami, kontras tinggi yang nyaman di mata',
+                icon: Icons.light_mode_outlined,
+                isSelected: currentMode == ThemeMode.light,
+                isDark: isDark,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                accent: accent,
+                onTap: () {
+                  OTMotion.selection();
+                  AppConfig.setThemeMode(ThemeMode.light);
+                  Navigator.pop(ctx);
+                },
+              ),
+              Divider(height: 1, color: border.withValues(alpha: 0.5)),
+              _buildThemeChoiceTile(
+                title: 'Mode Gelap (Deep Obsidian)',
+                subtitle: 'Minim silau untuk muthala\'ah dan riset malam hari',
+                icon: Icons.dark_mode_outlined,
+                isSelected: currentMode == ThemeMode.dark,
+                isDark: isDark,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                accent: accent,
+                onTap: () {
+                  OTMotion.selection();
+                  AppConfig.setThemeMode(ThemeMode.dark);
+                  Navigator.pop(ctx);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildThemeChoiceTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color accent,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: isSelected ? accent : textSecondary),
+            const SizedBox(width: OTSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: OTTypography.bodyMedium(
+                      color: isSelected ? accent : textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: OTTypography.caption(color: textSecondary),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_rounded, size: 20, color: accent),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.groupedCanvasDark : AppTheme.groupedCanvasLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final accent = OTColors.accent(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -183,11 +337,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.only(left: 4),
           child: Text(
             'Pengaturan',
-            style: GoogleFonts.newsreader(
-              fontSize: 24,
+            style: OTTypography.corpusTitle(color: textPrimary).copyWith(
+              fontSize: 22,
               fontWeight: FontWeight.w600,
-              color: textPrimary,
-              letterSpacing: -0.3,
             ),
           ),
         ),
@@ -228,16 +380,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 108),
+              padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
               physics: const BouncingScrollPhysics(),
               children: [
-                // ── Apple ID Unified Profile Card ──
+                // ── Scholarly Profile Card ──
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(OTSpacing.base),
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                    border: Border.all(color: border, width: 1.0),
+                    borderRadius: OTRadius.cardBorder,
+                    border: Border.all(color: border, width: 0.8),
                   ),
                   child: Column(
                     children: [
@@ -252,11 +404,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: userModel?.photoUrl.isEmpty != false
                                 ? Text(
                                     displayName.isNotEmpty ? displayName[0].toUpperCase() : 'P',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: textPrimary,
-                                    ),
+                                    style: OTTypography.screenTitle(color: textPrimary),
                                   )
                                 : null,
                           ),
@@ -267,21 +415,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 Text(
                                   displayName,
-                                  style: GoogleFonts.newsreader(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: textPrimary,
-                                  ),
+                                  style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 16),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   email,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 12,
-                                    color: textSecondary,
-                                  ),
+                                  style: OTTypography.caption(color: textSecondary),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -292,24 +433,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white : const Color(0xFF18181B),
-                              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                              color: isSubscribed ? accent : textPrimary,
+                              borderRadius: OTRadius.chipBorder,
                             ),
                             child: Text(
                               isSubscribed ? 'PRO' : 'TRIAL',
-                              style: GoogleFonts.outfit(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: isDark ? const Color(0xFF18181B) : Colors.white,
-                              ),
+                              style: OTTypography.captionMedium(
+                                color: isSubscribed ? Colors.white : canvas,
+                              ).copyWith(fontSize: 11, fontWeight: FontWeight.w700),
                             ),
                           ),
                         ],
                       ),
                       if (!isSubscribed) ...[
-                        const SizedBox(height: 14),
-                        Divider(height: 1, color: border),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: OTSpacing.md),
+                        Divider(height: 1, color: border.withValues(alpha: 0.5)),
+                        const SizedBox(height: OTSpacing.md),
                         Row(
                           children: [
                             Expanded(
@@ -318,19 +457,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   Text(
                                     'Tingkatkan ke OpenTurath Pro',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: textPrimary,
-                                    ),
+                                    style: OTTypography.bodyMedium(color: textPrimary),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     'Akses korpus kitab tanpa batas kuota.',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12,
-                                      color: textSecondary,
-                                    ),
+                                    style: OTTypography.caption(color: textSecondary),
                                   ),
                                 ],
                               ),
@@ -339,17 +471,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             FilledButton(
                               onPressed: _openSubscription,
                               style: FilledButton.styleFrom(
-                                backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
-                                foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                                backgroundColor: textPrimary,
+                                foregroundColor: canvas,
                                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                 minimumSize: Size.zero,
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
+                                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                               ),
-                              child: Text(
-                                'Upgrade',
-                                style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
-                              ),
+                              child: Text('Upgrade', style: OTTypography.button(color: canvas).copyWith(fontSize: 12)),
                             ),
                           ],
                         ),
@@ -358,26 +487,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: OTSpacing.xl),
 
-                // ── Section 1: Account & Billing (Apple Grouped Style) ──
+                // ── Section 1: Account & Billing ──
                 Padding(
                   padding: const EdgeInsets.only(left: 4, bottom: 6),
                   child: Text(
                     'AKUN & LISENSI',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.6,
-                      color: textSecondary,
-                    ),
+                    style: OTTypography.sectionHeading(color: textSecondary),
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                    border: Border.all(color: border, width: 1.0),
+                    borderRadius: OTRadius.cardBorder,
+                    border: Border.all(color: border, width: 0.8),
                   ),
                   child: Column(
                     children: [
@@ -388,7 +512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: _openSubscription,
                       ),
-                      Divider(height: 1, color: border, indent: 48),
+                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
                       _SettingsTile(
                         icon: Icons.confirmation_number_outlined,
                         title: 'Klaim Kode Akses Santri',
@@ -402,50 +526,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: OTSpacing.lg),
 
                 // ── Section 2: Display & Appearance ──
                 Padding(
                   padding: const EdgeInsets.only(left: 4, bottom: 6),
                   child: Text(
                     'TAMPILAN & PREFERENSI',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.6,
-                      color: textSecondary,
-                    ),
+                    style: OTTypography.sectionHeading(color: textSecondary),
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                    border: Border.all(color: border, width: 1.0),
+                    borderRadius: OTRadius.cardBorder,
+                    border: Border.all(color: border, width: 0.8),
                   ),
                   child: Column(
                     children: [
                       ValueListenableBuilder<ThemeMode>(
                         valueListenable: AppConfig.themeNotifier,
                         builder: (context, currentMode, _) {
-                          final isCurrentDark = currentMode == ThemeMode.dark;
+                          final String modeLabel;
+                          if (currentMode == ThemeMode.system) {
+                            modeLabel = 'Ikuti Sistem';
+                          } else if (currentMode == ThemeMode.dark) {
+                            modeLabel = 'Mode Gelap (Deep Obsidian)';
+                          } else {
+                            modeLabel = 'Mode Terang (Warm Off-White)';
+                          }
+
                           return _SettingsTile(
-                            icon: Icons.dark_mode_outlined,
+                            icon: Icons.palette_outlined,
                             title: 'Tema Tampilan',
-                            subtitle: isCurrentDark ? 'Mode Gelap' : 'Mode Terang',
-                            trailing: Switch.adaptive(
-                              value: isCurrentDark,
-                              activeTrackColor: accent,
-                              activeThumbColor: Colors.white,
-                              onChanged: (val) {
-                                HapticFeedback.selectionClick();
-                                AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
-                              },
-                            ),
+                            subtitle: modeLabel,
+                            trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                            onTap: () => _showThemeModal(context),
                           );
                         },
                       ),
-                      Divider(height: 1, color: border, indent: AppTheme.dividerIndent, endIndent: 16),
+                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
                       _SettingsTile(
                         icon: Icons.translate_rounded,
                         title: 'Bahasa Aplikasi',
@@ -464,26 +584,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: OTSpacing.lg),
 
                 // ── Section 3: Legal & About ──
                 Padding(
                   padding: const EdgeInsets.only(left: 4, bottom: 6),
                   child: Text(
                     'TENTANG & KEBIJAKAN',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.6,
-                      color: textSecondary,
-                    ),
+                    style: OTTypography.sectionHeading(color: textSecondary),
                   ),
                 ),
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                    border: Border.all(color: border, width: 1.0),
+                    borderRadius: OTRadius.cardBorder,
+                    border: Border.all(color: border, width: 0.8),
                   ),
                   child: Column(
                     children: [
@@ -501,7 +616,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border,
                         ),
                       ),
-                      Divider(height: 1, color: border, indent: AppTheme.dividerIndent, endIndent: 16),
+                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
                       _SettingsTile(
                         icon: Icons.privacy_tip_outlined,
                         title: 'Kebijakan Privasi',
@@ -516,7 +631,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border,
                         ),
                       ),
-                      Divider(height: 1, color: border, indent: AppTheme.dividerIndent, endIndent: 16),
+                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
                         title: 'Tentang OpenTurath',
@@ -535,9 +650,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
-
-                const SizedBox(height: 28),
+                const SizedBox(height: OTSpacing.xxl),
 
                 // ── Quiet Text Actions (Logout & Delete Account) ──
                 Center(
@@ -547,15 +660,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? const SizedBox(
                             width: 18,
                             height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.appleRed),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: OTColors.destructive),
                           )
                         : Text(
                             'Keluar dari Akun',
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppTheme.appleRed,
-                            ),
+                            style: OTTypography.bodyMedium(color: OTColors.destructive),
                           ),
                   ),
                 ),
@@ -567,14 +676,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.appleRed),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: OTColors.destructive),
                           )
                         : Text(
                             'Hapus Akun & Data Riset',
-                            style: GoogleFonts.outfit(
-                              color: textSecondary.withValues(alpha: 0.7),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
+                            style: OTTypography.caption(
+                              color: textSecondary.withValues(alpha: 0.65),
                             ),
                           ),
                   ),
@@ -600,16 +707,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-          side: BorderSide(color: border, width: 1.0),
+          borderRadius: OTRadius.dialogBorder,
+          side: BorderSide(color: border, width: 0.8),
         ),
         title: Text(
           'Tentang OpenTurath',
-          style: GoogleFonts.newsreader(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: textPrimary,
-          ),
+          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -617,29 +720,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Text(
               'Versi $_appVersion · AI for Islamic Scholarship',
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: textSecondary,
-              ),
+              style: OTTypography.captionMedium(color: textSecondary),
             ),
             const SizedBox(height: 12),
             Text(
               'OpenTurath adalah asisten riset naskah primer keilmuan Islam yang menggabungkan ribuan halaman kitab kuning mu\'tabar dengan teknologi penelaahan cerdas.',
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                height: 1.5,
-                color: textPrimary,
-              ),
+              style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 12),
             Text(
               'Prinsip Ilmiah: Berbasis sanad, penelusuran ibarah naskah asli, dan kehati-hatian dalam istinbath. Bukan pengganti proses talaqqi dengan masyayikh.',
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                height: 1.45,
-                color: textSecondary,
-              ),
+              style: OTTypography.caption(color: textSecondary),
             ),
           ],
         ),
@@ -647,14 +738,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           FilledButton(
             onPressed: () => Navigator.pop(ctx),
             style: FilledButton.styleFrom(
-              backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+              backgroundColor: textPrimary,
               foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
+              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
-            child: Text(
-              'Tutup',
-              style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
-            ),
+            child: Text('Tutup', style: OTTypography.button()),
           ),
         ],
       ),
@@ -677,8 +765,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: MediaQuery.of(ctx).size.height * 0.8,
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
-          border: Border.all(color: border, width: 1.0),
+          borderRadius: OTRadius.sheetBorder,
+          border: Border.all(color: border, width: 0.8),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Column(
@@ -691,7 +779,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: const EdgeInsets.only(bottom: 18),
                 decoration: BoxDecoration(
                   color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                  borderRadius: OTRadius.chipBorder,
                 ),
               ),
             ),
@@ -700,11 +788,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   'Ketentuan Layanan',
-                  style: GoogleFonts.newsreader(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: textPrimary,
-                  ),
+                  style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(ctx),
@@ -761,11 +845,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: FilledButton(
                 onPressed: () => Navigator.pop(ctx),
                 style: FilledButton.styleFrom(
-                  backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                  backgroundColor: textPrimary,
                   foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
+                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                 ),
-                child: Text('Saya Pahami & Setuju', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+                child: Text('Saya Pahami & Setuju', style: OTTypography.button()),
               ),
             ),
           ],
@@ -790,8 +874,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: MediaQuery.of(ctx).size.height * 0.8,
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
-          border: Border.all(color: border, width: 1.0),
+          borderRadius: OTRadius.sheetBorder,
+          border: Border.all(color: border, width: 0.8),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Column(
@@ -804,7 +888,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: const EdgeInsets.only(bottom: 18),
                 decoration: BoxDecoration(
                   color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                  borderRadius: OTRadius.chipBorder,
                 ),
               ),
             ),
@@ -813,11 +897,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   'Kebijakan Privasi',
-                  style: GoogleFonts.newsreader(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: textPrimary,
-                  ),
+                  style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(ctx),
@@ -874,11 +954,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: FilledButton(
                 onPressed: () => Navigator.pop(ctx),
                 style: FilledButton.styleFrom(
-                  backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                  backgroundColor: textPrimary,
                   foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
+                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                 ),
-                child: Text('Tutup', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+                child: Text('Tutup', style: OTTypography.button()),
               ),
             ),
           ],
@@ -900,16 +980,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-          side: BorderSide(color: border, width: 1.0),
+          borderRadius: OTRadius.dialogBorder,
+          side: BorderSide(color: border, width: 0.8),
         ),
         title: Text(
           'Bahasa Aplikasi',
-          style: GoogleFonts.newsreader(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: textPrimary,
-          ),
+          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -917,12 +993,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Text(
               'Antarmuka aplikasi saat ini dioptimalkan untuk Bahasa Indonesia dengan dukungan penuh teks Arab gundul/berharakat pada naskah kitab kuning primer.',
-              style: GoogleFonts.outfit(fontSize: 13, height: 1.45, color: textPrimary),
+              style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 10),
             Text(
               'Dukungan antarmuka penuh Bahasa Arab (العربية) dan Inggris (English) sedang dalam proses finalisasi kurasi kebahasaan.',
-              style: GoogleFonts.outfit(fontSize: 12, height: 1.4, color: textSecondary),
+              style: OTTypography.caption(color: textSecondary),
             ),
           ],
         ),
@@ -930,11 +1006,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           FilledButton(
             onPressed: () => Navigator.pop(ctx),
             style: FilledButton.styleFrom(
-              backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+              backgroundColor: textPrimary,
               foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
+              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
-            child: Text('Mengerti', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+            child: Text('Mengerti', style: OTTypography.button()),
           ),
         ],
       ),
@@ -952,20 +1028,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.outfit(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: textPrimary,
-          ),
+          style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 4),
         Text(
           content,
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            height: 1.5,
-            color: textSecondary,
-          ),
+          style: OTTypography.caption(color: textSecondary).copyWith(height: 1.5),
         ),
       ],
     );
@@ -990,36 +1058,29 @@ class _SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     return ListTile(
       onTap: onTap != null
           ? () {
-              HapticFeedback.lightImpact();
+              OTMotion.light();
               onTap!();
             }
           : null,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      contentPadding: const EdgeInsets.symmetric(horizontal: OTSpacing.base, vertical: 2),
       leading: Icon(
         icon,
         size: 21,
-        color: isDark ? Colors.white : const Color(0xFF18181B),
+        color: textPrimary,
       ),
       title: Text(
         title,
-        style: GoogleFonts.outfit(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-          color: textPrimary,
-        ),
+        style: OTTypography.bodyMedium(color: textPrimary),
       ),
       subtitle: Text(
         subtitle,
-        style: GoogleFonts.outfit(
-          fontSize: 12,
-          color: textSecondary,
-        ),
+        style: OTTypography.caption(color: textSecondary),
       ),
       trailing: trailing,
     );
