@@ -1,9 +1,9 @@
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/app_config.dart';
 import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_motion.dart';
 import '../models/field_model.dart';
 import 'dashboard_screen.dart';
 import 'specialist_list_screen.dart';
@@ -180,72 +180,59 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   children: screens,
                 ),
                 extendBody: true,
-                bottomNavigationBar: ClipRect(
-                  child: BackdropFilter(
-                    filter: ui.ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isDark ? AppTheme.navBarDark : AppTheme.navBarLight,
-                        border: Border(
-                          top: BorderSide(
-                            color: isDark ? AppTheme.navBarBorderDark : AppTheme.navBarBorderLight,
-                            width: 0.5,
-                          ),
-                        ),
+                bottomNavigationBar: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xF20E0E10) : const Color(0xF7FAFAF9),
+                    border: Border(
+                      top: BorderSide(
+                        color: isDark ? OTColors.borderDark : OTColors.borderLight,
+                        width: 0.5,
                       ),
-                      child: SafeArea(
-                        top: false,
-                        child: SizedBox(
-                          height: 60,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: _ExpressiveNavItem(
-                                  icon: Icons.home_outlined,
-                                  activeIcon: Icons.home_rounded,
-                                  label: 'Beranda',
-                                  isSelected: _currentIndex == 0,
-                                  accent: accent,
-                                  unselected: unselected,
-                                  onTap: () => _onTabSelected(0),
-                                ),
-                              ),
-                              Expanded(
-                                child: _ExpressiveNavItem(
-                                  icon: Icons.menu_book_outlined,
-                                  activeIcon: Icons.menu_book_rounded,
-                                  label: 'Keilmuan',
-                                  isSelected: _currentIndex == 1,
-                                  accent: accent,
-                                  unselected: unselected,
-                                  onTap: () => _onTabSelected(1),
-                                ),
-                              ),
-                              Expanded(
-                                child: _ExpressiveNavItem(
-                                  icon: Icons.collections_bookmark_outlined,
-                                  activeIcon: Icons.collections_bookmark_rounded,
-                                  label: 'Rujukan',
-                                  isSelected: _currentIndex == 2,
-                                  accent: accent,
-                                  unselected: unselected,
-                                  onTap: () => _onTabSelected(2),
-                                ),
-                              ),
-                              Expanded(
-                                child: _ExpressiveNavItem(
-                                  icon: Icons.person_outline_rounded,
-                                  activeIcon: Icons.person_rounded,
-                                  label: 'Profil',
-                                  isSelected: _currentIndex == 3,
-                                  accent: accent,
-                                  unselected: unselected,
-                                  onTap: () => _onTabSelected(3),
-                                ),
-                              ),
-                            ],
+                    ),
+                  ),
+                  child: SafeArea(
+                    top: false,
+                    child: SizedBox(
+                      height: 58,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.home_outlined,
+                              activeIcon: Icons.home_rounded,
+                              label: 'Beranda',
+                              isSelected: _currentIndex == 0,
+                              onTap: () => _onTabSelected(0),
+                            ),
                           ),
-                        ),
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.menu_book_outlined,
+                              activeIcon: Icons.menu_book_rounded,
+                              label: 'Keilmuan',
+                              isSelected: _currentIndex == 1,
+                              onTap: () => _onTabSelected(1),
+                            ),
+                          ),
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.collections_bookmark_outlined,
+                              activeIcon: Icons.collections_bookmark_rounded,
+                              label: 'Rujukan',
+                              isSelected: _currentIndex == 2,
+                              onTap: () => _onTabSelected(2),
+                            ),
+                          ),
+                          Expanded(
+                            child: _ExpressiveNavItem(
+                              icon: Icons.person_outline_rounded,
+                              activeIcon: Icons.person_rounded,
+                              label: 'Profil',
+                              isSelected: _currentIndex == 3,
+                              onTap: () => _onTabSelected(3),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -261,8 +248,6 @@ class _ExpressiveNavItem extends StatelessWidget {
   final IconData activeIcon;
   final String label;
   final bool isSelected;
-  final Color accent;
-  final Color unselected;
   final VoidCallback onTap;
 
   const _ExpressiveNavItem({
@@ -270,19 +255,18 @@ class _ExpressiveNavItem extends StatelessWidget {
     required this.activeIcon,
     required this.label,
     required this.isSelected,
-    required this.accent,
-    required this.unselected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeColor = isDark ? Colors.white : const Color(0xFF18181B);
+    final activeColor = OTColors.textPrimary(isDark);
+    final unselected = OTColors.textSecondary(isDark);
 
     return InkWell(
       onTap: () {
-        HapticFeedback.selectionClick();
+        OTMotion.selection();
         onTap();
       },
       borderRadius: BorderRadius.circular(AppTheme.radiusXS),
@@ -293,8 +277,8 @@ class _ExpressiveNavItem extends StatelessWidget {
           children: [
             AnimatedScale(
               scale: isSelected ? 1.08 : 1.0,
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOutCubic,
+              duration: OTMotion.fast,
+              curve: OTMotion.curve,
               child: Icon(
                 isSelected ? activeIcon : icon,
                 color: isSelected ? activeColor : unselected,
@@ -304,10 +288,7 @@ class _ExpressiveNavItem extends StatelessWidget {
             const SizedBox(height: 3),
             Text(
               label,
-              style: GoogleFonts.outfit(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                letterSpacing: -0.1,
+              style: OTTypography.captionMedium(
                 color: isSelected ? activeColor : unselected,
               ),
             ),
@@ -345,7 +326,7 @@ class _RailItem extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        HapticFeedback.selectionClick();
+        OTMotion.selection();
         onTap();
       },
       borderRadius: BorderRadius.circular(AppTheme.radiusCard),
@@ -355,8 +336,8 @@ class _RailItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOutCubic,
+              duration: OTMotion.normal,
+              curve: OTMotion.curve,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
                 color: isSelected ? activeBg : Colors.transparent,
@@ -364,7 +345,7 @@ class _RailItem extends StatelessWidget {
               ),
               child: AnimatedScale(
                 scale: isSelected ? 1.0 : 0.95,
-                duration: const Duration(milliseconds: 220),
+                duration: OTMotion.normal,
                 curve: Curves.easeOutBack,
                 child: Icon(
                   isSelected ? activeIcon : icon,
@@ -376,9 +357,7 @@ class _RailItem extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: GoogleFonts.outfit(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              style: OTTypography.captionMedium(
                 color: isSelected ? (isDark ? Colors.white : const Color(0xFF18181B)) : unselected,
               ),
             ),
