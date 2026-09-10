@@ -114,15 +114,16 @@ class AppTheme {
   static const Color lightTextPrimary     = textPrimaryLight;
   static const Color lightTextSecondary   = textSecondaryLight;
 
-  // ── 4. Geometri & Radius M3 Expressive ─────────────────────────────────────
-  static const double radiusXS   = 8.0;
-  static const double radiusS    = 12.0;
-  static const double radiusM    = 16.0;
-  static const double radiusL    = 20.0;
-  static const double radiusXL   = 28.0;
-  static const double radiusFull = 100.0; // M3 Full Stadium Pill
+  // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
+  static const double radiusXS   = 8.0;   // Kecil: chip / badge / tag
+  static const double radiusCard = 16.0;  // Sedang: card / dialog / bottom sheet
+  static const double radiusM    = 16.0;  // Alias untuk kompatibilitas
+  static const double radiusS    = 8.0;   // Diharmonisasi ke 8.0
+  static const double radiusL    = 16.0;  // Diharmonisasi ke 16.0
+  static const double radiusXL   = 16.0;  // Diharmonisasi ke 16.0
+  static const double radiusFull = 100.0; // Bulat: pill / button / avatar
   static const double radiusPill = 100.0; // Stadium Pills & Buttons
-  static const double radiusQuery= 28.0;  // Chat Query Stadium Pill
+  static const double radiusQuery= 100.0; // Chat Query Stadium Pill
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
   static const LinearGradient bgGradient = LinearGradient(
