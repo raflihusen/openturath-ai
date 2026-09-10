@@ -68,7 +68,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         content: Text(
           'Akun Google diperlukan agar ruang riset manuskrip AI dapat langsung digunakan tanpa meminta login berulang kali.',
           style: GoogleFonts.outfit(
-            fontSize: 13.5,
+            fontSize: 13,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
           ),
         ),
@@ -161,7 +161,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               Text(
                 'Autentikasi sesi riset naskah turats',
                 style: GoogleFonts.outfit(
-                  fontSize: 11.5,
+                  fontSize: 12,
                   color: textSecondary,
                 ),
               ),
