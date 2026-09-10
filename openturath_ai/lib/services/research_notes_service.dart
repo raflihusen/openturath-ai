@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Model Catatan Riset / Bookmark Hasil Pencarian Kitab
@@ -69,12 +70,32 @@ class ResearchNote {
 
 /// Service Penyimpanan Catatan & Bookmark Riset Lokal (Offline-first)
 class ResearchNotesService {
-  static const String _storageKey = 'openturath_research_notes_v1';
+  static const String _legacyKey = 'openturath_research_notes_v1';
 
-  Future<List<ResearchNote>> getNotes({String? agentId}) async {
+  String _getKey([String? userId]) {
+    final uid = userId ?? FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null && uid.isNotEmpty) {
+      return 'openturath_${uid}_research_notes_v1';
+    }
+    return _legacyKey;
+  }
+
+  Future<List<ResearchNote>> getNotes({String? agentId, String? userId}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString(_storageKey);
+      final key = _getKey(userId);
+      var raw = prefs.getString(key);
+
+      // Auto-migrasi data legacy
+      if ((raw == null || raw.isEmpty) && key != _legacyKey) {
+        final legacyRaw = prefs.getString(_legacyKey);
+        if (legacyRaw != null && legacyRaw.isNotEmpty) {
+          raw = legacyRaw;
+          await prefs.setString(key, legacyRaw);
+          await prefs.remove(_legacyKey);
+        }
+      }
+
       if (raw == null || raw.isEmpty) return [];
 
       final List<dynamic> list = jsonDecode(raw);
@@ -91,24 +112,26 @@ class ResearchNotesService {
     }
   }
 
-  Future<void> saveNote(ResearchNote note) async {
+  Future<void> saveNote(ResearchNote note, {String? userId}) async {
     final prefs = await SharedPreferences.getInstance();
-    final currentNotes = await getNotes();
+    final key = _getKey(userId);
+    final currentNotes = await getNotes(userId: userId);
     
     // Hapus duplikat jika ID sama
     currentNotes.removeWhere((n) => n.id == note.id);
     currentNotes.insert(0, note);
 
     final raw = jsonEncode(currentNotes.map((e) => e.toMap()).toList());
-    await prefs.setString(_storageKey, raw);
+    await prefs.setString(key, raw);
   }
 
-  Future<void> deleteNote(String noteId) async {
+  Future<void> deleteNote(String noteId, {String? userId}) async {
     final prefs = await SharedPreferences.getInstance();
-    final currentNotes = await getNotes();
+    final key = _getKey(userId);
+    final currentNotes = await getNotes(userId: userId);
     currentNotes.removeWhere((n) => n.id == noteId);
 
     final raw = jsonEncode(currentNotes.map((e) => e.toMap()).toList());
-    await prefs.setString(_storageKey, raw);
+    await prefs.setString(key, raw);
   }
 }
