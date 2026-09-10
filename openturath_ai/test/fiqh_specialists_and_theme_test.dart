@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/field_model.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/core/app_config.dart';
+import 'package:openturath_ai/core/theme.dart';
 
 void main() {
   group('Fikih Specialists & Theme Verification', () {
@@ -59,5 +60,14 @@ void main() {
     test('Default ThemeMode is dark to match Figma master design', () {
       expect(AppConfig.themeNotifier.value, ThemeMode.dark);
     });
+
+    test('AppTheme defines scholarly sapphire accent and parchment reading surface tokens', () {
+      expect(AppTheme.accentDark, const Color(0xFF60A5FA));
+      expect(AppTheme.accentLight, const Color(0xFF18181B));
+      expect(AppTheme.readingCanvasParchmentLight, const Color(0xFFFBF7EE));
+      expect(AppTheme.readingCanvasParchmentDark, const Color(0xFF1C1A17));
+      expect(AppTheme.scholarlyIndigo, const Color(0xFF4F46E5));
+    });
   });
 }
+
