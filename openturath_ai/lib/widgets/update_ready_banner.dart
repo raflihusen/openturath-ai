@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/theme.dart';
 import '../services/update_service.dart';
 
 class UpdateReadyBanner extends StatelessWidget {
@@ -17,6 +18,10 @@ class UpdateReadyBanner extends StatelessWidget {
         }
 
         final isDark = Theme.of(context).brightness == Brightness.dark;
+        final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+        final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
+        final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+        final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
         final info = updateService.updateInfo;
         final version = info?.latestVersion ?? '';
 
@@ -24,39 +29,26 @@ class UpdateReadyBanner extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 16),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [const Color(0xFF132A1C), const Color(0xFF0F1E2E)]
-                  : [const Color(0xFFE8F5E9), const Color(0xFFE3F2FD)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
+            color: surface,
+            borderRadius: BorderRadius.circular(AppTheme.radiusCard),
             border: Border.all(
-              color: isDark ? const Color(0xFF2E7D32) : const Color(0xFF81C784),
+              color: border,
               width: 1,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: (isDark ? Colors.black : Colors.green).withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
           child: Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1B5E20) : const Color(0xFFC8E6C9),
+                  color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.system_update_rounded,
-                  color: Color(0xFF2E7D32),
-                  size: 24,
+                  color: AppTheme.appleGreen,
+                  size: 20,
                 ),
               ),
               const SizedBox(width: 14),
@@ -67,17 +59,17 @@ class UpdateReadyBanner extends StatelessWidget {
                     Text(
                       'Pembaruan v$version Siap Dipasang',
                       style: GoogleFonts.outfit(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : const Color(0xFF1B5E20),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Telah selesai diunduh di latar belakang. Ketuk untuk memasang seketika.',
+                      'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
                       style: GoogleFonts.outfit(
-                        fontSize: 11.5,
-                        color: isDark ? const Color(0xFFA5D6A7) : const Color(0xFF388E3C),
+                        fontSize: 12,
+                        color: textSecondary,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -86,14 +78,15 @@ class UpdateReadyBanner extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              ElevatedButton(
+              FilledButton(
                 onPressed: () => updateService.installNow(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isDark ? const Color(0xFF2E7D32) : const Color(0xFF1B5E20),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.appleGreen,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  minimumSize: const Size(64, 36),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                   ),
                   elevation: 0,
                 ),
