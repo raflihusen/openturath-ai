@@ -205,7 +205,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Rujukan & Catatan Riset',
+              'Rujukan',
               style: GoogleFonts.newsreader(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -214,9 +214,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
             ),
             Text(
-              'Koleksi kutipan ibarah dan referensi naskah tersimpan',
+              'Catatan ibarah dan referensi naskah tersimpan',
               style: GoogleFonts.outfit(
-                fontSize: 11.5,
+                fontSize: 12,
                 color: textSecondary,
               ),
             ),
@@ -319,6 +319,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
                   return GestureDetector(
                     onTap: () {
+                      HapticFeedback.selectionClick();
                       setState(() {
                         _selectedCategory = cat;
                         _filter();
@@ -330,20 +331,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? (isDark ? Colors.white : const Color(0xFF18181B))
-                            : surface,
+                            : (isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7)),
                         borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: isSelected
-                              ? (isDark ? Colors.white : const Color(0xFF18181B))
-                              : border,
-                          width: 1.0,
-                        ),
                       ),
                       child: Center(
                         child: Text(
                           cat,
                           style: GoogleFonts.outfit(
-                            fontSize: 12,
+                            fontSize: 12.5,
                             fontWeight:
                                 isSelected ? FontWeight.w600 : FontWeight.w400,
                             color: isSelected
