@@ -18,7 +18,10 @@ service cloud.firestore {
           'name', 'email', 'photo_url', 'plan', 'questions_used',
           'subscription_expiry', 'entitlements'
         ])
-        && (request.resource.data.email == request.auth.token.email || request.auth.token.firebase.sign_in_provider == 'anonymous')
+        && (
+          (request.auth.token.firebase.sign_in_provider != 'anonymous' && request.resource.data.email == request.auth.token.email) ||
+          (request.auth.token.firebase.sign_in_provider == 'anonymous' && (!('email' in request.resource.data) || request.resource.data.email == null || request.resource.data.email == ''))
+        )
         && request.resource.data.plan == 'trial'
         && request.resource.data.questions_used == 0
         && request.resource.data.subscription_expiry == null
@@ -26,7 +29,7 @@ service cloud.firestore {
 
       allow update: if false;
 
-      // DELETE: Pengguna boleh menghapus datanya sendiri untuk kepatuhan Google Play
+      // DELETE: Pengguna boleh menghapus datanya sendiri
       allow delete: if request.auth != null && request.auth.uid == userId;
 
       // Sub-koleksi chat / conversations milik user
@@ -43,9 +46,8 @@ service cloud.firestore {
     // APP CONFIG (Termasuk Dynamic Script & Info Aplikasi)
     // ================================================================
     match /app_config/{configId} {
-      // Semua pengguna (bahkan yang belum login) bisa membaca config
       allow read: if true;
-      allow write: if false; // Hanya admin
+      allow write: if false;
     }
 
     // ================================================================
@@ -54,6 +56,20 @@ service cloud.firestore {
     match /transactions/{transactionId} {
       allow read: if request.auth != null && (resource == null || resource.data.uid == request.auth.uid);
       allow write: if false;
+    }
+
+    // ================================================================
+    // REDEEM CODES & WEBHOOK EVENTS: 100% Server Admin Only
+    // ================================================================
+    match /redeem_codes/{codeId} {
+      allow read, write: if false;
+      match /{allSubcollections=**} {
+        allow read, write: if false;
+      }
+    }
+
+    match /webhook_events/{eventId} {
+      allow read, write: if false;
     }
 
     // ================================================================
