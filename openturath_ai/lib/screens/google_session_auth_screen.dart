@@ -241,9 +241,29 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       useHybridComposition: true,
                       supportMultipleWindows: true,
                       javaScriptCanOpenWindowsAutomatically: true,
+                      mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                      allowFileAccess: false,
+                      allowContentAccess: false,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
                       algorithmicDarkeningAllowed: false,
                     ),
+                    shouldOverrideUrlLoading: (controller, navigationAction) async {
+                      final uri = navigationAction.request.url;
+                      if (uri == null) return NavigationActionPolicy.CANCEL;
+
+                      final scheme = uri.scheme.toLowerCase();
+                      if (scheme != 'https') return NavigationActionPolicy.CANCEL;
+
+                      final host = uri.host.toLowerCase();
+                      final isAllowed = host.endsWith('.google.com') ||
+                          host == 'google.com' ||
+                          host.endsWith('.gstatic.com') ||
+                          host.endsWith('.googleusercontent.com');
+
+                      return isAllowed
+                          ? NavigationActionPolicy.ALLOW
+                          : NavigationActionPolicy.CANCEL;
+                    },
                     onWebViewCreated: (controller) => _webController = controller,
                     onProgressChanged: (controller, progress) {
                       _loadProgress.value = progress / 100;
