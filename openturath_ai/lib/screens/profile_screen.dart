@@ -10,6 +10,7 @@ import '../core/app_snackbar.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
+import '../widgets/redeem_code_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -386,6 +387,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         subtitle: subscriptionSubtitle,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: _openSubscription,
+                      ),
+                      Divider(height: 1, color: border, indent: 48),
+                      _SettingsTile(
+                        icon: Icons.confirmation_number_outlined,
+                        title: 'Klaim Kode Akses Santri',
+                        subtitle: 'Tukarkan voucher atau kode akses trial terkontrol',
+                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                        onTap: () => RedeemCodeSheet.show(context, onSuccess: () {
+                          if (mounted) setState(() {});
+                        }),
                       ),
                     ],
                   ),
