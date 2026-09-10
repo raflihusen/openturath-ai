@@ -158,7 +158,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
         title: Text(
           'Batalkan Pembayaran?',
           style: GoogleFonts.outfit(
@@ -169,7 +169,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
         content: Text(
           'Apakah Anda yakin ingin menutup laman pembayaran? Sesi pembayaran Anda masih tersimpan.',
           style: GoogleFonts.outfit(
-            fontSize: 13.5,
+            fontSize: 13,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
           ),
         ),
