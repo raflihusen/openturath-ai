@@ -169,6 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     return Scaffold(
       backgroundColor: canvas,
@@ -356,9 +357,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // ── Section 1: Account & Billing (Apple Grouped Style) ──
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 6),
+                  child: Text(
+                    'AKUN & LISENSI',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.6,
+                      color: textSecondary,
+                    ),
+                  ),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -378,9 +391,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 // ── Section 2: Display & Appearance ──
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 6),
+                  child: Text(
+                    'TAMPILAN & PREFERENSI',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.6,
+                      color: textSecondary,
+                    ),
+                  ),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -399,7 +424,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             subtitle: isCurrentDark ? 'Mode Gelap' : 'Mode Terang',
                             trailing: Switch.adaptive(
                               value: isCurrentDark,
-                              activeTrackColor: AppTheme.appleGreen,
+                              activeTrackColor: accent,
                               activeThumbColor: Colors.white,
                               onChanged: (val) {
                                 HapticFeedback.selectionClick();
@@ -428,9 +453,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 // ── Section 3: Legal & About ──
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 6),
+                  child: Text(
+                    'TENTANG & KEBIJAKAN',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.6,
+                      color: textSecondary,
+                    ),
+                  ),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -490,6 +527,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 20),
 
                 // ── Section 4: Log Out Container ──
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, bottom: 6),
+                  child: Text(
+                    'SESI MASUK',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.6,
+                      color: textSecondary,
+                    ),
+                  ),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
