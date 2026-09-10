@@ -1265,7 +1265,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     child: Text(
                       'Saya Memahami & Menjaga Adab',
                       style: GoogleFonts.outfit(
-                        fontSize: 13.5,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1311,7 +1311,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               Text(
                 description,
                 style: GoogleFonts.outfit(
-                  fontSize: 11.5,
+                  fontSize: 12,
                   height: 1.35,
                   color: textSecondary,
                 ),
@@ -1367,7 +1367,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 Text(
                   'Sesuaikan ukuran huruf naskah dan terjemahan untuk kenyamanan membaca',
                   style: GoogleFonts.outfit(
-                    fontSize: 12.5,
+                    fontSize: 12,
                     color: textSecondary,
                   ),
                 ),
