@@ -31,8 +31,16 @@ class HijriDateUtils {
     'Desember',
   ];
 
+  static final Map<String, ({int day, int month, int year})> _apiCache = {};
+
   /// Mengonversi DateTime Masehi ke representasi Hijriah (Tahun, Bulan, Hari).
+  /// Memanfaatkan cache API AlAdhan jika tersedia, atau perhitungan deterministik Umm al-Qura.
   static ({int day, int month, int year}) gregorianToHijri(DateTime date) {
+    final key = '${date.year}-${date.month}-${date.day}';
+    if (_apiCache.containsKey(key)) {
+      return _apiCache[key]!;
+    }
+
     int day = date.day;
     int month = date.month;
     int year = date.year;
@@ -59,6 +67,12 @@ class HijriDateUtils {
     int hYear = 30 * n + j - 30;
 
     return (day: hDay.clamp(1, 30), month: hMonth.clamp(1, 12), year: hYear);
+  }
+
+  /// Sinkronisasi tanggal Hijriyah dari AlAdhan API resmi secara senyap di latar belakang.
+  static void registerVerifiedHijriDate({required DateTime date, required int day, required int month, required int year}) {
+    final key = '${date.year}-${date.month}-${date.day}';
+    _apiCache[key] = (day: day, month: month, year: year);
   }
 
   /// Menghasilkan format tanggal ganda yang anggun dan editorial:

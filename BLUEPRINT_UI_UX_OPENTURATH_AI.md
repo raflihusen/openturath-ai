@@ -181,7 +181,7 @@ Berkas: [lib/screens/dashboard_screen.dart](file:///Users/apple/Downloads/ramadh
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ OpenTurath                      [Avatar Peneliti (Circle)]   │
-│ Rabu, 18 Shafar 1448 H • 10 September 2026                 │
+│ Rabu, 27 Rabi'ul Awwal 1448 H • 10 September 2026           │
 ├─────────────────────────────────────────────────────────────┤
 │ [Banner Pembaruan Versi Baru Siap Pasang (Jika Ada)]        │
 ├─────────────────────────────────────────────────────────────┤
