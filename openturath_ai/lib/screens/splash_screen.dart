@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
+import '../core/theme.dart';
+import '../widgets/app_loader.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 450),
       vsync: this,
     );
 
@@ -31,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.90, end: 1.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
 
@@ -47,15 +49,12 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkAuthAndNavigate() async {
     try {
-      await Future.delayed(const Duration(milliseconds: 1200));
-      if (!mounted) return;
-
       final user = FirebaseAuth.instance.currentUser;
       String targetRoute;
 
       if (user != null && !user.isAnonymous) {
         final prefs = await SharedPreferences.getInstance()
-            .timeout(const Duration(seconds: 4));
+            .timeout(const Duration(seconds: 3));
         final isSessionReady = prefs.getBool('google_session_ready') ?? false;
         if (!isSessionReady) {
           targetRoute = AppRoutes.googleSessionAuth;
@@ -64,15 +63,6 @@ class _SplashScreenState extends State<SplashScreen>
         }
       } else {
         targetRoute = AppRoutes.login;
-      }
-
-      // Smooth exit transition before navigating
-      if (mounted) {
-        await _controller.animateBack(
-          0.0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInCubic,
-        );
       }
 
       if (!mounted) return;
@@ -85,9 +75,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFF0E0E10);
-    const textPrimary = Color(0xFFFAFAFA);
-    const accent = Color(0xFFA1A1AA);
+    const bg = AppTheme.canvasDark;
+    const textPrimary = AppTheme.textPrimaryDark;
+    const accent = AppTheme.textSecondaryDark;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -109,78 +99,20 @@ class _SplashScreenState extends State<SplashScreen>
                   Text(
                     'OpenTurath',
                     style: GoogleFonts.newsreader(
-                      fontSize: 34,
+                      fontSize: 32,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.6,
                       color: textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 36),
-                  const _PulsingDots(color: accent),
+                  const SizedBox(height: 28),
+                  const AppLoader(color: accent, dotSize: 7, spacing: 3.5),
                 ],
               ),
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PulsingDots extends StatefulWidget {
-  final Color color;
-  const _PulsingDots({required this.color});
-
-  @override
-  State<_PulsingDots> createState() => _PulsingDotsState();
-}
-
-class _PulsingDotsState extends State<_PulsingDots>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _pulse;
-
-  @override
-  void initState() {
-    super.initState();
-    _pulse = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1100),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _pulse.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _pulse,
-      builder: (context, child) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(3, (index) {
-            final shift = (index * 0.25);
-            final phase = ((_pulse.value + shift) % 1.0);
-            final wave = (0.5 - (phase - 0.5).abs()) * 2; // 0.0 -> 1.0 -> 0.0
-            final scale = 0.7 + (0.45 * wave);
-            final opacity = (0.3 + (0.7 * wave)).clamp(0.0, 1.0);
-
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 3.5),
-              width: 7,
-              height: 7,
-              transform: Matrix4.diagonal3Values(scale, scale, 1.0),
-              decoration: BoxDecoration(
-                color: widget.color.withValues(alpha: opacity),
-                shape: BoxShape.circle,
-              ),
-            );
-          }),
-        );
-      },
     );
   }
 }
