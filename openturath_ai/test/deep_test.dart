@@ -81,13 +81,13 @@ void main() {
       expect(AppTheme.citationBgDark, equals(const Color(0xFF1E1E22)));
     });
 
-    test('Radius tokens conform to Material 3 / Google Notebook standards', () {
+    test('Radius tokens conform to Apple HIG 3-token system', () {
       expect(AppTheme.radiusPill, equals(100.0));
       expect(AppTheme.radiusFull, equals(100.0));
-      expect(AppTheme.radiusS, equals(12.0));
+      expect(AppTheme.radiusXS, equals(8.0));
+      expect(AppTheme.radiusCard, equals(16.0));
       expect(AppTheme.radiusM, equals(16.0));
-      expect(AppTheme.radiusL, equals(20.0));
-      expect(AppTheme.radiusXL, equals(28.0));
+      expect(AppTheme.radiusS, equals(8.0));
     });
   });
 
