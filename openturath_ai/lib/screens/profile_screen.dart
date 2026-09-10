@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return AlertDialog(
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Text(
             'Konfirmasi Keluar',
             style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
+              style: FilledButton.styleFrom(backgroundColor: AppTheme.appleRed),
               child: Text('Keluar', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
             ),
           ],
@@ -92,22 +92,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return AlertDialog(
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 24),
+              const Icon(Icons.warning_amber_rounded, color: AppTheme.appleRed, size: 24),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Hapus Akun & Data',
-                  style: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: const Color(0xFFEF4444)),
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.w700, color: AppTheme.appleRed),
                 ),
               ),
             ],
           ),
           content: Text(
             'PERINGATAN: Tindakan ini permanen dan tidak dapat dibatalkan.\n\nSeluruh data profil, histori riset, bookmark kitab, dan lisensi akses di perangkat ini akan dihapus secara menyeluruh dari server.',
-            style: GoogleFonts.outfit(fontSize: 13.5, height: 1.45),
+            style: GoogleFonts.outfit(fontSize: 13, height: 1.45),
           ),
           actions: [
             TextButton(
@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(backgroundColor: const Color(0xFFDC2626)),
+              style: FilledButton.styleFrom(backgroundColor: AppTheme.appleRed),
               child: Text('Hapus Akun Permanen', style: GoogleFonts.outfit(fontWeight: FontWeight.w700)),
             ),
           ],
@@ -235,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -278,7 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Text(
                                   email,
                                   style: GoogleFonts.outfit(
-                                    fontSize: 12.5,
+                                    fontSize: 12,
                                     color: textSecondary,
                                   ),
                                   maxLines: 1,
@@ -292,12 +292,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
                               color: isDark ? Colors.white : const Color(0xFF18181B),
-                              borderRadius: BorderRadius.circular(100),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                             ),
                             child: Text(
                               isSubscribed ? 'PRO' : 'TRIAL',
                               style: GoogleFonts.outfit(
-                                fontSize: 10.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: isDark ? const Color(0xFF18181B) : Colors.white,
                               ),
@@ -343,7 +343,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                 minimumSize: Size.zero,
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
                               ),
                               child: Text(
                                 'Upgrade',
@@ -375,7 +375,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -409,7 +409,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -471,7 +471,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -541,7 +541,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : Text(
                             'Keluar dari Akun',
                             style: GoogleFonts.outfit(
-                              fontSize: 14.5,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: AppTheme.appleRed,
                             ),
@@ -556,13 +556,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFDC2626)),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.appleRed),
                           )
                         : Text(
                             'Hapus Akun & Data Riset',
                             style: GoogleFonts.outfit(
                               color: textSecondary.withValues(alpha: 0.7),
-                              fontSize: 12.5,
+                              fontSize: 12,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -589,7 +589,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           side: BorderSide(color: border, width: 1.0),
         ),
         title: Text(
@@ -616,7 +616,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               'OpenTurath adalah asisten riset naskah primer keilmuan Islam yang menggabungkan ribuan halaman kitab kuning mu\'tabar dengan teknologi penelaahan cerdas.',
               style: GoogleFonts.outfit(
-                fontSize: 13.5,
+                fontSize: 13,
                 height: 1.5,
                 color: textPrimary,
               ),
@@ -625,7 +625,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               'Prinsip Ilmiah: Berbasis sanad, penelusuran ibarah naskah asli, dan kehati-hatian dalam istinbath. Bukan pengganti proses talaqqi dengan masyayikh.',
               style: GoogleFonts.outfit(
-                fontSize: 12.5,
+                fontSize: 12,
                 height: 1.45,
                 color: textSecondary,
               ),
@@ -638,7 +638,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
               foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text(
               'Tutup',
@@ -666,7 +666,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: MediaQuery.of(ctx).size.height * 0.8,
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
           border: Border.all(color: border, width: 1.0),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -680,7 +680,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: const EdgeInsets.only(bottom: 18),
                 decoration: BoxDecoration(
                   color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                 ),
               ),
             ),
@@ -752,7 +752,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: FilledButton.styleFrom(
                   backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
                   foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
                 ),
                 child: Text('Saya Pahami & Setuju', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
               ),
@@ -779,7 +779,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         height: MediaQuery.of(ctx).size.height * 0.8,
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
           border: Border.all(color: border, width: 1.0),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -793,7 +793,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 margin: const EdgeInsets.only(bottom: 18),
                 decoration: BoxDecoration(
                   color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                 ),
               ),
             ),
@@ -865,7 +865,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 style: FilledButton.styleFrom(
                   backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
                   foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
                 ),
                 child: Text('Tutup', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
               ),
@@ -889,7 +889,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           side: BorderSide(color: border, width: 1.0),
         ),
         title: Text(
@@ -906,12 +906,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Text(
               'Antarmuka aplikasi saat ini dioptimalkan untuk Bahasa Indonesia dengan dukungan penuh teks Arab gundul/berharakat pada naskah kitab kuning primer.',
-              style: GoogleFonts.outfit(fontSize: 13.5, height: 1.45, color: textPrimary),
+              style: GoogleFonts.outfit(fontSize: 13, height: 1.45, color: textPrimary),
             ),
             const SizedBox(height: 10),
             Text(
               'Dukungan antarmuka penuh Bahasa Arab (العربية) dan Inggris (English) sedang dalam proses finalisasi kurasi kebahasaan.',
-              style: GoogleFonts.outfit(fontSize: 12.5, height: 1.4, color: textSecondary),
+              style: GoogleFonts.outfit(fontSize: 12, height: 1.4, color: textSecondary),
             ),
           ],
         ),
@@ -921,7 +921,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
               foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text('Mengerti', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
           ),
@@ -951,7 +951,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Text(
           content,
           style: GoogleFonts.outfit(
-            fontSize: 12.5,
+            fontSize: 12,
             height: 1.5,
             color: textSecondary,
           ),
@@ -998,7 +998,7 @@ class _SettingsTile extends StatelessWidget {
       title: Text(
         title,
         style: GoogleFonts.outfit(
-          fontSize: 14.5,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
           color: textPrimary,
         ),
