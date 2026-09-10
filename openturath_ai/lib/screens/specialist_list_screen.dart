@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../core/arabic_utils.dart';
-import '../core/theme.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_motion.dart';
+import '../core/design/ot_spacing.dart';
 import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
@@ -68,7 +72,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
   void _onSearchChanged(String val) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 300), () {
+    _debounce = Timer(const Duration(milliseconds: 250), () {
       if (mounted) {
         setState(() {
           _searchQuery = val.trim();
@@ -94,7 +98,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   }
 
   Future<void> _openAgent(AgentModel agent) async {
-    HapticFeedback.mediumImpact();
+    OTMotion.light();
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
@@ -136,12 +140,12 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.groupedCanvasDark : AppTheme.groupedCanvasLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final accent = OTColors.accent(isDark);
 
     final currentField = widget.field ??
         (_selectedFieldId != null && _selectedFieldId != 'all'
@@ -156,11 +160,15 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
     final isRootTab = widget.field == null;
 
+    // Filter list for discipline chips
+    const disciplineFields = FieldModel.defaultFields;
+
     return Scaffold(
       backgroundColor: canvas,
       appBar: AppBar(
         backgroundColor: canvas,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: isRootTab
             ? null
             : IconButton(
@@ -180,19 +188,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           children: [
             Text(
               title,
-              style: GoogleFonts.newsreader(
+              style: OTTypography.corpusTitle(color: textPrimary).copyWith(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
-                letterSpacing: -0.3,
-                color: textPrimary,
               ),
             ),
             Text(
               subtitle,
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                color: textSecondary,
-              ),
+              style: OTTypography.caption(color: textSecondary),
             ),
           ],
         ),
@@ -204,6 +207,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             ),
             tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari Keilmuan',
             onPressed: () {
+              OTMotion.selection();
               setState(() {
                 _showSearch = !_showSearch;
                 if (!_showSearch) {
@@ -213,7 +217,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               });
             },
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: OTSpacing.sm),
         ],
         centerTitle: !isRootTab,
       ),
@@ -223,22 +227,25 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             // ── Search Field (collapsible) ──
             if (_showSearch)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: OTSpacing.lg,
+                  vertical: OTSpacing.sm,
+                ),
                 child: Container(
                   height: 44,
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                    borderRadius: OTRadius.inputBorder,
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: TextField(
                     controller: _searchCtrl,
                     onChanged: _onSearchChanged,
                     autofocus: true,
-                    style: GoogleFonts.outfit(fontSize: 14, color: textPrimary),
+                    style: OTTypography.body(color: textPrimary),
                     decoration: InputDecoration(
                       hintText: 'Cari spesialis, kitab, atau bab...',
-                      hintStyle: GoogleFonts.outfit(fontSize: 13, color: textSecondary),
+                      hintStyle: OTTypography.body(color: textSecondary),
                       prefixIcon: Icon(Icons.search_rounded, size: 18, color: textSecondary),
                       suffixIcon: _searchQuery.isNotEmpty
                           ? IconButton(
@@ -262,43 +269,53 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             if (isRootTab)
               Container(
                 height: 38,
-                margin: const EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.symmetric(vertical: OTSpacing.sm),
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: FieldModel.defaultFields.length + 1,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+                  itemCount: disciplineFields.length + 1,
+                  separatorBuilder: (_, __) => const SizedBox(width: OTSpacing.sm),
                   itemBuilder: (context, index) {
                     final isAll = index == 0;
-                    final field = isAll ? null : FieldModel.defaultFields[index - 1];
+                    final field = isAll ? null : disciplineFields[index - 1];
                     final isSelected = isAll
                         ? (_selectedFieldId == null || _selectedFieldId == 'all')
                         : _selectedFieldId == field?.id;
 
                     return GestureDetector(
                       onTap: () {
-                        HapticFeedback.selectionClick();
+                        OTMotion.selection();
                         setState(() {
                           _selectedFieldId = isAll ? 'all' : field?.id;
                         });
                       },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      child: AnimatedContainer(
+                        duration: OTMotion.fast,
+                        curve: OTMotion.curve,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: OTSpacing.md + 2,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? (isDark ? Colors.white : const Color(0xFF18181B))
-                              : (isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7)),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                              ? textPrimary
+                              : surface,
+                          borderRadius: OTRadius.chipBorder,
+                          border: Border.all(
+                            color: isSelected
+                                ? textPrimary
+                                : border.withValues(alpha: 0.7),
+                            width: 0.8,
+                          ),
                         ),
                         child: Center(
                           child: Text(
                             isAll ? 'Semua' : field!.name,
-                            style: GoogleFonts.outfit(
+                            style: OTTypography.caption(
+                              color: isSelected ? canvas : textSecondary,
+                            ).copyWith(
                               fontSize: 12,
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                              color: isSelected
-                                  ? (isDark ? const Color(0xFF18181B) : Colors.white)
-                                  : textSecondary,
                             ),
                           ),
                         ),
@@ -308,7 +325,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 ),
               ),
 
-            const SizedBox(height: 4),
+            const SizedBox(height: OTSpacing.xs),
 
             // ── Continuous Scholarly List Separated by Hairlines ──
             Expanded(
@@ -329,20 +346,22 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 size: 44,
                                 color: textSecondary.withValues(alpha: 0.4),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: OTSpacing.md),
                               Text(
                                 'Tidak ada rujukan yang sesuai.',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 14,
-                                  color: textSecondary,
-                                ),
+                                style: OTTypography.body(color: textSecondary),
                               ),
                             ],
                           ),
                         )
                       : ListView.separated(
                           physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(20, 6, 20, 108),
+                          padding: const EdgeInsets.fromLTRB(
+                            OTSpacing.lg,
+                            OTSpacing.xs,
+                            OTSpacing.lg,
+                            108,
+                          ),
                           itemCount: filteredAgents.length,
                           separatorBuilder: (_, __) => Divider(
                             height: 1,
@@ -354,7 +373,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             if (agent.id == 'fiqh_tahawwulat') {
                               return _DignifiedTahawwulatRow(
                                 agent: agent,
-                                isDark: isDark,
                                 textPrimary: textPrimary,
                                 textSecondary: textSecondary,
                                 accent: accent,
@@ -363,10 +381,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             }
                             return _UnboxedSpecialistRow(
                               agent: agent,
-                              isDark: isDark,
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
                               accent: accent,
+                              border: border,
+                              surface: surface,
                               onTap: () => _openAgent(agent),
                             );
                           },
@@ -381,18 +400,20 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
 class _UnboxedSpecialistRow extends StatelessWidget {
   final AgentModel agent;
-  final bool isDark;
   final Color textPrimary;
   final Color textSecondary;
   final Color accent;
+  final Color border;
+  final Color surface;
   final VoidCallback onTap;
 
   const _UnboxedSpecialistRow({
     required this.agent,
-    required this.isDark,
     required this.textPrimary,
     required this.textSecondary,
     required this.accent,
+    required this.border,
+    required this.surface,
     required this.onTap,
   });
 
@@ -420,12 +441,7 @@ class _UnboxedSpecialistRow extends StatelessWidget {
                 children: [
                   Text(
                     agent.title,
-                    style: GoogleFonts.outfit(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: textPrimary,
-                      letterSpacing: -0.2,
-                    ),
+                    style: OTTypography.cardTitle(color: textPrimary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -433,10 +449,7 @@ class _UnboxedSpecialistRow extends StatelessWidget {
                     const SizedBox(height: 3),
                     Text(
                       referenceText,
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: textSecondary,
-                      ),
+                      style: OTTypography.caption(color: textSecondary),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -444,14 +457,25 @@ class _UnboxedSpecialistRow extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: OTSpacing.base),
             if (isComingSoon)
-              Text(
-                'Kurasi Naskah',
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: textSecondary.withValues(alpha: 0.65),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: OTRadius.chipBorder,
+                  border: Border.all(
+                    color: border.withValues(alpha: 0.6),
+                    width: 0.8,
+                  ),
+                ),
+                child: Text(
+                  'Segera hadir',
+                  style: OTTypography.caption(
+                    color: textSecondary.withValues(alpha: 0.75),
+                  ).copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               )
             else
@@ -469,7 +493,6 @@ class _UnboxedSpecialistRow extends StatelessWidget {
 
 class _DignifiedTahawwulatRow extends StatelessWidget {
   final AgentModel agent;
-  final bool isDark;
   final Color textPrimary;
   final Color textSecondary;
   final Color accent;
@@ -477,7 +500,6 @@ class _DignifiedTahawwulatRow extends StatelessWidget {
 
   const _DignifiedTahawwulatRow({
     required this.agent,
-    required this.isDark,
     required this.textPrimary,
     required this.textSecondary,
     required this.accent,
@@ -503,22 +525,12 @@ class _DignifiedTahawwulatRow extends StatelessWidget {
                     children: [
                       Text(
                         'Korpus Khusus',
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.8,
-                          color: accent,
-                        ),
+                        style: OTTypography.sectionHeading(color: accent),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         agent.title,
-                        style: GoogleFonts.newsreader(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.3,
-                          color: textPrimary,
-                        ),
+                        style: OTTypography.corpusTitle(color: textPrimary),
                       ),
                     ],
                   ),
@@ -538,9 +550,7 @@ class _DignifiedTahawwulatRow extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               '1.500+ muhadharah · naskah lengkap · takhrij sanad al-habib abu bakar al-masyhur',
-              style: GoogleFonts.outfit(
-                fontSize: 12,
-                color: textSecondary,
+              style: OTTypography.caption(color: textSecondary).copyWith(
                 height: 1.35,
               ),
             ),
@@ -549,11 +559,7 @@ class _DignifiedTahawwulatRow extends StatelessWidget {
               children: [
                 Text(
                   'Masuk ke Ruang Riset',
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: accent,
-                  ),
+                  style: OTTypography.captionMedium(color: accent),
                 ),
                 const SizedBox(width: 4),
                 Icon(
