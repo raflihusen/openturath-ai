@@ -6,15 +6,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/routes.dart';
+import '../core/theme.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
+import '../widgets/apple_interactive_wrapper.dart';
 
 /// LoginScreen: Gerbang Masuk Ruang Riset OpenTurath AI
 /// Mengadopsi filosofi desain minimalis modern Claude:
 /// - Dark mode hitam pekat (pure deep black)
 /// - Light mode putih pekat (pure clean white)
 /// - Shape minimalis dengan garis abu-abu tipis (subtle hairline border)
-/// - Slogan resmi: "Bridging Turath and Intelligence" dengan tipografi editorial serif
+/// - Slogan resmi: "AI for Islamic Scholarship" dengan tipografi editorial serif
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -25,7 +27,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
-  bool _isGooglePressed = false;
   late final TapGestureRecognizer _termsRecognizer;
   late final TapGestureRecognizer _privacyRecognizer;
 
@@ -53,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (_) {
       if (mounted) {
-        AppSnackBar.error(context, 'Tidak dapat membuka tautan: $url');
+        AppSnackBar.error(context, 'Tidak dapat membuka tautan halaman.');
       }
     }
   }
@@ -66,7 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacementNamed(context, AppRoutes.googleSessionAuth);
     } catch (e) {
       if (!mounted) return;
-      AppSnackBar.error(context, 'Gagal masuk: $e. Silakan coba lagi.');
+      final message = e.toString().contains('network') || e.toString().contains('SocketException')
+          ? 'Koneksi internet bermasalah. Periksa jaringan Anda.'
+          : 'Gagal masuk akun Google. Silakan coba kembali.';
+      AppSnackBar.error(context, message);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -92,10 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Dipaksa selalu tema gelap murni (Claude Pure Deep Black)
-    const bg = Color(0xFF0E0E10);
-    const textPrimary = Color(0xFFFAFAFA);
-    const textMuted = Color(0xFFA1A1AA);
+    const bg = AppTheme.canvasDark;
+    const textPrimary = AppTheme.textPrimaryDark;
+    const textMuted = AppTheme.textSecondaryDark;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -151,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       'OpenTurath',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
-                        fontSize: 35,
+                        fontSize: 32,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.6,
                         color: textPrimary,
@@ -168,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       'AI for Islamic Scholarship',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
-                        fontSize: 17.5,
+                        fontSize: 17,
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.italic,
                         letterSpacing: 0.1,
@@ -182,54 +185,48 @@ class _LoginScreenState extends State<LoginScreen> {
                   // ── 4. High-Contrast Solid White Action Pill ──
                   _stagger(
                     delayMs: 200,
-                    child: GestureDetector(
-                      onTapDown: (_) => setState(() => _isGooglePressed = true),
-                      onTapUp: (_) => setState(() => _isGooglePressed = false),
-                      onTapCancel: () => setState(() => _isGooglePressed = false),
-                      child: AnimatedScale(
-                        scale: _isGooglePressed ? 0.975 : 1.0,
-                        duration: const Duration(milliseconds: 120),
-                        curve: Curves.easeOutCubic,
-                        child: SizedBox(
-                          height: 52,
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: _isLoading ? null : _signIn,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF0E0E10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: AppleInteractiveWrapper(
+                      onTap: _isLoading ? null : _signIn,
+                      hapticType: HapticFeedbackType.medium,
+                      child: SizedBox(
+                        height: 52,
+                        width: double.infinity,
+                        child: FilledButton(
+                          onPressed: _isLoading ? null : _signIn,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF0E0E10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
                             ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Color(0xFF0E0E10),
-                                    ),
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      _GoogleGVector(),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        'Lanjutkan dengan Google',
-                                        style: GoogleFonts.outfit(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: -0.1,
-                                          color: const Color(0xFF0E0E10),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                           ),
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color(0xFF0E0E10),
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _GoogleGVector(),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      'Lanjutkan dengan Google',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.1,
+                                        color: const Color(0xFF0E0E10),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ),
                     ),
@@ -283,8 +280,9 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    ),);
-  }
+    ),
+  );
+}
 }
 
 class _GoogleGVector extends StatelessWidget {
