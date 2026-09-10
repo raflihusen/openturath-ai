@@ -10,7 +10,6 @@ import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
-import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -150,10 +149,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             : null);
 
     final filteredAgents = _computeFilteredAgents();
-    final title = currentField?.name ?? 'Khazanah Keilmuan';
+    final title = currentField?.name ?? 'Keilmuan';
     final subtitle = currentField != null
-        ? '${filteredAgents.length} Rujukan Korpus'
-        : 'Telusuri korpus berdasarkan tradisi naskah primer';
+        ? '${filteredAgents.length} rujukan korpus'
+        : 'Direktori korpus dan tradisi naskah primer';
 
     final isRootTab = widget.field == null;
 
@@ -191,7 +190,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             Text(
               subtitle,
               style: GoogleFonts.outfit(
-                fontSize: 11.5,
+                fontSize: 12,
                 color: textSecondary,
               ),
             ),
@@ -203,7 +202,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
               color: textPrimary,
             ),
-            tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari Spesialis',
+            tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari Keilmuan',
             onPressed: () {
               setState(() {
                 _showSearch = !_showSearch;
@@ -262,8 +261,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             // ── Discipline Category Filter Tabs (If in general specialist mode) ──
             if (isRootTab)
               Container(
-                height: 42,
-                margin: const EdgeInsets.symmetric(vertical: 6),
+                height: 38,
+                margin: const EdgeInsets.symmetric(vertical: 8),
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -284,22 +283,16 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
                           color: isSelected
                               ? (isDark ? Colors.white : const Color(0xFF18181B))
-                              : surface,
+                              : (isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7)),
                           borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            color: isSelected
-                                ? (isDark ? Colors.white : const Color(0xFF18181B))
-                                : border,
-                            width: 1.0,
-                          ),
                         ),
                         child: Center(
                           child: Text(
-                            isAll ? 'Semua Bidang' : field!.name,
+                            isAll ? 'Semua' : field!.name,
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
@@ -315,9 +308,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 ),
               ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
 
-            // ── Slim Specialist List Rows ──
+            // ── Continuous Scholarly List Separated by Hairlines ──
             Expanded(
               child: _isLoading
                   ? Center(
@@ -333,12 +326,12 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             children: [
                               Icon(
                                 Icons.search_off_rounded,
-                                size: 48,
-                                color: textSecondary.withValues(alpha: 0.5),
+                                size: 44,
+                                color: textSecondary.withValues(alpha: 0.4),
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                'Tidak ada spesialis yang sesuai.',
+                                'Tidak ada rujukan yang sesuai.',
                                 style: GoogleFonts.outfit(
                                   fontSize: 14,
                                   color: textSecondary,
@@ -349,33 +342,32 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                         )
                       : ListView.separated(
                           physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 108),
+                          padding: const EdgeInsets.fromLTRB(20, 6, 20, 108),
                           itemCount: filteredAgents.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          separatorBuilder: (_, __) => Divider(
+                            height: 1,
+                            thickness: 0.6,
+                            color: border.withValues(alpha: 0.5),
+                          ),
                           itemBuilder: (context, index) {
                             final agent = filteredAgents[index];
                             if (agent.id == 'fiqh_tahawwulat') {
-                              return _SovereignTahawwulatCard(
+                              return _DignifiedTahawwulatRow(
                                 agent: agent,
                                 isDark: isDark,
-                                surface: surface,
-                                border: border,
                                 textPrimary: textPrimary,
                                 textSecondary: textSecondary,
+                                accent: accent,
                                 onTap: () => _openAgent(agent),
-                                onOrder: () => _openSubscriptionForAgent(agent),
                               );
                             }
-                            return _SlimSpecialistRow(
+                            return _UnboxedSpecialistRow(
                               agent: agent,
                               isDark: isDark,
-                              surface: surface,
-                              border: border,
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
                               accent: accent,
                               onTap: () => _openAgent(agent),
-                              onOrder: () => _openSubscriptionForAgent(agent),
                             );
                           },
                         ),
@@ -387,219 +379,149 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   }
 }
 
-class _SlimSpecialistRow extends StatefulWidget {
+class _UnboxedSpecialistRow extends StatelessWidget {
   final AgentModel agent;
   final bool isDark;
-  final Color surface;
-  final Color border;
   final Color textPrimary;
   final Color textSecondary;
   final Color accent;
   final VoidCallback onTap;
-  final VoidCallback onOrder;
 
-  const _SlimSpecialistRow({
+  const _UnboxedSpecialistRow({
     required this.agent,
     required this.isDark,
-    required this.surface,
-    required this.border,
     required this.textPrimary,
     required this.textSecondary,
     required this.accent,
     required this.onTap,
-    required this.onOrder,
   });
 
   @override
-  State<_SlimSpecialistRow> createState() => _SlimSpecialistRowState();
-}
-
-class _SlimSpecialistRowState extends State<_SlimSpecialistRow> {
-  bool _isPressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    final isComingSoon = widget.agent.isComingSoon;
+    final isComingSoon = agent.isComingSoon;
+    final booksList = agent.referenceBooks;
+    final referenceText = (booksList != null && booksList.isNotEmpty)
+        ? booksList.map((b) => b.title).take(2).join(' · ')
+        : agent.subtitleAcademic.isNotEmpty
+            ? agent.subtitleAcademic
+            : agent.description;
 
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.98 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOutCubic,
-        child: Material(
-          color: widget.surface,
-          borderRadius: BorderRadius.circular(16),
-          child: InkWell(
-            onTap: widget.onTap,
-            borderRadius: BorderRadius.circular(16),
-            highlightColor: widget.isDark ? const Color(0xFF1E2D3D) : const Color(0xFFE2E8F0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: widget.border, width: 1.0),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Typography-First Title & Metadata
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          widget.agent.title,
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: widget.textPrimary,
-                            letterSpacing: -0.2,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Builder(
-                          builder: (context) {
-                            final booksList = widget.agent.referenceBooks;
-                            final referenceText = (booksList != null && booksList.isNotEmpty)
-                                ? booksList.map((b) => b.title).take(2).join(' · ')
-                                : widget.agent.subtitleAcademic;
-
-                            if (referenceText.isEmpty) return const SizedBox.shrink();
-
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 2),
-                              child: Text(
-                                referenceText,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  color: widget.textSecondary,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                  Text(
+                    agent.title,
+                    style: GoogleFonts.outfit(
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w600,
+                      color: textPrimary,
+                      letterSpacing: -0.2,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-
-                  const SizedBox(width: 14),
-
-                  // Minimalist Scholarly Action: Quiet Kurasi Naskah or Directional Chevron
-                  if (isComingSoon)
+                  if (referenceText.isNotEmpty) ...[
+                    const SizedBox(height: 3),
                     Text(
-                      'Kurasi Naskah',
+                      referenceText,
                       style: GoogleFonts.outfit(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w400,
-                        color: widget.textSecondary.withValues(alpha: 0.65),
+                        fontSize: 12.5,
+                        color: textSecondary,
                       ),
-                    )
-                  else
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 20,
-                      color: widget.textSecondary,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                  ],
                 ],
               ),
             ),
-          ),
+            const SizedBox(width: 14),
+            if (isComingSoon)
+              Text(
+                'Kurasi Naskah',
+                style: GoogleFonts.outfit(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w400,
+                  color: textSecondary.withValues(alpha: 0.65),
+                ),
+              )
+            else
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: textSecondary.withValues(alpha: 0.7),
+              ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _SovereignTahawwulatCard extends StatelessWidget {
+class _DignifiedTahawwulatRow extends StatelessWidget {
   final AgentModel agent;
   final bool isDark;
-  final Color surface;
-  final Color border;
   final Color textPrimary;
   final Color textSecondary;
+  final Color accent;
   final VoidCallback onTap;
-  final VoidCallback onOrder;
 
-  const _SovereignTahawwulatCard({
+  const _DignifiedTahawwulatRow({
     required this.agent,
     required this.isDark,
-    required this.surface,
-    required this.border,
     required this.textPrimary,
     required this.textSecondary,
+    required this.accent,
     required this.onTap,
-    required this.onOrder,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AppleInteractiveWrapper(
+    return InkWell(
       onTap: onTap,
-      hapticType: HapticFeedbackType.medium,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 6),
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: border,
-            width: 1.0,
-          ),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Badge Row: Minimalist Icon + Discipline Tag
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                      ),
-                      child: Icon(
-                        Icons.menu_book_rounded,
-                        size: 14,
-                        color: textPrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: border,
-                          width: 0.6,
-                        ),
-                      ),
-                      child: Text(
-                        'KORPUS ESKATOLOGI & FIKIH KONTEMPORER',
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Korpus Khusus',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 0.3,
-                          color: textSecondary,
+                          letterSpacing: 0.8,
+                          color: accent,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        agent.title,
+                        style: GoogleFonts.newsreader(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
+                          color: textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Text(
                   'فقه التحولات',
@@ -607,64 +529,37 @@ class _SovereignTahawwulatCard extends StatelessWidget {
                   style: GoogleFonts.amiri(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: textSecondary,
-                    height: 1.55,
+                    color: textSecondary.withValues(alpha: 0.6),
+                    height: 1.2,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-
-            // Title & Description
+            const SizedBox(height: 4),
             Text(
-              agent.title,
-              style: GoogleFonts.newsreader(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: textPrimary,
-                letterSpacing: -0.3,
-              ),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              '1.500+ Muhadharah Suara & Kitab Lengkap Al-Habib Abu Bakar Al-Masyhur',
+              '1.500+ muhadharah · naskah lengkap · takhrij sanad al-habib abu bakar al-masyhur',
               style: GoogleFonts.outfit(
-                fontSize: 12,
+                fontSize: 12.5,
                 color: textSecondary,
                 height: 1.35,
               ),
             ),
-            const SizedBox(height: 14),
-
-            // Minimalist Action
+            const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white : const Color(0xFF18181B),
-                    borderRadius: BorderRadius.circular(100),
+                Text(
+                  'Masuk ke Ruang Riset',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: accent,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Buka Ruang Riset',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? const Color(0xFF18181B) : Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 13,
-                        color: isDark ? const Color(0xFF18181B) : Colors.white,
-                      ),
-                    ],
-                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 13,
+                  color: accent,
                 ),
               ],
             ),
