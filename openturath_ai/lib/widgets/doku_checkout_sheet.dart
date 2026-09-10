@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../core/constants.dart';
 import '../core/theme.dart';
 import '../services/subscription_service.dart';
+import 'app_loader.dart';
 
 /// DokuCheckoutSheet: In-App Modal Pembayaran DOKU dengan Deteksi Otomatis
 /// Menampilkan halaman DOKU di dalam modal aplikasi tanpa perlu terlempar ke Chrome.
@@ -188,7 +189,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             child: Text(
               'Ya, Tutup',
               style: GoogleFonts.outfit(
-                color: Colors.redAccent,
+                color: AppTheme.appleRed,
               ),
             ),
           ),
@@ -223,7 +224,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
         height: screenHeight * 0.92,
         decoration: BoxDecoration(
           color: surfaceColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(isDark ? 100 : 40),
@@ -233,7 +234,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
           child: Stack(
             children: [
               // ── 1. Main Sheet Content (Header + WebView) ──
@@ -255,8 +256,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             height: 4,
                             margin: const EdgeInsets.only(bottom: 12),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white24 : Colors.black12,
-                              borderRadius: BorderRadius.circular(2),
+                              color: border,
+                              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                             ),
                           ),
                         ),
@@ -266,7 +267,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF10B981).withAlpha(30),
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusXS),
                               ),
                               child: const Icon(
                                 Icons.lock_rounded,
@@ -291,7 +292,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     Text(
                                       widget.invoiceNumber,
                                       style: GoogleFonts.outfit(
-                                        fontSize: 11.5,
+                                        fontSize: 12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
                                       ),
@@ -570,7 +571,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                               'Akses ke ruang riset Anda telah aktif secara otomatis. Mengalihkan...',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(
-                                fontSize: 13.5,
+                                fontSize: 13,
                                 color: textSecondary,
                                 height: 1.45,
                               ),
@@ -580,8 +581,8 @@ class _CelebratorySuccessView extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 32),
-                    // Pulsing dots indicator
-                    _CheckoutPulsingDots(color: accent),
+                    // Unified AppLoader
+                    AppLoader(color: accent, dotSize: 8, spacing: 4),
                   ],
                 ),
               ),
@@ -593,58 +594,3 @@ class _CelebratorySuccessView extends StatelessWidget {
   }
 }
 
-class _CheckoutPulsingDots extends StatefulWidget {
-  final Color color;
-  const _CheckoutPulsingDots({required this.color});
-
-  @override
-  State<_CheckoutPulsingDots> createState() => _CheckoutPulsingDotsState();
-}
-
-class _CheckoutPulsingDotsState extends State<_CheckoutPulsingDots>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(3, (index) {
-            final phase = ((_controller.value + index * 0.25) % 1.0);
-            final scale = 0.6 + 0.4 * (1.0 - (phase - 0.5).abs() * 2);
-            final opacity = 0.4 + 0.6 * (1.0 - (phase - 0.5).abs() * 2);
-
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: widget.color.withValues(alpha: opacity.clamp(0.2, 1.0)),
-              ),
-              transform: Matrix4.diagonal3Values(scale, scale, 1.0),
-            );
-          }),
-        );
-      },
-    );
-  }
-}
