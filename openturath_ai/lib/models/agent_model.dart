@@ -91,9 +91,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 1,
-          price1m: 300000,
-          price6m: 1500000,
-          price1y: 2700000,
+          price1m: 50000,
+          price6m: 250000,
+          price1y: 450000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',
