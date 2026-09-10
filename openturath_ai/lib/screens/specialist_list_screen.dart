@@ -150,10 +150,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
             : null);
 
     final filteredAgents = _computeFilteredAgents();
-    final title = currentField?.name ?? 'Koleksi Spesialis';
+    final title = currentField?.name ?? 'Khazanah Keilmuan';
     final subtitle = currentField != null
-        ? '${filteredAgents.length} Spesialis Turats'
-        : 'Pilih spesialis sesuai rujukan kitab primer';
+        ? '${filteredAgents.length} Rujukan Korpus'
+        : 'Telusuri korpus berdasarkan tradisi naskah primer';
 
     final isRootTab = widget.field == null;
 
@@ -462,43 +462,43 @@ class _SlimSpecialistRowState extends State<_SlimSpecialistRow> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        if (widget.agent.subtitleAcademic.isNotEmpty) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            widget.agent.subtitleAcademic,
-                            style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              color: widget.textSecondary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                        Builder(
+                          builder: (context) {
+                            final booksList = widget.agent.referenceBooks;
+                            final referenceText = (booksList != null && booksList.isNotEmpty)
+                                ? booksList.map((b) => b.title).take(2).join(' · ')
+                                : widget.agent.subtitleAcademic;
+
+                            if (referenceText.isEmpty) return const SizedBox.shrink();
+
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                referenceText,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  color: widget.textSecondary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
 
                   const SizedBox(width: 14),
 
-                  // Minimalist Claude Action: Label 'Segera' halus atau Panah Minimalis
+                  // Minimalist Scholarly Action: Quiet Kurasi Naskah or Directional Chevron
                   if (isComingSoon)
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: widget.border,
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Text(
-                        'Segera',
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: widget.textSecondary,
-                        ),
+                    Text(
+                      'Kurasi Naskah',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w400,
+                        color: widget.textSecondary.withValues(alpha: 0.65),
                       ),
                     )
                   else
@@ -573,7 +573,7 @@ class _SovereignTahawwulatCard extends StatelessWidget {
                         color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                       ),
                       child: Icon(
-                        Icons.auto_awesome_rounded,
+                        Icons.menu_book_rounded,
                         size: 14,
                         color: textPrimary,
                       ),
@@ -590,7 +590,7 @@ class _SovereignTahawwulatCard extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'SPESIALIS UTAMA • RUKUN KEEMPAT',
+                        'KORPUS ESKATOLOGI & FIKIH KONTEMPORER',
                         style: GoogleFonts.outfit(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
