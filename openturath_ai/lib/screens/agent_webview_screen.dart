@@ -19,6 +19,8 @@ import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
+import '../widgets/app_error_state.dart';
+import '../widgets/app_loader.dart';
 
 /// AgentWebviewScreen: Tampilan Ruang Riset AI NotebookLM
 /// Dilengkapi App Bar native yang bersih di bawah kamera notch/status bar,
@@ -92,6 +94,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   @override
   void dispose() {
+    try {
+      _webController?.stopLoading();
+    } catch (_) {}
     _webController = null;
     super.dispose();
   }
@@ -123,9 +128,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
           button.mat-tonal-button, a[aria-label*="Google" i],
           .gb_C, #gb, #gbwa, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
-          .pro-badge, .disclaimer, [class*="disclaimer" i], [class*="footnote" i],
-          footer, .footer, [role="contentinfo"], mat-hint, .mat-hint,
-          [class*="compliance" i], .compliance-notice, .legal-text, [class*="legal" i] {
+          .pro-badge {
             display: none !important;
             visibility: hidden !important;
             height: 0px !important;
@@ -138,6 +141,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             line-height: 0px !important;
             opacity: 0 !important;
             pointer-events: none !important;
+            border: none !important;
+          }
+          /* Subtle AI Disclaimer & Compliance (Transparent, Legal & Clean) */
+          .disclaimer, [class*="disclaimer" i], [class*="footnote" i], .compliance-notice, .legal-text {
+            color: #71717A !important;
+            font-size: 11px !important;
+            text-align: center !important;
+            padding: 6px 12px !important;
+            opacity: 0.8 !important;
             border: none !important;
           }
           :root, html, body, app-root, .app-root, mat-sidenav-container, mat-sidenav-content,
@@ -223,24 +235,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       function sendToFlutter(name, data) {
         if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
           window.flutter_inappwebview.callHandler(name, data);
-        } else {
-          var attempts = 0;
-          var poll = setInterval(function() {
-            attempts++;
-            if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
-              clearInterval(poll);
-              window.flutter_inappwebview.callHandler(name, data);
-            } else if (attempts > 20) {
-              clearInterval(poll);
-            }
-          }, 150);
         }
       }
 
-      // 2. Deference: Menghormati disclaimer akurasi bawaan secara transparan
-      function eradicateDisclaimer() {}
-
-      // 2b. Sembunyikan Kartu Metadata/Landing NotebookLM (SUPER AI, 0 sources, dll)
+      // 2. Sembunyikan Kartu Landing NotebookLM yang Memuat Metadata Teknis
       function sweepNotebookLandingCard() {
         try {
           var cards = document.querySelectorAll('mat-card, .mat-mdc-card, [role="region"], div[class*="card" i], div[class*="header" i], div[class*="title" i], div');
@@ -261,216 +259,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         } catch(e) {}
       }
 
-      // 3. Inject Action Buttons (Simpan ke Bookmark & Salin) Tepat di Samping Jempol
-      function injectChatActions() {
-        var thumbButtons = [];
-
-        // Strategi A: Tombol atau icon yang memiliki label/title/text thumbs
-        var candidates = Array.from(document.querySelectorAll('button, [role="button"], mat-icon-button, .mat-mdc-icon-button, [data-testid*="thumb" i]'));
-        for (var i = 0; i < candidates.length; i++) {
-          var b = candidates[i];
-          var aria = (b.getAttribute('aria-label') || '').toLowerCase();
-          var title = (b.getAttribute('title') || '').toLowerCase();
-          var text = (b.textContent || '').trim().toLowerCase();
-
-          if (aria.includes('thumb') || aria.includes('good') || aria.includes('bad') || 
-              aria.includes('like') || aria.includes('suka') || aria.includes('bagus') || 
-              aria.includes('buruk') || title.includes('thumb') || title.includes('good') || title.includes('bad')) {
-            thumbButtons.push(b);
-            continue;
-          }
-          if (text === 'thumb_up' || text === 'thumb_down' || text.includes('thumb') || text.includes('thum')) {
-            thumbButtons.push(b);
-            continue;
-          }
-          var icons = b.querySelectorAll('mat-icon, [data-mat-icon-name], svg, .google-symbols');
-          for (var k = 0; k < icons.length; k++) {
-            var icName = (icons[k].getAttribute('data-mat-icon-name') || '').toLowerCase();
-            var icTxt = (icons[k].textContent || '').trim().toLowerCase();
-            if (icName.includes('thumb') || icTxt.includes('thumb') || icTxt.includes('thum') ||
-                icTxt === 'thumb_up' || icTxt === 'thumb_down') {
-              thumbButtons.push(b);
-              break;
-            }
-          }
-        }
-
-        // Strategi B: Direct icons (mat-icon or .google-symbols)
-        var iconsDirect = Array.from(document.querySelectorAll('mat-icon, .google-symbols, [data-mat-icon-name]'));
-        for (var ic = 0; ic < iconsDirect.length; ic++) {
-          var iconEl = iconsDirect[ic];
-          var icText = (iconEl.textContent || '').trim().toLowerCase();
-          var icAttr = (iconEl.getAttribute('data-mat-icon-name') || '').toLowerCase();
-          if (icText.includes('thumb') || icText.includes('thum') || icAttr.includes('thumb')) {
-            var parentBtn = iconEl.closest('button, [role="button"], div, span');
-            if (parentBtn && thumbButtons.indexOf(parentBtn) === -1) {
-              thumbButtons.push(parentBtn);
-            }
-          }
-        }
-
-        // Strategi C: Pencarian teks thumthun (sesuai screenshot user)
-        var tw = document.createTreeWalker(document.body || document.documentElement, NodeFilter.SHOW_TEXT, null, false);
-        var tn;
-        while ((tn = tw.nextNode())) {
-          var tVal = (tn.nodeValue || '').trim().toLowerCase();
-          if (tVal.includes('thumthun') || tVal === 'thumb_up' || tVal === 'thumb_down') {
-            if (tn.parentElement && thumbButtons.indexOf(tn.parentElement) === -1) {
-              thumbButtons.push(tn.parentElement);
-            }
-          }
-        }
-
-        var parentMap = [];
-        for (var j = 0; j < thumbButtons.length; j++) {
-          var p = thumbButtons[j].parentElement;
-          if (p && parentMap.indexOf(p) === -1) parentMap.push(p);
-        }
-
-        for (var m = 0; m < parentMap.length; m++) {
-          var parentEl = parentMap[m];
-          if (parentEl.querySelector('.ot-action-btn-group')) continue;
-
-          // Cari tombol acuan terakhir di dalam baris
-          var anchor = null;
-          for (var c = parentEl.children.length - 1; c >= 0; c--) {
-            var child = parentEl.children[c];
-            if (thumbButtons.indexOf(child) !== -1 || child.querySelector('mat-icon, .google-symbols, svg') || child.tagName === 'BUTTON') {
-              anchor = child;
-              break;
-            }
-          }
-          if (!anchor) anchor = parentEl.lastElementChild;
-          if (!anchor) continue;
-
-          // Pastikan wadah parent tidak overflow hidden atau tinggi terbatas
-          parentEl.style.setProperty('overflow', 'visible', 'important');
-          parentEl.style.setProperty('height', 'auto', 'important');
-          parentEl.style.setProperty('min-height', '38px', 'important');
-          parentEl.style.setProperty('display', 'flex', 'important');
-          parentEl.style.setProperty('align-items', 'center', 'important');
-          parentEl.style.setProperty('flex-wrap', 'wrap', 'important');
-          parentEl.style.setProperty('gap', '6px', 'important');
-
-          var group = document.createElement('div');
-          group.className = 'ot-action-btn-group';
-          group.style.cssText = 'display: inline-flex !important; align-items: center !important; gap: 6px !important; margin-left: 8px !important; margin-top: 4px !important; margin-bottom: 4px !important; vertical-align: middle !important; flex-wrap: wrap !important; z-index: 999 !important; position: relative !important;';
-
-          var saveBtn = document.createElement('button');
-          saveBtn.type = 'button';
-          saveBtn.className = 'ot-action-btn ot-save-btn';
-          saveBtn.style.cssText = 'display: inline-flex !important; align-items: center !important; gap: 6px !important; background: #047857 !important; color: #ffffff !important; border: 1.5px solid #059669 !important; border-radius: 9999px !important; padding: 6px 14px !important; font-size: 12px !important; font-weight: 600 !important; cursor: pointer !important; line-height: 1.2 !important; box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important; user-select: none !important; -webkit-tap-highlight-color: transparent !important;';
-          saveBtn.innerHTML = '<svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg><span>Simpan ke Bookmark</span>';
-
-          var copyBtn = document.createElement('button');
-          copyBtn.type = 'button';
-          copyBtn.className = 'ot-action-btn ot-copy-btn';
-          copyBtn.style.cssText = 'display: inline-flex !important; align-items: center !important; gap: 5px !important; background: rgba(128,128,128,0.18) !important; color: inherit !important; border: 1px solid rgba(128,128,128,0.35) !important; border-radius: 9999px !important; padding: 6px 12px !important; font-size: 12px !important; font-weight: 500 !important; cursor: pointer !important; line-height: 1.2 !important; user-select: none !important; -webkit-tap-highlight-color: transparent !important;';
-          copyBtn.innerHTML = '<svg style="width: 13px; height: 13px; fill: currentColor;" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg><span>Salin</span>';
-
-          group.appendChild(saveBtn);
-          group.appendChild(copyBtn);
-
-          (function(sB, cB, aB) {
-            function extractData() {
-              var card = null;
-              var cur = aB.parentElement;
-              for (var d = 0; d < 8 && cur && cur !== document.body && cur !== document.documentElement; d++) {
-                // Jangan melompat melewati wadah yang memuat pesan-pesan lain
-                if (cur.querySelectorAll && cur.querySelectorAll('.ot-action-btn-group').length > 1) {
-                  break;
-                }
-                var t = (cur.innerText || '').trim();
-                if (t.length > 30) {
-                  card = cur;
-                }
-                if (cur.matches && cur.matches('.message-card, .chat-message, [role="article"], .model-turn, .assistant-turn, .response-container, div[class*="message" i], div[class*="turn" i]')) {
-                  card = cur;
-                  break;
-                }
-                cur = cur.parentElement;
-              }
-
-              var fullText = '';
-              var arabicText = '';
-              var questionText = '';
-
-              if (card) {
-                var clone = card.cloneNode(true);
-                var junk = clone.querySelectorAll('button, .ot-action-btn-group, mat-icon, svg, [role="toolbar"], footer, header, .google-symbols');
-                for (var j = 0; j < junk.length; j++) junk[j].remove();
-                fullText = (clone.innerText || clone.textContent || '').trim();
-
-                var arabicMatches = fullText.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]{6,}(?:[\s\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\d،؛؟.]+[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]{4,})*/g);
-                if (arabicMatches && arabicMatches.length > 0) {
-                  arabicMatches.sort(function(a, b) { return b.length - a.length; });
-                  arabicText = arabicMatches.slice(0, 2).join('\n...\n');
-                }
-
-                var prev = card.previousElementSibling;
-                while (prev) {
-                  var prevText = (prev.innerText || '').trim();
-                  if (prevText.length > 2 && prevText.length < 500) {
-                    questionText = prevText;
-                    break;
-                  }
-                  prev = prev.previousElementSibling;
-                }
-              }
-
-              if (!fullText || fullText.length < 15) {
-                var paras = document.querySelectorAll('p, .chat-panel-content, .message-content');
-                var collected = [];
-                for (var p = 0; p < paras.length; p++) {
-                  var pt = (paras[p].innerText || '').trim();
-                  if (pt.length > 20 && !pt.includes('can be inaccurate')) {
-                    collected.push(pt);
-                  }
-                }
-                if (collected.length > 0) {
-                  fullText = collected.slice(-3).join('\n\n');
-                }
-              }
-
-              return { fullAnswer: fullText, arabicExcerpt: arabicText, question: questionText };
-            }
-
-            sB.addEventListener('click', function(e) {
-              e.preventDefault();
-              e.stopPropagation();
-              var data = extractData();
-              sendToFlutter('onSaveBookmark', data);
-              sB.style.setProperty('background', '#065f46', 'important');
-              sB.style.setProperty('border-color', '#10b981', 'important');
-              var sp = sB.querySelector('span');
-              if (sp) sp.innerText = '✓ Tersimpan';
-            });
-
-            cB.addEventListener('click', function(e) {
-              e.preventDefault();
-              e.stopPropagation();
-              var data = extractData();
-              if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(data.fullAnswer).catch(function(){});
-              }
-              sendToFlutter('onCopySuccess', { length: data.fullAnswer.length });
-              var sp = cB.querySelector('span');
-              if (sp) sp.innerText = '✓ Tersalin!';
-              setTimeout(function() {
-                if (sp) sp.innerText = 'Salin';
-              }, 2500);
-            });
-          })(saveBtn, copyBtn, anchor);
-
-          if (anchor.nextSibling) {
-            parentEl.insertBefore(group, anchor.nextSibling);
-          } else {
-            parentEl.appendChild(group);
-          }
-        }
-      }
-
-      // 4. Font scale
+      // 3. Font scale
       window.applyTurathFontScale = function(scale) {
         var id = 'ot-font-scale-style';
         var st = document.getElementById(id);
@@ -492,21 +281,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         `;
       };
 
-      // 5. Master loop & observer
-      function runLoop() {
-        eradicateDisclaimer();
-        sweepNotebookLandingCard();
-        injectChatActions();
-      }
-
-      runLoop();
-
+      // 4. Observer Ringan dengan Debounce (Anti CPU Drain & Bebas Perulangan Berantai)
+      sweepNotebookLandingCard();
       if (!window.__otMasterObserver) {
+        var timeout = null;
         window.__otMasterObserver = new MutationObserver(function() {
-          runLoop();
+          if (timeout) clearTimeout(timeout);
+          timeout = setTimeout(function() {
+            sweepNotebookLandingCard();
+          }, 300);
         });
         window.__otMasterObserver.observe(document.documentElement || document.body, { childList: true, subtree: true });
-        setInterval(runLoop, 300);
       }
     })();
   """;
@@ -615,8 +400,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       if (res == 'DENIED' && mounted) {
         setState(() {
           _isPaywallRequired = true;
-          _errorMessage = 'Anda belum memiliki akses ke ruang riset ${_agent?.title ?? "ini"}. Silakan aktifkan paket langganan Rp 50.000/bulan atau Paket Promo Semua AI Rp 99.000.';
+          _isLoadingUrl = false;
           _isWebViewLoading = false;
+          _errorMessage = 'Anda belum memiliki akses ke ruang riset ${_agent?.title ?? "ini"}. Silakan periksa atau aktifkan paket langganan Anda.';
         });
       }
     } catch (_) {}
@@ -995,7 +781,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     return PopScope(
@@ -1033,36 +818,41 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 2),
                 child: Center(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.subscription,
-                        arguments: {'agent': _agent, 'user': _user},
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(100),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: border, width: 0.8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.bolt_rounded, size: 12, color: accent),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${_user!.questionsRemaining}',
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: textPrimary,
-                            ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                    child: Center(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.subscription,
+                            arguments: {'agent': _agent, 'user': _user},
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: isDark ? AppTheme.surfaceCardDark : AppTheme.pillSecondaryBgLight,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                            border: Border.all(color: border, width: 0.8),
                           ),
-                        ],
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.bolt_rounded, size: 12, color: accent),
+                              const SizedBox(width: 3),
+                              Text(
+                                '${_user!.questionsRemaining}',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -1285,61 +1075,31 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               ),
             ),
 
-            // ── Loading Indicator Screen (Three Dots Minimal Pulse) ──
+            // ── Loading Indicator Screen (Unified Three Dots Minimal Pulse) ──
             if (_isLoadingUrl || (_isWebViewLoading && _errorMessage == null))
               Positioned.fill(
-                child: _ThreeDotsMinimalLoader(
-                  agent: _agent,
-                  isDark: isDark,
+                child: AppLoader.fullscreen(
+                  title: _agent?.title ?? 'Ruang Riset Turats',
+                  subtitle: 'Menyiapkan korpus naskah primer...',
                   onCancel: _handleBackPress,
                 ),
               ),
 
-            // ── 2. Error State Screen ──
+            // ── 2. Error State Screen (Unified AppErrorState) ──
             if (_errorMessage != null && !_isLoadingUrl)
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: canvas,
-                padding: const EdgeInsets.all(28),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        _isPaywallRequired
-                            ? Icons.workspace_premium_rounded
-                            : Icons.info_outline_rounded,
-                        size: 48,
-                        color: _isPaywallRequired
-                            ? const Color(0xFFD97706)
-                            : (isDark ? AppTheme.accentDark : AppTheme.accentLight),
-                      ),
-                      const SizedBox(height: 18),
-                      Text(
-                        _isPaywallRequired
-                            ? 'Akses Berlangganan Diperlukan'
-                            : 'Kendala Memuat Ruang Riset',
-                        style: GoogleFonts.outfit(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _errorMessage!,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          fontSize: 13.5,
-                          height: 1.45,
-                          color: textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      if (_isPaywallRequired)
-                        FilledButton.icon(
-                          onPressed: () {
+              Positioned.fill(
+                child: Container(
+                  color: canvas,
+                  child: AppErrorState(
+                    title: _isPaywallRequired
+                        ? 'Akses Berlangganan Diperlukan'
+                        : 'Kendala Memuat Ruang Riset',
+                    message: _errorMessage!,
+                    icon: _isPaywallRequired
+                        ? Icons.workspace_premium_rounded
+                        : Icons.info_outline_rounded,
+                    onRetry: _isPaywallRequired
+                        ? () {
                             final fbUser = FirebaseAuth.instance.currentUser;
                             final user = fbUser != null
                                 ? UserModel(
@@ -1359,31 +1119,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                 'user': user,
                               },
                             );
-                          },
-                          icon: const Icon(Icons.workspace_premium_rounded, size: 18),
-                          label: const Text('Buka Paket Langganan'),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFFD97706),
-                            foregroundColor: Colors.white,
-                          ),
-                        )
-                      else ...[
-                        FilledButton.icon(
-                          onPressed: _fetchAgentUrl,
-                          icon: const Icon(Icons.refresh_rounded, size: 18),
-                          label: const Text('Coba Muat Ulang'),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: isDark ? const Color(0xFF1E293B) : const Color(0xFF1F1F1F),
-                            foregroundColor: Colors.white,
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 10),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Kembali ke Beranda'),
-                      ),
-                    ],
+                          }
+                        : _fetchAgentUrl,
+                    retryLabel: _isPaywallRequired
+                        ? 'Buka Paket Langganan'
+                        : 'Coba Muat Ulang',
+                    onBack: () => Navigator.pop(context),
+                    backLabel: 'Kembali ke Beranda',
                   ),
                 ),
               ),
@@ -1407,20 +1149,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   Future<void> _showAdabTalaqqiDialog() async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? const Color(0xFF18181B) : Colors.white;
-    final border = isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF0E0E10);
-    final textSecondary = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B);
+    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
+    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
 
     await showDialog<void>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (dialogCtx) {
         return Dialog(
           backgroundColor: surface,
           insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(AppTheme.radiusCard),
             side: BorderSide(color: border, width: 1.0),
           ),
           child: Padding(
@@ -1435,7 +1177,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                        color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -1455,6 +1197,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                           color: textPrimary,
                         ),
                       ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                      onPressed: () => Navigator.pop(dialogCtx),
+                      splashRadius: 20,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                     ),
                   ],
                 ),
@@ -1510,7 +1259,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                       ),
                     ),
                     child: Text(
@@ -1576,16 +1325,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   void _showFontScalePicker() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? const Color(0xFF18181B) : Colors.white;
-    final border = isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF0E0E10);
-    final textSecondary = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B);
+    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
+    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
 
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
       ),
       builder: (ctx) {
         return SafeArea(
@@ -1601,7 +1350,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     height: 4,
                     decoration: BoxDecoration(
                       color: border,
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                     ),
                   ),
                 ),
@@ -1645,8 +1394,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     required bool isDark,
   }) {
     final isSelected = (_fontScale - scale).abs() < 0.05;
-    final textPrimary = isDark ? Colors.white : const Color(0xFF0E0E10);
-    final textSecondary = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF52525B);
+    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     return ListTile(
@@ -1676,125 +1425,4 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 }
 
-/// ── _ThreeDotsMinimalLoader: Animasi Tiga Titik Berdenyut Minimalis (Identik Pembukaan Aplikasi) ──
-class _ThreeDotsMinimalLoader extends StatefulWidget {
-  final AgentModel? agent;
-  final bool isDark;
-  final VoidCallback onCancel;
-
-  const _ThreeDotsMinimalLoader({
-    required this.agent,
-    required this.isDark,
-    required this.onCancel,
-  });
-
-  @override
-  State<_ThreeDotsMinimalLoader> createState() => _ThreeDotsMinimalLoaderState();
-}
-
-class _ThreeDotsMinimalLoaderState extends State<_ThreeDotsMinimalLoader>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final canvas = widget.isDark ? const Color(0xFF0E0E10) : const Color(0xFFFFFFFF);
-    final textPrimary = widget.isDark ? Colors.white : const Color(0xFF18181B);
-    final textSecondary = widget.isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
-    final accent = widget.isDark ? const Color(0xFF10B981) : const Color(0xFF059669);
-
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: canvas,
-      child: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 3 Animated Dots
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(3, (index) {
-                      final delay = index * 0.2;
-                      final t = (_controller.value - delay) % 1.0;
-                      final curveVal = Curves.easeInOutSine.transform(t < 0 ? t + 1.0 : t);
-                      final scale = 0.75 + (0.45 * (1.0 - (curveVal - 0.5).abs() * 2));
-                      final opacity = 0.3 + (0.7 * (1.0 - (curveVal - 0.5).abs() * 2));
-
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Transform.scale(
-                          scale: scale,
-                          child: Opacity(
-                            opacity: opacity.clamp(0.25, 1.0),
-                            child: Container(
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: accent,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              Text(
-                widget.agent?.title ?? 'Ruang Riset Turats',
-                style: GoogleFonts.outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: textPrimary,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                'Menyiapkan korpus naskah primer...',
-                style: GoogleFonts.outfit(
-                  fontSize: 12.5,
-                  color: textSecondary,
-                ),
-              ),
-              const SizedBox(height: 28),
-              TextButton(
-                onPressed: widget.onCancel,
-                child: Text(
-                  'Batal',
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: widget.isDark ? Colors.white60 : Colors.black54,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
