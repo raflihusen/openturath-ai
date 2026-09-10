@@ -318,7 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Text(
                                     'Tingkatkan ke OpenTurath Pro',
                                     style: GoogleFonts.outfit(
-                                      fontSize: 13.5,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                       color: textPrimary,
                                     ),
@@ -327,7 +327,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Text(
                                     'Akses korpus kitab tanpa batas kuota.',
                                     style: GoogleFonts.outfit(
-                                      fontSize: 11.5,
+                                      fontSize: 12,
                                       color: textSecondary,
                                     ),
                                   ),
