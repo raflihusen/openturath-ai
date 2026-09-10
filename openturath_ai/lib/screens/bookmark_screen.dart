@@ -83,14 +83,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor:
               isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Text(
             'Hapus Rujukan?',
             style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
           ),
           content: Text(
             'Rujukan "${item.title}" akan dihapus dari daftar tersimpan.',
-            style: GoogleFonts.outfit(fontSize: 13.5),
+            style: GoogleFonts.outfit(fontSize: 13),
           ),
           actions: [
             TextButton(
@@ -101,7 +101,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFEF4444)),
+                  backgroundColor: AppTheme.appleRed),
               child: Text('Hapus',
                   style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
             ),
@@ -256,7 +256,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                     color: isDark
                         ? const Color(0xFF1E1F20)
                         : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                     border: Border.all(color: border, width: 1),
                   ),
                   child: TextField(
@@ -272,7 +272,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                     decoration: InputDecoration(
                       hintText: 'Cari dalam kutipan, kitab, atau topik...',
                       hintStyle: GoogleFonts.outfit(
-                        fontSize: 12.5,
+                        fontSize: 12,
                         color: isDark
                             ? AppTheme.textTertiaryDark
                             : AppTheme.textTertiaryLight,
@@ -332,13 +332,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         color: isSelected
                             ? (isDark ? Colors.white : const Color(0xFF18181B))
                             : (isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7)),
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                       ),
                       child: Center(
                         child: Text(
                           cat,
                           style: GoogleFonts.outfit(
-                            fontSize: 12.5,
+                            fontSize: 12,
                             fontWeight:
                                 isSelected ? FontWeight.w600 : FontWeight.w400,
                             color: isSelected
@@ -372,7 +372,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                 height: 72,
                                 decoration: BoxDecoration(
                                   color: isDark ? const Color(0xFF18181B) : const Color(0xFFF4F4F5),
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                                   border: Border.all(
                                     color: border,
                                     width: 1.0,
@@ -390,7 +390,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               Text(
                                 'Belum Ada Rujukan Tersimpan',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 16.5,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: textPrimary,
                                   letterSpacing: -0.2,
@@ -475,7 +475,7 @@ class _BookmarkCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         border: Border.all(color: border, width: 1),
       ),
       child: Column(
@@ -493,7 +493,7 @@ class _BookmarkCard extends StatelessWidget {
                           const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
                         color: accent.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusXS),
                       ),
                       child: Text(
                         item.fieldName,
@@ -539,7 +539,7 @@ class _BookmarkCard extends StatelessWidget {
           Text(
             item.title,
             style: GoogleFonts.outfit(
-              fontSize: 15.5,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
               color: textPrimary,
               height: 1.3,
@@ -553,7 +553,7 @@ class _BookmarkCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF28292A) : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(AppTheme.radiusXS),
               border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
             ),
             child: Row(
@@ -565,7 +565,7 @@ class _BookmarkCard extends StatelessWidget {
                   child: Text(
                     '${item.bookReference} · ${item.pageNumber}',
                     style: GoogleFonts.outfit(
-                      fontSize: 11.5,
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: textPrimary,
                     ),
@@ -584,14 +584,14 @@ class _BookmarkCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF131314) : const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppTheme.radiusXS),
               border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
             ),
             child: Text(
               item.arabicExcerpt,
               textDirection: TextDirection.rtl,
               style: GoogleFonts.amiri(
-                fontSize: 16.5,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 height: 1.6,
                 color: isDark ? const Color(0xFFF1F5F9) : const Color(0xFF0F172A),
@@ -615,7 +615,7 @@ class _BookmarkCard extends StatelessWidget {
                   side: BorderSide(color: accent.withValues(alpha: 0.5)),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   textStyle: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusXS)),
                 ),
               ),
               const SizedBox(width: 8),
@@ -629,7 +629,7 @@ class _BookmarkCard extends StatelessWidget {
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   textStyle: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w500),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusXS)),
                 ),
               ),
               const Spacer(),
