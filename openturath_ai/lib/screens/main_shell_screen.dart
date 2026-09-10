@@ -120,9 +120,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.auto_awesome_outlined,
-                            activeIcon: Icons.auto_awesome_rounded,
-                            label: 'Spesialis',
+                            icon: Icons.menu_book_outlined,
+                            activeIcon: Icons.menu_book_rounded,
+                            label: 'Keilmuan',
                             isSelected: _currentIndex == 1,
                             accent: accent,
                             unselected: unselected,
@@ -130,9 +130,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.bookmark_border_rounded,
-                            activeIcon: Icons.bookmark_rounded,
-                            label: 'Bookmark',
+                            icon: Icons.collections_bookmark_outlined,
+                            activeIcon: Icons.collections_bookmark_rounded,
+                            label: 'Rujukan',
                             isSelected: _currentIndex == 2,
                             accent: accent,
                             unselected: unselected,
@@ -212,9 +212,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                               ),
                               Expanded(
                                 child: _ExpressiveNavItem(
-                                  icon: Icons.auto_awesome_outlined,
-                                  activeIcon: Icons.auto_awesome_rounded,
-                                  label: 'Spesialis',
+                                  icon: Icons.menu_book_outlined,
+                                  activeIcon: Icons.menu_book_rounded,
+                                  label: 'Keilmuan',
                                   isSelected: _currentIndex == 1,
                                   accent: accent,
                                   unselected: unselected,
@@ -223,9 +223,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                               ),
                               Expanded(
                                 child: _ExpressiveNavItem(
-                                  icon: Icons.bookmark_border_rounded,
-                                  activeIcon: Icons.bookmark_rounded,
-                                  label: 'Bookmark',
+                                  icon: Icons.collections_bookmark_outlined,
+                                  activeIcon: Icons.collections_bookmark_rounded,
+                                  label: 'Rujukan',
                                   isSelected: _currentIndex == 2,
                                   accent: accent,
                                   unselected: unselected,
