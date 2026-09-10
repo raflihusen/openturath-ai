@@ -165,14 +165,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(100),
+      borderRadius: BorderRadius.circular(AppTheme.radiusPill),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           color: isSelected ? activeBg : surface,
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(AppTheme.radiusPill),
           border: Border.all(
             color: isSelected ? activeBg : border,
             width: 0.8,
@@ -324,13 +324,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Navigator.pushNamed(context, AppRoutes.specialistList);
                         }
                       },
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                       child: Container(
                         height: 48,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
                           color: surface,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                           border: Border.all(
                             color: border,
                             width: 0.8,
@@ -348,7 +348,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Text(
                                 'Kitab, istilah, hadits, atau persoalan...',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 13.5,
+                                  fontSize: 13,
                                   color: textSecondary,
                                 ),
                               ),
@@ -380,7 +380,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             const SizedBox(height: 8),
                             InkWell(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                               onTap: () => _openNotebook(lastActiveAgent, user),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 6),
@@ -405,7 +405,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           Text(
                                             '${lastActiveAgent.subtitleAcademic.isNotEmpty ? lastActiveAgent.subtitleAcademic : lastActiveAgent.description} · Sesi Terakhir',
                                             style: GoogleFonts.outfit(
-                                              fontSize: 12.5,
+                                              fontSize: 12,
                                               color: textSecondary,
                                             ),
                                             maxLines: 1,
@@ -453,13 +453,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             const SizedBox(height: 8),
                             InkWell(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                               onTap: () => _openNotebook(tahawwulatAgent, user),
                               child: Container(
                                 padding: const EdgeInsets.all(18),
                                 decoration: BoxDecoration(
                                   color: surface,
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusCard),
                                   border: Border.all(
                                     color: border,
                                     width: 0.8,
@@ -504,7 +504,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             Text(
                                               'Masuk',
                                               style: GoogleFonts.outfit(
-                                                fontSize: 12.5,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                                 color: textPrimary,
                                               ),
@@ -677,7 +677,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             Text(
                                               agent.title,
                                               style: GoogleFonts.outfit(
-                                                fontSize: 15.5,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: -0.2,
                                                 color: textPrimary,
@@ -693,7 +693,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       ? agent.subtitleAcademic
                                                       : agent.description,
                                               style: GoogleFonts.outfit(
-                                                fontSize: 12.5,
+                                                fontSize: 12,
                                                 color: textSecondary,
                                               ),
                                               maxLines: 1,
@@ -707,7 +707,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         Text(
                                           'Kurasi Naskah',
                                           style: GoogleFonts.outfit(
-                                            fontSize: 11.5,
+                                            fontSize: 12,
                                             fontWeight: FontWeight.w400,
                                             color: textSecondary.withValues(alpha: 0.65),
                                           ),
