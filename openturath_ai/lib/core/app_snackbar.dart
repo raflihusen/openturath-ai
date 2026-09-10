@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'theme.dart';
+
 enum SnackType { info, success, warning, error }
 
 class AppSnackBar {
@@ -58,7 +60,7 @@ class AppSnackBar {
                 message,
                 style: TextStyle(
                   color: foregroundColor,
-                  fontSize: 13.5,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   height: 1.3,
                 ),
@@ -71,7 +73,7 @@ class AppSnackBar {
         elevation: 4,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           side: BorderSide(
             color: foregroundColor.withValues(alpha: 0.25),
             width: 1,
