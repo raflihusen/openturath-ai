@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_snackbar.dart';
 import '../core/constants.dart';
-import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_motion.dart';
+import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/subscription_service.dart';
 import '../widgets/doku_checkout_sheet.dart';
 import '../widgets/redeem_code_sheet.dart';
 
-/// Halaman Langganan Ruang Riset OpenTurath AI
+/// Halaman Langganan Ruang Riset OpenTurath AI (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
 
@@ -26,7 +28,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   UserModel? _user;
   AgentModel? _agent;
   bool _isProcessing = false;
-  String? _selectedPlan;
+  int _selectedDurationIndex = 0; // 0: 1 Bulan, 1: 6 Bulan, 2: 1 Tahun
 
   List<AgentModel> get _activeAgents =>
       AgentModel.defaultAgents.where((a) => a.isActive).toList();
@@ -43,7 +45,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         _agent = args['agent'] as AgentModel?;
       }
 
-      // Pastikan data pengguna selalu terisi dari Firebase Auth aktif
       final fbUser = FirebaseAuth.instance.currentUser;
       if (_user == null && fbUser != null) {
         _user = UserModel(
@@ -79,10 +80,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (!mounted) return null;
     final textController = TextEditingController();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     final phone = await showDialog<String>(
       context: context,
@@ -90,40 +91,36 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusL),
-          side: BorderSide(color: border, width: 1),
+          borderRadius: OTRadius.dialogBorder,
+          side: BorderSide(color: border, width: 0.8),
         ),
         title: Text(
-          'Nomor WhatsApp Bukti Aktivasi',
-          style: GoogleFonts.outfit(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: textPrimary,
-          ),
+          'Nomor WhatsApp Konfirmasi',
+          style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Masukkan nomor WhatsApp aktif Anda untuk pengiriman konfirmasi aktivasi langganan dan rincian transaksi resmi secara instan.',
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                color: textSecondary,
-                height: 1.45,
-              ),
+              'Masukkan nomor WhatsApp aktif untuk pengiriman bukti aktivasi langganan dan rincian transaksi riset Anda.',
+              style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: OTSpacing.base),
             TextField(
               controller: textController,
               keyboardType: TextInputType.phone,
               autofocus: true,
-              style: GoogleFonts.outfit(fontSize: 15, color: textPrimary),
+              style: OTTypography.body(color: textPrimary),
               decoration: InputDecoration(
                 hintText: 'Contoh: 081234567890',
+                hintStyle: OTTypography.body(color: textSecondary),
                 prefixIcon: const Icon(Icons.phone_iphone_rounded, size: 20),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+                border: OutlineInputBorder(
+                  borderRadius: OTRadius.inputBorder,
+                  borderSide: BorderSide(color: border),
+                ),
               ),
             ),
           ],
@@ -131,10 +128,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              HapticFeedback.lightImpact();
+              OTMotion.light();
               Navigator.pop(ctx, null);
             },
-            child: Text('Batal', style: GoogleFonts.outfit(color: textSecondary)),
+            child: Text('Batal', style: OTTypography.button(color: textSecondary)),
           ),
           FilledButton(
             onPressed: () {
@@ -143,10 +140,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 AppSnackBar.warning(ctx, 'Masukkan nomor telepon yang valid.');
                 return;
               }
-              HapticFeedback.mediumImpact();
+              OTMotion.success();
               Navigator.pop(ctx, val);
             },
-            child: Text('Lanjutkan Pembayaran', style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+            style: FilledButton.styleFrom(
+              backgroundColor: textPrimary,
+              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+            ),
+            child: Text('Lanjutkan Pembayaran', style: OTTypography.button()),
           ),
         ],
       ),
@@ -161,13 +163,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return phone;
   }
 
-  Future<void> _handleSubscribe(
-    String plan,
-    String planTitle,
-    int price, {
+  Future<void> _handleSubscribe({
+    required String plan,
+    required String planTitle,
+    required int price,
     AgentModel? targetAgent,
   }) async {
-    // Validasi sesi pengguna
     final fbUser = FirebaseAuth.instance.currentUser;
     if (_user == null && fbUser != null) {
       _user = UserModel(
@@ -195,7 +196,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     setState(() {
       _isProcessing = true;
-      _selectedPlan = plan;
     });
 
     String? dokuUrl;
@@ -256,7 +256,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           'Alhamdulillah! Pembayaran berhasil. Akses ruang riset Anda telah aktif!',
           duration: const Duration(seconds: 4),
         );
-        Navigator.pop(context); // Kembali ke dashboard/layar riset
+        Navigator.pop(context);
       }
     } catch (e) {
       if (!mounted) return;
@@ -269,38 +269,47 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-  Widget _buildStaggeredItem(int index, Widget child) {
-    return child;
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final accent = OTColors.accent(isDark);
 
-    final singlePrice = _agent?.price1m ?? AppConstants.priceTholib1m;
-    final annualPrice = _agent?.price1y ?? AppConstants.priceBahits1y;
     final activeList = _activeAgents;
+
+    // Pricing tiers for Akses Penuh
+    const fullAccessTiers = [
+      {'name': 'Bulanan', 'price': 99000, 'label': 'Rp 99.000', 'period': '/ bulan', 'planId': 'all_ai_1m'},
+      {'name': '6 Bulan', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ 6 bulan', 'planId': 'all_ai_6m'},
+      {'name': '1 Tahun · Hemat 25%', 'price': 890000, 'label': 'Rp 890.000', 'period': '/ tahun', 'planId': 'all_ai_1y'},
+    ];
+
+    final currentTier = fullAccessTiers[_selectedDurationIndex];
+    final tierPrice = currentTier['price'] as int;
+    final tierLabel = currentTier['label'] as String;
+    final tierPeriod = currentTier['period'] as String;
+    final tierPlanId = currentTier['planId'] as String;
 
     return Scaffold(
       backgroundColor: canvas,
       appBar: AppBar(
         backgroundColor: canvas,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Langganan Ruang Riset',
-          style: GoogleFonts.outfit(
-            fontSize: 18,
+          style: OTTypography.corpusTitle(color: textPrimary).copyWith(
+            fontSize: 20,
             fontWeight: FontWeight.w600,
-            color: textPrimary,
           ),
         ),
         actions: [
@@ -308,17 +317,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
               if (mounted) setState(() {});
             }),
-            icon: Icon(Icons.card_giftcard_rounded, size: 18, color: accent),
+            icon: Icon(Icons.confirmation_number_outlined, size: 17, color: accent),
             label: Text(
               'Kode Akses',
-              style: GoogleFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: accent,
-              ),
+              style: OTTypography.button(color: accent).copyWith(fontSize: 13),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: OTSpacing.sm),
         ],
       ),
       body: AbsorbPointer(
@@ -333,241 +338,312 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
+                padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
                 children: [
-                  _buildStaggeredItem(
-                    0,
-                    Column(
+                  // Editorial Header
+                  Text(
+                    'Dukungan Riset Berkelanjutan',
+                    style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 24),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Akses komprehensif ke korpus naskah primer turats Islam dengan analisis komparatif instan.',
+                    style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                  ),
+
+                  const SizedBox(height: OTSpacing.lg),
+
+                  // ── Hero Package Card: Akses Penuh Semua AI ──
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surface,
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(
+                        color: textPrimary,
+                        width: 1.2,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(OTSpacing.lg),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Pilih Paket Ruang Riset',
-                          style: GoogleFonts.outfit(
-                            fontSize: 21,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.4,
-                            color: textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Akses komprehensif ke korpus naskah primer turats Islam dengan analisis komparatif instan.',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            color: textSecondary,
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildStaggeredItem(
-                    1,
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: accent.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusM),
-                        border: Border.all(color: accent.withValues(alpha: 0.2)),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.card_giftcard_rounded, color: accent, size: 22),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Punya Kode Akses Santri?',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: textPrimary,
-                                  ),
-                                ),
-                                Text(
-                                  'Tukarkan voucher khusus untuk membuka akses modul.',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11,
-                                    color: textSecondary,
-                                  ),
-                                ),
-                              ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'AKSES PENUH',
+                              style: OTTypography.sectionHeading(color: accent),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
-                              if (mounted) setState(() {});
-                            }),
-                            style: TextButton.styleFrom(
-                              foregroundColor: accent,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            ),
-                            child: const Text('Klaim', style: TextStyle(fontWeight: FontWeight.w700)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // ── Paket 1 (Unggulan): Paket Akses Penuh (Semua AI - Rp 99.000 / bulan) ──
-                  _buildStaggeredItem(
-                    1,
-                    _PricingCard(
-                      badge: 'AKSES LENGKAP · REKOMENDASI',
-                      title: 'Paket Akses Penuh (Semua AI)',
-                      price: 'Rp 99.000',
-                      period: '/ bulan',
-                      description:
-                          'Akses tanpa batas ke seluruh 11+ modul riset AI OpenTurath sekaligus secara simultan.',
-                      features: const [
-                        'Akses ke seluruh spesialis fikih 4 mazhab, hadits, tafsir, aqidah, ushul & bahasa',
-                        'Penelusuran lintas korpus naskah primer tanpa batas kuota harian',
-                        'Sitasi teks ibarah asli, nomor halaman, dan perbandingan syarah',
-                        'Prioritas kurasi naskah kitab dan pembaruan berkala',
-                      ],
-                      buttonLabel: 'Langganan Akses Penuh (Rp 99.000)',
-                      isRecommended: true,
-                      isDark: isDark,
-                      isProcessing: _isProcessing && _selectedPlan == 'all_ai_1m',
-                      onTap: () {
-                        final allAiAgent = AgentModel(
-                          id: 'all_ai',
-                          title: 'Paket Akses Penuh Semua AI',
-                          description: 'Akses ke seluruh modul AI OpenTurath',
-                          emoji: '✨',
-                          category: 'All Access',
-                          status: 'active',
-                          sortOrder: 0,
-                        );
-                        _handleSubscribe(
-                          'all_ai_1m',
-                          'Paket Akses Penuh Semua AI',
-                          99000,
-                          targetAgent: allAiAgent,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // ── Paket 2: Spesialis Satuan Terpilih (Rp 50.000 / bulan) ──
-                  _buildStaggeredItem(
-                    2,
-                    _PricingCard(
-                      badge: 'SPESIALIS SATUAN',
-                      title: '1 Bulan — ${_agent?.title ?? "AI Spesialis"}',
-                      price: 'Rp ${_formatPrice(singlePrice)}',
-                      period: '/ bulan',
-                      description:
-                          'Akses fokus ke ${_agent?.title ?? "modul ini"} tanpa batas pertanyaan harian.',
-                      features: [
-                        'Akses penuh korpus kitab ${_agent?.title ?? "modul terpilih"}',
-                        'Tanya jawab tanpa batas pertanyaan harian pada modul ini',
-                        'Sitasi ibarah kitab asli dan nomor halaman',
-                        'Dukungan asistensi teknis santri',
-                      ],
-                      extraWidget: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Pilih Cabang Keilmuan / Spesialis:',
-                            style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          DropdownButtonFormField<String>(
-                            initialValue: _agent?.id ?? 'fiqh_tahawwulat',
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                              filled: true,
-                              fillColor: isDark
-                                  ? const Color(0xFF131C26)
-                                  : const Color(0xFFF8FAFC),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                                borderSide: BorderSide(color: border),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: surfaceSubtle,
+                                borderRadius: OTRadius.chipBorder,
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                                borderSide: BorderSide(color: border),
+                              child: Text(
+                                'SEMUA 11+ MODUL',
+                                style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
-                            dropdownColor:
-                                isDark ? const Color(0xFF18181B) : Colors.white,
-                            items: activeList.map((a) {
-                              return DropdownMenuItem<String>(
-                                value: a.id,
-                                child: Text(
-                                  '${a.title}  ·  ${a.category}',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: textPrimary,
+                          ],
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        Text(
+                          'Paket Seluruh AI Keilmuan',
+                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 21),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Fikih 4 mazhab, Tahawwulat, hadits, tafsir, aqidah, ushul, dan sastra bahasa.',
+                          style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                        ),
+
+                        const SizedBox(height: OTSpacing.lg),
+
+                        // Segmented Control Durasi
+                        Container(
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: surfaceSubtle,
+                            borderRadius: OTRadius.chipBorder,
+                            border: Border.all(color: border, width: 0.8),
+                          ),
+                          child: Row(
+                            children: List.generate(fullAccessTiers.length, (idx) {
+                              final tier = fullAccessTiers[idx];
+                              final isSelected = _selectedDurationIndex == idx;
+                              return Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    OTMotion.selection();
+                                    setState(() => _selectedDurationIndex = idx);
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: OTMotion.fast,
+                                    curve: OTMotion.curve,
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? textPrimary : Colors.transparent,
+                                      borderRadius: OTRadius.chipBorder,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      tier['name'] as String,
+                                      style: OTTypography.caption(
+                                        color: isSelected ? canvas : textSecondary,
+                                      ).copyWith(
+                                        fontSize: 11,
+                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               );
-                            }).toList(),
-                            onChanged: (val) {
-                              if (val != null) {
-                                setState(() {
-                                  _agent = activeList.firstWhere((a) => a.id == val);
-                                });
-                              }
-                            },
+                            }),
                           ),
-                        ],
-                      ),
-                      buttonLabel: 'Langganan ${_agent?.title ?? "Modul Ini"} (Rp 50.000)',
-                      isDark: isDark,
-                      isProcessing:
-                          _isProcessing && _selectedPlan == AppConstants.planTholib1m,
-                      onTap: () => _handleSubscribe(
-                        AppConstants.planTholib1m,
-                        '1 Bulan ${_agent?.title ?? "Modul AI"}',
-                        singlePrice,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                        ),
 
-                  // ── Paket 3: Akses 1 Tahun Modul Terpilih (Rp 450.000 / tahun) ──
-                  _buildStaggeredItem(
-                    3,
-                    _PricingCard(
-                      badge: 'PAKET TAHUNAN',
-                      title: '1 Tahun — ${_agent?.title ?? "AI Spesialis"}',
-                      price: 'Rp ${_formatPrice(annualPrice)}',
-                      period: '/ tahun',
-                      description:
-                          'Pilihan hemat 1 tahun untuk pengajar, asatidz, santri, dan peneliti.',
-                      features: [
-                        'Seluruh fitur akses penuh ${_agent?.title ?? "modul terpilih"}',
-                        'Hemat dibanding membayar bulanan selama 12 bulan',
-                        'Akses prioritas pembaruan kitab dan ibarah',
-                        'Dukungan asistensi teknis berkelanjutan',
+                        const SizedBox(height: OTSpacing.lg),
+
+                        // Price Display
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              tierLabel,
+                              style: OTTypography.price(color: textPrimary),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              tierPeriod,
+                              style: OTTypography.caption(color: textSecondary),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: OTSpacing.base),
+                        Divider(color: border.withValues(alpha: 0.6), height: 1),
+                        const SizedBox(height: OTSpacing.base),
+
+                        // Core Benefits (Disciplined 3-4 items)
+                        _benefitRow('Akses simultan ke 11+ modul naskah primer turats', textPrimary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Penelusuran tanpa batas kuota pertanyaan harian', textPrimary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Sitasi marja\' kitab asli, nomor halaman & matan lengkap', textPrimary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Prioritas kurasi naskah dan pembaruan berkala', textPrimary),
+
+                        const SizedBox(height: OTSpacing.lg),
+
+                        // CTA Button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: FilledButton(
+                            onPressed: _isProcessing
+                                ? null
+                                : () {
+                                    final allAiAgent = AgentModel(
+                                      id: 'all_ai',
+                                      title: 'Paket Akses Penuh Semua AI',
+                                      description: 'Akses ke seluruh modul AI OpenTurath',
+                                      emoji: '✨',
+                                      category: 'All Access',
+                                      status: 'active',
+                                      sortOrder: 0,
+                                    );
+                                    _handleSubscribe(
+                                      plan: tierPlanId,
+                                      planTitle: 'Paket Akses Penuh (${currentTier['name']})',
+                                      price: tierPrice,
+                                      targetAgent: allAiAgent,
+                                    );
+                                  },
+                            style: FilledButton.styleFrom(
+                              backgroundColor: textPrimary,
+                              foregroundColor: canvas,
+                              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'Pilih Paket Ini ($tierLabel)',
+                              style: OTTypography.button(color: canvas),
+                            ),
+                          ),
+                        ),
                       ],
-                      buttonLabel: 'Langganan 1 Tahun (Rp 450.000)',
-                      isDark: isDark,
-                      isProcessing:
-                          _isProcessing && _selectedPlan == AppConstants.planBahits1y,
-                      onTap: () => _handleSubscribe(
-                        AppConstants.planBahits1y,
-                        '1 Tahun ${_agent?.title ?? "Modul AI"}',
-                        annualPrice,
+                    ),
+                  ),
+
+                  const SizedBox(height: OTSpacing.xl),
+
+                  // ── Add-On / Modul Satuan Terpisah ──
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 6),
+                    child: Text(
+                      'PILIHAN MODUL SATUAN',
+                      style: OTTypography.sectionHeading(color: textSecondary),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surface,
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(color: border, width: 0.8),
+                    ),
+                    padding: const EdgeInsets.all(OTSpacing.base),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '1 Modul Spesialis Terpilih',
+                                    style: OTTypography.cardTitle(color: textPrimary),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Fokus telaah pada satu disiplin keilmuan tertentu',
+                                    style: OTTypography.caption(color: textSecondary),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              'Rp 50.000 / bln',
+                              style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: OTSpacing.md),
+
+                        DropdownButtonFormField<String>(
+                          initialValue: _agent?.id ?? 'fiqh_tahawwulat',
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            filled: true,
+                            fillColor: surfaceSubtle,
+                            border: OutlineInputBorder(
+                              borderRadius: OTRadius.inputBorder,
+                              borderSide: BorderSide(color: border),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: OTRadius.inputBorder,
+                              borderSide: BorderSide(color: border),
+                            ),
+                          ),
+                          dropdownColor: surface,
+                          items: activeList.map((a) {
+                            return DropdownMenuItem<String>(
+                              value: a.id,
+                              child: Text(
+                                '${a.title}  ·  ${a.category}',
+                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _agent = activeList.firstWhere((a) => a.id == val);
+                              });
+                            }
+                          },
+                        ),
+
+                        const SizedBox(height: OTSpacing.md),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: 44,
+                          child: OutlinedButton(
+                            onPressed: _isProcessing
+                                ? null
+                                : () => _handleSubscribe(
+                                      plan: AppConstants.planTholib1m,
+                                      planTitle: '1 Bulan ${_agent?.title ?? "Modul AI"}',
+                                      price: _agent?.price1m ?? AppConstants.priceTholib1m,
+                                    ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: textPrimary,
+                              side: BorderSide(color: border, width: 0.8),
+                              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                            ),
+                            child: Text(
+                              'Langganan ${_agent?.title ?? "Modul Ini"} (Rp 50.000)',
+                              style: OTTypography.button(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: OTSpacing.xl),
+
+                  // Voucher / Redeem Code Trigger
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
+                        if (mounted) setState(() {});
+                      }),
+                      icon: Icon(Icons.confirmation_number_outlined, size: 16, color: textSecondary),
+                      label: Text(
+                        'Punya voucher atau kode redeem santri? Klaim di sini',
+                        style: OTTypography.caption(color: textSecondary),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -576,223 +652,30 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       ),
     );
   }
-}
 
-class _PricingCard extends StatefulWidget {
-  final String title;
-  final String price;
-  final String period;
-  final String description;
-  final List<String> features;
-  final VoidCallback onTap;
-  final bool isRecommended;
-  final bool isDark;
-  final bool isProcessing;
-  final String? badge;
-  final String? buttonLabel;
-  final Widget? extraWidget;
-
-  const _PricingCard({
-    required this.title,
-    required this.price,
-    required this.period,
-    required this.description,
-    required this.features,
-    required this.onTap,
-    this.isRecommended = false,
-    required this.isDark,
-    required this.isProcessing,
-    this.badge,
-    this.buttonLabel,
-    this.extraWidget,
-  });
-
-  @override
-  State<_PricingCard> createState() => _PricingCardState();
-}
-
-class _PricingCardState extends State<_PricingCard> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = widget.isDark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = widget.isRecommended
-        ? (isDark ? Colors.white : const Color(0xFF18181B))
-        : (isDark ? AppTheme.borderDark : AppTheme.borderLight);
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.985 : 1.0,
-        duration: const Duration(milliseconds: 140),
-        curve: Curves.easeOutCubic,
-        child: Container(
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-            border: Border.all(
-              color: widget.isRecommended
-                  ? (isDark ? Colors.white : const Color(0xFF18181B))
-                  : border,
-              width: 1.0,
-            ),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (widget.badge != null || widget.isRecommended)
-                Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                  ),
-                  child: Text(
-                    widget.badge ?? 'PILIHAN UTAMA',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.4,
-                      color: textPrimary,
-                    ),
-                  ),
-                ),
-              Text(
-                widget.title,
-                style: GoogleFonts.newsreader(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: textPrimary,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 6),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    widget.price,
-                    style: GoogleFonts.outfit(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.4,
-                      color: textPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    widget.period,
-                    style: GoogleFonts.outfit(
-                      fontSize: 13,
-                      color: textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.description,
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  color: textSecondary,
-                  height: 1.35,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Divider(color: border, height: 1),
-              const SizedBox(height: 14),
-              for (final f in widget.features) ...[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 2),
-                      child: Icon(
-                        Icons.check_circle_rounded,
-                        size: 15,
-                        color: Color(0xFF10B981),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        f,
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: textPrimary,
-                          height: 1.35,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-              ],
-              if (widget.extraWidget != null) ...[
-                const SizedBox(height: 12),
-                widget.extraWidget!,
-                const SizedBox(height: 4),
-              ],
-              const SizedBox(height: 14),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: FilledButton(
-                  onPressed: widget.isProcessing ? null : widget.onTap,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: widget.isRecommended
-                        ? (isDark ? Colors.white : const Color(0xFF18181B))
-                        : (isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7)),
-                    foregroundColor: widget.isRecommended
-                        ? (isDark ? const Color(0xFF18181B) : Colors.white)
-                        : (isDark ? Colors.white : const Color(0xFF18181B)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
-                    elevation: 0,
-                  ),
-                  child: widget.isProcessing
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: widget.isRecommended
-                                ? (isDark ? const Color(0xFF18181B) : Colors.white)
-                                : (isDark ? Colors.white : const Color(0xFF18181B)),
-                          ),
-                        )
-                      : Text(
-                          widget.buttonLabel ?? 'Pilih Paket Ini',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                ),
-              ),
-            ],
+  Widget _benefitRow(String text, Color textPrimary) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Icon(
+            Icons.check_circle_rounded,
+            size: 15,
+            color: OTColors.success,
           ),
         ),
-      ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: OTTypography.body(color: textPrimary).copyWith(
+              fontSize: 12.5,
+              height: 1.35,
+            ),
+          ),
+        ),
+      ],
     );
   }
-}
-
-String _formatPrice(int price) {
-  final digits = price.toString();
-  final buffer = StringBuffer();
-  for (var index = 0; index < digits.length; index++) {
-    if (index > 0 && (digits.length - index) % 3 == 0) buffer.write('.');
-    buffer.write(digits[index]);
-  }
-  return buffer.toString();
 }
