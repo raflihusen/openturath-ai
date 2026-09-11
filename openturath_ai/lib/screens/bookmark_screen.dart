@@ -46,10 +46,18 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void initState() {
     super.initState();
     _loadBookmarks();
+    _bookmarkService.addListener(_onBookmarksChanged);
+  }
+
+  void _onBookmarksChanged() {
+    if (mounted) {
+      _loadBookmarks();
+    }
   }
 
   @override
   void dispose() {
+    _bookmarkService.removeListener(_onBookmarksChanged);
     _searchCtrl.dispose();
     super.dispose();
   }

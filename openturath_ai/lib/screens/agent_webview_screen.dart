@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -157,6 +156,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             padding: 6px 12px !important;
             opacity: 0.8 !important;
             border: none !important;
+          }
           ::-webkit-scrollbar { display: none !important; width: 0px !important; height: 0px !important; }
           html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
           /* Padding atas yang cukup agar pesan teratas tidak terpotong */
@@ -175,28 +175,23 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         }
       }
 
-      // 2. Sembunyikan Kartu Landing NotebookLM yang Memuat Metadata Teknis
+      // 2. Sembunyikan Kartu Landing NotebookLM yang Memuat Metadata Teknis (F37: Hindari sweep div umum)
       function sweepNotebookLandingCard() {
         try {
-          var cards = document.querySelectorAll('mat-card, .mat-mdc-card, [role="region"], div[class*="card" i], div[class*="header" i], div[class*="title" i], div');
+          var cards = document.querySelectorAll('mat-card.notebook-info-card, .mat-mdc-card.landing-card, .notebook-landing-banner');
           for (var i = 0; i < cards.length; i++) {
             var el = cards[i];
-            var txt = (el.innerText || '').toLowerCase();
-            if ((txt.includes('sources ·') || txt.includes('0 sources') || txt.includes('super ai') || txt.includes('feb 22') || txt.includes('feb 2026')) && el.clientHeight < 450 && el.clientHeight > 20) {
-              if (!el.querySelector('textarea, input, [role="article"]')) {
-                el.style.setProperty('display', 'none', 'important');
-                el.style.setProperty('visibility', 'hidden', 'important');
-                el.style.setProperty('height', '0px', 'important');
-                el.style.setProperty('overflow', 'hidden', 'important');
-                el.style.setProperty('margin', '0px', 'important');
-                el.style.setProperty('padding', '0px', 'important');
-              }
+            if (!el.querySelector('textarea, input, [role="article"], .chat-message')) {
+              el.style.setProperty('display', 'none', 'important');
+              el.style.setProperty('visibility', 'hidden', 'important');
+              el.style.setProperty('height', '0px', 'important');
+              el.style.setProperty('overflow', 'hidden', 'important');
             }
           }
         } catch(e) {}
       }
 
-      // 3. Font scale
+      // 3. Font scale aman tanpa compound font explosion (F36)
       window.applyTurathFontScale = function(scale) {
         var id = 'ot-font-scale-style';
         var st = document.getElementById(id);
@@ -205,15 +200,22 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           st.id = id;
           (document.head || document.documentElement).appendChild(st);
         }
-        var pct = Math.round(scale * 100);
-        var arPct = Math.round(scale * 125);
+        var basePx = Math.round(scale * 15);
+        var arabicPx = Math.round(scale * 19);
         st.textContent = `
-          .chat-panel-content, .chat-view, .conversation-container, .message-list, p, span, li, blockquote, pre {
-            font-size: ${pct}% !important;
-            line-height: 1.6 !important;
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"] {
+            font-size: ${basePx}px !important;
+            line-height: 1.65 !important;
+          }
+          .chat-panel-content p, .chat-view p, [role="article"] p,
+          .chat-panel-content span, .chat-view span, [role="article"] span,
+          .chat-panel-content li, .chat-view li, [role="article"] li {
+            font-size: inherit !important;
+            line-height: inherit !important;
           }
           [lang="ar"], .arabic, *[class*="arabic" i] {
-            font-size: ${arPct}% !important;
+            font-size: ${arabicPx}px !important;
+            line-height: 1.8 !important;
           }
         `;
       };
@@ -443,12 +445,22 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             }
           }
 
-          var arabicMatch = answer.match(/[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]{15,}/g);
+          // Regex Arab yang mendukung frasa dan spasi (F29)
+          var arabicRegex = /[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]+(?:\\s+[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]+){1,}/g;
+          var arabicMatch = answer.match(arabicRegex);
           var arabicExcerpt = arabicMatch ? arabicMatch.slice(0, 3).join(' ... ') : '';
+
+          // Ekstraksi sitasi rujukan kitab primer jika tersedia (F28, F30)
+          var bookMatch = answer.match(/(?:Kitab|Rujukan|Sumber|Maraji'|Pustaka)\\s*:\\s*([^\\n\\r,]+)/i);
+          var pageMatch = answer.match(/(?:Hal(?:aman)?|Juz|Hlm|Sahifah)\\s*[:.]?\\s*([0-9\\/\\-]+)/i);
+          var detectedBook = bookMatch ? bookMatch[1].trim() : '';
+          var detectedPage = pageMatch ? pageMatch[1].trim() : '';
 
           return JSON.stringify({
             fullAnswer: answer,
-            arabicExcerpt: arabicExcerpt
+            arabicExcerpt: arabicExcerpt,
+            detectedBook: detectedBook,
+            detectedPage: detectedPage
           });
         })();
       """);
@@ -457,23 +469,30 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         final Map<String, dynamic> data = jsonDecode(res.toString());
         final fullAnswer = (data['fullAnswer'] as String? ?? '').trim();
         final arabicExcerpt = (data['arabicExcerpt'] as String? ?? '').trim();
+        final detectedBook = (data['detectedBook'] as String? ?? '').trim();
+        final detectedPage = (data['detectedPage'] as String? ?? '').trim();
 
         if (fullAnswer.isEmpty) {
           if (mounted) {
             AppSnackBar.warning(context, 'Belum ada telaah AI yang dapat disimpan.');
           }
         } else {
+          // F28 & F30: Pisahkan nama spesialis AI dari rujukan kitab primer
+          final bookRef = detectedBook.isNotEmpty
+              ? detectedBook
+              : 'Sumber Primer (${_agent?.category ?? "Turats"})';
+
           final bookmark = BookmarkModel(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
-            title: 'Telaah ${_agent?.title ?? "Naskah Turats"}',
+            title: 'Kajian ${_agent?.category ?? "Turats"}: ${bookRef.length > 28 ? "${bookRef.substring(0, 28)}..." : bookRef}',
             agentId: _agent?.id ?? 'umum',
-            agentTitle: _agent?.title ?? 'Kutubut Turats',
+            agentTitle: _agent?.title ?? 'Spesialis Turats',
             fieldName: _agent?.category ?? 'Fikih',
             fieldId: (_agent?.category ?? 'fikih').toLowerCase().replaceAll(' ', '_'),
             arabicExcerpt: arabicExcerpt,
             fullAnswer: fullAnswer,
-            bookReference: _agent?.title ?? 'Kutubut Turats',
-            pageNumber: '',
+            bookReference: bookRef,
+            pageNumber: detectedPage,
             createdAt: DateTime.now(),
           );
 
@@ -511,6 +530,29 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     } else {
       if (mounted) {
         Navigator.pop(context);
+      }
+    }
+  }
+
+  Future<void> _navigateToSubscription() async {
+    final currentUser = _user ?? await AuthService().getCurrentUserModel();
+    if (!mounted) return;
+    await Navigator.pushNamed(
+      context,
+      AppRoutes.subscription,
+      arguments: {
+        'agent': _agent,
+        'user': currentUser,
+      },
+    );
+    if (!mounted) return;
+    final refreshedUser = await AuthService().getCurrentUserModel();
+    if (mounted && refreshedUser != null) {
+      setState(() {
+        _user = refreshedUser;
+      });
+      if (_isPaywallRequired && refreshedUser.hasAccessToAgent(_agent?.id ?? '')) {
+        _fetchAgentUrl();
       }
     }
   }
@@ -571,13 +613,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 padding: const EdgeInsets.only(right: 4),
                 child: Center(
                   child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.subscription,
-                        arguments: {'agent': _agent, 'user': _user},
-                      );
-                    },
+                    onTap: _navigateToSubscription,
                     borderRadius: OTRadius.chipBorder,
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -818,27 +854,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         ? Icons.workspace_premium_rounded
                         : Icons.info_outline_rounded,
                     onRetry: _isPaywallRequired
-                        ? () {
-                            final fbUser = FirebaseAuth.instance.currentUser;
-                            final user = fbUser != null
-                                ? UserModel(
-                                    uid: fbUser.uid,
-                                    email: fbUser.email ?? '',
-                                    name: fbUser.displayName ?? 'Peneliti Turats',
-                                    photoUrl: fbUser.photoURL ?? '',
-                                    plan: 'trial',
-                                    questionsUsed: 0,
-                                  )
-                                : null;
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.subscription,
-                              arguments: {
-                                'agent': _agent,
-                                'user': user,
-                              },
-                            );
-                          }
+                        ? _navigateToSubscription
                         : _fetchAgentUrl,
                     retryLabel: _isPaywallRequired
                         ? 'Buka Paket Langganan'
