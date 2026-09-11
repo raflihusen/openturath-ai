@@ -16,7 +16,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
           'name', 'email', 'photo_url', 'plan', 'questions_used',
-          'subscription_expiry', 'entitlements'
+          'subscription_expiry', 'entitlements', 'pending_deletion', 'pending_deletion_at'
         ])
         && (
           (request.auth.token.firebase.sign_in_provider != 'anonymous' && request.resource.data.email == request.auth.token.email) ||
@@ -25,9 +25,14 @@ service cloud.firestore {
         && request.resource.data.plan == 'trial'
         && request.resource.data.questions_used == 0
         && request.resource.data.subscription_expiry == null
+        && (!('photo_url' in request.resource.data) || request.resource.data.photo_url == null || request.resource.data.photo_url.size() <= 1000)
         && (!('entitlements' in request.resource.data) || request.resource.data.entitlements == {});
 
-      allow update: if false;
+      // UPDATE: Hanya diizinkan untuk menandai pending_deletion saat penghapusan akun
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pending_deletion', 'pending_deletion_at'])
+        && request.resource.data.pending_deletion == true;
 
       // DELETE: Pengguna boleh menghapus datanya sendiri
       allow delete: if request.auth != null && request.auth.uid == userId;
@@ -59,13 +64,25 @@ service cloud.firestore {
     }
 
     // ================================================================
-    // REDEEM CODES & WEBHOOK EVENTS: 100% Server Admin Only
+    // SERVER-ONLY COLLECTIONS (Redeem, Webhook, Outbox, Rate Limits)
     // ================================================================
     match /redeem_codes/{codeId} {
       allow read, write: if false;
       match /{allSubcollections=**} {
         allow read, write: if false;
       }
+    }
+
+    match /redeem_attempts/{uid} {
+      allow read, write: if false;
+    }
+
+    match /rate_limits/{limitId} {
+      allow read, write: if false;
+    }
+
+    match /provisioning_outbox/{jobId} {
+      allow read, write: if false;
     }
 
     match /webhook_events/{eventId} {
