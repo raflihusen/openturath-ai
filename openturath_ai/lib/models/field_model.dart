@@ -128,7 +128,7 @@ class FieldModel {
         const FieldModel(
           id: 'umum',
           name: 'Umum & Turats',
-          description: 'Kajian khazanah keilmuan Islam dan naskah primer.',
+          description: 'Beragam kajian dari kitab-kitab Islam.',
           icon: Icons.menu_book_rounded,
           specialistCount: 0,
           agentIds: [],

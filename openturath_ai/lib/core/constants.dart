@@ -2,7 +2,7 @@ class AppConstants {
   // ── App Info ──────────────────────────────────────────────────
   static const String appName = 'OpenTurath AI';
   static const String appNameArabic = 'الذكاء الاصطناعي للعلوم الإسلامية';
-  static const String appTagline = 'Ilmu Islam. Sumber Primer. Ibarah Asli.';
+  static const String appTagline = 'Membaca kitab, menelusuri ibarah.';
 
   // ── Trial Limit Config ────────────────────────────────────────
   static const int trialQuestionLimit = 10;
