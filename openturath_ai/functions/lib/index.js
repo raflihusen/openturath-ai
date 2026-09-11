@@ -217,7 +217,7 @@ exports.recordQuestion = functions
     }
     const agentId = data.agentId;
     if (!agentId || !AGENT_URLS[agentId]) {
-        throw new functions.https.HttpsError("not-found", "Agent tidak ditemukan atau belum aktif.");
+        throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan atau belum aktif.");
     }
     const entitlementKey = getEntitlementKey(agentId);
     const userRef = db.collection("users").doc(context.auth.uid);
@@ -232,11 +232,11 @@ exports.recordQuestion = functions
             return { isPremium: true, questionsUsed: userData.questions_used || 0, questionsRemaining: null };
         }
         if (entitlementAccess.premiumPlan) {
-            throw new functions.https.HttpsError("permission-denied", "Langganan Anda untuk modul ini telah berakhir atau belum memiliki masa berlaku.");
+            throw new functions.https.HttpsError("permission-denied", "Langganan Anda untuk kajian ini telah berakhir.");
         }
         const questionsUsed = Number.isInteger(userData.questions_used) ? userData.questions_used : 0;
         if (questionsUsed >= TRIAL_QUESTION_LIMIT) {
-            throw new functions.https.HttpsError("permission-denied", "Kuota trial Anda telah habis. Berlangganan untuk melanjutkan.");
+            throw new functions.https.HttpsError("permission-denied", "Kuota uji coba sudah habis. Berlangganan untuk lanjut.");
         }
         const updatedQuestionsUsed = questionsUsed + 1;
         transaction.update(userRef, { questions_used: updatedQuestionsUsed });
@@ -497,7 +497,7 @@ function getServiceTitleForEntitlement(entitlementKey) {
         return "AI Tarikh & Sirah Nabawiyah";
     if (entitlementKey === "tasawwuf" || entitlementKey === "habib_umar" || entitlementKey === "tasawwuf_ihya" || entitlementKey === "tasawwuf_adab")
         return "AI Tasawwuf & Tazkiyatun Nafs";
-    return "Ruang Riset";
+    return "Modul kajian";
 }
 async function processSuccessfulPayment(invoiceNumber) {
     const txQuery = await db.collection("transactions")
@@ -807,7 +807,7 @@ exports.checkPaymentStatus = functions
             return {
                 success: true,
                 status: "SUCCESS",
-                message: "Pembayaran berhasil diverifikasi! Akses Anda telah aktif.",
+                message: "Pembayaran terverifikasi. Akses Anda sudah aktif.",
                 details: actResult
             };
         }
@@ -815,7 +815,7 @@ exports.checkPaymentStatus = functions
             return {
                 success: false,
                 status: trxStatus || "PENDING",
-                message: "Pembayaran belum diselesaikan atau masih diproses."
+                message: "Pembayaran masih menunggu penyelesaian."
             };
         }
     }
@@ -965,7 +965,7 @@ exports.redeemCode = functions
         entitlementKey: redeemResult.entitlementKey,
         durationDays: redeemResult.durationDays,
         expiry: redeemResult.expiryIso,
-        message: `Kode diterima. Akses ruang riset ${redeemResult.serviceTitle} telah aktif.`,
+        message: `Kode diterima. Akses ke ${redeemResult.serviceTitle} sudah aktif.`,
     };
 });
 // ================================================================
@@ -1845,8 +1845,8 @@ function getLoginHTML(ref, csrfToken, error) {
 </head>
 <body>
   <div class="logo">OpenTurath</div>
-  <h1>AI Islamiyah</h1>
-  <p class="subtitle">Masukkan email langganan Anda</p>
+  <h1>Ruang Kajian</h1>
+  <p class="subtitle">Masukkan email akun Anda</p>
   <div class="card">
     ${errorHTML}
     <form method="POST" action="/login">
@@ -1854,10 +1854,10 @@ function getLoginHTML(ref, csrfToken, error) {
       <input type="hidden" name="csrf_token" value="${escapeHtml(csrfToken)}">
       <label for="email">Alamat Email</label>
       <input type="email" id="email" name="email" placeholder="nama@email.com" required autocomplete="email">
-      <button type="submit">Masuk ke Ruang Belajar →</button>
+      <button type="submit">Buka ruang kajian →</button>
     </form>
   </div>
-  <p class="footer">Belum berlangganan? Silakan berlangganan melalui aplikasi resmi OpenTurath AI</p>
+  <p class="footer">Belum berlangganan? Buka langganan melalui aplikasi OpenTurath</p>
 </body>
 </html>`;
 }
@@ -1866,52 +1866,52 @@ function getChatWrapperHTML(agent, agentId, email) {
     let descHtml = "";
     let promptsHtml = "";
     if (agentId === "fiqh_tahawwulat") {
-        descHtml = `<p>Ruang riset **Fikih Tahawwulat** dirancang untuk menelaah kaidah fikih tanda zaman dan krisis peradaban berdasarkan karya rujukan ulama terkait.</p>`;
+        descHtml = `<p>Kajian **Fikih Tahawwulat** menelaah kaidah tanda zaman dan perubahan peradaban berdasarkan kitab-kitab rujukan.</p>`;
         promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Jelaskan konsep Al-Ghuthsa’iyyah (era buih) berdasarkan penjelasan kitab!')">
-        Jelaskan konsep Al-Ghuthsa’iyyah 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana penjelasan al-ghutsā\\'iyyah dalam kitab?')">
+        Penjelasan al-ghutsā'iyyah 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Apa rukun keempat dalam metodologi Fikih Tahawwulat?')">
-        Rukun keempat Fikih Tahawwulat 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa yang dimaksud Rukun Keempat dalam Fikih Tahawwulat?')">
+        Rukun Keempat Fikih Tahawwulat 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana kaidah menyikapi fitnah akhir zaman?')">
-        Menyikapi fitnah akhir zaman 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana para ulama menjelaskan sikap saat masa fitnah?')">
+        Sikap saat masa fitnah 📋
       </div>
     `;
     }
     else if (agentId === "fiqh_syafii") {
-        descHtml = `<p>Ruang riset **Fikih Syafi'i** memuat korpus naskah primer mazhab Syafi'i untuk penelaahan masalah ibadah, muamalah, dan fatwa para ashab al-wujuh dan muta'akhkhirin.</p>`;
+        descHtml = `<p>Kajian **Fikih Syafi'i** menelaah masalah ibadah, muamalah, dan fatwa para ulama mazhab Syafi'i dari kitab-kitab mu'tamad.</p>`;
         promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana rukun wudhu menurut qaul mu’tamad mazhab Syafi’i?')">
-        Rukun wudhu mu'tamad Syafi'i 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa rukun wudu menurut pendapat mu\\'tamad dalam mazhab Syafi\\'i?')">
+        Rukun wudu mu'tamad Syafi'i 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Jelaskan syarat sah shalat berjamaah menurut naskah Minhaj ath-Thalibin!')">
-        Syarat shalat berjamaah di Minhaj 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa syarat sah salat berjamaah menurut Minhāj al-Ṭālibīn?')">
+        Syarat salat berjamaah di Minhāj 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana ketentuan zakat perniagaan dalam fatwa Imam An-Nawawi?')">
-        Zakat perniagaan menurut An-Nawawi 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana ketentuan zakat perdagangan menurut Imam al-Nawawi?')">
+        Zakat perdagangan menurut al-Nawawi 📋
       </div>
     `;
     }
     else if (agentId === "hadits") {
-        descHtml = `<p>Ruang riset **Hadis & Syarah** memuat himpunan kutubus sittah dan syarah hadis induk untuk verifikasi matan, takhrij, dan faedah hukum nabawi.</p>`;
+        descHtml = `<p>Kajian **Hadis & Syarah** memuat kitab-kitab hadis induk dan syarahnya untuk memeriksa matan, sanad, dan faedah hukum.</p>`;
         promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana penjelasan syarah hadis tentang niat dalam Fathul Bari?')">
-        Syarah hadis niat di Fathul Bari 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana penjelasan hadis tentang niat dalam Fatḥ al-Bārī?')">
+        Penjelasan hadis niat di Fatḥ al-Bārī 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana kedudukan perawi dan sanad pada riwayat ini?')">
-        Takhrij sanad dan faedah hadis 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana menilai sanad riwayat ini?')">
+        Penilaian sanad riwayat 📋
       </div>
     `;
     }
     else {
-        descHtml = `<p>Ruang riset **${escapeHtml(agent.label || "Naskah Turats")}** menyediakan fasilitas telaah cerdas terhadap naskah rujukan keilmuan Islam.</p>`;
+        descHtml = `<p>Kajian **${escapeHtml(agent.label || "Kitab")}** membantu menelaah kitab-kitab rujukan keilmuan Islam.</p>`;
         promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Sebutkan pokok bahasan utama pada bab ini beserta dalilnya!')">
-        Pokok bahasan bab & dalil 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa pokok bahasan dalam bab ini?')">
+        Pokok bahasan bab 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana perbandingan pendapat para ulama dalam masalah ini?')">
-        Perbandingan pendapat ulama 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa perbedaan pendapat ulama dalam masalah ini?')">
+        Perbedaan pendapat ulama 📋
       </div>
     `;
     }
@@ -2239,7 +2239,7 @@ function getChatWrapperHTML(agent, agentId, email) {
     <!-- Left Sidebar -->
     <aside class="sidebar-left" id="sidebar-left">
       <div class="sidebar-section">
-        <div class="section-title">Pilih Modul AI</div>
+        <div class="section-title">Pilih Kajian</div>
         <nav class="menu-list">
           <a href="/chat/fikih-tahawwulat-muhaqqiq" class="menu-item ${agentId === 'fikih-tahawwulat-muhaqqiq' ? 'active' : ''}">
             <span>📗</span> AI Fikih (Al-Muhaqqiq)
@@ -2255,7 +2255,7 @@ function getChatWrapperHTML(agent, agentId, email) {
           </a>
         </nav>
         <a href="${chatUrl}" target="_blank" class="btn-full-tab">
-          🚀 Buka Layar Penuh
+          Buka Layar Penuh
         </a>
       </div>
 
@@ -2282,7 +2282,7 @@ function getChatWrapperHTML(agent, agentId, email) {
     <!-- Right Sidebar -->
     <aside class="sidebar-right">
       <div class="sidebar-section">
-        <div class="section-title">Tentang ruang ini</div>
+        <div class="section-title">Tentang kajian ini</div>
         <div class="desc-box">
           ${descHtml}
         </div>
@@ -2326,7 +2326,7 @@ function getChatWrapperHTML(agent, agentId, email) {
     function copyPrompt(text) {
       navigator.clipboard.writeText(text).then(() => {
         const toast = document.getElementById('toast');
-        toast.innerText = 'Pertanyaan disalin! Silakan tempel (paste) ke kolom chat NotebookLM.';
+        toast.innerText = 'Pertanyaan tersalin. Tempelkan di kolom chat.';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3500);
       }).catch(err => {
