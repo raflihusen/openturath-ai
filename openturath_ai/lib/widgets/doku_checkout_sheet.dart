@@ -89,8 +89,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             (snap) {
               if (snap.docs.isNotEmpty) {
                 final data = snap.docs.first.data() as Map<String, dynamic>?;
-                if (data != null &&
-                    (data['status'] == 'success' || data['status'] == 'SUCCESS')) {
+                final status = (data?['status'] ?? '').toString().toLowerCase();
+                if (status == 'paid' || status == 'success') {
                   _triggerSuccess();
                 }
               }

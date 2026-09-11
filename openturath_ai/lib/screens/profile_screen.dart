@@ -249,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 subscriptionSubtitle = 'Langganan Aktif$expStr';
               }
             } else {
-              subscriptionSubtitle = 'Langganan Aktif · s/d 6/11/2026';
+              subscriptionSubtitle = 'Belum berlangganan. Akses dibuka dengan voucher atau paket.';
             }
 
             return ListView(
@@ -490,7 +490,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Hapus Akun & Data Riset',
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
-                              color: textSecondary.withValues(alpha: 0.6),
+                              fontWeight: FontWeight.w500,
+                              color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
                             ),
                           ),
                   ),

@@ -110,9 +110,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         canPop: _currentIndex == 0,
         onPopInvokedWithResult: (didPop, result) {
           if (!didPop && _currentIndex != 0) {
-            setState(() {
-              _currentIndex = 0;
-            });
+            _onTabSelected(0);
           }
         },
         child: isWideScreen

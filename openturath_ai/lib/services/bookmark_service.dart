@@ -20,7 +20,7 @@ class BookmarkService extends ChangeNotifier {
     _activeLock = completer.future;
     try {
       if (previousLock != null) {
-        await previousLock;
+        await previousLock.timeout(const Duration(seconds: 5), onTimeout: () {});
       }
       return await action();
     } finally {

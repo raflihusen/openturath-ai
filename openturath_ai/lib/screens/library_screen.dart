@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -21,6 +22,7 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
   final CanonicalLibraryService _service = CanonicalLibraryService.instance;
+  Timer? _searchDebounce;
 
   List<CanonicalBookPresentation>? _allBooks;
   List<CanonicalBookPresentation>? _filteredBooks;
@@ -36,18 +38,22 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
   void _onSearchChanged() {
-    if (_allBooks == null) return;
-    setState(() {
-      _filteredBooks = _service.filterBooks(
-        _allBooks!,
-        _searchController.text,
-      );
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 200), () {
+      if (_allBooks == null || !mounted) return;
+      setState(() {
+        _filteredBooks = _service.filterBooks(
+          _allBooks!,
+          _searchController.text,
+        );
+      });
     });
   }
 

@@ -15,6 +15,9 @@ class AuthService {
   );
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  // Cached persistent userStream to prevent memory leak and listener churn (F10)
+  Stream<UserModel?>? _cachedUserStream;
+
   // In-memory cache to prevent entitlement loss on network hiccup (F41)
   static final Map<String, UserModel> _userCache = {};
 
@@ -121,11 +124,11 @@ class AuthService {
     }
   }
 
-  // ── Guest / Anonymous Sign In (Fallback jika Google Play Services gagal) ──
-  Future<UserModel?> signInAsGuest() async {
+  // ── Anonymous / Guest Sign-In ──────────────────────────────────
+  Future<UserModel?> signInAnonymously() async {
     try {
-      final UserCredential userCredential = await _auth.signInAnonymously();
-      final User? firebaseUser = userCredential.user;
+      final cred = await _auth.signInAnonymously();
+      final firebaseUser = cred.user;
       if (firebaseUser == null) return _localGuestUser();
 
       try {
@@ -137,14 +140,14 @@ class AuthService {
           final newUser = UserModel(
             uid: firebaseUser.uid,
             name: 'Peneliti Tamu',
-            email: 'tamu@openturath.ai',
+            email: '',
             photoUrl: '',
             plan: AppConstants.planTrial,
             questionsUsed: 0,
           );
           await docRef.set({
             'name': newUser.name,
-            'email': newUser.email,
+            'email': '',
             'photo_url': newUser.photoUrl,
             'plan': newUser.plan,
             'questions_used': newUser.questionsUsed,
@@ -219,8 +222,10 @@ class AuthService {
     }
   }
 
-  // ── Stream user changes (real-time with clean subscription switching, F22 & F41) ──
-  Stream<UserModel?> get userStream {
+  // ── Stream user changes (real-time with single persistent cached stream, F10 & F41) ──
+  Stream<UserModel?> get userStream => _cachedUserStream ??= _buildUserStream();
+
+  Stream<UserModel?> _buildUserStream() {
     late StreamController<UserModel?> controller;
     StreamSubscription<User?>? authSub;
     StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? docSub;
@@ -325,17 +330,42 @@ class AuthService {
     } catch (_) {}
   }
 
-  // ── Delete Account & User Data (Google Play Compliance, F08 & F41) ─────────
+  // ── Delete Account & User Data (Google Play Compliance & Orphan Cleanup, P0) ──
   Future<void> deleteAccount() async {
     final user = currentUser;
     if (user == null) return;
     final uid = user.uid;
+    final email = user.email ?? '';
 
-    // 1. WAJIB Hapus Akun Auth Terlebih Dahulu (F08).
-    // Jika gagal (misal requires-recent-login), jangan hapus dokumen atau preferensi.
+    // 1. Tandai dokumen sebagai pending_deletion & catat outbox revoke SEBELUM Auth dihapus
+    try {
+      await _db.collection(AppConstants.colUsers).doc(uid).set(
+        {
+          'pending_deletion': true,
+          'pending_deletion_at': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      ).timeout(const Duration(seconds: 4));
+
+      if (email.isNotEmpty) {
+        final outboxDoc = _db.collection('provisioning_outbox').doc('del_${uid}_${DateTime.now().millisecondsSinceEpoch}');
+        await outboxDoc.set({
+          'uid': uid,
+          'email': email,
+          'action': 'remove',
+          'plan': 'trial',
+          'entitlement_key': 'all_access',
+          'status': 'pending',
+          'attempts': 0,
+          'created_at': FieldValue.serverTimestamp(),
+        }).timeout(const Duration(seconds: 4));
+      }
+    } catch (_) {}
+
+    // 2. WAJIB Hapus Akun Auth Terlebih Dahulu. Jika gagal (misal requires-recent-login), stop di sini.
     await user.delete();
 
-    // 2. Hanya setelah Auth berhasil dihapus, bersihkan data Firestore
+    // 3. Hanya setelah Auth berhasil dihapus, bersihkan data Firestore
     try {
       await _db
           .collection(AppConstants.colUsers)
@@ -344,7 +374,7 @@ class AuthService {
           .timeout(const Duration(seconds: 5));
     } catch (_) {}
 
-    // 3. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())
+    // 4. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())
     try {
       _userCache.remove(uid);
       final prefs = await SharedPreferences.getInstance();
@@ -357,15 +387,6 @@ class AuthService {
           await prefs.remove(key);
         }
       }
-    } catch (_) {}
-
-    // 4. Bersihkan cookies & cache WebView
-    try {
-      final cookieManager = CookieManager.instance();
-      await cookieManager.deleteAllCookies();
-      await cookieManager.removeSessionCookies();
-      await InAppWebViewController.clearAllCache();
-      await WebStorageManager.instance().deleteAllData();
     } catch (_) {}
 
     // 5. Putuskan hubungan Google Sign In

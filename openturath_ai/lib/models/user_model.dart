@@ -67,6 +67,14 @@ class ModuleEntitlement {
         'source_transaction_id': sourceTransactionId,
         'updated_at': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
       };
+
+  Map<String, dynamic> toJsonMap() => {
+        'plan': plan,
+        'expiry': expiry?.toIso8601String(),
+        'status': status,
+        'source_transaction_id': sourceTransactionId,
+        'updated_at': updatedAt?.toIso8601String(),
+      };
 }
 
 class UserModel {
@@ -245,7 +253,7 @@ class UserModel {
         'plan': plan,
         'questions_used': questionsUsed,
         'subscription_expiry': subscriptionExpiry?.toIso8601String(),
-        'entitlements': entitlements.map((k, v) => MapEntry(k, v.toMap())),
+        'entitlements': entitlements.map((k, v) => MapEntry(k, v.toJsonMap())),
       };
 
   UserModel copyWith({

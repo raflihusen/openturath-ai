@@ -62,8 +62,8 @@ class SpecialistCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         title,
-                        style: GoogleFonts.outfit(
-                          fontSize: 15.5,
+                        style: GoogleFonts.newsreader(
+                          fontSize: 16.5,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                           color: textPrimary,

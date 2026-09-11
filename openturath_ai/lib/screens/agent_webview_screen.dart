@@ -100,9 +100,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   @override
   void dispose() {
     try {
+      _webController?.evaluateJavascript(source: '''
+        if (window.otMasterObserver) {
+          window.otMasterObserver.disconnect();
+          window.otMasterObserver = null;
+        }
+      ''');
       _webController?.stopLoading();
-    } catch (_) {}
-    _webController = null;
+    } catch (_) {
+    } finally {
+      _webController = null;
+    }
     super.dispose();
   }
 
@@ -190,7 +198,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             var isBanner = txt.includes('0 sources') || txt.includes('sources ·') ||
                            txt.includes('super ai') || txt.includes('bridging turath') ||
                            txt.includes('asisten penelitian berbasis turath') ||
-                           (txt.includes('sources') && (txt.includes('dec 22') || txt.includes('feb 22') || txt.includes('2025') || txt.includes('2026')));
+                           (txt.includes('sources') && (txt.includes('dec 22') || txt.includes('feb 22') || /\b(19|20)\d{2}\b/.test(txt)));
             if (isBanner && el.clientHeight > 15 && el.clientHeight < 700) {
               el.style.setProperty('display', 'none', 'important');
               el.style.setProperty('visibility', 'hidden', 'important');
