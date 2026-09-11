@@ -118,8 +118,18 @@ function getEntitlementKey(agentId: string): string {
   return entitlementKey;
 }
 
+export function addCalendarMonthsClamped(baseDate: Date, months: number): Date {
+  const result = new Date(baseDate.getTime());
+  const originalDay = result.getDate();
+  result.setDate(1);
+  result.setMonth(result.getMonth() + months);
+  const maxDays = new Date(result.getFullYear(), result.getMonth() + 1, 0).getDate();
+  result.setDate(Math.min(originalDay, maxDays));
+  return result;
+}
+
 function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlementKey: string): { premiumPlan: boolean; active: boolean } {
-  const entitlements = userData.entitlements || {};
+  const entitlements = (userData.entitlements || {}) as Record<string, any>;
 
   // 1. Cek All Access (Paket Lengkap Semua AI)
   const allAccess = entitlements["all_access"];
@@ -130,50 +140,65 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
       ? (typeof allExpiryVal.toDate === "function" ? allExpiryVal.toDate() : new Date(allExpiryVal))
       : null;
     // Status revoked langsung menolak akses meskipun expiry belum lewat
-    if (status !== "revoked" && allExpiryDate && allExpiryDate > new Date()) {
+    if (status === "active" && allExpiryDate && allExpiryDate > new Date()) {
       return { premiumPlan: true, active: true };
+    }
+    if (status === "revoked") {
+      return { premiumPlan: false, active: false };
     }
   }
 
   // 2. Cek Modul Spesifik
   const productEntitlement = entitlements[entitlementKey];
-  const access = productEntitlement && typeof productEntitlement === "object"
-    ? productEntitlement
-    // Dukungan sementara untuk pelanggan lama sebelum migrasi entitlement.
-    : (userData.plan && userData.plan !== "trial"
-        ? { plan: userData.plan, expiry: userData.subscription_expiry, status: "active" }
-        : null);
+  if (productEntitlement && typeof productEntitlement === "object") {
+    const status = productEntitlement.status;
+    if (status === "revoked" || status !== "active") {
+      return { premiumPlan: false, active: false };
+    }
 
-  if (!access) {
-    return { premiumPlan: false, active: false };
+    const plan = productEntitlement.plan as string | undefined;
+    const expiryValue = productEntitlement.expiry;
+    const expiryDate = expiryValue
+      ? (typeof expiryValue.toDate === "function" ? expiryValue.toDate() : new Date(expiryValue))
+      : null;
+
+    const premiumPlan = typeof plan === "string" &&
+      (plan === "tholib" ||
+       plan === "bahits" ||
+       plan === "premium" ||
+       plan === "all_access" ||
+       plan === "voucher_access" ||
+       plan === "voucher" ||
+       plan.startsWith("tholib_") ||
+       plan.startsWith("bahits_") ||
+       plan.startsWith("voucher_"));
+
+    return {
+      premiumPlan,
+      active: premiumPlan && expiryDate !== null && !Number.isNaN(expiryDate.getTime()) && expiryDate > new Date(),
+    };
   }
 
-  const status = access.status;
-  if (status === "revoked") {
-    return { premiumPlan: false, active: false };
+  // 3. Legacy fallback HANYA jika userData.plan adalah all_access eksplisit (F01: cegah kebocoran modul tunggal)
+  const legacyPlan = userData.plan as string | undefined;
+  const isLegacyAllAccess = typeof legacyPlan === "string" && (
+    legacyPlan === "all_access" ||
+    legacyPlan === "all_ai_1m" ||
+    legacyPlan === "all_ai_6m" ||
+    legacyPlan === "all_ai_1y"
+  );
+  if (isLegacyAllAccess) {
+    const expiryValue = userData.subscription_expiry;
+    const expiryDate = expiryValue
+      ? (typeof expiryValue.toDate === "function" ? expiryValue.toDate() : new Date(expiryValue))
+      : null;
+    return {
+      premiumPlan: true,
+      active: expiryDate !== null && !Number.isNaN(expiryDate.getTime()) && expiryDate > new Date(),
+    };
   }
 
-  const plan = access.plan as string | undefined;
-  const expiryValue = access.expiry;
-  const expiryDate = expiryValue
-    ? (typeof expiryValue.toDate === "function" ? expiryValue.toDate() : new Date(expiryValue))
-    : null;
-
-  const premiumPlan = typeof plan === "string" &&
-    (plan === "tholib" ||
-     plan === "bahits" ||
-     plan === "premium" ||
-     plan === "all_access" ||
-     plan === "voucher_access" ||
-     plan === "voucher" ||
-     plan.startsWith("tholib_") ||
-     plan.startsWith("bahits_") ||
-     plan.startsWith("voucher_"));
-
-  return {
-    premiumPlan,
-    active: premiumPlan && expiryDate !== null && !Number.isNaN(expiryDate.getTime()) && expiryDate > new Date(),
-  };
+  return { premiumPlan: false, active: false };
 }
 
 // ================================================================
@@ -498,6 +523,21 @@ function generateDokuGetSignature(
   return `HMACSHA256=${hmac}`;
 }
 
+function getServiceTitleForEntitlement(entitlementKey: string): string {
+  if (entitlementKey === "all_access" || entitlementKey === "all_ai") return "Paket Semua AI";
+  if (entitlementKey === "fiqh_tahawwulat") return "AI Fikih Tahawwulat";
+  if (entitlementKey === "fiqh_syafii") return "AI Fikih Syafi'i";
+  if (entitlementKey === "fiqh_hanafi") return "AI Fikih Hanafi";
+  if (entitlementKey === "fiqh_maliki") return "AI Fikih Maliki";
+  if (entitlementKey === "fiqh_hanbali") return "AI Fikih Hanbali";
+  if (entitlementKey === "fiqh_muqaran") return "AI Fikih Perbandingan Mazhab";
+  if (entitlementKey === "ushul_fiqh") return "AI Ushul Fiqih";
+  if (entitlementKey === "tafsir") return "AI Tafsir";
+  if (entitlementKey === "hadits") return "AI Hadits";
+  if (entitlementKey === "nahwu" || entitlementKey === "bahasa_arab" || entitlementKey === "nahwu_sharaf") return "AI Bahasa Arab";
+  return "Ruang Riset";
+}
+
 async function processSuccessfulPayment(invoiceNumber: string) {
   const txQuery = await db.collection("transactions")
     .where("invoice_number", "==", invoiceNumber)
@@ -509,114 +549,153 @@ async function processSuccessfulPayment(invoiceNumber: string) {
     return { success: false, message: "Transaction not found" };
   }
 
-  const txDoc = txQuery.docs[0];
-  const txData = txDoc.data();
+  const txDocRef = txQuery.docs[0].ref;
 
-  const uid = txData.uid;
-  const email = (txData.customer_email || "").trim().toLowerCase();
-  const durationMonths = txData.duration_months || 1;
-  const entitlementKey = txData.entitlement_key || "fiqh_tahawwulat";
-  const plan = txData.plan || "premium";
-
-  // 1. Hubungkan & Dapatkan Dokumen User Terlebih Dahulu
-  let userRef: FirebaseFirestore.DocumentReference;
-  if (uid) {
-    userRef = db.collection("users").doc(uid);
-  } else {
-    const uQuery = await db.collection("users").where("email", "==", email).limit(1).get();
-    if (!uQuery.empty) {
-      userRef = uQuery.docs[0].ref;
-    } else {
-      userRef = db.collection("users").doc();
-    }
-  }
-
-  const uSnap = await userRef.get();
-  const uData = uSnap.exists ? uSnap.data()! : {};
-  const entitlements = uData.entitlements || {};
-  const currentEnt = entitlements[entitlementKey];
-
-  // Hitung tanggal kedaluwarsa secara adil: jika masih aktif, tambahkan di atas tanggal kedaluwarsa saat ini!
-  const now = new Date();
-  let baseDate = now;
-  if (currentEnt && currentEnt.expiry) {
-    const curExpDate = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
-    if (curExpDate > now) {
-      baseDate = curExpDate;
-    }
-  }
-  const expiryDate = new Date(baseDate);
-  expiryDate.setMonth(expiryDate.getMonth() + durationMonths);
-
-  // 2. Update Dokumen Transaksi
-  await txDoc.ref.update({
-    status: "success",
-    paid_at: admin.firestore.FieldValue.serverTimestamp(),
-    subscription_expires_at: admin.firestore.Timestamp.fromDate(expiryDate),
-    uid: userRef.id,
-  });
-
-  // 3. Update Dokumen User
-  const updatedEntitlements = {
-    ...entitlements,
-    [entitlementKey]: {
-      plan: plan,
-      status: "active",
-      source: "doku_payment",
-      expiry: admin.firestore.Timestamp.fromDate(expiryDate),
-      updated_at: admin.firestore.FieldValue.serverTimestamp(),
-    }
+  let activationResult = {
+    alreadyActivated: false,
+    entitlementKey: "fiqh_tahawwulat",
+    plan: "premium",
+    email: "",
+    uid: "",
+    serviceTitle: "Ruang Riset",
   };
 
-  await userRef.set({
-    email: email,
-    name: uData.name || txData.customer_name || "Santri OpenTurath",
-    plan: plan,
-    subscription_expiry: admin.firestore.Timestamp.fromDate(expiryDate),
-    entitlements: updatedEntitlements,
-    updated_at: admin.firestore.FieldValue.serverTimestamp(),
-  }, { merge: true });
+  // F03, F04, F05: Transaksi Atomik Firestore
+  await db.runTransaction(async (t) => {
+    const txSnap = await t.get(txDocRef);
+    if (!txSnap.exists) {
+      throw new Error(`Transaction ${invoiceNumber} tidak ditemukan dalam transaksi`);
+    }
+    const txData = txSnap.data()!;
 
-  console.log(`[Activation] Akses berhasil diaktifkan untuk ${email} (Modul: ${entitlementKey}) hingga ${expiryDate.toISOString()}`);
-
-  // 3. Trigger NotebookLM sharing pada server Cloud Run
-  try {
-    let serviceTitle = "Paket Semua AI";
-    if (entitlementKey === "all_access" || entitlementKey === "all_ai") {
-      serviceTitle = "Paket Semua AI";
-    } else if (entitlementKey === "fiqh_tahawwulat") {
-      serviceTitle = "AI Fikih Tahawwulat";
-    } else if (entitlementKey === "fiqh_syafii") {
-      serviceTitle = "AI Fikih Syafi'i";
-    } else if (entitlementKey === "fiqh_hanafi") {
-      serviceTitle = "AI Fikih Hanafi";
-    } else if (entitlementKey === "fiqh_maliki") {
-      serviceTitle = "AI Fikih Maliki";
-    } else if (entitlementKey === "fiqh_hanbali") {
-      serviceTitle = "AI Fikih Hanbali";
-    } else if (entitlementKey === "fiqh_muqaran") {
-      serviceTitle = "AI Fikih Perbandingan Mazhab";
-    } else if (entitlementKey === "ushul_fiqh") {
-      serviceTitle = "AI Ushul Fiqih";
-    } else if (entitlementKey === "tafsir") {
-      serviceTitle = "AI Tafsir";
-    } else if (entitlementKey === "hadits") {
-      serviceTitle = "AI Hadits";
-    } else if (entitlementKey === "nahwu" || entitlementKey === "bahasa_arab" || entitlementKey === "nahwu_sharaf") {
-      serviceTitle = "AI Bahasa Arab";
-    } else {
-      serviceTitle = "Paket Semua AI";
+    // F04: Idempotensi invoice - cegah penambahan durasi berulang jika invoice sudah diaktivasi
+    if (txData.activation_applied === true) {
+      activationResult = {
+        alreadyActivated: true,
+        entitlementKey: txData.entitlement_key || "fiqh_tahawwulat",
+        plan: txData.plan || "premium",
+        email: (txData.customer_email || "").trim().toLowerCase(),
+        uid: txData.uid || "",
+        serviceTitle: getServiceTitleForEntitlement(txData.entitlement_key || "fiqh_tahawwulat"),
+      };
+      return;
     }
 
-    // Non-blocking asynchronous background execution so client inquiry returns immediately (<1s)
-    notifySubscriptionServer(email, txData.customer_name || "User", plan, "add", serviceTitle)
-      .then(() => console.log(`[Activation] Background subscription notification completed for ${email}`))
-      .catch((e: any) => console.error("[Activation] Background notification to subscription server error:", e.message));
-  } catch (e: any) {
-    console.error("[Activation] Failed to initiate subscription server notification:", e.message);
+    const uid = txData.uid;
+    const email = (txData.customer_email || "").trim().toLowerCase();
+    const durationMonths = txData.duration_months || 1;
+    const entitlementKey = txData.entitlement_key || "fiqh_tahawwulat";
+    const plan = txData.plan || "premium";
+
+    // F07: UID terverifikasi wajib menjadi pemilik dokumen
+    if (!uid) {
+      throw new Error(`Transaction ${invoiceNumber} tidak memiliki owner UID`);
+    }
+
+    const userRef = db.collection("users").doc(uid);
+    const uSnap = await t.get(userRef);
+    const uData = uSnap.exists ? uSnap.data()! : {};
+    const entitlements = (uData.entitlements || {}) as Record<string, any>;
+    const currentEnt = entitlements[entitlementKey];
+
+    // F65: Hitung tanggal kedaluwarsa dengan month-end clamp
+    const now = new Date();
+    let baseDate = now;
+    if (currentEnt && currentEnt.expiry && currentEnt.status === "active") {
+      const curExpDate = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
+      if (curExpDate > now) {
+        baseDate = curExpDate;
+      }
+    }
+    const expiryDate = addCalendarMonthsClamped(baseDate, durationMonths);
+
+    // F03: Update Status Transaksi Atomik
+    t.update(txDocRef, {
+      status: "paid",
+      activation_applied: true,
+      paid_at: admin.firestore.FieldValue.serverTimestamp(),
+      subscription_expires_at: admin.firestore.Timestamp.fromDate(expiryDate),
+      billing_email: email, // F07: Simpan sebagai billing_email kontak terpisah
+    });
+
+    const isAllAccess = entitlementKey === "all_access" || entitlementKey === "all_ai";
+
+    const updatedEntitlements = {
+      ...entitlements,
+      [entitlementKey]: {
+        plan: plan,
+        status: "active",
+        source: "doku_payment",
+        expiry: admin.firestore.Timestamp.fromDate(expiryDate),
+        updated_at: admin.firestore.FieldValue.serverTimestamp(),
+      }
+    };
+
+    const userUpdate: any = {
+      entitlements: updatedEntitlements,
+      updated_at: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // F01: Hanya ubah plan global jika pembelian adalah paket all_access
+    if (isAllAccess) {
+      userUpdate.plan = plan;
+      userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(expiryDate);
+    }
+
+    // F07: Jangan menimpa email auth user jika sudah ada
+    if (!uData.email && email) {
+      userUpdate.email = email;
+    }
+
+    t.set(userRef, userUpdate, { merge: true });
+
+    // F10, F11: Rekam durable outbox job dalam transaksi yang sama
+    const outboxRef = db.collection("provisioning_outbox").doc(`job_${invoiceNumber}`);
+    t.set(outboxRef, {
+      invoice_number: invoiceNumber,
+      uid: userRef.id,
+      email: uData.email || email,
+      name: uData.name || txData.customer_name || "Peneliti",
+      entitlement_key: entitlementKey,
+      plan: plan,
+      action: "add",
+      status: "pending",
+      attempts: 0,
+      created_at: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    activationResult = {
+      alreadyActivated: false,
+      entitlementKey,
+      plan,
+      email: uData.email || email,
+      uid: userRef.id,
+      serviceTitle: getServiceTitleForEntitlement(entitlementKey),
+    };
+  });
+
+  if (activationResult.alreadyActivated) {
+    console.log(`[Activation] Invoice ${invoiceNumber} sudah diaktivasi sebelumnya (idempoten).`);
+    return { success: true, ...activationResult };
   }
 
-  return { success: true, entitlementKey, plan, email };
+  console.log(`[Activation] Akses berhasil diaktifkan atomik untuk ${activationResult.uid} (Modul: ${activationResult.entitlementKey})`);
+
+  // Non-blocking trigger helper sharing ke server Cloud Run di luar transaksi
+  try {
+    notifySubscriptionServer(
+      activationResult.email,
+      "Peneliti",
+      activationResult.plan,
+      "add",
+      activationResult.serviceTitle
+    ).then(() => console.log(`[Activation] Provisioning helper triggered for ${activationResult.email}`))
+     .catch((e: any) => console.warn(`[Activation] Provisioning helper background error: ${e.message}`));
+  } catch (e: any) {
+    console.warn(`[Activation] Could not trigger provisioning helper: ${e.message}`);
+  }
+
+  return { success: true, ...activationResult };
 }
 
 // ================================================================
@@ -629,8 +708,11 @@ export const dokuWebhook = functions
     try {
       const headers = req.headers;
       const body = req.body || {};
-      console.log("[DOKU Webhook] Headers:", JSON.stringify(headers));
-      console.log("[DOKU Webhook] Payload Body:", JSON.stringify(body));
+
+      // F63: Redaksi log sensitif - jangan cetak raw authorization atau full personal payload
+      const invoiceNumber = body.order?.invoice_number || body.invoice_number;
+      const status = body.transaction?.status || body.transactionStatus || body.status;
+      console.log(`[DOKU Webhook] Notifikasi diterima untuk invoice: ${invoiceNumber}, status: ${status}`);
 
       // Verifikasi Signature DOKU wajib di seluruh environment
       const incomingSignature = (headers["signature"] || headers["Signature"]) as string | undefined;
@@ -653,7 +735,7 @@ export const dokuWebhook = functions
       const expectedSig3 = generateDokuSignature(clientId, requestId, timestamp, "/dokuWebhook", rawBody, dokuCfg.secretKey);
 
       if (incomingSignature !== expectedSig1 && incomingSignature !== expectedSig2 && incomingSignature !== expectedSig3) {
-        console.error(`[DOKU Webhook] Signature mismatch. Incoming: ${incomingSignature}`);
+        console.error(`[DOKU Webhook] Signature mismatch for request ${requestId}`);
         res.status(401).send("Invalid signature");
         return;
       }
@@ -669,41 +751,63 @@ export const dokuWebhook = functions
         }
       }
 
-      const invoiceNumber = body.order?.invoice_number || body.invoice_number;
-      const status = body.transaction?.status || body.transactionStatus || body.status;
-
       if (!invoiceNumber) {
         console.warn("[DOKU Webhook] Missing invoice_number in notification.");
         res.status(400).send("Missing invoice_number");
         return;
       }
 
-      // Idempotensi: Cek apakah Request-Id ini sudah pernah diproses sebelumnya
+      // F06: State Machine Idempotensi Event (received -> processing -> completed / failed)
+      let eventRef: FirebaseFirestore.DocumentReference | null = null;
       if (requestId) {
-        const eventRef = db.collection("webhook_events").doc(requestId);
+        eventRef = db.collection("webhook_events").doc(requestId);
         const eventSnap = await eventRef.get();
         if (eventSnap.exists) {
-          console.log(`[DOKU Webhook] Request ID ${requestId} sudah pernah diproses. Mengembalikan 200 OK.`);
-          res.status(200).json({ status: "ALREADY_PROCESSED", requestId });
-          return;
+          const eventData = eventSnap.data()!;
+          if (eventData.status === "completed") {
+            console.log(`[DOKU Webhook] Request ID ${requestId} sudah berstatus completed. 200 OK.`);
+            res.status(200).json({ status: "ALREADY_PROCESSED", requestId });
+            return;
+          }
         }
         await eventRef.set({
           invoice_number: invoiceNumber,
-          status: status,
+          status: "processing",
           received_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
+        }, { merge: true });
       }
 
       if (status !== "SUCCESS") {
         console.log(`[DOKU Webhook] Status: ${status}, skipping activation.`);
+        if (eventRef) {
+          await eventRef.update({ status: "ignored_not_success" });
+        }
         res.status(200).json({ status: "OK", message: "Ignored status" });
         return;
       }
 
-      const result = await processSuccessfulPayment(invoiceNumber);
-      res.status(200).json({ status: "SUCCESS", result });
+      try {
+        const actResult = await processSuccessfulPayment(invoiceNumber);
+        if (eventRef) {
+          await eventRef.update({
+            status: "completed",
+            completed_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        }
+        res.status(200).json({ status: "SUCCESS", invoice: invoiceNumber, details: actResult });
+      } catch (err: any) {
+        console.error(`[DOKU Webhook] Activation error for invoice ${invoiceNumber}:`, err.message);
+        if (eventRef) {
+          await eventRef.update({
+            status: "failed",
+            error: err.message || "Activation failure",
+            failed_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        }
+        res.status(500).json({ status: "ERROR", message: "Failed to activate payment" });
+      }
     } catch (err: any) {
-      console.error("[DOKU Webhook] Uncaught error:", err);
+      console.error("[DOKU Webhook] Uncaught error in handler:", err.message);
       res.status(500).json({ error: err.message });
     }
   });
@@ -744,7 +848,7 @@ export const checkPaymentStatus = functions
       throw new functions.https.HttpsError("permission-denied", "Anda tidak memiliki akses untuk memeriksa transaksi ini.");
     }
 
-    if (txData.status === "success") {
+    if (txData.status === "paid" || txData.status === "success") {
       return { success: true, status: "SUCCESS", message: "Akses langganan sudah aktif." };
     }
 
@@ -816,7 +920,16 @@ export const redeemCode = functions
     const uid = context.auth.uid;
     const userEmail = (context.auth.token.email || "").trim().toLowerCase();
 
-    return await db.runTransaction(async (transaction) => {
+    let redeemResult = {
+      entitlementKey: "fiqh_syafii",
+      durationDays: 7,
+      expiryIso: "",
+      email: userEmail,
+      name: "Peneliti",
+      serviceTitle: "AI Fikih Syafi'i",
+    };
+
+    await db.runTransaction(async (transaction) => {
       const codeRef = db.collection("redeem_codes").doc(rawCode);
       const codeDoc = await transaction.get(codeRef);
 
@@ -853,11 +966,11 @@ export const redeemCode = functions
       const userRef = db.collection("users").doc(uid);
       const userDoc = await transaction.get(userRef);
       const userData = userDoc.exists ? userDoc.data()! : {};
-      const entitlements = userData.entitlements || {};
+      const entitlements = (userData.entitlements || {}) as Record<string, any>;
       const currentEnt = entitlements[entitlementKey];
 
       let baseDate = new Date();
-      if (currentEnt && currentEnt.expiry) {
+      if (currentEnt && currentEnt.expiry && currentEnt.status === "active") {
         const curExp = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
         if (curExp > baseDate) {
           baseDate = curExp;
@@ -878,38 +991,85 @@ export const redeemCode = functions
         times_used: timesUsed + 1,
       });
 
-      // 3. Update profil dan entitlement pengguna
+      // 3. Update profil dan entitlement pengguna (F01: isolasi per modul)
       const updatedEntitlements = {
         ...entitlements,
         [entitlementKey]: {
           plan: "voucher_access",
           status: "active",
           source: "redeem_code",
-          code: rawCode,
+          code_id: rawCode.slice(0, 4) + "****", // Redaksi di entitlement
           expiry: admin.firestore.Timestamp.fromDate(newExpiry),
           updated_at: admin.firestore.FieldValue.serverTimestamp(),
         }
       };
 
-      transaction.set(userRef, {
-        email: userEmail || userData.email || "",
-        name: userData.name || "Santri OpenTurath",
-        plan: "voucher_access",
-        subscription_expiry: admin.firestore.Timestamp.fromDate(newExpiry),
+      const userUpdate: any = {
         entitlements: updatedEntitlements,
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
-      }, { merge: true });
+      };
 
-      console.log(`[Redeem] Kode ${rawCode} berhasil ditukarkan oleh ${uid} (${userEmail}). Akses ${entitlementKey} aktif s/d ${newExpiry.toISOString()}`);
+      // Hanya set plan global jika voucher adalah all_access
+      if (entitlementKey === "all_access") {
+        userUpdate.plan = "voucher_access";
+        userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(newExpiry);
+      }
 
-      return {
-        success: true,
+      if (!userData.email && userEmail) {
+        userUpdate.email = userEmail;
+      }
+
+      transaction.set(userRef, userUpdate, { merge: true });
+
+      // F10: Rekam outbox job untuk provisioning NotebookLM
+      const outboxRef = db.collection("provisioning_outbox").doc(`redeem_${rawCode}_${uid}`);
+      transaction.set(outboxRef, {
+        type: "redeem",
+        uid,
+        email: userEmail || userData.email || "",
+        name: userData.name || "Peneliti",
+        entitlement_key: entitlementKey,
+        plan: "voucher_access",
+        action: "add",
+        status: "pending",
+        attempts: 0,
+        created_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      redeemResult = {
         entitlementKey,
         durationDays,
-        expiry: newExpiry.toISOString(),
-        message: `Alhamdulillah! Akses ${durationDays} hari untuk modul ini berhasil diaktifkan.`,
+        expiryIso: newExpiry.toISOString(),
+        email: userEmail || userData.email || "",
+        name: userData.name || "Peneliti",
+        serviceTitle: getServiceTitleForEntitlement(entitlementKey),
       };
     });
+
+    // F63: Redaksi log kode voucher mentah
+    console.log(`[Redeem] Voucher berhasil ditukarkan oleh ${uid}. Modul: ${redeemResult.entitlementKey}, aktif s/d ${redeemResult.expiryIso}`);
+
+    // F11: Trigger helper sharing background non-blocking
+    try {
+      notifySubscriptionServer(
+        redeemResult.email,
+        redeemResult.name,
+        "voucher_access",
+        "add",
+        redeemResult.serviceTitle
+      ).then(() => console.log(`[Redeem] Provisioning helper triggered for ${redeemResult.email}`))
+       .catch((e: any) => console.warn(`[Redeem] Provisioning helper error: ${e.message}`));
+    } catch (e: any) {
+      console.warn(`[Redeem] Could not trigger provisioning helper: ${e.message}`);
+    }
+
+    return {
+      success: true,
+      entitlementKey: redeemResult.entitlementKey,
+      durationDays: redeemResult.durationDays,
+      expiry: redeemResult.expiryIso,
+      message: `Kode diterima. Akses ruang riset ${redeemResult.serviceTitle} telah aktif.`,
+    };
   });
 
 // ================================================================
@@ -940,7 +1100,7 @@ export const onUserCreate = functions.firestore
       const trxQuery = await db
         .collection("transactions")
         .where("customer_email", "==", email.toLowerCase())
-        .where("status", "==", "success")
+        .where("status", "in", ["success", "paid"])
         .get();
 
       if (trxQuery.empty) {
@@ -1001,10 +1161,19 @@ export const onUserCreate = functions.firestore
           await latestTrxDoc.ref.update({ uid: uid });
         }
 
-        try {
-          await notifySubscriptionServer(email, userData.name || "User", latestTrxData.plan, "add");
-        } catch (err: any) {
-          console.error("Failed to notify subscription server in onUserCreate:", err.message);
+        // F13: Kirim per-scope entitlement, jangan broadcast semua 6 layanan
+        for (const entKey of Object.keys(entitlements)) {
+          try {
+            await notifySubscriptionServer(
+              email,
+              userData.name || "User",
+              entitlements[entKey]?.plan || latestTrxData.plan,
+              "add",
+              getServiceTitleForEntitlement(entKey)
+            );
+          } catch (err: any) {
+            console.error(`Failed to notify subscription server in onUserCreate for ${entKey}:`, err.message);
+          }
         }
 
         await db.collection("sharing_log").add({
@@ -1054,8 +1223,13 @@ export const dailyRevoke = functions
       const userData = doc.data();
       const plan = userData.plan || "";
       
-      // Filter plan in memory to avoid composite index requirement
-      if (!["tholib", "bahits", "tholib_1m", "tholib_6m", "bahits_1y", "premium", "all_access"].includes(plan)) {
+      // F12: Perluas whitelist plan agar mencakup all_ai dan voucher_access
+      const eligiblePlans = [
+        "tholib", "bahits", "tholib_1m", "tholib_6m", "bahits_1y",
+        "premium", "all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y",
+        "voucher_access", "voucher"
+      ];
+      if (!eligiblePlans.includes(plan)) {
         continue;
       }
       
@@ -1065,6 +1239,7 @@ export const dailyRevoke = functions
       const entitlements = userData.entitlements || {};
       let hasExpiredEntitlement = false;
       const updatedEntitlements = { ...entitlements };
+      const expiredKeys: string[] = [];
 
       for (const [key, val] of Object.entries(entitlements)) {
         if (val && typeof val === "object") {
@@ -1079,37 +1254,66 @@ export const dailyRevoke = functions
               updated_at: admin.firestore.FieldValue.serverTimestamp(),
             };
             hasExpiredEntitlement = true;
+            expiredKeys.push(key);
           }
         }
       }
 
-      const updateData: any = {
-        plan: "trial",
-        subscription_expiry: null,
-        questions_used: 0,
-      };
+      // F12: Cek apakah masih ada entitlement lain yang aktif sebelum mereset plan global ke trial
+      let hasRemainingActive = false;
+      for (const val of Object.values(updatedEntitlements)) {
+        if (val && typeof val === "object") {
+          const item = val as any;
+          const exp = item.expiry
+            ? (typeof item.expiry.toDate === "function" ? item.expiry.toDate() : new Date(item.expiry))
+            : null;
+          if (item.status === "active" && exp && exp > now.toDate()) {
+            hasRemainingActive = true;
+            break;
+          }
+        }
+      }
+
+      const updateData: any = {};
       if (hasExpiredEntitlement) {
         updateData.entitlements = updatedEntitlements;
       }
+      // HANYA reset global plan jika TIDAK ADA modul lain yang aktif!
+      if (!hasRemainingActive) {
+        updateData.plan = "trial";
+        updateData.subscription_expiry = null;
+        updateData.questions_used = 0;
+      }
 
-      await doc.ref.update(updateData);
+      if (Object.keys(updateData).length > 0) {
+        await doc.ref.update(updateData);
+      }
 
-      if (email) {
-        console.log(`🔒 Akses premium berakhir untuk ${email}.`);
+      if (email && expiredKeys.length > 0) {
+        for (const expiredKey of expiredKeys) {
+          console.log(`🔒 Akses modul ${expiredKey} berakhir untuk ${email}.`);
 
-        try {
-          await notifySubscriptionServer(email, userData.name || "User", "trial", "remove");
-        } catch (err: any) {
-          console.error("Failed to notify subscription server in dailyRevoke:", err.message);
+          try {
+            await notifySubscriptionServer(
+              email,
+              userData.name || "User",
+              "trial",
+              "remove",
+              getServiceTitleForEntitlement(expiredKey)
+            );
+          } catch (err: any) {
+            console.error(`Failed to notify subscription server in dailyRevoke for ${expiredKey}:`, err.message);
+          }
+
+          await db.collection("sharing_log").add({
+            email,
+            uid: doc.id,
+            action: "remove",
+            entitlement_key: expiredKey,
+            method: "daily_revoke_scheduler",
+            created_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
         }
-
-        await db.collection("sharing_log").add({
-          email,
-          uid: doc.id,
-          action: "remove",
-          method: "webview_gatekeeper",
-          created_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
       }
     }
 
@@ -1411,18 +1615,33 @@ async function verifySubscriptionFirestore(email: string, entitlementKey: string
   const userQuery = await db.collection("users").where("email", "==", email).limit(1).get();
   if (!userQuery.empty) {
     const userData = userQuery.docs[0].data();
+    const entitlements = (userData.entitlements || {}) as Record<string, any>;
     
-    // Check specific entitlement expiry
-    const entitlements = userData.entitlements || {};
+    // 1. Cek specific entitlement (F02: status wajib active dan bukan revoked)
     const ent = entitlements[entitlementKey];
     if (ent && ent.expiry) {
-      if (ent.expiry.toDate() > new Date()) {
+      if (ent.status === "active" && ent.status !== "revoked" && ent.expiry.toDate() > new Date()) {
+        return true;
+      }
+    }
+
+    // 2. Cek all_access entitlement
+    const allAccess = entitlements["all_access"];
+    if (allAccess && allAccess.expiry) {
+      if (allAccess.status === "active" && allAccess.status !== "revoked" && allAccess.expiry.toDate() > new Date()) {
         return true;
       }
     }
     
-    // Legacy global fallback check
-    if (userData.subscription_expiry) {
+    // 3. Legacy all-access fallback (F01: hanya untuk plan all_access eksplisit)
+    const legacyPlan = userData.plan as string | undefined;
+    const isAllAccess = typeof legacyPlan === "string" && (
+      legacyPlan === "all_access" ||
+      legacyPlan === "all_ai_1m" ||
+      legacyPlan === "all_ai_6m" ||
+      legacyPlan === "all_ai_1y"
+    );
+    if (isAllAccess && userData.subscription_expiry) {
       if (userData.subscription_expiry.toDate() > new Date()) {
         return true;
       }
@@ -1432,7 +1651,7 @@ async function verifySubscriptionFirestore(email: string, entitlementKey: string
   // B. Check if there is a successful transaction in Firestore
   const txQuery = await db.collection("transactions")
     .where("customer_email", "==", email)
-    .where("status", "==", "success")
+    .where("status", "in", ["success", "paid"])
     .get();
 
   if (!txQuery.empty) {
@@ -1736,35 +1955,56 @@ function getLoginHTML(ref: string, csrfToken: string, error: string): string {
 
 function getChatWrapperHTML(agent: any, agentId: string, email: string): string {
   const chatUrl = `https://notebooklm.google.com/notebook/${agent.notebookId}/preview`;
-  const isFikih = agentId.includes("fikih");
-  
-  const promptsHtml = isFikih ? `
-    <div class="prompt-item" onclick="copyPrompt('Jelaskan konsep Al-Ghuthsa’iyyah (era buih) berdasarkan penjelasan kitab!')">
-      Jelaskan konsep Al-Ghuthsa’iyyah (era buih) 📋
-    </div>
-    <div class="prompt-item" onclick="copyPrompt('Apa perbedaan mendasar antara Al-Muhaqqiq dan Al-Bayan dalam Fikih Tahawwulat?')">
-      Perbedaan Al-Muhaqqiq & Al-Bayan 📋
-    </div>
-    <div class="prompt-item" onclick="copyPrompt('Bagaimana cara menyikapi fitnah akhir zaman sesuai petunjuk Habib Abu Bakar?')">
-      Menyikapi fitnah akhir zaman 📋
-    </div>
-  ` : `
-    <div class="prompt-item" onclick="copyPrompt('Jelaskan pengertian I\\\'rab dan berikan contohnya!')">
-      Jelaskan pengertian I'rab & contohnya 📋
-    </div>
-    <div class="prompt-item" onclick="copyPrompt('Bagaimana cara men-tashrif fi\\\'il tsulatsi mujarrad bab 1?')">
-      Cara men-tashrif tsulatsi mujarrad 📋
-    </div>
-    <div class="prompt-item" onclick="copyPrompt('Tunjukkan perbedaan isim fail dan isim maful!')">
-      Perbedaan isim fa'il & isim maf'ul 📋
-    </div>
-  `;
+  let descHtml = "";
+  let promptsHtml = "";
 
-  const descHtml = isFikih ? `
-    <p>Modul **AI Fikih Tahawwulat** dirancang khusus untuk membedah kajian ilmu Fikih Kontemporer, tanda akhir zaman, dan panduan fiqih praktis berdasarkan kitab kurasi para ulama.</p>
-  ` : `
-    <p>Modul **AI Bahasa Arab (Nahwu Sharaf)** dikonfigurasi untuk membantu Anda memahami kaidah tata bahasa Arab secara terperinci, termasuk i'rab, bina', dan tashrif kata.</p>
-  `;
+  if (agentId === "fiqh_tahawwulat") {
+    descHtml = `<p>Ruang riset **Fikih Tahawwulat** dirancang untuk menelaah kaidah fikih tanda zaman dan krisis peradaban berdasarkan karya rujukan ulama terkait.</p>`;
+    promptsHtml = `
+      <div class="prompt-item" onclick="copyPrompt('Jelaskan konsep Al-Ghuthsa’iyyah (era buih) berdasarkan penjelasan kitab!')">
+        Jelaskan konsep Al-Ghuthsa’iyyah 📋
+      </div>
+      <div class="prompt-item" onclick="copyPrompt('Apa rukun keempat dalam metodologi Fikih Tahawwulat?')">
+        Rukun keempat Fikih Tahawwulat 📋
+      </div>
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana kaidah menyikapi fitnah akhir zaman?')">
+        Menyikapi fitnah akhir zaman 📋
+      </div>
+    `;
+  } else if (agentId === "fiqh_syafii") {
+    descHtml = `<p>Ruang riset **Fikih Syafi'i** memuat korpus naskah primer mazhab Syafi'i untuk penelaahan masalah ibadah, muamalah, dan fatwa para ashab al-wujuh dan muta'akhkhirin.</p>`;
+    promptsHtml = `
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana rukun wudhu menurut qaul mu’tamad mazhab Syafi’i?')">
+        Rukun wudhu mu'tamad Syafi'i 📋
+      </div>
+      <div class="prompt-item" onclick="copyPrompt('Jelaskan syarat sah shalat berjamaah menurut naskah Minhaj ath-Thalibin!')">
+        Syarat shalat berjamaah di Minhaj 📋
+      </div>
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana ketentuan zakat perniagaan dalam fatwa Imam An-Nawawi?')">
+        Zakat perniagaan menurut An-Nawawi 📋
+      </div>
+    `;
+  } else if (agentId === "hadits") {
+    descHtml = `<p>Ruang riset **Hadis & Syarah** memuat himpunan kutubus sittah dan syarah hadis induk untuk verifikasi matan, takhrij, dan faedah hukum nabawi.</p>`;
+    promptsHtml = `
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana penjelasan syarah hadis tentang niat dalam Fathul Bari?')">
+        Syarah hadis niat di Fathul Bari 📋
+      </div>
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana kedudukan perawi dan sanad pada riwayat ini?')">
+        Takhrij sanad dan faedah hadis 📋
+      </div>
+    `;
+  } else {
+    descHtml = `<p>Ruang riset **${escapeHtml(agent.label || "Naskah Turats")}** menyediakan fasilitas telaah cerdas terhadap naskah rujukan keilmuan Islam.</p>`;
+    promptsHtml = `
+      <div class="prompt-item" onclick="copyPrompt('Sebutkan pokok bahasan utama pada bab ini beserta dalilnya!')">
+        Pokok bahasan bab & dalil 📋
+      </div>
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana perbandingan pendapat para ulama dalam masalah ini?')">
+        Perbandingan pendapat ulama 📋
+      </div>
+    `;
+  }
 
   return `<!DOCTYPE html>
 <html lang="id">
@@ -2112,9 +2352,9 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
 
       <div class="user-card">
         <div class="user-info">
-          <div class="user-status"><div class="status-dot"></div>Panduan Akses</div>
+          <div class="user-status"><div class="status-dot"></div>Akun Google</div>
           <div style="font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 4px; line-height: 1.4;">
-            Pastikan Anda masuk ke Google/Gmail di browser ini menggunakan email yang terdaftar di Akal.
+            Gunakan akun Google yang memiliki akses ke ruang ini.
           </div>
         </div>
       </div>
@@ -2133,14 +2373,14 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
     <!-- Right Sidebar -->
     <aside class="sidebar-right">
       <div class="sidebar-section">
-        <div class="section-title">Tentang Modul</div>
+        <div class="section-title">Tentang ruang ini</div>
         <div class="desc-box">
           ${descHtml}
         </div>
       </div>
 
       <div class="sidebar-section">
-        <div class="section-title">Ide Pertanyaan</div>
+        <div class="section-title">Contoh pertanyaan</div>
         <div class="prompt-list">
           ${promptsHtml}
         </div>
@@ -2148,8 +2388,8 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
       
       <div style="flex-grow: 1;"></div>
       
-      <a href="https://wa.me/628123456789" target="_blank" class="btn-help">
-        💬 Hubungi Bantuan Admin
+      <a href="mailto:support@openturath.com" class="btn-help">
+        💬 Bantuan
       </a>
     </aside>
   </div>
