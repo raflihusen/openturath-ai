@@ -18,21 +18,42 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ---
 
-## 2. Status Terkini: 100% Selesai & Terverifikasi
+## 2. Status Terkini: 100% Selesai & Terverifikasi (Forensic Audit Hardened)
 
-### A. Refactoring Arsitektur UI/UX "Minimalist Purism & AI for Islamic Scholarship"
-1. **Desain Minimalis Murni (Pure Minimalist)**:
-   - **Tanpa Logo Grafis**: Top bar Beranda menggunakan tipografis murni terpusat `OpenTurath` dalam Newsreader serif tanpa tanggal ganda atau subketerangan.
-   - **Slogan Global Konsisten**: `"AI for Islamic Scholarship"` menggantikan seluruh sisa `"Riset kitab turats"`.
-   - **Kartu Spesialis Bersih**: Tanpa kotak ikon, tanpa teks Arab pendamping, dan tanpa baris sub-keterangan berantakan. Hanya judul bersih, badge status jika belum tersedia, dan chevron `>`.
-   - **Pencarian Stadium Pill Bersih**: Menghilangkan border ganda ("buletan dalam buletan") dari TextField di Beranda dan Keilmuan.
-   - **Pembersihan Modal Ruang Riset**: Menghapus opsi "Buka di Browser Eksternal" dan menghapus seluruh sub-penjelasan di bawah tiap opsi.
-   - **Pembersihan Disclaimer Gemini**: Seluruh teks disclaimer ("Gemini may display inaccurate info...", dll.) disapu bersih via CSS dan MutationObserver script.
-   - **Animasi Antar-Tab Halus**: Mengganti `IndexedStack` dengan `PageView` ber-controller animasi (`Curves.easeOutCubic`, 300ms) untuk transisi tab yang hidup dan mulus.
-2. **Hasil Verifikasi**:
+### A. Resolusi Audit Forensik 360° (Putaran 1 & Putaran 2)
+1. **Layer 1 — Client Flutter & Ergonomi UI**:
+   - **F-03 & F-10**: Subtitle langganan palsu di Profil dieliminasi. Status langganan kini 100% dinamis dan akurat.
+   - **F-09**: Rasio kontras tombol destruktif "Hapus Akun & Data Riset" ditingkatkan hingga memenuhi standar aksesibilitas WCAG AA (>= 4.5:1).
+   - **F-10**: `userStream` di-cache sebagai broadcast stream terkelola tunggal (mencegah listener Firestore churn & memory leak saat mengetik di search bar).
+   - **F-11**: Tombol Back Android (`onPopInvokedWithResult`) memanggil `_onTabSelected(0)` sehingga `_pageController` tersinkronisasi mulus ke tab Beranda.
+   - **F-04**: Pembersihan `window.otMasterObserver` eksplisit di JS dan controller cleanup dalam `finally` pada `dispose()` WebView.
+   - **F-12**: Deteksi tahun banner NotebookLM menggunakan regex generik `/\b(19|20)\d{2}\b/`.
+   - **F-08**: Debounce timer 200ms pada pencarian katalog perpustakaan.
+   - **F-05**: Timeout 5 detik pada antrean mutex `_synchronized` BookmarkService.
+   - **F-19**: Serialisasi tanggal ISO-8601 pada `ModuleEntitlement` dan `UserModel` untuk cache offline aman tanpa crash `jsonEncode`.
+   - **F-20**: DOKU checkout sheet mendeteksi status `'paid'` (server) di samping `'success'`.
+   - **F-31**: Tipografi judul korpus spesialis menerapkan Newsreader serif ilmiah 3 lapis.
+   - **F-28**: Slogan konsisten dalam Bahasa Indonesia ilmiah: `'Telaah ibarah dari marja\' mu\'tamad'`.
+
+2. **Layer 2 — Backend Cloud Functions & Aturan Firestore**:
+   - **F-01 (P0)**: `dailyRevoke` memeriksa masa aktif tiap modular entitlement di peta `entitlements`, mencabut modul satuan yang telah kedaluwarsa, dan merekam job ke `provisioning_outbox`.
+   - **F-02 (P0)**: Cron worker `processProvisioningOutbox` (setiap 5 menit) memproses outbox provisioning/revocation NotebookLM hingga 8 kali percobaan dengan backoff aman.
+   - **F-02 (Audit 2)**: Rate-limiting pada callable `checkPaymentStatus` (maksimal 15 panggilan/menit per UID).
+   - **F-03 & F-05**: Rate-limiting brute force protection pada `redeemCode` (maksimal 8 percobaan/15 menit per UID).
+   - **F-06**: Signature webhook DOKU diverifikasi menggunakan constant-time `crypto.timingSafeEqual` dan penolakan timestamp skew > 15 menit dengan HTTP 401.
+   - **F-07**: Tulis dokumen transaksi berstatus `"pending"` sebelum memanggil API checkout gateway DOKU.
+   - **F-08**: Eliminasi pembuatan dokumen user ber-ID acak (`db.collection("users").doc()`).
+   - **F-01 (Audit 2)**: Cron harian `cleanupOrphanedDeletions` untuk membersihkan dokumen Firestore bertanda `pending_deletion` jika akun Auth telah terhapus.
+   - **F-15**: Pemetaan judul spesialis lengkap untuk `aqidah`, `tarikh`, `tasawwuf`, dan `sirah`.
+   - **firestore.rules**: Mengunci koleksi server-only (`rate_limits`, `redeem_attempts`, `provisioning_outbox`) dan memvalidasi `photo_url.size() <= 1000`.
+
+3. **Layer 3 — Pengujian Unit & Sinkronisasi Katalog**:
+   - **F-29**: Sinkronisasi jumlah katalog menjadi **87 kitab mu'tamad** (sesuai data riil `canonical_syafii.json`).
+   - **F-17**: Pengujian unit langsung terhadap kode produksi `AgentWebviewScreen.isAllowedNotebookUrl` dan `SubscriptionService.normalizeCode`.
+   - **F-11 (Audit 2)**: Pengujian batas kalender kabisat (29 Februari) dan non-kabisat (28 Februari) pada `HijriDateUtils.addCalendarMonthsClamped`.
    - `flutter analyze lib/`: **0 issues found** (100% bersih).
-   - `flutter test`: **51 dari 51 test case LULUS 100%**.
-   - **Binary Release APK**: `/Users/apple/Downloads/ramadhan/app-release-latest.apk` (58.6 MB, SHA-256: `f049b00e24a9513bc40d7b5459f1a4ff06353987ee4b4438e30b70f1c7a079a0`).
+   - `flutter test`: **52 dari 52 test case LULUS 100%**.
+   - `npm run build` (Functions): **Kompilasi TypeScript tsc 100% BERSIH tanpa error**.
 
 ---
 
@@ -46,11 +67,10 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 ---
 
 ## 4. Git Commits Riwayat Terkini
-- `7a47a07`: `fix(ui): eliminate card icons, arabic titles, cluttered descriptions, external browser option, search inner borders, and inject smooth tab animations`
-- `8370e00`: `feat(ui): restore minimalist purism, centered wordmark, grouped settings, and AI for Islamic Scholarship slogan`
-- `749279c`: `fix(ui): restore tactile Apple micro-interactions, authentic scholarly copywriting, and intuitive academic desk`
-- `444f9d9`: `fix(ui): overhaul scholarly dashboard, eliminate NotebookLM header banner, and elevate SpecialistCard aesthetics`
-- `cf3f22b`: `fix(ui): dialog ergonomics, checkout navigation safety, and 333-line forensic copy overhaul (F33, F38, F49-F60, C001-C333)`
+- `147befb`: `fix(client): resolve forensic audit findings F-03, F-04, F-05, F-08, F-10, F-11, F-19, F-20, F-22, F-31 in Flutter app`
+- `f138228`: `fix(security): lock server collections and permit pending_deletion update in firestore.rules`
+- `8d8e6c1`: `fix(backend): resolve forensic audit findings F-01, F-02, F-04, F-06, F-07, F-08, F-15 in Cloud Functions`
+- `583e50b`: `test(hardening): verify calendar leap year clamping, test production code directly, and align catalog count to 87`
 
 ---
 
