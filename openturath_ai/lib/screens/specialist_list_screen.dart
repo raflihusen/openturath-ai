@@ -16,6 +16,7 @@ import '../services/auth_service.dart';
 import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
+import '../widgets/apple_interactive_wrapper.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final FieldModel? field; // Nullable if opened as general Specialist tab
@@ -189,7 +190,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                     onChanged: _onSearchChanged,
                     style: OTTypography.body(color: textPrimary),
                     decoration: InputDecoration(
-                      hintText: 'Cari bidang atau ulama',
+                      hintText: 'Cari spesialis, kitab, atau bab...',
                       hintStyle: OTTypography.body(color: textSecondary),
                       prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
                       suffixIcon: _searchQuery.isNotEmpty
@@ -237,6 +238,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               SizedBox(
                 height: 38,
                 child: ListView(
+                  physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
                   children: [
@@ -287,8 +289,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 const SizedBox(height: OTSpacing.sm),
                                 Text(
                                   _searchQuery.isNotEmpty
-                                      ? 'Tidak ada hasil'
-                                      : 'Belum ada ruang riset untuk bidang ini',
+                                      ? 'Tidak ditemukan rujukan atau spesialis yang sesuai.'
+                                      : 'Belum ada ruang riset untuk bidang ini.',
                                   style: OTTypography.body(color: textSecondary),
                                   textAlign: TextAlign.center,
                                 ),
@@ -308,6 +310,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             }
 
                             return ListView.separated(
+                              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                               padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 96),
                               itemCount: sorted.length,
                               separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -320,7 +323,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                       ? agent.subtitleAcademic
                                       : agent.category,
                                   emoji: agent.emoji,
-                                  statusLabel: agent.isComingSoon ? 'Tahap Kurasi' : null,
+                                  statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
                                   onOpen: () => _openAgent(agent),
                                   onOpenLibrary: agent.catalogId != null
                                       ? () => showResearchLibrary(context, agent: agent)
@@ -350,11 +353,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final activeBg = textPrimary;
     final activeFg = isDark ? Colors.black : Colors.white;
 
-    return InkWell(
+    return AppleInteractiveWrapper(
       onTap: onTap,
+      pressedScale: 0.94,
+      hapticType: HapticFeedbackType.selection,
       borderRadius: BorderRadius.circular(20),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? activeBg : surface,

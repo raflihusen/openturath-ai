@@ -13,6 +13,7 @@ import '../core/design/ot_spacing.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
+import '../widgets/apple_interactive_wrapper.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -352,7 +353,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             final displayName = userModel?.name.isNotEmpty == true
                 ? userModel!.name
-                : (fbUser?.displayName ?? 'Peneliti');
+                : (fbUser?.displayName ?? 'Santri Peneliti');
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
                 : (fbUser?.email ?? 'peneliti@openturath.ai');
@@ -467,17 +468,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            FilledButton(
-                              onPressed: _openSubscription,
-                              style: FilledButton.styleFrom(
-                                backgroundColor: textPrimary,
-                                foregroundColor: canvas,
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                            AppleInteractiveWrapper(
+                              onTap: _openSubscription,
+                              pressedScale: 0.94,
+                              hapticType: HapticFeedbackType.light,
+                              child: FilledButton(
+                                onPressed: _openSubscription,
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: textPrimary,
+                                  foregroundColor: canvas,
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                  minimumSize: Size.zero,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                                ),
+                                child: Text('Upgrade', style: OTTypography.button(color: canvas).copyWith(fontSize: 12)),
                               ),
-                              child: Text('Upgrade', style: OTTypography.button(color: canvas).copyWith(fontSize: 12)),
                             ),
                           ],
                         ),
@@ -624,7 +630,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
                         title: 'Tentang OpenTurath',
-                        subtitle: 'Versi $_appVersion · Riset kitab turats',
+                        subtitle: 'Versi $_appVersion · AI for Islamic Scholarship',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showAboutModal(
                           context,
@@ -1050,28 +1056,29 @@ class _SettingsTile extends StatelessWidget {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
-    return ListTile(
-      onTap: onTap != null
-          ? () {
-              OTMotion.light();
-              onTap!();
-            }
-          : null,
-      contentPadding: const EdgeInsets.symmetric(horizontal: OTSpacing.base, vertical: 2),
-      leading: Icon(
-        icon,
-        size: 21,
-        color: textPrimary,
+    return AppleInteractiveWrapper(
+      onTap: onTap,
+      pressedScale: 0.985,
+      hapticType: HapticFeedbackType.light,
+      borderRadius: BorderRadius.circular(10),
+      child: ListTile(
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: OTSpacing.base, vertical: 2),
+        leading: Icon(
+          icon,
+          size: 21,
+          color: textPrimary,
+        ),
+        title: Text(
+          title,
+          style: OTTypography.bodyMedium(color: textPrimary),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: OTTypography.caption(color: textSecondary),
+        ),
+        trailing: trailing,
       ),
-      title: Text(
-        title,
-        style: OTTypography.bodyMedium(color: textPrimary),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: OTTypography.caption(color: textSecondary),
-      ),
-      trailing: trailing,
     );
   }
 }

@@ -18,11 +18,12 @@ import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
+import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
 
-/// Beranda OpenTurath AI (Quiet Scholar Adaptive)
-/// Meja riset digital dengan tipografi anggun, penanggalan Hijriah,
-/// pencarian naskah seketika, akses langsung ruang unggulan, dan portal disiplin keilmuan.
+/// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
+/// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
+/// penanggalan ganda Hijriah, pencarian naskah seketika, dan portal keilmuan interaktif.
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -85,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        '${agent.title} belum tersedia (Tahap Kurasi). Modul ini sedang dalam tahap verifikasi naskah kitab primer.',
+        '${agent.title} sedang dalam tahap kurasi naskah kitab primer (Segera Hadir).',
       );
       return;
     }
@@ -145,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               uid: curFirebaseUser?.uid ?? 'user',
               name: curFirebaseUser?.displayName?.isNotEmpty == true
                   ? curFirebaseUser!.displayName!
-                  : 'Peneliti Turats',
+                  : 'Santri Peneliti',
               email: curFirebaseUser?.email ?? '',
               photoUrl: curFirebaseUser?.photoURL ?? '',
               plan: AppConstants.planTrial,
@@ -170,12 +171,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onRefresh: _loadData,
               color: accent,
               child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
+                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 96),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Top Bar: OpenTurath Brand & Islamic Dual Calendar ──
+                    // ── 1. Top Bar: OpenTurath Brand & Dual Calendar ──
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -197,11 +198,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ],
                         ),
-                        InkWell(
+                        AppleInteractiveWrapper(
                           onTap: () {
                             final shell = MainShellController.of(context);
                             shell?.switchTab(3);
                           },
+                          pressedScale: 0.94,
+                          hapticType: HapticFeedbackType.selection,
                           borderRadius: BorderRadius.circular(24),
                           child: Container(
                             padding: const EdgeInsets.all(2),
@@ -215,7 +218,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               backgroundImage: user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
                               child: user.photoUrl.isEmpty
                                   ? Text(
-                                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'P',
+                                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'S',
                                       style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
                                     )
                                   : null,
@@ -257,7 +260,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onChanged: (val) => setState(() => _searchQuery = val.trim()),
                               style: OTTypography.body(color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari kitab, ulama, naskah, atau topik...',
+                                hintText: 'Kitab, istilah, hadits, atau persoalan...',
                                 hintStyle: OTTypography.body(color: textSecondary).copyWith(fontSize: 13.5),
                                 border: InputBorder.none,
                                 isDense: true,
@@ -282,7 +285,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // ── 4. Jika User Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil pencarian',
+                        'Hasil penelusuran',
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
                       const SizedBox(height: OTSpacing.sm),
@@ -303,7 +306,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Tidak ada naskah atau korpus yang sesuai.',
+                                  'Tidak ditemukan naskah atau korpus yang sesuai.',
                                   style: OTTypography.body(color: textSecondary),
                                 ),
                               ),
@@ -322,7 +325,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 titleArabic: agent.titleArabic,
                                 scopeLabel: agent.subtitleAcademic.isNotEmpty ? agent.subtitleAcademic : agent.category,
                                 emoji: agent.emoji,
-                                statusLabel: agent.isComingSoon ? 'Tahap Kurasi' : null,
+                                statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
                                 onOpen: agent.isActive ? () => _openNotebook(agent, user) : null,
                                 onOpenLibrary: agent.catalogId != null
                                     ? () => showResearchLibrary(context, agent: agent)
@@ -333,10 +336,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 5. Lanjutkan Telaah (Hanya jika ada sesi terakhir) ──
+                      // ── 5. Lanjutkan Penelitian (Unboxed Resume Session) ──
                       if (lastOpened != null) ...[
                         Text(
-                          'Lanjutkan telaah',
+                          'Lanjutkan penelitian',
                           style: OTTypography.sectionHeading(color: textSecondary),
                         ),
                         const SizedBox(height: OTSpacing.sm),
@@ -379,7 +382,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       const SizedBox(height: OTSpacing.sm),
 
-                      // Card Unggulan 1: Fikih Syafi'i
+                      // Card Unggulan 1: Super AI Fikih Syafi'i
                       _buildFeaturedCard(
                         context: context,
                         isDark: isDark,
@@ -389,19 +392,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                         surfaceSubtle: surfaceSubtle,
-                        title: 'Fikih Syafi\'i',
+                        title: 'Super AI Fikih Syafi\'i',
                         arabicTitle: 'الفقه الشافعي',
                         subtitle: 'Al-Muhaqqiq Fiqh Syafi\'i · Matan, Syarah & Hasyiyah Mu\'tabarah',
                         icon: Icons.menu_book_rounded,
-                        primaryActionLabel: 'Buka Ruang Riset',
+                        primaryActionLabel: 'Masuk Ruang Riset',
                         onPrimaryAction: () => _openNotebook(syafiiAgent, user),
-                        secondaryActionLabel: 'Pustaka Naskah (89 Kitab)',
+                        secondaryActionLabel: 'Katalog Pustaka (89 Kitab)',
                         onSecondaryAction: () => showResearchLibrary(context, agent: syafiiAgent),
                       ),
 
                       const SizedBox(height: 12),
 
-                      // Card Unggulan 2: Fikih Tahawwulat
+                      // Card Unggulan 2: Fikih Tahawwulat & Eskatologi
                       _buildFeaturedCard(
                         context: context,
                         isDark: isDark,
@@ -411,9 +414,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                         surfaceSubtle: surfaceSubtle,
-                        title: 'Fikih Tahawwulat',
+                        title: 'Fikih Tahawwulat & Eskatologi',
                         arabicTitle: 'فقه التحولات',
-                        subtitle: 'Manhaj Abu Bakr al-Masyhur · 1.500+ Naskah Muhadharah Lengkap',
+                        subtitle: 'Manhaj Fiqh Fitnah & Tanda Zaman • Rukun Keempat\n1.500+ Muhadharah · Naskah Lengkap · Takhrij Sanad',
                         icon: Icons.history_edu_rounded,
                         primaryActionLabel: 'Buka Korpus Tahawwulat',
                         onPrimaryAction: () => _openNotebook(tahawwulatAgent, user),
@@ -430,12 +433,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             'Disiplin keilmuan',
                             style: OTTypography.sectionHeading(color: textSecondary),
                           ),
-                          InkWell(
+                          AppleInteractiveWrapper(
                             onTap: () {
                               final shell = MainShellController.of(context);
                               shell?.switchTab(1);
                             },
-                            borderRadius: BorderRadius.circular(6),
+                            pressedScale: 0.95,
+                            hapticType: HapticFeedbackType.selection,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               child: Row(
@@ -542,16 +546,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       const SizedBox(height: OTSpacing.xxl),
 
                       // ── 8. Akses Cepat Pustaka Rujukan Naskah ──
-                      Material(
-                        color: surface,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          side: BorderSide(color: border, width: 0.8),
-                        ),
-                        child: InkWell(
-                          onTap: () => showResearchLibrary(context, agent: syafiiAgent),
-                          borderRadius: BorderRadius.circular(16),
+                      AppleInteractiveWrapper(
+                        onTap: () => showResearchLibrary(context, agent: syafiiAgent),
+                        pressedScale: 0.98,
+                        hapticType: HapticFeedbackType.light,
+                        borderRadius: BorderRadius.circular(16),
+                        child: Material(
+                          color: surface,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(color: border, width: 0.8),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Row(
@@ -621,114 +627,130 @@ class _DashboardScreenState extends State<DashboardScreen> {
     String? secondaryActionLabel,
     VoidCallback? onSecondaryAction,
   }) {
-    return Material(
-      color: surface,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: border, width: 0.8),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
-                    borderRadius: BorderRadius.circular(11),
-                    border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.8),
+    return AppleInteractiveWrapper(
+      onTap: onPrimaryAction,
+      pressedScale: 0.985,
+      hapticType: HapticFeedbackType.light,
+      borderRadius: BorderRadius.circular(16),
+      child: Material(
+        color: surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: border, width: 0.8),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(11),
+                      border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.8),
+                    ),
+                    child: Icon(icon, size: 20, color: accent),
                   ),
-                  child: Icon(icon, size: 20, color: accent),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            title,
-                            style: OTTypography.cardTitle(color: textPrimary).copyWith(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            arabicTitle,
-                            textDirection: TextDirection.rtl,
-                            style: OTTypography.arabicReading(
-                              color: isDark ? const Color(0xFFD97706) : const Color(0xFFB45309),
-                            ).copyWith(
-                              fontSize: 15,
-                              height: 1.1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                if (secondaryActionLabel != null && onSecondaryAction != null) ...[
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: onSecondaryAction,
-                      icon: Icon(Icons.menu_book_outlined, size: 14, color: textSecondary),
-                      label: Text(
-                        secondaryActionLabel,
-                        style: OTTypography.button(color: textSecondary).copyWith(fontSize: 12),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        side: BorderSide(color: border, width: 0.8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              title,
+                              style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              arabicTitle,
+                              textDirection: TextDirection.rtl,
+                              style: OTTypography.arabicReading(
+                                color: isDark ? const Color(0xFFD97706) : const Color(0xFFB45309),
+                              ).copyWith(
+                                fontSize: 15,
+                                height: 1.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8),
                 ],
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: onPrimaryAction,
-                    icon: const Icon(Icons.arrow_forward_rounded, size: 14),
-                    label: Text(
-                      primaryActionLabel,
-                      style: OTTypography.button(color: Colors.white).copyWith(fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  if (secondaryActionLabel != null && onSecondaryAction != null) ...[
+                    Expanded(
+                      child: AppleInteractiveWrapper(
+                        onTap: onSecondaryAction,
+                        pressedScale: 0.95,
+                        hapticType: HapticFeedbackType.selection,
+                        child: OutlinedButton.icon(
+                          onPressed: onSecondaryAction,
+                          icon: Icon(Icons.menu_book_outlined, size: 14, color: textSecondary),
+                          label: Text(
+                            secondaryActionLabel,
+                            style: OTTypography.button(color: textSecondary).copyWith(fontSize: 12),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            side: BorderSide(color: border, width: 0.8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                      ),
                     ),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: accent,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    const SizedBox(width: 8),
+                  ],
+                  Expanded(
+                    child: AppleInteractiveWrapper(
+                      onTap: onPrimaryAction,
+                      pressedScale: 0.95,
+                      hapticType: HapticFeedbackType.light,
+                      child: FilledButton.icon(
+                        onPressed: onPrimaryAction,
+                        icon: const Icon(Icons.arrow_forward_rounded, size: 14),
+                        label: Text(
+                          primaryActionLabel,
+                          style: OTTypography.button(color: Colors.white).copyWith(fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: accent,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -746,19 +768,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required Color textPrimary,
     required Color textSecondary,
   }) {
-    return Material(
-      color: surface,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: border, width: 0.8),
-      ),
-      child: InkWell(
-        onTap: () {
-          final shell = MainShellController.of(context);
-          shell?.switchTab(1, fieldId: fieldId);
-        },
-        borderRadius: BorderRadius.circular(12),
+    return AppleInteractiveWrapper(
+      onTap: () {
+        final shell = MainShellController.of(context);
+        shell?.switchTab(1, fieldId: fieldId);
+      },
+      pressedScale: 0.96,
+      hapticType: HapticFeedbackType.selection,
+      borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: border, width: 0.8),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(

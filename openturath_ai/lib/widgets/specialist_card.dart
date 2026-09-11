@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
+import 'apple_interactive_wrapper.dart';
 
-/// Unified rounded specialist card adhering to Quiet Scholar Adaptive standards.
-/// Clean, symmetrical 16dp container with scholarly typography,
-/// elegant category icon, and optional integrated Pustaka action.
+/// Unified rounded specialist card with Apple HIG micro-interactions,
+/// scholarly typography, elegant category icon, and optional integrated Pustaka action.
 class SpecialistCard extends StatelessWidget {
   const SpecialistCard({
     super.key,
@@ -70,16 +70,19 @@ class SpecialistCard extends StatelessWidget {
     final resolvedIcon = _resolveIcon();
     final isComingSoon = statusLabel != null && statusLabel!.isNotEmpty;
 
-    return Material(
-      color: surface,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: border, width: 0.8),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onOpen,
+    return AppleInteractiveWrapper(
+      onTap: onOpen,
+      pressedScale: 0.98,
+      hapticType: HapticFeedbackType.light,
+      borderRadius: BorderRadius.circular(16),
+      child: Material(
+        color: surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: border, width: 0.8),
+        ),
+        clipBehavior: Clip.antiAlias,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
@@ -160,15 +163,20 @@ class SpecialistCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
-                          color: surfaceSubtle,
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFFEF3C7),
                           borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: border.withValues(alpha: 0.6), width: 0.6),
+                          border: Border.all(
+                            color: isDark ? border : const Color(0xFFFDE68A),
+                            width: 0.6,
+                          ),
                         ),
                         child: Text(
                           statusLabel!,
-                          style: OTTypography.caption(color: textSecondary).copyWith(
+                          style: OTTypography.caption(
+                            color: isDark ? textSecondary : const Color(0xFFB45309),
+                          ).copyWith(
                             fontSize: 10.5,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -180,8 +188,10 @@ class SpecialistCard extends StatelessWidget {
               // Action Buttons: Optional Pustaka + Chevron
               if (onOpenLibrary != null) ...[
                 const SizedBox(width: 8),
-                InkWell(
+                AppleInteractiveWrapper(
                   onTap: onOpenLibrary,
+                  pressedScale: 0.94,
+                  hapticType: HapticFeedbackType.selection,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),

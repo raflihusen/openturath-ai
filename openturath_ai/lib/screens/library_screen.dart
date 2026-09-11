@@ -274,6 +274,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             ),
                           )
                         : ListView.separated(
+                            physics: const BouncingScrollPhysics(),
                             padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: OTSpacing.xs),
                             itemCount: _filteredBooks!.length,
                             separatorBuilder: (_, __) => const SizedBox(height: 12),

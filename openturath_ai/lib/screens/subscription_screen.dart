@@ -14,6 +14,7 @@ import '../models/user_model.dart';
 import '../services/subscription_service.dart';
 import '../widgets/doku_checkout_sheet.dart';
 import '../widgets/redeem_code_sheet.dart';
+import '../widgets/apple_interactive_wrapper.dart';
 
 /// Halaman Langganan Ruang Riset OpenTurath AI (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           uid: fbUser.uid,
           email: fbUser.email ?? '',
           name: fbUser.displayName ??
-              (fbUser.email?.split('@').first ?? 'Peneliti'),
+              (fbUser.email?.split('@').first ?? 'Santri Peneliti'),
           photoUrl: fbUser.photoURL ?? '',
           plan: 'trial',
           questionsUsed: 0,
@@ -179,7 +180,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       _user = UserModel(
         uid: fbUser.uid,
         email: fbUser.email ?? '',
-        name: fbUser.displayName ?? 'Peneliti',
+        name: fbUser.displayName ?? 'Santri Peneliti',
         photoUrl: fbUser.photoURL ?? '',
         plan: 'trial',
         questionsUsed: 0,
@@ -210,7 +211,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     try {
       final userName = _user!.name.trim().isNotEmpty
           ? _user!.name.trim()
-          : (_user!.email.isNotEmpty ? _user!.email.split('@').first : 'Peneliti');
+          : (_user!.email.isNotEmpty ? _user!.email.split('@').first : 'Santri Peneliti');
 
       final result = await _subService
           .createPayment(
@@ -348,18 +349,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   // Satu pintu masuk redeem kode akses
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
+                    child: AppleInteractiveWrapper(
+                      onTap: () => RedeemCodeSheet.show(context, onSuccess: () {
                         if (mounted) setState(() {});
                       }),
-                      icon: Icon(Icons.confirmation_number_outlined, size: 16, color: accent),
-                      label: Text(
-                        'Gunakan kode akses',
-                        style: OTTypography.button(color: accent).copyWith(fontSize: 14),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                        minimumSize: const Size(48, 48),
+                      pressedScale: 0.96,
+                      hapticType: HapticFeedbackType.selection,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.confirmation_number_outlined, size: 16, color: accent),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Punya voucher atau kode redeem santri? Klaim di sini',
+                              style: OTTypography.button(color: accent).copyWith(fontSize: 13.5),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -426,11 +434,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               final tier = fullAccessTiers[idx];
                               final isSelected = _selectedDurationIndex == idx;
                               return Expanded(
-                                child: GestureDetector(
+                                child: AppleInteractiveWrapper(
                                   onTap: () {
                                     OTMotion.selection();
                                     setState(() => _selectedDurationIndex = idx);
                                   },
+                                  pressedScale: 0.94,
+                                  hapticType: HapticFeedbackType.selection,
                                   child: AnimatedContainer(
                                     duration: OTMotion.fast,
                                     curve: OTMotion.curve,
@@ -479,13 +489,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.base),
 
                         // Core Benefits
-                        _benefitRow('Akses ruang riset yang tersedia', textPrimary),
+                        _benefitRow('Akses simultan ke seluruh ruang riset & korpus kitab', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Batas penggunaan mengikuti layanan riset', textPrimary),
+                        _benefitRow('Penelusuran mendalam tanpa batas kuota pertanyaan harian', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Periksa sumber yang dicantumkan pada jawaban', textPrimary),
+                        _benefitRow('Sitasi marja\' kitab asli, nomor halaman & matan lengkap', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Pembaruan pustaka berkala', textPrimary),
+                        _benefitRow('Prioritas pembaruan naskah dan kurasi kitab primer', textPrimary),
 
                         const SizedBox(height: OTSpacing.lg),
 
@@ -493,8 +503,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         SizedBox(
                           width: double.infinity,
                           height: 48,
-                          child: FilledButton(
-                            onPressed: _isProcessing
+                          child: AppleInteractiveWrapper(
+                            onTap: _isProcessing
                                 ? null
                                 : () {
                                     final allAiAgent = AgentModel(
@@ -513,15 +523,39 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       targetAgent: allAiAgent,
                                     );
                                   },
-                            style: FilledButton.styleFrom(
-                              backgroundColor: textPrimary,
-                              foregroundColor: canvas,
-                              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'Lanjutkan · $tierLabel',
-                              style: OTTypography.button(color: canvas),
+                            pressedScale: 0.97,
+                            hapticType: HapticFeedbackType.light,
+                            borderRadius: BorderRadius.circular(OTRadius.button),
+                            child: FilledButton(
+                              onPressed: _isProcessing
+                                  ? null
+                                  : () {
+                                      final allAiAgent = AgentModel(
+                                        id: 'all_ai',
+                                        title: 'Semua Ruang Riset',
+                                        description: 'Akses ke seluruh modul AI OpenTurath',
+                                        emoji: '✨',
+                                        category: 'All Access',
+                                        status: 'active',
+                                        sortOrder: 0,
+                                      );
+                                      _handleSubscribe(
+                                        plan: tierPlanId,
+                                        planTitle: 'Paket Akses Penuh (${currentTier['name']})',
+                                        price: tierPrice,
+                                        targetAgent: allAiAgent,
+                                      );
+                                    },
+                              style: FilledButton.styleFrom(
+                                backgroundColor: textPrimary,
+                                foregroundColor: canvas,
+                                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                'Pilih Paket Ini ($tierLabel)',
+                                style: OTTypography.button(color: canvas),
+                              ),
                             ),
                           ),
                         ),
@@ -535,7 +569,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   Padding(
                     padding: const EdgeInsets.only(left: 4, bottom: 6),
                     child: Text(
-                      'SATU RUANG RISET',
+                      'PILIHAN MODUL SATUAN',
                       style: OTTypography.sectionHeading(color: textSecondary),
                     ),
                   ),
@@ -557,12 +591,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pilih Bidang atau Ulama',
+                                    '1 Modul Spesialis Terpilih',
                                     style: OTTypography.cardTitle(color: textPrimary),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Pilih ruang riset sesuai fokus telaah',
+                                    'Fokus telaah pada satu disiplin keilmuan tertentu',
                                     style: OTTypography.caption(color: textSecondary),
                                   ),
                                 ],
@@ -619,28 +653,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         SizedBox(
                           width: double.infinity,
                           height: 44,
-                          child: OutlinedButton(
-                            onPressed: _isProcessing
+                          child: AppleInteractiveWrapper(
+                            onTap: _isProcessing
                                 ? null
                                 : () => _handleSubscribe(
                                       plan: AppConstants.planTholib1m,
                                       planTitle: '1 Bulan ${_agent?.title ?? "Modul AI"}',
                                       price: _agent?.price1m ?? AppConstants.priceTholib1m,
                                     ),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: textPrimary,
-                              side: BorderSide(color: border, width: 0.8),
-                              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                            ),
-                            child: Builder(
-                              builder: (context) {
-                                final p = _agent?.price1m ?? AppConstants.priceTholib1m;
-                                final formatted = 'Rp ${p.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
-                                return Text(
-                                  'Lanjutkan · $formatted',
-                                  style: OTTypography.button(),
-                                );
-                              },
+                            pressedScale: 0.97,
+                            hapticType: HapticFeedbackType.light,
+                            borderRadius: BorderRadius.circular(OTRadius.button),
+                            child: OutlinedButton(
+                              onPressed: _isProcessing
+                                  ? null
+                                  : () => _handleSubscribe(
+                                        plan: AppConstants.planTholib1m,
+                                        planTitle: '1 Bulan ${_agent?.title ?? "Modul AI"}',
+                                        price: _agent?.price1m ?? AppConstants.priceTholib1m,
+                                      ),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: textPrimary,
+                                side: BorderSide(color: border, width: 0.8),
+                                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                              ),
+                              child: Builder(
+                                builder: (context) {
+                                  final p = _agent?.price1m ?? AppConstants.priceTholib1m;
+                                  final formatted = 'Rp ${p.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
+                                  return Text(
+                                    'Langganan Modul ($formatted)',
+                                    style: OTTypography.button(),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),

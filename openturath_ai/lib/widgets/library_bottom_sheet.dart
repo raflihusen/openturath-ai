@@ -6,6 +6,7 @@ import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
+import 'apple_interactive_wrapper.dart';
 
 /// Opens the Canonical Research Library as a bottom sheet.
 /// Uses [useRootNavigator: true] so it overlays cleanly over WebViews without tearing down session state.
@@ -346,6 +347,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                               )
                             : ListView.separated(
                                 controller: scrollController,
+                                physics: const BouncingScrollPhysics(),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: OTSpacing.lg,
                                   vertical: OTSpacing.sm,
@@ -395,15 +397,18 @@ class CanonicalBookTile extends StatelessWidget {
     return Semantics(
       button: true,
       label: '${book.titleArabic}, ${book.authorArabic}',
-      child: Material(
-        color: surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: border, width: 0.8),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onOpenEdition,
+      child: AppleInteractiveWrapper(
+        onTap: onOpenEdition,
+        pressedScale: 0.98,
+        hapticType: HapticFeedbackType.light,
+        borderRadius: BorderRadius.circular(16),
+        child: Material(
+          color: surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: border, width: 0.8),
+          ),
+          clipBehavior: Clip.antiAlias,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
