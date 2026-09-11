@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
-  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
+  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
   static final ValueNotifier<String> localeNotifier = ValueNotifier('id'); // 'id', 'en', 'ar'
 
   static const String _themeKey = 'app_theme_mode';
@@ -11,14 +11,14 @@ class AppConfig {
   static Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     
-    // Load Theme (Default: Dark Mode sesuai desain master Figma)
+    // Load Theme (Default: ThemeMode.system)
     final themeStr = prefs.getString(_themeKey);
     if (themeStr == 'light') {
       themeNotifier.value = ThemeMode.light;
-    } else if (themeStr == 'system') {
-      themeNotifier.value = ThemeMode.system;
-    } else {
+    } else if (themeStr == 'dark') {
       themeNotifier.value = ThemeMode.dark;
+    } else {
+      themeNotifier.value = ThemeMode.system;
     }
 
     // Load Locale

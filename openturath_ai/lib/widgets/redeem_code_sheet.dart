@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/app_snackbar.dart';
-import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
 
@@ -31,6 +33,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
   final TextEditingController _codeController = TextEditingController();
   final SubscriptionService _subscriptionService = SubscriptionService();
   bool _isLoading = false;
+  String? _inlineError;
 
   @override
   void dispose() {
@@ -41,32 +44,33 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
   Future<void> _handleRedeem() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
-      AppSnackBar.show(
-        context,
-        message: 'Silakan masukkan kode akses santri terlebih dahulu.',
-        type: SnackType.error,
-      );
+      setState(() => _inlineError = 'Masukkan kode akses');
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _inlineError = null;
+    });
+
     final result = await _subscriptionService.redeemAccessCode(code);
     if (!mounted) return;
     setState(() => _isLoading = false);
 
     final success = result['success'] == true;
     final message = (result['message'] as String?) ??
-        (success ? 'Kode berhasil diaktifkan!' : 'Gagal mengaktifkan kode.');
-
-    AppSnackBar.show(
-      context,
-      message: message,
-      type: success ? SnackType.success : SnackType.error,
-    );
+        (success ? 'Akses berhasil diaktifkan' : 'Kode tidak valid atau sudah kedaluwarsa');
 
     if (success) {
+      AppSnackBar.show(
+        context,
+        message: 'Akses berhasil diaktifkan',
+        type: SnackType.success,
+      );
       widget.onSuccess?.call();
       Navigator.of(context).pop();
+    } else {
+      setState(() => _inlineError = message);
     }
   }
 
@@ -74,19 +78,19 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final accent = isDark ? AppTheme.accentDark : const Color(0xFF2563EB);
-    final bgSurface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final borderColor = isDark ? AppTheme.borderDark : AppTheme.borderLight;
+    final bgSurface = OTColors.surface(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final borderColor = OTColors.border(isDark);
+    final canvas = OTColors.canvas(isDark);
 
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         decoration: BoxDecoration(
           color: bgSurface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusM)),
-          border: Border.all(color: borderColor, width: 1.0),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          border: Border.all(color: borderColor, width: 0.8),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
@@ -98,53 +102,29 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white24 : Colors.black26,
+                  color: borderColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: OTSpacing.base),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  ),
-                  child: Icon(
-                    Icons.card_giftcard_rounded,
-                    color: accent,
-                    size: 22,
+                Text(
+                  'Gunakan kode akses',
+                  style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Klaim Kode Akses Santri',
-                        style: GoogleFonts.outfit(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Punya kode voucher khusus? Tukarkan untuk membuka akses.',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
+                IconButton(
+                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: OTSpacing.md),
             TextField(
               controller: _codeController,
               enabled: !_isLoading,
@@ -153,61 +133,61 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-_]')),
                 LengthLimitingTextInputFormatter(25),
               ],
-              style: GoogleFonts.outfit(
+              onChanged: (_) {
+                if (_inlineError != null) setState(() => _inlineError = null);
+              },
+              style: OTTypography.bodyMedium(color: textPrimary).copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                letterSpacing: 1.5,
-                color: textPrimary,
+                letterSpacing: 1.2,
               ),
               decoration: InputDecoration(
-                hintText: 'CONTOH: SYAFII7D',
-                hintStyle: GoogleFonts.outfit(
+                hintText: 'Masukkan kode akses',
+                hintStyle: OTTypography.body(color: textSecondary).copyWith(
+                  letterSpacing: 0,
                   fontSize: 14,
-                  letterSpacing: 1.0,
-                  color: isDark ? Colors.white30 : Colors.black26,
                 ),
+                errorText: _inlineError,
+                errorStyle: const TextStyle(fontSize: 12),
                 filled: true,
-                fillColor: isDark ? AppTheme.canvasDark : AppTheme.groupedCanvasLight,
+                fillColor: canvas,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  borderSide: BorderSide(color: borderColor),
+                  borderRadius: OTRadius.inputBorder,
+                  borderSide: BorderSide(color: borderColor, width: 0.8),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  borderSide: BorderSide(color: borderColor),
+                  borderRadius: OTRadius.inputBorder,
+                  borderSide: BorderSide(color: borderColor, width: 0.8),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusS),
-                  borderSide: BorderSide(color: accent, width: 1.5),
+                  borderRadius: OTRadius.inputBorder,
+                  borderSide: BorderSide(color: textPrimary, width: 1.2),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: OTSpacing.lg),
             SizedBox(
               height: 48,
-              child: ElevatedButton(
+              child: FilledButton(
                 onPressed: _isLoading ? null : _handleRedeem,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: accent,
-                  foregroundColor: Colors.white,
+                style: FilledButton.styleFrom(
+                  backgroundColor: textPrimary,
+                  foregroundColor: canvas,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusS),
+                    borderRadius: OTRadius.buttonBorder,
                   ),
                   elevation: 0,
                 ),
                 child: _isLoading
-                    ? const AppLoader(dotSize: 6, color: Colors.white)
+                    ? AppLoader(dotSize: 6, color: canvas)
                     : Text(
-                        'Tukarkan Kode Akses',
-                        style: GoogleFonts.outfit(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        'Aktifkan',
+                        style: OTTypography.button(color: canvas),
                       ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: OTSpacing.sm),
           ],
         ),
       ),

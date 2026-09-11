@@ -4,6 +4,7 @@ import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_motion.dart';
+import '../models/agent_model.dart';
 import '../models/field_model.dart';
 import 'dashboard_screen.dart';
 import 'specialist_list_screen.dart';
@@ -12,7 +13,7 @@ import 'profile_screen.dart';
 import '../widgets/openturath_brand.dart';
 
 class MainShellController extends InheritedWidget {
-  final void Function(int index, {String? fieldId}) switchTab;
+  final void Function(int index, {String? fieldId, CorpusKind? kind}) switchTab;
 
   const MainShellController({
     super.key,
@@ -40,6 +41,7 @@ class MainShellScreen extends StatefulWidget {
 class _MainShellScreenState extends State<MainShellScreen> {
   late int _currentIndex;
   String? _selectedFieldId;
+  CorpusKind? _selectedKind;
 
   @override
   void initState() {
@@ -47,10 +49,11 @@ class _MainShellScreenState extends State<MainShellScreen> {
     _currentIndex = widget.initialTab;
   }
 
-  void _onTabSelected(int index, {String? fieldId}) {
+  void _onTabSelected(int index, {String? fieldId, CorpusKind? kind}) {
     setState(() {
       _currentIndex = index;
       _selectedFieldId = fieldId;
+      _selectedKind = kind;
     });
   }
 
@@ -64,7 +67,10 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
     return [
       const DashboardScreen(),
-      SpecialistListScreen(key: ValueKey(_selectedFieldId), field: field),
+      SpecialistListScreen(
+        key: ValueKey('${_selectedFieldId}_${_selectedKind?.name}'),
+        field: field,
+      ),
       const BookmarkScreen(),
       const ProfileScreen(),
     ];
@@ -132,7 +138,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           _RailItem(
                             icon: Icons.collections_bookmark_outlined,
                             activeIcon: Icons.collections_bookmark_rounded,
-                            label: 'Rujukan',
+                            label: 'Tersimpan',
                             isSelected: _currentIndex == 2,
                             accent: accent,
                             unselected: unselected,
@@ -218,7 +224,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             child: _ExpressiveNavItem(
                               icon: Icons.collections_bookmark_outlined,
                               activeIcon: Icons.collections_bookmark_rounded,
-                              label: 'Rujukan',
+                              label: 'Tersimpan',
                               isSelected: _currentIndex == 2,
                               onTap: () => _onTabSelected(2),
                             ),

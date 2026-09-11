@@ -47,7 +47,7 @@ class EvidenceBottomSheet extends StatelessWidget {
 
   void _copyIbarah(BuildContext context) {
     Clipboard.setData(ClipboardData(text: arabicExcerpt));
-    AppSnackBar.success(context, 'Ibarah asli berhasil disalin ke clipboard.');
+    AppSnackBar.success(context, 'Teks disalin');
   }
 
   void _shareEvidence(BuildContext context) {
@@ -67,10 +67,10 @@ class EvidenceBottomSheet extends StatelessWidget {
       buffer.writeln();
     }
     buffer.writeln('—');
-    buffer.writeln('Ditelusuri via *OpenTurath AI* (Kecerdasan Buatan Turats Islam)');
+    buffer.writeln('Disimpan melalui *OpenTurath*');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
-    AppSnackBar.success(context, 'Format kutipan ilmiah rujukan berhasil disalin.');
+    AppSnackBar.success(context, 'Sitasi disalin');
   }
 
   Widget _stagger(int index, Widget child) {
@@ -340,7 +340,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: OutlinedButton.icon(
                               onPressed: () => _copyIbarah(context),
                               icon: const Icon(Icons.copy_rounded, size: 16),
-                              label: const Text('Salin Ibarah'),
+                              label: const Text('Salin Teks'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: accent,
                                 side: BorderSide(color: accent.withValues(alpha: 0.6)),
@@ -360,7 +360,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: FilledButton.icon(
                               onPressed: () => _launchExternal(context),
                               icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                              label: const Text('Maktabah Syamilah'),
+                              label: const Text('Cari di Syamilah'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: accent,
                                 foregroundColor: isDark
@@ -381,7 +381,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           IconButton.filledTonal(
                             onPressed: () => _shareEvidence(context),
                             icon: const Icon(Icons.share_outlined, size: 18),
-                            tooltip: 'Bagikan Kutipan Rujukan',
+                            tooltip: 'Salin sitasi',
                             style: IconButton.styleFrom(
                               padding: const EdgeInsets.all(13),
                               shape: RoundedRectangleBorder(

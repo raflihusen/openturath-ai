@@ -93,11 +93,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus Rujukan?',
+            'Hapus dari tersimpan?',
             style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Rujukan "${item.title}" akan dihapus dari daftar tersimpan.',
+            '"${item.title}" akan dihapus dari tersimpan.',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -133,7 +133,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     if (!mounted) return;
     AppSnackBar.info(
       context,
-      'Rujukan "${item.title}" berhasil dihapus.',
+      'Dihapus dari tersimpan.',
       action: SnackBarAction(
         label: 'Urungkan',
         textColor: const Color(0xFFFBBF24),
@@ -149,7 +149,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _copyIbarah(String ibarah) {
     OTMotion.light();
     Clipboard.setData(ClipboardData(text: ibarah));
-    AppSnackBar.success(context, 'Kutipan ibarah berhasil disalin ke clipboard.');
+    AppSnackBar.success(context, 'Teks disalin');
   }
 
   void _shareBookmark(BookmarkModel item) {
@@ -157,7 +157,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     buffer.writeln('📖 *${item.title}*');
     buffer.writeln('Disiplin: ${item.fieldName} | ${item.agentTitle}');
     if (item.bookReference.isNotEmpty) {
-      buffer.writeln('Marja\'/Rujukan: ${item.bookReference}${item.pageNumber.isNotEmpty ? " (Hlm. ${item.pageNumber})" : ""}');
+      buffer.writeln('Sumber: ${item.bookReference}${item.pageNumber.isNotEmpty ? " (Hlm. ${item.pageNumber})" : ""}');
     }
     buffer.writeln();
     if (item.arabicExcerpt.isNotEmpty) {
@@ -166,17 +166,17 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       buffer.writeln();
     }
     if (item.fullAnswer.isNotEmpty) {
-      buffer.writeln('Kajian & Penjelasan:');
+      buffer.writeln('Jawaban AI:');
       buffer.writeln(item.fullAnswer);
       buffer.writeln();
     }
     buffer.writeln('—');
-    buffer.writeln('Ditelusuri via *OpenTurath AI* (Kecerdasan Buatan Turats Islam)');
+    buffer.writeln('Disimpan melalui *OpenTurath*');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Format kutipan ilmiah berhasil disalin & siap dibagikan.',
+      'Sitasi disalin',
     );
   }
 
@@ -214,21 +214,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         backgroundColor: canvas,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Rujukan',
-              style: OTTypography.corpusTitle(color: textPrimary).copyWith(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              'Catatan ibarah dan referensi naskah tersimpan',
-              style: OTTypography.caption(color: textSecondary),
-            ),
-          ],
+        title: Text(
+          'Tersimpan',
+          style: OTTypography.corpusTitle(color: textPrimary).copyWith(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         actions: [
           IconButton(
@@ -236,7 +227,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
               color: textPrimary,
             ),
-            tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari Rujukan',
+            tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari dalam tersimpan',
             onPressed: () {
               OTMotion.selection();
               setState(() {
@@ -397,14 +388,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                 ),
                                 const SizedBox(height: OTSpacing.lg),
                                 Text(
-                                  'Belum Ada Rujukan Tersimpan',
+                                  'Belum ada yang disimpan',
                                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                                     fontSize: 16,
                                   ),
                                 ),
                                 const SizedBox(height: OTSpacing.xs + 2),
                                 Text(
-                                  'Tandai ibarah kitab dari ruang riset AI untuk menelaah dan menyimpannya di sini.',
+                                  'Simpan jawaban dari ruang riset.',
                                   textAlign: TextAlign.center,
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 13,
@@ -415,10 +406,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   onPressed: () {
                                     OTMotion.light();
                                     final shell = MainShellController.of(context);
-                                    shell?.switchTab(0);
+                                    shell?.switchTab(1);
                                   },
-                                  icon: const Icon(Icons.search_rounded, size: 16),
-                                  label: const Text('Mulai Menelusuri'),
+                                  icon: const Icon(Icons.menu_book_outlined, size: 16),
+                                  label: const Text('Buka keilmuan'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: textPrimary,
                                     side: BorderSide(color: border, width: 1.0),
