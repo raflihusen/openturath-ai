@@ -46,7 +46,16 @@ Future<void> main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     runApp(const OpenTurathApp());
-  } catch (_) {
+  } catch (error, stackTrace) {
+    debugPrint('[OpenTurath] Firebase initialization error: $error\n$stackTrace');
+    final isUnsupportedPlatform = error is UnsupportedError;
+    final title = isUnsupportedPlatform
+        ? 'Platform Belum Didukung Penuh'
+        : 'Koneksi Server Belum Siap';
+    final message = isUnsupportedPlatform
+        ? 'Aplikasi OpenTurath AI dioptimalkan untuk perangkat Android dan Web. Layanan cloud mungkin memerlukan penyesuaian pada sistem ini.'
+        : 'Tidak dapat menginisialisasi layanan data. Periksa koneksi internet Anda lalu coba muat ulang aplikasi.';
+
     runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
@@ -54,8 +63,8 @@ Future<void> main() async {
         backgroundColor: AppTheme.canvasDark,
         body: SafeArea(
           child: AppErrorState(
-            title: 'Koneksi Server Terputus',
-            message: 'Tidak dapat terhubung ke server layanan. Pastikan perangkat Anda terhubung ke internet lalu coba kembali.',
+            title: title,
+            message: message,
             onRetry: () => main(),
           ),
         ),

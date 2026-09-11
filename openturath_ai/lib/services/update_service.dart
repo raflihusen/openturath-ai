@@ -87,6 +87,12 @@ class UpdateService extends ChangeNotifier {
   bool _isChecking = false;
   bool _isDownloading = false;
 
+  /// Hitung SHA-256 secara streaming tanpa memuat seluruh file 60MB ke memori RAM (F20)
+  static Future<String> _computeFileSha256(File file) async {
+    final digest = await sha256.bind(file.openRead()).first;
+    return digest.toString();
+  }
+
   /// Memulai pengecekan versi dan unduhan otomatis di background
   Future<void> checkForUpdatesSilently() async {
     if (_isChecking || _isDownloading) return;
@@ -140,9 +146,31 @@ class UpdateService extends ChangeNotifier {
           return;
         }
 
-        // Android: Periksa apakah APK versi tersebut SUDAH pernah terunduh sebelumnya di cache
+        // Android: Periksa apakah APK versi tersebut SUDAH pernah terunduh di cache (F44)
         final localFile = await _getLocalApkFile(latestCode);
+        bool isCachedValid = false;
         if (await localFile.exists() && (await localFile.length()) > 5 * 1024 * 1024) {
+          if (sha256Hash != null && sha256Hash.isNotEmpty) {
+            try {
+              final cachedSha = await _computeFileSha256(localFile);
+              if (cachedSha.toLowerCase() == sha256Hash.toLowerCase()) {
+                isCachedValid = true;
+              } else {
+                debugPrint('[UpdateService] Cached APK hash mismatch: $cachedSha vs $sha256Hash');
+                await localFile.delete();
+              }
+            } catch (e) {
+              debugPrint('[UpdateService] Error checking cached hash: $e');
+              try {
+                await localFile.delete();
+              } catch (_) {}
+            }
+          } else {
+            isCachedValid = true;
+          }
+        }
+
+        if (isCachedValid) {
           _updateInfo = _updateInfo!.copyWith(
             isDownloaded: true,
             localFilePath: localFile.path,
@@ -151,7 +179,7 @@ class UpdateService extends ChangeNotifier {
           _status = UpdateStatus.readyToInstall;
           notifyListeners();
         } else {
-          // Belum terunduh: Jalankan silent background download otomatis
+          // Belum terunduh atau cache tidak valid: Jalankan silent background download otomatis
           _startSilentDownload(apkUrl, localFile, sha256Hash);
         }
       } else {
@@ -222,10 +250,9 @@ class UpdateService extends ChangeNotifier {
         return;
       }
 
-      // Validasi SHA-256 jika disediakan oleh Firestore app_config/version
+      // Validasi SHA-256 secara streaming jika disediakan oleh Firestore app_config/version (F20)
       if (expectedSha256 != null && expectedSha256.isNotEmpty) {
-        final bytes = await tempFile.readAsBytes();
-        final calculatedSha256 = sha256.convert(bytes).toString();
+        final calculatedSha256 = await _computeFileSha256(tempFile);
         if (calculatedSha256.toLowerCase() != expectedSha256.toLowerCase()) {
           debugPrint('[UpdateService] SHA256 checksum mismatch: $calculatedSha256 vs $expectedSha256');
           if (await tempFile.exists()) await tempFile.delete();

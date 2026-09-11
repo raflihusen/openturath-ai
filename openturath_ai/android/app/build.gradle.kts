@@ -36,10 +36,12 @@ android {
             create("release") {
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
-                storeFile = keystoreProperties.getProperty("storeFile")?.let {
+                val storeFilePath = keystoreProperties.getProperty("storeFile")
+                val resolvedStoreFile = storeFilePath?.let {
                     val f = file(it)
                     if (f.exists()) f else rootProject.file(it)
                 }
+                storeFile = resolvedStoreFile
                 storePassword = keystoreProperties.getProperty("storePassword")
             }
         }
@@ -55,10 +57,15 @@ android {
 
     buildTypes {
         release {
-            if (keystorePropertiesFile.exists()) {
+            if (keystorePropertiesFile.exists() && signingConfigs.findByName("release")?.storeFile?.exists() == true) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
-                signingConfig = signingConfigs.getByName("debug")
+                gradle.taskGraph.whenReady {
+                    val hasReleaseTask = allTasks.any { it.name.contains("Release", ignoreCase = true) }
+                    if (hasReleaseTask) {
+                        throw org.gradle.api.GradleException("Release build failed: key.properties or release keystore file is missing or invalid. Release builds must not fallback to debug signing.")
+                    }
+                }
             }
         }
     }
