@@ -352,7 +352,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             final displayName = userModel?.name.isNotEmpty == true
                 ? userModel!.name
-                : (fbUser?.displayName ?? 'Peneliti Turats');
+                : (fbUser?.displayName ?? 'Peneliti');
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
                 : (fbUser?.email ?? 'peneliti@openturath.ai');
@@ -624,7 +624,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
                         title: 'Tentang OpenTurath',
-                        subtitle: 'Versi $_appVersion · AI for Islamic Scholarship',
+                        subtitle: 'Versi $_appVersion · Riset kitab turats',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showAboutModal(
                           context,
@@ -708,7 +708,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Versi $_appVersion · AI for Islamic Scholarship',
+              'Versi $_appVersion · Riset kitab turats',
               style: OTTypography.captionMedium(color: textSecondary),
             ),
             const SizedBox(height: 12),
@@ -999,7 +999,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
               shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
-            child: Text('Mengerti', style: OTTypography.button()),
+            child: Text('Tutup', style: OTTypography.button()),
           ),
         ],
       ),

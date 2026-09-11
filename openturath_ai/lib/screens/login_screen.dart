@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _stagger(
                     delayMs: 140,
                     child: Text(
-                      'AI for Islamic Scholarship',
+                      'Riset kitab turats',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
                         fontSize: 17,

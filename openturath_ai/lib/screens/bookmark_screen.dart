@@ -33,13 +33,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   static const List<String> _categories = [
     'Semua',
     'Fikih',
-    'Hadits',
+    'Hadis',
     'Tafsir',
-    'Aqidah',
-    'Ushul Fiqh',
+    'Akidah',
+    'Usul Fikih',
     'Bahasa Arab',
-    'Tarikh',
-    'Tasawwuf',
+    'Sejarah',
+    'Tasawuf',
   ];
 
   @override
@@ -76,8 +76,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _filter() {
     final q = _searchQuery.toLowerCase().trim();
     _filteredBookmarks = _allBookmarks.where((b) {
+      final fieldLower = b.fieldName.toLowerCase();
       final matchesCategory = _selectedCategory == 'Semua' ||
-          b.fieldName.toLowerCase().contains(_selectedCategory.toLowerCase());
+          fieldLower.contains(_selectedCategory.toLowerCase()) ||
+          (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
+          (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
+          (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
+          (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
+          (_selectedCategory == 'Tasawuf' && fieldLower.contains('tasawwuf'));
       if (!matchesCategory) return false;
       if (q.isEmpty) return true;
       return b.title.toLowerCase().contains(q) ||
@@ -235,7 +241,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
               color: textPrimary,
             ),
-            tooltip: _showSearch ? 'Tutup Pencarian' : 'Cari dalam tersimpan',
+            tooltip: _showSearch ? 'Tutup pencarian' : 'Cari dalam tersimpan',
             onPressed: () {
               OTMotion.selection();
               setState(() {

@@ -226,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Jika user sedang mencari
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil Penelusuran',
+                        'Hasil pencarian',
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
                       const SizedBox(height: OTSpacing.sm),
@@ -246,7 +246,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Tidak ditemukan bidang atau ulama yang cocok',
+                                  'Tidak ada hasil',
                                   style: OTTypography.body(color: textSecondary),
                                 ),
                               ),
@@ -286,7 +286,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         SpecialistCard(
                           title: lastOpened.title,
                           titleArabic: lastOpened.titleArabic,
-                          scopeLabel: '${lastOpened.subtitleAcademic.isNotEmpty ? lastOpened.subtitleAcademic : lastOpened.category} · Sesi Terakhir',
+                          scopeLabel: lastOpened.subtitleAcademic.isNotEmpty ? lastOpened.subtitleAcademic : lastOpened.category,
                           emoji: lastOpened.emoji,
                           onOpen: () => _openNotebook(lastOpened, user),
                           onOpenLibrary: lastOpened.catalogId != null

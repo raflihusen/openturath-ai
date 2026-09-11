@@ -287,8 +287,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 const SizedBox(height: OTSpacing.sm),
                                 Text(
                                   _searchQuery.isNotEmpty
-                                      ? 'Tidak ditemukan yang cocok dengan pencarian'
-                                      : 'Belum ada modul pada kategori ini',
+                                      ? 'Tidak ada hasil'
+                                      : 'Belum ada ruang riset untuk bidang ini',
                                   style: OTTypography.body(color: textSecondary),
                                   textAlign: TextAlign.center,
                                 ),

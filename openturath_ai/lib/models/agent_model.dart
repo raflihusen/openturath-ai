@@ -100,7 +100,7 @@ class AgentModel {
           disciplineIds: const ['fiqh_tahawwulat'],
           scholarIds: const ['habib_abu_bakar'],
           fieldId: 'fiqh_tahawwulat',
-          subtitleAcademic: 'Manhaj Fiqh Fitnah & Tanda Zaman • Rukun Keempat',
+          subtitleAcademic: 'Manhaj Abu Bakr al-Masyhur',
           suggestedPrompts: [
             'Jelaskan konsep Rukun Keempat dalam Fikih Tahawwulat!',
             'Bagaimana ibarah tentang tanda zaman kubra dan sughra?',
@@ -341,7 +341,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_muqaran',
-          title: 'Fikih Muqaran',
+          title: 'Perbandingan Mazhab',
           titleArabic: 'الفقه المقارن',
           description:
               'Komparasi hukum lintas mazhab empat (Arba\'ah), analisis wajh al-dilalah, dan tarjih dalil mu\'tabar.',
@@ -620,7 +620,7 @@ class AgentModel {
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
         AgentModel(
           id: 'tarikh',
-          title: 'Sejarah & Sirah Nabawiyyah',
+          title: 'Sejarah & Sirah',
           titleArabic: 'السيرة والتاريخ',
           description:
               'Rekam jejak Sirah Nabawiyyah, Khulafaur Rasyidin, dan thabaqat ulama salaf.',

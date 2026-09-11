@@ -68,6 +68,9 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
   double _loadProgress = 0.0;
   bool _isChecking = false;
   bool _isSuccess = false;
+  int _pollAttempts = 0;
+  bool _isShowingConfirmDialog = false;
+  bool _hasPopped = false;
 
   @override
   void initState() {
@@ -113,7 +116,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
   }
 
   void _triggerSuccess() async {
-    if (_isSuccess || !mounted) return;
+    if (_isSuccess || _hasPopped || !mounted) return;
     _pollTimer?.cancel();
     _txSubscription?.cancel();
     setState(() {
@@ -122,14 +125,22 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
     // Beri jeda 2.2 detik agar pengguna menikmati animasi sukses
     await Future.delayed(const Duration(milliseconds: 2200));
-    if (mounted && context.mounted) {
+    if (mounted && context.mounted && !_hasPopped) {
+      _hasPopped = true;
       Navigator.of(context).pop(true);
     }
   }
 
   Future<void> _checkPaymentStatus() async {
-    if (_isChecking || _isSuccess || !mounted) return;
+    if (_isChecking || _isSuccess || _hasPopped || !mounted) return;
     if (widget.invoiceNumber.isEmpty) return;
+
+    _pollAttempts++;
+    // F33: Batas maksimal polling 150 kali (5 menit) agar tidak memboroskan sumber daya
+    if (_pollAttempts > 150) {
+      _pollTimer?.cancel();
+      return;
+    }
 
     _isChecking = true;
     try {
@@ -151,53 +162,59 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
   }
 
   Future<bool> _handleWillPop() async {
-    if (_isSuccess) return false;
+    if (_isSuccess || _hasPopped) return false;
+    if (_isShowingConfirmDialog) return false;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
-        title: Text(
-          'Batalkan Pembayaran?',
-          style: GoogleFonts.outfit(
-            fontWeight: FontWeight.w600,
-            color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
-          ),
-        ),
-        content: Text(
-          'Apakah Anda yakin ingin menutup laman pembayaran? Sesi pembayaran Anda masih tersimpan.',
-          style: GoogleFonts.outfit(
-            fontSize: 13,
-            color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(
-              'Lanjutkan Bayar',
-              style: GoogleFonts.outfit(
-                color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
-                fontWeight: FontWeight.w600,
-              ),
+    _isShowingConfirmDialog = true;
+    try {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+          title: Text(
+            'Tutup Laman Pembayaran?',
+            style: GoogleFonts.outfit(
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
             ),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              'Ya, Tutup',
-              style: GoogleFonts.outfit(
-                color: AppTheme.appleRed,
-              ),
+          content: Text(
+            'Apakah Anda ingin menutup sesi pembayaran? Transaksi Anda tetap tercatat di sistem.',
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
             ),
           ),
-        ],
-      ),
-    );
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(
+                'Lanjutkan Bayar',
+                style: GoogleFonts.outfit(
+                  color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                'Ya, Tutup',
+                style: GoogleFonts.outfit(
+                  color: AppTheme.appleRed,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 
-    return confirm ?? false;
+      return confirm ?? false;
+    } finally {
+      _isShowingConfirmDialog = false;
+    }
   }
 
   @override
@@ -216,7 +233,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldPop = await _handleWillPop();
-        if (shouldPop && context.mounted) {
+        if (shouldPop && context.mounted && !_hasPopped) {
+          _hasPopped = true;
           Navigator.of(context).pop(false);
         }
       },
@@ -321,7 +339,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             IconButton(
                               onPressed: () async {
                                 final shouldPop = await _handleWillPop();
-                                if (shouldPop && context.mounted) {
+                                if (shouldPop && context.mounted && !_hasPopped) {
+                                  _hasPopped = true;
                                   Navigator.of(context).pop(false);
                                 }
                               },

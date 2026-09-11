@@ -85,74 +85,79 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
-    final phone = await showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: OTRadius.dialogBorder,
-          side: BorderSide(color: border, width: 0.8),
-        ),
-        title: Text(
-          'Nomor WhatsApp Konfirmasi',
-          style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Masukkan nomor WhatsApp aktif untuk pengiriman bukti aktivasi langganan dan rincian transaksi riset Anda.',
-              style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
-            ),
-            const SizedBox(height: OTSpacing.base),
-            TextField(
-              controller: textController,
-              keyboardType: TextInputType.phone,
-              autofocus: true,
-              style: OTTypography.body(color: textPrimary),
-              decoration: InputDecoration(
-                hintText: 'Contoh: 081234567890',
-                hintStyle: OTTypography.body(color: textSecondary),
-                prefixIcon: const Icon(Icons.phone_iphone_rounded, size: 20),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: OTRadius.inputBorder,
-                  borderSide: BorderSide(color: border),
+    String? phone;
+    try {
+      phone = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: OTRadius.dialogBorder,
+            side: BorderSide(color: border, width: 0.8),
+          ),
+          title: Text(
+            'Nomor WhatsApp Konfirmasi',
+            style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Masukkan nomor WhatsApp aktif untuk pengiriman bukti aktivasi langganan dan rincian transaksi riset Anda.',
+                style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+              ),
+              const SizedBox(height: OTSpacing.base),
+              TextField(
+                controller: textController,
+                keyboardType: TextInputType.phone,
+                autofocus: true,
+                style: OTTypography.body(color: textPrimary),
+                decoration: InputDecoration(
+                  hintText: 'Contoh: 081234567890',
+                  hintStyle: OTTypography.body(color: textSecondary),
+                  prefixIcon: const Icon(Icons.phone_iphone_rounded, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: OTRadius.inputBorder,
+                    borderSide: BorderSide(color: border),
+                  ),
                 ),
               ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                OTMotion.light();
+                Navigator.pop(ctx, null);
+              },
+              child: Text('Batal', style: OTTypography.button(color: textSecondary)),
+            ),
+            FilledButton(
+              onPressed: () {
+                final val = textController.text.trim();
+                if (val.length < 8) {
+                  AppSnackBar.warning(ctx, 'Masukkan nomor telepon yang valid.');
+                  return;
+                }
+                OTMotion.success();
+                Navigator.pop(ctx, val);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: textPrimary,
+                foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+              ),
+              child: Text('Lanjutkan Pembayaran', style: OTTypography.button()),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              OTMotion.light();
-              Navigator.pop(ctx, null);
-            },
-            child: Text('Batal', style: OTTypography.button(color: textSecondary)),
-          ),
-          FilledButton(
-            onPressed: () {
-              final val = textController.text.trim();
-              if (val.length < 8) {
-                AppSnackBar.warning(ctx, 'Masukkan nomor telepon yang valid.');
-                return;
-              }
-              OTMotion.success();
-              Navigator.pop(ctx, val);
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: textPrimary,
-              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-            ),
-            child: Text('Lanjutkan Pembayaran', style: OTTypography.button()),
-          ),
-        ],
-      ),
-    );
+      );
+    } finally {
+      textController.dispose();
+    }
 
     if (phone != null && phone.isNotEmpty) {
       try {
@@ -205,7 +210,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     try {
       final userName = _user!.name.trim().isNotEmpty
           ? _user!.name.trim()
-          : (_user!.email.isNotEmpty ? _user!.email.split('@').first : 'Peneliti Turats');
+          : (_user!.email.isNotEmpty ? _user!.email.split('@').first : 'Peneliti');
 
       final result = await _subService
           .createPayment(
