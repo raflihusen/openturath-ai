@@ -57,8 +57,8 @@ void main() {
       expect(activeAgents.map((a) => a.id), contains('hadits'));
     });
 
-    test('Default ThemeMode is dark to match Figma master design', () {
-      expect(AppConfig.themeNotifier.value, ThemeMode.dark);
+    test('Default ThemeMode is system for fresh installs', () {
+      expect(AppConfig.themeNotifier.value, ThemeMode.system);
     });
 
     test('AppTheme defines scholarly sapphire accent and parchment reading surface tokens', () {
