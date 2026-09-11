@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_config.dart';
+import '../core/app_copy.dart';
 import '../core/theme.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_motion.dart';
@@ -132,7 +133,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           _RailItem(
                             icon: Icons.home_outlined,
                             activeIcon: Icons.home_rounded,
-                            label: 'Beranda',
+                            label: AppCopy.navHome,
                             isSelected: _currentIndex == 0,
                             accent: accent,
                             unselected: unselected,
@@ -142,7 +143,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           _RailItem(
                             icon: Icons.auto_awesome_outlined,
                             activeIcon: Icons.auto_awesome_rounded,
-                            label: 'Spesialis',
+                            label: AppCopy.navStudies,
                             isSelected: _currentIndex == 1,
                             accent: accent,
                             unselected: unselected,
@@ -152,7 +153,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           _RailItem(
                             icon: Icons.bookmark_border_rounded,
                             activeIcon: Icons.bookmark_rounded,
-                            label: 'Bookmark',
+                            label: AppCopy.navSaved,
                             isSelected: _currentIndex == 2,
                             accent: accent,
                             unselected: unselected,
@@ -160,9 +161,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.person_outline_rounded,
-                            activeIcon: Icons.person_rounded,
-                            label: 'Profil',
+                            icon: Icons.settings_outlined,
+                            activeIcon: Icons.settings_rounded,
+                            label: AppCopy.navSettings,
                             isSelected: _currentIndex == 3,
                             accent: accent,
                             unselected: unselected,
@@ -222,7 +223,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             child: _GoogleNavBarItem(
                               icon: Icons.home_outlined,
                               activeIcon: Icons.home_rounded,
-                              label: 'Beranda',
+                              label: AppCopy.navHome,
                               isSelected: _currentIndex == 0,
                               onTap: () => _onTabSelected(0),
                             ),
@@ -231,7 +232,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             child: _GoogleNavBarItem(
                               icon: Icons.auto_awesome_outlined,
                               activeIcon: Icons.auto_awesome_rounded,
-                              label: 'Spesialis',
+                              label: AppCopy.navStudies,
                               isSelected: _currentIndex == 1,
                               onTap: () => _onTabSelected(1),
                             ),
@@ -240,16 +241,16 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             child: _GoogleNavBarItem(
                               icon: Icons.bookmark_border_rounded,
                               activeIcon: Icons.bookmark_rounded,
-                              label: 'Bookmark',
+                              label: AppCopy.navSaved,
                               isSelected: _currentIndex == 2,
                               onTap: () => _onTabSelected(2),
                             ),
                           ),
                           Expanded(
                             child: _GoogleNavBarItem(
-                              icon: Icons.person_outline_rounded,
-                              activeIcon: Icons.person_rounded,
-                              label: 'Profil',
+                              icon: Icons.settings_outlined,
+                              activeIcon: Icons.settings_rounded,
+                              label: AppCopy.navSettings,
                               isSelected: _currentIndex == 3,
                               onTap: () => _onTabSelected(3),
                             ),

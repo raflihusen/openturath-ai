@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -102,28 +103,28 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) {
+      builder: (context) {
         return AlertDialog(
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus dari tersimpan?',
+            'Hapus dari Tersimpan',
             style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            '"${item.title}" akan dihapus dari tersimpan.',
+            'Yakin ingin menghapus catatan rujukan ini dari daftar simpanan?',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
+              onPressed: () => Navigator.pop(context, false),
               child: Text(
                 'Batal',
                 style: OTTypography.button(color: textSecondary),
               ),
             ),
             FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
+              onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
                 backgroundColor: OTColors.destructive,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
@@ -147,7 +148,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     if (!mounted) return;
     AppSnackBar.info(
       context,
-      'Dihapus dari tersimpan.',
+      'Dihapus dari simpanan.',
       action: SnackBarAction(
         label: 'Urungkan',
         textColor: const Color(0xFFFBBF24),
@@ -163,7 +164,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _copyIbarah(String ibarah) {
     OTMotion.light();
     Clipboard.setData(ClipboardData(text: ibarah));
-    AppSnackBar.success(context, 'Teks disalin');
+    AppSnackBar.success(context, 'Ibarah tersalin.');
   }
 
   void _shareBookmark(BookmarkModel item) {
@@ -180,7 +181,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       buffer.writeln();
     }
     if (item.fullAnswer.isNotEmpty) {
-      buffer.writeln('Jawaban AI:');
+      buffer.writeln('Jawaban:');
       buffer.writeln(item.fullAnswer);
       buffer.writeln();
     }
@@ -190,7 +191,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Sitasi disalin',
+      'Rujukan tersalin.',
     );
   }
 
@@ -241,7 +242,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
               color: textPrimary,
             ),
-            tooltip: _showSearch ? 'Tutup pencarian' : 'Cari dalam tersimpan',
+            tooltip: _showSearch ? 'Tutup pencarian' : AppCopy.searchSavedTooltip,
             onPressed: () {
               OTMotion.selection();
               setState(() {
@@ -285,7 +286,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                     },
                     style: OTTypography.body(color: textPrimary),
                     decoration: InputDecoration(
-                      hintText: 'Cari dalam kutipan, kitab, atau topik...',
+                      hintText: AppCopy.searchSavedHint,
                       hintStyle: OTTypography.body(color: textSecondary),
                       prefixIcon: Icon(
                         Icons.search_rounded,
@@ -402,14 +403,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                 ),
                                 const SizedBox(height: OTSpacing.lg),
                                 Text(
-                                  'Belum ada yang disimpan',
+                                  AppCopy.noSavedTitle,
                                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                                     fontSize: 16,
                                   ),
                                 ),
                                 const SizedBox(height: OTSpacing.xs + 2),
                                 Text(
-                                  'Simpan jawaban dari ruang riset.',
+                                  AppCopy.noSavedDescription,
                                   textAlign: TextAlign.center,
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 13,
@@ -423,7 +424,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                     shell?.switchTab(1);
                                   },
                                   icon: const Icon(Icons.menu_book_outlined, size: 16),
-                                  label: const Text('Buka keilmuan'),
+                                  label: const Text('Buka kajian'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: textPrimary,
                                     side: BorderSide(color: border, width: 1.0),
@@ -630,7 +631,7 @@ class _BookmarkCard extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: onCopy,
                 icon: const Icon(Icons.copy_rounded, size: 14),
-                label: const Text('Salin Ibarah'),
+                label: const Text(AppCopy.copyIbarahAction),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: textPrimary,
                   side: BorderSide(color: border, width: 0.8),
@@ -643,7 +644,7 @@ class _BookmarkCard extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onOpen,
                 icon: const Icon(Icons.menu_book, size: 14),
-                label: const Text('Lihat Bukti'),
+                label: const Text(AppCopy.viewReferenceAction),
                 style: FilledButton.styleFrom(
                   backgroundColor: surfaceSubtle,
                   foregroundColor: textPrimary,
@@ -657,7 +658,7 @@ class _BookmarkCard extends StatelessWidget {
               IconButton(
                 onPressed: onShare,
                 icon: const Icon(Icons.share_outlined, size: 18),
-                tooltip: 'Bagikan Rujukan Ilmiah',
+                tooltip: AppCopy.shareReferenceTooltip,
                 color: textSecondary,
                 padding: const EdgeInsets.all(8),
                 constraints: const BoxConstraints(),

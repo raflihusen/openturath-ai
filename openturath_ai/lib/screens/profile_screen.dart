@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/routes.dart';
 import '../core/app_config.dart';
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -38,9 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final info = await PackageInfo.fromPlatform();
       if (mounted) {
-        setState(() {
-          _appVersion = info.version;
-        });
+        setState(() => _appVersion = '${info.version}+${info.buildNumber}');
       }
     } catch (_) {}
   }
@@ -58,11 +57,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Konfirmasi Keluar',
+            AppCopy.logoutDialogTitle,
             style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Apakah Anda yakin ingin keluar dari akun OpenTurath AI?',
+            AppCopy.logoutDialogBody,
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -76,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: OTColors.destructive,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text('Keluar', style: OTTypography.button(color: Colors.white)),
+              child: Text(AppCopy.logoutButton, style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -112,14 +111,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(width: OTSpacing.sm),
               Expanded(
                 child: Text(
-                  'Hapus Akun & Data',
+                  AppCopy.deleteAccountTitle,
                   style: OTTypography.cardTitle(color: OTColors.destructive).copyWith(fontSize: 18),
                 ),
               ),
             ],
           ),
           content: Text(
-            'PERINGATAN: Tindakan ini permanen dan tidak dapat dibatalkan.\n\nSeluruh data profil, histori riset, bookmark kitab, dan lisensi akses di perangkat ini akan dihapus secara menyeluruh dari server.',
+            AppCopy.deleteAccountBody,
             style: OTTypography.body(color: OTColors.textSecondary(isDark)),
           ),
           actions: [
@@ -133,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: OTColors.destructive,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text('Hapus Akun Permanen', style: OTTypography.button(color: Colors.white)),
+              child: Text(AppCopy.deleteAccountButton, style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -146,16 +145,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await _authService.deleteAccount();
       if (mounted) {
-        AppSnackBar.success(context, 'Akun dan seluruh data Anda telah berhasil dihapus.');
+        AppSnackBar.success(context, AppCopy.deleteAccountSuccess);
         Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isDeletingAccount = false);
-        AppSnackBar.error(
-          context,
-          'Gagal menghapus akun: ${e.toString().contains('requires-recent-login') ? 'Sesi telah kedaluwarsa. Silakan masuk ulang terlebih dahulu.' : 'Terjadi gangguan jaringan.'}',
-        );
+        final errText = e.toString().contains('requires-recent-login')
+            ? AppCopy.recentLoginRequired
+            : AppCopy.networkError;
+        AppSnackBar.error(context, errText);
       }
     }
   }
@@ -194,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         scrolledUnderElevation: 0,
         centerTitle: true,
         title: Text(
-          'Settings',
+          AppCopy.navSettings,
           style: GoogleFonts.newsreader(
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -226,30 +225,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             final displayName = userModel?.name.isNotEmpty == true
                 ? userModel!.name
-                : (fbUser?.displayName ?? 'Santri Peneliti');
+                : (fbUser?.displayName ?? 'Pengguna');
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
-                : (fbUser?.email ?? 'peneliti@openturath.ai');
+                : (fbUser?.email ?? 'pengguna@openturath.id');
             final plan = userModel?.plan ?? 'trial';
             final isSubscribed =
                 userModel?.isSubscriptionActive ?? (userModel?.isPremium ?? false);
 
             final exp = userModel?.subscriptionExpiry;
-            final expStr = exp != null ? ' · s/d ${exp.day}/${exp.month}/${exp.year}' : '';
+            final expStr = exp != null ? ' · Aktif sampai ${exp.day}/${exp.month}/${exp.year}' : '';
             final String subscriptionSubtitle;
 
             if (isSubscribed) {
               if (plan == 'sultan' || plan == 'all_access' || plan == 'all_ai_1m' || plan == 'all_ai') {
-                subscriptionSubtitle = 'Paket Semua AI (Akses Penuh)$expStr';
+                subscriptionSubtitle = 'Semua Kajian$expStr';
               } else if (plan == 'field') {
-                subscriptionSubtitle = 'Paket Rumpun Keilmuan$expStr';
+                subscriptionSubtitle = 'Rumpun Kajian$expStr';
               } else if (plan == 'single') {
-                subscriptionSubtitle = 'Paket Spesialis Satuan$expStr';
+                subscriptionSubtitle = 'Kajian Satuan$expStr';
               } else {
-                subscriptionSubtitle = 'Langganan Aktif$expStr';
+                subscriptionSubtitle = '${AppCopy.activeSubscription}$expStr';
               }
             } else {
-              subscriptionSubtitle = 'Belum berlangganan. Akses dibuka dengan voucher atau paket.';
+              subscriptionSubtitle = AppCopy.inactiveSubscription;
             }
 
             return ListView(
@@ -285,7 +284,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Text(
-                          isSubscribed ? 'Pro' : 'Pro',
+                          isSubscribed ? 'Aktif' : 'Gratis',
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -310,13 +309,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       _SettingsTile(
                         icon: Icons.person_outline_rounded,
-                        title: 'Profile',
+                        title: AppCopy.profile,
                         subtitle: displayName,
                       ),
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.credit_card_outlined,
-                        title: 'Billing & Plan',
+                        title: AppCopy.subscription,
                         subtitle: subscriptionSubtitle,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: _openSubscription,
@@ -343,8 +342,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               (currentMode == ThemeMode.system && isDark);
                           return _SettingsTile(
                             icon: Icons.dark_mode_outlined,
-                            title: 'Color mode',
-                            subtitle: isCurrentDark ? 'Dark' : 'Light',
+                            title: AppCopy.appearance,
+                            subtitle: isCurrentDark ? AppCopy.modeDark : AppCopy.modeLight,
                             trailing: Switch.adaptive(
                               value: isCurrentDark,
                               activeTrackColor: isDark ? Colors.white : const Color(0xFF18181B),
@@ -359,8 +358,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.translate_rounded,
-                        title: 'Language',
-                        subtitle: 'Bahasa Indonesia (Utama)',
+                        title: AppCopy.language,
+                        subtitle: AppCopy.languageIndonesian,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showLanguageModal(
                           context,
@@ -389,7 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _SettingsTile(
                         icon: Icons.article_outlined,
                         title: 'Ketentuan Layanan',
-                        subtitle: 'Syarat dan ketentuan riset OpenTurath',
+                        subtitle: 'Syarat dan ketentuan OpenTurath',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showTermsOfService(
                           context,
@@ -404,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _SettingsTile(
                         icon: Icons.security_outlined,
                         title: 'Kebijakan Privasi',
-                        subtitle: 'Perlindungan kerahasiaan data riset',
+                        subtitle: 'Perlindungan kerahasiaan data pengguna',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showPrivacyPolicy(
                           context,
@@ -418,8 +417,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
-                        title: 'About OpenTurath',
-                        subtitle: 'Version $_appVersion · AI for Islamic Scholarship',
+                        title: AppCopy.aboutTitle,
+                        subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showAboutModal(
                           context,
@@ -460,7 +459,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(width: 14),
                             Text(
-                              _isLoggingOut ? 'Sedang keluar...' : 'Log out',
+                              _isLoggingOut ? 'Sedang keluar...' : AppCopy.logoutButton,
                               style: GoogleFonts.outfit(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
@@ -487,7 +486,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2, color: OTColors.destructive),
                           )
                         : Text(
-                            'Hapus Akun & Data Riset',
+                            AppCopy.deleteAccountButton,
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
@@ -521,7 +520,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           side: BorderSide(color: border, width: 0.8),
         ),
         title: Text(
-          'Tentang OpenTurath',
+          AppCopy.aboutTitle,
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
         content: Column(
@@ -529,17 +528,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Versi $_appVersion · AI for Islamic Scholarship',
+              'Versi $_appVersion · ${AppCopy.appTagline}',
               style: OTTypography.captionMedium(color: textSecondary),
             ),
             const SizedBox(height: 12),
             Text(
-              'OpenTurath adalah asisten riset naskah primer keilmuan Islam yang menggabungkan ribuan halaman kitab kuning mu\'tabar dengan teknologi penelaahan cerdas.',
+              AppCopy.aboutDescription,
               style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 12),
             Text(
-              'Prinsip Ilmiah: Berbasis sanad, penelusuran ibarah naskah asli, dan kehati-hatian dalam istinbath. Bukan pengganti proses talaqqi dengan masyayikh.',
+              AppCopy.aboutScholarlyPrinciple,
               style: OTTypography.caption(color: textSecondary),
             ),
           ],
