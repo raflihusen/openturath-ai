@@ -139,21 +139,42 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ---
 
-## 2. Status Terkini: 100% Selesai & Terverifikasi
+## 2. Status Terkini: 100% Selesai & Terverifikasi (Forensic Audit Hardened)
 
-### A. Refactoring Arsitektur UI/UX "Minimalist Purism & AI for Islamic Scholarship"
-1. **Desain Minimalis Murni (Pure Minimalist)**:
-   - **Tanpa Logo Grafis**: Top bar Beranda menggunakan tipografis murni terpusat `OpenTurath` dalam Newsreader serif tanpa tanggal ganda atau subketerangan.
-   - **Slogan Global Konsisten**: `"AI for Islamic Scholarship"` menggantikan seluruh sisa `"Riset kitab turats"`.
-   - **Kartu Spesialis Bersih**: Tanpa kotak ikon, tanpa teks Arab pendamping, dan tanpa baris sub-keterangan berantakan. Hanya judul bersih, badge status jika belum tersedia, dan chevron `>`.
-   - **Pencarian Stadium Pill Bersih**: Menghilangkan border ganda ("buletan dalam buletan") dari TextField di Beranda dan Keilmuan.
-   - **Pembersihan Modal Ruang Riset**: Menghapus opsi "Buka di Browser Eksternal" dan menghapus seluruh sub-penjelasan di bawah tiap opsi.
-   - **Pembersihan Disclaimer Gemini**: Seluruh teks disclaimer ("Gemini may display inaccurate info...", dll.) disapu bersih via CSS dan MutationObserver script.
-   - **Animasi Antar-Tab Halus**: Mengganti `IndexedStack` dengan `PageView` ber-controller animasi (`Curves.easeOutCubic`, 300ms) untuk transisi tab yang hidup dan mulus.
-2. **Hasil Verifikasi**:
+### A. Resolusi Audit Forensik 360° (Putaran 1 & Putaran 2)
+1. **Layer 1 — Client Flutter & Ergonomi UI**:
+   - **F-03 & F-10**: Subtitle langganan palsu di Profil dieliminasi. Status langganan kini 100% dinamis dan akurat.
+   - **F-09**: Rasio kontras tombol destruktif "Hapus Akun & Data Riset" ditingkatkan hingga memenuhi standar aksesibilitas WCAG AA (>= 4.5:1).
+   - **F-10**: `userStream` di-cache sebagai broadcast stream terkelola tunggal (mencegah listener Firestore churn & memory leak saat mengetik di search bar).
+   - **F-11**: Tombol Back Android (`onPopInvokedWithResult`) memanggil `_onTabSelected(0)` sehingga `_pageController` tersinkronisasi mulus ke tab Beranda.
+   - **F-04**: Pembersihan `window.otMasterObserver` eksplisit di JS dan controller cleanup dalam `finally` pada `dispose()` WebView.
+   - **F-12**: Deteksi tahun banner NotebookLM menggunakan regex generik `/\b(19|20)\d{2}\b/`.
+   - **F-08**: Debounce timer 200ms pada pencarian katalog perpustakaan.
+   - **F-05**: Timeout 5 detik pada antrean mutex `_synchronized` BookmarkService.
+   - **F-19**: Serialisasi tanggal ISO-8601 pada `ModuleEntitlement` dan `UserModel` untuk cache offline aman tanpa crash `jsonEncode`.
+   - **F-20**: DOKU checkout sheet mendeteksi status `'paid'` (server) di samping `'success'`.
+   - **F-31**: Tipografi judul korpus spesialis menerapkan Newsreader serif ilmiah 3 lapis.
+   - **F-28**: Slogan konsisten dalam Bahasa Indonesia ilmiah: `'Telaah ibarah dari marja\' mu\'tamad'`.
+
+2. **Layer 2 — Backend Cloud Functions & Aturan Firestore**:
+   - **F-01 (P0)**: `dailyRevoke` memeriksa masa aktif tiap modular entitlement di peta `entitlements`, mencabut modul satuan yang telah kedaluwarsa, dan merekam job ke `provisioning_outbox`.
+   - **F-02 (P0)**: Cron worker `processProvisioningOutbox` (setiap 5 menit) memproses outbox provisioning/revocation NotebookLM hingga 8 kali percobaan dengan backoff aman.
+   - **F-02 (Audit 2)**: Rate-limiting pada callable `checkPaymentStatus` (maksimal 15 panggilan/menit per UID).
+   - **F-03 & F-05**: Rate-limiting brute force protection pada `redeemCode` (maksimal 8 percobaan/15 menit per UID).
+   - **F-06**: Signature webhook DOKU diverifikasi menggunakan constant-time `crypto.timingSafeEqual` dan penolakan timestamp skew > 15 menit dengan HTTP 401.
+   - **F-07**: Tulis dokumen transaksi berstatus `"pending"` sebelum memanggil API checkout gateway DOKU.
+   - **F-08**: Eliminasi pembuatan dokumen user ber-ID acak (`db.collection("users").doc()`).
+   - **F-01 (Audit 2)**: Cron harian `cleanupOrphanedDeletions` untuk membersihkan dokumen Firestore bertanda `pending_deletion` jika akun Auth telah terhapus.
+   - **F-15**: Pemetaan judul spesialis lengkap untuk `aqidah`, `tarikh`, `tasawwuf`, dan `sirah`.
+   - **firestore.rules**: Mengunci koleksi server-only (`rate_limits`, `redeem_attempts`, `provisioning_outbox`) dan memvalidasi `photo_url.size() <= 1000`.
+
+3. **Layer 3 — Pengujian Unit & Sinkronisasi Katalog**:
+   - **F-29**: Sinkronisasi jumlah katalog menjadi **87 kitab mu'tamad** (sesuai data riil `canonical_syafii.json`).
+   - **F-17**: Pengujian unit langsung terhadap kode produksi `AgentWebviewScreen.isAllowedNotebookUrl` dan `SubscriptionService.normalizeCode`.
+   - **F-11 (Audit 2)**: Pengujian batas kalender kabisat (29 Februari) dan non-kabisat (28 Februari) pada `HijriDateUtils.addCalendarMonthsClamped`.
    - `flutter analyze lib/`: **0 issues found** (100% bersih).
-   - `flutter test`: **51 dari 51 test case LULUS 100%**.
-   - **Binary Release APK**: `/Users/apple/Downloads/ramadhan/app-release-latest.apk` (58.6 MB, SHA-256: `f049b00e24a9513bc40d7b5459f1a4ff06353987ee4b4438e30b70f1c7a079a0`).
+   - `flutter test`: **52 dari 52 test case LULUS 100%**.
+   - `npm run build` (Functions): **Kompilasi TypeScript tsc 100% BERSIH tanpa error**.
 
 ---
 
@@ -167,11 +188,10 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 ---
 
 ## 4. Git Commits Riwayat Terkini
-- `7a47a07`: `fix(ui): eliminate card icons, arabic titles, cluttered descriptions, external browser option, search inner borders, and inject smooth tab animations`
-- `8370e00`: `feat(ui): restore minimalist purism, centered wordmark, grouped settings, and AI for Islamic Scholarship slogan`
-- `749279c`: `fix(ui): restore tactile Apple micro-interactions, authentic scholarly copywriting, and intuitive academic desk`
-- `444f9d9`: `fix(ui): overhaul scholarly dashboard, eliminate NotebookLM header banner, and elevate SpecialistCard aesthetics`
-- `cf3f22b`: `fix(ui): dialog ergonomics, checkout navigation safety, and 333-line forensic copy overhaul (F33, F38, F49-F60, C001-C333)`
+- `147befb`: `fix(client): resolve forensic audit findings F-03, F-04, F-05, F-08, F-10, F-11, F-19, F-20, F-22, F-31 in Flutter app`
+- `f138228`: `fix(security): lock server collections and permit pending_deletion update in firestore.rules`
+- `8d8e6c1`: `fix(backend): resolve forensic audit findings F-01, F-02, F-04, F-06, F-07, F-08, F-15 in Cloud Functions`
+- `583e50b`: `test(hardening): verify calendar leap year clamping, test production code directly, and align catalog count to 87`
 
 ---
 
@@ -2022,7 +2042,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
           'name', 'email', 'photo_url', 'plan', 'questions_used',
-          'subscription_expiry', 'entitlements'
+          'subscription_expiry', 'entitlements', 'pending_deletion', 'pending_deletion_at'
         ])
         && (
           (request.auth.token.firebase.sign_in_provider != 'anonymous' && request.resource.data.email == request.auth.token.email) ||
@@ -2031,9 +2051,14 @@ service cloud.firestore {
         && request.resource.data.plan == 'trial'
         && request.resource.data.questions_used == 0
         && request.resource.data.subscription_expiry == null
+        && (!('photo_url' in request.resource.data) || request.resource.data.photo_url == null || request.resource.data.photo_url.size() <= 1000)
         && (!('entitlements' in request.resource.data) || request.resource.data.entitlements == {});
 
-      allow update: if false;
+      // UPDATE: Hanya diizinkan untuk menandai pending_deletion saat penghapusan akun
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pending_deletion', 'pending_deletion_at'])
+        && request.resource.data.pending_deletion == true;
 
       // DELETE: Pengguna boleh menghapus datanya sendiri
       allow delete: if request.auth != null && request.auth.uid == userId;
@@ -2065,13 +2090,25 @@ service cloud.firestore {
     }
 
     // ================================================================
-    // REDEEM CODES & WEBHOOK EVENTS: 100% Server Admin Only
+    // SERVER-ONLY COLLECTIONS (Redeem, Webhook, Outbox, Rate Limits)
     // ================================================================
     match /redeem_codes/{codeId} {
       allow read, write: if false;
       match /{allSubcollections=**} {
         allow read, write: if false;
       }
+    }
+
+    match /redeem_attempts/{uid} {
+      allow read, write: if false;
+    }
+
+    match /rate_limits/{limitId} {
+      allow read, write: if false;
+    }
+
+    match /provisioning_outbox/{jobId} {
+      allow read, write: if false;
     }
 
     match /webhook_events/{eventId} {
@@ -2236,9 +2273,8 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
     if (status === "active" && allExpiryDate && allExpiryDate > new Date()) {
       return { premiumPlan: true, active: true };
     }
-    if (status === "revoked") {
-      return { premiumPlan: false, active: false };
-    }
+    // F-04: Jika all_access berstatus revoked atau expired, jangan langsung tolak semua modul.
+    // Lanjutkan pengecekan ke modul spesifik (productEntitlement) di bawah.
   }
 
   // 2. Cek Modul Spesifik
@@ -2531,6 +2567,59 @@ async function requestDokuCheckout(params: {
 }
 
 // ================================================================
+// ================================================================
+// RATE LIMITING HELPER (In-Memory / Firestore Atomic Window)
+// ================================================================
+async function enforceRateLimit(
+  key: string,
+  limit: number,
+  windowSeconds: number,
+  errorMessage: string
+): Promise<void> {
+  const now = Date.now();
+  const rateLimitRef = db.collection("rate_limits").doc(key);
+
+  await db.runTransaction(async (t) => {
+    const snap = await t.get(rateLimitRef);
+    if (!snap.exists) {
+      t.set(rateLimitRef, {
+        count: 1,
+        reset_at: admin.firestore.Timestamp.fromMillis(now + windowSeconds * 1000),
+        updated_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      return;
+    }
+
+    const data = snap.data()!;
+    const resetAt = data.reset_at?.toMillis ? data.reset_at.toMillis() : (data.reset_at || 0);
+
+    if (now > resetAt) {
+      // Window reset
+      t.set(rateLimitRef, {
+        count: 1,
+        reset_at: admin.firestore.Timestamp.fromMillis(now + windowSeconds * 1000),
+        updated_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      return;
+    }
+
+    const currentCount = (data.count || 0) as number;
+    if (currentCount >= limit) {
+      const waitSec = Math.ceil((resetAt - now) / 1000);
+      throw new functions.https.HttpsError(
+        "resource-exhausted",
+        `${errorMessage} Harap tunggu ${waitSec} detik lagi.`
+      );
+    }
+
+    t.update(rateLimitRef, {
+      count: currentCount + 1,
+      updated_at: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  });
+}
+
+// ================================================================
 // FUNCTION 2: createCheckout
 // Dipanggil dari app & web — mengembalikan link DOKU Checkout
 // ================================================================
@@ -2560,24 +2649,7 @@ export const createCheckout = functions
     const trxId = trxRef.id;
     const uid = context.auth?.uid || null;
 
-    let paymentUrl = "";
-    try {
-      paymentUrl = await requestDokuCheckout({
-        invoiceNumber,
-        amount: pricing.amount,
-        itemName: pricing.label,
-        customerName: name,
-        customerEmail: email,
-        customerPhone: phone || "",
-      });
-    } catch (err: any) {
-      console.error("[createCheckout] DOKU checkout error:", err.response?.data || err.message);
-      throw new functions.https.HttpsError(
-        "internal",
-        "Gagal membuat sesi pembayaran DOKU: " + (err.response?.data?.error?.message || err.message || "Kendala teknis DOKU")
-      );
-    }
-
+    // F-07: Tulis dokumen transaksi berstatus pending SEBELUM memanggil gateway DOKU
     await trxRef.set({
       uid,
       plan,
@@ -2592,9 +2664,37 @@ export const createCheckout = functions
       customer_name: name,
       customer_email: email,
       customer_phone: phone || "",
-      payment_url: paymentUrl,
       created_at: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+    let paymentUrl = "";
+    try {
+      paymentUrl = await requestDokuCheckout({
+        invoiceNumber,
+        amount: pricing.amount,
+        itemName: pricing.label,
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone || "",
+      });
+
+      // Update URL pembayaran yang berhasil diperoleh
+      await trxRef.update({
+        payment_url: paymentUrl,
+        updated_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (err: any) {
+      console.error("[createCheckout] DOKU checkout error:", err.response?.data || err.message);
+      await trxRef.update({
+        status: "failed",
+        error: err.response?.data?.error?.message || err.message || "Kendala teknis DOKU",
+        failed_at: admin.firestore.FieldValue.serverTimestamp(),
+      }).catch(() => {});
+      throw new functions.https.HttpsError(
+        "internal",
+        "Gagal membuat sesi pembayaran DOKU: " + (err.response?.data?.error?.message || err.message || "Kendala teknis DOKU")
+      );
+    }
 
     return {
       redirectUrl: paymentUrl,
@@ -2628,6 +2728,9 @@ function getServiceTitleForEntitlement(entitlementKey: string): string {
   if (entitlementKey === "tafsir") return "AI Tafsir";
   if (entitlementKey === "hadits") return "AI Hadits";
   if (entitlementKey === "nahwu" || entitlementKey === "bahasa_arab" || entitlementKey === "nahwu_sharaf") return "AI Bahasa Arab";
+  if (entitlementKey === "aqidah" || entitlementKey === "aqidah_kalam" || entitlementKey === "aqidah_ushuluddin") return "AI Aqidah & Ushuluddin";
+  if (entitlementKey === "tarikh" || entitlementKey === "tarikh_khulafa" || entitlementKey === "tarikh_thabaqat" || entitlementKey === "sirah") return "AI Tarikh & Sirah Nabawiyah";
+  if (entitlementKey === "tasawwuf" || entitlementKey === "habib_umar" || entitlementKey === "tasawwuf_ihya" || entitlementKey === "tasawwuf_adab") return "AI Tasawwuf & Tazkiyatun Nafs";
   return "Ruang Riset";
 }
 
@@ -2791,6 +2894,14 @@ async function processSuccessfulPayment(invoiceNumber: string) {
   return { success: true, ...activationResult };
 }
 
+function safeTimingEqual(a: string, b: string): boolean {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
 // ================================================================
 // FUNCTION 2b: dokuWebhook (HTTP Notification dari DOKU)
 // Otomatis aktifkan akses santri di Firestore saat bayar sukses
@@ -2827,20 +2938,24 @@ export const dokuWebhook = functions
       const expectedSig2 = generateDokuSignature(clientId, requestId, timestamp, req.path || "/dokuWebhook", rawBody, dokuCfg.secretKey);
       const expectedSig3 = generateDokuSignature(clientId, requestId, timestamp, "/dokuWebhook", rawBody, dokuCfg.secretKey);
 
-      if (incomingSignature !== expectedSig1 && incomingSignature !== expectedSig2 && incomingSignature !== expectedSig3) {
+      // F-06: Verifikasi signature dengan constant-time comparison mencegah timing attacks
+      const isValidSig = safeTimingEqual(incomingSignature, expectedSig1) ||
+                         safeTimingEqual(incomingSignature, expectedSig2) ||
+                         safeTimingEqual(incomingSignature, expectedSig3);
+
+      if (!isValidSig) {
         console.error(`[DOKU Webhook] Signature mismatch for request ${requestId}`);
         res.status(401).send("Invalid signature");
         return;
       }
 
-      // Verifikasi skew timestamp jika ada (toleransi 15 menit)
+      // F-06: Verifikasi skew timestamp mencegah replay attack (toleransi maksimal 15 menit)
       if (timestamp) {
         const reqTime = new Date(timestamp).getTime();
-        if (!isNaN(reqTime)) {
-          const skewMs = Math.abs(Date.now() - reqTime);
-          if (skewMs > 15 * 60 * 1000) {
-            console.warn(`[DOKU Webhook] Request-Timestamp skew terlampau jauh: ${timestamp}`);
-          }
+        if (isNaN(reqTime) || Math.abs(Date.now() - reqTime) > 15 * 60 * 1000) {
+          console.error(`[DOKU Webhook] Request-Timestamp invalid or skew > 15 min: ${timestamp}`);
+          res.status(401).send("Timestamp expired or invalid");
+          return;
         }
       }
 
@@ -2918,6 +3033,14 @@ export const checkPaymentStatus = functions
     }
 
     const callerUid = context.auth.uid;
+    // F-02: Rate limit status inquiry (maksimal 15 panggilan per menit per UID)
+    await enforceRateLimit(
+      `chk_${callerUid}`,
+      15,
+      60,
+      "Terlalu banyak permintaan pemeriksaan status pembayaran."
+    );
+
     const invoiceNumber = data.invoiceNumber;
     if (!invoiceNumber) {
       throw new functions.https.HttpsError("invalid-argument", "Invoice number diperlukan.");
@@ -3011,6 +3134,14 @@ export const redeemCode = functions
     }
 
     const uid = context.auth.uid;
+    // F-03 & F-05: Rate limit penukaran voucher per UID (maksimal 8 percobaan per 15 menit)
+    await enforceRateLimit(
+      `rdm_${uid}`,
+      8,
+      900,
+      "Terlalu banyak percobaan penukaran kode redeem."
+    );
+
     const userEmail = (context.auth.token.email || "").trim().toLowerCase();
 
     let redeemResult = {
@@ -3300,36 +3431,24 @@ export const dailyRevoke = functions
   .onRun(async () => {
     const now = admin.firestore.Timestamp.now();
 
-    const expiredUsers = await db
-      .collection("users")
-      .where("subscription_expiry", "<=", now)
-      .get();
+    // F-01: Periksa seluruh user di database (agar langganan modul tunggal tidak lolos)
+    const allUsersSnap = await db.collection("users").get();
 
-    if (expiredUsers.empty) {
-      console.log("✅ No expired subscriptions found.");
+    if (allUsersSnap.empty) {
+      console.log("✅ Tidak ada data user di database.");
       return null;
     }
 
-    console.log(`🔄 Memproses ${expiredUsers.size} user expired...`);
+    console.log(`🔄 Memeriksa ${allUsersSnap.size} user untuk pengecekan kedaluwarsa...`);
+    let processedCount = 0;
 
-    for (const doc of expiredUsers.docs) {
+    for (const doc of allUsersSnap.docs) {
       const userData = doc.data();
       const plan = userData.plan || "";
-      
-      // F12: Perluas whitelist plan agar mencakup all_ai dan voucher_access
-      const eligiblePlans = [
-        "tholib", "bahits", "tholib_1m", "tholib_6m", "bahits_1y",
-        "premium", "all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y",
-        "voucher_access", "voucher"
-      ];
-      if (!eligiblePlans.includes(plan)) {
-        continue;
-      }
-      
-      const email = userData.email;
+      const email = (userData.email || "").trim().toLowerCase();
+      const entitlements = (userData.entitlements || {}) as Record<string, any>;
 
-      // Revoke modular entitlements jika expired
-      const entitlements = userData.entitlements || {};
+      // 1. Periksa modular entitlements yang telah expired
       let hasExpiredEntitlement = false;
       const updatedEntitlements = { ...entitlements };
       const expiredKeys: string[] = [];
@@ -3340,7 +3459,7 @@ export const dailyRevoke = functions
           const exp = item.expiry
             ? (typeof item.expiry.toDate === "function" ? item.expiry.toDate() : new Date(item.expiry))
             : null;
-          if (exp && exp <= now.toDate() && item.status !== "expired") {
+          if (exp && exp <= now.toDate() && item.status === "active") {
             updatedEntitlements[key] = {
               ...item,
               status: "expired",
@@ -3352,7 +3471,7 @@ export const dailyRevoke = functions
         }
       }
 
-      // F12: Cek apakah masih ada entitlement lain yang aktif sebelum mereset plan global ke trial
+      // 2. Cek apakah masih ada entitlement lain yang aktif
       let hasRemainingActive = false;
       for (const val of Object.values(updatedEntitlements)) {
         if (val && typeof val === "object") {
@@ -3367,24 +3486,47 @@ export const dailyRevoke = functions
         }
       }
 
+      const globalExpiry = userData.subscription_expiry
+        ? (typeof userData.subscription_expiry.toDate === "function" ? userData.subscription_expiry.toDate() : new Date(userData.subscription_expiry))
+        : null;
+      const isGlobalExpired = globalExpiry && globalExpiry <= now.toDate();
+
       const updateData: any = {};
       if (hasExpiredEntitlement) {
         updateData.entitlements = updatedEntitlements;
       }
-      // HANYA reset global plan jika TIDAK ADA modul lain yang aktif!
-      if (!hasRemainingActive) {
-        updateData.plan = "trial";
-        updateData.subscription_expiry = null;
-        updateData.questions_used = 0;
+      // HANYA reset global plan jika TIDAK ADA modul lain yang aktif dan masa berlaku habis
+      if (!hasRemainingActive && (isGlobalExpired || !globalExpiry)) {
+        if (plan !== "trial" && plan !== "anonymous") {
+          updateData.plan = "trial";
+          updateData.subscription_expiry = null;
+          updateData.questions_used = 0;
+        }
       }
 
       if (Object.keys(updateData).length > 0) {
         await doc.ref.update(updateData);
+        processedCount++;
       }
 
+      // 3. Cabut akses NotebookLM untuk tiap modul yang expired
       if (email && expiredKeys.length > 0) {
         for (const expiredKey of expiredKeys) {
           console.log(`🔒 Akses modul ${expiredKey} berakhir untuk ${email}.`);
+
+          // F-01 & F-02: Catat job pencabutan ke durable outbox
+          const outboxRef = db.collection("provisioning_outbox").doc(`rev_${doc.id}_${expiredKey}_${now.toMillis()}`);
+          await outboxRef.set({
+            uid: doc.id,
+            email,
+            name: userData.name || "Peneliti",
+            entitlement_key: expiredKey,
+            plan: "trial",
+            action: "remove",
+            status: "pending",
+            attempts: 0,
+            created_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
 
           try {
             await notifySubscriptionServer(
@@ -3410,9 +3552,131 @@ export const dailyRevoke = functions
       }
     }
 
-    console.log(
-      `✅ Selesai memproses ${expiredUsers.size} expired subscriptions.`
-    );
+    console.log(`✅ Selesai memproses dailyRevoke. ${processedCount} user diperbarui.`);
+    return null;
+  });
+
+// ================================================================
+// FUNCTION 4b: processProvisioningOutbox (Cron Worker — tiap 5 menit)
+// Memproses antrean durable outbox provisioning & revocation NotebookLM
+// ================================================================
+export const processProvisioningOutbox = functions
+  .runWith({
+    serviceAccount: "open-turath@appspot.gserviceaccount.com",
+    timeoutSeconds: 300,
+  })
+  .pubsub.schedule("every 5 minutes")
+  .onRun(async () => {
+    const pendingJobs = await db.collection("provisioning_outbox")
+      .where("status", "in", ["pending", "retry"])
+      .limit(25)
+      .get();
+
+    if (pendingJobs.empty) {
+      return null;
+    }
+
+    console.log(`[Outbox Worker] Memproses ${pendingJobs.size} antrean outbox...`);
+
+    for (const doc of pendingJobs.docs) {
+      const job = doc.data();
+      const attempts = (job.attempts || 0) as number;
+
+      if (attempts >= 8) {
+        console.error(`[Outbox Worker] Job ${doc.id} mencapai batas maksimal percobaan (8). Ditandai failed.`);
+        await doc.ref.update({
+          status: "failed",
+          failed_at: admin.firestore.FieldValue.serverTimestamp(),
+          error: "Exceeded max retry attempts (8)",
+        });
+        continue;
+      }
+
+      const email = (job.email || "").trim().toLowerCase();
+      if (!email || !email.includes("@")) {
+        console.warn(`[Outbox Worker] Job ${doc.id} tidak memiliki email valid: '${email}'. Ditandai failed.`);
+        await doc.ref.update({
+          status: "failed",
+          failed_at: admin.firestore.FieldValue.serverTimestamp(),
+          error: "Invalid email",
+        });
+        continue;
+      }
+
+      const action = (job.action || "add") as "add" | "remove";
+      const plan = job.plan || "premium";
+      const name = job.name || "Peneliti";
+      const serviceTitle = getServiceTitleForEntitlement(job.entitlement_key || "");
+
+      try {
+        await notifySubscriptionServer(email, name, plan, action, serviceTitle);
+        await doc.ref.update({
+          status: "completed",
+          completed_at: admin.firestore.FieldValue.serverTimestamp(),
+          last_attempt_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        console.log(`[Outbox Worker] Berhasil memproses job ${doc.id} (${action} ${email} -> ${serviceTitle})`);
+      } catch (err: any) {
+        console.error(`[Outbox Worker] Gagal memproses job ${doc.id}:`, err.message);
+        await doc.ref.update({
+          status: "retry",
+          attempts: attempts + 1,
+          last_error: err.message || "Unknown error",
+          last_attempt_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+    }
+
+    return null;
+  });
+
+// ================================================================
+// FUNCTION 4c: cleanupOrphanedDeletions (Cron Harian — jam 03.00 WIB)
+// Membersihkan dokumen user yang bertanda pending_deletion jika akun Auth sudah terhapus
+// ================================================================
+export const cleanupOrphanedDeletions = functions
+  .runWith({
+    serviceAccount: "open-turath@appspot.gserviceaccount.com",
+    timeoutSeconds: 300,
+  })
+  .pubsub.schedule("0 3 * * *")
+  .timeZone("Asia/Jakarta")
+  .onRun(async () => {
+    const pendingSnap = await db.collection("users")
+      .where("pending_deletion", "==", true)
+      .limit(50)
+      .get();
+
+    if (pendingSnap.empty) {
+      console.log("[cleanupOrphanedDeletions] Tidak ada user pending_deletion.");
+      return null;
+    }
+
+    console.log(`[cleanupOrphanedDeletions] Memeriksa ${pendingSnap.size} user pending deletion...`);
+
+    for (const doc of pendingSnap.docs) {
+      const uid = doc.id;
+      let authUserExists = false;
+
+      try {
+        await admin.auth().getUser(uid);
+        authUserExists = true;
+      } catch (err: any) {
+        if (err.code === "auth/user-not-found") {
+          authUserExists = false;
+        } else {
+          console.warn(`[cleanupOrphanedDeletions] Gagal mengecek auth untuk UID ${uid}: ${err.message}`);
+          continue;
+        }
+      }
+
+      // Jika akun Auth sudah tidak ada, hapus dokumen Firestore agar tidak menjadi orphan
+      if (!authUserExists) {
+        console.log(`[cleanupOrphanedDeletions] Menghapus orphan Firestore doc untuk UID ${uid}`);
+        await doc.ref.delete();
+      }
+    }
+
     return null;
   });
 
@@ -3755,39 +4019,44 @@ async function verifySubscriptionFirestore(email: string, entitlementKey: string
       
       if (txEntitlement === entitlementKey && expiresAt && expiresAt.toDate() > new Date()) {
         // Auto-initialize user doc if they exist in transactions but not in users collection
-        let userRef;
+        let userRef: FirebaseFirestore.DocumentReference | null = null;
         let userData: any = {};
         
         if (!userQuery.empty) {
           userRef = userQuery.docs[0].ref;
           userData = userQuery.docs[0].data();
         } else {
-          // If no doc exists, create one with auto-generated ID
-          userRef = db.collection("users").doc();
+          // F-08: Jangan membuat dokumen ber-ID acak. Hubungkan hanya jika ada akun Firebase Auth yang sah.
+          const authUser = await admin.auth().getUserByEmail(email).catch(() => null);
+          if (authUser) {
+            userRef = db.collection("users").doc(authUser.uid);
+          }
         }
 
-        const expiryDate = expiresAt.toDate();
-        const plan = tx.plan || "tholib_1m";
+        if (userRef) {
+          const expiryDate = expiresAt.toDate();
+          const plan = tx.plan || "tholib_1m";
 
-        await userRef.set({
-          email: email,
-          name: userData.name || tx.customer_name || "User",
-          plan: plan,
-          subscription_expiry: expiryDate,
-          entitlements: {
-            ...userData.entitlements,
-            [entitlementKey]: {
-              plan: plan,
-              expiry: expiryDate,
-              updated_at: now
-            }
-          },
-          questions_used: userData.questions_used || 0,
-          created_at: userData.created_at || now,
-          updated_at: now
-        }, { merge: true });
+          await userRef.set({
+            email: email,
+            name: userData.name || tx.customer_name || "User",
+            plan: plan,
+            subscription_expiry: expiryDate,
+            entitlements: {
+              ...userData.entitlements,
+              [entitlementKey]: {
+                plan: plan,
+                expiry: expiryDate,
+                updated_at: now
+              }
+            },
+            questions_used: userData.questions_used || 0,
+            created_at: userData.created_at || now,
+            updated_at: now
+          }, { merge: true });
 
-        console.log(`[Auth] Auto-registered/updated user document for ${email} based on active transaction.`);
+          console.log(`[Auth] Auto-registered/updated user document for ${email} based on active transaction.`);
+        }
         return true;
       }
     }
@@ -5255,6 +5524,34 @@ class HijriDateUtils {
         : 'Bulan';
     return '${h.day} $hMonthName ${h.year} H';
   }
+
+  /// Menambahkan durasi bulan kalender dengan month-end clamping deterministik.
+  /// Contoh: 31 Januari + 1 bulan = 28 Februari (atau 29 pada kabisat).
+  /// 31 Maret + 1 bulan = 30 April.
+  static DateTime addCalendarMonthsClamped(DateTime baseDate, int months) {
+    var newYear = baseDate.year;
+    var newMonth = baseDate.month + months;
+    while (newMonth > 12) {
+      newYear++;
+      newMonth -= 12;
+    }
+    while (newMonth < 1) {
+      newYear--;
+      newMonth += 12;
+    }
+    final daysInTargetMonth = DateTime(newYear, newMonth + 1, 0).day;
+    final clampedDay = baseDate.day > daysInTargetMonth ? daysInTargetMonth : baseDate.day;
+    return DateTime(
+      newYear,
+      newMonth,
+      clampedDay,
+      baseDate.hour,
+      baseDate.minute,
+      baseDate.second,
+      baseDate.millisecond,
+      baseDate.microsecond,
+    );
+  }
 }
 
 ```
@@ -5277,7 +5574,7 @@ class Loc {
       'active_sub': 'Akses aktif',
       'valid_until': 'Aktif hingga',
       'full_access': 'Akses semua ruang riset yang tersedia',
-      'unlimited_research': 'AI for Islamic Scholarship',
+      'unlimited_research': 'Telaah ibarah dari marja\' mu\'tamad',
       'explore_corpus': 'Pilih ruang riset.',
       'theme_mode': 'Tampilan Tema',
       'theme_system': 'Sistem Default',
@@ -7400,6 +7697,14 @@ class ModuleEntitlement {
         'source_transaction_id': sourceTransactionId,
         'updated_at': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
       };
+
+  Map<String, dynamic> toJsonMap() => {
+        'plan': plan,
+        'expiry': expiry?.toIso8601String(),
+        'status': status,
+        'source_transaction_id': sourceTransactionId,
+        'updated_at': updatedAt?.toIso8601String(),
+      };
 }
 
 class UserModel {
@@ -7578,7 +7883,7 @@ class UserModel {
         'plan': plan,
         'questions_used': questionsUsed,
         'subscription_expiry': subscriptionExpiry?.toIso8601String(),
-        'entitlements': entitlements.map((k, v) => MapEntry(k, v.toMap())),
+        'entitlements': entitlements.map((k, v) => MapEntry(k, v.toJsonMap())),
       };
 
   UserModel copyWith({
@@ -7639,6 +7944,19 @@ import '../widgets/library_bottom_sheet.dart';
 class AgentWebviewScreen extends StatefulWidget {
   final AgentModel? agent;
   const AgentWebviewScreen({super.key, this.agent});
+
+  /// Kebijakan keamanan URL: Hanya izinkan HTTPS pada ekosistem resmi Google NotebookLM
+  static bool isAllowedNotebookUrl(Uri uri) {
+    if (uri.scheme.toLowerCase() != 'https') return false;
+    final host = uri.host.toLowerCase();
+    const allowedDomains = [
+      'google.com',
+      'gstatic.com',
+      'googleapis.com',
+      'googleusercontent.com',
+    ];
+    return allowedDomains.any((d) => host == d || host.endsWith('.$d'));
+  }
 
   @override
   State<AgentWebviewScreen> createState() => _AgentWebviewScreenState();
@@ -7706,9 +8024,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   @override
   void dispose() {
     try {
+      _webController?.evaluateJavascript(source: '''
+        if (window.otMasterObserver) {
+          window.otMasterObserver.disconnect();
+          window.otMasterObserver = null;
+        }
+      ''');
       _webController?.stopLoading();
-    } catch (_) {}
-    _webController = null;
+    } catch (_) {
+    } finally {
+      _webController = null;
+    }
     super.dispose();
   }
 
@@ -7796,7 +8122,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             var isBanner = txt.includes('0 sources') || txt.includes('sources ·') ||
                            txt.includes('super ai') || txt.includes('bridging turath') ||
                            txt.includes('asisten penelitian berbasis turath') ||
-                           (txt.includes('sources') && (txt.includes('dec 22') || txt.includes('feb 22') || txt.includes('2025') || txt.includes('2026')));
+                           (txt.includes('sources') && (txt.includes('dec 22') || txt.includes('feb 22') || /\b(19|20)\d{2}\b/.test(txt)));
             if (isBanner && el.clientHeight > 15 && el.clientHeight < 700) {
               el.style.setProperty('display', 'none', 'important');
               el.style.setProperty('visibility', 'hidden', 'important');
@@ -8415,20 +8741,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   final uri = navigationAction.request.url;
                   if (uri == null) return NavigationActionPolicy.ALLOW;
 
-                  // Wajib skema HTTPS
-                  if (uri.scheme != 'https') {
-                    return NavigationActionPolicy.CANCEL;
-                  }
-
-                  final host = uri.host.toLowerCase();
-                  const allowedDomains = [
-                    'google.com',
-                    'gstatic.com',
-                    'googleapis.com',
-                    'googleusercontent.com',
-                  ];
-                  final isAllowed = allowedDomains.any((d) => host == d || host.endsWith('.$d'));
-                  if (isAllowed) {
+                  if (AgentWebviewScreen.isAllowedNotebookUrl(uri)) {
                     return NavigationActionPolicy.ALLOW;
                   }
 
@@ -10774,6 +11087,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
 ### FLUTTER FILE: openturath_ai/lib/screens/library_screen.dart
 ```dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -10797,6 +11111,7 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
   final CanonicalLibraryService _service = CanonicalLibraryService.instance;
+  Timer? _searchDebounce;
 
   List<CanonicalBookPresentation>? _allBooks;
   List<CanonicalBookPresentation>? _filteredBooks;
@@ -10812,18 +11127,22 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
   void _onSearchChanged() {
-    if (_allBooks == null) return;
-    setState(() {
-      _filteredBooks = _service.filterBooks(
-        _allBooks!,
-        _searchController.text,
-      );
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 200), () {
+      if (_allBooks == null || !mounted) return;
+      setState(() {
+        _filteredBooks = _service.filterBooks(
+          _allBooks!,
+          _searchController.text,
+        );
+      });
     });
   }
 
@@ -11494,9 +11813,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         canPop: _currentIndex == 0,
         onPopInvokedWithResult: (didPop, result) {
           if (!didPop && _currentIndex != 0) {
-            setState(() {
-              _currentIndex = 0;
-            });
+            _onTabSelected(0);
           }
         },
         child: isWideScreen
@@ -12048,7 +12365,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 subscriptionSubtitle = 'Langganan Aktif$expStr';
               }
             } else {
-              subscriptionSubtitle = 'Langganan Aktif · s/d 6/11/2026';
+              subscriptionSubtitle = 'Belum berlangganan. Akses dibuka dengan voucher atau paket.';
             }
 
             return ListView(
@@ -12289,7 +12606,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Hapus Akun & Data Riset',
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
-                              color: textSecondary.withValues(alpha: 0.6),
+                              fontWeight: FontWeight.w500,
+                              color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
                             ),
                           ),
                   ),
@@ -14053,6 +14371,9 @@ class AuthService {
   );
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  // Cached persistent userStream to prevent memory leak and listener churn (F10)
+  Stream<UserModel?>? _cachedUserStream;
+
   // In-memory cache to prevent entitlement loss on network hiccup (F41)
   static final Map<String, UserModel> _userCache = {};
 
@@ -14159,11 +14480,11 @@ class AuthService {
     }
   }
 
-  // ── Guest / Anonymous Sign In (Fallback jika Google Play Services gagal) ──
-  Future<UserModel?> signInAsGuest() async {
+  // ── Anonymous / Guest Sign-In ──────────────────────────────────
+  Future<UserModel?> signInAnonymously() async {
     try {
-      final UserCredential userCredential = await _auth.signInAnonymously();
-      final User? firebaseUser = userCredential.user;
+      final cred = await _auth.signInAnonymously();
+      final firebaseUser = cred.user;
       if (firebaseUser == null) return _localGuestUser();
 
       try {
@@ -14175,14 +14496,14 @@ class AuthService {
           final newUser = UserModel(
             uid: firebaseUser.uid,
             name: 'Peneliti Tamu',
-            email: 'tamu@openturath.ai',
+            email: '',
             photoUrl: '',
             plan: AppConstants.planTrial,
             questionsUsed: 0,
           );
           await docRef.set({
             'name': newUser.name,
-            'email': newUser.email,
+            'email': '',
             'photo_url': newUser.photoUrl,
             'plan': newUser.plan,
             'questions_used': newUser.questionsUsed,
@@ -14257,8 +14578,10 @@ class AuthService {
     }
   }
 
-  // ── Stream user changes (real-time with clean subscription switching, F22 & F41) ──
-  Stream<UserModel?> get userStream {
+  // ── Stream user changes (real-time with single persistent cached stream, F10 & F41) ──
+  Stream<UserModel?> get userStream => _cachedUserStream ??= _buildUserStream();
+
+  Stream<UserModel?> _buildUserStream() {
     late StreamController<UserModel?> controller;
     StreamSubscription<User?>? authSub;
     StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? docSub;
@@ -14363,17 +14686,42 @@ class AuthService {
     } catch (_) {}
   }
 
-  // ── Delete Account & User Data (Google Play Compliance, F08 & F41) ─────────
+  // ── Delete Account & User Data (Google Play Compliance & Orphan Cleanup, P0) ──
   Future<void> deleteAccount() async {
     final user = currentUser;
     if (user == null) return;
     final uid = user.uid;
+    final email = user.email ?? '';
 
-    // 1. WAJIB Hapus Akun Auth Terlebih Dahulu (F08).
-    // Jika gagal (misal requires-recent-login), jangan hapus dokumen atau preferensi.
+    // 1. Tandai dokumen sebagai pending_deletion & catat outbox revoke SEBELUM Auth dihapus
+    try {
+      await _db.collection(AppConstants.colUsers).doc(uid).set(
+        {
+          'pending_deletion': true,
+          'pending_deletion_at': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      ).timeout(const Duration(seconds: 4));
+
+      if (email.isNotEmpty) {
+        final outboxDoc = _db.collection('provisioning_outbox').doc('del_${uid}_${DateTime.now().millisecondsSinceEpoch}');
+        await outboxDoc.set({
+          'uid': uid,
+          'email': email,
+          'action': 'remove',
+          'plan': 'trial',
+          'entitlement_key': 'all_access',
+          'status': 'pending',
+          'attempts': 0,
+          'created_at': FieldValue.serverTimestamp(),
+        }).timeout(const Duration(seconds: 4));
+      }
+    } catch (_) {}
+
+    // 2. WAJIB Hapus Akun Auth Terlebih Dahulu. Jika gagal (misal requires-recent-login), stop di sini.
     await user.delete();
 
-    // 2. Hanya setelah Auth berhasil dihapus, bersihkan data Firestore
+    // 3. Hanya setelah Auth berhasil dihapus, bersihkan data Firestore
     try {
       await _db
           .collection(AppConstants.colUsers)
@@ -14382,7 +14730,7 @@ class AuthService {
           .timeout(const Duration(seconds: 5));
     } catch (_) {}
 
-    // 3. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())
+    // 4. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())
     try {
       _userCache.remove(uid);
       final prefs = await SharedPreferences.getInstance();
@@ -14395,15 +14743,6 @@ class AuthService {
           await prefs.remove(key);
         }
       }
-    } catch (_) {}
-
-    // 4. Bersihkan cookies & cache WebView
-    try {
-      final cookieManager = CookieManager.instance();
-      await cookieManager.deleteAllCookies();
-      await cookieManager.removeSessionCookies();
-      await InAppWebViewController.clearAllCache();
-      await WebStorageManager.instance().deleteAllData();
     } catch (_) {}
 
     // 5. Putuskan hubungan Google Sign In
@@ -14448,7 +14787,7 @@ class BookmarkService extends ChangeNotifier {
     _activeLock = completer.future;
     try {
       if (previousLock != null) {
-        await previousLock;
+        await previousLock.timeout(const Duration(seconds: 5), onTimeout: () {});
       }
       return await action();
     } finally {
@@ -14911,11 +15250,17 @@ class SubscriptionService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final DokuService _dokuService = DokuService();
 
+  /// Normalisasi kode voucher: hapus spasi, ubah huruf kapital, hapus tanda strip
+  static String normalizeCode(String input) {
+    return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
+  }
+
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
   Future<Map<String, dynamic>> redeemAccessCode(String code) async {
     try {
+      final normalized = normalizeCode(code);
       final callable = FirebaseFunctions.instance.httpsCallable('redeemCode');
-      final result = await callable.call({'code': code.trim().toUpperCase()});
+      final result = await callable.call({'code': normalized});
       final data = result.data;
       if (data is Map) {
         return Map<String, dynamic>.from(data);
@@ -15983,8 +16328,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             (snap) {
               if (snap.docs.isNotEmpty) {
                 final data = snap.docs.first.data() as Map<String, dynamic>?;
-                if (data != null &&
-                    (data['status'] == 'success' || data['status'] == 'SUCCESS')) {
+                final status = (data?['status'] ?? '').toString().toLowerCase();
+                if (status == 'paid' || status == 'success') {
                   _triggerSuccess();
                 }
               }
@@ -17790,8 +18135,8 @@ class SpecialistCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         title,
-                        style: GoogleFonts.outfit(
-                          fontSize: 15.5,
+                        style: GoogleFonts.newsreader(
+                          fontSize: 16.5,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                           color: textPrimary,
@@ -18009,7 +18354,7 @@ import 'package:openturath_ai/models/book_model.dart';
 
 void main() {
   group('Canonical Syafi\'i Catalog Parser Tests', () {
-    test('parses canonical_syafii.json correctly with 89 entries', () {
+    test('parses canonical_syafii.json correctly with 87 entries', () {
       final file = File('assets/data/canonical_syafii.json');
       expect(file.existsSync(), isTrue, reason: 'assets/data/canonical_syafii.json must exist');
 
@@ -18564,8 +18909,11 @@ void main() {
 ### TEST FILE: openturath_ai/test/hardening_and_redeem_test.dart
 ```dart
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/hijri_date_utils.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/user_model.dart';
+import 'package:openturath_ai/screens/agent_webview_screen.dart';
+import 'package:openturath_ai/services/subscription_service.dart';
 
 void main() {
   group('System Hardening & Entitlement Suite', () {
@@ -18642,37 +18990,63 @@ void main() {
       expect(user.hasAccessToAgent('fiqh_tahawwulat'), isTrue);
     });
 
-    test('URL security policy allows Google NotebookLM ecosystem and blocks external redirects', () {
-      bool isAllowedUrl(String urlStr) {
+    test('URL security policy allows Google NotebookLM ecosystem and blocks external redirects (Production Code)', () {
+      bool check(String urlStr) {
         final uri = Uri.tryParse(urlStr);
         if (uri == null) return false;
-        if (uri.scheme.toLowerCase() != 'https') return false;
-
-        final host = uri.host.toLowerCase();
-        return host.endsWith('.google.com') ||
-            host == 'google.com' ||
-            host.endsWith('.gstatic.com') ||
-            host.endsWith('.googleusercontent.com') ||
-            host.endsWith('.firebaseapp.com');
+        return AgentWebviewScreen.isAllowedNotebookUrl(uri);
       }
 
-      expect(isAllowedUrl('https://notebooklm.google.com/notebook/abc-123'), isTrue);
-      expect(isAllowedUrl('https://accounts.google.com/ServiceLogin'), isTrue);
-      expect(isAllowedUrl('https://fonts.gstatic.com/s/roboto/v20/xyz.woff2'), isTrue);
-      expect(isAllowedUrl('http://notebooklm.google.com'), isFalse); // HTTP insecure
-      expect(isAllowedUrl('https://evil-phishing.com/notebooklm.google.com'), isFalse);
-      expect(isAllowedUrl('javascript:alert(1)'), isFalse);
-      expect(isAllowedUrl('file:///android_asset/something.html'), isFalse);
+      expect(check('https://notebooklm.google.com/notebook/abc-123'), isTrue);
+      expect(check('https://accounts.google.com/ServiceLogin'), isTrue);
+      expect(check('https://fonts.gstatic.com/s/roboto/v20/xyz.woff2'), isTrue);
+      expect(check('https://apis.google.com/js/api.js'), isTrue);
+      expect(check('http://notebooklm.google.com'), isFalse); // HTTP insecure rejected
+      expect(check('https://evil-phishing.com/notebooklm.google.com'), isFalse);
+      expect(check('javascript:alert(1)'), isFalse);
+      expect(check('file:///android_asset/something.html'), isFalse);
     });
 
-    test('Redeem code normalization handles whitespace, casing, and dashes', () {
-      String normalizeCode(String input) {
-        return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
-      }
+    test('Redeem code normalization handles whitespace, casing, and dashes (Production Code)', () {
+      expect(SubscriptionService.normalizeCode('  santri-7hari  '), equals('SANTRI7HARI'));
+      expect(SubscriptionService.normalizeCode('FIKIH-SYAFII-2026'), equals('FIKIHSYAFII2026'));
+      expect(SubscriptionService.normalizeCode('  voucher 123  '), equals('VOUCHER123'));
+      expect(SubscriptionService.normalizeCode(' santri_123 '), equals('SANTRI_123'));
+    });
 
-      expect(normalizeCode('  santri-7hari  '), equals('SANTRI7HARI'));
-      expect(normalizeCode('FIKIH-SYAFII-2026'), equals('FIKIHSYAFII2026'));
-      expect(normalizeCode('  voucher 123  '), equals('VOUCHER123'));
+    test('addCalendarMonthsClamped correctly handles leap year 29 Feb and non-leap 28 Feb boundary conditions (F-11)', () {
+      // 1. Tahun kabisat (2024): 31 Januari + 1 bulan = 29 Februari 2024
+      final jan31Leap = DateTime(2024, 1, 31);
+      final febLeap = HijriDateUtils.addCalendarMonthsClamped(jan31Leap, 1);
+      expect(febLeap.year, equals(2024));
+      expect(febLeap.month, equals(2));
+      expect(febLeap.day, equals(29));
+
+      // 2. Tahun non-kabisat (2025): 31 Januari + 1 bulan = 28 Februari 2025
+      final jan31NonLeap = DateTime(2025, 1, 31);
+      final febNonLeap = HijriDateUtils.addCalendarMonthsClamped(jan31NonLeap, 1);
+      expect(febNonLeap.year, equals(2025));
+      expect(febNonLeap.month, equals(2));
+      expect(febNonLeap.day, equals(28));
+
+      // 3. Dari 29 Februari kabisat (2024) + 12 bulan (1 tahun) = 28 Februari 2025 (non-kabisat)
+      final leapFeb29 = DateTime(2024, 2, 29);
+      final nextYearFeb = HijriDateUtils.addCalendarMonthsClamped(leapFeb29, 12);
+      expect(nextYearFeb.year, equals(2025));
+      expect(nextYearFeb.month, equals(2));
+      expect(nextYearFeb.day, equals(28));
+
+      // 4. 31 Maret + 1 bulan = 30 April
+      final mar31 = DateTime(2024, 3, 31);
+      final apr30 = HijriDateUtils.addCalendarMonthsClamped(mar31, 1);
+      expect(apr30.month, equals(4));
+      expect(apr30.day, equals(30));
+
+      // 5. 31 Mei + 1 bulan = 30 Juni
+      final may31 = DateTime(2024, 5, 31);
+      final jun30 = HijriDateUtils.addCalendarMonthsClamped(may31, 1);
+      expect(jun30.month, equals(6));
+      expect(jun30.day, equals(30));
     });
   });
 }
