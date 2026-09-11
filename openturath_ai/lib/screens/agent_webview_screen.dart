@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
@@ -27,7 +28,7 @@ import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
 
-/// AgentWebviewScreen: Tampilan Ruang Riset AI NotebookLM
+/// AgentWebviewScreen: Tampilan Ruang Kajian NotebookLM
 /// Dilengkapi App Bar native yang bersih di bawah kamera notch/status bar,
 /// tombol kembali yang jelas, dan injeksi CSS/JS untuk menyembunyikan header Google.
 class AgentWebviewScreen extends StatefulWidget {
@@ -252,7 +253,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           var inputs = document.querySelectorAll('textarea, input[type="text"]');
           for (var k = 0; k < inputs.length; k++) {
             if (inputs[k].placeholder && (inputs[k].placeholder.includes('Ask a question') || inputs[k].placeholder.includes('create something'))) {
-              inputs[k].placeholder = 'Tuliskan telaah naskah atau pertanyaan riset...';
+              inputs[k].placeholder = 'Tanyakan sesuatu tentang kitab ini...';
             }
           }
         } catch(e) {}
@@ -333,7 +334,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (_agent != null && _agent!.isComingSoon) {
       setState(() {
         _isLoadingUrl = false;
-        _errorMessage = '${_agent!.title} belum tersedia (Segera Hadir) dan sedang dalam proses kurasi naskah kitab primer.';
+        _errorMessage = AppCopy.preparingModule(_agent!.title);
       });
       return;
     }
@@ -346,7 +347,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (_user == null || !_user!.hasAccessToAgent(_agent!.id)) {
       setState(() {
         _isPaywallRequired = true;
-        _errorMessage = 'Modul ${_agent!.title} memerlukan langganan aktif. Silakan pilih paket langganan untuk mengakses ruang riset.';
+        _errorMessage = AppCopy.subscriptionRequiredFor(_agent!.title);
         _isLoadingUrl = false;
       });
       return;
@@ -357,7 +358,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       if (!mounted) return;
       if (url == null || url.isEmpty) {
         setState(() {
-          _errorMessage = 'URL riset tidak tersedia. Silakan hubungi pengelola.';
+          _errorMessage = AppCopy.moduleUnavailable;
           _isLoadingUrl = false;
         });
         return;
@@ -380,7 +381,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       setState(() {
         _errorMessage = e is AgentAccessException
             ? e.message
-            : 'Gagal memuat ruang riset. Silakan coba beberapa saat lagi.';
+            : AppCopy.studyNotLoadedYet;
         _isPaywallRequired = false;
         _isLoadingUrl = false;
       });
@@ -408,7 +409,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           _isPaywallRequired = true;
           _isLoadingUrl = false;
           _isWebViewLoading = false;
-          _errorMessage = 'Anda belum memiliki akses ke ruang riset ${_agent?.title ?? "ini"}. Silakan periksa atau aktifkan paket langganan Anda.';
+          _errorMessage = AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
         });
       }
     } catch (_) {}
@@ -464,13 +465,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       final text = (res as String? ?? '').trim();
       if (text.isEmpty) {
         if (mounted) {
-          AppSnackBar.warning(context, 'Belum ada jawaban AI yang dapat disalin.');
+          AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
         }
       } else {
         await Clipboard.setData(ClipboardData(text: text));
         if (mounted) {
           setState(() => _hasCopied = true);
-          AppSnackBar.success(context, 'Hasil telaah AI berhasil disalin!');
+          AppSnackBar.success(context, AppCopy.answerCopied);
           Future.delayed(const Duration(seconds: 2), () {
             if (mounted) setState(() => _hasCopied = false);
           });
@@ -478,7 +479,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.error(context, 'Tidak dapat menyalin telaah saat ini. Silakan coba kembali.');
+        AppSnackBar.error(context, AppCopy.copyFailed);
       }
     } finally {
       if (mounted) setState(() => _isCopying = false);
@@ -541,7 +542,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
         if (fullAnswer.isEmpty) {
           if (mounted) {
-            AppSnackBar.warning(context, 'Belum ada telaah AI yang dapat disimpan.');
+            AppSnackBar.warning(context, AppCopy.noAnswerToSave);
           }
         } else {
           // F28 & F30: Pisahkan nama spesialis AI dari rujukan kitab primer
@@ -568,7 +569,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             setState(() => _hasBookmarked = true);
             AppSnackBar.success(
               context,
-              'Telaah tersimpan di Bookmark!',
+              AppCopy.savedSuccess,
               action: SnackBarAction(
                 label: 'Lihat',
                 textColor: Colors.white,
@@ -583,7 +584,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.error(context, 'Tidak dapat menyimpan bookmark saat ini. Silakan coba kembali.');
+        AppSnackBar.error(context, AppCopy.saveFailed);
       }
     } finally {
       if (mounted) setState(() => _isBookmarking = false);
@@ -655,7 +656,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           ),
           titleSpacing: 0,
           title: Text(
-            _agent?.title ?? 'Ruang Riset AI',
+            _agent?.title ?? AppCopy.studySpace,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: OTTypography.corpusTitle(color: textPrimary).copyWith(
@@ -698,12 +699,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               ),
             IconButton(
               icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 21),
-              tooltip: 'Pustaka Rujukan',
+              tooltip: AppCopy.referenceBooks,
               onPressed: () => showResearchLibrary(context, agent: _agent),
             ),
             IconButton(
               icon: Icon(Icons.more_horiz_rounded, color: textPrimary, size: 22),
-              tooltip: 'Opsi Riset',
+              tooltip: AppCopy.studyOptions,
               onPressed: _showOverflowMenu,
             ),
             const SizedBox(width: OTSpacing.xs),
@@ -761,7 +762,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                           if (context.mounted) {
                             AppSnackBar.show(
                               context,
-                              message: 'Tidak dapat menyimpan telaah kosong',
+                              message: AppCopy.emptyAnswerCannotSave,
                               type: SnackType.error,
                             );
                           }
@@ -770,7 +771,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
                         final title = question.isNotEmpty
                             ? (question.length > 55 ? '${question.substring(0, 52)}...' : question)
-                            : (_agent?.title != null ? 'Telaah ${_agent!.title}' : 'Telaah Naskah Turats');
+                            : (_agent?.title != null ? 'Kajian ${_agent!.title}' : 'Kajian Kitab');
 
                         final category = _agent?.category ?? 'Fikih';
 
@@ -792,7 +793,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         if (context.mounted) {
                           AppSnackBar.show(
                             context,
-                            message: 'Telaah tersimpan di Bookmark',
+                            message: AppCopy.savedSuccess,
                             type: SnackType.success,
                             action: SnackBarAction(
                               label: 'Lihat',
@@ -812,7 +813,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       if (mounted) {
                         AppSnackBar.show(
                           context,
-                          message: 'Hasil telaah AI berhasil disalin',
+                          message: AppCopy.answerCopied,
                           type: SnackType.info,
                         );
                       }
@@ -866,7 +867,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   if (mounted && (request.isForMainFrame == true)) {
                     setState(() {
                       _isWebViewLoading = false;
-                      _errorMessage = 'Tidak dapat memuat sesi riset. Periksa koneksi internet Anda lalu coba kembali.';
+                      _errorMessage = AppCopy.cannotLoad;
                     });
                   }
                 },
@@ -877,8 +878,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             if (_isLoadingUrl || (_isWebViewLoading && _errorMessage == null))
               Positioned.fill(
                 child: AppLoader.fullscreen(
-                  title: _agent?.title ?? 'Ruang Riset Turats',
-                  subtitle: 'Menyiapkan korpus naskah primer...',
+                  title: _agent?.title ?? AppCopy.openStudy,
+                  subtitle: AppCopy.loadingReferences,
                   onCancel: _handleBackPress,
                 ),
               ),
@@ -890,8 +891,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   color: canvas,
                   child: AppErrorState(
                     title: _isPaywallRequired
-                        ? 'Akses Berlangganan Diperlukan'
-                        : 'Kendala Memuat Ruang Riset',
+                        ? AppCopy.subscriptionRequiredTitle
+                        : AppCopy.cannotLoadStudy,
                     message: _errorMessage!,
                     icon: _isPaywallRequired
                         ? Icons.workspace_premium_rounded
@@ -900,8 +901,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         ? _navigateToSubscription
                         : _fetchAgentUrl,
                     retryLabel: _isPaywallRequired
-                        ? 'Buka Paket Langganan'
-                        : 'Coba Muat Ulang',
+                        ? AppCopy.viewSubscription
+                        : AppCopy.tryAgain,
                     onBack: () => Navigator.pop(context),
                     backLabel: 'Kembali ke Beranda',
                   ),
@@ -967,7 +968,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Adab Riset & Penafian Talaqqi',
+                        AppCopy.adabDialogTitle,
                         style: GoogleFonts.newsreader(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -999,9 +1000,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 14),
                 _buildAdabPoint(
                   icon: Icons.menu_book_outlined,
-                  title: 'Wasilah Bantu, Bukan Mufti',
-                  description:
-                      'OpenTurath adalah perkakas digital pelacak ibarah dan komparasi naskah primer kitab kuning, bukan mufti fatwa mandiri.',
+                  title: AppCopy.adabHeading1,
+                  description: AppCopy.adabBody1,
                   textPrimary: textPrimary,
                   textSecondary: textSecondary,
                   isDark: isDark,
@@ -1009,9 +1009,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 12),
                 _buildAdabPoint(
                   icon: Icons.people_outline_rounded,
-                  title: 'Kewajiban Talaqqi Bersanad',
-                  description:
-                      'Kajian agama hakiki wajib melalui bimbingan talaqqi dengan masyayikh dan ulama yang kompeten.',
+                  title: AppCopy.adabHeading2,
+                  description: AppCopy.adabBody2,
                   textPrimary: textPrimary,
                   textSecondary: textSecondary,
                   isDark: isDark,
@@ -1019,9 +1018,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 12),
                 _buildAdabPoint(
                   icon: Icons.fact_check_outlined,
-                  title: 'Sikap Ihtiyath (Wara\')',
-                  description:
-                      'Selalu verifikasi dalil dan ibarah ke naskah fisik cetakan mu\'tamad sebelum menjadikannya landasan kajian.',
+                  title: AppCopy.adabHeading3,
+                  description: AppCopy.adabBody3,
                   textPrimary: textPrimary,
                   textSecondary: textSecondary,
                   isDark: isDark,
@@ -1041,7 +1039,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       ),
                     ),
                     child: Text(
-                      'Saya Memahami & Menjaga Adab',
+                      AppCopy.adabAcknowledgeButton,
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -1135,13 +1133,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               ),
             ),
             Text(
-              'Opsi Ruang Riset',
+              AppCopy.studyOptions,
               style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             const SizedBox(height: 12),
             ListTile(
               leading: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-              title: Text('Ukuran Teks Telaah (${(_fontScale * 100).round()}%)', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Ukuran teks (${(_fontScale * 100).round()}%)', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showFontScalePicker();
@@ -1150,7 +1148,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
-              title: Text('Salin Jawaban AI Terakhir', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Salin jawaban', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
@@ -1161,7 +1159,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, color: _hasBookmarked ? OTColors.sovereignAmber : textPrimary, size: 20),
-              title: Text('Simpan ke Rujukan', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text(AppCopy.saveAnswerMenu, style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isBookmarking
                   ? null
                   : () {
@@ -1211,12 +1209,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Ukuran Teks Telaah',
+                    'Ukuran teks',
                     style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 17),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Sesuaikan ukuran huruf naskah dan terjemahan untuk kenyamanan membaca',
+                    'Sesuaikan ukuran teks untuk kenyamanan membaca',
                     style: OTTypography.caption(color: textSecondary),
                   ),
                   const SizedBox(height: 14),
@@ -1225,7 +1223,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   _buildScaleOption(ctx, label: 'Sedang (120%)', scale: 1.20, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Besar (140%)', scale: 1.40, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Ekstra Besar (165%)', scale: 1.65, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Maksimal Naskah (200%)', scale: 2.00, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Maksimal (200%)', scale: 2.00, isDark: isDark),
                   const SizedBox(height: 8),
                 ],
               ),
