@@ -1,25 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants.dart';
 import '../core/routes.dart';
-import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
-import '../core/design/ot_motion.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/app_snackbar.dart';
-import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
-import '../models/field_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
 import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
-import '../widgets/apple_interactive_wrapper.dart';
-import 'main_shell_screen.dart';
+import '../widgets/corpus_kind_control.dart';
+import '../widgets/specialist_card.dart';
+import '../widgets/library_bottom_sheet.dart';
 
 /// Beranda OpenTurath AI (Quiet Scholar Adaptive)
 class DashboardScreen extends StatefulWidget {
@@ -38,7 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<AgentModel> _agents = AgentModel.defaultAgents;
   String? _lastOpenedAgentId;
   String _searchQuery = '';
-  bool _isLoading = false;
+  CorpusKind _selectedKind = CorpusKind.discipline;
 
   @override
   void initState() {
@@ -77,11 +75,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _lastOpenedAgentId = lastId;
         _initialUser = results[0] as UserModel?;
         _agents = results[1] as List<AgentModel>;
-        _isLoading = false;
       });
-    } catch (_) {
-      if (mounted) setState(() => _isLoading = false);
-    }
+    } catch (_) {}
   }
 
   Future<void> _openNotebook(AgentModel agent, UserModel? user) async {
@@ -120,94 +115,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  String? _selectedFieldId;
-
-  List<AgentModel> _getRecentAgents() {
-    final List<AgentModel> recents = [];
-
-    // Prioritize last opened agent if present and strictly active
-    if (_lastOpenedAgentId != null && _lastOpenedAgentId!.isNotEmpty) {
-      final match = _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive);
-      if (match.isNotEmpty) {
-        recents.add(match.first);
-      }
-    }
-
-    // Default core active agents
-    for (final a in _agents) {
-      if (recents.length >= 4) break;
-      if (!recents.any((r) => r.id == a.id) && a.isActive) {
-        recents.add(a);
-      }
-    }
-
-    if (recents.isEmpty && _agents.isNotEmpty) {
-      final activeAgents = _agents.where((a) => a.isActive).toList();
-      recents.addAll(activeAgents.take(3));
-    }
-
-    return recents;
-  }
-
-  List<AgentModel> _getDisplayAgents() {
-    if (_selectedFieldId != null) {
-      final fieldAgents = _agents.where((a) => a.fieldId == _selectedFieldId).toList();
-      if (fieldAgents.isNotEmpty) return fieldAgents;
-      return AgentModel.defaultAgents.where((a) => a.fieldId == _selectedFieldId).toList();
-    }
-    return _getRecentAgents();
-  }
-
-  Widget _buildDisciplinePill({
-    required String label,
-    required bool isSelected,
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required VoidCallback onTap,
-  }) {
-    final activeBg = isDark ? Colors.white : const Color(0xFF18181B);
-    final activeFg = isDark ? const Color(0xFF18181B) : Colors.white;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: isSelected ? activeBg : surface,
-          borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-          border: Border.all(
-            color: isSelected ? activeBg : border,
-            width: 0.8,
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.outfit(
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            letterSpacing: -0.1,
-            color: isSelected ? activeFg : textSecondary,
-          ),
-        ),
-      ),
-    );
+  AgentModel? _getLastOpenedAgent() {
+    if (_lastOpenedAgentId == null || _lastOpenedAgentId!.isEmpty) return null;
+    final match = _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive);
+    return match.isNotEmpty ? match.first : null;
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = isDark ? AppTheme.groupedCanvasDark : AppTheme.groupedCanvasLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final accent = OTColors.accent(isDark);
 
     return StreamBuilder<UserModel?>(
       stream: _authService.userStream,
@@ -226,116 +149,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
               questionsUsed: 0,
             );
 
+        final lastOpened = _getLastOpenedAgent();
+
         return Scaffold(
           backgroundColor: canvas,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            backgroundColor: canvas,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            toolbarHeight: 56,
+            title: Text(
+              'OpenTurath',
+              style: OTTypography.brandLogo(
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+          ),
           body: SafeArea(
+            top: false,
             bottom: false,
             child: RefreshIndicator(
               onRefresh: _loadData,
               color: accent,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 96),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 96),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Top Bar: OpenTurath Brand & Dual Calendar ──
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'OpenTurath',
-                              style: GoogleFonts.newsreader(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.5,
-                                color: textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              HijriDateUtils.formatDualDate(),
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: textSecondary,
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        AppleInteractiveWrapper(
-                          onTap: () {
-                            final shell = MainShellController.of(context);
-                            shell?.switchTab(3);
-                          },
-                          hapticType: HapticFeedbackType.selection,
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: border,
-                                width: 1.0,
-                              ),
-                            ),
-                            child: CircleAvatar(
-                              radius: 18,
-                              backgroundColor: surface,
-                              backgroundImage: user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
-                              child: user.photoUrl.isEmpty
-                                  ? Text(
-                                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'P',
-                                      style: GoogleFonts.outfit(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 13,
-                                        color: textPrimary,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 22),
-
-                    // ── 2. Pembaruan Otomatis Siap Pasang (Jika Ada) ──
+                    // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
-                    const SizedBox(height: 20),
 
-                    // ── 3. Research Command Surface ──
-                    Text(
-                      'Apa yang ingin Anda telusuri?',
-                      style: OTTypography.editorialHero(color: textPrimary),
-                    ),
-
-                    const SizedBox(height: 14),
-
-                    // Ergonomic Global Search Bar
+                    // Search Bar dengan label jujur
                     Container(
                       height: 48,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
                         color: surface,
                         borderRadius: BorderRadius.circular(OTRadius.input),
-                        border: Border.all(
-                          color: border,
-                          width: 0.8,
-                        ),
+                        border: Border.all(color: border, width: 0.8),
                       ),
                       child: Row(
                         children: [
-                          Icon(
-                            Icons.search_rounded,
-                            size: 20,
-                            color: textSecondary,
-                          ),
+                          Icon(Icons.search_rounded, size: 20, color: textSecondary),
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextField(
@@ -343,7 +201,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onChanged: (val) => setState(() => _searchQuery = val.trim()),
                               style: OTTypography.body(color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari kitab, istilah, hadis, persoalan...',
+                                hintText: 'Cari bidang atau ulama',
                                 hintStyle: OTTypography.body(color: textSecondary),
                                 border: InputBorder.none,
                                 isDense: true,
@@ -363,31 +221,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    // ── 3b. Realtime Search Results (If query active) ──
+                    const SizedBox(height: OTSpacing.lg),
+
+                    // Jika user sedang mencari
                     if (_searchQuery.isNotEmpty) ...[
-                      const SizedBox(height: 20),
                       Text(
                         'Hasil Penelusuran',
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: OTSpacing.sm),
                       Builder(
                         builder: (context) {
                           final q = _searchQuery.toLowerCase();
                           final matches = _agents.where((a) {
                             final title = a.title.toLowerCase();
                             final arabic = a.titleArabic;
-                            final desc = a.description.toLowerCase();
-                            final books = a.referenceBooks?.any((b) => b.title.toLowerCase().contains(q)) ?? false;
-                            return title.contains(q) || arabic.contains(q) || desc.contains(q) || books;
+                            final subtitle = a.subtitleAcademic.toLowerCase();
+                            final category = a.category.toLowerCase();
+                            return title.contains(q) || arabic.contains(q) || subtitle.contains(q) || category.contains(q);
                           }).toList();
 
                           if (matches.isEmpty) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 32),
+                              padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Tidak ditemukan naskah atau korpus yang sesuai.',
+                                  'Tidak ditemukan bidang atau ulama yang cocok',
                                   style: OTTypography.body(color: textSecondary),
                                 ),
                               ),
@@ -398,387 +257,99 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: matches.length,
-                            separatorBuilder: (_, __) => Divider(height: 1, color: border.withValues(alpha: 0.5)),
+                            separatorBuilder: (_, __) => const SizedBox(height: 12),
                             itemBuilder: (context, idx) {
                               final agent = matches[idx];
-                              return InkWell(
-                                onTap: () => _openNotebook(agent, user),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              agent.title,
-                                              style: OTTypography.cardTitle(color: textPrimary),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              agent.subtitleAcademic.isNotEmpty ? agent.subtitleAcademic : agent.description,
-                                              style: OTTypography.caption(color: textSecondary),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      if (agent.isComingSoon)
-                                        Text(
-                                          'Segera hadir',
-                                          style: OTTypography.caption(color: textSecondary.withValues(alpha: 0.65)),
-                                        )
-                                      else
-                                        Icon(Icons.chevron_right_rounded, size: 18, color: textSecondary),
-                                    ],
-                                  ),
-                                ),
+                              return SpecialistCard(
+                                title: agent.title,
+                                titleArabic: agent.titleArabic,
+                                scopeLabel: agent.subtitleAcademic.isNotEmpty ? agent.subtitleAcademic : agent.category,
+                                emoji: agent.emoji,
+                                statusLabel: agent.isComingSoon ? 'Belum tersedia' : null,
+                                onOpen: agent.isActive ? () => _openNotebook(agent, user) : null,
+                                onOpenLibrary: agent.catalogId != null
+                                    ? () => showResearchLibrary(context, agent: agent)
+                                    : null,
                               );
                             },
                           );
                         },
                       ),
                     ] else ...[
-                      // ── 4. Lanjutkan Penelitian (Unboxed Resume Session) ──
-                      Builder(
-                        builder: (context) {
-                          final recents = _getRecentAgents();
-                          final lastActiveAgent = recents.isNotEmpty ? recents.first : null;
-                          if (lastActiveAgent == null) return const SizedBox.shrink();
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 28),
-                              Text(
-                                'Lanjutkan',
-                                style: OTTypography.sectionHeading(color: textSecondary),
-                              ),
-                              const SizedBox(height: 8),
-                              InkWell(
-                                borderRadius: BorderRadius.circular(OTRadius.card),
-                                onTap: () => _openNotebook(lastActiveAgent, user),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 6),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              lastActiveAgent.title,
-                                              style: OTTypography.cardTitle(color: textPrimary),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              '${lastActiveAgent.subtitleAcademic.isNotEmpty ? lastActiveAgent.subtitleAcademic : lastActiveAgent.description} · Sesi Terakhir',
-                                              style: OTTypography.caption(color: textSecondary),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Icon(
-                                        Icons.arrow_forward_rounded,
-                                        size: 16,
-                                        color: textSecondary,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Divider(height: 24, color: border.withValues(alpha: 0.5)),
-                            ],
-                          );
-                        },
-                      ),
-
-                      // ── 5. Ruang Riset Unggulan (Fikih Tahawwulat Dignified Card) ──
-                      Builder(
-                        builder: (context) {
-                          final tahawwulatAgent = _agents.firstWhere(
-                            (a) => a.id == 'fiqh_tahawwulat',
-                            orElse: () => AgentModel.defaultAgents.first,
-                          );
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 12),
-                              Text(
-                                'Pilihan untuk Anda',
-                                style: OTTypography.sectionHeading(color: textSecondary),
-                              ),
-                              const SizedBox(height: 8),
-                              InkWell(
-                                borderRadius: BorderRadius.circular(OTRadius.card),
-                                onTap: () => _openNotebook(tahawwulatAgent, user),
-                                child: Container(
-                                  padding: const EdgeInsets.all(18),
-                                  decoration: BoxDecoration(
-                                    color: surface,
-                                    borderRadius: BorderRadius.circular(OTRadius.card),
-                                    border: Border.all(
-                                      color: border,
-                                      width: 0.8,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Fikih Tahawwulat',
-                                            style: OTTypography.corpusTitle(color: textPrimary),
-                                          ),
-                                          Text(
-                                            'فقه التحولات',
-                                            style: OTTypography.arabicDisplay(
-                                              color: isDark ? const Color(0xFFD97706) : const Color(0xFFB45309),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Korpus khusus · 1.500+ muhadharah naskah lengkap',
-                                        style: OTTypography.caption(color: textSecondary),
-                                      ),
-                                      const SizedBox(height: 14),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            'Masuk',
-                                            style: OTTypography.button(color: textPrimary),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Icon(
-                                            Icons.arrow_forward_rounded,
-                                            size: 14,
-                                            color: textPrimary,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Divider(height: 28, color: border.withValues(alpha: 0.5)),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-
-                    const SizedBox(height: 28),
-
-                    // ── 6. Keilmuan (Discipline Navigation) ──
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
+                      // ── 1. Terakhir Dibuka (HANYA jika ada riwayat nyata) ──
+                      if (lastOpened != null) ...[
                         Text(
-                          'Keilmuan',
-                          style: GoogleFonts.outfit(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -0.2,
-                            color: textPrimary,
-                          ),
+                          'Terakhir dibuka',
+                          style: OTTypography.sectionHeading(color: textSecondary),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            final shell = MainShellController.of(context);
-                            if (shell != null) {
-                              shell.switchTab(1);
-                            } else {
-                              Navigator.pushNamed(context, AppRoutes.specialistList);
-                            }
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Semua',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: textSecondary,
-                                ),
-                              ),
-                              const SizedBox(width: 2),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                size: 16,
-                                color: textSecondary,
-                              ),
-                            ],
-                          ),
+                        const SizedBox(height: OTSpacing.sm),
+                        SpecialistCard(
+                          title: lastOpened.title,
+                          titleArabic: lastOpened.titleArabic,
+                          scopeLabel: '${lastOpened.subtitleAcademic.isNotEmpty ? lastOpened.subtitleAcademic : lastOpened.category} · Sesi Terakhir',
+                          emoji: lastOpened.emoji,
+                          onOpen: () => _openNotebook(lastOpened, user),
+                          onOpenLibrary: lastOpened.catalogId != null
+                              ? () => showResearchLibrary(context, agent: lastOpened)
+                              : null,
                         ),
+                        const SizedBox(height: OTSpacing.xl),
                       ],
-                    ),
 
-                    const SizedBox(height: 12),
+                      // ── 2. Kontrol Dua Jalur: Bidang Ilmu vs Korpus Ulama ──
+                      CorpusKindControl(
+                        value: _selectedKind,
+                        onChanged: (kind) => setState(() => _selectedKind = kind),
+                      ),
 
-                    // Horizontal Discipline Filter
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      child: Row(
+                      const SizedBox(height: OTSpacing.lg),
+
+                      // ── 3. Daftar Kartu Spesialis Sesuai Jalur ──
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildDisciplinePill(
-                            label: 'Semua',
-                            isSelected: _selectedFieldId == null,
-                            isDark: isDark,
-                            surface: surface,
-                            border: border,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            onTap: () {
-                              OTMotion.selection();
-                              setState(() => _selectedFieldId = null);
-                            },
+                          Text(
+                            _selectedKind == CorpusKind.discipline ? 'Bidang Ilmu' : 'Korpus Ulama',
+                            style: OTTypography.sectionHeading(color: textSecondary),
                           ),
-                          ...FieldModel.defaultFields.take(6).map((field) {
-                            final isSelected = _selectedFieldId == field.id;
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: _buildDisciplinePill(
-                                label: field.name,
-                                isSelected: isSelected,
-                                isDark: isDark,
-                                surface: surface,
-                                border: border,
-                                textPrimary: textPrimary,
-                                textSecondary: textSecondary,
-                                onTap: () {
-                                  OTMotion.selection();
-                                  setState(() {
-                                    _selectedFieldId = isSelected ? null : field.id;
-                                  });
-                                },
-                              ),
-                            );
-                          }),
+                          Text(
+                            _selectedKind == CorpusKind.discipline
+                                ? '${_agents.where((a) => a.kind == CorpusKind.discipline).length} Bidang'
+                                : '${_agents.where((a) => a.kind == CorpusKind.scholar).length} Ulama',
+                            style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
+                          ),
                         ],
                       ),
-                    ),
 
-                    const SizedBox(height: 12),
+                      const SizedBox(height: OTSpacing.sm),
 
-                    // Curated Research Modules List (Continuous Unboxed List with hairlines)
-                    if (_isLoading)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: CircularProgressIndicator(color: accent, strokeWidth: 2),
-                        ),
-                      )
-                    else ...[
                       Builder(
                         builder: (context) {
-                          final displayAgents = _getDisplayAgents();
-                          if (displayAgents.isEmpty) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 24),
-                              child: Center(
-                                child: Text(
-                                  'Belum ada modul pada rumpun ini.',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 13,
-                                    color: textSecondary,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
+                          final displayedAgents = _agents.where((a) => a.kind == _selectedKind).toList();
 
                           return ListView.separated(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: displayAgents.length,
-                            separatorBuilder: (_, __) => Divider(
-                              height: 1,
-                              color: border.withValues(alpha: 0.5),
-                            ),
-                            itemBuilder: (context, index) {
-                              final agent = displayAgents[index];
-                              final isComingSoon = agent.isComingSoon;
-
-                              return InkWell(
-                                onTap: () => _openNotebook(agent, user),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 13),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              agent.title,
-                                              style: GoogleFonts.outfit(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: -0.2,
-                                                color: textPrimary,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 3),
-                                            Text(
-                                              (agent.referenceBooks != null && agent.referenceBooks!.isNotEmpty)
-                                                  ? agent.referenceBooks!.map((b) => b.title).take(2).join(' · ')
-                                                  : agent.subtitleAcademic.isNotEmpty
-                                                      ? agent.subtitleAcademic
-                                                      : agent.description,
-                                              style: GoogleFonts.outfit(
-                                                fontSize: 12,
-                                                color: textSecondary,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      if (isComingSoon)
-                                        Text(
-                                          'Segera hadir',
-                                          style: OTTypography.caption(
-                                            color: textSecondary.withValues(alpha: 0.65),
-                                          ),
-                                        )
-                                      else
-                                        Icon(
-                                          Icons.chevron_right_rounded,
-                                          size: 18,
-                                          color: textSecondary.withValues(alpha: 0.7),
-                                        ),
-                                    ],
-                                  ),
-                                ),
+                            itemCount: displayedAgents.length,
+                            separatorBuilder: (_, __) => const SizedBox(height: 12),
+                            itemBuilder: (context, idx) {
+                              final agent = displayedAgents[idx];
+                              return SpecialistCard(
+                                title: agent.title,
+                                titleArabic: agent.titleArabic,
+                                scopeLabel: agent.subtitleAcademic.isNotEmpty ? agent.subtitleAcademic : agent.category,
+                                emoji: agent.emoji,
+                                statusLabel: agent.isComingSoon ? 'Belum tersedia' : null,
+                                onOpen: agent.isActive ? () => _openNotebook(agent, user) : null,
+                                onOpenLibrary: agent.catalogId != null
+                                    ? () => showResearchLibrary(context, agent: agent)
+                                    : null,
                               );
                             },
                           );
                         },
                       ),
                     ],
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),

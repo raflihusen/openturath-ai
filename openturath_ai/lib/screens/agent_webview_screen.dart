@@ -26,6 +26,7 @@ import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
+import '../widgets/library_bottom_sheet.dart';
 
 /// AgentWebviewScreen: Tampilan Ruang Riset AI NotebookLM
 /// Dilengkapi App Bar native yang bersih di bawah kamera notch/status bar,
@@ -603,6 +604,11 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                 ),
               ),
+            IconButton(
+              icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 21),
+              tooltip: 'Pustaka Rujukan',
+              onPressed: () => showResearchLibrary(context, agent: _agent),
+            ),
             IconButton(
               icon: Icon(Icons.more_horiz_rounded, color: textPrimary, size: 22),
               tooltip: 'Opsi Riset',
