@@ -8,11 +8,17 @@ class SubscriptionService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final DokuService _dokuService = DokuService();
 
+  /// Normalisasi kode voucher: hapus spasi, ubah huruf kapital, hapus tanda strip
+  static String normalizeCode(String input) {
+    return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
+  }
+
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
   Future<Map<String, dynamic>> redeemAccessCode(String code) async {
     try {
+      final normalized = normalizeCode(code);
       final callable = FirebaseFunctions.instance.httpsCallable('redeemCode');
-      final result = await callable.call({'code': code.trim().toUpperCase()});
+      final result = await callable.call({'code': normalized});
       final data = result.data;
       if (data is Map) {
         return Map<String, dynamic>.from(data);

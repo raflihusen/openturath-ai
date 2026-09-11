@@ -101,4 +101,32 @@ class HijriDateUtils {
         : 'Bulan';
     return '${h.day} $hMonthName ${h.year} H';
   }
+
+  /// Menambahkan durasi bulan kalender dengan month-end clamping deterministik.
+  /// Contoh: 31 Januari + 1 bulan = 28 Februari (atau 29 pada kabisat).
+  /// 31 Maret + 1 bulan = 30 April.
+  static DateTime addCalendarMonthsClamped(DateTime baseDate, int months) {
+    var newYear = baseDate.year;
+    var newMonth = baseDate.month + months;
+    while (newMonth > 12) {
+      newYear++;
+      newMonth -= 12;
+    }
+    while (newMonth < 1) {
+      newYear--;
+      newMonth += 12;
+    }
+    final daysInTargetMonth = DateTime(newYear, newMonth + 1, 0).day;
+    final clampedDay = baseDate.day > daysInTargetMonth ? daysInTargetMonth : baseDate.day;
+    return DateTime(
+      newYear,
+      newMonth,
+      clampedDay,
+      baseDate.hour,
+      baseDate.minute,
+      baseDate.second,
+      baseDate.millisecond,
+      baseDate.microsecond,
+    );
+  }
 }

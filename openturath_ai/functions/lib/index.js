@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.chatGate = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = void 0;
+exports.chatGate = exports.cleanupOrphanedDeletions = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -125,9 +125,8 @@ function getEntitlementAccess(userData, entitlementKey) {
         if (status === "active" && allExpiryDate && allExpiryDate > new Date()) {
             return { premiumPlan: true, active: true };
         }
-        if (status === "revoked") {
-            return { premiumPlan: false, active: false };
-        }
+        // F-04: Jika all_access berstatus revoked atau expired, jangan langsung tolak semua modul.
+        // Lanjutkan pengecekan ke modul spesifik (productEntitlement) di bawah.
     }
     // 2. Cek Modul Spesifik
     const productEntitlement = entitlements[entitlementKey];
@@ -355,13 +354,53 @@ async function requestDokuCheckout(params) {
     return paymentUrl;
 }
 // ================================================================
+// ================================================================
+// RATE LIMITING HELPER (In-Memory / Firestore Atomic Window)
+// ================================================================
+async function enforceRateLimit(key, limit, windowSeconds, errorMessage) {
+    const now = Date.now();
+    const rateLimitRef = db.collection("rate_limits").doc(key);
+    await db.runTransaction(async (t) => {
+        var _a;
+        const snap = await t.get(rateLimitRef);
+        if (!snap.exists) {
+            t.set(rateLimitRef, {
+                count: 1,
+                reset_at: admin.firestore.Timestamp.fromMillis(now + windowSeconds * 1000),
+                updated_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            return;
+        }
+        const data = snap.data();
+        const resetAt = ((_a = data.reset_at) === null || _a === void 0 ? void 0 : _a.toMillis) ? data.reset_at.toMillis() : (data.reset_at || 0);
+        if (now > resetAt) {
+            // Window reset
+            t.set(rateLimitRef, {
+                count: 1,
+                reset_at: admin.firestore.Timestamp.fromMillis(now + windowSeconds * 1000),
+                updated_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            return;
+        }
+        const currentCount = (data.count || 0);
+        if (currentCount >= limit) {
+            const waitSec = Math.ceil((resetAt - now) / 1000);
+            throw new functions.https.HttpsError("resource-exhausted", `${errorMessage} Harap tunggu ${waitSec} detik lagi.`);
+        }
+        t.update(rateLimitRef, {
+            count: currentCount + 1,
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+    });
+}
+// ================================================================
 // FUNCTION 2: createCheckout
 // Dipanggil dari app & web — mengembalikan link DOKU Checkout
 // ================================================================
 exports.createCheckout = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
     .https.onCall(async (data, context) => {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk melakukan transaksi.");
     }
@@ -375,21 +414,7 @@ exports.createCheckout = functions
     const trxRef = db.collection("transactions").doc();
     const trxId = trxRef.id;
     const uid = ((_a = context.auth) === null || _a === void 0 ? void 0 : _a.uid) || null;
-    let paymentUrl = "";
-    try {
-        paymentUrl = await requestDokuCheckout({
-            invoiceNumber,
-            amount: pricing.amount,
-            itemName: pricing.label,
-            customerName: name,
-            customerEmail: email,
-            customerPhone: phone || "",
-        });
-    }
-    catch (err) {
-        console.error("[createCheckout] DOKU checkout error:", ((_b = err.response) === null || _b === void 0 ? void 0 : _b.data) || err.message);
-        throw new functions.https.HttpsError("internal", "Gagal membuat sesi pembayaran DOKU: " + (((_e = (_d = (_c = err.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error) === null || _e === void 0 ? void 0 : _e.message) || err.message || "Kendala teknis DOKU"));
-    }
+    // F-07: Tulis dokumen transaksi berstatus pending SEBELUM memanggil gateway DOKU
     await trxRef.set({
         uid,
         plan,
@@ -404,9 +429,33 @@ exports.createCheckout = functions
         customer_name: name,
         customer_email: email,
         customer_phone: phone || "",
-        payment_url: paymentUrl,
         created_at: admin.firestore.FieldValue.serverTimestamp(),
     });
+    let paymentUrl = "";
+    try {
+        paymentUrl = await requestDokuCheckout({
+            invoiceNumber,
+            amount: pricing.amount,
+            itemName: pricing.label,
+            customerName: name,
+            customerEmail: email,
+            customerPhone: phone || "",
+        });
+        // Update URL pembayaran yang berhasil diperoleh
+        await trxRef.update({
+            payment_url: paymentUrl,
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+    }
+    catch (err) {
+        console.error("[createCheckout] DOKU checkout error:", ((_b = err.response) === null || _b === void 0 ? void 0 : _b.data) || err.message);
+        await trxRef.update({
+            status: "failed",
+            error: ((_e = (_d = (_c = err.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error) === null || _e === void 0 ? void 0 : _e.message) || err.message || "Kendala teknis DOKU",
+            failed_at: admin.firestore.FieldValue.serverTimestamp(),
+        }).catch(() => { });
+        throw new functions.https.HttpsError("internal", "Gagal membuat sesi pembayaran DOKU: " + (((_h = (_g = (_f = err.response) === null || _f === void 0 ? void 0 : _f.data) === null || _g === void 0 ? void 0 : _g.error) === null || _h === void 0 ? void 0 : _h.message) || err.message || "Kendala teknis DOKU"));
+    }
     return {
         redirectUrl: paymentUrl,
         paymentUrl: paymentUrl,
@@ -442,6 +491,12 @@ function getServiceTitleForEntitlement(entitlementKey) {
         return "AI Hadits";
     if (entitlementKey === "nahwu" || entitlementKey === "bahasa_arab" || entitlementKey === "nahwu_sharaf")
         return "AI Bahasa Arab";
+    if (entitlementKey === "aqidah" || entitlementKey === "aqidah_kalam" || entitlementKey === "aqidah_ushuluddin")
+        return "AI Aqidah & Ushuluddin";
+    if (entitlementKey === "tarikh" || entitlementKey === "tarikh_khulafa" || entitlementKey === "tarikh_thabaqat" || entitlementKey === "sirah")
+        return "AI Tarikh & Sirah Nabawiyah";
+    if (entitlementKey === "tasawwuf" || entitlementKey === "habib_umar" || entitlementKey === "tasawwuf_ihya" || entitlementKey === "tasawwuf_adab")
+        return "AI Tasawwuf & Tazkiyatun Nafs";
     return "Ruang Riset";
 }
 async function processSuccessfulPayment(invoiceNumber) {
@@ -573,6 +628,15 @@ async function processSuccessfulPayment(invoiceNumber) {
     }
     return Object.assign({ success: true }, activationResult);
 }
+function safeTimingEqual(a, b) {
+    if (typeof a !== "string" || typeof b !== "string")
+        return false;
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length)
+        return false;
+    return crypto.timingSafeEqual(bufA, bufB);
+}
 // ================================================================
 // FUNCTION 2b: dokuWebhook (HTTP Notification dari DOKU)
 // Otomatis aktifkan akses santri di Firestore saat bayar sukses
@@ -605,19 +669,22 @@ exports.dokuWebhook = functions
         const expectedSig1 = generateDokuSignature(clientId, requestId, timestamp, req.originalUrl || "/dokuWebhook", rawBody, dokuCfg.secretKey);
         const expectedSig2 = generateDokuSignature(clientId, requestId, timestamp, req.path || "/dokuWebhook", rawBody, dokuCfg.secretKey);
         const expectedSig3 = generateDokuSignature(clientId, requestId, timestamp, "/dokuWebhook", rawBody, dokuCfg.secretKey);
-        if (incomingSignature !== expectedSig1 && incomingSignature !== expectedSig2 && incomingSignature !== expectedSig3) {
+        // F-06: Verifikasi signature dengan constant-time comparison mencegah timing attacks
+        const isValidSig = safeTimingEqual(incomingSignature, expectedSig1) ||
+            safeTimingEqual(incomingSignature, expectedSig2) ||
+            safeTimingEqual(incomingSignature, expectedSig3);
+        if (!isValidSig) {
             console.error(`[DOKU Webhook] Signature mismatch for request ${requestId}`);
             res.status(401).send("Invalid signature");
             return;
         }
-        // Verifikasi skew timestamp jika ada (toleransi 15 menit)
+        // F-06: Verifikasi skew timestamp mencegah replay attack (toleransi maksimal 15 menit)
         if (timestamp) {
             const reqTime = new Date(timestamp).getTime();
-            if (!isNaN(reqTime)) {
-                const skewMs = Math.abs(Date.now() - reqTime);
-                if (skewMs > 15 * 60 * 1000) {
-                    console.warn(`[DOKU Webhook] Request-Timestamp skew terlampau jauh: ${timestamp}`);
-                }
+            if (isNaN(reqTime) || Math.abs(Date.now() - reqTime) > 15 * 60 * 1000) {
+                console.error(`[DOKU Webhook] Request-Timestamp invalid or skew > 15 min: ${timestamp}`);
+                res.status(401).send("Timestamp expired or invalid");
+                return;
             }
         }
         if (!invoiceNumber) {
@@ -692,6 +759,8 @@ exports.checkPaymentStatus = functions
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk memeriksa status pembayaran.");
     }
     const callerUid = context.auth.uid;
+    // F-02: Rate limit status inquiry (maksimal 15 panggilan per menit per UID)
+    await enforceRateLimit(`chk_${callerUid}`, 15, 60, "Terlalu banyak permintaan pemeriksaan status pembayaran.");
     const invoiceNumber = data.invoiceNumber;
     if (!invoiceNumber) {
         throw new functions.https.HttpsError("invalid-argument", "Invoice number diperlukan.");
@@ -775,6 +844,8 @@ exports.redeemCode = functions
         throw new functions.https.HttpsError("invalid-argument", "Kode redeem tidak boleh kosong.");
     }
     const uid = context.auth.uid;
+    // F-03 & F-05: Rate limit penukaran voucher per UID (maksimal 8 percobaan per 15 menit)
+    await enforceRateLimit(`rdm_${uid}`, 8, 900, "Terlalu banyak percobaan penukaran kode redeem.");
     const userEmail = (context.auth.token.email || "").trim().toLowerCase();
     let redeemResult = {
         entitlementKey: "fiqh_syafii",
@@ -1013,30 +1084,20 @@ exports.dailyRevoke = functions
     .timeZone("Asia/Jakarta")
     .onRun(async () => {
     const now = admin.firestore.Timestamp.now();
-    const expiredUsers = await db
-        .collection("users")
-        .where("subscription_expiry", "<=", now)
-        .get();
-    if (expiredUsers.empty) {
-        console.log("✅ No expired subscriptions found.");
+    // F-01: Periksa seluruh user di database (agar langganan modul tunggal tidak lolos)
+    const allUsersSnap = await db.collection("users").get();
+    if (allUsersSnap.empty) {
+        console.log("✅ Tidak ada data user di database.");
         return null;
     }
-    console.log(`🔄 Memproses ${expiredUsers.size} user expired...`);
-    for (const doc of expiredUsers.docs) {
+    console.log(`🔄 Memeriksa ${allUsersSnap.size} user untuk pengecekan kedaluwarsa...`);
+    let processedCount = 0;
+    for (const doc of allUsersSnap.docs) {
         const userData = doc.data();
         const plan = userData.plan || "";
-        // F12: Perluas whitelist plan agar mencakup all_ai dan voucher_access
-        const eligiblePlans = [
-            "tholib", "bahits", "tholib_1m", "tholib_6m", "bahits_1y",
-            "premium", "all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y",
-            "voucher_access", "voucher"
-        ];
-        if (!eligiblePlans.includes(plan)) {
-            continue;
-        }
-        const email = userData.email;
-        // Revoke modular entitlements jika expired
-        const entitlements = userData.entitlements || {};
+        const email = (userData.email || "").trim().toLowerCase();
+        const entitlements = (userData.entitlements || {});
+        // 1. Periksa modular entitlements yang telah expired
         let hasExpiredEntitlement = false;
         const updatedEntitlements = Object.assign({}, entitlements);
         const expiredKeys = [];
@@ -1046,14 +1107,14 @@ exports.dailyRevoke = functions
                 const exp = item.expiry
                     ? (typeof item.expiry.toDate === "function" ? item.expiry.toDate() : new Date(item.expiry))
                     : null;
-                if (exp && exp <= now.toDate() && item.status !== "expired") {
+                if (exp && exp <= now.toDate() && item.status === "active") {
                     updatedEntitlements[key] = Object.assign(Object.assign({}, item), { status: "expired", updated_at: admin.firestore.FieldValue.serverTimestamp() });
                     hasExpiredEntitlement = true;
                     expiredKeys.push(key);
                 }
             }
         }
-        // F12: Cek apakah masih ada entitlement lain yang aktif sebelum mereset plan global ke trial
+        // 2. Cek apakah masih ada entitlement lain yang aktif
         let hasRemainingActive = false;
         for (const val of Object.values(updatedEntitlements)) {
             if (val && typeof val === "object") {
@@ -1067,22 +1128,43 @@ exports.dailyRevoke = functions
                 }
             }
         }
+        const globalExpiry = userData.subscription_expiry
+            ? (typeof userData.subscription_expiry.toDate === "function" ? userData.subscription_expiry.toDate() : new Date(userData.subscription_expiry))
+            : null;
+        const isGlobalExpired = globalExpiry && globalExpiry <= now.toDate();
         const updateData = {};
         if (hasExpiredEntitlement) {
             updateData.entitlements = updatedEntitlements;
         }
-        // HANYA reset global plan jika TIDAK ADA modul lain yang aktif!
-        if (!hasRemainingActive) {
-            updateData.plan = "trial";
-            updateData.subscription_expiry = null;
-            updateData.questions_used = 0;
+        // HANYA reset global plan jika TIDAK ADA modul lain yang aktif dan masa berlaku habis
+        if (!hasRemainingActive && (isGlobalExpired || !globalExpiry)) {
+            if (plan !== "trial" && plan !== "anonymous") {
+                updateData.plan = "trial";
+                updateData.subscription_expiry = null;
+                updateData.questions_used = 0;
+            }
         }
         if (Object.keys(updateData).length > 0) {
             await doc.ref.update(updateData);
+            processedCount++;
         }
+        // 3. Cabut akses NotebookLM untuk tiap modul yang expired
         if (email && expiredKeys.length > 0) {
             for (const expiredKey of expiredKeys) {
                 console.log(`🔒 Akses modul ${expiredKey} berakhir untuk ${email}.`);
+                // F-01 & F-02: Catat job pencabutan ke durable outbox
+                const outboxRef = db.collection("provisioning_outbox").doc(`rev_${doc.id}_${expiredKey}_${now.toMillis()}`);
+                await outboxRef.set({
+                    uid: doc.id,
+                    email,
+                    name: userData.name || "Peneliti",
+                    entitlement_key: expiredKey,
+                    plan: "trial",
+                    action: "remove",
+                    status: "pending",
+                    attempts: 0,
+                    created_at: admin.firestore.FieldValue.serverTimestamp(),
+                });
                 try {
                     await notifySubscriptionServer(email, userData.name || "User", "trial", "remove", getServiceTitleForEntitlement(expiredKey));
                 }
@@ -1100,7 +1182,118 @@ exports.dailyRevoke = functions
             }
         }
     }
-    console.log(`✅ Selesai memproses ${expiredUsers.size} expired subscriptions.`);
+    console.log(`✅ Selesai memproses dailyRevoke. ${processedCount} user diperbarui.`);
+    return null;
+});
+// ================================================================
+// FUNCTION 4b: processProvisioningOutbox (Cron Worker — tiap 5 menit)
+// Memproses antrean durable outbox provisioning & revocation NotebookLM
+// ================================================================
+exports.processProvisioningOutbox = functions
+    .runWith({
+    serviceAccount: "open-turath@appspot.gserviceaccount.com",
+    timeoutSeconds: 300,
+})
+    .pubsub.schedule("every 5 minutes")
+    .onRun(async () => {
+    const pendingJobs = await db.collection("provisioning_outbox")
+        .where("status", "in", ["pending", "retry"])
+        .limit(25)
+        .get();
+    if (pendingJobs.empty) {
+        return null;
+    }
+    console.log(`[Outbox Worker] Memproses ${pendingJobs.size} antrean outbox...`);
+    for (const doc of pendingJobs.docs) {
+        const job = doc.data();
+        const attempts = (job.attempts || 0);
+        if (attempts >= 8) {
+            console.error(`[Outbox Worker] Job ${doc.id} mencapai batas maksimal percobaan (8). Ditandai failed.`);
+            await doc.ref.update({
+                status: "failed",
+                failed_at: admin.firestore.FieldValue.serverTimestamp(),
+                error: "Exceeded max retry attempts (8)",
+            });
+            continue;
+        }
+        const email = (job.email || "").trim().toLowerCase();
+        if (!email || !email.includes("@")) {
+            console.warn(`[Outbox Worker] Job ${doc.id} tidak memiliki email valid: '${email}'. Ditandai failed.`);
+            await doc.ref.update({
+                status: "failed",
+                failed_at: admin.firestore.FieldValue.serverTimestamp(),
+                error: "Invalid email",
+            });
+            continue;
+        }
+        const action = (job.action || "add");
+        const plan = job.plan || "premium";
+        const name = job.name || "Peneliti";
+        const serviceTitle = getServiceTitleForEntitlement(job.entitlement_key || "");
+        try {
+            await notifySubscriptionServer(email, name, plan, action, serviceTitle);
+            await doc.ref.update({
+                status: "completed",
+                completed_at: admin.firestore.FieldValue.serverTimestamp(),
+                last_attempt_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            console.log(`[Outbox Worker] Berhasil memproses job ${doc.id} (${action} ${email} -> ${serviceTitle})`);
+        }
+        catch (err) {
+            console.error(`[Outbox Worker] Gagal memproses job ${doc.id}:`, err.message);
+            await doc.ref.update({
+                status: "retry",
+                attempts: attempts + 1,
+                last_error: err.message || "Unknown error",
+                last_attempt_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+        }
+    }
+    return null;
+});
+// ================================================================
+// FUNCTION 4c: cleanupOrphanedDeletions (Cron Harian — jam 03.00 WIB)
+// Membersihkan dokumen user yang bertanda pending_deletion jika akun Auth sudah terhapus
+// ================================================================
+exports.cleanupOrphanedDeletions = functions
+    .runWith({
+    serviceAccount: "open-turath@appspot.gserviceaccount.com",
+    timeoutSeconds: 300,
+})
+    .pubsub.schedule("0 3 * * *")
+    .timeZone("Asia/Jakarta")
+    .onRun(async () => {
+    const pendingSnap = await db.collection("users")
+        .where("pending_deletion", "==", true)
+        .limit(50)
+        .get();
+    if (pendingSnap.empty) {
+        console.log("[cleanupOrphanedDeletions] Tidak ada user pending_deletion.");
+        return null;
+    }
+    console.log(`[cleanupOrphanedDeletions] Memeriksa ${pendingSnap.size} user pending deletion...`);
+    for (const doc of pendingSnap.docs) {
+        const uid = doc.id;
+        let authUserExists = false;
+        try {
+            await admin.auth().getUser(uid);
+            authUserExists = true;
+        }
+        catch (err) {
+            if (err.code === "auth/user-not-found") {
+                authUserExists = false;
+            }
+            else {
+                console.warn(`[cleanupOrphanedDeletions] Gagal mengecek auth untuk UID ${uid}: ${err.message}`);
+                continue;
+            }
+        }
+        // Jika akun Auth sudah tidak ada, hapus dokumen Firestore agar tidak menjadi orphan
+        if (!authUserExists) {
+            console.log(`[cleanupOrphanedDeletions] Menghapus orphan Firestore doc untuk UID ${uid}`);
+            await doc.ref.delete();
+        }
+    }
     return null;
 });
 // ================================================================
@@ -1391,33 +1584,38 @@ async function verifySubscriptionFirestore(email, entitlementKey) {
             const txEntitlement = tx.entitlement_key || "fiqh_tahawwulat";
             if (txEntitlement === entitlementKey && expiresAt && expiresAt.toDate() > new Date()) {
                 // Auto-initialize user doc if they exist in transactions but not in users collection
-                let userRef;
+                let userRef = null;
                 let userData = {};
                 if (!userQuery.empty) {
                     userRef = userQuery.docs[0].ref;
                     userData = userQuery.docs[0].data();
                 }
                 else {
-                    // If no doc exists, create one with auto-generated ID
-                    userRef = db.collection("users").doc();
+                    // F-08: Jangan membuat dokumen ber-ID acak. Hubungkan hanya jika ada akun Firebase Auth yang sah.
+                    const authUser = await admin.auth().getUserByEmail(email).catch(() => null);
+                    if (authUser) {
+                        userRef = db.collection("users").doc(authUser.uid);
+                    }
                 }
-                const expiryDate = expiresAt.toDate();
-                const plan = tx.plan || "tholib_1m";
-                await userRef.set({
-                    email: email,
-                    name: userData.name || tx.customer_name || "User",
-                    plan: plan,
-                    subscription_expiry: expiryDate,
-                    entitlements: Object.assign(Object.assign({}, userData.entitlements), { [entitlementKey]: {
-                            plan: plan,
-                            expiry: expiryDate,
-                            updated_at: now
-                        } }),
-                    questions_used: userData.questions_used || 0,
-                    created_at: userData.created_at || now,
-                    updated_at: now
-                }, { merge: true });
-                console.log(`[Auth] Auto-registered/updated user document for ${email} based on active transaction.`);
+                if (userRef) {
+                    const expiryDate = expiresAt.toDate();
+                    const plan = tx.plan || "tholib_1m";
+                    await userRef.set({
+                        email: email,
+                        name: userData.name || tx.customer_name || "User",
+                        plan: plan,
+                        subscription_expiry: expiryDate,
+                        entitlements: Object.assign(Object.assign({}, userData.entitlements), { [entitlementKey]: {
+                                plan: plan,
+                                expiry: expiryDate,
+                                updated_at: now
+                            } }),
+                        questions_used: userData.questions_used || 0,
+                        created_at: userData.created_at || now,
+                        updated_at: now
+                    }, { merge: true });
+                    console.log(`[Auth] Auto-registered/updated user document for ${email} based on active transaction.`);
+                }
                 return true;
             }
         }

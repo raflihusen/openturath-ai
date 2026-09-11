@@ -34,6 +34,19 @@ class AgentWebviewScreen extends StatefulWidget {
   final AgentModel? agent;
   const AgentWebviewScreen({super.key, this.agent});
 
+  /// Kebijakan keamanan URL: Hanya izinkan HTTPS pada ekosistem resmi Google NotebookLM
+  static bool isAllowedNotebookUrl(Uri uri) {
+    if (uri.scheme.toLowerCase() != 'https') return false;
+    final host = uri.host.toLowerCase();
+    const allowedDomains = [
+      'google.com',
+      'gstatic.com',
+      'googleapis.com',
+      'googleusercontent.com',
+    ];
+    return allowedDomains.any((d) => host == d || host.endsWith('.$d'));
+  }
+
   @override
   State<AgentWebviewScreen> createState() => _AgentWebviewScreenState();
 }
@@ -817,20 +830,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   final uri = navigationAction.request.url;
                   if (uri == null) return NavigationActionPolicy.ALLOW;
 
-                  // Wajib skema HTTPS
-                  if (uri.scheme != 'https') {
-                    return NavigationActionPolicy.CANCEL;
-                  }
-
-                  final host = uri.host.toLowerCase();
-                  const allowedDomains = [
-                    'google.com',
-                    'gstatic.com',
-                    'googleapis.com',
-                    'googleusercontent.com',
-                  ];
-                  final isAllowed = allowedDomains.any((d) => host == d || host.endsWith('.$d'));
-                  if (isAllowed) {
+                  if (AgentWebviewScreen.isAllowedNotebookUrl(uri)) {
                     return NavigationActionPolicy.ALLOW;
                   }
 

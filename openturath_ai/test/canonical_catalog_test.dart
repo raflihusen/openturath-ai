@@ -4,7 +4,7 @@ import 'package:openturath_ai/models/book_model.dart';
 
 void main() {
   group('Canonical Syafi\'i Catalog Parser Tests', () {
-    test('parses canonical_syafii.json correctly with 89 entries', () {
+    test('parses canonical_syafii.json correctly with 87 entries', () {
       final file = File('assets/data/canonical_syafii.json');
       expect(file.existsSync(), isTrue, reason: 'assets/data/canonical_syafii.json must exist');
 
