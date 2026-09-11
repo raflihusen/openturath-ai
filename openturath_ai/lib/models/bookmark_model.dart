@@ -9,6 +9,7 @@ class BookmarkModel {
   final String fullAnswer;
   final String bookReference;
   final String pageNumber;
+  final String? author;
   final DateTime createdAt;
 
   BookmarkModel({
@@ -22,6 +23,7 @@ class BookmarkModel {
     required this.fullAnswer,
     required this.bookReference,
     required this.pageNumber,
+    this.author,
     required this.createdAt,
   });
 
@@ -37,6 +39,7 @@ class BookmarkModel {
       'fullAnswer': fullAnswer,
       'bookReference': bookReference,
       'pageNumber': pageNumber,
+      'author': author,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -53,6 +56,7 @@ class BookmarkModel {
       fullAnswer: json['fullAnswer'] as String? ?? '',
       bookReference: json['bookReference'] as String? ?? '',
       pageNumber: json['pageNumber'] as String? ?? '',
+      author: json['author'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
           : DateTime.now(),

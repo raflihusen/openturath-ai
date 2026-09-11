@@ -286,7 +286,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     const fullAccessTiers = [
       {'name': 'Bulanan', 'price': 99000, 'label': 'Rp 99.000', 'period': '/ bulan', 'planId': 'all_ai_1m'},
       {'name': '6 Bulan', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ 6 bulan', 'planId': 'all_ai_6m'},
-      {'name': '1 Tahun · Hemat 25%', 'price': 890000, 'label': 'Rp 890.000', 'period': '/ tahun', 'planId': 'all_ai_1y'},
+      {'name': '1 Tahun · Hemat 33%', 'price': 799000, 'label': 'Rp 799.000', 'period': '/ tahun', 'planId': 'all_ai_1y'},
     ];
 
     final currentTier = fullAccessTiers[_selectedDurationIndex];
@@ -306,25 +306,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Langganan Ruang Riset',
+          'Langganan',
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          TextButton.icon(
-            onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
-              if (mounted) setState(() {});
-            }),
-            icon: Icon(Icons.confirmation_number_outlined, size: 17, color: accent),
-            label: Text(
-              'Kode Akses',
-              style: OTTypography.button(color: accent).copyWith(fontSize: 13),
-            ),
-          ),
-          const SizedBox(width: OTSpacing.sm),
-        ],
       ),
       body: AbsorbPointer(
         absorbing: _isProcessing,
@@ -342,16 +329,37 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 children: [
                   // Editorial Header
                   Text(
-                    'Dukungan Riset Berkelanjutan',
+                    'Pilih akses',
                     style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 24),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Akses komprehensif ke korpus naskah primer turats Islam dengan analisis komparatif instan.',
+                    'Akses ruang riset turats Islam dengan analisis naskah primer.',
                     style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                   ),
 
-                  const SizedBox(height: OTSpacing.lg),
+                  const SizedBox(height: OTSpacing.sm),
+
+                  // Satu pintu masuk redeem kode akses
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
+                        if (mounted) setState(() {});
+                      }),
+                      icon: Icon(Icons.confirmation_number_outlined, size: 16, color: accent),
+                      label: Text(
+                        'Gunakan kode akses',
+                        style: OTTypography.button(color: accent).copyWith(fontSize: 14),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                        minimumSize: const Size(48, 48),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: OTSpacing.sm),
 
                   // ── Hero Package Card: Akses Penuh Semua AI ──
                   Container(
@@ -465,14 +473,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Divider(color: border.withValues(alpha: 0.6), height: 1),
                         const SizedBox(height: OTSpacing.base),
 
-                        // Core Benefits (Disciplined 3-4 items)
-                        _benefitRow('Akses simultan ke 11+ modul naskah primer turats', textPrimary),
+                        // Core Benefits
+                        _benefitRow('Akses ruang riset yang tersedia', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Penelusuran tanpa batas kuota pertanyaan harian', textPrimary),
+                        _benefitRow('Batas penggunaan mengikuti layanan riset', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Sitasi marja\' kitab asli, nomor halaman & matan lengkap', textPrimary),
+                        _benefitRow('Periksa sumber yang dicantumkan pada jawaban', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Prioritas kurasi naskah dan pembaruan berkala', textPrimary),
+                        _benefitRow('Pembaruan pustaka berkala', textPrimary),
 
                         const SizedBox(height: OTSpacing.lg),
 
@@ -486,7 +494,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 : () {
                                     final allAiAgent = AgentModel(
                                       id: 'all_ai',
-                                      title: 'Paket Akses Penuh Semua AI',
+                                      title: 'Semua Ruang Riset',
                                       description: 'Akses ke seluruh modul AI OpenTurath',
                                       emoji: '✨',
                                       category: 'All Access',
@@ -507,7 +515,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               elevation: 0,
                             ),
                             child: Text(
-                              'Pilih Paket Ini ($tierLabel)',
+                              'Lanjutkan · $tierLabel',
                               style: OTTypography.button(color: canvas),
                             ),
                           ),
@@ -522,7 +530,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   Padding(
                     padding: const EdgeInsets.only(left: 4, bottom: 6),
                     child: Text(
-                      'PILIHAN MODUL SATUAN',
+                      'SATU RUANG RISET',
                       style: OTTypography.sectionHeading(color: textSecondary),
                     ),
                   ),
@@ -544,19 +552,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '1 Modul Spesialis Terpilih',
+                                    'Pilih Bidang atau Ulama',
                                     style: OTTypography.cardTitle(color: textPrimary),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'Fokus telaah pada satu disiplin keilmuan tertentu',
+                                    'Pilih ruang riset sesuai fokus telaah',
                                     style: OTTypography.caption(color: textSecondary),
                                   ),
                                 ],
                               ),
                             ),
                             Text(
-                              'Rp 50.000 / bln',
+                              'Rp50.000 / bulan',
                               style: OTTypography.bodyMedium(color: textPrimary).copyWith(
                                 fontWeight: FontWeight.w700,
                               ),
@@ -586,7 +594,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             return DropdownMenuItem<String>(
                               value: a.id,
                               child: Text(
-                                '${a.title}  ·  ${a.category}',
+                                a.title,
                                 style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -619,29 +627,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               side: BorderSide(color: border, width: 0.8),
                               shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                             ),
-                            child: Text(
-                              'Langganan ${_agent?.title ?? "Modul Ini"} (Rp 50.000)',
-                              style: OTTypography.button(),
+                            child: Builder(
+                              builder: (context) {
+                                final p = _agent?.price1m ?? AppConstants.priceTholib1m;
+                                final formatted = 'Rp ${p.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
+                                return Text(
+                                  'Lanjutkan · $formatted',
+                                  style: OTTypography.button(),
+                                );
+                              },
                             ),
                           ),
                         ),
                       ],
-                    ),
-                  ),
-
-                  const SizedBox(height: OTSpacing.xl),
-
-                  // Voucher / Redeem Code Trigger
-                  Center(
-                    child: TextButton.icon(
-                      onPressed: () => RedeemCodeSheet.show(context, onSuccess: () {
-                        if (mounted) setState(() {});
-                      }),
-                      icon: Icon(Icons.confirmation_number_outlined, size: 16, color: textSecondary),
-                      label: Text(
-                        'Punya voucher atau kode redeem santri? Klaim di sini',
-                        style: OTTypography.caption(color: textSecondary),
-                      ),
                     ),
                   ),
                 ],

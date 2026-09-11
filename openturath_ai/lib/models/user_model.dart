@@ -157,6 +157,10 @@ class UserModel {
     if (ent != null) {
       return ent.isActive && ent.isPremium;
     }
+    // Jika peta entitlement ada, jadikan itu sumber keputusan; fallback legacy hanya jika belum bermigrasi sama sekali
+    if (entitlements.isNotEmpty) {
+      return false;
+    }
     return isSubscriptionActive;
   }
 

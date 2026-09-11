@@ -13,7 +13,6 @@ import '../core/design/ot_spacing.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
-import '../widgets/redeem_code_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -218,8 +217,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: OTSpacing.md),
               _buildThemeChoiceTile(
-                title: 'Ikuti Pengaturan Sistem',
-                subtitle: 'Otomatis menyesuaikan tema perangkat Anda',
+                title: 'Ikuti Sistem',
+                subtitle: 'Menyesuaikan tema perangkat Anda',
                 icon: Icons.brightness_auto_rounded,
                 isSelected: currentMode == ThemeMode.system,
                 isDark: isDark,
@@ -234,8 +233,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Divider(height: 1, color: border.withValues(alpha: 0.5)),
               _buildThemeChoiceTile(
-                title: 'Mode Terang (Warm Off-White)',
-                subtitle: 'Kertas alami, kontras tinggi yang nyaman di mata',
+                title: 'Terang',
+                subtitle: 'Tampilan cerah yang nyaman di mata',
                 icon: Icons.light_mode_outlined,
                 isSelected: currentMode == ThemeMode.light,
                 isDark: isDark,
@@ -250,8 +249,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Divider(height: 1, color: border.withValues(alpha: 0.5)),
               _buildThemeChoiceTile(
-                title: 'Mode Gelap (Deep Obsidian)',
-                subtitle: 'Minim silau untuk muthala\'ah dan riset malam hari',
+                title: 'Gelap',
+                subtitle: 'Minim silau untuk riset malam hari',
                 icon: Icons.dark_mode_outlined,
                 isSelected: currentMode == ThemeMode.dark,
                 isDark: isDark,
@@ -512,16 +511,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: _openSubscription,
                       ),
-                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
-                      _SettingsTile(
-                        icon: Icons.confirmation_number_outlined,
-                        title: 'Klaim Kode Akses Santri',
-                        subtitle: 'Tukarkan voucher atau kode akses trial terkontrol',
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => RedeemCodeSheet.show(context, onSuccess: () {
-                          if (mounted) setState(() {});
-                        }),
-                      ),
                     ],
                   ),
                 ),
@@ -551,9 +540,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (currentMode == ThemeMode.system) {
                             modeLabel = 'Ikuti Sistem';
                           } else if (currentMode == ThemeMode.dark) {
-                            modeLabel = 'Mode Gelap (Deep Obsidian)';
+                            modeLabel = 'Gelap';
                           } else {
-                            modeLabel = 'Mode Terang (Warm Off-White)';
+                            modeLabel = 'Terang';
                           }
 
                           return _SettingsTile(

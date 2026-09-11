@@ -106,11 +106,13 @@ function getEntitlementAccess(userData, entitlementKey) {
     // 1. Cek All Access (Paket Lengkap Semua AI)
     const allAccess = entitlements["all_access"];
     if (allAccess && typeof allAccess === "object") {
+        const status = allAccess.status;
         const allExpiryVal = allAccess.expiry;
         const allExpiryDate = allExpiryVal
             ? (typeof allExpiryVal.toDate === "function" ? allExpiryVal.toDate() : new Date(allExpiryVal))
             : null;
-        if (allExpiryDate && allExpiryDate > new Date()) {
+        // Status revoked langsung menolak akses meskipun expiry belum lewat
+        if (status !== "revoked" && allExpiryDate && allExpiryDate > new Date()) {
             return { premiumPlan: true, active: true };
         }
     }
@@ -119,14 +121,31 @@ function getEntitlementAccess(userData, entitlementKey) {
     const access = productEntitlement && typeof productEntitlement === "object"
         ? productEntitlement
         // Dukungan sementara untuk pelanggan lama sebelum migrasi entitlement.
-        : { plan: userData.plan, expiry: userData.subscription_expiry };
+        : (userData.plan && userData.plan !== "trial"
+            ? { plan: userData.plan, expiry: userData.subscription_expiry, status: "active" }
+            : null);
+    if (!access) {
+        return { premiumPlan: false, active: false };
+    }
+    const status = access.status;
+    if (status === "revoked") {
+        return { premiumPlan: false, active: false };
+    }
     const plan = access.plan;
     const expiryValue = access.expiry;
     const expiryDate = expiryValue
         ? (typeof expiryValue.toDate === "function" ? expiryValue.toDate() : new Date(expiryValue))
         : null;
     const premiumPlan = typeof plan === "string" &&
-        (plan === "tholib" || plan === "bahits" || plan === "premium" || plan === "all_access" || plan.startsWith("tholib_") || plan.startsWith("bahits_"));
+        (plan === "tholib" ||
+            plan === "bahits" ||
+            plan === "premium" ||
+            plan === "all_access" ||
+            plan === "voucher_access" ||
+            plan === "voucher" ||
+            plan.startsWith("tholib_") ||
+            plan.startsWith("bahits_") ||
+            plan.startsWith("voucher_"));
     return {
         premiumPlan,
         active: premiumPlan && expiryDate !== null && !Number.isNaN(expiryDate.getTime()) && expiryDate > new Date(),

@@ -187,8 +187,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) => EvidenceBottomSheet(
         citationNumber: 1,
-        bookName: item.bookReference,
-        author: item.agentTitle,
+        bookName: item.bookReference.isNotEmpty ? item.bookReference : 'Rujukan Naskah',
+        author: item.author ?? '',
         pageNumber: item.pageNumber,
         category: item.fieldName,
         arabicExcerpt: item.arabicExcerpt,
