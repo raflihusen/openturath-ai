@@ -147,29 +147,37 @@ class UserModel {
   }
 
   bool isAgentSubscriptionActive(String agentId) {
-    // 1. Cek hak akses global All Access (Promo Semua AI)
+    // 1. Cek hak akses global All Access (Paket Semua AI)
     final allAccess = entitlements['all_access'] ?? entitlements['all_ai'];
-    if (allAccess != null && allAccess.isActive && allAccess.isPremium) {
-      return true;
+    if (allAccess != null) {
+      if (allAccess.status == 'revoked') return false;
+      if (allAccess.isActive && allAccess.isPremium) {
+        return true;
+      }
     }
     // 2. Cek hak akses modul spesifik
     final ent = getEntitlement(agentId);
     if (ent != null) {
+      if (ent.status == 'revoked') return false;
       return ent.isActive && ent.isPremium;
     }
-    // Jika peta entitlement ada, jadikan itu sumber keputusan; fallback legacy hanya jika belum bermigrasi sama sekali
+    // 3. Jika peta entitlement terisi, batasi strictly pada modul yang terdaftar
     if (entitlements.isNotEmpty) {
       return false;
     }
-    return isSubscriptionActive;
+    // 4. Fallback legacy HANYA jika plan akun adalah paket all_access eksplisit
+    final isLegacyAllAccess = plan == 'all_access' ||
+        plan == 'full' ||
+        plan == AppConstants.planBahits1y ||
+        plan.startsWith('all_ai') ||
+        plan.startsWith('redeem_all') ||
+        plan.startsWith('voucher_all');
+    return isLegacyAllAccess && isSubscriptionActive;
   }
 
   bool hasAccessToAgent(String agentId) {
-    // 1. Cek hak akses langganan aktif (modul spesifik atau all-access)
-    if (isAgentSubscriptionActive(agentId)) return true;
-    // 2. Cek hak akses pengguna trial dengan sisa kuota pertanyaan
-    if (isTrial && questionsUsed < AppConstants.trialQuestionLimit) return true;
-    return false;
+    // Akses notebook memerlukan hak akses langganan atau voucher aktif (F24: hapus jalur trial tanpa batas server)
+    return isAgentSubscriptionActive(agentId);
   }
 
   int questionsRemainingForAgent(String agentId) {
@@ -177,9 +185,7 @@ class UserModel {
     return AppConstants.trialQuestionLimit - questionsUsed;
   }
 
-  factory UserModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>? ?? {};
-    
+  factory UserModel.fromMap(String uid, Map<String, dynamic> data) {
     // Parse entitlements map
     final Map<String, ModuleEntitlement> parsedEntitlements = {};
     if (data['entitlements'] != null && data['entitlements'] is Map) {
@@ -191,18 +197,33 @@ class UserModel {
       });
     }
 
+    DateTime? expiry;
+    if (data['subscription_expiry'] != null) {
+      final exp = data['subscription_expiry'];
+      if (exp is Timestamp) {
+        expiry = exp.toDate();
+      } else if (exp is String) {
+        expiry = DateTime.tryParse(exp);
+      } else if (exp is int) {
+        expiry = DateTime.fromMillisecondsSinceEpoch(exp);
+      }
+    }
+
     return UserModel(
-      uid: doc.id,
+      uid: uid,
       name: data['name'] ?? '',
       email: data['email'] ?? '',
       photoUrl: data['photo_url'] ?? '',
       plan: data['plan'] ?? AppConstants.planTrial,
       questionsUsed: data['questions_used'] ?? 0,
-      subscriptionExpiry: data['subscription_expiry'] != null
-          ? (data['subscription_expiry'] as Timestamp).toDate()
-          : null,
+      subscriptionExpiry: expiry,
       entitlements: parsedEntitlements,
     );
+  }
+
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    return UserModel.fromMap(doc.id, data);
   }
 
   Map<String, dynamic> toMap() => {
@@ -214,6 +235,16 @@ class UserModel {
         'subscription_expiry': subscriptionExpiry != null
             ? Timestamp.fromDate(subscriptionExpiry!)
             : null,
+        'entitlements': entitlements.map((k, v) => MapEntry(k, v.toMap())),
+      };
+
+  Map<String, dynamic> toJsonMap() => {
+        'name': name,
+        'email': email,
+        'photo_url': photoUrl,
+        'plan': plan,
+        'questions_used': questionsUsed,
+        'subscription_expiry': subscriptionExpiry?.toIso8601String(),
         'entitlements': entitlements.map((k, v) => MapEntry(k, v.toMap())),
       };
 

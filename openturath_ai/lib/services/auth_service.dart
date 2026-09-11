@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +14,38 @@ class AuthService {
     serverClientId: '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
   );
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  // In-memory cache to prevent entitlement loss on network hiccup (F41)
+  static final Map<String, UserModel> _userCache = {};
+
+  // ── Cache Helpers ──────────────────────────────────────────────
+  static Future<void> _cacheUserLocally(UserModel user) async {
+    _userCache[user.uid] = user;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'openturath_cached_user_${user.uid}',
+        jsonEncode(user.toJsonMap()),
+      );
+    } catch (_) {}
+  }
+
+  static Future<UserModel?> _getCachedUser(String uid) async {
+    if (_userCache.containsKey(uid)) {
+      return _userCache[uid];
+    }
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('openturath_cached_user_$uid');
+      if (raw != null && raw.isNotEmpty) {
+        final map = jsonDecode(raw) as Map<String, dynamic>;
+        final user = UserModel.fromMap(uid, map);
+        _userCache[uid] = user;
+        return user;
+      }
+    } catch (_) {}
+    return null;
+  }
 
   // ── Current Firebase User ──────────────────────────────────────
   User? get currentUser => _auth.currentUser;
@@ -60,13 +94,19 @@ class AuthService {
             'questions_used': newUser.questionsUsed,
             'subscription_expiry': null,
           }).timeout(const Duration(seconds: 4));
+          await _cacheUserLocally(newUser);
           return newUser;
         } else {
-          return UserModel.fromFirestore(doc);
+          final userModel = UserModel.fromFirestore(doc);
+          await _cacheUserLocally(userModel);
+          return userModel;
         }
       } catch (_) {
-        // Fallback user jika Firestore lambat / offline
-        return UserModel(
+        // Fallback user jika Firestore lambat / offline: cek cache terlebih dahulu (F41)
+        final cached = await _getCachedUser(firebaseUser.uid);
+        if (cached != null) return cached;
+
+        final fallback = UserModel(
           uid: firebaseUser.uid,
           name: firebaseUser.displayName ?? 'Pengguna',
           email: firebaseUser.email ?? '',
@@ -74,6 +114,7 @@ class AuthService {
           plan: AppConstants.planTrial,
           questionsUsed: 0,
         );
+        return fallback;
       }
     } catch (e) {
       rethrow;
@@ -109,9 +150,12 @@ class AuthService {
             'questions_used': newUser.questionsUsed,
             'subscription_expiry': null,
           }).timeout(const Duration(seconds: 4));
+          await _cacheUserLocally(newUser);
           return newUser;
         } else {
-          return UserModel.fromFirestore(doc);
+          final userModel = UserModel.fromFirestore(doc);
+          await _cacheUserLocally(userModel);
+          return userModel;
         }
       } catch (_) {
         return _localGuestUser();
@@ -146,7 +190,7 @@ class AuthService {
           .get()
           .timeout(const Duration(seconds: 4));
       if (!doc.exists) {
-        return UserModel(
+        final fallback = UserModel(
           uid: user.uid,
           name: user.displayName ?? 'Pengguna',
           email: user.email ?? '',
@@ -154,9 +198,16 @@ class AuthService {
           plan: AppConstants.planTrial,
           questionsUsed: 0,
         );
+        return fallback;
       }
-      return UserModel.fromFirestore(doc);
+      final userModel = UserModel.fromFirestore(doc);
+      await _cacheUserLocally(userModel);
+      return userModel;
     } catch (_) {
+      // Pertahankan snapshot terakhir jika ada (F41)
+      final cached = await _getCachedUser(user.uid);
+      if (cached != null) return cached;
+
       return UserModel(
         uid: user.uid,
         name: user.displayName ?? 'Pengguna',
@@ -168,48 +219,99 @@ class AuthService {
     }
   }
 
-  // ── Stream user changes (real-time) ───────────────────────────
+  // ── Stream user changes (real-time with clean subscription switching, F22 & F41) ──
   Stream<UserModel?> get userStream {
-    return _auth.authStateChanges().asyncExpand((user) {
-      if (user == null) return Stream.value(null);
-      return _db
-          .collection(AppConstants.colUsers)
-          .doc(user.uid)
-          .snapshots()
-          .map((doc) => doc.exists ? UserModel.fromFirestore(doc) : null);
-    });
+    late StreamController<UserModel?> controller;
+    StreamSubscription<User?>? authSub;
+    StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? docSub;
+
+    controller = StreamController<UserModel?>.broadcast(
+      onListen: () {
+        authSub = _auth.authStateChanges().listen((user) async {
+          await docSub?.cancel();
+          docSub = null;
+
+          if (user == null) {
+            if (!controller.isClosed) controller.add(null);
+          } else {
+            // Optimistic emit from cache if available (stale-while-revalidate)
+            final cached = await _getCachedUser(user.uid);
+            if (cached != null && !controller.isClosed) {
+              controller.add(cached);
+            }
+
+            docSub = _db
+                .collection(AppConstants.colUsers)
+                .doc(user.uid)
+                .snapshots()
+                .listen(
+              (doc) {
+                if (controller.isClosed) return;
+                if (doc.exists) {
+                  final userModel = UserModel.fromFirestore(doc);
+                  _cacheUserLocally(userModel);
+                  controller.add(userModel);
+                } else {
+                  controller.add(null);
+                }
+              },
+              onError: (err) async {
+                if (controller.isClosed) return;
+                // Preserve last known state on Firestore error instead of degrading to empty trial (F41)
+                final fallback = await _getCachedUser(user.uid) ??
+                    UserModel(
+                      uid: user.uid,
+                      name: user.displayName ?? 'Pengguna',
+                      email: user.email ?? '',
+                      photoUrl: user.photoURL ?? '',
+                      plan: AppConstants.planTrial,
+                      questionsUsed: 0,
+                    );
+                controller.add(fallback);
+              },
+            );
+          }
+        }, onError: (err) {
+          if (!controller.isClosed) controller.addError(err);
+        });
+      },
+      onCancel: () {
+        docSub?.cancel();
+        authSub?.cancel();
+      },
+    );
+
+    return controller.stream;
   }
 
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
+    final currentUid = _auth.currentUser?.uid;
+
     try {
-      // Clear all cookies, session cookies, cache, and web storage in WebView first
       final cookieManager = CookieManager.instance();
       await cookieManager.deleteAllCookies();
       await cookieManager.removeSessionCookies();
       await InAppWebViewController.clearAllCache();
       await WebStorageManager.instance().deleteAllData();
-    } catch (e) {
-      // Ignore if not supported on current platform/test
-    }
+    } catch (_) {}
 
     try {
       await _googleSignIn.signOut();
-    } catch (e) {
-      // Ignore
-    }
+    } catch (_) {}
 
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('google_session_ready');
       await prefs.remove('last_opened_notebook_id');
+      if (currentUid != null) {
+        _userCache.remove(currentUid);
+        await prefs.remove('openturath_cached_user_$currentUid');
+      }
     } catch (_) {}
 
-    try {
-      await _auth.signOut();
-    } catch (e) {
-      // Ignore
-    }
+    // Propagate Auth signOut to avoid half-signed-out UI state (F41)
+    await _auth.signOut();
   }
 
   // ── Increment Question Count ───────────────────────────────────
@@ -223,23 +325,41 @@ class AuthService {
     } catch (_) {}
   }
 
-  // ── Delete Account & User Data (Google Play Compliance) ─────────
+  // ── Delete Account & User Data (Google Play Compliance, F08 & F41) ─────────
   Future<void> deleteAccount() async {
     final user = currentUser;
     if (user == null) return;
+    final uid = user.uid;
 
-    // 1. Hapus dokumen profil di Firestore jika ada
+    // 1. WAJIB Hapus Akun Auth Terlebih Dahulu (F08).
+    // Jika gagal (misal requires-recent-login), jangan hapus dokumen atau preferensi.
+    await user.delete();
+
+    // 2. Hanya setelah Auth berhasil dihapus, bersihkan data Firestore
     try {
       await _db
           .collection(AppConstants.colUsers)
-          .doc(user.uid)
+          .doc(uid)
           .delete()
           .timeout(const Duration(seconds: 5));
-    } catch (_) {
-      // Abaikan jika offline / rule restricted
-    }
+    } catch (_) {}
 
-    // 2. Bersihkan seluruh session cookies, cache, dan data lokal WebView
+    // 3. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())
+    try {
+      _userCache.remove(uid);
+      final prefs = await SharedPreferences.getInstance();
+      final keys = prefs.getKeys();
+      for (final key in keys) {
+        if (key.startsWith('openturath_${uid}_') ||
+            key == 'openturath_cached_user_$uid' ||
+            key == 'google_session_ready' ||
+            key == 'last_opened_notebook_id') {
+          await prefs.remove(key);
+        }
+      }
+    } catch (_) {}
+
+    // 4. Bersihkan cookies & cache WebView
     try {
       final cookieManager = CookieManager.instance();
       await cookieManager.deleteAllCookies();
@@ -248,13 +368,7 @@ class AuthService {
       await WebStorageManager.instance().deleteAllData();
     } catch (_) {}
 
-    // 3. Bersihkan seluruh penyimpanan lokal SharedPreferences
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-    } catch (_) {}
-
-    // 4. Putuskan hubungan Google Sign In
+    // 5. Putuskan hubungan Google Sign In
     try {
       await _googleSignIn.disconnect();
     } catch (_) {
@@ -263,16 +377,7 @@ class AuthService {
       } catch (_) {}
     }
 
-    // 5. Hapus akun pengguna secara permanen dari Firebase Auth
-    try {
-      await user.delete();
-    } catch (e) {
-      // Jika require recent login, logout dan sign out
-      await _auth.signOut();
-      rethrow;
-    }
-
-    // 6. Pastikan sign out bersih
+    // 6. Pastikan sign-out bersih
     try {
       await _auth.signOut();
     } catch (_) {}
