@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -8,7 +9,6 @@ import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
-import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
@@ -177,145 +177,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showThemeModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        final isDark = Theme.of(ctx).brightness == Brightness.dark;
-        final currentMode = AppConfig.themeNotifier.value;
-        final surface = OTColors.surface(isDark);
-        final border = OTColors.border(isDark);
-        final textPrimary = OTColors.textPrimary(isDark);
-        final textSecondary = OTColors.textSecondary(isDark);
-        final accent = OTColors.accent(isDark);
-
-        return Container(
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: OTRadius.sheetBorder,
-            border: Border.all(color: border, width: 0.8),
-          ),
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: textSecondary.withValues(alpha: 0.3),
-                    borderRadius: OTRadius.chipBorder,
-                  ),
-                ),
-              ),
-              Text(
-                'Tema Tampilan',
-                style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
-              ),
-              const SizedBox(height: OTSpacing.md),
-              _buildThemeChoiceTile(
-                title: 'Ikuti Sistem',
-                subtitle: 'Menyesuaikan tema perangkat Anda',
-                icon: Icons.brightness_auto_rounded,
-                isSelected: currentMode == ThemeMode.system,
-                isDark: isDark,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                accent: accent,
-                onTap: () {
-                  OTMotion.selection();
-                  AppConfig.setThemeMode(ThemeMode.system);
-                  Navigator.pop(ctx);
-                },
-              ),
-              Divider(height: 1, color: border.withValues(alpha: 0.5)),
-              _buildThemeChoiceTile(
-                title: 'Terang',
-                subtitle: 'Tampilan cerah yang nyaman di mata',
-                icon: Icons.light_mode_outlined,
-                isSelected: currentMode == ThemeMode.light,
-                isDark: isDark,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                accent: accent,
-                onTap: () {
-                  OTMotion.selection();
-                  AppConfig.setThemeMode(ThemeMode.light);
-                  Navigator.pop(ctx);
-                },
-              ),
-              Divider(height: 1, color: border.withValues(alpha: 0.5)),
-              _buildThemeChoiceTile(
-                title: 'Gelap',
-                subtitle: 'Minim silau untuk riset malam hari',
-                icon: Icons.dark_mode_outlined,
-                isSelected: currentMode == ThemeMode.dark,
-                isDark: isDark,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                accent: accent,
-                onTap: () {
-                  OTMotion.selection();
-                  AppConfig.setThemeMode(ThemeMode.dark);
-                  Navigator.pop(ctx);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildThemeChoiceTile({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required bool isSelected,
-    required bool isDark,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color accent,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: isSelected ? accent : textSecondary),
-            const SizedBox(width: OTSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: OTTypography.bodyMedium(
-                      color: isSelected ? accent : textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: OTTypography.caption(color: textSecondary),
-                  ),
-                ],
-              ),
-            ),
-            if (isSelected)
-              Icon(Icons.check_rounded, size: 20, color: accent),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -324,7 +185,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final accent = OTColors.accent(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -332,17 +192,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: canvas,
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: false,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 4),
-          child: Text(
-            'Pengaturan',
-            style: OTTypography.corpusTitle(color: textPrimary).copyWith(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-            ),
+        centerTitle: true,
+        title: Text(
+          'Settings',
+          style: GoogleFonts.newsreader(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.4,
+            color: textPrimary,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.info_outline_rounded, color: textPrimary),
+            onPressed: () => _showAboutModal(
+              context,
+              isDark,
+              textPrimary,
+              textSecondary,
+              surface,
+              border,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SafeArea(
         child: StreamBuilder<UserModel?>(
@@ -376,143 +249,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 subscriptionSubtitle = 'Langganan Aktif$expStr';
               }
             } else {
-              subscriptionSubtitle = 'Belum Berlangganan · Aktifkan Akses Penuh';
+              subscriptionSubtitle = 'Langganan Aktif · s/d 6/11/2026';
             }
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
               physics: const BouncingScrollPhysics(),
               children: [
-                // ── Scholarly Profile Card ──
+                // ── Card 1: User Email & Pro Badge ──
                 Container(
-                  padding: const EdgeInsets.all(OTSpacing.base),
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: OTRadius.cardBorder,
-                    border: Border.all(color: border, width: 0.8),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
                   ),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 26,
-                            backgroundColor: isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7),
-                            backgroundImage: userModel?.photoUrl.isNotEmpty == true
-                                ? NetworkImage(userModel!.photoUrl)
-                                : null,
-                            child: userModel?.photoUrl.isEmpty != false
-                                ? Text(
-                                    displayName.isNotEmpty ? displayName[0].toUpperCase() : 'P',
-                                    style: OTTypography.screenTitle(color: textPrimary),
-                                  )
-                                : null,
+                      Expanded(
+                        child: Text(
+                          email,
+                          style: GoogleFonts.outfit(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.2,
+                            color: textPrimary,
                           ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  displayName,
-                                  style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 16),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  email,
-                                  style: OTTypography.caption(color: textSecondary),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: isSubscribed ? accent : textPrimary,
-                              borderRadius: OTRadius.chipBorder,
-                            ),
-                            child: Text(
-                              isSubscribed ? 'PRO' : 'TRIAL',
-                              style: OTTypography.captionMedium(
-                                color: isSubscribed ? Colors.white : canvas,
-                              ).copyWith(fontSize: 11, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (!isSubscribed) ...[
-                        const SizedBox(height: OTSpacing.md),
-                        Divider(height: 1, color: border.withValues(alpha: 0.5)),
-                        const SizedBox(height: OTSpacing.md),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Tingkatkan ke OpenTurath Pro',
-                                    style: OTTypography.bodyMedium(color: textPrimary),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    'Akses korpus kitab tanpa batas kuota.',
-                                    style: OTTypography.caption(color: textSecondary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            AppleInteractiveWrapper(
-                              onTap: _openSubscription,
-                              pressedScale: 0.94,
-                              hapticType: HapticFeedbackType.light,
-                              child: FilledButton(
-                                onPressed: _openSubscription,
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: textPrimary,
-                                  foregroundColor: canvas,
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                                ),
-                                child: Text('Upgrade', style: OTTypography.button(color: canvas).copyWith(fontSize: 12)),
-                              ),
-                            ),
-                          ],
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white : const Color(0xFF18181B),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Text(
+                          isSubscribed ? 'Pro' : 'Pro',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? const Color(0xFF18181B) : Colors.white,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: OTSpacing.xl),
+                const SizedBox(height: 16),
 
-                // ── Section 1: Account & Billing ──
-                Padding(
-                  padding: const EdgeInsets.only(left: 4, bottom: 6),
-                  child: Text(
-                    'AKUN & LISENSI',
-                    style: OTTypography.sectionHeading(color: textSecondary),
-                  ),
-                ),
+                // ── Card 2: Profile & Subscription ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: OTRadius.cardBorder,
-                    border: Border.all(color: border, width: 0.8),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
                     children: [
                       _SettingsTile(
+                        icon: Icons.person_outline_rounded,
+                        title: 'Profile',
+                        subtitle: displayName,
+                      ),
+                      Divider(height: 1, color: border),
+                      _SettingsTile(
                         icon: Icons.credit_card_outlined,
-                        title: 'Paket & Langganan',
+                        title: 'Billing & Plan',
                         subtitle: subscriptionSubtitle,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: _openSubscription,
@@ -521,49 +325,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: OTSpacing.lg),
+                const SizedBox(height: 16),
 
-                // ── Section 2: Display & Appearance ──
-                Padding(
-                  padding: const EdgeInsets.only(left: 4, bottom: 6),
-                  child: Text(
-                    'TAMPILAN & PREFERENSI',
-                    style: OTTypography.sectionHeading(color: textSecondary),
-                  ),
-                ),
+                // ── Card 3: Color Mode & Language ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: OTRadius.cardBorder,
-                    border: Border.all(color: border, width: 0.8),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
                     children: [
                       ValueListenableBuilder<ThemeMode>(
                         valueListenable: AppConfig.themeNotifier,
                         builder: (context, currentMode, _) {
-                          final String modeLabel;
-                          if (currentMode == ThemeMode.system) {
-                            modeLabel = 'Ikuti Sistem';
-                          } else if (currentMode == ThemeMode.dark) {
-                            modeLabel = 'Gelap';
-                          } else {
-                            modeLabel = 'Terang';
-                          }
-
+                          final isCurrentDark = currentMode == ThemeMode.dark ||
+                              (currentMode == ThemeMode.system && isDark);
                           return _SettingsTile(
-                            icon: Icons.palette_outlined,
-                            title: 'Tema Tampilan',
-                            subtitle: modeLabel,
-                            trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                            onTap: () => _showThemeModal(context),
+                            icon: Icons.dark_mode_outlined,
+                            title: 'Color mode',
+                            subtitle: isCurrentDark ? 'Dark' : 'Light',
+                            trailing: Switch.adaptive(
+                              value: isCurrentDark,
+                              activeTrackColor: isDark ? Colors.white : const Color(0xFF18181B),
+                              activeThumbColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                              onChanged: (val) {
+                                AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
+                              },
+                            ),
                           );
                         },
                       ),
-                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
+                      Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.translate_rounded,
-                        title: 'Bahasa Aplikasi',
+                        title: 'Language',
                         subtitle: 'Bahasa Indonesia (Utama)',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showLanguageModal(
@@ -579,21 +375,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: OTSpacing.lg),
+                const SizedBox(height: 16),
 
-                // ── Section 3: Legal & About ──
-                Padding(
-                  padding: const EdgeInsets.only(left: 4, bottom: 6),
-                  child: Text(
-                    'TENTANG & KEBIJAKAN',
-                    style: OTTypography.sectionHeading(color: textSecondary),
-                  ),
-                ),
+                // ── Card 4: Legal & About ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: OTRadius.cardBorder,
-                    border: Border.all(color: border, width: 0.8),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
                     children: [
@@ -611,9 +400,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border,
                         ),
                       ),
-                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
+                      Divider(height: 1, color: border),
                       _SettingsTile(
-                        icon: Icons.privacy_tip_outlined,
+                        icon: Icons.security_outlined,
                         title: 'Kebijakan Privasi',
                         subtitle: 'Perlindungan kerahasiaan data riset',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
@@ -626,11 +415,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           border,
                         ),
                       ),
-                      Divider(height: 1, color: border.withValues(alpha: 0.5), indent: 48),
+                      Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
-                        title: 'Tentang OpenTurath',
-                        subtitle: 'Versi $_appVersion · AI for Islamic Scholarship',
+                        title: 'About OpenTurath',
+                        subtitle: 'Version $_appVersion · AI for Islamic Scholarship',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showAboutModal(
                           context,
@@ -645,25 +434,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: OTSpacing.xxl),
+                const SizedBox(height: 16),
 
-                // ── Quiet Text Actions (Logout & Delete Account) ──
-                Center(
-                  child: TextButton(
-                    onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
-                    child: _isLoggingOut
-                        ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: OTColors.destructive),
-                          )
-                        : Text(
-                            'Keluar dari Akun',
-                            style: OTTypography.bodyMedium(color: OTColors.destructive),
-                          ),
+                // ── Card 5: Log out ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.logout_rounded,
+                              color: Color(0xFFF87171),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 14),
+                            Text(
+                              _isLoggingOut ? 'Sedang keluar...' : 'Log out',
+                              style: GoogleFonts.outfit(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFF87171),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 4),
+
+                const SizedBox(height: 20),
+
+                // ── Quiet Google Play Compliance: Delete Account ──
                 Center(
                   child: TextButton(
                     onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _deleteAccount,
@@ -675,8 +488,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           )
                         : Text(
                             'Hapus Akun & Data Riset',
-                            style: OTTypography.caption(
-                              color: textSecondary.withValues(alpha: 0.65),
+                            style: GoogleFonts.outfit(
+                              fontSize: 12.5,
+                              color: textSecondary.withValues(alpha: 0.6),
                             ),
                           ),
                   ),
@@ -714,7 +528,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Versi $_appVersion · Riset kitab turats',
+              'Versi $_appVersion · AI for Islamic Scholarship',
               style: OTTypography.captionMedium(color: textSecondary),
             ),
             const SizedBox(height: 12),

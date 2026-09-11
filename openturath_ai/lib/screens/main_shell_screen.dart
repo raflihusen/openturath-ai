@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../core/app_config.dart';
 import '../core/theme.dart';
-import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_motion.dart';
 import '../models/agent_model.dart';
@@ -126,9 +127,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.menu_book_outlined,
-                            activeIcon: Icons.menu_book_rounded,
-                            label: 'Keilmuan',
+                            icon: Icons.auto_awesome_outlined,
+                            activeIcon: Icons.auto_awesome_rounded,
+                            label: 'Spesialis',
                             isSelected: _currentIndex == 1,
                             accent: accent,
                             unselected: unselected,
@@ -136,9 +137,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.collections_bookmark_outlined,
-                            activeIcon: Icons.collections_bookmark_rounded,
-                            label: 'Tersimpan',
+                            icon: Icons.bookmark_border_rounded,
+                            activeIcon: Icons.bookmark_rounded,
+                            label: 'Bookmark',
                             isSelected: _currentIndex == 2,
                             accent: accent,
                             unselected: unselected,
@@ -188,55 +189,48 @@ class _MainShellScreenState extends State<MainShellScreen> {
                 extendBody: true,
                 bottomNavigationBar: Container(
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xF20E0E10) : const Color(0xF7FAFAF9),
+                    color: surface,
                     border: Border(
                       top: BorderSide(
-                        color: isDark ? OTColors.borderDark : OTColors.borderLight,
-                        width: 0.5,
+                        color: border,
+                        width: 0.8,
                       ),
                     ),
                   ),
                   child: SafeArea(
                     top: false,
                     child: SizedBox(
-                      height: 58,
+                      height: 60,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.home_outlined,
-                              activeIcon: Icons.home_rounded,
-                              label: 'Beranda',
-                              isSelected: _currentIndex == 0,
-                              onTap: () => _onTabSelected(0),
-                            ),
+                          _ExpressiveNavItem(
+                            icon: Icons.home_outlined,
+                            activeIcon: Icons.home_rounded,
+                            label: 'Beranda',
+                            isSelected: _currentIndex == 0,
+                            onTap: () => _onTabSelected(0),
                           ),
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.menu_book_outlined,
-                              activeIcon: Icons.menu_book_rounded,
-                              label: 'Keilmuan',
-                              isSelected: _currentIndex == 1,
-                              onTap: () => _onTabSelected(1),
-                            ),
+                          _ExpressiveNavItem(
+                            icon: Icons.auto_awesome_outlined,
+                            activeIcon: Icons.auto_awesome_rounded,
+                            label: 'Spesialis',
+                            isSelected: _currentIndex == 1,
+                            onTap: () => _onTabSelected(1),
                           ),
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.collections_bookmark_outlined,
-                              activeIcon: Icons.collections_bookmark_rounded,
-                              label: 'Tersimpan',
-                              isSelected: _currentIndex == 2,
-                              onTap: () => _onTabSelected(2),
-                            ),
+                          _ExpressiveNavItem(
+                            icon: Icons.bookmark_border_rounded,
+                            activeIcon: Icons.bookmark_rounded,
+                            label: 'Bookmark',
+                            isSelected: _currentIndex == 2,
+                            onTap: () => _onTabSelected(2),
                           ),
-                          Expanded(
-                            child: _ExpressiveNavItem(
-                              icon: Icons.person_outline_rounded,
-                              activeIcon: Icons.person_rounded,
-                              label: 'Profil',
-                              isSelected: _currentIndex == 3,
-                              onTap: () => _onTabSelected(3),
-                            ),
+                          _ExpressiveNavItem(
+                            icon: Icons.person_outline_rounded,
+                            activeIcon: Icons.person_rounded,
+                            label: 'Profil',
+                            isSelected: _currentIndex == 3,
+                            onTap: () => _onTabSelected(3),
                           ),
                         ],
                       ),
@@ -267,37 +261,47 @@ class _ExpressiveNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeColor = OTColors.textPrimary(isDark);
-    final unselected = OTColors.textSecondary(isDark);
+    final activeBg = isDark ? Colors.white : const Color(0xFF18181B);
+    final activeFg = isDark ? const Color(0xFF18181B) : Colors.white;
+    final unselected = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
 
     return InkWell(
       onTap: () {
-        OTMotion.selection();
+        HapticFeedback.selectionClick();
         onTap();
       },
-      borderRadius: BorderRadius.circular(AppTheme.radiusXS),
-      child: Center(
-        child: Column(
+      borderRadius: BorderRadius.circular(100),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 240),
+        curve: Curves.easeOutCubic,
+        padding: EdgeInsets.symmetric(
+          horizontal: isSelected ? 16 : 14,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? activeBg : Colors.transparent,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Row(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedScale(
-              scale: isSelected ? 1.08 : 1.0,
-              duration: OTMotion.fast,
-              curve: OTMotion.curve,
-              child: Icon(
-                isSelected ? activeIcon : icon,
-                color: isSelected ? activeColor : unselected,
-                size: 21,
-              ),
+            Icon(
+              isSelected ? activeIcon : icon,
+              color: isSelected ? activeFg : unselected,
+              size: 21,
             ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: OTTypography.captionMedium(
-                color: isSelected ? activeColor : unselected,
+            if (isSelected) ...[
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: GoogleFonts.outfit(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.2,
+                  color: activeFg,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

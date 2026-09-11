@@ -14,7 +14,7 @@ class Loc {
       'active_sub': 'Akses aktif',
       'valid_until': 'Aktif hingga',
       'full_access': 'Akses semua ruang riset yang tersedia',
-      'unlimited_research': 'Riset kitab turats',
+      'unlimited_research': 'AI for Islamic Scholarship',
       'explore_corpus': 'Pilih ruang riset.',
       'theme_mode': 'Tampilan Tema',
       'theme_system': 'Sistem Default',

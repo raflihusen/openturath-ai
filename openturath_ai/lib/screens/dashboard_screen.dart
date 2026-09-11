@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
-import '../core/design/ot_radius.dart';
-import '../core/design/ot_spacing.dart';
 import '../core/app_snackbar.dart';
-import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
@@ -55,6 +52,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadData() async {
+    setState(() => _isLoading = true);
     try {
       if (_authService.currentUser == null) {
         if (!mounted) return;
@@ -79,7 +77,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _initialUser = results[0] as UserModel?;
         _agents = results[1] as List<AgentModel>;
       });
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   Future<void> _openNotebook(AgentModel agent, UserModel? user) async {
@@ -118,11 +121,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  AgentModel? _getLastOpenedAgent() {
-    if (_lastOpenedAgentId == null || _lastOpenedAgentId!.isEmpty) return null;
-    final match = _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive);
-    return match.isNotEmpty ? match.first : null;
+  bool _isLoading = false;
+
+  List<AgentModel> _getRecentAgents() {
+    final List<AgentModel> recents = [];
+    if (_lastOpenedAgentId != null && _lastOpenedAgentId!.isNotEmpty) {
+      final match = _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive);
+      if (match.isNotEmpty) {
+        recents.add(match.first);
+      }
+    }
+    for (final a in _agents) {
+      if (recents.length >= 3) break;
+      if (!recents.any((r) => r.id == a.id) && a.isActive) {
+        recents.add(a);
+      }
+    }
+    if (recents.isEmpty && _agents.isNotEmpty) {
+      final activeAgents = _agents.where((a) => a.isActive).toList();
+      recents.addAll(activeAgents.take(2));
+    }
+    return recents;
   }
+
+  static const List<({String fieldId, String name, int specialistCount})> _curatedDisciplines = [
+    (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
+    (fieldId: 'hadith', name: 'Hadits', specialistCount: 1),
+    (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
+    (fieldId: 'aqidah', name: 'Aqidah', specialistCount: 1),
+    (fieldId: 'usul', name: 'Usul Fiqh', specialistCount: 1),
+    (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +163,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final accent = OTColors.accent(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
 
     return StreamBuilder<UserModel?>(
       stream: _authService.userStream,
@@ -153,15 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               questionsUsed: 0,
             );
 
-        final lastOpened = _getLastOpenedAgent();
-        final syafiiAgent = _agents.firstWhere(
-          (a) => a.id == 'fiqh_syafii',
-          orElse: () => AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii'),
-        );
-        final tahawwulatAgent = _agents.firstWhere(
-          (a) => a.id == 'fiqh_tahawwulat',
-          orElse: () => AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat'),
-        );
+        final recentAgents = _getRecentAgents();
 
         return Scaffold(
           backgroundColor: canvas,
@@ -176,56 +196,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Top Bar: OpenTurath Brand & Dual Calendar ──
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'OpenTurath',
-                              style: OTTypography.brandLogo(color: textPrimary).copyWith(fontSize: 24),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              HijriDateUtils.formatDualDate(),
-                              style: OTTypography.caption(color: textSecondary).copyWith(
-                                fontSize: 11.5,
-                                letterSpacing: 0.1,
-                              ),
-                            ),
-                          ],
+                    // ── 1. Header Centered: OpenTurath (Tanpa logo, tanpa keterangan baris bawah) ──
+                    Center(
+                      child: Text(
+                        'OpenTurath',
+                        style: GoogleFonts.newsreader(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.4,
+                          color: textPrimary,
                         ),
-                        AppleInteractiveWrapper(
-                          onTap: () {
-                            final shell = MainShellController.of(context);
-                            shell?.switchTab(3);
-                          },
-                          pressedScale: 0.94,
-                          hapticType: HapticFeedbackType.selection,
-                          borderRadius: BorderRadius.circular(24),
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: border, width: 1.0),
-                            ),
-                            child: CircleAvatar(
-                              radius: 18,
-                              backgroundColor: surfaceSubtle,
-                              backgroundImage: user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
-                              child: user.photoUrl.isEmpty
-                                  ? Text(
-                                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'S',
-                                      style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
 
                     const SizedBox(height: 20),
@@ -233,22 +214,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
-                    // ── 2. Editorial Hero Welcome ──
+                    // ── 2. Academic Greeting ──
                     Text(
-                      'Apa yang ingin Anda telusuri?',
-                      style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 23),
+                      user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
+                      style: GoogleFonts.newsreader(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.3,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Kaji naskah primer turats dengan asisten riset cerdas.',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13.5,
+                        color: textSecondary,
+                      ),
                     ),
 
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 18),
 
-                    // ── 3. Ergonomic Realtime Search Bar ──
+                    // ── 3. Announcement Carousel Card ──
+                    _DashboardAnnouncementCarousel(
+                      isDark: isDark,
+                      surface: surface,
+                      border: border,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                      accent: accent,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // ── 4. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
                       height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(OTRadius.input),
-                        border: Border.all(color: border, width: 0.8),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: border, width: 1.0),
                       ),
                       child: Row(
                         children: [
@@ -258,10 +264,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             child: TextField(
                               controller: _searchController,
                               onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                              style: OTTypography.body(color: textPrimary),
+                              style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Kitab, istilah, hadits, atau persoalan...',
-                                hintStyle: OTTypography.body(color: textSecondary).copyWith(fontSize: 13.5),
+                                hintText: 'Cari spesialis, bab fikih, atau kitab...',
+                                hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
                                 isDense: true,
                                 contentPadding: EdgeInsets.zero,
@@ -280,15 +286,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: OTSpacing.lg),
+                    const SizedBox(height: 22),
 
-                    // ── 4. Jika User Sedang Mencari (Hasil Realtime) ──
+                    // ── 5. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil penelusuran',
-                        style: OTTypography.sectionHeading(color: textSecondary),
+                        'Hasil Penelusuran',
+                        style: GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                          color: textPrimary,
+                        ),
                       ),
-                      const SizedBox(height: OTSpacing.sm),
+                      const SizedBox(height: 12),
                       Builder(
                         builder: (context) {
                           final q = _searchQuery.toLowerCase();
@@ -306,8 +317,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Tidak ditemukan naskah atau korpus yang sesuai.',
-                                  style: OTTypography.body(color: textSecondary),
+                                  'Tidak ditemukan naskah atau spesialis yang sesuai.',
+                                  style: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                                 ),
                               ),
                             );
@@ -317,16 +328,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: matches.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 12),
+                            separatorBuilder: (_, __) => const SizedBox(height: 10),
                             itemBuilder: (context, idx) {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
+                                scopeLabel: agent.category,
                                 titleArabic: agent.titleArabic,
-                                scopeLabel: agent.subtitleAcademic.isNotEmpty ? agent.subtitleAcademic : agent.category,
                                 emoji: agent.emoji,
                                 statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
-                                onOpen: agent.isActive ? () => _openNotebook(agent, user) : null,
+                                onOpen: () => _openNotebook(agent, user),
                                 onOpenLibrary: agent.catalogId != null
                                     ? () => showResearchLibrary(context, agent: agent)
                                     : null,
@@ -336,268 +347,251 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 5. Lanjutkan Penelitian (Unboxed Resume Session) ──
-                      if (lastOpened != null) ...[
-                        Text(
-                          'Lanjutkan penelitian',
-                          style: OTTypography.sectionHeading(color: textSecondary),
-                        ),
-                        const SizedBox(height: OTSpacing.sm),
-                        SpecialistCard(
-                          title: lastOpened.title,
-                          titleArabic: lastOpened.titleArabic,
-                          scopeLabel: '${lastOpened.subtitleAcademic.isNotEmpty ? lastOpened.subtitleAcademic : lastOpened.category} · Sesi Terakhir',
-                          emoji: lastOpened.emoji,
-                          onOpen: () => _openNotebook(lastOpened, user),
-                          onOpenLibrary: lastOpened.catalogId != null
-                              ? () => showResearchLibrary(context, agent: lastOpened)
-                              : null,
-                        ),
-                        const SizedBox(height: OTSpacing.xl),
-                      ],
-
-                      // ── 6. Ruang Riset Unggulan (Flagship Research Rooms) ──
+                      // ── 6. Section: Pilih Bidang Ilmu ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            'Ruang riset unggulan',
-                            style: OTTypography.sectionHeading(color: textSecondary),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'Siap telaah',
-                              style: OTTypography.caption(color: accent).copyWith(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w600,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Pilih Bidang Ilmu',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.2,
+                                  color: textPrimary,
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Eksplorasi modul spesialis berdasarkan rumpun',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  color: textSecondary,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: OTSpacing.sm),
-
-                      // Card Unggulan 1: Super AI Fikih Syafi'i
-                      _buildFeaturedCard(
-                        context: context,
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        accent: accent,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                        surfaceSubtle: surfaceSubtle,
-                        title: 'Super AI Fikih Syafi\'i',
-                        arabicTitle: 'الفقه الشافعي',
-                        subtitle: 'Al-Muhaqqiq Fiqh Syafi\'i · Matan, Syarah & Hasyiyah Mu\'tabarah',
-                        icon: Icons.menu_book_rounded,
-                        primaryActionLabel: 'Masuk Ruang Riset',
-                        onPrimaryAction: () => _openNotebook(syafiiAgent, user),
-                        secondaryActionLabel: 'Katalog Pustaka (89 Kitab)',
-                        onSecondaryAction: () => showResearchLibrary(context, agent: syafiiAgent),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Card Unggulan 2: Fikih Tahawwulat & Eskatologi
-                      _buildFeaturedCard(
-                        context: context,
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        accent: accent,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                        surfaceSubtle: surfaceSubtle,
-                        title: 'Fikih Tahawwulat & Eskatologi',
-                        arabicTitle: 'فقه التحولات',
-                        subtitle: 'Manhaj Fiqh Fitnah & Tanda Zaman • Rukun Keempat\n1.500+ Muhadharah · Naskah Lengkap · Takhrij Sanad',
-                        icon: Icons.history_edu_rounded,
-                        primaryActionLabel: 'Buka Korpus Tahawwulat',
-                        onPrimaryAction: () => _openNotebook(tahawwulatAgent, user),
-                      ),
-
-                      const SizedBox(height: OTSpacing.xxl),
-
-                      // ── 7. Disiplin Keilmuan (Discipline Navigation Portal) ──
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Disiplin keilmuan',
-                            style: OTTypography.sectionHeading(color: textSecondary),
-                          ),
-                          AppleInteractiveWrapper(
+                          GestureDetector(
                             onTap: () {
                               final shell = MainShellController.of(context);
-                              shell?.switchTab(1);
+                              if (shell != null) {
+                                shell.switchTab(1);
+                              } else {
+                                Navigator.pushNamed(context, AppRoutes.specialistList);
+                              }
                             },
-                            pressedScale: 0.95,
-                            hapticType: HapticFeedbackType.selection,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Lihat Semua',
-                                    style: OTTypography.button(color: accent).copyWith(fontSize: 12),
-                                  ),
-                                  const SizedBox(width: 2),
-                                  Icon(Icons.arrow_forward_rounded, size: 13, color: accent),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: OTSpacing.sm),
-
-                      // 2-Column Grid Disiplin Keilmuan
-                      GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 2.1,
-                        children: [
-                          _buildDisciplinePortal(
-                            context: context,
-                            title: 'Fikih 4 Mazhab',
-                            scope: 'Syafi\'i, Hanafi, Maliki, Hanbali',
-                            icon: Icons.balance_rounded,
-                            fieldId: 'fiqh',
-                            isDark: isDark,
-                            surface: surface,
-                            border: border,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                          _buildDisciplinePortal(
-                            context: context,
-                            title: 'Fikih Tahawwulat',
-                            scope: 'Rukun Keempat & Eskatologi',
-                            icon: Icons.history_edu_rounded,
-                            fieldId: 'fiqh_tahawwulat',
-                            isDark: isDark,
-                            surface: surface,
-                            border: border,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                          _buildDisciplinePortal(
-                            context: context,
-                            title: 'Hadits & Syarah',
-                            scope: 'Kutubus Sittah & Sanad',
-                            icon: Icons.auto_stories_rounded,
-                            fieldId: 'hadith',
-                            isDark: isDark,
-                            surface: surface,
-                            border: border,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                          _buildDisciplinePortal(
-                            context: context,
-                            title: 'Tafsir Al-Qur\'an',
-                            scope: 'Kajian Ayat & Asbabun Nuzul',
-                            icon: Icons.menu_book_rounded,
-                            fieldId: 'tafsir',
-                            isDark: isDark,
-                            surface: surface,
-                            border: border,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                          _buildDisciplinePortal(
-                            context: context,
-                            title: 'Akidah & Kalam',
-                            scope: 'Asy\'ariyyah & Ushuluddin',
-                            icon: Icons.shield_outlined,
-                            fieldId: 'aqidah',
-                            isDark: isDark,
-                            surface: surface,
-                            border: border,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                          _buildDisciplinePortal(
-                            context: context,
-                            title: 'Usul Fikih & Qawa\'id',
-                            scope: 'Kaidah Istinbath & Maqashid',
-                            icon: Icons.architecture_rounded,
-                            fieldId: 'usul',
-                            isDark: isDark,
-                            surface: surface,
-                            border: border,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: OTSpacing.xxl),
-
-                      // ── 8. Akses Cepat Pustaka Rujukan Naskah ──
-                      AppleInteractiveWrapper(
-                        onTap: () => showResearchLibrary(context, agent: syafiiAgent),
-                        pressedScale: 0.98,
-                        hapticType: HapticFeedbackType.light,
-                        borderRadius: BorderRadius.circular(16),
-                        child: Material(
-                          color: surface,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: border, width: 0.8),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
                             child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.8),
-                                  ),
-                                  child: Icon(Icons.library_books_rounded, size: 21, color: accent),
-                                ),
-                                const SizedBox(width: 14),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Katalog Pustaka Naskah Syafi\'i',
-                                        style: OTTypography.cardTitle(color: textPrimary).copyWith(
-                                          fontSize: 14.5,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        '89 naskah primer kitab induk terverifikasi',
-                                        style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
-                                      ),
-                                    ],
+                                Text(
+                                  'Lihat Semua',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: textPrimary,
                                   ),
                                 ),
-                                Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                                const SizedBox(width: 2),
+                                Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
                               ],
                             ),
                           ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      // ── 7. 2-Column Minimalist Purism Grid (6 Cards, Aspect Ratio 1.45) ──
+                      GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 1.45,
+                        ),
+                        itemCount: _curatedDisciplines.length,
+                        itemBuilder: (context, index) {
+                          final disc = _curatedDisciplines[index];
+                          return AppleInteractiveWrapper(
+                            onTap: () {
+                              final shell = MainShellController.of(context);
+                              if (shell != null) {
+                                shell.switchTab(1, fieldId: disc.fieldId);
+                              } else {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.specialistList,
+                                  arguments: {'fieldId': disc.fieldId},
+                                );
+                              }
+                            },
+                            pressedScale: 0.96,
+                            hapticType: HapticFeedbackType.light,
+                            borderRadius: BorderRadius.circular(18),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: surface,
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(color: border, width: 1.0),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    disc.name,
+                                    style: GoogleFonts.newsreader(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: -0.2,
+                                      color: textPrimary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    '${disc.specialistCount} spesialis',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 12.5,
+                                      color: textSecondary,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── 8. Section: Mulai Riset (Recent Research Modules) ──
+                      Text(
+                        'Mulai Riset',
+                        style: GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                          color: textPrimary,
                         ),
                       ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Pilih modul spesialis untuk memulai kajian kitab',
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          color: textSecondary,
+                        ),
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      if (_isLoading)
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: CircularProgressIndicator(color: textPrimary, strokeWidth: 2),
+                          ),
+                        )
+                      else if (recentAgents.isEmpty)
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: surface,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: border, width: 1.0),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Belum ada riwayat sesi riset.',
+                              style: GoogleFonts.outfit(fontSize: 13, color: textSecondary),
+                            ),
+                          ),
+                        )
+                      else
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: recentAgents.length,
+                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final agent = recentAgents[index];
+                            final isFirst = index == 0;
+                            final timeLabel = isFirst ? 'Modul Aktif' : 'Siap Dikaji';
+
+                            return AppleInteractiveWrapper(
+                              onTap: () => _openNotebook(agent, user),
+                              pressedScale: 0.98,
+                              hapticType: HapticFeedbackType.selection,
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                                decoration: BoxDecoration(
+                                  color: surface,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: border, width: 1.0),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  agent.title,
+                                                  style: GoogleFonts.outfit(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w600,
+                                                    letterSpacing: -0.2,
+                                                    color: textPrimary,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                                decoration: BoxDecoration(
+                                                  color: isDark ? const Color(0xFF27272A) : const Color(0xFFF1F5F9),
+                                                  borderRadius: BorderRadius.circular(100),
+                                                ),
+                                                child: Text(
+                                                  timeLabel,
+                                                  style: GoogleFonts.outfit(
+                                                    fontSize: 10.5,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: textSecondary,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Icon(
+                                      Icons.arrow_outward_rounded,
+                                      size: 18,
+                                      color: textPrimary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                     ],
                   ],
                 ),
@@ -608,214 +602,337 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
     );
   }
+}
 
-  Widget _buildFeaturedCard({
-    required BuildContext context,
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color accent,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color surfaceSubtle,
-    required String title,
-    required String arabicTitle,
-    required String subtitle,
-    required IconData icon,
-    required String primaryActionLabel,
-    required VoidCallback onPrimaryAction,
-    String? secondaryActionLabel,
-    VoidCallback? onSecondaryAction,
-  }) {
-    return AppleInteractiveWrapper(
-      onTap: onPrimaryAction,
-      pressedScale: 0.985,
-      hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(16),
-      child: Material(
-        color: surface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: border, width: 0.8),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+class _DashboardAnnouncementCarousel extends StatefulWidget {
+  final bool isDark;
+  final Color surface;
+  final Color border;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color accent;
+
+  const _DashboardAnnouncementCarousel({
+    required this.isDark,
+    required this.surface,
+    required this.border,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.accent,
+  });
+
+  @override
+  State<_DashboardAnnouncementCarousel> createState() =>
+      _DashboardAnnouncementCarouselState();
+}
+
+class _DashboardAnnouncementCarouselState
+    extends State<_DashboardAnnouncementCarousel> {
+  late final PageController _pageController;
+  int _currentPage = 0;
+  Timer? _autoPlayTimer;
+
+  static const List<_AnnouncementSlide> _slides = [
+    _AnnouncementSlide(
+      badge: 'TENTANG OPENTURATH',
+      title: 'Mengenal OpenTurath AI',
+      summary:
+          'Asisten riset keilmuan Islam berbasis korpus naskah primer mu\'tabar untuk mempermudah penelaahan turats.',
+      detailedContent:
+          'OpenTurath dirancang sebagai ruang telaah digital bagi para santri, asatidz, dan akademisi. Sistem ini mengintegrasikan ribuan halaman naskah primer kitab kuning (turats) dengan kemampuan pemrosesan bahasa alami untuk mencari referensi, memahami konteks ibarah, dan melacak perbandingan lintas matan dan syarah secara presisi.',
+    ),
+    _AnnouncementSlide(
+      badge: 'KEUNGGULAN RISET',
+      title: 'Riset Berbasis Sanad & Takhrij',
+      summary:
+          'Dilengkapi kutipan ibarah teks asli, nomor halaman kitab muktamad, serta komparasi silang antar-mazhab.',
+      detailedContent:
+          'Setiap jawaban dan analisis yang dihasilkan OpenTurath selalu disertai rujukan langsung ke naskah primer. Peneliti dapat meninjau teks Arab asli, nama kitab, bab pembahasan, hingga nama pensyarah guna menjaga akurasi transmisi keilmuan Islam yang berakar kuat pada tradisi sanad.',
+    ),
+    _AnnouncementSlide(
+      badge: 'ADAB & DISCLAIMER',
+      title: 'Wasilah Bantu, Bukan Pengganti Guru',
+      summary:
+          'Kajian agama hakiki wajib melalui talaqqi dengan masyayikh bersanad. AI hanyalah sarana penunjang riset.',
+      detailedContent:
+          'PENTING DIPAHAMI:\n\nTeknologi kecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur, bukan mufti dan bukan pengganti otoritas guru (masyayikh). Pemahaman fikih, fatwa hukum, dan kedalaman spiritual tetap wajib dikonfirmasi langsung melalui proses talaqqi dan bimbingan ulama yang kompeten.',
+    ),
+    _AnnouncementSlide(
+      badge: 'PANDUAN RISET',
+      title: 'Gunakan dengan Sikap Wara\' & Bijak',
+      summary:
+          'Verifikasi setiap kutipan dalil ke naskah fisik primer sebelum dijadikan landasan kajian atau karya ilmiah.',
+      detailedContent:
+          'Sebagai seorang peneliti turats, sikap wara\' dan kehati-hatian (ihtiyath) adalah adab utama. Selalu luangkan waktu untuk membuka dan mengonfirmasi naskah cetak fisik kitab primer sebelum mengutip atau menyebarluaskan hasil telaah ke khalayak luas.',
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.93);
+    _startAutoPlay();
+  }
+
+  void _startAutoPlay() {
+    _autoPlayTimer?.cancel();
+    _autoPlayTimer = Timer.periodic(const Duration(seconds: 8), (timer) {
+      if (!mounted) return;
+      if (_pageController.hasClients) {
+        final nextPage = (_currentPage + 1) % _slides.length;
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 450),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoPlayTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _showDetailModal(_AnnouncementSlide slide) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          decoration: BoxDecoration(
+            color: widget.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border.all(color: widget.border, width: 1.0),
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
-                      borderRadius: BorderRadius.circular(11),
-                      border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.8),
-                    ),
-                    child: Icon(icon, size: 20, color: accent),
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 18),
+                  decoration: BoxDecoration(
+                    color: widget.textSecondary.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: widget.accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(
+                  slide.badge,
+                  style: GoogleFonts.outfit(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.4,
+                    color: widget.accent,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                slide.title,
+                style: GoogleFonts.newsreader(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.3,
+                  color: widget.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                slide.detailedContent,
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  height: 1.55,
+                  color: widget.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 44,
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: widget.isDark ? Colors.white : const Color(0xFF18181B),
+                    foregroundColor: widget.isDark ? const Color(0xFF18181B) : Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                  ),
+                  child: Text(
+                    'Mengerti & Tutup',
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 146,
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is ScrollStartNotification) {
+                _autoPlayTimer?.cancel();
+              } else if (notification is ScrollEndNotification) {
+                _startAutoPlay();
+              }
+              return false;
+            },
+            child: PageView.builder(
+              controller: _pageController,
+              physics: const BouncingScrollPhysics(),
+              itemCount: _slides.length,
+              onPageChanged: (index) {
+                setState(() => _currentPage = index);
+              },
+              itemBuilder: (context, index) {
+                final slide = _slides[index];
+                return InkWell(
+                  onTap: () => _showDetailModal(slide),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: widget.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: widget.border,
+                        width: 1.0,
+                      ),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              title,
-                              style: OTTypography.cardTitle(color: textPrimary).copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                              decoration: BoxDecoration(
+                                color: widget.accent.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Text(
+                                slide.badge,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.3,
+                                  color: widget.accent,
+                                ),
                               ),
                             ),
-                            Text(
-                              arabicTitle,
-                              textDirection: TextDirection.rtl,
-                              style: OTTypography.arabicReading(
-                                color: isDark ? const Color(0xFFD97706) : const Color(0xFFB45309),
-                              ).copyWith(
-                                fontSize: 15,
-                                height: 1.1,
-                              ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Baca Selengkapnya',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: widget.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  size: 14,
+                                  color: widget.textSecondary,
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 2),
                         Text(
-                          subtitle,
-                          style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
+                          slide.title,
+                          style: GoogleFonts.newsreader(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.2,
+                            color: widget.textPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          slide.summary,
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            color: widget.textSecondary,
+                            height: 1.35,
+                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  if (secondaryActionLabel != null && onSecondaryAction != null) ...[
-                    Expanded(
-                      child: AppleInteractiveWrapper(
-                        onTap: onSecondaryAction,
-                        pressedScale: 0.95,
-                        hapticType: HapticFeedbackType.selection,
-                        child: OutlinedButton.icon(
-                          onPressed: onSecondaryAction,
-                          icon: Icon(Icons.menu_book_outlined, size: 14, color: textSecondary),
-                          label: Text(
-                            secondaryActionLabel,
-                            style: OTTypography.button(color: textSecondary).copyWith(fontSize: 12),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                            side: BorderSide(color: border, width: 0.8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
-                  Expanded(
-                    child: AppleInteractiveWrapper(
-                      onTap: onPrimaryAction,
-                      pressedScale: 0.95,
-                      hapticType: HapticFeedbackType.light,
-                      child: FilledButton.icon(
-                        onPressed: onPrimaryAction,
-                        icon: const Icon(Icons.arrow_forward_rounded, size: 14),
-                        label: Text(
-                          primaryActionLabel,
-                          style: OTTypography.button(color: Colors.white).copyWith(fontSize: 12),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: accent,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                );
+              },
+            ),
           ),
         ),
-      ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            _slides.length,
+            (i) => AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: _currentPage == i ? 18 : 5,
+              height: 5,
+              decoration: BoxDecoration(
+                color: _currentPage == i
+                    ? (widget.isDark ? Colors.white : const Color(0xFF18181B))
+                    : widget.border,
+                borderRadius: BorderRadius.circular(100),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
+}
 
-  Widget _buildDisciplinePortal({
-    required BuildContext context,
-    required String title,
-    required String scope,
-    required IconData icon,
-    required String fieldId,
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    return AppleInteractiveWrapper(
-      onTap: () {
-        final shell = MainShellController.of(context);
-        shell?.switchTab(1, fieldId: fieldId);
-      },
-      pressedScale: 0.96,
-      hapticType: HapticFeedbackType.selection,
-      borderRadius: BorderRadius.circular(12),
-      child: Material(
-        color: surface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: border, width: 0.8),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
-            children: [
-              Icon(icon, size: 18, color: textSecondary),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      style: OTTypography.cardTitle(color: textPrimary).copyWith(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      scope,
-                      style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 10.5),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+class _AnnouncementSlide {
+  final String badge;
+  final String title;
+  final String summary;
+  final String detailedContent;
+
+  const _AnnouncementSlide({
+    required this.badge,
+    required this.title,
+    required this.summary,
+    required this.detailedContent,
+  });
 }

@@ -81,7 +81,7 @@ class OpenTurathBrand extends StatelessWidget {
             if (showSlogan) ...[
               const SizedBox(height: 1),
               Text(
-                'Riset kitab turats',
+                'AI for Islamic Scholarship',
                 style: GoogleFonts.newsreader(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
