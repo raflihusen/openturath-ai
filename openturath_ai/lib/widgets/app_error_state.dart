@@ -15,11 +15,11 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState({
     super.key,
-    this.title = 'Koneksi Terputus',
+    this.title = 'Koneksi terputus',
     this.message = 'Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
-    this.retryLabel = 'Coba Lagi',
+    this.retryLabel = 'Coba lagi',
     this.onBack,
     this.backLabel = 'Kembali',
   });

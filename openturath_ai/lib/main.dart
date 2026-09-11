@@ -15,6 +15,7 @@ import 'screens/google_session_auth_screen.dart';
 import 'firebase_options.dart';
 
 import 'core/app_config.dart';
+import 'core/app_copy.dart';
 import 'core/localization.dart';
 import 'widgets/app_error_state.dart';
 
@@ -50,11 +51,11 @@ Future<void> main() async {
     debugPrint('[OpenTurath] Firebase initialization error: $error\n$stackTrace');
     final isUnsupportedPlatform = error is UnsupportedError;
     final title = isUnsupportedPlatform
-        ? 'Platform Belum Didukung Penuh'
-        : 'Koneksi Server Belum Siap';
+        ? AppCopy.deviceNotSupportedTitle
+        : AppCopy.cannotConnectTitle;
     final message = isUnsupportedPlatform
-        ? 'Aplikasi OpenTurath AI dioptimalkan untuk perangkat Android dan Web. Layanan cloud mungkin memerlukan penyesuaian pada sistem ini.'
-        : 'Tidak dapat menginisialisasi layanan data. Periksa koneksi internet Anda lalu coba muat ulang aplikasi.';
+        ? AppCopy.deviceNotSupportedMessage
+        : AppCopy.cannotConnectMessage;
 
     runApp(MaterialApp(
       debugShowCheckedModeBanner: false,

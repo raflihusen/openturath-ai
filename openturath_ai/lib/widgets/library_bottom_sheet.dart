@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
@@ -84,7 +85,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Katalog rujukan belum dapat dimuat saat ini.';
+        _errorMessage = AppCopy.catalogLoadFailed;
         _isLoading = false;
       });
     }
@@ -117,7 +118,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Rincian Edisi Naskah',
+                        AppCopy.bookDetails,
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
                       IconButton(
@@ -209,8 +210,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
     final border = OTColors.border(isDark);
 
     final title = widget.agent != null
-        ? 'Pustaka Rujukan ${widget.agent!.title}'
-        : 'Pustaka Rujukan Madzhab Syafi\'i';
+        ? 'Kitab rujukan ${widget.agent!.title}'
+        : 'Kitab rujukan Mazhab Syafi\'i';
 
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -255,7 +256,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                           ),
                           if (_allBooks != null)
                             Text(
-                              '${_filteredBooks?.length ?? 0} dari ${_allBooks!.length} naskah primer terkatalogisasi',
+                              '${_filteredBooks?.length ?? 0} dari ${_allBooks!.length} kitab rujukan',
                               style: OTTypography.caption(color: textSecondary),
                             ),
                         ],
@@ -322,7 +323,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                   const SizedBox(height: OTSpacing.base),
                                   OutlinedButton(
                                     onPressed: _loadData,
-                                    child: const Text('Coba Lagi'),
+                                    child: const Text('Coba lagi'),
                                   ),
                                 ],
                               ),
@@ -338,7 +339,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                       Icon(Icons.search_off_rounded, size: 40, color: textSecondary),
                                       const SizedBox(height: OTSpacing.sm),
                                       Text(
-                                        'Tidak ada naskah yang cocok dengan pencarian',
+                                        'Tidak ada kitab yang cocok dengan pencarian',
                                         style: OTTypography.body(color: textSecondary),
                                       ),
                                     ],
@@ -479,7 +480,7 @@ class CanonicalBookTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Rincian edisi',
+                      'Keterangan kitab',
                       style: OTTypography.button(color: accent).copyWith(fontSize: 12),
                     ),
                     const SizedBox(width: 4),
