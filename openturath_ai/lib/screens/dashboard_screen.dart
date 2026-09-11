@@ -9,17 +9,20 @@ import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/app_snackbar.dart';
+import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
 import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
-import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
+import 'main_shell_screen.dart';
 
 /// Beranda OpenTurath AI (Quiet Scholar Adaptive)
+/// Meja riset digital dengan tipografi anggun, penanggalan Hijriah,
+/// pencarian naskah seketika, akses langsung ruang unggulan, dan portal disiplin keilmuan.
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -36,7 +39,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<AgentModel> _agents = AgentModel.defaultAgents;
   String? _lastOpenedAgentId;
   String _searchQuery = '';
-  CorpusKind _selectedKind = CorpusKind.discipline;
 
   @override
   void initState() {
@@ -83,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        '${agent.title} belum tersedia (Segera Hadir). Modul ini sedang dalam tahap kurasi naskah kitab primer.',
+        '${agent.title} belum tersedia (Tahap Kurasi). Modul ini sedang dalam tahap verifikasi naskah kitab primer.',
       );
       return;
     }
@@ -131,6 +133,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final accent = OTColors.accent(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
 
     return StreamBuilder<UserModel?>(
       stream: _authService.userStream,
@@ -142,7 +145,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               uid: curFirebaseUser?.uid ?? 'user',
               name: curFirebaseUser?.displayName?.isNotEmpty == true
                   ? curFirebaseUser!.displayName!
-                  : 'Santri Peneliti',
+                  : 'Peneliti Turats',
               email: curFirebaseUser?.email ?? '',
               photoUrl: curFirebaseUser?.photoURL ?? '',
               plan: AppConstants.planTrial,
@@ -150,39 +153,92 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
 
         final lastOpened = _getLastOpenedAgent();
+        final syafiiAgent = _agents.firstWhere(
+          (a) => a.id == 'fiqh_syafii',
+          orElse: () => AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii'),
+        );
+        final tahawwulatAgent = _agents.firstWhere(
+          (a) => a.id == 'fiqh_tahawwulat',
+          orElse: () => AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat'),
+        );
 
         return Scaffold(
           backgroundColor: canvas,
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            backgroundColor: canvas,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            toolbarHeight: 56,
-            title: Text(
-              'OpenTurath',
-              style: OTTypography.brandLogo(
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-          ),
           body: SafeArea(
-            top: false,
             bottom: false,
             child: RefreshIndicator(
               onRefresh: _loadData,
               color: accent,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 96),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 96),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // ── 1. Top Bar: OpenTurath Brand & Islamic Dual Calendar ──
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'OpenTurath',
+                              style: OTTypography.brandLogo(color: textPrimary).copyWith(fontSize: 24),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              HijriDateUtils.formatDualDate(),
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                fontSize: 11.5,
+                                letterSpacing: 0.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                          onTap: () {
+                            final shell = MainShellController.of(context);
+                            shell?.switchTab(3);
+                          },
+                          borderRadius: BorderRadius.circular(24),
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: border, width: 1.0),
+                            ),
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: surfaceSubtle,
+                              backgroundImage: user.photoUrl.isNotEmpty ? NetworkImage(user.photoUrl) : null,
+                              child: user.photoUrl.isEmpty
+                                  ? Text(
+                                      user.name.isNotEmpty ? user.name[0].toUpperCase() : 'P',
+                                      style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
-                    // Search Bar dengan label jujur
+                    // ── 2. Editorial Hero Welcome ──
+                    Text(
+                      'Apa yang ingin Anda telusuri?',
+                      style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 23),
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // ── 3. Ergonomic Realtime Search Bar ──
                     Container(
                       height: 48,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -201,8 +257,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onChanged: (val) => setState(() => _searchQuery = val.trim()),
                               style: OTTypography.body(color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari bidang atau ulama',
-                                hintStyle: OTTypography.body(color: textSecondary),
+                                hintText: 'Cari kitab, ulama, naskah, atau topik...',
+                                hintStyle: OTTypography.body(color: textSecondary).copyWith(fontSize: 13.5),
                                 border: InputBorder.none,
                                 isDense: true,
                                 contentPadding: EdgeInsets.zero,
@@ -223,7 +279,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: OTSpacing.lg),
 
-                    // Jika user sedang mencari
+                    // ── 4. Jika User Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
                         'Hasil pencarian',
@@ -238,7 +294,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             final arabic = a.titleArabic;
                             final subtitle = a.subtitleAcademic.toLowerCase();
                             final category = a.category.toLowerCase();
-                            return title.contains(q) || arabic.contains(q) || subtitle.contains(q) || category.contains(q);
+                            final books = a.referenceBooks?.any((b) => b.title.toLowerCase().contains(q)) ?? false;
+                            return title.contains(q) || arabic.contains(q) || subtitle.contains(q) || category.contains(q) || books;
                           }).toList();
 
                           if (matches.isEmpty) {
@@ -246,7 +303,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Tidak ada hasil',
+                                  'Tidak ada naskah atau korpus yang sesuai.',
                                   style: OTTypography.body(color: textSecondary),
                                 ),
                               ),
@@ -265,7 +322,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 titleArabic: agent.titleArabic,
                                 scopeLabel: agent.subtitleAcademic.isNotEmpty ? agent.subtitleAcademic : agent.category,
                                 emoji: agent.emoji,
-                                statusLabel: agent.isComingSoon ? 'Belum tersedia' : null,
+                                statusLabel: agent.isComingSoon ? 'Tahap Kurasi' : null,
                                 onOpen: agent.isActive ? () => _openNotebook(agent, user) : null,
                                 onOpenLibrary: agent.catalogId != null
                                     ? () => showResearchLibrary(context, agent: agent)
@@ -276,17 +333,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 1. Terakhir Dibuka (HANYA jika ada riwayat nyata) ──
+                      // ── 5. Lanjutkan Telaah (Hanya jika ada sesi terakhir) ──
                       if (lastOpened != null) ...[
                         Text(
-                          'Terakhir dibuka',
+                          'Lanjutkan telaah',
                           style: OTTypography.sectionHeading(color: textSecondary),
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         SpecialistCard(
                           title: lastOpened.title,
                           titleArabic: lastOpened.titleArabic,
-                          scopeLabel: lastOpened.subtitleAcademic.isNotEmpty ? lastOpened.subtitleAcademic : lastOpened.category,
+                          scopeLabel: '${lastOpened.subtitleAcademic.isNotEmpty ? lastOpened.subtitleAcademic : lastOpened.category} · Sesi Terakhir',
                           emoji: lastOpened.emoji,
                           onOpen: () => _openNotebook(lastOpened, user),
                           onOpenLibrary: lastOpened.catalogId != null
@@ -296,58 +353,244 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const SizedBox(height: OTSpacing.xl),
                       ],
 
-                      // ── 2. Kontrol Dua Jalur: Bidang Ilmu vs Korpus Ulama ──
-                      CorpusKindControl(
-                        value: _selectedKind,
-                        onChanged: (kind) => setState(() => _selectedKind = kind),
-                      ),
-
-                      const SizedBox(height: OTSpacing.lg),
-
-                      // ── 3. Daftar Kartu Spesialis Sesuai Jalur ──
+                      // ── 6. Ruang Riset Unggulan (Flagship Research Rooms) ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            _selectedKind == CorpusKind.discipline ? 'Bidang Ilmu' : 'Korpus Ulama',
+                            'Ruang riset unggulan',
                             style: OTTypography.sectionHeading(color: textSecondary),
                           ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Siap telaah',
+                              style: OTTypography.caption(color: accent).copyWith(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: OTSpacing.sm),
+
+                      // Card Unggulan 1: Fikih Syafi'i
+                      _buildFeaturedCard(
+                        context: context,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        accent: accent,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        surfaceSubtle: surfaceSubtle,
+                        title: 'Fikih Syafi\'i',
+                        arabicTitle: 'الفقه الشافعي',
+                        subtitle: 'Al-Muhaqqiq Fiqh Syafi\'i · Matan, Syarah & Hasyiyah Mu\'tabarah',
+                        icon: Icons.menu_book_rounded,
+                        primaryActionLabel: 'Buka Ruang Riset',
+                        onPrimaryAction: () => _openNotebook(syafiiAgent, user),
+                        secondaryActionLabel: 'Pustaka Naskah (89 Kitab)',
+                        onSecondaryAction: () => showResearchLibrary(context, agent: syafiiAgent),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Card Unggulan 2: Fikih Tahawwulat
+                      _buildFeaturedCard(
+                        context: context,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        accent: accent,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        surfaceSubtle: surfaceSubtle,
+                        title: 'Fikih Tahawwulat',
+                        arabicTitle: 'فقه التحولات',
+                        subtitle: 'Manhaj Abu Bakr al-Masyhur · 1.500+ Naskah Muhadharah Lengkap',
+                        icon: Icons.history_edu_rounded,
+                        primaryActionLabel: 'Buka Korpus Tahawwulat',
+                        onPrimaryAction: () => _openNotebook(tahawwulatAgent, user),
+                      ),
+
+                      const SizedBox(height: OTSpacing.xxl),
+
+                      // ── 7. Disiplin Keilmuan (Discipline Navigation Portal) ──
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
                           Text(
-                            _selectedKind == CorpusKind.discipline
-                                ? '${_agents.where((a) => a.kind == CorpusKind.discipline).length} Bidang'
-                                : '${_agents.where((a) => a.kind == CorpusKind.scholar).length} Ulama',
-                            style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
+                            'Disiplin keilmuan',
+                            style: OTTypography.sectionHeading(color: textSecondary),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              final shell = MainShellController.of(context);
+                              shell?.switchTab(1);
+                            },
+                            borderRadius: BorderRadius.circular(6),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Lihat Semua',
+                                    style: OTTypography.button(color: accent).copyWith(fontSize: 12),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Icon(Icons.arrow_forward_rounded, size: 13, color: accent),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: OTSpacing.sm),
+
+                      // 2-Column Grid Disiplin Keilmuan
+                      GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 2.1,
+                        children: [
+                          _buildDisciplinePortal(
+                            context: context,
+                            title: 'Fikih 4 Mazhab',
+                            scope: 'Syafi\'i, Hanafi, Maliki, Hanbali',
+                            icon: Icons.balance_rounded,
+                            fieldId: 'fiqh',
+                            isDark: isDark,
+                            surface: surface,
+                            border: border,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                          ),
+                          _buildDisciplinePortal(
+                            context: context,
+                            title: 'Fikih Tahawwulat',
+                            scope: 'Rukun Keempat & Eskatologi',
+                            icon: Icons.history_edu_rounded,
+                            fieldId: 'fiqh_tahawwulat',
+                            isDark: isDark,
+                            surface: surface,
+                            border: border,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                          ),
+                          _buildDisciplinePortal(
+                            context: context,
+                            title: 'Hadits & Syarah',
+                            scope: 'Kutubus Sittah & Sanad',
+                            icon: Icons.auto_stories_rounded,
+                            fieldId: 'hadith',
+                            isDark: isDark,
+                            surface: surface,
+                            border: border,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                          ),
+                          _buildDisciplinePortal(
+                            context: context,
+                            title: 'Tafsir Al-Qur\'an',
+                            scope: 'Kajian Ayat & Asbabun Nuzul',
+                            icon: Icons.menu_book_rounded,
+                            fieldId: 'tafsir',
+                            isDark: isDark,
+                            surface: surface,
+                            border: border,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                          ),
+                          _buildDisciplinePortal(
+                            context: context,
+                            title: 'Akidah & Kalam',
+                            scope: 'Asy\'ariyyah & Ushuluddin',
+                            icon: Icons.shield_outlined,
+                            fieldId: 'aqidah',
+                            isDark: isDark,
+                            surface: surface,
+                            border: border,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                          ),
+                          _buildDisciplinePortal(
+                            context: context,
+                            title: 'Usul Fikih & Qawa\'id',
+                            scope: 'Kaidah Istinbath & Maqashid',
+                            icon: Icons.architecture_rounded,
+                            fieldId: 'usul',
+                            isDark: isDark,
+                            surface: surface,
+                            border: border,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
                           ),
                         ],
                       ),
 
-                      const SizedBox(height: OTSpacing.sm),
+                      const SizedBox(height: OTSpacing.xxl),
 
-                      Builder(
-                        builder: (context) {
-                          final displayedAgents = _agents.where((a) => a.kind == _selectedKind).toList();
-
-                          return ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: displayedAgents.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 12),
-                            itemBuilder: (context, idx) {
-                              final agent = displayedAgents[idx];
-                              return SpecialistCard(
-                                title: agent.title,
-                                titleArabic: agent.titleArabic,
-                                scopeLabel: agent.subtitleAcademic.isNotEmpty ? agent.subtitleAcademic : agent.category,
-                                emoji: agent.emoji,
-                                statusLabel: agent.isComingSoon ? 'Belum tersedia' : null,
-                                onOpen: agent.isActive ? () => _openNotebook(agent, user) : null,
-                                onOpenLibrary: agent.catalogId != null
-                                    ? () => showResearchLibrary(context, agent: agent)
-                                    : null,
-                              );
-                            },
-                          );
-                        },
+                      // ── 8. Akses Cepat Pustaka Rujukan Naskah ──
+                      Material(
+                        color: surface,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(color: border, width: 0.8),
+                        ),
+                        child: InkWell(
+                          onTap: () => showResearchLibrary(context, agent: syafiiAgent),
+                          borderRadius: BorderRadius.circular(16),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.8),
+                                  ),
+                                  child: Icon(Icons.library_books_rounded, size: 21, color: accent),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Katalog Pustaka Naskah Syafi\'i',
+                                        style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                                          fontSize: 14.5,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '89 naskah primer kitab induk terverifikasi',
+                                        style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ],
@@ -357,6 +600,198 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFeaturedCard({
+    required BuildContext context,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color accent,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color surfaceSubtle,
+    required String title,
+    required String arabicTitle,
+    required String subtitle,
+    required IconData icon,
+    required String primaryActionLabel,
+    required VoidCallback onPrimaryAction,
+    String? secondaryActionLabel,
+    VoidCallback? onSecondaryAction,
+  }) {
+    return Material(
+      color: surface,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: border, width: 0.8),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
+                    borderRadius: BorderRadius.circular(11),
+                    border: Border.all(color: accent.withValues(alpha: 0.3), width: 0.8),
+                  ),
+                  child: Icon(icon, size: 20, color: accent),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            title,
+                            style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            arabicTitle,
+                            textDirection: TextDirection.rtl,
+                            style: OTTypography.arabicReading(
+                              color: isDark ? const Color(0xFFD97706) : const Color(0xFFB45309),
+                            ).copyWith(
+                              fontSize: 15,
+                              height: 1.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                if (secondaryActionLabel != null && onSecondaryAction != null) ...[
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: onSecondaryAction,
+                      icon: Icon(Icons.menu_book_outlined, size: 14, color: textSecondary),
+                      label: Text(
+                        secondaryActionLabel,
+                        style: OTTypography.button(color: textSecondary).copyWith(fontSize: 12),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        side: BorderSide(color: border, width: 0.8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: onPrimaryAction,
+                    icon: const Icon(Icons.arrow_forward_rounded, size: 14),
+                    label: Text(
+                      primaryActionLabel,
+                      style: OTTypography.button(color: Colors.white).copyWith(fontSize: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: accent,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDisciplinePortal({
+    required BuildContext context,
+    required String title,
+    required String scope,
+    required IconData icon,
+    required String fieldId,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    return Material(
+      color: surface,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: border, width: 0.8),
+      ),
+      child: InkWell(
+        onTap: () {
+          final shell = MainShellController.of(context);
+          shell?.switchTab(1, fieldId: fieldId);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: textSecondary),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      scope,
+                      style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 10.5),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

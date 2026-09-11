@@ -128,12 +128,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           div[class*="notebook-info" i], .project-header, div.source-badge-container,
           div[class*="notebook-title" i], [class*="artifact-card" i],
           .mobile-header, div[class*="mobile-header" i],
+          app-chat-guide, .chat-guide, div[class*="guide" i],
+          div[class*="landing" i], div[class*="banner" i],
+          div[class*="cover" i], [class*="notebook-info" i],
+          mat-card[class*="guide" i], mat-card[class*="info" i],
           button[aria-label*="Copy" i], button[aria-label*="Salin" i],
           button[aria-label*="Create" i], button[aria-label*="Buat" i],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
           button.mat-tonal-button, a[aria-label*="Google" i],
           .gb_C, #gb, #gbwa, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
-          .pro-badge {
+          .pro-badge,
+          .disclaimer, [class*="disclaimer" i], [class*="footnote" i], .compliance-notice, .legal-text {
             display: none !important;
             visibility: hidden !important;
             height: 0px !important;
@@ -148,20 +153,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             pointer-events: none !important;
             border: none !important;
           }
-          /* Subtle AI Disclaimer & Compliance (Transparent, Legal & Clean) */
-          .disclaimer, [class*="disclaimer" i], [class*="footnote" i], .compliance-notice, .legal-text {
-            color: #71717A !important;
-            font-size: 11px !important;
-            text-align: center !important;
-            padding: 6px 12px !important;
-            opacity: 0.8 !important;
-            border: none !important;
-          }
           ::-webkit-scrollbar { display: none !important; width: 0px !important; height: 0px !important; }
           html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
-          /* Padding atas yang cukup agar pesan teratas tidak terpotong */
+          /* Padding atas dan bawah yang cukup agar pesan teratas tidak terpotong */
           .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
             padding-top: 14px !important;
+            padding-bottom: 24px !important;
             margin-top: 0px !important;
           }
         `;
@@ -175,17 +172,39 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         }
       }
 
-      // 2. Sembunyikan Kartu Landing NotebookLM yang Memuat Metadata Teknis (F37: Hindari sweep div umum)
+      // 2. Sembunyikan Kartu Landing NotebookLM yang Memuat Metadata Teknis & Poster
       function sweepNotebookLandingCard() {
         try {
-          var cards = document.querySelectorAll('mat-card.notebook-info-card, .mat-mdc-card.landing-card, .notebook-landing-banner');
-          for (var i = 0; i < cards.length; i++) {
-            var el = cards[i];
-            if (!el.querySelector('textarea, input, [role="article"], .chat-message')) {
+          var allCandidates = document.querySelectorAll('app-chat-guide, mat-card, .mat-mdc-card, [role="region"], div[class*="guide" i], div[class*="card" i], div[class*="header" i], div[class*="banner" i], div[class*="cover" i], div');
+          for (var i = 0; i < allCandidates.length; i++) {
+            var el = allCandidates[i];
+            if (el.querySelector('textarea, input, [role="article"], .chat-message, .message-content, .query-text')) {
+              continue;
+            }
+            var txt = (el.innerText || '').toLowerCase();
+            var isBanner = txt.includes('0 sources') || txt.includes('sources ·') ||
+                           txt.includes('super ai') || txt.includes('bridging turath') ||
+                           txt.includes('asisten penelitian berbasis turath') ||
+                           (txt.includes('sources') && (txt.includes('dec 22') || txt.includes('feb 22') || txt.includes('2025') || txt.includes('2026')));
+            if (isBanner && el.clientHeight > 15 && el.clientHeight < 700) {
               el.style.setProperty('display', 'none', 'important');
               el.style.setProperty('visibility', 'hidden', 'important');
               el.style.setProperty('height', '0px', 'important');
+              el.style.setProperty('min-height', '0px', 'important');
+              el.style.setProperty('max-height', '0px', 'important');
+              el.style.setProperty('margin', '0px', 'important');
+              el.style.setProperty('padding', '0px', 'important');
               el.style.setProperty('overflow', 'hidden', 'important');
+              el.style.setProperty('opacity', '0', 'important');
+              el.style.setProperty('pointer-events', 'none', 'important');
+            }
+          }
+
+          // Poles Input Placeholder ke Bahasa Indonesia Ilmiah
+          var inputs = document.querySelectorAll('textarea, input[type="text"]');
+          for (var k = 0; k < inputs.length; k++) {
+            if (inputs[k].placeholder && (inputs[k].placeholder.includes('Ask a question') || inputs[k].placeholder.includes('create something'))) {
+              inputs[k].placeholder = 'Tuliskan telaah naskah atau pertanyaan riset...';
             }
           }
         } catch(e) {}
@@ -228,7 +247,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           if (timeout) clearTimeout(timeout);
           timeout = setTimeout(function() {
             sweepNotebookLandingCard();
-          }, 300);
+          }, 250);
         });
         window.__otMasterObserver.observe(document.documentElement || document.body, { childList: true, subtree: true });
       }

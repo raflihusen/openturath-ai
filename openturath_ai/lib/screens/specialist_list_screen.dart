@@ -296,24 +296,37 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             ),
                           ),
                         )
-                      : ListView.separated(
-                          padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 96),
-                          itemCount: filtered.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 12),
-                          itemBuilder: (context, index) {
-                            final agent = filtered[index];
-                            return SpecialistCard(
-                              title: agent.title,
-                              titleArabic: agent.titleArabic,
-                              scopeLabel: agent.subtitleAcademic.isNotEmpty
-                                  ? agent.subtitleAcademic
-                                  : agent.category,
-                              emoji: agent.emoji,
-                              statusLabel: agent.isComingSoon ? 'Belum tersedia' : null,
-                              onOpen: agent.isActive ? () => _openAgent(agent) : null,
-                              onOpenLibrary: agent.catalogId != null
-                                  ? () => showResearchLibrary(context, agent: agent)
-                                  : null,
+                      : Builder(
+                          builder: (context) {
+                            final sorted = List<AgentModel>.from(filtered);
+                            if (_searchQuery.isEmpty) {
+                              sorted.sort((a, b) {
+                                if (a.isActive && !b.isActive) return -1;
+                                if (!a.isActive && b.isActive) return 1;
+                                return 0;
+                              });
+                            }
+
+                            return ListView.separated(
+                              padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 96),
+                              itemCount: sorted.length,
+                              separatorBuilder: (_, __) => const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                final agent = sorted[index];
+                                return SpecialistCard(
+                                  title: agent.title,
+                                  titleArabic: agent.titleArabic,
+                                  scopeLabel: agent.subtitleAcademic.isNotEmpty
+                                      ? agent.subtitleAcademic
+                                      : agent.category,
+                                  emoji: agent.emoji,
+                                  statusLabel: agent.isComingSoon ? 'Tahap Kurasi' : null,
+                                  onOpen: () => _openAgent(agent),
+                                  onOpenLibrary: agent.catalogId != null
+                                      ? () => showResearchLibrary(context, agent: agent)
+                                      : null,
+                                );
+                              },
                             );
                           },
                         ),
