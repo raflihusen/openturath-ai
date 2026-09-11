@@ -11601,37 +11601,44 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   child: SafeArea(
                     top: false,
                     child: SizedBox(
-                      height: 60,
+                      height: 64,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _ExpressiveNavItem(
-                            icon: Icons.home_outlined,
-                            activeIcon: Icons.home_rounded,
-                            label: 'Beranda',
-                            isSelected: _currentIndex == 0,
-                            onTap: () => _onTabSelected(0),
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.home_outlined,
+                              activeIcon: Icons.home_rounded,
+                              label: 'Beranda',
+                              isSelected: _currentIndex == 0,
+                              onTap: () => _onTabSelected(0),
+                            ),
                           ),
-                          _ExpressiveNavItem(
-                            icon: Icons.auto_awesome_outlined,
-                            activeIcon: Icons.auto_awesome_rounded,
-                            label: 'Spesialis',
-                            isSelected: _currentIndex == 1,
-                            onTap: () => _onTabSelected(1),
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.auto_awesome_outlined,
+                              activeIcon: Icons.auto_awesome_rounded,
+                              label: 'Spesialis',
+                              isSelected: _currentIndex == 1,
+                              onTap: () => _onTabSelected(1),
+                            ),
                           ),
-                          _ExpressiveNavItem(
-                            icon: Icons.bookmark_border_rounded,
-                            activeIcon: Icons.bookmark_rounded,
-                            label: 'Bookmark',
-                            isSelected: _currentIndex == 2,
-                            onTap: () => _onTabSelected(2),
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.bookmark_border_rounded,
+                              activeIcon: Icons.bookmark_rounded,
+                              label: 'Bookmark',
+                              isSelected: _currentIndex == 2,
+                              onTap: () => _onTabSelected(2),
+                            ),
                           ),
-                          _ExpressiveNavItem(
-                            icon: Icons.person_outline_rounded,
-                            activeIcon: Icons.person_rounded,
-                            label: 'Profil',
-                            isSelected: _currentIndex == 3,
-                            onTap: () => _onTabSelected(3),
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.person_outline_rounded,
+                              activeIcon: Icons.person_rounded,
+                              label: 'Profil',
+                              isSelected: _currentIndex == 3,
+                              onTap: () => _onTabSelected(3),
+                            ),
                           ),
                         ],
                       ),
@@ -11644,14 +11651,14 @@ class _MainShellScreenState extends State<MainShellScreen> {
   }
 }
 
-class _ExpressiveNavItem extends StatelessWidget {
+class _GoogleNavBarItem extends StatelessWidget {
   final IconData icon;
   final IconData activeIcon;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _ExpressiveNavItem({
+  const _GoogleNavBarItem({
     required this.icon,
     required this.activeIcon,
     required this.label,
@@ -11665,44 +11672,51 @@ class _ExpressiveNavItem extends StatelessWidget {
     final activeBg = isDark ? Colors.white : const Color(0xFF18181B);
     final activeFg = isDark ? const Color(0xFF18181B) : Colors.white;
     final unselected = isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+    final labelColor = isSelected
+        ? (isDark ? Colors.white : const Color(0xFF18181B))
+        : unselected;
 
     return InkWell(
       onTap: () {
         HapticFeedback.selectionClick();
         onTap();
       },
-      borderRadius: BorderRadius.circular(100),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 240),
-        curve: Curves.easeOutCubic,
-        padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 16 : 14,
-          vertical: 8,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ? activeBg : Colors.transparent,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Row(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Center(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              isSelected ? activeIcon : icon,
-              color: isSelected ? activeFg : unselected,
-              size: 21,
-            ),
-            if (isSelected) ...[
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: GoogleFonts.outfit(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.2,
-                  color: activeFg,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              width: 56,
+              height: 30,
+              decoration: BoxDecoration(
+                color: isSelected ? activeBg : Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Center(
+                child: Icon(
+                  isSelected ? activeIcon : icon,
+                  color: isSelected ? activeFg : unselected,
+                  size: 21,
                 ),
               ),
-            ],
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.outfit(
+                fontSize: 11.5,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                letterSpacing: -0.1,
+                color: labelColor,
+              ),
+            ),
           ],
         ),
       ),
