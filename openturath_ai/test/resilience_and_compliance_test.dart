@@ -31,10 +31,10 @@ void main() {
 
       expect(find.text('Gagal Memuat Korpus'), findsOneWidget);
       expect(find.text('Terjadi kendala koneksi saat menghubungi server.'), findsOneWidget);
-      expect(find.text('Coba Lagi'), findsOneWidget);
+      expect(find.text('Coba lagi'), findsOneWidget);
       expect(find.text('Kembali'), findsOneWidget);
 
-      await tester.tap(find.text('Coba Lagi'));
+      await tester.tap(find.text('Coba lagi'));
       expect(retried, isTrue);
 
       await tester.tap(find.text('Kembali'));

@@ -2394,7 +2394,7 @@ export const recordQuestion = functions
     }
     const agentId = data.agentId as string;
     if (!agentId || !AGENT_URLS[agentId]) {
-      throw new functions.https.HttpsError("not-found", "Agent tidak ditemukan atau belum aktif.");
+      throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan atau belum aktif.");
     }
     const entitlementKey = getEntitlementKey(agentId);
     const userRef = db.collection("users").doc(context.auth.uid);
@@ -2412,7 +2412,7 @@ export const recordQuestion = functions
       if (entitlementAccess.premiumPlan) {
         throw new functions.https.HttpsError(
           "permission-denied",
-          "Langganan Anda untuk modul ini telah berakhir atau belum memiliki masa berlaku."
+          "Langganan Anda untuk kajian ini telah berakhir."
         );
       }
 
@@ -2420,7 +2420,7 @@ export const recordQuestion = functions
       if (questionsUsed >= TRIAL_QUESTION_LIMIT) {
         throw new functions.https.HttpsError(
           "permission-denied",
-          "Kuota trial Anda telah habis. Berlangganan untuk melanjutkan."
+          "Kuota uji coba sudah habis. Berlangganan untuk lanjut."
         );
       }
       const updatedQuestionsUsed = questionsUsed + 1;
@@ -2731,7 +2731,7 @@ function getServiceTitleForEntitlement(entitlementKey: string): string {
   if (entitlementKey === "aqidah" || entitlementKey === "aqidah_kalam" || entitlementKey === "aqidah_ushuluddin") return "AI Aqidah & Ushuluddin";
   if (entitlementKey === "tarikh" || entitlementKey === "tarikh_khulafa" || entitlementKey === "tarikh_thabaqat" || entitlementKey === "sirah") return "AI Tarikh & Sirah Nabawiyah";
   if (entitlementKey === "tasawwuf" || entitlementKey === "habib_umar" || entitlementKey === "tasawwuf_ihya" || entitlementKey === "tasawwuf_adab") return "AI Tasawwuf & Tazkiyatun Nafs";
-  return "Ruang Riset";
+  return "Modul kajian";
 }
 
 async function processSuccessfulPayment(invoiceNumber: string) {
@@ -3096,14 +3096,14 @@ export const checkPaymentStatus = functions
         return {
           success: true,
           status: "SUCCESS",
-          message: "Pembayaran berhasil diverifikasi! Akses Anda telah aktif.",
+          message: "Pembayaran terverifikasi. Akses Anda sudah aktif.",
           details: actResult
         };
       } else {
         return {
           success: false,
           status: trxStatus || "PENDING",
-          message: "Pembayaran belum diselesaikan atau masih diproses."
+          message: "Pembayaran masih menunggu penyelesaian."
         };
       }
     } catch (err: any) {
@@ -3292,7 +3292,7 @@ export const redeemCode = functions
       entitlementKey: redeemResult.entitlementKey,
       durationDays: redeemResult.durationDays,
       expiry: redeemResult.expiryIso,
-      message: `Kode diterima. Akses ruang riset ${redeemResult.serviceTitle} telah aktif.`,
+      message: `Kode diterima. Akses ke ${redeemResult.serviceTitle} sudah aktif.`,
     };
   });
 
@@ -4298,8 +4298,8 @@ function getLoginHTML(ref: string, csrfToken: string, error: string): string {
 </head>
 <body>
   <div class="logo">OpenTurath</div>
-  <h1>AI Islamiyah</h1>
-  <p class="subtitle">Masukkan email langganan Anda</p>
+  <h1>Ruang Kajian</h1>
+  <p class="subtitle">Masukkan email akun Anda</p>
   <div class="card">
     ${errorHTML}
     <form method="POST" action="/login">
@@ -4307,10 +4307,10 @@ function getLoginHTML(ref: string, csrfToken: string, error: string): string {
       <input type="hidden" name="csrf_token" value="${escapeHtml(csrfToken)}">
       <label for="email">Alamat Email</label>
       <input type="email" id="email" name="email" placeholder="nama@email.com" required autocomplete="email">
-      <button type="submit">Masuk ke Ruang Belajar →</button>
+      <button type="submit">Buka ruang kajian →</button>
     </form>
   </div>
-  <p class="footer">Belum berlangganan? Silakan berlangganan melalui aplikasi resmi OpenTurath AI</p>
+  <p class="footer">Belum berlangganan? Buka langganan melalui aplikasi OpenTurath</p>
 </body>
 </html>`;
 }
@@ -4321,49 +4321,49 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
   let promptsHtml = "";
 
   if (agentId === "fiqh_tahawwulat") {
-    descHtml = `<p>Ruang riset **Fikih Tahawwulat** dirancang untuk menelaah kaidah fikih tanda zaman dan krisis peradaban berdasarkan karya rujukan ulama terkait.</p>`;
+    descHtml = `<p>Kajian **Fikih Tahawwulat** menelaah kaidah tanda zaman dan perubahan peradaban berdasarkan kitab-kitab rujukan.</p>`;
     promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Jelaskan konsep Al-Ghuthsa’iyyah (era buih) berdasarkan penjelasan kitab!')">
-        Jelaskan konsep Al-Ghuthsa’iyyah 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana penjelasan al-ghutsā\\'iyyah dalam kitab?')">
+        Penjelasan al-ghutsā'iyyah 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Apa rukun keempat dalam metodologi Fikih Tahawwulat?')">
-        Rukun keempat Fikih Tahawwulat 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa yang dimaksud Rukun Keempat dalam Fikih Tahawwulat?')">
+        Rukun Keempat Fikih Tahawwulat 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana kaidah menyikapi fitnah akhir zaman?')">
-        Menyikapi fitnah akhir zaman 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana para ulama menjelaskan sikap saat masa fitnah?')">
+        Sikap saat masa fitnah 📋
       </div>
     `;
   } else if (agentId === "fiqh_syafii") {
-    descHtml = `<p>Ruang riset **Fikih Syafi'i** memuat korpus naskah primer mazhab Syafi'i untuk penelaahan masalah ibadah, muamalah, dan fatwa para ashab al-wujuh dan muta'akhkhirin.</p>`;
+    descHtml = `<p>Kajian **Fikih Syafi'i** menelaah masalah ibadah, muamalah, dan fatwa para ulama mazhab Syafi'i dari kitab-kitab mu'tamad.</p>`;
     promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana rukun wudhu menurut qaul mu’tamad mazhab Syafi’i?')">
-        Rukun wudhu mu'tamad Syafi'i 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa rukun wudu menurut pendapat mu\\'tamad dalam mazhab Syafi\\'i?')">
+        Rukun wudu mu'tamad Syafi'i 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Jelaskan syarat sah shalat berjamaah menurut naskah Minhaj ath-Thalibin!')">
-        Syarat shalat berjamaah di Minhaj 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa syarat sah salat berjamaah menurut Minhāj al-Ṭālibīn?')">
+        Syarat salat berjamaah di Minhāj 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana ketentuan zakat perniagaan dalam fatwa Imam An-Nawawi?')">
-        Zakat perniagaan menurut An-Nawawi 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana ketentuan zakat perdagangan menurut Imam al-Nawawi?')">
+        Zakat perdagangan menurut al-Nawawi 📋
       </div>
     `;
   } else if (agentId === "hadits") {
-    descHtml = `<p>Ruang riset **Hadis & Syarah** memuat himpunan kutubus sittah dan syarah hadis induk untuk verifikasi matan, takhrij, dan faedah hukum nabawi.</p>`;
+    descHtml = `<p>Kajian **Hadis & Syarah** memuat kitab-kitab hadis induk dan syarahnya untuk memeriksa matan, sanad, dan faedah hukum.</p>`;
     promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana penjelasan syarah hadis tentang niat dalam Fathul Bari?')">
-        Syarah hadis niat di Fathul Bari 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana penjelasan hadis tentang niat dalam Fatḥ al-Bārī?')">
+        Penjelasan hadis niat di Fatḥ al-Bārī 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana kedudukan perawi dan sanad pada riwayat ini?')">
-        Takhrij sanad dan faedah hadis 📋
+      <div class="prompt-item" onclick="copyPrompt('Bagaimana menilai sanad riwayat ini?')">
+        Penilaian sanad riwayat 📋
       </div>
     `;
   } else {
-    descHtml = `<p>Ruang riset **${escapeHtml(agent.label || "Naskah Turats")}** menyediakan fasilitas telaah cerdas terhadap naskah rujukan keilmuan Islam.</p>`;
+    descHtml = `<p>Kajian **${escapeHtml(agent.label || "Kitab")}** membantu menelaah kitab-kitab rujukan keilmuan Islam.</p>`;
     promptsHtml = `
-      <div class="prompt-item" onclick="copyPrompt('Sebutkan pokok bahasan utama pada bab ini beserta dalilnya!')">
-        Pokok bahasan bab & dalil 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa pokok bahasan dalam bab ini?')">
+        Pokok bahasan bab 📋
       </div>
-      <div class="prompt-item" onclick="copyPrompt('Bagaimana perbandingan pendapat para ulama dalam masalah ini?')">
-        Perbandingan pendapat ulama 📋
+      <div class="prompt-item" onclick="copyPrompt('Apa perbedaan pendapat ulama dalam masalah ini?')">
+        Perbedaan pendapat ulama 📋
       </div>
     `;
   }
@@ -4692,7 +4692,7 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
     <!-- Left Sidebar -->
     <aside class="sidebar-left" id="sidebar-left">
       <div class="sidebar-section">
-        <div class="section-title">Pilih Modul AI</div>
+        <div class="section-title">Pilih Kajian</div>
         <nav class="menu-list">
           <a href="/chat/fikih-tahawwulat-muhaqqiq" class="menu-item ${agentId === 'fikih-tahawwulat-muhaqqiq' ? 'active' : ''}">
             <span>📗</span> AI Fikih (Al-Muhaqqiq)
@@ -4708,7 +4708,7 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
           </a>
         </nav>
         <a href="${chatUrl}" target="_blank" class="btn-full-tab">
-          🚀 Buka Layar Penuh
+          Buka Layar Penuh
         </a>
       </div>
 
@@ -4735,7 +4735,7 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
     <!-- Right Sidebar -->
     <aside class="sidebar-right">
       <div class="sidebar-section">
-        <div class="section-title">Tentang ruang ini</div>
+        <div class="section-title">Tentang kajian ini</div>
         <div class="desc-box">
           ${descHtml}
         </div>
@@ -4779,7 +4779,7 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
     function copyPrompt(text) {
       navigator.clipboard.writeText(text).then(() => {
         const toast = document.getElementById('toast');
-        toast.innerText = 'Pertanyaan disalin! Silakan tempel (paste) ke kolom chat NotebookLM.';
+        toast.innerText = 'Pertanyaan tersalin. Tempelkan di kolom chat.';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3500);
       }).catch(err => {
@@ -4851,6 +4851,133 @@ class AppConfig {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_localeKey, langCode);
   }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/core/app_copy.dart
+```dart
+/// AppCopy: Sumber teks kanonik terpusat untuk OpenTurath.
+/// Menjaga nada bahasa tetap tenang, ringkas, jelas, dan wajar untuk kajian keislaman.
+abstract final class AppCopy {
+  // ── Identitas & Merek ──────────────────────────────────────────
+  static const appName = 'OpenTurath';
+  static const appTagline = 'Membaca kitab, menelusuri ibarah.';
+  static const defaultFieldDesc = 'Beragam kajian dari kitab-kitab Islam.';
+  static const aboutTitle = 'Tentang OpenTurath';
+  static const aboutDescription =
+      'OpenTurath membantu Anda membaca, mencari, dan membandingkan keterangan dari kitab-kitab rujukan.';
+  static const aboutScholarlyPrinciple =
+      'Gunakan jawaban sebagai pintu masuk untuk menelusuri ibarah. Untuk memahami dan menetapkan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.';
+
+  // ── Navigasi Utama ─────────────────────────────────────────────
+  static const navHome = 'Beranda';
+  static const navStudies = 'Kajian';
+  static const navSaved = 'Tersimpan';
+  static const navSettings = 'Pengaturan';
+
+  // ── Istilah Ruang & Kajian ─────────────────────────────────────
+  static const studySpace = 'Ruang kajian';
+  static const openStudy = 'Membuka kajian';
+  static const studyOptions = 'Opsi kajian';
+  static const referenceBooks = 'Kitab rujukan';
+  static const savedCollection = 'Simpanan';
+  static const bookDetails = 'Keterangan kitab';
+
+  // ── Loading, Error & Akses ─────────────────────────────────────
+  static const loadingReferences = 'Memuat kitab rujukan...';
+  static const modulePreparing = 'sedang disiapkan.';
+  static const moduleUnavailable = 'Modul ini belum dapat dibuka. Coba lagi nanti.';
+  static const cannotLoad = 'Tidak dapat dimuat. Periksa koneksi, lalu coba lagi.';
+  static const cannotLoadStudy = 'Tidak dapat memuat kajian';
+  static const studyNotLoadedYet = 'Kajian belum bisa dimuat. Coba lagi sebentar.';
+  static const subscriptionRequiredTitle = 'Langganan diperlukan';
+  static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
+  static const inputQuestionHint = 'Tanyakan sesuatu tentang kitab ini...';
+  static const viewSubscription = 'Lihat langganan';
+  static const tryAgain = 'Coba lagi';
+
+  // Platform & Inisialisasi
+  static const deviceNotSupportedTitle = 'Perangkat belum didukung';
+  static const deviceNotSupportedMessage =
+      'OpenTurath saat ini mendukung Android, macOS, dan Windows. Perangkat ini belum didukung.';
+  static const cannotConnectTitle = 'Tidak dapat terhubung';
+  static const cannotConnectMessage =
+      'Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi, lalu coba lagi.';
+
+  // ── Dialog Catatan Sebelum Mulai (Adab) ────────────────────────
+  static const adabDialogTitle = 'Catatan sebelum mulai';
+  static const adabAcknowledgeButton = 'Saya mengerti';
+
+  static const adabHeading1 = 'Alat bantu, bukan pemberi fatwa';
+  static const adabBody1 =
+      'OpenTurath membantu mencari ibarah dan membandingkan keterangan dalam kitab. Aplikasi ini tidak menggantikan fatwa ulama.';
+
+  static const adabHeading2 = 'Belajar tetap perlu bimbingan';
+  static const adabBody2 =
+      'Untuk memahami agama dengan baik, belajarlah kepada guru dan ulama yang berkompeten.';
+
+  static const adabHeading3 = 'Periksa kembali rujukan';
+  static const adabBody3 =
+      'Periksa kembali dalil dan ibarah pada kitab rujukan sebelum menjadikannya pegangan.';
+
+  // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
+  static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
+  static const answerCopied = 'Jawaban tersalin.';
+  static const copyFailed = 'Gagal menyalin. Coba lagi.';
+  static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
+  static const savedSuccess = 'Tersimpan.';
+  static const saveFailed = 'Gagal menyimpan. Coba lagi.';
+  static const emptyAnswerCannotSave = 'Belum ada jawaban untuk disimpan.';
+
+  // ── Simpanan / Bookmark ────────────────────────────────────────
+  static const searchSavedHint = 'Cari kitab, topik, atau kutipan...';
+  static const searchSavedTooltip = 'Cari simpanan';
+  static const noSavedTitle = 'Belum ada simpanan';
+  static const noSavedDescription =
+      'Simpan jawaban atau ibarah agar mudah dibuka kembali.';
+  static const copyIbarahAction = 'Salin ibarah';
+  static const viewReferenceAction = 'Lihat rujukan';
+  static const shareReferenceTooltip = 'Bagikan rujukan';
+  static const saveAnswerMenu = 'Simpan jawaban';
+
+  // ── Akun & Pengaturan ──────────────────────────────────────────
+  static const profile = 'Profil';
+  static const subscription = 'Langganan';
+  static const activeSubscription = 'Langganan aktif';
+  static const inactiveSubscription =
+      'Belum berlangganan. Akses dibuka dengan voucher atau paket.';
+  static const appearance = 'Tampilan';
+  static const modeDark = 'Gelap';
+  static const modeLight = 'Terang';
+  static const modeSystem = 'Sistem';
+  static const language = 'Bahasa';
+  static const languageIndonesian = 'Bahasa Indonesia';
+
+  static const logoutDialogTitle = 'Keluar dari akun?';
+  static const logoutDialogBody = 'Anda akan keluar dari akun ini.';
+  static const logoutButton = 'Keluar';
+
+  static const deleteAccountTitle = 'Hapus akun?';
+  static const deleteAccountBody =
+      'Tindakan ini tidak dapat dibatalkan. Profil, simpanan, dan data akun Anda akan dihapus dari server.';
+  static const deleteAccountButton = 'Hapus akun';
+  static const deleteAccountSuccess = 'Akun Anda sudah dihapus.';
+  static const recentLoginRequired =
+      'Untuk menghapus akun, masuk ulang terlebih dahulu.';
+  static const networkError = 'Koneksi bermasalah. Coba lagi.';
+
+  // ── Helper Interpolasi Dinamis ─────────────────────────────────
+  static String preparingModule(String module) => '$module sedang disiapkan.';
+
+  static String subscriptionRequiredFor(String module) =>
+      'Berlangganan untuk membuka $module.';
+
+  static String accessUnavailableFor(String module) =>
+      'Akun ini belum mendapat akses ke $module. Aktifkan langganan untuk melanjutkan.';
+
+  static String planWithAgent(String agentTitle, String duration) =>
+      '$agentTitle — $duration';
 }
 
 ```
@@ -5033,7 +5160,7 @@ class AppConstants {
   // ── App Info ──────────────────────────────────────────────────
   static const String appName = 'OpenTurath AI';
   static const String appNameArabic = 'الذكاء الاصطناعي للعلوم الإسلامية';
-  static const String appTagline = 'Ilmu Islam. Sumber Primer. Ibarah Asli.';
+  static const String appTagline = 'Membaca kitab, menelusuri ibarah.';
 
   // ── Trial Limit Config ────────────────────────────────────────
   static const int trialQuestionLimit = 10;
@@ -6270,6 +6397,7 @@ import 'screens/google_session_auth_screen.dart';
 import 'firebase_options.dart';
 
 import 'core/app_config.dart';
+import 'core/app_copy.dart';
 import 'core/localization.dart';
 import 'widgets/app_error_state.dart';
 
@@ -6305,11 +6433,11 @@ Future<void> main() async {
     debugPrint('[OpenTurath] Firebase initialization error: $error\n$stackTrace');
     final isUnsupportedPlatform = error is UnsupportedError;
     final title = isUnsupportedPlatform
-        ? 'Platform Belum Didukung Penuh'
-        : 'Koneksi Server Belum Siap';
+        ? AppCopy.deviceNotSupportedTitle
+        : AppCopy.cannotConnectTitle;
     final message = isUnsupportedPlatform
-        ? 'Aplikasi OpenTurath AI dioptimalkan untuk perangkat Android dan Web. Layanan cloud mungkin memerlukan penyesuaian pada sistem ini.'
-        : 'Tidak dapat menginisialisasi layanan data. Periksa koneksi internet Anda lalu coba muat ulang aplikasi.';
+        ? AppCopy.deviceNotSupportedMessage
+        : AppCopy.cannotConnectMessage;
 
     runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -6563,7 +6691,7 @@ class AgentModel {
           title: 'Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
-              'Kajian komprehensif naskah dan muhadharah Al-Habib Abu Bakar Al-Masyhur disertai telaah ibarah primer.',
+              'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan muhadharah Habib Abu Bakar al-Masyhur.',
           emoji: '📜',
           category: 'Fikih Tahawwulat',
           kind: CorpusKind.discipline,
@@ -6572,9 +6700,9 @@ class AgentModel {
           fieldId: 'fiqh_tahawwulat',
           subtitleAcademic: 'Manhaj Abu Bakr al-Masyhur',
           suggestedPrompts: [
-            'Jelaskan konsep Rukun Keempat dalam Fikih Tahawwulat!',
-            'Bagaimana ibarah tentang tanda zaman kubra dan sughra?',
-            'Apa perbedaan fitnah dhuhaima dan fitnah sarra\'?',
+            'Bagaimana penjelasan al-ghutsā\'iyyah dalam kitab?',
+            'Apa yang dimaksud Rukun Keempat dalam Fikih Tahawwulat?',
+            'Bagaimana para ulama menjelaskan sikap saat masa fitnah?',
           ],
           status: 'active',
           sortOrder: 1,
@@ -6587,20 +6715,20 @@ class AgentModel {
               name: 'Al-Muhaqqiq (Riset Dalil)',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis riset mendalam. Menyajikan dalil, ibarah lengkap, dan rujukan presisi dari kitab/ceramah.',
+                  'Membantu menemukan dalil, ibarah, dan rujukan yang relevan.',
               descriptionArabic: 'البحث والتحقيق وعزو النصوص إلى مصادرها',
               emoji: '🔍',
-              badge: 'Riset Mendalam',
+              badge: 'Riset Dalil',
             ),
             SubAgentModel(
               id: 'fiqh_tahawwulat_bayan',
               name: 'Al-Bayan (Penjelasan Luas)',
               nameArabic: 'البيان',
               description:
-                  'Spesialis penjelasan. Menjabarkan konsep dengan bahasa yang mudah dipahami, disertai intisari.',
+                  'Menjelaskan pokok bahasan dengan bahasa yang lebih ringkas.',
               descriptionArabic: 'الشرح والبيان والتبسيط المنهجي',
               emoji: '💡',
-              badge: 'Penjelasan Luas',
+              badge: 'Penjelasan',
             ),
           ],
           referenceBooks: [
@@ -6616,7 +6744,7 @@ class AgentModel {
               titleArabic: 'الفقه المنهجي في فقه التحولات',
               author: 'Habib Abu Bakar Al-Masyhur',
               description:
-                  'Panduan kurikulum fikih tahawwulat sistematik untuk tingkat madrasah dan perguruan tinggi.',
+                  'Panduan pengantar Fikih Tahawwulat untuk pelajar dan peneliti.',
             ),
           ],
         ),
@@ -6625,7 +6753,7 @@ class AgentModel {
           title: 'Fikih Syafi\'i',
           titleArabic: 'الفقه الشافعي',
           description:
-              'Asisten AI khusus Fikih Mazhab Syafi\'i lengkap dengan kutipan kitab-kitab mu\'tabarah.',
+              'Bantuan untuk mencari keterangan dalam kitab-kitab mazhab Syafi\'i.',
           emoji: '📜',
           category: 'Fiqih',
           kind: CorpusKind.discipline,
@@ -6634,9 +6762,9 @@ class AgentModel {
           fieldId: 'fiqh',
           subtitleAcademic: 'Matan · Syarah · Hasyiyah Mu\'tabarah',
           suggestedPrompts: [
-            'Bagaimana hukum shalat di atas kapal menurut Al-Majmu\'?',
-            'Apa qaul mu\'tamad tentang batas basuhan wudhu?',
-            'Bawakan ibarah Fathul Mu\'in tentang jual beli khiyar!',
+            'Apa rukun wudu menurut pendapat mu\'tamad dalam mazhab Syafi\'i?',
+            'Apa syarat sah salat berjamaah menurut Minhāj al-Ṭālibīn?',
+            'Bagaimana ketentuan zakat perdagangan menurut Imam al-Nawawi?',
           ],
           status: 'active',
           sortOrder: 2,
@@ -6649,7 +6777,7 @@ class AgentModel {
               name: 'Al-Muhaqqiq Fikih Syafi\'i',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis riset hukum Fikih Syafi\'i, perbandingan qaul dan mu\'tamad madzhab.',
+                  'Membantu menemukan dalil, ibarah, dan rujukan dalam mazhab Syafi\'i.',
               descriptionArabic: 'تحقيق المعتمد في المذهب الشافعي',
               emoji: '⚖️',
               badge: 'Fikih Syafi\'i',
@@ -6667,7 +6795,7 @@ class AgentModel {
               titleArabic: 'المجموع شرح المهذب',
               author: 'Imam An-Nawawi',
               description:
-                  'Rujukan fikih mazhab Syafi\'i yang komprehensif karya Imam An-Nawawi.',
+                  'Rujukan fikih mazhab Syafi\'i karya Imam An-Nawawi.',
             ),
           ],
         ),
@@ -6799,7 +6927,7 @@ class AgentModel {
               title: 'Al-Mughni',
               titleArabic: 'المغني',
               author: 'Ibnu Qudamah Al-Maqdisi',
-              description: 'Kitab fikih dalil komprehensif mazhab Hanbali karya Ibnu Qudamah.',
+              description: 'Kitab fikih dalil mazhab Hanbali karya Ibnu Qudamah.',
             ),
             BookModel(
               title: 'Kasysyaf Al-Qina\' \'an Matn Al-Iqna\'',
@@ -6851,7 +6979,7 @@ class AgentModel {
               title: 'Al-Fiqh Al-Islami wa Adillatuh',
               titleArabic: 'الفقه الإسلامي وأدلته',
               author: 'Prof. Dr. Wahbah Az-Zuhaili',
-              description: 'Ensiklopedi perbandingan komprehensif mazhab klasik & kontemporer.',
+              description: 'Ensiklopedi perbandingan mazhab klasik & kontemporer.',
             ),
           ],
         ),
@@ -6868,9 +6996,9 @@ class AgentModel {
           fieldId: 'hadith',
           subtitleAcademic: 'Kutubus Sittah · Takhrij & Rijal',
           suggestedPrompts: [
-            'Takhrij hadis "Innamal a\'malu bin-niyyat" beserta syarahnya!',
-            'Bagaimana status perawi hadis talqin mayit dalam Kutubus Sittah?',
-            'Bawakan syarah Fathul Bari mengenai bab permulaan wahyu!',
+            'Bagaimana penjelasan hadis tentang niat dalam Fatḥ al-Bārī?',
+            'Bagaimana menilai sanad riwayat ini?',
+            'Bagaimana status perawi hadis talqin dalam Kutubus Sittah?',
           ],
           status: 'active',
           sortOrder: 7,
@@ -6949,7 +7077,7 @@ class AgentModel {
               title: 'Al-Jami\' li Ahkam Al-Qur\'an',
               titleArabic: 'تفسير القرطبي',
               author: 'Imam Al-Qurtubi',
-              description: 'Tafsir komprehensif fokus pada hukum-hukum fikih dalam Al-Qur\'an.',
+              description: 'Tafsir dengan fokus pada hukum-hukum fikih dalam Al-Qur\'an.',
             ),
           ],
         ),
@@ -7113,12 +7241,12 @@ class AgentModel {
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
         AgentModel(
           id: 'habib_umar',
-          title: 'Korpus Habib Umar bin Hafizh',
+          title: 'Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
-              'Kitab dan rekaman muhadharah Habib Umar bin Hafiz dengan rujukan terpercaya.',
+              'Kitab dan rekaman muhadharah Habib Umar bin Hafizh dengan rujukan terpercaya.',
           emoji: '🕌',
-          category: 'Korpus Ulama',
+          category: 'Kajian Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['habib_umar'],
           disciplineIds: const ['tasawwuf'],
@@ -7134,12 +7262,12 @@ class AgentModel {
         ),
         AgentModel(
           id: 'imam_ghazali',
-          title: 'Korpus Hujjatul Islam Al-Ghazali',
+          title: 'Hujjatul Islam Al-Ghazali',
           titleArabic: 'حجة الإسلام الغزالي',
           description:
-              'Kajian naskah Ihya Ulumuddin, Al-Mustashfa, Tahafut al-Falasifah, dan karya-karya primer Al-Ghazali.',
+              'Kajian kitab Ihya Ulumuddin, Al-Mustashfa, Tahafut al-Falasifah, dan karya-karya Imam Al-Ghazali.',
           emoji: '🕯️',
-          category: 'Korpus Ulama',
+          category: 'Kajian Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['imam_ghazali'],
           disciplineIds: const ['tasawwuf', 'usul', 'aqidah'],
@@ -7592,7 +7720,7 @@ class FieldModel {
         const FieldModel(
           id: 'umum',
           name: 'Umum & Turats',
-          description: 'Kajian khazanah keilmuan Islam dan naskah primer.',
+          description: 'Beragam kajian dari kitab-kitab Islam.',
           icon: Icons.menu_book_rounded,
           specialistCount: 0,
           agentIds: [],
@@ -7919,6 +8047,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
@@ -7938,7 +8067,7 @@ import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
 
-/// AgentWebviewScreen: Tampilan Ruang Riset AI NotebookLM
+/// AgentWebviewScreen: Tampilan Ruang Kajian NotebookLM
 /// Dilengkapi App Bar native yang bersih di bawah kamera notch/status bar,
 /// tombol kembali yang jelas, dan injeksi CSS/JS untuk menyembunyikan header Google.
 class AgentWebviewScreen extends StatefulWidget {
@@ -8163,7 +8292,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           var inputs = document.querySelectorAll('textarea, input[type="text"]');
           for (var k = 0; k < inputs.length; k++) {
             if (inputs[k].placeholder && (inputs[k].placeholder.includes('Ask a question') || inputs[k].placeholder.includes('create something'))) {
-              inputs[k].placeholder = 'Tuliskan telaah naskah atau pertanyaan riset...';
+              inputs[k].placeholder = 'Tanyakan sesuatu tentang kitab ini...';
             }
           }
         } catch(e) {}
@@ -8244,7 +8373,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (_agent != null && _agent!.isComingSoon) {
       setState(() {
         _isLoadingUrl = false;
-        _errorMessage = '${_agent!.title} belum tersedia (Segera Hadir) dan sedang dalam proses kurasi naskah kitab primer.';
+        _errorMessage = AppCopy.preparingModule(_agent!.title);
       });
       return;
     }
@@ -8257,7 +8386,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (_user == null || !_user!.hasAccessToAgent(_agent!.id)) {
       setState(() {
         _isPaywallRequired = true;
-        _errorMessage = 'Modul ${_agent!.title} memerlukan langganan aktif. Silakan pilih paket langganan untuk mengakses ruang riset.';
+        _errorMessage = AppCopy.subscriptionRequiredFor(_agent!.title);
         _isLoadingUrl = false;
       });
       return;
@@ -8268,7 +8397,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       if (!mounted) return;
       if (url == null || url.isEmpty) {
         setState(() {
-          _errorMessage = 'URL riset tidak tersedia. Silakan hubungi pengelola.';
+          _errorMessage = AppCopy.moduleUnavailable;
           _isLoadingUrl = false;
         });
         return;
@@ -8291,7 +8420,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       setState(() {
         _errorMessage = e is AgentAccessException
             ? e.message
-            : 'Gagal memuat ruang riset. Silakan coba beberapa saat lagi.';
+            : AppCopy.studyNotLoadedYet;
         _isPaywallRequired = false;
         _isLoadingUrl = false;
       });
@@ -8319,7 +8448,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           _isPaywallRequired = true;
           _isLoadingUrl = false;
           _isWebViewLoading = false;
-          _errorMessage = 'Anda belum memiliki akses ke ruang riset ${_agent?.title ?? "ini"}. Silakan periksa atau aktifkan paket langganan Anda.';
+          _errorMessage = AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
         });
       }
     } catch (_) {}
@@ -8375,13 +8504,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       final text = (res as String? ?? '').trim();
       if (text.isEmpty) {
         if (mounted) {
-          AppSnackBar.warning(context, 'Belum ada jawaban AI yang dapat disalin.');
+          AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
         }
       } else {
         await Clipboard.setData(ClipboardData(text: text));
         if (mounted) {
           setState(() => _hasCopied = true);
-          AppSnackBar.success(context, 'Hasil telaah AI berhasil disalin!');
+          AppSnackBar.success(context, AppCopy.answerCopied);
           Future.delayed(const Duration(seconds: 2), () {
             if (mounted) setState(() => _hasCopied = false);
           });
@@ -8389,7 +8518,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.error(context, 'Tidak dapat menyalin telaah saat ini. Silakan coba kembali.');
+        AppSnackBar.error(context, AppCopy.copyFailed);
       }
     } finally {
       if (mounted) setState(() => _isCopying = false);
@@ -8452,7 +8581,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
         if (fullAnswer.isEmpty) {
           if (mounted) {
-            AppSnackBar.warning(context, 'Belum ada telaah AI yang dapat disimpan.');
+            AppSnackBar.warning(context, AppCopy.noAnswerToSave);
           }
         } else {
           // F28 & F30: Pisahkan nama spesialis AI dari rujukan kitab primer
@@ -8479,7 +8608,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             setState(() => _hasBookmarked = true);
             AppSnackBar.success(
               context,
-              'Telaah tersimpan di Bookmark!',
+              AppCopy.savedSuccess,
               action: SnackBarAction(
                 label: 'Lihat',
                 textColor: Colors.white,
@@ -8494,7 +8623,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.error(context, 'Tidak dapat menyimpan bookmark saat ini. Silakan coba kembali.');
+        AppSnackBar.error(context, AppCopy.saveFailed);
       }
     } finally {
       if (mounted) setState(() => _isBookmarking = false);
@@ -8566,7 +8695,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           ),
           titleSpacing: 0,
           title: Text(
-            _agent?.title ?? 'Ruang Riset AI',
+            _agent?.title ?? AppCopy.studySpace,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: OTTypography.corpusTitle(color: textPrimary).copyWith(
@@ -8609,12 +8738,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               ),
             IconButton(
               icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 21),
-              tooltip: 'Pustaka Rujukan',
+              tooltip: AppCopy.referenceBooks,
               onPressed: () => showResearchLibrary(context, agent: _agent),
             ),
             IconButton(
               icon: Icon(Icons.more_horiz_rounded, color: textPrimary, size: 22),
-              tooltip: 'Opsi Riset',
+              tooltip: AppCopy.studyOptions,
               onPressed: _showOverflowMenu,
             ),
             const SizedBox(width: OTSpacing.xs),
@@ -8672,7 +8801,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                           if (context.mounted) {
                             AppSnackBar.show(
                               context,
-                              message: 'Tidak dapat menyimpan telaah kosong',
+                              message: AppCopy.emptyAnswerCannotSave,
                               type: SnackType.error,
                             );
                           }
@@ -8681,7 +8810,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
                         final title = question.isNotEmpty
                             ? (question.length > 55 ? '${question.substring(0, 52)}...' : question)
-                            : (_agent?.title != null ? 'Telaah ${_agent!.title}' : 'Telaah Naskah Turats');
+                            : (_agent?.title != null ? 'Kajian ${_agent!.title}' : 'Kajian Kitab');
 
                         final category = _agent?.category ?? 'Fikih';
 
@@ -8703,7 +8832,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         if (context.mounted) {
                           AppSnackBar.show(
                             context,
-                            message: 'Telaah tersimpan di Bookmark',
+                            message: AppCopy.savedSuccess,
                             type: SnackType.success,
                             action: SnackBarAction(
                               label: 'Lihat',
@@ -8723,7 +8852,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       if (mounted) {
                         AppSnackBar.show(
                           context,
-                          message: 'Hasil telaah AI berhasil disalin',
+                          message: AppCopy.answerCopied,
                           type: SnackType.info,
                         );
                       }
@@ -8777,7 +8906,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   if (mounted && (request.isForMainFrame == true)) {
                     setState(() {
                       _isWebViewLoading = false;
-                      _errorMessage = 'Tidak dapat memuat sesi riset. Periksa koneksi internet Anda lalu coba kembali.';
+                      _errorMessage = AppCopy.cannotLoad;
                     });
                   }
                 },
@@ -8788,8 +8917,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             if (_isLoadingUrl || (_isWebViewLoading && _errorMessage == null))
               Positioned.fill(
                 child: AppLoader.fullscreen(
-                  title: _agent?.title ?? 'Ruang Riset Turats',
-                  subtitle: 'Menyiapkan korpus naskah primer...',
+                  title: _agent?.title ?? AppCopy.openStudy,
+                  subtitle: AppCopy.loadingReferences,
                   onCancel: _handleBackPress,
                 ),
               ),
@@ -8801,8 +8930,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   color: canvas,
                   child: AppErrorState(
                     title: _isPaywallRequired
-                        ? 'Akses Berlangganan Diperlukan'
-                        : 'Kendala Memuat Ruang Riset',
+                        ? AppCopy.subscriptionRequiredTitle
+                        : AppCopy.cannotLoadStudy,
                     message: _errorMessage!,
                     icon: _isPaywallRequired
                         ? Icons.workspace_premium_rounded
@@ -8811,8 +8940,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         ? _navigateToSubscription
                         : _fetchAgentUrl,
                     retryLabel: _isPaywallRequired
-                        ? 'Buka Paket Langganan'
-                        : 'Coba Muat Ulang',
+                        ? AppCopy.viewSubscription
+                        : AppCopy.tryAgain,
                     onBack: () => Navigator.pop(context),
                     backLabel: 'Kembali ke Beranda',
                   ),
@@ -8878,7 +9007,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Adab Riset & Penafian Talaqqi',
+                        AppCopy.adabDialogTitle,
                         style: GoogleFonts.newsreader(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -8910,9 +9039,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 14),
                 _buildAdabPoint(
                   icon: Icons.menu_book_outlined,
-                  title: 'Wasilah Bantu, Bukan Mufti',
-                  description:
-                      'OpenTurath adalah perkakas digital pelacak ibarah dan komparasi naskah primer kitab kuning, bukan mufti fatwa mandiri.',
+                  title: AppCopy.adabHeading1,
+                  description: AppCopy.adabBody1,
                   textPrimary: textPrimary,
                   textSecondary: textSecondary,
                   isDark: isDark,
@@ -8920,9 +9048,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 12),
                 _buildAdabPoint(
                   icon: Icons.people_outline_rounded,
-                  title: 'Kewajiban Talaqqi Bersanad',
-                  description:
-                      'Kajian agama hakiki wajib melalui bimbingan talaqqi dengan masyayikh dan ulama yang kompeten.',
+                  title: AppCopy.adabHeading2,
+                  description: AppCopy.adabBody2,
                   textPrimary: textPrimary,
                   textSecondary: textSecondary,
                   isDark: isDark,
@@ -8930,9 +9057,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 12),
                 _buildAdabPoint(
                   icon: Icons.fact_check_outlined,
-                  title: 'Sikap Ihtiyath (Wara\')',
-                  description:
-                      'Selalu verifikasi dalil dan ibarah ke naskah fisik cetakan mu\'tamad sebelum menjadikannya landasan kajian.',
+                  title: AppCopy.adabHeading3,
+                  description: AppCopy.adabBody3,
                   textPrimary: textPrimary,
                   textSecondary: textSecondary,
                   isDark: isDark,
@@ -8952,7 +9078,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       ),
                     ),
                     child: Text(
-                      'Saya Memahami & Menjaga Adab',
+                      AppCopy.adabAcknowledgeButton,
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -9046,13 +9172,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               ),
             ),
             Text(
-              'Opsi Ruang Riset',
+              AppCopy.studyOptions,
               style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             const SizedBox(height: 12),
             ListTile(
               leading: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-              title: Text('Ukuran Teks Telaah (${(_fontScale * 100).round()}%)', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Ukuran teks (${(_fontScale * 100).round()}%)', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showFontScalePicker();
@@ -9061,7 +9187,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
-              title: Text('Salin Jawaban AI Terakhir', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Salin jawaban', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
@@ -9072,7 +9198,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, color: _hasBookmarked ? OTColors.sovereignAmber : textPrimary, size: 20),
-              title: Text('Simpan ke Rujukan', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text(AppCopy.saveAnswerMenu, style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isBookmarking
                   ? null
                   : () {
@@ -9122,12 +9248,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Ukuran Teks Telaah',
+                    'Ukuran teks',
                     style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 17),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Sesuaikan ukuran huruf naskah dan terjemahan untuk kenyamanan membaca',
+                    'Sesuaikan ukuran teks untuk kenyamanan membaca',
                     style: OTTypography.caption(color: textSecondary),
                   ),
                   const SizedBox(height: 14),
@@ -9136,7 +9262,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   _buildScaleOption(ctx, label: 'Sedang (120%)', scale: 1.20, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Besar (140%)', scale: 1.40, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Ekstra Besar (165%)', scale: 1.65, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Maksimal Naskah (200%)', scale: 2.00, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Maksimal (200%)', scale: 2.00, isDark: isDark),
                   const SizedBox(height: 8),
                 ],
               ),
@@ -9193,6 +9319,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -9293,28 +9420,28 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) {
+      builder: (context) {
         return AlertDialog(
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus dari tersimpan?',
+            'Hapus dari Tersimpan',
             style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            '"${item.title}" akan dihapus dari tersimpan.',
+            'Yakin ingin menghapus catatan rujukan ini dari daftar simpanan?',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
+              onPressed: () => Navigator.pop(context, false),
               child: Text(
                 'Batal',
                 style: OTTypography.button(color: textSecondary),
               ),
             ),
             FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
+              onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
                 backgroundColor: OTColors.destructive,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
@@ -9338,7 +9465,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     if (!mounted) return;
     AppSnackBar.info(
       context,
-      'Dihapus dari tersimpan.',
+      'Dihapus dari simpanan.',
       action: SnackBarAction(
         label: 'Urungkan',
         textColor: const Color(0xFFFBBF24),
@@ -9354,7 +9481,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _copyIbarah(String ibarah) {
     OTMotion.light();
     Clipboard.setData(ClipboardData(text: ibarah));
-    AppSnackBar.success(context, 'Teks disalin');
+    AppSnackBar.success(context, 'Ibarah tersalin.');
   }
 
   void _shareBookmark(BookmarkModel item) {
@@ -9371,7 +9498,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       buffer.writeln();
     }
     if (item.fullAnswer.isNotEmpty) {
-      buffer.writeln('Jawaban AI:');
+      buffer.writeln('Jawaban:');
       buffer.writeln(item.fullAnswer);
       buffer.writeln();
     }
@@ -9381,7 +9508,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Sitasi disalin',
+      'Rujukan tersalin.',
     );
   }
 
@@ -9432,7 +9559,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
               color: textPrimary,
             ),
-            tooltip: _showSearch ? 'Tutup pencarian' : 'Cari dalam tersimpan',
+            tooltip: _showSearch ? 'Tutup pencarian' : AppCopy.searchSavedTooltip,
             onPressed: () {
               OTMotion.selection();
               setState(() {
@@ -9476,7 +9603,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                     },
                     style: OTTypography.body(color: textPrimary),
                     decoration: InputDecoration(
-                      hintText: 'Cari dalam kutipan, kitab, atau topik...',
+                      hintText: AppCopy.searchSavedHint,
                       hintStyle: OTTypography.body(color: textSecondary),
                       prefixIcon: Icon(
                         Icons.search_rounded,
@@ -9593,14 +9720,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                 ),
                                 const SizedBox(height: OTSpacing.lg),
                                 Text(
-                                  'Belum ada yang disimpan',
+                                  AppCopy.noSavedTitle,
                                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                                     fontSize: 16,
                                   ),
                                 ),
                                 const SizedBox(height: OTSpacing.xs + 2),
                                 Text(
-                                  'Simpan jawaban dari ruang riset.',
+                                  AppCopy.noSavedDescription,
                                   textAlign: TextAlign.center,
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 13,
@@ -9614,7 +9741,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                     shell?.switchTab(1);
                                   },
                                   icon: const Icon(Icons.menu_book_outlined, size: 16),
-                                  label: const Text('Buka keilmuan'),
+                                  label: const Text('Buka kajian'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: textPrimary,
                                     side: BorderSide(color: border, width: 1.0),
@@ -9821,7 +9948,7 @@ class _BookmarkCard extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: onCopy,
                 icon: const Icon(Icons.copy_rounded, size: 14),
-                label: const Text('Salin Ibarah'),
+                label: const Text(AppCopy.copyIbarahAction),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: textPrimary,
                   side: BorderSide(color: border, width: 0.8),
@@ -9834,7 +9961,7 @@ class _BookmarkCard extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onOpen,
                 icon: const Icon(Icons.menu_book, size: 14),
-                label: const Text('Lihat Bukti'),
+                label: const Text(AppCopy.viewReferenceAction),
                 style: FilledButton.styleFrom(
                   backgroundColor: surfaceSubtle,
                   foregroundColor: textPrimary,
@@ -9848,7 +9975,7 @@ class _BookmarkCard extends StatelessWidget {
               IconButton(
                 onPressed: onShare,
                 icon: const Icon(Icons.share_outlined, size: 18),
-                tooltip: 'Bagikan Rujukan Ilmiah',
+                tooltip: AppCopy.shareReferenceTooltip,
                 color: textSecondary,
                 padding: const EdgeInsets.all(8),
                 constraints: const BoxConstraints(),
@@ -11705,6 +11832,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/app_config.dart';
+import '../core/app_copy.dart';
 import '../core/theme.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_motion.dart';
@@ -11835,7 +11963,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           _RailItem(
                             icon: Icons.home_outlined,
                             activeIcon: Icons.home_rounded,
-                            label: 'Beranda',
+                            label: AppCopy.navHome,
                             isSelected: _currentIndex == 0,
                             accent: accent,
                             unselected: unselected,
@@ -11845,7 +11973,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           _RailItem(
                             icon: Icons.auto_awesome_outlined,
                             activeIcon: Icons.auto_awesome_rounded,
-                            label: 'Spesialis',
+                            label: AppCopy.navStudies,
                             isSelected: _currentIndex == 1,
                             accent: accent,
                             unselected: unselected,
@@ -11855,7 +11983,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           _RailItem(
                             icon: Icons.bookmark_border_rounded,
                             activeIcon: Icons.bookmark_rounded,
-                            label: 'Bookmark',
+                            label: AppCopy.navSaved,
                             isSelected: _currentIndex == 2,
                             accent: accent,
                             unselected: unselected,
@@ -11863,9 +11991,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.person_outline_rounded,
-                            activeIcon: Icons.person_rounded,
-                            label: 'Profil',
+                            icon: Icons.settings_outlined,
+                            activeIcon: Icons.settings_rounded,
+                            label: AppCopy.navSettings,
                             isSelected: _currentIndex == 3,
                             accent: accent,
                             unselected: unselected,
@@ -11925,7 +12053,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             child: _GoogleNavBarItem(
                               icon: Icons.home_outlined,
                               activeIcon: Icons.home_rounded,
-                              label: 'Beranda',
+                              label: AppCopy.navHome,
                               isSelected: _currentIndex == 0,
                               onTap: () => _onTabSelected(0),
                             ),
@@ -11934,7 +12062,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             child: _GoogleNavBarItem(
                               icon: Icons.auto_awesome_outlined,
                               activeIcon: Icons.auto_awesome_rounded,
-                              label: 'Spesialis',
+                              label: AppCopy.navStudies,
                               isSelected: _currentIndex == 1,
                               onTap: () => _onTabSelected(1),
                             ),
@@ -11943,16 +12071,16 @@ class _MainShellScreenState extends State<MainShellScreen> {
                             child: _GoogleNavBarItem(
                               icon: Icons.bookmark_border_rounded,
                               activeIcon: Icons.bookmark_rounded,
-                              label: 'Bookmark',
+                              label: AppCopy.navSaved,
                               isSelected: _currentIndex == 2,
                               onTap: () => _onTabSelected(2),
                             ),
                           ),
                           Expanded(
                             child: _GoogleNavBarItem(
-                              icon: Icons.person_outline_rounded,
-                              activeIcon: Icons.person_rounded,
-                              label: 'Profil',
+                              icon: Icons.settings_outlined,
+                              activeIcon: Icons.settings_rounded,
+                              label: AppCopy.navSettings,
                               isSelected: _currentIndex == 3,
                               onTap: () => _onTabSelected(3),
                             ),
@@ -12121,6 +12249,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../core/routes.dart';
 import '../core/app_config.dart';
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -12154,9 +12283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final info = await PackageInfo.fromPlatform();
       if (mounted) {
-        setState(() {
-          _appVersion = info.version;
-        });
+        setState(() => _appVersion = '${info.version}+${info.buildNumber}');
       }
     } catch (_) {}
   }
@@ -12174,11 +12301,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Konfirmasi Keluar',
+            AppCopy.logoutDialogTitle,
             style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Apakah Anda yakin ingin keluar dari akun OpenTurath AI?',
+            AppCopy.logoutDialogBody,
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -12192,7 +12319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: OTColors.destructive,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text('Keluar', style: OTTypography.button(color: Colors.white)),
+              child: Text(AppCopy.logoutButton, style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -12228,14 +12355,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(width: OTSpacing.sm),
               Expanded(
                 child: Text(
-                  'Hapus Akun & Data',
+                  AppCopy.deleteAccountTitle,
                   style: OTTypography.cardTitle(color: OTColors.destructive).copyWith(fontSize: 18),
                 ),
               ),
             ],
           ),
           content: Text(
-            'PERINGATAN: Tindakan ini permanen dan tidak dapat dibatalkan.\n\nSeluruh data profil, histori riset, bookmark kitab, dan lisensi akses di perangkat ini akan dihapus secara menyeluruh dari server.',
+            AppCopy.deleteAccountBody,
             style: OTTypography.body(color: OTColors.textSecondary(isDark)),
           ),
           actions: [
@@ -12249,7 +12376,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: OTColors.destructive,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text('Hapus Akun Permanen', style: OTTypography.button(color: Colors.white)),
+              child: Text(AppCopy.deleteAccountButton, style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -12262,16 +12389,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await _authService.deleteAccount();
       if (mounted) {
-        AppSnackBar.success(context, 'Akun dan seluruh data Anda telah berhasil dihapus.');
+        AppSnackBar.success(context, AppCopy.deleteAccountSuccess);
         Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isDeletingAccount = false);
-        AppSnackBar.error(
-          context,
-          'Gagal menghapus akun: ${e.toString().contains('requires-recent-login') ? 'Sesi telah kedaluwarsa. Silakan masuk ulang terlebih dahulu.' : 'Terjadi gangguan jaringan.'}',
-        );
+        final errText = e.toString().contains('requires-recent-login')
+            ? AppCopy.recentLoginRequired
+            : AppCopy.networkError;
+        AppSnackBar.error(context, errText);
       }
     }
   }
@@ -12310,7 +12437,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         scrolledUnderElevation: 0,
         centerTitle: true,
         title: Text(
-          'Settings',
+          AppCopy.navSettings,
           style: GoogleFonts.newsreader(
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -12342,30 +12469,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             final displayName = userModel?.name.isNotEmpty == true
                 ? userModel!.name
-                : (fbUser?.displayName ?? 'Santri Peneliti');
+                : (fbUser?.displayName ?? 'Pengguna');
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
-                : (fbUser?.email ?? 'peneliti@openturath.ai');
+                : (fbUser?.email ?? 'pengguna@openturath.id');
             final plan = userModel?.plan ?? 'trial';
             final isSubscribed =
                 userModel?.isSubscriptionActive ?? (userModel?.isPremium ?? false);
 
             final exp = userModel?.subscriptionExpiry;
-            final expStr = exp != null ? ' · s/d ${exp.day}/${exp.month}/${exp.year}' : '';
+            final expStr = exp != null ? ' · Aktif sampai ${exp.day}/${exp.month}/${exp.year}' : '';
             final String subscriptionSubtitle;
 
             if (isSubscribed) {
               if (plan == 'sultan' || plan == 'all_access' || plan == 'all_ai_1m' || plan == 'all_ai') {
-                subscriptionSubtitle = 'Paket Semua AI (Akses Penuh)$expStr';
+                subscriptionSubtitle = 'Semua Kajian$expStr';
               } else if (plan == 'field') {
-                subscriptionSubtitle = 'Paket Rumpun Keilmuan$expStr';
+                subscriptionSubtitle = 'Rumpun Kajian$expStr';
               } else if (plan == 'single') {
-                subscriptionSubtitle = 'Paket Spesialis Satuan$expStr';
+                subscriptionSubtitle = 'Kajian Satuan$expStr';
               } else {
-                subscriptionSubtitle = 'Langganan Aktif$expStr';
+                subscriptionSubtitle = '${AppCopy.activeSubscription}$expStr';
               }
             } else {
-              subscriptionSubtitle = 'Belum berlangganan. Akses dibuka dengan voucher atau paket.';
+              subscriptionSubtitle = AppCopy.inactiveSubscription;
             }
 
             return ListView(
@@ -12401,7 +12528,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Text(
-                          isSubscribed ? 'Pro' : 'Pro',
+                          isSubscribed ? 'Aktif' : 'Gratis',
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
@@ -12426,13 +12553,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       _SettingsTile(
                         icon: Icons.person_outline_rounded,
-                        title: 'Profile',
+                        title: AppCopy.profile,
                         subtitle: displayName,
                       ),
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.credit_card_outlined,
-                        title: 'Billing & Plan',
+                        title: AppCopy.subscription,
                         subtitle: subscriptionSubtitle,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: _openSubscription,
@@ -12459,8 +12586,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               (currentMode == ThemeMode.system && isDark);
                           return _SettingsTile(
                             icon: Icons.dark_mode_outlined,
-                            title: 'Color mode',
-                            subtitle: isCurrentDark ? 'Dark' : 'Light',
+                            title: AppCopy.appearance,
+                            subtitle: isCurrentDark ? AppCopy.modeDark : AppCopy.modeLight,
                             trailing: Switch.adaptive(
                               value: isCurrentDark,
                               activeTrackColor: isDark ? Colors.white : const Color(0xFF18181B),
@@ -12475,8 +12602,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.translate_rounded,
-                        title: 'Language',
-                        subtitle: 'Bahasa Indonesia (Utama)',
+                        title: AppCopy.language,
+                        subtitle: AppCopy.languageIndonesian,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showLanguageModal(
                           context,
@@ -12505,7 +12632,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _SettingsTile(
                         icon: Icons.article_outlined,
                         title: 'Ketentuan Layanan',
-                        subtitle: 'Syarat dan ketentuan riset OpenTurath',
+                        subtitle: 'Syarat dan ketentuan OpenTurath',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showTermsOfService(
                           context,
@@ -12520,7 +12647,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _SettingsTile(
                         icon: Icons.security_outlined,
                         title: 'Kebijakan Privasi',
-                        subtitle: 'Perlindungan kerahasiaan data riset',
+                        subtitle: 'Perlindungan kerahasiaan data pengguna',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showPrivacyPolicy(
                           context,
@@ -12534,8 +12661,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Divider(height: 1, color: border),
                       _SettingsTile(
                         icon: Icons.info_outline_rounded,
-                        title: 'About OpenTurath',
-                        subtitle: 'Version $_appVersion · AI for Islamic Scholarship',
+                        title: AppCopy.aboutTitle,
+                        subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
                         onTap: () => _showAboutModal(
                           context,
@@ -12576,7 +12703,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(width: 14),
                             Text(
-                              _isLoggingOut ? 'Sedang keluar...' : 'Log out',
+                              _isLoggingOut ? 'Sedang keluar...' : AppCopy.logoutButton,
                               style: GoogleFonts.outfit(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
@@ -12603,7 +12730,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2, color: OTColors.destructive),
                           )
                         : Text(
-                            'Hapus Akun & Data Riset',
+                            AppCopy.deleteAccountButton,
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
@@ -12637,7 +12764,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           side: BorderSide(color: border, width: 0.8),
         ),
         title: Text(
-          'Tentang OpenTurath',
+          AppCopy.aboutTitle,
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
         content: Column(
@@ -12645,17 +12772,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Versi $_appVersion · AI for Islamic Scholarship',
+              'Versi $_appVersion · ${AppCopy.appTagline}',
               style: OTTypography.captionMedium(color: textSecondary),
             ),
             const SizedBox(height: 12),
             Text(
-              'OpenTurath adalah asisten riset naskah primer keilmuan Islam yang menggabungkan ribuan halaman kitab kuning mu\'tabar dengan teknologi penelaahan cerdas.',
+              AppCopy.aboutDescription,
               style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 12),
             Text(
-              'Prinsip Ilmiah: Berbasis sanad, penelusuran ibarah naskah asli, dan kehati-hatian dalam istinbath. Bukan pengganti proses talaqqi dengan masyayikh.',
+              AppCopy.aboutScholarlyPrinciple,
               style: OTTypography.caption(color: textSecondary),
             ),
           ],
@@ -15748,11 +15875,11 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState({
     super.key,
-    this.title = 'Koneksi Terputus',
+    this.title = 'Koneksi terputus',
     this.message = 'Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
-    this.retryLabel = 'Coba Lagi',
+    this.retryLabel = 'Coba lagi',
     this.onBack,
     this.backLabel = 'Kembali',
   });
@@ -17267,6 +17394,7 @@ class EvidenceBottomSheet extends StatelessWidget {
 ### FLUTTER FILE: openturath_ai/lib/widgets/library_bottom_sheet.dart
 ```dart
 import 'package:flutter/material.dart';
+import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
@@ -17352,7 +17480,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Katalog rujukan belum dapat dimuat saat ini.';
+        _errorMessage = AppCopy.catalogLoadFailed;
         _isLoading = false;
       });
     }
@@ -17385,7 +17513,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Rincian Edisi Naskah',
+                        AppCopy.bookDetails,
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
                       IconButton(
@@ -17477,8 +17605,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
     final border = OTColors.border(isDark);
 
     final title = widget.agent != null
-        ? 'Pustaka Rujukan ${widget.agent!.title}'
-        : 'Pustaka Rujukan Madzhab Syafi\'i';
+        ? 'Kitab rujukan ${widget.agent!.title}'
+        : 'Kitab rujukan Mazhab Syafi\'i';
 
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -17523,7 +17651,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                           ),
                           if (_allBooks != null)
                             Text(
-                              '${_filteredBooks?.length ?? 0} dari ${_allBooks!.length} naskah primer terkatalogisasi',
+                              '${_filteredBooks?.length ?? 0} dari ${_allBooks!.length} kitab rujukan',
                               style: OTTypography.caption(color: textSecondary),
                             ),
                         ],
@@ -17590,7 +17718,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                   const SizedBox(height: OTSpacing.base),
                                   OutlinedButton(
                                     onPressed: _loadData,
-                                    child: const Text('Coba Lagi'),
+                                    child: const Text('Coba lagi'),
                                   ),
                                 ],
                               ),
@@ -17606,7 +17734,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                       Icon(Icons.search_off_rounded, size: 40, color: textSecondary),
                                       const SizedBox(height: OTSpacing.sm),
                                       Text(
-                                        'Tidak ada naskah yang cocok dengan pencarian',
+                                        'Tidak ada kitab yang cocok dengan pencarian',
                                         style: OTTypography.body(color: textSecondary),
                                       ),
                                     ],
@@ -17747,7 +17875,7 @@ class CanonicalBookTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Rincian edisi',
+                      'Keterangan kitab',
                       style: OTTypography.button(color: accent).copyWith(fontSize: 12),
                     ),
                     const SizedBox(width: 4),
@@ -18381,6 +18509,110 @@ void main() {
       expect(presentation.reviewedEraLabel, equals('Mutaqaddimin'));
       expect(presentation.compactLabels, contains('Asal Mazhab'));
       expect(presentation.compactLabels, contains('8 Jilid'));
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/copywriting_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/app_copy.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+
+void main() {
+  group('OpenTurath Copywriting Overhaul — Quiet Scholar Principles', () {
+    test('Canonical navigation labels use concise, quiet terms', () {
+      expect(AppCopy.navHome, equals('Beranda'));
+      expect(AppCopy.navStudies, equals('Kajian'));
+      expect(AppCopy.navSaved, equals('Tersimpan'));
+      expect(AppCopy.navSettings, equals('Pengaturan'));
+    });
+
+    test('Canonical app name and tagline are concise and avoid superlatives', () {
+      expect(AppCopy.appName, equals('OpenTurath'));
+      expect(AppCopy.appTagline, equals('Membaca kitab, menelusuri ibarah.'));
+    });
+
+    test('Success toasts never use exclamation marks (!)', () {
+      expect(AppCopy.savedSuccess.contains('!'), isFalse,
+          reason: 'Success messages should be calm and not use exclamation marks');
+      expect(AppCopy.answerCopied.contains('!'), isFalse,
+          reason: 'Copy action should be quiet and not use exclamation marks');
+      expect(AppCopy.deleteAccountSuccess.contains('!'), isFalse);
+    });
+
+    test('Public strings do not contain prohibited marketing or academic jargon', () {
+      final prohibitedWords = [
+        'korpus',
+        'penelaahan',
+        'fasilitas',
+        'komprehensif',
+        'secara menyeluruh',
+        'berbasis',
+        'terintegrasi',
+        'optimal',
+        'presisi',
+        'solusi',
+      ];
+
+      final samplePublicStrings = [
+        AppCopy.aboutDescription,
+        AppCopy.aboutScholarlyPrinciple,
+        AppCopy.adabHeading1,
+        AppCopy.adabBody1,
+        AppCopy.adabHeading2,
+        AppCopy.adabBody2,
+        AppCopy.deviceNotSupportedTitle,
+        AppCopy.deviceNotSupportedMessage,
+        AppCopy.cannotConnectTitle,
+        AppCopy.cannotConnectMessage,
+        AppCopy.noSavedTitle,
+        AppCopy.noSavedDescription,
+        AppCopy.catalogLoadFailed,
+        AppCopy.activeSubscription,
+        AppCopy.inactiveSubscription,
+      ];
+
+      for (final text in samplePublicStrings) {
+        final lower = text.toLowerCase();
+        for (final word in prohibitedWords) {
+          expect(lower.contains(word), isFalse,
+              reason: 'String "$text" should not contain prohibited word "$word"');
+        }
+      }
+    });
+
+    test('AgentModel defaultAgents descriptions and titles avoid banned jargon', () {
+      final prohibitedInAgents = [
+        'korpus',
+        'fasilitas',
+        'komprehensif',
+        'secara menyeluruh',
+        'solusi',
+        'optimal',
+      ];
+
+      for (final agent in AgentModel.defaultAgents) {
+        final refTitles = (agent.referenceBooks ?? []).map((b) => '${b.title} ${b.description}').join(' ');
+        final combined = '${agent.title} ${agent.description} $refTitles'.toLowerCase();
+        for (final word in prohibitedInAgents) {
+          expect(combined.contains(word), isFalse,
+              reason: 'Agent ${agent.id} contains prohibited word "$word": $combined');
+        }
+      }
+    });
+
+    test('Dynamic interpolation helpers produce serene, well-formed phrases', () {
+      expect(AppCopy.preparingModule('Fikih Syafi\'i'),
+          equals('Fikih Syafi\'i sedang disiapkan.'));
+      expect(AppCopy.subscriptionRequiredFor('Fikih Syafi\'i'),
+          equals('Berlangganan untuk membuka Fikih Syafi\'i.'));
+      expect(AppCopy.accessUnavailableFor('Fikih Syafi\'i'),
+          equals('Akun ini belum mendapat akses ke Fikih Syafi\'i. Aktifkan langganan untuk melanjutkan.'));
+      expect(AppCopy.planWithAgent('Fikih Syafi\'i', '1 Bulan'),
+          equals('Fikih Syafi\'i — 1 Bulan'));
     });
   });
 }
@@ -19088,10 +19320,10 @@ void main() {
 
       expect(find.text('Gagal Memuat Korpus'), findsOneWidget);
       expect(find.text('Terjadi kendala koneksi saat menghubungi server.'), findsOneWidget);
-      expect(find.text('Coba Lagi'), findsOneWidget);
+      expect(find.text('Coba lagi'), findsOneWidget);
       expect(find.text('Kembali'), findsOneWidget);
 
-      await tester.tap(find.text('Coba Lagi'));
+      await tester.tap(find.text('Coba lagi'));
       expect(retried, isTrue);
 
       await tester.tap(find.text('Kembali'));
