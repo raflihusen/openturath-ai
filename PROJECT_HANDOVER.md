@@ -20,28 +20,19 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ## 2. Status Terkini: 100% Selesai & Terverifikasi
 
-### A. Refactoring Arsitektur UI/UX "Quiet Scholar Adaptive" (Layer 1 – Layer 9)
-Filosofi: *"Konten adalah tokoh utama. UI harus mundur satu langkah."* (Digital scholarly research desk, minimal, tenang, bebas kebocoran warna emas neon).
-1. **Core Design Tokens (`lib/core/design/`)**:
-   - `OTColors`: Warm off-white canvas (`#FAFAF9`), deep obsidian dark canvas (`#0E0E10`), zinc contrast (`#18181B` / `#FAFAFA`), scholarly sapphire accent (`#2563EB` / `#60A5FA`), hairline borders 0.5px.
-   - `OTTypography`: 3-Layer Strict Architecture:
-     - Brand & Editorial: `Newsreader` (Serif) untuk logo, editorial hero, judul korpus.
-     - Interface: `Outfit` (Sans) untuk navigasi, tombol, formulir, metadata, chip.
-     - Arabic Scholarly: `Amiri` untuk teks Arab ilmiah (line-height `1.6`–`1.8`, RTL native). Dilengkapi `useSystemFontFallback` untuk test instan.
-   - `OTSpacing`: Ritme kelipatan 4 (`xs:4, sm:8, md:12, base:16, lg:20, xl:24, xxl:32, huge:40, massive:48, jumbo:64`).
-   - `OTRadius`: Kurva terukur (`input:14, card:16, sheet:24, dialog:20, chip:999, button:999`).
-   - `OTMotion`: Durasi tenang (`fast:180ms, normal:220ms, sheet:280ms`) dan haptik.
-2. **8 Layar Direfaktor Penuh**:
-   - `main_shell_screen.dart`: Tanpa `BackdropFilter` 20px blur berat GPU; permukaan solid/subtle bersih dengan garis batas hairline 0.5px; adaptive bottom bar (mobile) & navigation rail (desktop).
-   - `dashboard_screen.dart`: Editorial hero heading, pencarian real-time lintas spesialis, kartu Fikih Tahawwulat berdaulat dengan kaligrafi Arab Amiri, badge "Segera hadir" eksplisit.
-   - `specialist_list_screen.dart`: Desain seragam ilmiah, chip filter bersih, indikator status modul.
-   - `bookmark_screen.dart`: Unboxed empty state dengan CTA langsung `[ Mulai Menelusuri ]`, format kartu sitasi ilmiah dengan badge kitab/juz/halaman.
-   - `profile_screen.dart`: Inset grouped sections, modal sheet tema 3 pilihan (`Ikuti Sistem`, `Mode Terang`, `Mode Gelap`), integrasi voucher redeem.
-   - `subscription_screen.dart`: Progressive disclosure (kartu hero tunggal Rp 99.000 dengan durasi Bulanan/6 Bulan/1 Tahun), 4 manfaat inti, modul spesialis satuan di bawahnya, form klaim voucher.
-   - `agent_webview_screen.dart`: **Menghapus 200+ baris CSS override destruktif** (`#0E0E10 !important` & `#FAFAFA !important`) yang sebelumnya memicu bug teks hitam di atas latar hitam pada NotebookLM. Top bar tenang dengan tombol overflow `•••` bottom sheet.
-3. **Hasil Verifikasi**:
-   - `flutter analyze`: **0 issues found** (100% bersih).
-   - `flutter test`: **50 dari 50 test case LULUS 100%**.
+### A. Refactoring Arsitektur UI/UX "Minimalist Purism & AI for Islamic Scholarship"
+1. **Desain Minimalis Murni (Pure Minimalist)**:
+   - **Tanpa Logo Grafis**: Top bar Beranda menggunakan tipografis murni terpusat `OpenTurath` dalam Newsreader serif tanpa tanggal ganda atau subketerangan.
+   - **Slogan Global Konsisten**: `"AI for Islamic Scholarship"` menggantikan seluruh sisa `"Riset kitab turats"`.
+   - **Kartu Spesialis Bersih**: Tanpa kotak ikon, tanpa teks Arab pendamping, dan tanpa baris sub-keterangan berantakan. Hanya judul bersih, badge status jika belum tersedia, dan chevron `>`.
+   - **Pencarian Stadium Pill Bersih**: Menghilangkan border ganda ("buletan dalam buletan") dari TextField di Beranda dan Keilmuan.
+   - **Pembersihan Modal Ruang Riset**: Menghapus opsi "Buka di Browser Eksternal" dan menghapus seluruh sub-penjelasan di bawah tiap opsi.
+   - **Pembersihan Disclaimer Gemini**: Seluruh teks disclaimer ("Gemini may display inaccurate info...", dll.) disapu bersih via CSS dan MutationObserver script.
+   - **Animasi Antar-Tab Halus**: Mengganti `IndexedStack` dengan `PageView` ber-controller animasi (`Curves.easeOutCubic`, 300ms) untuk transisi tab yang hidup dan mulus.
+2. **Hasil Verifikasi**:
+   - `flutter analyze lib/`: **0 issues found** (100% bersih).
+   - `flutter test`: **51 dari 51 test case LULUS 100%**.
+   - **Binary Release APK**: `/Users/apple/Downloads/ramadhan/app-release-latest.apk` (58.6 MB, SHA-256: `f049b00e24a9513bc40d7b5459f1a4ff06353987ee4b4438e30b70f1c7a079a0`).
 
 ---
 
@@ -55,15 +46,11 @@ Filosofi: *"Konten adalah tokoh utama. UI harus mundur satu langkah."* (Digital 
 ---
 
 ## 4. Git Commits Riwayat Terkini
-- `ead39ea`: `test(design): add Quiet Scholar token verification suite and test font fallback support`
-- `16057cc`: `feat(webview): implement Quiet Scholar top bar with overflow sheet and eliminate destructive color overrides`
-- `8a967dc`: `feat(subscription): implement progressive disclosure layout, segmented duration control, and disciplined Quiet Scholar design`
-- `90312fb`: `feat(profile): implement Quiet Scholar layout, 3-choice theme modal sheet, and inset grouped settings`
-- `fef9f35`: `feat(bookmarks): implement Quiet Scholar layout, unboxed empty state with CTA, and refined citations`
-- `f5f4bf8`: `feat(specialists): apply Quiet Scholar tokens, clean category chips, and explicit Segera hadir badges`
-- `ab42d11`: `feat(home): implement Quiet Scholar layout, global realtime search, and explicit status labels`
-- `a030805`: `feat(shell): adapt navigation to Quiet Scholar design, eliminate heavy BackdropFilter blur, and use OT tokens`
-- `e1e13ae`: `feat(design): implement Quiet Scholar Adaptive core token system (colors, typography, spacing, radius, motion)`
+- `7a47a07`: `fix(ui): eliminate card icons, arabic titles, cluttered descriptions, external browser option, search inner borders, and inject smooth tab animations`
+- `8370e00`: `feat(ui): restore minimalist purism, centered wordmark, grouped settings, and AI for Islamic Scholarship slogan`
+- `749279c`: `fix(ui): restore tactile Apple micro-interactions, authentic scholarly copywriting, and intuitive academic desk`
+- `444f9d9`: `fix(ui): overhaul scholarly dashboard, eliminate NotebookLM header banner, and elevate SpecialistCard aesthetics`
+- `cf3f22b`: `fix(ui): dialog ergonomics, checkout navigation safety, and 333-line forensic copy overhaul (F33, F38, F49-F60, C001-C333)`
 
 ---
 
