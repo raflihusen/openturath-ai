@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
 import '../models/field_model.dart';
@@ -184,35 +184,47 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
               child: Column(
                 children: [
-                  // Search Bar
-                  TextField(
-                    controller: _searchCtrl,
-                    onChanged: _onSearchChanged,
-                    style: OTTypography.body(color: textPrimary),
-                    decoration: InputDecoration(
-                      hintText: 'Cari spesialis, kitab, atau bab...',
-                      hintStyle: OTTypography.body(color: textSecondary),
-                      prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(Icons.clear_rounded, size: 18, color: textSecondary),
-                              onPressed: () {
-                                _searchCtrl.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: surface,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      border: OutlineInputBorder(
-                        borderRadius: OTRadius.inputBorder,
-                        borderSide: BorderSide(color: border, width: 0.8),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: OTRadius.inputBorder,
-                        borderSide: BorderSide(color: border, width: 0.8),
-                      ),
+                  Container(
+                    height: 48,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: surface,
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: border, width: 1.0),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.search_rounded, size: 20, color: textSecondary),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: _searchCtrl,
+                            onChanged: _onSearchChanged,
+                            style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
+                            decoration: InputDecoration(
+                              hintText: 'Cari spesialis, kitab, atau bab...',
+                              hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              focusedErrorBorder: InputBorder.none,
+                              filled: false,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ),
+                        if (_searchQuery.isNotEmpty)
+                          GestureDetector(
+                            onTap: () {
+                              _searchCtrl.clear();
+                              setState(() => _searchQuery = '');
+                            },
+                            child: Icon(Icons.close_rounded, size: 18, color: textSecondary),
+                          ),
+                      ],
                     ),
                   ),
 
@@ -318,11 +330,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 final agent = sorted[index];
                                 return SpecialistCard(
                                   title: agent.title,
-                                  titleArabic: agent.titleArabic,
-                                  scopeLabel: agent.subtitleAcademic.isNotEmpty
-                                      ? agent.subtitleAcademic
-                                      : agent.category,
-                                  emoji: agent.emoji,
                                   statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
                                   onOpen: () => _openAgent(agent),
                                   onOpenLibrary: agent.catalogId != null

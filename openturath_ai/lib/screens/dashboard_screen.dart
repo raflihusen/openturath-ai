@@ -214,7 +214,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
-                    // ── 2. Academic Greeting ──
                     Text(
                       user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
                       style: GoogleFonts.newsreader(
@@ -224,16 +223,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Kaji naskah primer turats dengan asisten riset cerdas.',
-                      style: GoogleFonts.outfit(
-                        fontSize: 13.5,
-                        color: textSecondary,
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
 
                     // ── 3. Announcement Carousel Card ──
                     _DashboardAnnouncementCarousel(
@@ -269,6 +259,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 hintText: 'Cari spesialis, bab fikih, atau kitab...',
                                 hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                                filled: false,
                                 isDense: true,
                                 contentPadding: EdgeInsets.zero,
                               ),
@@ -333,9 +329,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
-                                scopeLabel: agent.category,
-                                titleArabic: agent.titleArabic,
-                                emoji: agent.emoji,
                                 statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
                                 onOpen: () => _openNotebook(agent, user),
                                 onOpenLibrary: agent.catalogId != null
@@ -352,27 +345,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Pilih Bidang Ilmu',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.2,
-                                  color: textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Eksplorasi modul spesialis berdasarkan rumpun',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  color: textSecondary,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'Pilih Bidang Ilmu',
+                            style: GoogleFonts.outfit(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.2,
+                              color: textPrimary,
+                            ),
                           ),
                           GestureDetector(
                             onTap: () {
@@ -481,15 +461,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           color: textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Pilih modul spesialis untuk memulai kajian kitab',
-                        style: GoogleFonts.outfit(
-                          fontSize: 12,
-                          color: textSecondary,
-                        ),
-                      ),
-
                       const SizedBox(height: 14),
 
                       if (_isLoading)

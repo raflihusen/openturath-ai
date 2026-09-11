@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
 import 'apple_interactive_wrapper.dart';
 
-/// Unified rounded specialist card with Apple HIG micro-interactions,
-/// scholarly typography, elegant category icon, and optional integrated Pustaka action.
+/// Minimalist Purism Specialist Card
+/// Clean, typographic, rounded corners (16), no icons, no Arabic clutter, no subtitle lines.
 class SpecialistCard extends StatelessWidget {
   const SpecialistCard({
     super.key,
     required this.title,
-    required this.scopeLabel,
+    this.scopeLabel,
     required this.onOpen,
     this.titleArabic,
     this.emoji,
@@ -19,42 +19,13 @@ class SpecialistCard extends StatelessWidget {
   });
 
   final String title;
-  final String scopeLabel;
+  final String? scopeLabel;
   final String? titleArabic;
   final String? emoji;
   final IconData? icon;
   final String? statusLabel;
   final VoidCallback? onOpen;
   final VoidCallback? onOpenLibrary;
-
-  IconData _resolveIcon() {
-    if (icon != null) return icon!;
-    final lowerTitle = title.toLowerCase();
-    final lowerScope = scopeLabel.toLowerCase();
-
-    if (lowerTitle.contains('tahawwulat') || lowerScope.contains('tahawwulat')) {
-      return Icons.history_edu_rounded;
-    }
-    if (lowerTitle.contains('syafi') || lowerTitle.contains('fikih')) {
-      return Icons.menu_book_rounded;
-    }
-    if (lowerTitle.contains('hanafi') || lowerTitle.contains('maliki') || lowerTitle.contains('hanbali')) {
-      return Icons.balance_rounded;
-    }
-    if (lowerTitle.contains('hadits') || lowerScope.contains('hadits')) {
-      return Icons.auto_stories_rounded;
-    }
-    if (lowerTitle.contains('tafsir') || lowerScope.contains('tafsir')) {
-      return Icons.import_contacts_rounded;
-    }
-    if (lowerTitle.contains('tasawuf') || lowerScope.contains('akhlak')) {
-      return Icons.psychology_alt_outlined;
-    }
-    if (lowerTitle.contains('habib') || lowerTitle.contains('imam') || lowerTitle.contains('ulama')) {
-      return Icons.school_outlined;
-    }
-    return Icons.menu_book_outlined;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +36,6 @@ class SpecialistCard extends StatelessWidget {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
-    final accent = OTColors.accent(isDark);
-
-    final resolvedIcon = _resolveIcon();
-    final isComingSoon = statusLabel != null && statusLabel!.isNotEmpty;
 
     return AppleInteractiveWrapper(
       onTap: onOpen,
@@ -80,101 +47,47 @@ class SpecialistCard extends StatelessWidget {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: border, width: 0.8),
+          side: BorderSide(color: border, width: 1.0),
         ),
         clipBehavior: Clip.antiAlias,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Scholarly Icon Box
-              Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isComingSoon
-                      ? surfaceSubtle
-                      : (isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF)),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isComingSoon ? border : accent.withValues(alpha: 0.3),
-                    width: 0.8,
-                  ),
-                ),
-                child: Icon(
-                  resolvedIcon,
-                  size: 21,
-                  color: isComingSoon
-                      ? textSecondary.withValues(alpha: 0.7)
-                      : accent,
-                ),
-              ),
-              const SizedBox(width: 14),
-
-              // Title, Arabic, and Scope
+              // Pure Title & Optional Minimal Status Badge
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: OTTypography.cardTitle(color: textPrimary).copyWith(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.1,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                    Flexible(
+                      child: Text(
+                        title,
+                        style: GoogleFonts.outfit(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.2,
+                          color: textPrimary,
                         ),
-                        if (titleArabic != null && titleArabic!.isNotEmpty) ...[
-                          const SizedBox(width: 8),
-                          Text(
-                            titleArabic!,
-                            textDirection: TextDirection.rtl,
-                            style: OTTypography.arabicReading(
-                              color: isDark ? const Color(0xFFD97706) : const Color(0xFFB45309),
-                            ).copyWith(
-                              fontSize: 14,
-                              height: 1.2,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      scopeLabel,
-                      style: OTTypography.caption(color: textSecondary).copyWith(
-                        fontSize: 12,
-                        height: 1.3,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    if (statusLabel != null) ...[
-                      const SizedBox(height: 5),
+                    if (statusLabel != null && statusLabel!.isNotEmpty) ...[
+                      const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                         decoration: BoxDecoration(
                           color: isDark ? const Color(0xFF27272A) : const Color(0xFFFEF3C7),
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(100),
                           border: Border.all(
                             color: isDark ? border : const Color(0xFFFDE68A),
-                            width: 0.6,
+                            width: 0.8,
                           ),
                         ),
                         child: Text(
                           statusLabel!,
-                          style: OTTypography.caption(
+                          style: GoogleFonts.outfit(
                             color: isDark ? textSecondary : const Color(0xFFB45309),
-                          ).copyWith(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                           ),
@@ -192,12 +105,12 @@ class SpecialistCard extends StatelessWidget {
                   onTap: onOpenLibrary,
                   pressedScale: 0.94,
                   hapticType: HapticFeedbackType.selection,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(100),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: surfaceSubtle,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(100),
                       border: Border.all(color: border, width: 0.8),
                     ),
                     child: Row(
@@ -207,9 +120,10 @@ class SpecialistCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           'Pustaka',
-                          style: OTTypography.button(color: textSecondary).copyWith(
+                          style: GoogleFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
+                            color: textSecondary,
                           ),
                         ),
                       ],
@@ -219,10 +133,10 @@ class SpecialistCard extends StatelessWidget {
               ],
 
               if (onOpen != null) ...[
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: textSecondary.withValues(alpha: 0.6),
+                  color: textSecondary.withValues(alpha: 0.5),
                   size: 20,
                 ),
               ],

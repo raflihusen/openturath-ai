@@ -41,6 +41,7 @@ class MainShellScreen extends StatefulWidget {
 
 class _MainShellScreenState extends State<MainShellScreen> {
   late int _currentIndex;
+  late final PageController _pageController;
   String? _selectedFieldId;
   CorpusKind? _selectedKind;
 
@@ -48,9 +49,23 @@ class _MainShellScreenState extends State<MainShellScreen> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialTab;
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   void _onTabSelected(int index, {String? fieldId, CorpusKind? kind}) {
+    if (_pageController.hasClients && _currentIndex != index) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    }
     setState(() {
       _currentIndex = index;
       _selectedFieldId = fieldId;
@@ -172,8 +187,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                       ),
                     ),
                     Expanded(
-                      child: IndexedStack(
-                        index: _currentIndex,
+                      child: PageView(
+                        controller: _pageController,
+                        physics: const NeverScrollableScrollPhysics(),
                         children: screens,
                       ),
                     ),
@@ -182,8 +198,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
               )
             : Scaffold(
                 backgroundColor: canvas,
-                body: IndexedStack(
-                  index: _currentIndex,
+                body: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
                   children: screens,
                 ),
                 extendBody: true,

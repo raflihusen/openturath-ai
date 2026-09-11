@@ -138,7 +138,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           button.mat-tonal-button, a[aria-label*="Google" i],
           .gb_C, #gb, #gbwa, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
           .pro-badge,
-          .disclaimer, [class*="disclaimer" i], [class*="footnote" i], .compliance-notice, .legal-text {
+          .disclaimer, [class*="disclaimer" i], [class*="footnote" i], .compliance-notice, .legal-text,
+          .input-footer, div[class*="input-footer" i], div[class*="footer" i],
+          p[class*="disclaimer" i], span[class*="disclaimer" i],
+          div[aria-label*="disclaimer" i], div[aria-label*="inaccurate" i],
+          .bottom-disclaimer, div[class*="bottom-disclaimer" i],
+          div[class*="terms" i] {
             display: none !important;
             visibility: hidden !important;
             height: 0px !important;
@@ -197,6 +202,28 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               el.style.setProperty('overflow', 'hidden', 'important');
               el.style.setProperty('opacity', '0', 'important');
               el.style.setProperty('pointer-events', 'none', 'important');
+            }
+          }
+
+          // Sembunyikan SEMUA elemen disclaimer Gemini / NotebookLM inaccurate
+          var disclaimers = document.querySelectorAll('p, span, div, small, footer, [role="contentinfo"]');
+          for (var d = 0; d < disclaimers.length; d++) {
+            var del = disclaimers[d];
+            if (del.querySelector('textarea, input, [role="article"], .chat-message, .message-content, .query-text')) continue;
+            var dtxt = (del.innerText || '').toLowerCase();
+            if (dtxt.includes('inaccurate') ||
+                dtxt.includes('can make mistakes') ||
+                dtxt.includes('gemini may') ||
+                dtxt.includes('double-check') ||
+                dtxt.includes('notebooklm can') ||
+                dtxt.includes('tidak akurat') ||
+                dtxt.includes('membuat kesalahan')) {
+              del.style.setProperty('display', 'none', 'important');
+              del.style.setProperty('visibility', 'hidden', 'important');
+              del.style.setProperty('height', '0px', 'important');
+              del.style.setProperty('opacity', '0', 'important');
+              del.style.setProperty('margin', '0px', 'important');
+              del.style.setProperty('padding', '0px', 'important');
             }
           }
 
@@ -585,7 +612,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
     final accent = OTColors.accent(isDark);
 
     return PopScope(
@@ -607,24 +633,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             onPressed: _handleBackPress,
           ),
           titleSpacing: 0,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _agent?.title ?? 'Ruang Riset AI',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: OTTypography.corpusTitle(color: textPrimary).copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                'Ruang Telaah Naskah Primer',
-                style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
-              ),
-            ],
+          title: Text(
+            _agent?.title ?? 'Ruang Riset AI',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: OTTypography.corpusTitle(color: textPrimary).copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           actions: [
             if (_user != null && _user!.plan == 'trial')
@@ -1117,8 +1133,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             const SizedBox(height: 12),
             ListTile(
               leading: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-              title: Text('Ukuran Teks Telaah', style: OTTypography.bodyMedium(color: textPrimary)),
-              subtitle: Text('Sesuaikan ukuran huruf naskah (${(_fontScale * 100).round()}%)', style: OTTypography.caption(color: textSecondary)),
+              title: Text('Ukuran Teks Telaah (${(_fontScale * 100).round()}%)', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showFontScalePicker();
@@ -1128,7 +1143,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
               title: Text('Salin Jawaban AI Terakhir', style: OTTypography.bodyMedium(color: textPrimary)),
-              subtitle: Text('Salin teks hasil telaah ke papan klip', style: OTTypography.caption(color: textSecondary)),
               onTap: _isCopying
                   ? null
                   : () {
@@ -1140,28 +1154,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ListTile(
               leading: Icon(_hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, color: _hasBookmarked ? OTColors.sovereignAmber : textPrimary, size: 20),
               title: Text('Simpan ke Rujukan', style: OTTypography.bodyMedium(color: textPrimary)),
-              subtitle: Text('Tandai dan simpan ibarah ke koleksi rujukan Anda', style: OTTypography.caption(color: textSecondary)),
               onTap: _isBookmarking
                   ? null
                   : () {
                       Navigator.pop(ctx);
                       _bookmarkLatestResponse();
                     },
-            ),
-            Divider(height: 1, color: border.withValues(alpha: 0.5)),
-            ListTile(
-              leading: Icon(Icons.open_in_browser_rounded, color: textPrimary, size: 20),
-              title: Text('Buka di Browser Eksternal', style: OTTypography.bodyMedium(color: textPrimary)),
-              subtitle: Text('Buka sesi riset di peramban web perangkat', style: OTTypography.caption(color: textSecondary)),
-              onTap: () async {
-                Navigator.pop(ctx);
-                if (_agentUrl != null) {
-                  final uri = Uri.parse(_agentUrl!);
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
-                }
-              },
             ),
           ],
         ),
