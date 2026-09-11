@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'sub_agent_model.dart';
 import 'book_model.dart';
 
+enum CorpusKind { discipline, scholar }
+
 class AgentModel {
   final String id;
   final String title;
@@ -22,6 +24,10 @@ class AgentModel {
   final int? price1m;
   final int? price6m;
   final int? price1y;
+  final CorpusKind kind;
+  final List<String> disciplineIds;
+  final List<String> scholarIds;
+  final String? catalogId;
 
   AgentModel({
     required this.id,
@@ -43,6 +49,10 @@ class AgentModel {
     this.price1m,
     this.price6m,
     this.price1y,
+    this.kind = CorpusKind.discipline,
+    this.disciplineIds = const [],
+    this.scholarIds = const [],
+    this.catalogId,
   });
 
   bool get isActive => status == 'active';
@@ -68,6 +78,10 @@ class AgentModel {
       price1m: data['price_1m'],
       price6m: data['price_6m'],
       price1y: data['price_1y'],
+      kind: data['kind'] == 'scholar' ? CorpusKind.scholar : CorpusKind.discipline,
+      disciplineIds: List<String>.from(data['discipline_ids'] ?? []),
+      scholarIds: List<String>.from(data['scholar_ids'] ?? []),
+      catalogId: data['catalog_id'],
     );
   }
 
@@ -82,6 +96,9 @@ class AgentModel {
               'Kajian komprehensif naskah dan muhadharah Al-Habib Abu Bakar Al-Masyhur disertai telaah ibarah primer.',
           emoji: '📜',
           category: 'Fikih Tahawwulat',
+          kind: CorpusKind.discipline,
+          disciplineIds: const ['fiqh_tahawwulat'],
+          scholarIds: const ['habib_abu_bakar'],
           fieldId: 'fiqh_tahawwulat',
           subtitleAcademic: 'Manhaj Fiqh Fitnah & Tanda Zaman • Rukun Keempat',
           suggestedPrompts: [
@@ -141,6 +158,9 @@ class AgentModel {
               'Asisten AI khusus Fikih Mazhab Syafi\'i lengkap dengan kutipan kitab-kitab mu\'tabarah.',
           emoji: '📜',
           category: 'Fiqih',
+          kind: CorpusKind.discipline,
+          disciplineIds: const ['fiqh'],
+          catalogId: 'canonical_syafii',
           fieldId: 'fiqh',
           subtitleAcademic: 'Matan · Syarah · Hasyiyah Mu\'tabarah',
           suggestedPrompts: [
@@ -623,12 +643,15 @@ class AgentModel {
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
         AgentModel(
           id: 'habib_umar',
-          title: 'Habib Umar bin Hafiz',
+          title: 'Korpus Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
               'Kitab dan rekaman muhadharah Habib Umar bin Hafiz dengan rujukan terpercaya.',
           emoji: '🕌',
-          category: 'Ulama',
+          category: 'Korpus Ulama',
+          kind: CorpusKind.scholar,
+          scholarIds: const ['habib_umar'],
+          disciplineIds: const ['tasawwuf'],
           fieldId: 'tasawwuf',
           subtitleAcademic: 'Kitab & Ribuan Muhadharah Tarim',
           suggestedPrompts: [
@@ -638,6 +661,27 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 13,
+        ),
+        AgentModel(
+          id: 'imam_ghazali',
+          title: 'Korpus Hujjatul Islam Al-Ghazali',
+          titleArabic: 'حجة الإسلام الغزالي',
+          description:
+              'Kajian naskah Ihya Ulumuddin, Al-Mustashfa, Tahafut al-Falasifah, dan karya-karya primer Al-Ghazali.',
+          emoji: '🕯️',
+          category: 'Korpus Ulama',
+          kind: CorpusKind.scholar,
+          scholarIds: const ['imam_ghazali'],
+          disciplineIds: const ['tasawwuf', 'usul', 'aqidah'],
+          fieldId: 'tasawwuf',
+          subtitleAcademic: 'Ihya Ulumiddin & Naskah Hujjatul Islam',
+          suggestedPrompts: [
+            'Bagaimana pembagian ilmu terpuji dan tercela dalam Kitab Al-Ilm Ihya Ulumiddin?',
+            'Penjelasan konsep qalb dan ruh menurut Imam Al-Ghazali.',
+            'Kaidah maslahah mursalah dan maqashid syariah dalam Al-Mustashfa.',
+          ],
+          status: 'coming_soon',
+          sortOrder: 14,
         ),
       ];
 }

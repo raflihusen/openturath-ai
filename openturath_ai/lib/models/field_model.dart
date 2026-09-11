@@ -108,17 +108,30 @@ class FieldModel {
       name: 'Tasawuf & Akhlaq',
       description: 'Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih.',
       icon: Icons.spa_rounded,
-      specialistCount: 1,
+      specialistCount: 2,
       agentIds: [
         'habib_umar',
+        'imam_ghazali',
       ],
     ),
   ];
 
+  static FieldModel? findById(String id) {
+    for (final f in defaultFields) {
+      if (f.id == id) return f;
+    }
+    return null;
+  }
+
   static FieldModel getById(String id) {
-    return defaultFields.firstWhere(
-      (f) => f.id == id,
-      orElse: () => defaultFields[0],
-    );
+    return findById(id) ??
+        const FieldModel(
+          id: 'umum',
+          name: 'Umum & Turats',
+          description: 'Kajian khazanah keilmuan Islam dan naskah primer.',
+          icon: Icons.menu_book_rounded,
+          specialistCount: 0,
+          agentIds: [],
+        );
   }
 }
