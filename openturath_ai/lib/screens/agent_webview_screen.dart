@@ -7,6 +7,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/notebook_navigation.dart';
+import '../core/notebook_ui_script.dart';
+import 'package:crypto/crypto.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -59,9 +61,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   String? _errorMessage;
   double _fontScale = 1.0;
   bool _isCopying = false;
-  bool _isBookmarking = false;
+  Timer? _readinessTimer;
+  DateTime? _loadingStarted;
+  int _readySamples = 0;
+  bool _checkingReady = false;
   bool _hasCopied = false;
-  bool _hasBookmarked = false;
+
   bool _isGoingBack = false;
 
   @override
@@ -104,6 +109,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   @override
   void dispose() {
+    _readinessTimer?.cancel();
     final controller = _webController;
     _webController = null;
     if (controller != null) {
@@ -201,8 +207,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   """;
 
   static final _cloakScript = UserScript(
-    source: _turatsMasterScript,
-    injectionTime: UserScriptInjectionTime.AT_DOCUMENT_END,
+    source: _turatsMasterScript + notebookUiScript,
+    injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
     forMainFrameOnly: true,
   );
 
@@ -225,6 +231,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _fetchAgentUrl() async {
     setState(() {
       _isLoadingUrl = true;
+      _isWebViewLoading = true;
+      _isPaywallRequired = false;
+      _agentUrl = null;
       _errorMessage = null;
     });
 
@@ -319,7 +328,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _applyHideScript() async {
     if (_webController == null) return;
     try {
-      await _webController!.evaluateJavascript(source: _turatsMasterScript);
+      await _webController!.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
       await _applyThemeCss();
     } catch (_) {}
   }
@@ -333,165 +342,77 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     } catch (_) {}
   }
 
+  Future<void> _saveCopiedAnswer(String text, String ownerUid) async {
+    text = text.trim();
+    if (text.isEmpty || text.length > 200000 || _authService.currentUser?.uid != ownerUid) return;
+    final agent = _agent;
+    if (agent == null) return;
+    final id = sha256.convert(utf8.encode('${agent.id}:$text')).toString();
+    await _bookmarkService.addBookmark(BookmarkModel(
+      id: id,
+      title: text.split('\n').first.length > 80 ? text.split('\n').first.substring(0, 80) : text.split('\n').first,
+      agentId: agent.id, agentTitle: agent.title, fieldName: agent.category, fieldId: agent.fieldId,
+      arabicExcerpt: '', fullAnswer: text, bookReference: 'Rujukan belum diidentifikasi', pageNumber: '', createdAt: DateTime.now(),
+    ), userId: ownerUid);
+  }
+
   Future<void> _copyLatestResponse() async {
-    if (_webController == null) return;
-    HapticFeedback.lightImpact();
+    if (_webController == null || _isCopying) return;
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
     setState(() => _isCopying = true);
-
     try {
-      final res = await _webController!.evaluateJavascript(source: """
-        (function() {
-          var selectors = [
-            '.chat-message[data-sender="model"]',
-            '.model-message',
-            '.response-message',
-            '.chat-panel-content .message:last-child',
-            '[role="article"]:last-of-type',
-            '.markdown-content:last-of-type',
-            '.message:last-of-type'
-          ];
-          for (var i = 0; i < selectors.length; i++) {
-            var els = document.querySelectorAll(selectors[i]);
-            if (els.length > 0) {
-              var lastEl = els[els.length - 1];
-              var txt = (lastEl.innerText || lastEl.textContent || '').trim();
-              if (txt.length > 10) return txt;
-            }
-          }
-          var main = document.querySelector('main, .chat-panel-content, .conversation-container');
-          return main ? (main.innerText || main.textContent || '').trim() : '';
-        })();
-      """);
-
-      final text = (res as String? ?? '').trim();
+      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
+      final text = result is String ? result.trim() : '';
       if (text.isEmpty) {
-        if (mounted) {
-          AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
-        }
-      } else {
-        await Clipboard.setData(ClipboardData(text: text));
-        if (mounted) {
-          setState(() => _hasCopied = true);
-          AppSnackBar.success(context, AppCopy.answerCopied);
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) setState(() => _hasCopied = false);
-          });
-        }
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
+        return;
       }
-    } catch (e) {
+      await Clipboard.setData(ClipboardData(text: text));
+      await _saveCopiedAnswer(text, uid);
       if (mounted) {
-        AppSnackBar.error(context, AppCopy.copyFailed);
+        setState(() => _hasCopied = true);
+        AppSnackBar.success(context, 'Jawaban disalin dan ditambahkan ke Tersimpan.');
       }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, 'Jawaban belum berhasil disalin dan disimpan. Coba lagi.');
     } finally {
       if (mounted) setState(() => _isCopying = false);
     }
   }
 
-  Future<void> _bookmarkLatestResponse() async {
-    if (_webController == null || _isBookmarking) return;
-    final ownerUid = _authService.currentUser?.uid;
-    if (ownerUid == null) return;
-    HapticFeedback.mediumImpact();
-    setState(() => _isBookmarking = true);
+  void _startReadinessCheck() {
+    _readinessTimer?.cancel();
+    _loadingStarted = DateTime.now();
+    _readySamples = 0;
+    _readinessTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+  }
 
+  Future<void> _checkReady() async {
+    if (_checkingReady || _webController == null || !mounted) return;
+    _checkingReady = true;
     try {
-      final res = await _webController!.evaluateJavascript(source: """
-        (function() {
-          var selectors = [
-            '.chat-message[data-sender="model"]',
-            '.model-message',
-            '.response-message',
-            '.chat-panel-content .message:last-child',
-            '[role="article"]:last-of-type',
-            '.markdown-content:last-of-type',
-            '.message:last-of-type'
-          ];
-          var answer = '';
-          for (var i = 0; i < selectors.length; i++) {
-            var els = document.querySelectorAll(selectors[i]);
-            if (els.length > 0) {
-              var lastEl = els[els.length - 1];
-              answer = (lastEl.innerText || lastEl.textContent || '').trim();
-              if (answer.length > 10) break;
-            }
-          }
-
-          // Regex Arab yang mendukung frasa dan spasi (F29)
-          var arabicRegex = /[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]+(?:\\s+[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]+){1,}/g;
-          var arabicMatch = answer.match(arabicRegex);
-          var arabicExcerpt = arabicMatch ? arabicMatch.slice(0, 3).join(' ... ') : '';
-
-          // Ekstraksi sitasi rujukan kitab primer jika tersedia (F28, F30)
-          var bookMatch = answer.match(/(?:Kitab|Rujukan|Sumber|Maraji'|Pustaka)\\s*:\\s*([^\\n\\r,]+)/i);
-          var pageMatch = answer.match(/(?:Hal(?:aman)?|Juz|Hlm|Sahifah)\\s*[:.]?\\s*([0-9\\/\\-]+)/i);
-          var detectedBook = bookMatch ? bookMatch[1].trim() : '';
-          var detectedPage = pageMatch ? pageMatch[1].trim() : '';
-
-          return JSON.stringify({
-            fullAnswer: answer,
-            arabicExcerpt: arabicExcerpt,
-            detectedBook: detectedBook,
-            detectedPage: detectedPage
-          });
-        })();
-      """);
-
-      if (res != null) {
-        final Map<String, dynamic> data = jsonDecode(res.toString());
-        final fullAnswer = (data['fullAnswer'] as String? ?? '').trim();
-        final arabicExcerpt = (data['arabicExcerpt'] as String? ?? '').trim();
-        final detectedBook = (data['detectedBook'] as String? ?? '').trim();
-        final detectedPage = (data['detectedPage'] as String? ?? '').trim();
-
-        if (fullAnswer.isEmpty) {
-          if (mounted) {
-            AppSnackBar.warning(context, AppCopy.noAnswerToSave);
-          }
-        } else {
-          // F28 & F30: Pisahkan nama spesialis AI dari rujukan kitab primer
-          final bookRef = detectedBook.isNotEmpty
-              ? detectedBook
-              : 'Rujukan belum diidentifikasi';
-
-          final bookmark = BookmarkModel(
-            id: DateTime.now().microsecondsSinceEpoch.toString(),
-            title: 'Kajian ${_agent?.category ?? "Turats"}: ${bookRef.length > 28 ? "${bookRef.substring(0, 28)}..." : bookRef}',
-            agentId: _agent?.id ?? 'umum',
-            agentTitle: _agent?.title ?? 'Spesialis Turats',
-            fieldName: _agent?.category ?? 'Fikih',
-            fieldId: (_agent?.category ?? 'fikih').toLowerCase().replaceAll(' ', '_'),
-            arabicExcerpt: arabicExcerpt,
-            fullAnswer: fullAnswer,
-            bookReference: bookRef,
-            pageNumber: detectedPage,
-            createdAt: DateTime.now(),
-          );
-
-          await _bookmarkService.addBookmark(bookmark, userId: ownerUid);
-          if (mounted) {
-            setState(() => _hasBookmarked = true);
-            AppSnackBar.success(
-              context,
-              AppCopy.savedSuccess,
-              action: SnackBarAction(
-                label: 'Lihat',
-                textColor: OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark),
-                onPressed: () => Navigator.pushNamed(context, AppRoutes.bookmark),
-              ),
-            );
-            Future.delayed(const Duration(seconds: 3), () {
-              if (mounted) setState(() => _hasBookmarked = false);
-            });
-          }
-        }
+      final url = await _webController!.getUrl();
+      final isLogin = url?.host == 'accounts.google.com' || url?.host == 'accounts.youtube.com';
+      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.ready() : false');
+      _readySamples = result == true ? _readySamples + 1 : 0;
+      if (!mounted) return;
+      if (isLogin || _readySamples >= 3) {
+        _readinessTimer?.cancel();
+        setState(() => _isWebViewLoading = false);
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+        _readinessTimer?.cancel();
+        setState(() {
+          _isWebViewLoading = false;
+          _errorMessage = 'AI belum siap merespons. Periksa koneksi lalu coba muat kembali.';
+        });
       }
-    } catch (e) {
-      if (mounted) {
-        AppSnackBar.error(context, AppCopy.saveFailed);
+    } catch (_) {
+      if (mounted && _loadingStarted != null && DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+        _readinessTimer?.cancel();
+        setState(() { _isWebViewLoading = false; _errorMessage = AppCopy.cannotLoad; });
       }
-    } finally {
-      if (mounted) setState(() => _isBookmarking = false);
-    }
+    } finally { _checkingReady = false; }
   }
 
   Future<void> _handleBackPress() async {
@@ -657,7 +578,27 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       algorithmicDarkeningAllowed: false,
                       transparentBackground: true,
                     ),
-                onWebViewCreated: (controller) { _webController = controller; },
+                onWebViewCreated: (controller) {
+                  _webController = controller;
+                  final ownerUid = _authService.currentUser?.uid;
+                  controller.addJavaScriptHandler(handlerName: 'otCopiedAnswer', callback: (args) async {
+                    final url = await controller.getUrl();
+                    if (ownerUid == null || url?.scheme != 'https' || !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) || args.isEmpty || args.first is! String) return false;
+                    try {
+                      await _saveCopiedAnswer(args.first as String, ownerUid);
+                      if (mounted) AppSnackBar.success(context, 'Jawaban ditambahkan ke Tersimpan.');
+                      return true;
+                    } catch (_) {
+                      if (mounted) AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
+                      return false;
+                    }
+                  });
+                  _startReadinessCheck();
+                },
+                onLoadStart: (controller, url) {
+                  if (mounted) setState(() => _isWebViewLoading = true);
+                  _startReadinessCheck();
+                },
                 onPermissionRequest: (controller, request) async => PermissionResponse(
                   resources: request.resources, action: PermissionResponseAction.DENY,
                 ),
@@ -670,9 +611,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   await _applyHideScript();
                   await _applyCurrentFontScale();
                   await _detectGoogleAccessDenied();
-                  if (mounted && _isWebViewLoading) {
-                    setState(() => _isWebViewLoading = false);
-                  }
+                  await _checkReady();
                 },
                 onProgressChanged: (controller, progress) async {
                   if (progress >= 25) {
@@ -681,9 +620,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   }
                   if (progress >= 45) {
                     await _detectGoogleAccessDenied();
-                    if (_isWebViewLoading && mounted) {
-                      setState(() => _isWebViewLoading = false);
-                    }
+
                   }
                 },
                 onReceivedError: (controller, request, error) {
@@ -977,17 +914,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   : () {
                       Navigator.pop(ctx);
                       _copyLatestResponse();
-                    },
-            ),
-            Divider(height: 1, color: border.withValues(alpha: 0.5)),
-            ListTile(
-              leading: Icon(_hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, color: _hasBookmarked ? OTColors.sovereignAmber : textPrimary, size: 20),
-              title: Text(AppCopy.saveAnswerMenu, style: OTTypography.bodyMedium(color: textPrimary)),
-              onTap: _isBookmarking
-                  ? null
-                  : () {
-                      Navigator.pop(ctx);
-                      _bookmarkLatestResponse();
                     },
             ),
           ],
