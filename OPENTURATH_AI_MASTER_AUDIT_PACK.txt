@@ -2050,7 +2050,7 @@ service cloud.firestore {
         && request.resource.data.pending_deletion == true;
 
       // DELETE: Pengguna boleh menghapus datanya sendiri
-      allow delete: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
 
       // Sub-koleksi chat / conversations milik user
       match /conversations/{convId} {
@@ -2248,75 +2248,28 @@ export function addCalendarMonthsClamped(baseDate: Date, months: number): Date {
 }
 
 function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlementKey: string): { premiumPlan: boolean; active: boolean } {
-  const entitlements = (userData.entitlements || {}) as Record<string, any>;
-
-  // 1. Cek All Access (Paket Lengkap Semua AI)
-  const allAccess = entitlements["all_access"];
-  if (allAccess && typeof allAccess === "object") {
-    const status = allAccess.status;
-    const allExpiryVal = allAccess.expiry;
-    const allExpiryDate = allExpiryVal
-      ? (typeof allExpiryVal.toDate === "function" ? allExpiryVal.toDate() : new Date(allExpiryVal))
-      : null;
-    // Status revoked langsung menolak akses meskipun expiry belum lewat
-    if (status === "active" && allExpiryDate && allExpiryDate > new Date()) {
-      return { premiumPlan: true, active: true };
-    }
-    // F-04: Jika all_access berstatus revoked atau expired, jangan langsung tolak semua modul.
-    // Lanjutkan pengecekan ke modul spesifik (productEntitlement) di bawah.
+  if (userData.account_deleted === true) return {premiumPlan:false,active:false};
+  const entitlements = userData.entitlements && typeof userData.entitlements === "object"
+    ? userData.entitlements as Record<string, any> : {};
+  const now = Date.now();
+  const active = (ent: any): boolean => {
+    if (!ent || ent.status !== "active" || typeof ent.plan !== "string") return false;
+    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
+    const expiry = ent.expiry?.toDate ? ent.expiry.toDate() : new Date(ent.expiry ?? "");
+    return allowed && Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
+  };
+  const all = entitlements.all_access ?? entitlements.all_ai;
+  if (active(all)) return { premiumPlan: true, active: true };
+  const specific = entitlements[entitlementKey];
+  if (active(specific)) return { premiumPlan: true, active: true };
+  // An explicit entitlement map is authoritative, including revoked entries.
+  if (Object.keys(entitlements).length > 0) {
+    return { premiumPlan: !!(all || specific), active: false };
   }
-
-  // 2. Cek Modul Spesifik
-  const productEntitlement = entitlements[entitlementKey];
-  if (productEntitlement && typeof productEntitlement === "object") {
-    const status = productEntitlement.status;
-    if (status === "revoked" || status !== "active") {
-      return { premiumPlan: false, active: false };
-    }
-
-    const plan = productEntitlement.plan as string | undefined;
-    const expiryValue = productEntitlement.expiry;
-    const expiryDate = expiryValue
-      ? (typeof expiryValue.toDate === "function" ? expiryValue.toDate() : new Date(expiryValue))
-      : null;
-
-    const premiumPlan = typeof plan === "string" &&
-      (plan === "tholib" ||
-       plan === "bahits" ||
-       plan === "premium" ||
-       plan === "all_access" ||
-       plan === "voucher_access" ||
-       plan === "voucher" ||
-       plan.startsWith("tholib_") ||
-       plan.startsWith("bahits_") ||
-       plan.startsWith("voucher_"));
-
-    return {
-      premiumPlan,
-      active: premiumPlan && expiryDate !== null && !Number.isNaN(expiryDate.getTime()) && expiryDate > new Date(),
-    };
-  }
-
-  // 3. Legacy fallback HANYA jika userData.plan adalah all_access eksplisit (F01: cegah kebocoran modul tunggal)
-  const legacyPlan = userData.plan as string | undefined;
-  const isLegacyAllAccess = typeof legacyPlan === "string" && (
-    legacyPlan === "all_access" ||
-    legacyPlan === "all_ai_1m" ||
-    legacyPlan === "all_ai_6m" ||
-    legacyPlan === "all_ai_1y"
-  );
-  if (isLegacyAllAccess) {
-    const expiryValue = userData.subscription_expiry;
-    const expiryDate = expiryValue
-      ? (typeof expiryValue.toDate === "function" ? expiryValue.toDate() : new Date(expiryValue))
-      : null;
-    return {
-      premiumPlan: true,
-      active: expiryDate !== null && !Number.isNaN(expiryDate.getTime()) && expiryDate > new Date(),
-    };
-  }
-
-  return { premiumPlan: false, active: false };
+  const legacy = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "full"].includes(userData.plan);
+  const expiry = userData.subscription_expiry?.toDate
+    ? userData.subscription_expiry.toDate() : new Date(userData.subscription_expiry ?? "");
+  return { premiumPlan: legacy, active: legacy && Number.isFinite(expiry.getTime()) && expiry.getTime() > now };
 }
 
 // ================================================================
@@ -2433,7 +2386,7 @@ function getDokuConfig() {
   const secretKey = process.env.DOKU_SECRET_KEY || "";
   const apiKey = process.env.DOKU_API_KEY || "";
   if (!clientId || !secretKey) {
-    console.error("[DOKU Config] Peringatan kritis: DOKU_CLIENT_ID atau DOKU_SECRET_KEY belum dikonfigurasi di environment!");
+    throw new Error("DOKU credentials are not configured");
   }
   return { env, baseUrl, clientId, secretKey, apiKey };
 }
@@ -2723,7 +2676,7 @@ function getServiceTitleForEntitlement(entitlementKey: string): string {
   return "Modul kajian";
 }
 
-async function processSuccessfulPayment(invoiceNumber: string) {
+async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unknown) {
   const txQuery = await db.collection("transactions")
     .where("invoice_number", "==", invoiceNumber)
     .limit(1)
@@ -2731,7 +2684,7 @@ async function processSuccessfulPayment(invoiceNumber: string) {
 
   if (txQuery.empty) {
     console.warn(`[Activation] Transaction not found for invoice: ${invoiceNumber}`);
-    return { success: false, message: "Transaction not found" };
+    throw new Error("Transaction not found");
   }
 
   const txDocRef = txQuery.docs[0].ref;
@@ -2752,6 +2705,11 @@ async function processSuccessfulPayment(invoiceNumber: string) {
       throw new Error(`Transaction ${invoiceNumber} tidak ditemukan dalam transaksi`);
     }
     const txData = txSnap.data()!;
+    const amount = typeof paidAmount === "string" && /^\d+(?:\.0+)?$/.test(paidAmount)
+      ? Number(paidAmount) : paidAmount;
+    if (!Number.isSafeInteger(amount) || (amount as number) <= 0 || amount !== txData.amount) {
+      throw new Error("Payment amount does not match invoice");
+    }
 
     // F04: Idempotensi invoice - cegah penambahan durasi berulang jika invoice sudah diaktivasi
     if (txData.activation_applied === true) {
@@ -2779,7 +2737,8 @@ async function processSuccessfulPayment(invoiceNumber: string) {
 
     const userRef = db.collection("users").doc(uid);
     const uSnap = await t.get(userRef);
-    const uData = uSnap.exists ? uSnap.data()! : {};
+    if (!uSnap.exists) throw new Error("Payment owner profile is missing");
+    const uData = uSnap.data()!;
     const entitlements = (uData.entitlements || {}) as Record<string, any>;
     const currentEnt = entitlements[entitlementKey];
 
@@ -2866,20 +2825,6 @@ async function processSuccessfulPayment(invoiceNumber: string) {
 
   console.log(`[Activation] Akses berhasil diaktifkan atomik untuk ${activationResult.uid} (Modul: ${activationResult.entitlementKey})`);
 
-  // Non-blocking trigger helper sharing ke server Cloud Run di luar transaksi
-  try {
-    notifySubscriptionServer(
-      activationResult.email,
-      "Peneliti",
-      activationResult.plan,
-      "add",
-      activationResult.serviceTitle
-    ).then(() => console.log(`[Activation] Provisioning helper triggered for ${activationResult.email}`))
-     .catch((e: any) => console.warn(`[Activation] Provisioning helper background error: ${e.message}`));
-  } catch (e: any) {
-    console.warn(`[Activation] Could not trigger provisioning helper: ${e.message}`);
-  }
-
   return { success: true, ...activationResult };
 }
 
@@ -2899,6 +2844,10 @@ export const dokuWebhook = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
   .https.onRequest(async (req, res) => {
     try {
+      if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+      }
       const headers = req.headers;
       const body = req.body || {};
 
@@ -2916,12 +2865,18 @@ export const dokuWebhook = functions
         return;
       }
 
-      const clientId = (headers["client-id"] || headers["Client-Id"] || dokuCfg.clientId) as string;
-      const requestId = (headers["request-id"] || headers["Request-Id"] || "") as string;
-      const timestamp = (headers["request-timestamp"] || headers["Request-Timestamp"] || "") as string;
-      const rawBody = (req as any).rawBody
-        ? (req as any).rawBody.toString("utf8")
-        : (typeof req.body === "string" ? req.body : JSON.stringify(req.body || {}));
+      const clientId = headers["client-id"];
+      const requestId = headers["request-id"];
+      const timestamp = headers["request-timestamp"];
+      if (typeof incomingSignature !== "string" || typeof clientId !== "string" ||
+          clientId !== dokuCfg.clientId || typeof requestId !== "string" ||
+          requestId.length === 0 || requestId.length > 200 ||
+          typeof timestamp !== "string" || !timestamp ||
+          !Buffer.isBuffer(req.rawBody)) {
+        res.status(401).send("Invalid notification headers");
+        return;
+      }
+      const rawBody = req.rawBody.toString("utf8");
 
       const expectedSig1 = generateDokuSignature(clientId, requestId, timestamp, req.originalUrl || "/dokuWebhook", rawBody, dokuCfg.secretKey);
       const expectedSig2 = generateDokuSignature(clientId, requestId, timestamp, req.path || "/dokuWebhook", rawBody, dokuCfg.secretKey);
@@ -2948,7 +2903,7 @@ export const dokuWebhook = functions
         }
       }
 
-      if (!invoiceNumber) {
+      if (typeof invoiceNumber !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(invoiceNumber)) {
         console.warn("[DOKU Webhook] Missing invoice_number in notification.");
         res.status(400).send("Missing invoice_number");
         return;
@@ -2957,7 +2912,7 @@ export const dokuWebhook = functions
       // F06: State Machine Idempotensi Event (received -> processing -> completed / failed)
       let eventRef: FirebaseFirestore.DocumentReference | null = null;
       if (requestId) {
-        eventRef = db.collection("webhook_events").doc(requestId);
+        eventRef = db.collection("webhook_events").doc(crypto.createHash("sha256").update(requestId).digest("hex"));
         const eventSnap = await eventRef.get();
         if (eventSnap.exists) {
           const eventData = eventSnap.data()!;
@@ -2984,7 +2939,7 @@ export const dokuWebhook = functions
       }
 
       try {
-        const actResult = await processSuccessfulPayment(invoiceNumber);
+        const actResult = await processSuccessfulPayment(invoiceNumber, body.order?.amount ?? body.amount);
         if (eventRef) {
           await eventRef.update({
             status: "completed",
@@ -3049,7 +3004,7 @@ export const checkPaymentStatus = functions
     const txData = txDoc.data();
 
     // Verifikasi kepemilikan transaksi
-    if (txData.uid && txData.uid !== callerUid) {
+    if (txData.uid !== callerUid) {
       throw new functions.https.HttpsError("permission-denied", "Anda tidak memiliki akses untuk memeriksa transaksi ini.");
     }
 
@@ -3081,7 +3036,7 @@ export const checkPaymentStatus = functions
 
       if (trxStatus === "SUCCESS") {
         console.log(`[checkPaymentStatus] DOKU Inquiry verified SUCCESS for ${invoiceNumber}! Activating subscription...`);
-        const actResult = await processSuccessfulPayment(invoiceNumber);
+        const actResult = await processSuccessfulPayment(invoiceNumber, dokuData.order?.amount);
         return {
           success: true,
           status: "SUCCESS",
@@ -3117,7 +3072,13 @@ export const redeemCode = functions
       throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk menukarkan kode akses.");
     }
 
-    const rawCode = (data.code as string || "").trim().toUpperCase();
+    if (typeof data?.code !== "string" || data.code.length > 256) {
+      throw new functions.https.HttpsError("invalid-argument", "Format kode akses tidak valid.");
+    }
+    const rawCode = data.code.trim().toUpperCase().replace(/[\s-]/g, "");
+    if (!/^[A-Z0-9]{1,64}$/.test(rawCode)) {
+      throw new functions.https.HttpsError("invalid-argument", "Format kode akses tidak valid.");
+    }
     if (!rawCode) {
       throw new functions.https.HttpsError("invalid-argument", "Kode redeem tidak boleh kosong.");
     }
@@ -3262,20 +3223,6 @@ export const redeemCode = functions
     // F63: Redaksi log kode voucher mentah
     console.log(`[Redeem] Voucher berhasil ditukarkan oleh ${uid}. Modul: ${redeemResult.entitlementKey}, aktif s/d ${redeemResult.expiryIso}`);
 
-    // F11: Trigger helper sharing background non-blocking
-    try {
-      notifySubscriptionServer(
-        redeemResult.email,
-        redeemResult.name,
-        "voucher_access",
-        "add",
-        redeemResult.serviceTitle
-      ).then(() => console.log(`[Redeem] Provisioning helper triggered for ${redeemResult.email}`))
-       .catch((e: any) => console.warn(`[Redeem] Provisioning helper error: ${e.message}`));
-    } catch (e: any) {
-      console.warn(`[Redeem] Could not trigger provisioning helper: ${e.message}`);
-    }
-
     return {
       success: true,
       entitlementKey: redeemResult.entitlementKey,
@@ -3293,255 +3240,90 @@ export const redeemCode = functions
 export const onUserCreate = functions.firestore
   .document("users/{uid}")
   .onCreate(async (snapshot, context) => {
-    try {
-      const userData = snapshot.data();
-      const email = userData.email;
-      const uid = context.params.uid;
-
-      if (!email || typeof email !== "string" || !email.includes("@")) return null;
-
-      // Verifikasi bahwa user bukan akun anonim via Firebase Auth record
-      const userRecord = await admin.auth().getUser(uid).catch(() => null);
-      if (!userRecord || userRecord.providerData.length === 0 || userRecord.email?.toLowerCase() !== email.toLowerCase()) {
-        console.warn(`onUserCreate: Melewati klaim transaksi untuk akun anonim/tidak terverifikasi: ${uid}`);
-        return null;
-      }
-
-      console.log(`onUserCreate: Checking verified transactions for email: ${email}`);
-
-      // Cari semua transaksi sukses untuk email ini
-      const trxQuery = await db
-        .collection("transactions")
-        .where("customer_email", "==", email.toLowerCase())
-        .where("status", "in", ["success", "paid"])
-        .get();
-
-      if (trxQuery.empty) {
-        console.log(`onUserCreate: No successful transactions found for ${email}`);
-        return null;
-      }
-
-      // Kumpulkan seluruh entitlement modul yang aktif dan cari tanggal kedaluwarsa terjauh
-      let latestTrxDoc = trxQuery.docs[0];
-      let latestExpiry = latestTrxDoc.data().subscription_expires_at;
+    const uid = context.params.uid;
+    const user = await admin.auth().getUser(uid);
+    if (!user.emailVerified || !user.email) return null;
+    // Only owned historical transactions may repair an empty profile.
+    const owned = await db.collection("transactions").where("uid", "==", uid)
+      .where("status", "in", ["success", "paid"]).get();
+    if (owned.empty) return null;
+    await db.runTransaction(async t => {
+      const current = await t.get(snapshot.ref);
+      if (!current.exists) return;
+      const profile = current.data()!;
+      if (Object.keys(profile.entitlements || {}).length > 0) return;
       const entitlements: Record<string, any> = {};
-      const now = new Date();
-      let hasActive = false;
-
-      for (const doc of trxQuery.docs) {
-        const txData = doc.data();
-        const expiry = txData.subscription_expires_at;
-        const entKey = txData.entitlement_key || getEntitlementKey(txData.agent_id || "fiqh_tahawwulat");
-
-        // Hubungkan kembali UID ke dokumen transaksi jika belum terhubung
-        if (!txData.uid) {
-          await doc.ref.update({ uid: uid });
-        }
-
-        if (expiry && expiry.toDate() > now) {
-          hasActive = true;
-          const currentEnt = entitlements[entKey];
-          if (!currentEnt || expiry.toDate() > currentEnt.expiry.toDate()) {
-            entitlements[entKey] = {
-              plan: txData.plan || "premium",
-              status: "active",
-              expiry: expiry,
-              updated_at: admin.firestore.FieldValue.serverTimestamp(),
-            };
-          }
-        }
-
-        if (expiry && (!latestExpiry || expiry.toDate() > latestExpiry.toDate())) {
-          latestTrxDoc = doc;
-          latestExpiry = expiry;
+      const txs = [];
+      for (const doc of owned.docs) txs.push(await t.get(doc.ref));
+      for (const tx of txs) {
+        const data = tx.data();
+        if (!data || data.uid !== uid || !["paid", "success"].includes(data.status)) continue;
+        const key = data.entitlement_key;
+        const expiry = data.subscription_expires_at;
+        if (typeof key !== "string" || !expiry?.toDate || expiry.toDate() <= new Date()) continue;
+        if (!entitlements[key] || expiry.toMillis() > entitlements[key].expiry.toMillis()) {
+          entitlements[key] = { plan: data.plan || "premium", status: "active", expiry };
         }
       }
-
-      if (hasActive && latestExpiry && latestExpiry.toDate() > now) {
-        const latestTrxData = latestTrxDoc.data();
-        console.log(`onUserCreate: Activating plan ${latestTrxData.plan} and entitlements for user ${uid}`);
-
-        await snapshot.ref.update({
-          plan: latestTrxData.plan || "premium",
-          subscription_expiry: latestExpiry,
-          entitlements: entitlements,
-          questions_used: 0,
-          updated_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
-
-        // Pastikan latestTrxDoc juga terhubung
-        if (!latestTrxData.uid) {
-          await latestTrxDoc.ref.update({ uid: uid });
-        }
-
-        // F13: Kirim per-scope entitlement, jangan broadcast semua 6 layanan
-        for (const entKey of Object.keys(entitlements)) {
-          try {
-            await notifySubscriptionServer(
-              email,
-              userData.name || "User",
-              entitlements[entKey]?.plan || latestTrxData.plan,
-              "add",
-              getServiceTitleForEntitlement(entKey)
-            );
-          } catch (err: any) {
-            console.error(`Failed to notify subscription server in onUserCreate for ${entKey}:`, err.message);
-          }
-        }
-
-        await db.collection("sharing_log").add({
-          email,
-          uid,
-          action: "add",
-          method: "on_user_create_sync",
-          entitlements: Object.keys(entitlements),
+      if (!Object.keys(entitlements).length) return;
+      t.update(snapshot.ref, { entitlements, updated_at: admin.firestore.FieldValue.serverTimestamp() });
+      for (const key of Object.keys(entitlements)) {
+        t.set(db.collection("provisioning_outbox").doc(`restore_${uid}_${key}`), {
+          uid, email: user.email, entitlement_key: key, action: "add", status: "pending", attempts: 0,
           created_at: admin.firestore.FieldValue.serverTimestamp(),
         });
-      } else {
-        console.log(`onUserCreate: Found transactions for ${email} but they are already expired`);
       }
-    } catch (err) {
-      console.error("Error in onUserCreate trigger:", err);
-    }
+    });
     return null;
   });
-
 
 // ================================================================
 // FUNCTION 4: dailyRevoke (Cron Job — tiap tengah malam)
 // ================================================================
 export const dailyRevoke = functions
-  .runWith({
-    serviceAccount: "open-turath@appspot.gserviceaccount.com",
-    timeoutSeconds: 300,
-  })
-  .pubsub.schedule("0 0 * * *")
-  .timeZone("Asia/Jakarta")
+  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
+  .pubsub.schedule("0 0 * * *").timeZone("Asia/Jakarta")
   .onRun(async () => {
-    const now = admin.firestore.Timestamp.now();
-
-    // F-01: Periksa seluruh user di database (agar langganan modul tunggal tidak lolos)
-    const allUsersSnap = await db.collection("users").get();
-
-    if (allUsersSnap.empty) {
-      console.log("✅ Tidak ada data user di database.");
-      return null;
+    let cursor: FirebaseFirestore.QueryDocumentSnapshot | undefined;
+    while (true) {
+      let query = db.collection("users").orderBy(admin.firestore.FieldPath.documentId()).limit(100);
+      if (cursor) query = query.startAfter(cursor);
+      const page = await query.get();
+      if (page.empty) break;
+      for (const doc of page.docs) {
+        await db.runTransaction(async t => {
+          const snap = await t.get(doc.ref);
+          if (!snap.exists) return;
+          const data = snap.data()!;
+          const entitlements = { ...(data.entitlements || {}) };
+          const expired: string[] = [];
+          for (const [key, value] of Object.entries(entitlements)) {
+            const ent = value as any;
+            const expiry = ent?.expiry?.toDate ? ent.expiry.toDate() : new Date(ent?.expiry ?? "");
+            if (ent?.status === "active" && expiry <= new Date()) {
+              entitlements[key] = { ...ent, status: "expired" };
+              expired.push(key);
+            }
+          }
+          const legacyExpiry = data.subscription_expiry?.toDate
+            ? data.subscription_expiry.toDate() : new Date(data.subscription_expiry ?? "");
+          const legacyExpired = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "full"].includes(data.plan)
+            && legacyExpiry <= new Date();
+          if (!expired.length && !legacyExpired) return;
+          const update: any = { entitlements, updated_at: admin.firestore.FieldValue.serverTimestamp() };
+          if (legacyExpired) { update.plan = "trial"; update.subscription_expiry = null; expired.push("all_access"); }
+          t.update(doc.ref, update);
+          for (const key of new Set(expired)) {
+            t.set(db.collection("provisioning_outbox").doc(`reconcile_${doc.id}_${key}_${crypto.randomUUID()}`), {
+              uid: doc.id, email: data.email || "", entitlement_key: key,
+              action: "remove", status: "pending", attempts: 0,
+              created_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+          }
+        });
+      }
+      cursor = page.docs[page.docs.length - 1];
     }
-
-    console.log(`🔄 Memeriksa ${allUsersSnap.size} user untuk pengecekan kedaluwarsa...`);
-    let processedCount = 0;
-
-    for (const doc of allUsersSnap.docs) {
-      const userData = doc.data();
-      const plan = userData.plan || "";
-      const email = (userData.email || "").trim().toLowerCase();
-      const entitlements = (userData.entitlements || {}) as Record<string, any>;
-
-      // 1. Periksa modular entitlements yang telah expired
-      let hasExpiredEntitlement = false;
-      const updatedEntitlements = { ...entitlements };
-      const expiredKeys: string[] = [];
-
-      for (const [key, val] of Object.entries(entitlements)) {
-        if (val && typeof val === "object") {
-          const item = val as any;
-          const exp = item.expiry
-            ? (typeof item.expiry.toDate === "function" ? item.expiry.toDate() : new Date(item.expiry))
-            : null;
-          if (exp && exp <= now.toDate() && item.status === "active") {
-            updatedEntitlements[key] = {
-              ...item,
-              status: "expired",
-              updated_at: admin.firestore.FieldValue.serverTimestamp(),
-            };
-            hasExpiredEntitlement = true;
-            expiredKeys.push(key);
-          }
-        }
-      }
-
-      // 2. Cek apakah masih ada entitlement lain yang aktif
-      let hasRemainingActive = false;
-      for (const val of Object.values(updatedEntitlements)) {
-        if (val && typeof val === "object") {
-          const item = val as any;
-          const exp = item.expiry
-            ? (typeof item.expiry.toDate === "function" ? item.expiry.toDate() : new Date(item.expiry))
-            : null;
-          if (item.status === "active" && exp && exp > now.toDate()) {
-            hasRemainingActive = true;
-            break;
-          }
-        }
-      }
-
-      const globalExpiry = userData.subscription_expiry
-        ? (typeof userData.subscription_expiry.toDate === "function" ? userData.subscription_expiry.toDate() : new Date(userData.subscription_expiry))
-        : null;
-      const isGlobalExpired = globalExpiry && globalExpiry <= now.toDate();
-
-      const updateData: any = {};
-      if (hasExpiredEntitlement) {
-        updateData.entitlements = updatedEntitlements;
-      }
-      // HANYA reset global plan jika TIDAK ADA modul lain yang aktif dan masa berlaku habis
-      if (!hasRemainingActive && (isGlobalExpired || !globalExpiry)) {
-        if (plan !== "trial" && plan !== "anonymous") {
-          updateData.plan = "trial";
-          updateData.subscription_expiry = null;
-          updateData.questions_used = 0;
-        }
-      }
-
-      if (Object.keys(updateData).length > 0) {
-        await doc.ref.update(updateData);
-        processedCount++;
-      }
-
-      // 3. Cabut akses NotebookLM untuk tiap modul yang expired
-      if (email && expiredKeys.length > 0) {
-        for (const expiredKey of expiredKeys) {
-          console.log(`🔒 Akses modul ${expiredKey} berakhir untuk ${email}.`);
-
-          // F-01 & F-02: Catat job pencabutan ke durable outbox
-          const outboxRef = db.collection("provisioning_outbox").doc(`rev_${doc.id}_${expiredKey}_${now.toMillis()}`);
-          await outboxRef.set({
-            uid: doc.id,
-            email,
-            name: userData.name || "Peneliti",
-            entitlement_key: expiredKey,
-            plan: "trial",
-            action: "remove",
-            status: "pending",
-            attempts: 0,
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-          });
-
-          try {
-            await notifySubscriptionServer(
-              email,
-              userData.name || "User",
-              "trial",
-              "remove",
-              getServiceTitleForEntitlement(expiredKey)
-            );
-          } catch (err: any) {
-            console.error(`Failed to notify subscription server in dailyRevoke for ${expiredKey}:`, err.message);
-          }
-
-          await db.collection("sharing_log").add({
-            email,
-            uid: doc.id,
-            action: "remove",
-            entitlement_key: expiredKey,
-            method: "daily_revoke_scheduler",
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-          });
-        }
-      }
-    }
-
-    console.log(`✅ Selesai memproses dailyRevoke. ${processedCount} user diperbarui.`);
     return null;
   });
 
@@ -3549,73 +3331,75 @@ export const dailyRevoke = functions
 // FUNCTION 4b: processProvisioningOutbox (Cron Worker — tiap 5 menit)
 // Memproses antrean durable outbox provisioning & revocation NotebookLM
 // ================================================================
+const PROVISIONED_KEYS = ["fiqh_tahawwulat", "fiqh_syafii", "ushul_fiqh", "hadits", "tafsir", "nahwu"];
+
+function entitlementRevision(data: any): string {
+  return JSON.stringify([data?.plan, data?.subscription_expiry, data?.entitlements]);
+}
+
 export const processProvisioningOutbox = functions
-  .runWith({
-    serviceAccount: "open-turath@appspot.gserviceaccount.com",
-    timeoutSeconds: 300,
-  })
+  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
   .pubsub.schedule("every 5 minutes")
   .onRun(async () => {
-    const pendingJobs = await db.collection("provisioning_outbox")
-      .where("status", "in", ["pending", "retry"])
-      .limit(25)
-      .get();
-
-    if (pendingJobs.empty) {
-      return null;
-    }
-
-    console.log(`[Outbox Worker] Memproses ${pendingJobs.size} antrean outbox...`);
-
-    for (const doc of pendingJobs.docs) {
-      const job = doc.data();
-      const attempts = (job.attempts || 0) as number;
-
-      if (attempts >= 8) {
-        console.error(`[Outbox Worker] Job ${doc.id} mencapai batas maksimal percobaan (8). Ditandai failed.`);
-        await doc.ref.update({
-          status: "failed",
-          failed_at: admin.firestore.FieldValue.serverTimestamp(),
-          error: "Exceeded max retry attempts (8)",
-        });
+    const started = Date.now();
+    const pending = await db.collection("provisioning_outbox")
+      .where("status", "in", ["pending", "retry", "processing"]).limit(25).get();
+    for (const candidate of pending.docs) {
+      if (Date.now() - started > 210000) break;
+      const token = crypto.randomUUID();
+      const uid = candidate.data().uid;
+      if (typeof uid !== "string" || !uid) {
+        await candidate.ref.update({status:"failed",error:"Missing owner UID"});
         continue;
       }
-
-      const email = (job.email || "").trim().toLowerCase();
-      if (!email || !email.includes("@")) {
-        console.warn(`[Outbox Worker] Job ${doc.id} tidak memiliki email valid: '${email}'. Ditandai failed.`);
-        await doc.ref.update({
-          status: "failed",
-          failed_at: admin.firestore.FieldValue.serverTimestamp(),
-          error: "Invalid email",
-        });
-        continue;
-      }
-
-      const action = (job.action || "add") as "add" | "remove";
-      const plan = job.plan || "premium";
-      const name = job.name || "Peneliti";
-      const serviceTitle = getServiceTitleForEntitlement(job.entitlement_key || "");
-
+      const lease = db.collection("provisioning_leases").doc(uid);
+      const job = await db.runTransaction(async t => {
+        const snap = await t.get(candidate.ref);
+        const lock = await t.get(lease);
+        const data = snap.data();
+        if (!data || !["pending", "retry", "processing"].includes(data.status)) return null;
+        if ((lock.data()?.until?.toMillis?.() || 0) > Date.now()) return null;
+        if ((data.attempts || 0) >= 8) {
+          t.update(candidate.ref, {status:"failed",error:"Exceeded retry limit"});
+          return null;
+        }
+        t.set(lease, {token, until:admin.firestore.Timestamp.fromMillis(Date.now()+330000)});
+        t.update(candidate.ref, {status:"processing",attempts:(data.attempts||0)+1,lease_token:token});
+        return data;
+      });
+      if (!job) continue;
+      let status = "completed";
+      let error = "";
       try {
-        await notifySubscriptionServer(email, name, plan, action, serviceTitle);
-        await doc.ref.update({
-          status: "completed",
-          completed_at: admin.firestore.FieldValue.serverTimestamp(),
-          last_attempt_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
-        console.log(`[Outbox Worker] Berhasil memproses job ${doc.id} (${action} ${email} -> ${serviceTitle})`);
+        const user = await db.collection("users").doc(uid).get();
+        const data = user.data();
+        const email = (data?.email || job.email || "").trim().toLowerCase();
+        if (!email.includes("@")) throw new Error("Invalid provisioning email");
+        const scope = job.entitlement_key;
+        const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONED_KEYS : [scope];
+        for (const key of keys) {
+          if (!PROVISIONED_KEYS.includes(key)) throw new Error("Unsupported provisioning scope");
+          const desired = data && getEntitlementAccess(data,key).active;
+          await notifySubscriptionServer(email,data?.name||job.name||"Peneliti",desired ? "premium" : "trial",
+            desired ? "add" : "remove",getServiceTitleForEntitlement(key));
+        }
+        const after = await db.collection("users").doc(uid).get();
+        if (entitlementRevision(data) !== entitlementRevision(after.data())) {
+          status = "retry";
+          error = "Entitlements changed during delivery";
+        }
       } catch (err: any) {
-        console.error(`[Outbox Worker] Gagal memproses job ${doc.id}:`, err.message);
-        await doc.ref.update({
-          status: "retry",
-          attempts: attempts + 1,
-          last_error: err.message || "Unknown error",
-          last_attempt_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
+        status = "retry";
+        error = String(err.message || "Provisioning failure").slice(0,300);
       }
+      await db.runTransaction(async t => {
+        const lock = await t.get(lease);
+        const snap = await t.get(candidate.ref);
+        if (lock.data()?.token !== token || snap.data()?.lease_token !== token) return;
+        t.update(candidate.ref, {status,last_error:error,last_attempt_at:admin.firestore.FieldValue.serverTimestamp()});
+        t.delete(lease);
+      });
     }
-
     return null;
   });
 
@@ -3623,49 +3407,44 @@ export const processProvisioningOutbox = functions
 // FUNCTION 4c: cleanupOrphanedDeletions (Cron Harian — jam 03.00 WIB)
 // Membersihkan dokumen user yang bertanda pending_deletion jika akun Auth sudah terhapus
 // ================================================================
+async function deleteUserData(uid: string, authEmail = ""): Promise<void> {
+  const ref = db.collection("users").doc(uid);
+  await db.runTransaction(async t => {
+    const user = await t.get(ref);
+    const email = authEmail || user.data()?.email || "";
+    const jobs = [];
+    for (const key of PROVISIONED_KEYS) {
+      const job = db.collection("provisioning_outbox").doc(`delete_${uid}_${key}`);
+      jobs.push({ref:job,snap:await t.get(job),key});
+    }
+    if (user.exists) t.update(ref,{account_deleted:true});
+    for (const job of jobs) {
+      if (job.snap.exists) continue;
+      t.set(job.ref, {uid,email,entitlement_key:job.key,action:"remove",status:"pending",attempts:0,
+        created_at:admin.firestore.FieldValue.serverTimestamp()});
+    }
+  });
+  await db.recursiveDelete(ref);
+}
+
+export const onUserDeleted = functions
+  .runWith({ serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:300,failurePolicy:true })
+  .auth.user().onDelete(async user => {
+    await deleteUserData(user.uid,user.email || "");
+  });
+
 export const cleanupOrphanedDeletions = functions
-  .runWith({
-    serviceAccount: "open-turath@appspot.gserviceaccount.com",
-    timeoutSeconds: 300,
-  })
-  .pubsub.schedule("0 3 * * *")
-  .timeZone("Asia/Jakarta")
+  .runWith({ serviceAccount:"open-turath@appspot.gserviceaccount.com",timeoutSeconds:300 })
+  .pubsub.schedule("0 3 * * *").timeZone("Asia/Jakarta")
   .onRun(async () => {
-    const pendingSnap = await db.collection("users")
-      .where("pending_deletion", "==", true)
-      .limit(50)
-      .get();
-
-    if (pendingSnap.empty) {
-      console.log("[cleanupOrphanedDeletions] Tidak ada user pending_deletion.");
-      return null;
-    }
-
-    console.log(`[cleanupOrphanedDeletions] Memeriksa ${pendingSnap.size} user pending deletion...`);
-
-    for (const doc of pendingSnap.docs) {
-      const uid = doc.id;
-      let authUserExists = false;
-
-      try {
-        await admin.auth().getUser(uid);
-        authUserExists = true;
-      } catch (err: any) {
-        if (err.code === "auth/user-not-found") {
-          authUserExists = false;
-        } else {
-          console.warn(`[cleanupOrphanedDeletions] Gagal mengecek auth untuk UID ${uid}: ${err.message}`);
-          continue;
-        }
-      }
-
-      // Jika akun Auth sudah tidak ada, hapus dokumen Firestore agar tidak menjadi orphan
-      if (!authUserExists) {
-        console.log(`[cleanupOrphanedDeletions] Menghapus orphan Firestore doc untuk UID ${uid}`);
-        await doc.ref.delete();
+    const pending = await db.collection("users").where("pending_deletion","==",true).limit(50).get();
+    for (const doc of pending.docs) {
+      try { await admin.auth().getUser(doc.id); }
+      catch (err: any) {
+        if (err.code === "auth/user-not-found") await deleteUserData(doc.id);
+        else throw err;
       }
     }
-
     return null;
   });
 
@@ -3709,18 +3488,20 @@ async function notifySubscriptionServer(
     try {
       const internalSecret = process.env.INTERNAL_SECRET || "";
       if (!internalSecret) {
-        console.error("INTERNAL_SECRET not set! Skipping notification.");
-        return;
+        throw new Error("INTERNAL_SECRET is not configured");
       }
       await axios.post(url, payload, {
         headers: {
           "Content-Type": "application/json",
           "X-Internal-Secret": internalSecret
         },
+        timeout: 10000,
+        maxRedirects: 0,
       });
       console.log(`Successfully notified subscription server: ${action} ${email} for ${service}`);
     } catch (err: any) {
-      console.error(`Failed to notify subscription server for ${service}:`, err.message);
+      console.error(`Provisioning request failed for ${service}`);
+      throw err;
     }
   }
 }
@@ -3863,7 +3644,8 @@ export const chatGate = functions
       // prevents an old session cookie from bypassing expiry/revocation.
       const hasAccess = await verifySubscriptionFirestore(
         session.email,
-        agent.entitlementKey
+        agent.entitlementKey,
+        session.uid
       );
       if (!hasAccess) {
         clearSessionCookie(res);
@@ -3898,10 +3680,12 @@ async function handleLogin(req: functions.Request, res: functions.Response, secr
   }
 
   let email = "";
+  let uid = "";
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const decodedToken = await admin.auth().verifyIdToken(idToken, true);
+    uid = decodedToken.uid;
     email = (decodedToken.email || "").trim().toLowerCase();
-    if (!email) {
+    if (!email || decodedToken.email_verified !== true) {
       res.redirect(`/login?ref=${ref}&error=unverified_email`);
       return;
     }
@@ -3911,20 +3695,14 @@ async function handleLogin(req: functions.Request, res: functions.Response, secr
     return;
   }
 
-  if (!apiKey) {
-    console.error("AKAL_API_KEY tidak diset di Functions!");
-    res.status(500).send("Server configuration error.");
-    return;
-  }
-
   const agent = AGENTS[ref] || AGENTS["fikih-tahawwulat-muhaqqiq"];
   const akalCuid = agent.akalCuid;
   const entitlementKey = agent.entitlementKey || "fiqh_tahawwulat";
 
-  const isSubscriber = await verifySubscriptionHybrid(email, entitlementKey, akalCuid, apiKey);
+  const isSubscriber = await verifySubscriptionFirestore(email, entitlementKey, uid);
 
   if (isSubscriber) {
-    const payload = JSON.stringify({ email, iat: Date.now() });
+    const payload = JSON.stringify({ uid, email, iat: Date.now() });
     const payloadB64 = Buffer.from(payload).toString("base64url");
     const sig = crypto.createHmac("sha256", secret).update(payloadB64).digest("base64url");
     const sessionCookie = `${payloadB64}.${sig}`;
@@ -3953,105 +3731,14 @@ async function verifySubscriptionHybrid(email: string, entitlementKey: string, s
   return await verifyAkalSubscription(email, serviceCuid, apiKey);
 }
 
-async function verifySubscriptionFirestore(email: string, entitlementKey: string): Promise<boolean> {
-  const db = admin.firestore();
-  const now = admin.firestore.Timestamp.now();
-
-  // A. Check if user document exists and has active entitlement
-  const userQuery = await db.collection("users").where("email", "==", email).limit(1).get();
-  if (!userQuery.empty) {
-    const userData = userQuery.docs[0].data();
-    const entitlements = (userData.entitlements || {}) as Record<string, any>;
-    
-    // 1. Cek specific entitlement (F02: status wajib active dan bukan revoked)
-    const ent = entitlements[entitlementKey];
-    if (ent && ent.expiry) {
-      if (ent.status === "active" && ent.status !== "revoked" && ent.expiry.toDate() > new Date()) {
-        return true;
-      }
-    }
-
-    // 2. Cek all_access entitlement
-    const allAccess = entitlements["all_access"];
-    if (allAccess && allAccess.expiry) {
-      if (allAccess.status === "active" && allAccess.status !== "revoked" && allAccess.expiry.toDate() > new Date()) {
-        return true;
-      }
-    }
-    
-    // 3. Legacy all-access fallback (F01: hanya untuk plan all_access eksplisit)
-    const legacyPlan = userData.plan as string | undefined;
-    const isAllAccess = typeof legacyPlan === "string" && (
-      legacyPlan === "all_access" ||
-      legacyPlan === "all_ai_1m" ||
-      legacyPlan === "all_ai_6m" ||
-      legacyPlan === "all_ai_1y"
-    );
-    if (isAllAccess && userData.subscription_expiry) {
-      if (userData.subscription_expiry.toDate() > new Date()) {
-        return true;
-      }
-    }
-  }
-
-  // B. Check if there is a successful transaction in Firestore
-  const txQuery = await db.collection("transactions")
-    .where("customer_email", "==", email)
-    .where("status", "in", ["success", "paid"])
-    .get();
-
-  if (!txQuery.empty) {
-    for (const doc of txQuery.docs) {
-      const tx = doc.data();
-      const expiresAt = tx.subscription_expires_at;
-      const txEntitlement = tx.entitlement_key || "fiqh_tahawwulat";
-      
-      if (txEntitlement === entitlementKey && expiresAt && expiresAt.toDate() > new Date()) {
-        // Auto-initialize user doc if they exist in transactions but not in users collection
-        let userRef: FirebaseFirestore.DocumentReference | null = null;
-        let userData: any = {};
-        
-        if (!userQuery.empty) {
-          userRef = userQuery.docs[0].ref;
-          userData = userQuery.docs[0].data();
-        } else {
-          // F-08: Jangan membuat dokumen ber-ID acak. Hubungkan hanya jika ada akun Firebase Auth yang sah.
-          const authUser = await admin.auth().getUserByEmail(email).catch(() => null);
-          if (authUser) {
-            userRef = db.collection("users").doc(authUser.uid);
-          }
-        }
-
-        if (userRef) {
-          const expiryDate = expiresAt.toDate();
-          const plan = tx.plan || "tholib_1m";
-
-          await userRef.set({
-            email: email,
-            name: userData.name || tx.customer_name || "User",
-            plan: plan,
-            subscription_expiry: expiryDate,
-            entitlements: {
-              ...userData.entitlements,
-              [entitlementKey]: {
-                plan: plan,
-                expiry: expiryDate,
-                updated_at: now
-              }
-            },
-            questions_used: userData.questions_used || 0,
-            created_at: userData.created_at || now,
-            updated_at: now
-          }, { merge: true });
-
-          console.log(`[Auth] Auto-registered/updated user document for ${email} based on active transaction.`);
-        }
-        return true;
-      }
-    }
-  }
-
-  return false;
+async function verifySubscriptionFirestore(email: string, entitlementKey: string, uid?: string): Promise<boolean> {
+  // Web authorization must carry a verified UID. Billing history is not identity.
+  if (!uid) return false;
+  const user = await db.collection("users").doc(uid).get();
+  if (!user.exists) return false;
+  const data = user.data()!;
+  if (typeof data.email !== "string" || data.email.toLowerCase() !== email.toLowerCase()) return false;
+  return getEntitlementAccess(data, entitlementKey).active;
 }
 
 async function verifyAkalSubscription(email: string, serviceCuid: string, apiKey: string): Promise<boolean> {
@@ -4113,7 +3800,7 @@ function detectDurationMonths(priceSchemeTitle: string, serviceTitle: string): n
   return 1;
 }
 
-function verifySessionCookie(cookieHeader: string, secret: string): { email: string } | null {
+function verifySessionCookie(cookieHeader: string, secret: string): { uid: string; email: string } | null {
   if (!cookieHeader) return null;
 
   const cookies: Record<string, string> = {};
@@ -4134,14 +3821,15 @@ function verifySessionCookie(cookieHeader: string, secret: string): { email: str
 
   try {
     const expectedSig = crypto.createHmac("sha256", secret).update(payloadB64).digest("base64url");
-    if (sigB64 !== expectedSig) return null;
+    if (!safeTimingEqual(sigB64, expectedSig)) return null;
 
     const payloadStr = Buffer.from(payloadB64, "base64url").toString("utf8");
     const payload = JSON.parse(payloadStr);
 
-    if (Date.now() - payload.iat > COOKIE_MAX_AGE * 1000) return null;
-
-    return { email: payload.email };
+    if (typeof payload.uid !== "string" || !payload.uid ||
+        typeof payload.email !== "string" || !Number.isFinite(payload.iat) ||
+        payload.iat > Date.now() + 60000 || Date.now() - payload.iat > COOKIE_MAX_AGE * 1000) return null;
+    return { uid: payload.uid, email: payload.email };
   } catch {
     return null;
   }
@@ -5143,6 +4831,22 @@ class ArabicUtils {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/core/checkout_completion.dart
+```dart
+class CheckoutCompletion {
+  Future<void>? confirmation;
+  bool _finishing = false;
+  Future<void> finish({required void Function() dismissConfirmation, required void Function() closeCheckout}) async {
+    if (_finishing) return;
+    _finishing = true;
+    dismissConfirmation();
+    await confirmation;
+    closeCheckout();
+  }
+}
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/core/constants.dart
 ```dart
 class AppConstants {
@@ -5213,7 +4917,7 @@ class OTColors {
   // ── 4. Dark Typography (Clean White & High Contrast Gray) ──
   static const Color textPrimaryDark = Color(0xFFFAFAFA); // Zinc 50
   static const Color textSecondaryDark = Color(0xFFA1A1AA); // Zinc 400 (>7.0:1 WCAG AAA)
-  static const Color textTertiaryDark = Color(0xFF71717A); // Zinc 500
+  static const Color textTertiaryDark = Color(0xFFA1A1AA); // Zinc 500
 
   // ── 5. Scholarly Accents (Muted Intellectual Sapphire & Emerald) ──
   static const Color accentLight = Color(0xFF2563EB); // Intellectual sapphire
@@ -5223,7 +4927,7 @@ class OTColors {
 
   // ── 6. Semantic Colors ──
   static const Color success = Color(0xFF10B981); // Emerald green (hanya saat bermakna)
-  static const Color destructive = Color(0xFFEF4444); // Red (hanya logout/delete/error)
+  static const Color destructive = Color(0xFFDC2626); // Red (hanya logout/delete/error)
 
   // ── Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
@@ -5535,6 +5239,55 @@ class OTTypography {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/core/entitlement_keys.dart
+```dart
+const entitlementKeys = <String, String>{
+  'fiqh_tahawwulat': 'fiqh_tahawwulat',
+  'fiqh_tahawwulat_muhaqqiq': 'fiqh_tahawwulat',
+  'fiqh_tahawwulat_bayan': 'fiqh_tahawwulat',
+  'fiqh_syafii': 'fiqh_syafii',
+  'fiqh_syafii_muhaqqiq': 'fiqh_syafii',
+  'fiqh_hanafi': 'fiqh_hanafi',
+  'fiqh_maliki': 'fiqh_maliki',
+  'fiqh_hanbali': 'fiqh_hanbali',
+  'fiqh_muqaran': 'fiqh_muqaran',
+  'nahwu_sharaf': 'nahwu',
+  'nahwu_sharaf_muerib': 'nahwu',
+  'nahwu_sharaf_tashrif': 'nahwu',
+  'bahasa_arab': 'nahwu',
+  'lughah_nahwu': 'nahwu',
+  'lughah_sharaf': 'nahwu',
+  'lughah_balaghah': 'nahwu',
+  'lughah_mujam': 'nahwu',
+  'ushul_fiqh': 'ushul_fiqh',
+  'ushul_muhaqqiq': 'ushul_fiqh',
+  'usul_qawaid': 'ushul_fiqh',
+  'usul_maqashid': 'ushul_fiqh',
+  'usul_istinbath': 'ushul_fiqh',
+  'tafsir': 'tafsir',
+  'tafsir_muhaqqiq': 'tafsir',
+  'tafsir_ahkam': 'tafsir',
+  'tafsir_matsur': 'tafsir',
+  'tafsir_ulumul_quran': 'tafsir',
+  'hadits': 'hadits',
+  'hadits_muhaqqiq': 'hadits',
+  'hadits_takhrij': 'hadits',
+  'hadits_syarah': 'hadits',
+  'hadits_ilal': 'hadits',
+  'aqidah': 'aqidah',
+  'aqidah_kalam': 'aqidah',
+  'aqidah_ushuluddin': 'aqidah',
+  'tarikh': 'tarikh',
+  'tarikh_khulafa': 'tarikh',
+  'tarikh_thabaqat': 'tarikh',
+  'habib_umar': 'tasawwuf',
+  'tasawwuf_ihya': 'tasawwuf',
+  'tasawwuf_adab': 'tasawwuf',
+  'all_ai': 'all_access',
+};
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/core/hijri_date_utils.dart
 ```dart
 /// Utilitas penanggalan Islam (Hijriah) dan Masehi deterministik & akurat
@@ -5760,6 +5513,21 @@ class Loc {
     }
     return text;
   }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/core/notebook_navigation.dart
+```dart
+class NotebookNavigation {
+  static const hosts = {
+    'notebooklm.google.com', 'notebook.google.com',
+    'accounts.google.com', 'accounts.youtube.com', 'consent.google.com',
+  };
+  static bool allowed(Uri uri) => uri.scheme == 'https' && uri.userInfo.isEmpty &&
+    uri.port == 443 && hosts.contains(uri.host.toLowerCase());
+  static bool notebook(Uri uri) => allowed(uri) &&
+    (uri.host == 'notebooklm.google.com' || uri.host == 'notebook.google.com');
 }
 
 ```
@@ -6793,7 +6561,7 @@ class AgentModel {
           title: 'Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
-              'Literatur Fikih Mazhab Hanafi berbasis kitab induk Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
+              'Fikih Mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
           emoji: '⚖️',
           category: 'Fiqih',
           fieldId: 'fiqh',
@@ -6839,7 +6607,7 @@ class AgentModel {
           title: 'Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
-              'Kajian Fikih Mazhab Maliki dan \'Amal Ahlil Madinah berbasis Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
+              'Fikih Mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
           emoji: '⚖️',
           category: 'Fiqih',
           fieldId: 'fiqh',
@@ -7077,7 +6845,7 @@ class AgentModel {
           title: 'Ushul Fiqih',
           titleArabic: 'أصول الفقه',
           description:
-              'Metodologi istinbath hukum Islam dan kaidah ushuliyyah berbasis kitab-kitab ushul mu\'tabarah.',
+              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan yang diakui.',
           emoji: '📐',
           category: 'Ushul Fiqih',
           fieldId: 'usul',
@@ -7126,7 +6894,7 @@ class AgentModel {
           title: 'Bahasa Arab & Balaghah',
           titleArabic: 'النحو والصرف',
           description:
-              'Kaidah tata bahasa Arab (Nahwu, Sharaf, Balaghah, dan Mu\'jam) berbasis literatur kitab rujukan utama.',
+              'Nahwu, sharaf, balaghah, dan mu\'jam dengan rujukan kitab bahasa Arab.',
           emoji: '🔤',
           category: 'Bahasa Arab',
           fieldId: 'lughah',
@@ -7747,6 +7515,7 @@ class SubAgentModel {
 ```dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/constants.dart';
+import '../core/entitlement_keys.dart';
 
 /// Model Hak Akses Per Modul Notebook / Kitab (Canonical Entitlement)
 class ModuleEntitlement {
@@ -7764,30 +7533,9 @@ class ModuleEntitlement {
     this.updatedAt,
   });
 
-  bool get isPremium =>
-      plan != AppConstants.planTrial &&
-      (plan == AppConstants.planTholib1m ||
-          plan == AppConstants.planTholib6m ||
-          plan == AppConstants.planBahits1y ||
-          plan == 'all_ai_1m' ||
-          plan == 'all_access' ||
-          plan == 'full' ||
-          plan.startsWith('all_ai') ||
-          plan.startsWith('redeem') ||
-          plan.startsWith('voucher') ||
-          plan == 'custom');
+  bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
 
-  bool get isActive {
-    if (status != 'active') return false;
-    if (plan == 'lifetime' || plan == 'sultan_lifetime' || plan == 'all_access_lifetime') {
-      return true;
-    }
-    if (expiry == null) {
-      // Paket bertenggat tanpa expiry date dianggap data tidak lengkap
-      return false;
-    }
-    return expiry!.isAfter(DateTime.now());
-  }
+  bool get isActive => status == 'active' && expiry != null && expiry!.isAfter(DateTime.now());
 
   factory ModuleEntitlement.fromMap(Map<String, dynamic> map) {
     return ModuleEntitlement(
@@ -7797,7 +7545,7 @@ class ModuleEntitlement {
               ? (map['expiry'] as Timestamp).toDate()
               : DateTime.tryParse(map['expiry'].toString()))
           : null,
-      status: map['status'] ?? 'active',
+      status: map['status'] ?? 'trial',
       sourceTransactionId: map['source_transaction_id'] ?? map['trx_id'],
       updatedAt: map['updated_at'] != null
           ? (map['updated_at'] is Timestamp
@@ -7883,51 +7631,16 @@ class UserModel {
       isTrial && questionsUsed >= AppConstants.trialQuestionLimit;
 
   // ── Modular Entitlement Helpers ──
-  ModuleEntitlement? getEntitlement(String agentId) {
-    // 1. Cek langsung dengan ID agent
-    if (entitlements.containsKey(agentId)) {
-      return entitlements[agentId];
-    }
-    // 2. Normalisasi sub-agen (misal fiqh_tahawwulat_muhaqqiq -> fiqh_tahawwulat)
-    for (final entry in entitlements.entries) {
-      if (agentId == entry.key || agentId.startsWith('${entry.key}_')) {
-        // Khusus fiqh_tahawwulat merupakan field independen, jangan tertukar dengan rumpun fiqh umum
-        if (entry.key == 'fiqh' && agentId.startsWith('fiqh_tahawwulat')) {
-          continue;
-        }
-        return entry.value;
-      }
-    }
-    return null;
-  }
+  ModuleEntitlement? getEntitlement(String agentId) => entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
-    // 1. Cek hak akses global All Access (Paket Semua AI)
-    final allAccess = entitlements['all_access'] ?? entitlements['all_ai'];
-    if (allAccess != null) {
-      if (allAccess.status == 'revoked') return false;
-      if (allAccess.isActive && allAccess.isPremium) {
-        return true;
-      }
-    }
-    // 2. Cek hak akses modul spesifik
-    final ent = getEntitlement(agentId);
-    if (ent != null) {
-      if (ent.status == 'revoked') return false;
-      return ent.isActive && ent.isPremium;
-    }
-    // 3. Jika peta entitlement terisi, batasi strictly pada modul yang terdaftar
-    if (entitlements.isNotEmpty) {
-      return false;
-    }
-    // 4. Fallback legacy HANYA jika plan akun adalah paket all_access eksplisit
-    final isLegacyAllAccess = plan == 'all_access' ||
-        plan == 'full' ||
-        plan == AppConstants.planBahits1y ||
-        plan.startsWith('all_ai') ||
-        plan.startsWith('redeem_all') ||
-        plan.startsWith('voucher_all');
-    return isLegacyAllAccess && isSubscriptionActive;
+    final all = entitlements['all_access'] ?? entitlements['all_ai'];
+    if (all != null && all.isActive && all.isPremium) return true;
+    final specific = getEntitlement(agentId);
+    if (specific != null && specific.isActive && specific.isPremium) return true;
+    if (entitlements.isNotEmpty) return false;
+    const legacyPlans = ['all_access', 'all_ai_1m', 'all_ai_6m', 'all_ai_1y', 'full'];
+    return legacyPlans.contains(plan) && isSubscriptionActive;
   }
 
   bool hasAccessToAgent(String agentId) {
@@ -8034,7 +7747,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../core/notebook_navigation.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -8064,17 +7777,7 @@ class AgentWebviewScreen extends StatefulWidget {
   const AgentWebviewScreen({super.key, this.agent});
 
   /// Kebijakan keamanan URL: Hanya izinkan HTTPS pada ekosistem resmi Google NotebookLM
-  static bool isAllowedNotebookUrl(Uri uri) {
-    if (uri.scheme.toLowerCase() != 'https') return false;
-    final host = uri.host.toLowerCase();
-    const allowedDomains = [
-      'google.com',
-      'gstatic.com',
-      'googleapis.com',
-      'googleusercontent.com',
-    ];
-    return allowedDomains.any((d) => host == d || host.endsWith('.$d'));
-  }
+  static bool isAllowedNotebookUrl(Uri uri) => NotebookNavigation.allowed(uri);
 
   @override
   State<AgentWebviewScreen> createState() => _AgentWebviewScreenState();
@@ -8100,6 +7803,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   bool _isBookmarking = false;
   bool _hasCopied = false;
   bool _hasBookmarked = false;
+  bool _isGoingBack = false;
 
   @override
   void initState() {
@@ -8110,7 +7814,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _loadFontScale() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final scale = prefs.getDouble('turath_font_zoom_level') ?? 1.0;
+      final value = prefs.getDouble('turath_font_zoom_level') ?? 1.0;
+      final scale = value.isFinite ? value.clamp(0.85, 2.0).toDouble() : 1.0;
       if (mounted) {
         setState(() => _fontScale = scale);
       }
@@ -8118,16 +7823,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _setFontScale(double scale) async {
+    if (!mounted || !scale.isFinite) return;
+    scale = scale.clamp(0.85, 2.0).toDouble();
     setState(() => _fontScale = scale);
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('turath_font_zoom_level', scale);
+      if (!mounted) return;
+      await _applyCurrentFontScale();
     } catch (_) {}
-    if (_webController != null) {
-      await _webController!.evaluateJavascript(
-        source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($scale); }',
-      );
-    }
   }
 
   Future<void> _applyCurrentFontScale() async {
@@ -8141,24 +7845,23 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   @override
   void dispose() {
-    try {
-      _webController?.evaluateJavascript(source: '''
-        if (window.otMasterObserver) {
-          window.otMasterObserver.disconnect();
-          window.otMasterObserver = null;
-        }
-      ''');
-      _webController?.stopLoading();
-    } catch (_) {
-    } finally {
-      _webController = null;
+    final controller = _webController;
+    _webController = null;
+    if (controller != null) {
+      unawaited(_stopWebView(controller));
     }
     super.dispose();
   }
 
+  static Future<void> _stopWebView(InAppWebViewController controller) async {
+    try { await controller.stopLoading(); } catch (_) {}
+  }
+
   static const String _turatsMasterScript = r"""
     (function() {
-      // 1. Injeksi Style CSS Penting
+      if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
+
+      // 1. Injeksi Style CSS: Sembunyikan Header Resmi, Logo Google & NotebookLM
       var styleId = 'ot-hide-controls';
       var existingStyle = document.getElementById(styleId);
       if (!existingStyle) {
@@ -8166,38 +7869,25 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         style.id = styleId;
         style.type = 'text/css';
         style.textContent = `
+          /* Header, Top Bar, Logo, dan Banner Google NotebookLM */
           top-bar, .top-bar, header, .header, .app-header, app-header,
           mat-toolbar, [role="banner"], .header-container, .header-row,
-          div[class*="header" i], div[class*="top-bar" i], div[class*="topbar" i],
+          .mobile-header, div[class*="mobile-header" i],
           labs-tailwind-logo, a.logo-link, .logo-container,
           a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
           .title-input, input.title-input, .title-container, .notebook-title,
           .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
           div[class*="title-card" i], div[class*="notebook-header" i],
-          div[class*="source-summary" i], div[class*="source-count" i],
-          div[class*="notebook-info" i], .project-header, div.source-badge-container,
-          div[class*="notebook-title" i], [class*="artifact-card" i],
-          .mobile-header, div[class*="mobile-header" i],
-          app-chat-guide, .chat-guide, div[class*="guide" i],
-          div[class*="landing" i], div[class*="banner" i],
-          div[class*="cover" i], [class*="notebook-info" i],
-          mat-card[class*="guide" i], mat-card[class*="info" i],
-          button[aria-label*="Copy" i], button[aria-label*="Salin" i],
-          button[aria-label*="Create" i], button[aria-label*="Buat" i],
-          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-          button.mat-tonal-button, a[aria-label*="Google" i],
-          .gb_C, #gb, #gbwa, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          .project-header, div.source-badge-container,
+          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
           .pro-badge,
-          .disclaimer, [class*="disclaimer" i], [class*="footnote" i], .compliance-notice, .legal-text,
-          .input-footer, div[class*="input-footer" i], div[class*="footer" i],
-          p[class*="disclaimer" i], span[class*="disclaimer" i],
-          div[aria-label*="disclaimer" i], div[aria-label*="inaccurate" i],
-          .bottom-disclaimer, div[class*="bottom-disclaimer" i],
-          div[class*="terms" i] {
+          /* Google Account Bar, App Launcher & Setelan */
+          #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button.mat-tonal-button, a[aria-label*="Google" i] {
             display: none !important;
             visibility: hidden !important;
             height: 0px !important;
-            min-height: 0px !important;
             max-height: 0px !important;
             overflow: hidden !important;
             margin: 0px !important;
@@ -8208,9 +7898,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             pointer-events: none !important;
             border: none !important;
           }
-          ::-webkit-scrollbar { display: none !important; width: 0px !important; height: 0px !important; }
-          html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
-          /* Padding atas dan bawah yang cukup agar pesan teratas tidak terpotong */
+          ::-webkit-scrollbar { display: none !important; width: 0px !important; }
+          html, body, * { scrollbar-width: none !important; }
+          /* Padding atas dan bawah agar percakapan tidak terpotong */
           .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
             padding-top: 14px !important;
             padding-bottom: 24px !important;
@@ -8220,87 +7910,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         (document.head || document.documentElement).appendChild(style);
       }
 
-      // Helper untuk komunikasi aman ke Flutter
-      function sendToFlutter(name, data) {
-        if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
-          window.flutter_inappwebview.callHandler(name, data);
+      // 2. Font Scale Presisi
+      window.applyTurathFontScale = function(value) {
+        var scale = Number(value);
+        if (!Number.isFinite(scale)) return;
+        scale = Math.max(0.85, Math.min(2, scale));
+        var fontStyle = document.getElementById('ot-font-scale-style');
+        if (!fontStyle) {
+          fontStyle = document.createElement('style');
+          fontStyle.id = 'ot-font-scale-style';
+          (document.head || document.documentElement).appendChild(fontStyle);
         }
-      }
-
-      // 2. Sembunyikan Kartu Landing NotebookLM yang Memuat Metadata Teknis & Poster
-      function sweepNotebookLandingCard() {
-        try {
-          var allCandidates = document.querySelectorAll('app-chat-guide, mat-card, .mat-mdc-card, [role="region"], div[class*="guide" i], div[class*="card" i], div[class*="header" i], div[class*="banner" i], div[class*="cover" i], div');
-          for (var i = 0; i < allCandidates.length; i++) {
-            var el = allCandidates[i];
-            if (el.querySelector('textarea, input, [role="article"], .chat-message, .message-content, .query-text')) {
-              continue;
-            }
-            var txt = (el.innerText || '').toLowerCase();
-            var isBanner = txt.includes('0 sources') || txt.includes('sources ·') ||
-                           txt.includes('super ai') || txt.includes('bridging turath') ||
-                           txt.includes('asisten penelitian berbasis turath') ||
-                           (txt.includes('sources') && (txt.includes('dec 22') || txt.includes('feb 22') || /\b(19|20)\d{2}\b/.test(txt)));
-            if (isBanner && el.clientHeight > 15 && el.clientHeight < 700) {
-              el.style.setProperty('display', 'none', 'important');
-              el.style.setProperty('visibility', 'hidden', 'important');
-              el.style.setProperty('height', '0px', 'important');
-              el.style.setProperty('min-height', '0px', 'important');
-              el.style.setProperty('max-height', '0px', 'important');
-              el.style.setProperty('margin', '0px', 'important');
-              el.style.setProperty('padding', '0px', 'important');
-              el.style.setProperty('overflow', 'hidden', 'important');
-              el.style.setProperty('opacity', '0', 'important');
-              el.style.setProperty('pointer-events', 'none', 'important');
-            }
-          }
-
-          // Sembunyikan SEMUA elemen disclaimer Gemini / NotebookLM inaccurate
-          var disclaimers = document.querySelectorAll('p, span, div, small, footer, [role="contentinfo"]');
-          for (var d = 0; d < disclaimers.length; d++) {
-            var del = disclaimers[d];
-            if (del.querySelector('textarea, input, [role="article"], .chat-message, .message-content, .query-text')) continue;
-            var dtxt = (del.innerText || '').toLowerCase();
-            if (dtxt.includes('inaccurate') ||
-                dtxt.includes('can make mistakes') ||
-                dtxt.includes('gemini may') ||
-                dtxt.includes('double-check') ||
-                dtxt.includes('notebooklm can') ||
-                dtxt.includes('tidak akurat') ||
-                dtxt.includes('membuat kesalahan')) {
-              del.style.setProperty('display', 'none', 'important');
-              del.style.setProperty('visibility', 'hidden', 'important');
-              del.style.setProperty('height', '0px', 'important');
-              del.style.setProperty('opacity', '0', 'important');
-              del.style.setProperty('margin', '0px', 'important');
-              del.style.setProperty('padding', '0px', 'important');
-            }
-          }
-
-          // Poles Input Placeholder ke Bahasa Indonesia Ilmiah
-          var inputs = document.querySelectorAll('textarea, input[type="text"]');
-          for (var k = 0; k < inputs.length; k++) {
-            if (inputs[k].placeholder && (inputs[k].placeholder.includes('Ask a question') || inputs[k].placeholder.includes('create something'))) {
-              inputs[k].placeholder = 'Tanyakan sesuatu tentang kitab ini...';
-            }
-          }
-        } catch(e) {}
-      }
-
-      // 3. Font scale aman tanpa compound font explosion (F36)
-      window.applyTurathFontScale = function(scale) {
-        var id = 'ot-font-scale-style';
-        var st = document.getElementById(id);
-        if (!st) {
-          st = document.createElement('style');
-          st.id = id;
-          (document.head || document.documentElement).appendChild(st);
-        }
-        var basePx = Math.round(scale * 15);
-        var arabicPx = Math.round(scale * 19);
-        st.textContent = `
+        fontStyle.textContent = `
           .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"] {
-            font-size: ${basePx}px !important;
+            font-size: ${Math.round(scale * 15)}px !important;
             line-height: 1.65 !important;
           }
           .chat-panel-content p, .chat-view p, [role="article"] p,
@@ -8309,31 +7932,19 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             font-size: inherit !important;
             line-height: inherit !important;
           }
-          [lang="ar"], .arabic, *[class*="arabic" i] {
-            font-size: ${arabicPx}px !important;
+          [lang="ar"], .arabic {
+            font-size: ${Math.round(scale * 19)}px !important;
             line-height: 1.8 !important;
           }
         `;
       };
-
-      // 4. Observer Ringan dengan Debounce (Anti CPU Drain & Bebas Perulangan Berantai)
-      sweepNotebookLandingCard();
-      if (!window.__otMasterObserver) {
-        var timeout = null;
-        window.__otMasterObserver = new MutationObserver(function() {
-          if (timeout) clearTimeout(timeout);
-          timeout = setTimeout(function() {
-            sweepNotebookLandingCard();
-          }, 250);
-        });
-        window.__otMasterObserver.observe(document.documentElement || document.body, { childList: true, subtree: true });
-      }
     })();
   """;
 
   static final _cloakScript = UserScript(
     source: _turatsMasterScript,
     injectionTime: UserScriptInjectionTime.AT_DOCUMENT_END,
+    forMainFrameOnly: true,
   );
 
   @override
@@ -8347,7 +7958,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       } else if (rawArgs is AgentModel) {
         _agent = rawArgs;
       }
-      _agent ??= AgentModel.defaultAgents.first;
+      _agent ??= widget.agent ?? AgentModel.defaultAgents.first;
       _fetchAgentUrl();
     }
   }
@@ -8434,10 +8045,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       """);
       if (res == 'DENIED' && mounted) {
         setState(() {
-          _isPaywallRequired = true;
+          final alreadyEntitled = _user?.hasAccessToAgent(_agent?.id ?? '') ?? false;
+          _isPaywallRequired = !alreadyEntitled;
           _isLoadingUrl = false;
           _isWebViewLoading = false;
-          _errorMessage = AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
+          _errorMessage = alreadyEntitled
+              ? 'Hak akses sudah tercatat. NotebookLM belum mengenali akun ini. Pastikan akun Google sesuai, lalu coba muat kembali.'
+              : AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
         });
       }
     } catch (_) {}
@@ -8515,7 +8129,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _bookmarkLatestResponse() async {
-    if (_webController == null) return;
+    if (_webController == null || _isBookmarking) return;
+    final ownerUid = _authService.currentUser?.uid;
+    if (ownerUid == null) return;
     HapticFeedback.mediumImpact();
     setState(() => _isBookmarking = true);
 
@@ -8576,10 +8192,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           // F28 & F30: Pisahkan nama spesialis AI dari rujukan kitab primer
           final bookRef = detectedBook.isNotEmpty
               ? detectedBook
-              : 'Sumber Primer (${_agent?.category ?? "Turats"})';
+              : 'Rujukan belum diidentifikasi';
 
           final bookmark = BookmarkModel(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            id: DateTime.now().microsecondsSinceEpoch.toString(),
             title: 'Kajian ${_agent?.category ?? "Turats"}: ${bookRef.length > 28 ? "${bookRef.substring(0, 28)}..." : bookRef}',
             agentId: _agent?.id ?? 'umum',
             agentTitle: _agent?.title ?? 'Spesialis Turats',
@@ -8592,7 +8208,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             createdAt: DateTime.now(),
           );
 
-          await _bookmarkService.addBookmark(bookmark);
+          await _bookmarkService.addBookmark(bookmark, userId: ownerUid);
           if (mounted) {
             setState(() => _hasBookmarked = true);
             AppSnackBar.success(
@@ -8600,7 +8216,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               AppCopy.savedSuccess,
               action: SnackBarAction(
                 label: 'Lihat',
-                textColor: Colors.white,
+                textColor: OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark),
                 onPressed: () => Navigator.pushNamed(context, AppRoutes.bookmark),
               ),
             );
@@ -8620,13 +8236,21 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _handleBackPress() async {
-    HapticFeedback.lightImpact();
-    if (_webController != null && await _webController!.canGoBack()) {
-      await _webController!.goBack();
-    } else {
-      if (mounted) {
+    if (!mounted || _isGoingBack) return;
+    _isGoingBack = true;
+    final controller = _webController;
+    try {
+      final canGoBack = await controller?.canGoBack() ?? false;
+      if (!mounted) return;
+      if (canGoBack && controller != null && identical(controller, _webController)) {
+        await controller.goBack();
+      } else {
         Navigator.pop(context);
       }
+    } catch (_) {
+      if (mounted) Navigator.pop(context);
+    } finally {
+      _isGoingBack = false;
     }
   }
 
@@ -8762,8 +8386,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       useHybridComposition: true,
                       mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       allowFileAccess: false,
-                      allowContentAccess: true,
-                      javaScriptCanOpenWindowsAutomatically: true,
+                      allowContentAccess: false,
+                      javaScriptCanOpenWindowsAutomatically: false,
+                      useShouldOverrideUrlLoading: true,
                       supportZoom: true,
                       builtInZoomControls: true,
                       displayZoomControls: false,
@@ -8773,103 +8398,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       algorithmicDarkeningAllowed: false,
                       transparentBackground: true,
                     ),
-                onWebViewCreated: (controller) {
-                  _webController = controller;
-
-                  // Injeksi Callback Simpan Bookmark Langsung dari Respon AI
-                  controller.addJavaScriptHandler(
-                    handlerName: 'onSaveBookmark',
-                    callback: (args) async {
-                      if (args.isNotEmpty && args[0] is Map) {
-                        final map = Map<String, dynamic>.from(args[0] as Map);
-                        final fullAnswer = (map['fullAnswer'] as String? ?? '').trim();
-                        final arabicExcerpt = (map['arabicExcerpt'] as String? ?? '').trim();
-                        final question = (map['question'] as String? ?? '').trim();
-
-                        if (fullAnswer.isEmpty) {
-                          if (context.mounted) {
-                            AppSnackBar.show(
-                              context,
-                              message: AppCopy.emptyAnswerCannotSave,
-                              type: SnackType.error,
-                            );
-                          }
-                          return;
-                        }
-
-                        final title = question.isNotEmpty
-                            ? (question.length > 55 ? '${question.substring(0, 52)}...' : question)
-                            : (_agent?.title != null ? 'Kajian ${_agent!.title}' : 'Kajian Kitab');
-
-                        final category = _agent?.category ?? 'Fikih';
-
-                        final bookmark = BookmarkModel(
-                          id: DateTime.now().millisecondsSinceEpoch.toString(),
-                          title: title,
-                          agentId: _agent?.id ?? 'umum',
-                          agentTitle: _agent?.title ?? 'Kutubut Turats',
-                          fieldName: category,
-                          fieldId: category.toLowerCase().replaceAll(' ', '_'),
-                          arabicExcerpt: arabicExcerpt,
-                          fullAnswer: fullAnswer,
-                          bookReference: _agent?.title ?? 'Kutubut Turats',
-                          pageNumber: '',
-                          createdAt: DateTime.now(),
-                        );
-
-                        await _bookmarkService.addBookmark(bookmark);
-                        if (context.mounted) {
-                          AppSnackBar.show(
-                            context,
-                            message: AppCopy.savedSuccess,
-                            type: SnackType.success,
-                            action: SnackBarAction(
-                              label: 'Lihat',
-                              textColor: Colors.white,
-                              onPressed: () => Navigator.pushNamed(context, AppRoutes.bookmark),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  );
-
-                  // Callback Konfirmasi Salin Teks
-                  controller.addJavaScriptHandler(
-                    handlerName: 'onCopySuccess',
-                    callback: (args) {
-                      if (mounted) {
-                        AppSnackBar.show(
-                          context,
-                          message: AppCopy.answerCopied,
-                          type: SnackType.info,
-                        );
-                      }
-                    },
-                  );
-                },
-                onPermissionRequest: (controller, request) async {
-                  final isAudio = request.resources.contains(PermissionResourceType.MICROPHONE);
-                  return PermissionResponse(
-                    resources: request.resources,
-                    action: isAudio ? PermissionResponseAction.GRANT : PermissionResponseAction.DENY,
-                  );
-                },
+                onWebViewCreated: (controller) { _webController = controller; },
+                onPermissionRequest: (controller, request) async => PermissionResponse(
+                  resources: request.resources, action: PermissionResponseAction.DENY,
+                ),
                 shouldOverrideUrlLoading: (controller, navigationAction) async {
                   final uri = navigationAction.request.url;
-                  if (uri == null) return NavigationActionPolicy.ALLOW;
-
-                  if (AgentWebviewScreen.isAllowedNotebookUrl(uri)) {
-                    return NavigationActionPolicy.ALLOW;
-                  }
-
-                  try {
-                    if (await canLaunchUrl(uri)) {
-                      await launchUrl(uri, mode: LaunchMode.externalApplication);
-                      return NavigationActionPolicy.CANCEL;
-                    }
-                  } catch (_) {}
-                  return NavigationActionPolicy.CANCEL;
+                  return uri != null && NotebookNavigation.allowed(uri)
+                    ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL;
                 },
                 onLoadStop: (controller, url) async {
                   await _applyHideScript();
@@ -10591,13 +10127,13 @@ class _DashboardAnnouncementCarouselState
       badge: 'TENTANG OPENTURATH',
       title: 'Mengenal OpenTurath AI',
       summary:
-          'Asisten riset keilmuan Islam berbasis korpus naskah primer mu\'tabar untuk mempermudah penelaahan turats.',
+          'Membaca kitab dan menelusuri ibarah dari naskah rujukan.',
       detailedContent:
-          'OpenTurath dirancang sebagai ruang telaah digital bagi para santri, asatidz, dan akademisi. Sistem ini mengintegrasikan ribuan halaman naskah primer kitab kuning (turats) dengan kemampuan pemrosesan bahasa alami untuk mencari referensi, memahami konteks ibarah, dan melacak perbandingan lintas matan dan syarah secara presisi.',
+          'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru.',
     ),
     _AnnouncementSlide(
       badge: 'KEUNGGULAN RISET',
-      title: 'Riset Berbasis Sanad & Takhrij',
+      title: 'Menelusuri Sanad dan Takhrij',
       summary:
           'Dilengkapi kutipan ibarah teks asli, nomor halaman kitab muktamad, serta komparasi silang antar-mazhab.',
       detailedContent:
@@ -10901,6 +10437,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/routes.dart';
+import '../core/notebook_navigation.dart';
 import '../core/theme.dart';
 import '../services/auth_service.dart';
 import '../widgets/app_loader.dart';
@@ -10936,7 +10473,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Simpan status sesi dan arahkan ke Dashboard
   Future<void> _onSessionAuthenticated() async {
-    if (_isSessionReady) return;
+    if (!mounted || _isSessionReady) return;
     setState(() => _isSessionReady = true);
 
     try {
@@ -11019,7 +10556,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         body: const Center(
           child: AppLoader(
             title: 'Sesi Google Terhubung',
-            subtitle: 'Menyiapkan akses korpus riset kitab...',
+            subtitle: 'Menyiapkan akses kitab.',
             dotSize: 10,
           ),
         ),
@@ -11030,7 +10567,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        if (await _webController?.canGoBack() ?? false) {
+        final canGoBack = await _webController?.canGoBack() ?? false;
+        if (!mounted) return;
+        if (canGoBack) {
           await _webController?.goBack();
         } else {
           await _confirmCancelAndSignOut();
@@ -11136,8 +10675,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       sharedCookiesEnabled: true,
                       thirdPartyCookiesEnabled: true,
                       useHybridComposition: true,
-                      supportMultipleWindows: true,
-                      javaScriptCanOpenWindowsAutomatically: true,
+                      supportMultipleWindows: false,
+                      useShouldOverrideUrlLoading: true,
+                      javaScriptCanOpenWindowsAutomatically: false,
                       mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       allowFileAccess: false,
                       allowContentAccess: false,
@@ -11148,27 +10688,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       final uri = navigationAction.request.url;
                       if (uri == null) return NavigationActionPolicy.CANCEL;
 
-                      final scheme = uri.scheme.toLowerCase();
-                      if (scheme != 'https') return NavigationActionPolicy.CANCEL;
-
-                      final host = uri.host.toLowerCase();
-                      final isAllowed = host.endsWith('.google.com') ||
-                          host == 'google.com' ||
-                          host.endsWith('.gstatic.com') ||
-                          host.endsWith('.googleusercontent.com');
-
-                      return isAllowed
-                          ? NavigationActionPolicy.ALLOW
-                          : NavigationActionPolicy.CANCEL;
+                      return NotebookNavigation.allowed(uri)
+                          ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL;
                     },
                     onWebViewCreated: (controller) => _webController = controller,
                     onProgressChanged: (controller, progress) {
-                      _loadProgress.value = progress / 100;
+                      if (mounted) _loadProgress.value = progress / 100;
                     },
                     onLoadStop: (controller, url) async {
-                      if (url == null) return;
+                      if (!mounted || url == null) return;
                       final urlStr = url.toString();
-                      final host = url.host.toLowerCase();
 
                       final cookieManager = CookieManager.instance();
                       final cookies = await cookieManager.getCookies(
@@ -11181,8 +10710,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                           c.name == 'OSID');
 
                       if (hasSession ||
-                          ((host.contains('notebook.google.com') ||
-                                  host.contains('notebooklm.google.com')) &&
+                          (NotebookNavigation.notebook(url) &&
                               !urlStr.contains('ServiceLogin') &&
                               !urlStr.contains('signin'))) {
                         await _onSessionAuthenticated();
@@ -12315,7 +11843,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
 
-    if (confirm != true) return;
+    if (!mounted || confirm != true) return;
 
     setState(() => _isLoggingOut = true);
     try {
@@ -12372,7 +11900,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
 
-    if (confirm != true) return;
+    if (!mounted || confirm != true) return;
 
     setState(() => _isDeletingAccount = true);
     try {
@@ -12848,7 +12376,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildLegalSection(
                       title: '1. Ruang Lingkup & Tujuan Riset',
                       content:
-                          'OpenTurath AI adalah platform penelaahan komputasi naskah primer keilmuan Islam (turats). Layanan ini dirancang khusus untuk mempermudah santri, akademisi, asatidz, dan peneliti dalam mencari ibarah, membandingkan matan dan syarah, serta melacak rujukan kitab muktamad.',
+                          'OpenTurath membantu pembaca mencari ibarah, membandingkan matan dan syarah, serta menelusuri rujukan kitab. Hasilnya perlu diperiksa kembali pada naskah asli.',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
@@ -13034,7 +12562,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Antarmuka aplikasi saat ini dioptimalkan untuk Bahasa Indonesia dengan dukungan penuh teks Arab gundul/berharakat pada naskah kitab kuning primer.',
+              'Menu tersedia dalam bahasa Indonesia. Teks Arab dapat dibaca dengan atau tanpa harakat.',
               style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 10),
@@ -13725,9 +13253,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<String?> _getOrPromptPhone() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return null;
+    final phoneKey = 'openturath_${uid}_user_phone';
     try {
       final prefs = await SharedPreferences.getInstance();
-      final saved = prefs.getString('user_phone') ?? '';
+      final saved = prefs.getString(phoneKey) ?? '';
       if (saved.isNotEmpty && saved.length >= 8) {
         return saved;
       }
@@ -13818,7 +13349,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (phone != null && phone.isNotEmpty) {
       try {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user_phone', phone);
+        await prefs.setString(phoneKey, phone);
       } catch (_) {}
     }
     return phone;
@@ -14144,7 +13675,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.base),
 
                         // Core Benefits
-                        _benefitRow('Akses simultan ke seluruh ruang riset & korpus kitab', textPrimary),
+                        _benefitRow('Akses ke seluruh kajian dan kitab', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow('Penelusuran mendalam tanpa batas kuota pertanyaan harian', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
@@ -14479,6 +14010,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../core/constants.dart';
+import 'session_user_stream.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -14697,69 +14229,16 @@ class AuthService {
   // ── Stream user changes (real-time with single persistent cached stream, F10 & F41) ──
   Stream<UserModel?> get userStream => _cachedUserStream ??= _buildUserStream();
 
-  Stream<UserModel?> _buildUserStream() {
-    late StreamController<UserModel?> controller;
-    StreamSubscription<User?>? authSub;
-    StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? docSub;
-
-    controller = StreamController<UserModel?>.broadcast(
-      onListen: () {
-        authSub = _auth.authStateChanges().listen((user) async {
-          await docSub?.cancel();
-          docSub = null;
-
-          if (user == null) {
-            if (!controller.isClosed) controller.add(null);
-          } else {
-            // Optimistic emit from cache if available (stale-while-revalidate)
-            final cached = await _getCachedUser(user.uid);
-            if (cached != null && !controller.isClosed) {
-              controller.add(cached);
-            }
-
-            docSub = _db
-                .collection(AppConstants.colUsers)
-                .doc(user.uid)
-                .snapshots()
-                .listen(
-              (doc) {
-                if (controller.isClosed) return;
-                if (doc.exists) {
-                  final userModel = UserModel.fromFirestore(doc);
-                  _cacheUserLocally(userModel);
-                  controller.add(userModel);
-                } else {
-                  controller.add(null);
-                }
-              },
-              onError: (err) async {
-                if (controller.isClosed) return;
-                // Preserve last known state on Firestore error instead of degrading to empty trial (F41)
-                final fallback = await _getCachedUser(user.uid) ??
-                    UserModel(
-                      uid: user.uid,
-                      name: user.displayName ?? 'Pengguna',
-                      email: user.email ?? '',
-                      photoUrl: user.photoURL ?? '',
-                      plan: AppConstants.planTrial,
-                      questionsUsed: 0,
-                    );
-                controller.add(fallback);
-              },
-            );
-          }
-        }, onError: (err) {
-          if (!controller.isClosed) controller.addError(err);
-        });
-      },
-      onCancel: () {
-        docSub?.cancel();
-        authSub?.cancel();
-      },
-    );
-
-    return controller.stream;
-  }
+  Stream<UserModel?> _buildUserStream() => sessionUserStream<UserModel>(
+    auth: _auth.authStateChanges().map((user) => user?.uid),
+    cached: _getCachedUser,
+    watch: (uid) => _db.collection(AppConstants.colUsers).doc(uid).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      final user = UserModel.fromFirestore(doc);
+      if (_auth.currentUser?.uid == uid) { unawaited(_cacheUserLocally(user)); }
+      return user;
+    }),
+  );
 
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
@@ -14807,43 +14286,13 @@ class AuthService {
     final user = currentUser;
     if (user == null) return;
     final uid = user.uid;
-    final email = user.email ?? '';
 
-    // 1. Tandai dokumen sebagai pending_deletion & catat outbox revoke SEBELUM Auth dihapus
-    try {
-      await _db.collection(AppConstants.colUsers).doc(uid).set(
-        {
-          'pending_deletion': true,
-          'pending_deletion_at': FieldValue.serverTimestamp(),
-        },
-        SetOptions(merge: true),
-      ).timeout(const Duration(seconds: 4));
-
-      if (email.isNotEmpty) {
-        final outboxDoc = _db.collection('provisioning_outbox').doc('del_${uid}_${DateTime.now().millisecondsSinceEpoch}');
-        await outboxDoc.set({
-          'uid': uid,
-          'email': email,
-          'action': 'remove',
-          'plan': 'trial',
-          'entitlement_key': 'all_access',
-          'status': 'pending',
-          'attempts': 0,
-          'created_at': FieldValue.serverTimestamp(),
-        }).timeout(const Duration(seconds: 4));
-      }
-    } catch (_) {}
-
-    // 2. WAJIB Hapus Akun Auth Terlebih Dahulu. Jika gagal (misal requires-recent-login), stop di sini.
+    // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     await user.delete();
-
-    // 3. Hanya setelah Auth berhasil dihapus, bersihkan data Firestore
     try {
-      await _db
-          .collection(AppConstants.colUsers)
-          .doc(uid)
-          .delete()
-          .timeout(const Duration(seconds: 5));
+      await CookieManager.instance().deleteAllCookies();
+      await InAppWebViewController.clearAllCache();
+      await WebStorageManager.instance().deleteAllData();
     } catch (_) {}
 
     // 4. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())
@@ -14881,121 +14330,52 @@ class AuthService {
 
 ### FLUTTER FILE: openturath_ai/lib/services/bookmark_service.dart
 ```dart
-import 'dart:async';
-import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/bookmark_model.dart';
+import 'scoped_json_store.dart';
 
 class BookmarkService extends ChangeNotifier {
   static final BookmarkService _instance = BookmarkService._internal();
   factory BookmarkService() => _instance;
   BookmarkService._internal();
 
-  static const String _legacyKey = 'openturath_saved_bookmarks';
-  List<BookmarkModel> _cachedBookmarks = [];
-  Future<void>? _activeLock;
+  final _store = ScopedJsonListStore<BookmarkModel>(
+    storage: PreferencesStringStore(), decode: BookmarkModel.fromJson,
+    encode: (bookmark) => bookmark.toJson(),
+  );
 
-  Future<T> _synchronized<T>(Future<T> Function() action) async {
-    final previousLock = _activeLock;
-    final completer = Completer<void>();
-    _activeLock = completer.future;
-    try {
-      if (previousLock != null) {
-        await previousLock.timeout(const Duration(seconds: 5), onTimeout: () {});
-      }
-      return await action();
-    } finally {
-      completer.complete();
-    }
-  }
-
-  String _getKey([String? userId]) {
+  String _key(String? userId) {
     final uid = userId ?? FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null && uid.isNotEmpty) {
-      return 'openturath_${uid}_saved_bookmarks';
-    }
-    return _legacyKey;
+    return uid == null || uid.isEmpty ? 'openturath_saved_bookmarks' : 'openturath_${uid}_saved_bookmarks';
   }
 
-  Future<List<BookmarkModel>> getBookmarks({String? userId}) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = _getKey(userId);
-    var raw = prefs.getString(key);
-
-    // Auto-migrasi data legacy jika ada
-    if ((raw == null || raw.isEmpty) && key != _legacyKey) {
-      final legacyRaw = prefs.getString(_legacyKey);
-      if (legacyRaw != null && legacyRaw.isNotEmpty) {
-        raw = legacyRaw;
-        await prefs.setString(key, legacyRaw);
-        await prefs.remove(_legacyKey);
-      }
-    }
-
-    if (raw == null || raw.isEmpty) {
-      return _cachedBookmarks.isNotEmpty && key == _getKey() ? _cachedBookmarks : [];
-    }
-
-    try {
-      final list = jsonDecode(raw) as List;
-      _cachedBookmarks = list
-          .map((e) => BookmarkModel.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-      return List.from(_cachedBookmarks);
-    } catch (e) {
-      // Karantina data korup agar tidak hilang selamanya (F27)
-      try {
-        final timestamp = DateTime.now().millisecondsSinceEpoch;
-        await prefs.setString('openturath_bookmarks_corrupted_$timestamp', raw);
-      } catch (_) {}
-      return List.from(_cachedBookmarks);
-    }
-  }
+  Future<List<BookmarkModel>> getBookmarks({String? userId}) => _store.read(_key(userId));
 
   Future<void> saveAll(List<BookmarkModel> bookmarks, {String? userId}) async {
-    await _synchronized(() async {
-      final prefs = await SharedPreferences.getInstance();
-      final key = _getKey(userId);
-      final raw = jsonEncode(bookmarks.map((e) => e.toJson()).toList());
-      await prefs.setString(key, raw);
-      _cachedBookmarks = List.from(bookmarks);
-      notifyListeners();
-    });
+    final key = _key(userId);
+    await _store.replace(key, bookmarks);
+    notifyListeners();
   }
 
   Future<void> addBookmark(BookmarkModel bookmark, {String? userId}) async {
-    await _synchronized(() async {
-      final list = await getBookmarks(userId: userId);
-      list.removeWhere((b) => b.id == bookmark.id);
-      list.insert(0, bookmark);
-      final prefs = await SharedPreferences.getInstance();
-      final key = _getKey(userId);
-      final raw = jsonEncode(list.map((e) => e.toJson()).toList());
-      await prefs.setString(key, raw);
-      _cachedBookmarks = List.from(list);
-      notifyListeners();
+    final key = _key(userId);
+    await _store.update(key, (items) {
+      items.removeWhere((item) => item.id == bookmark.id);
+      items.insert(0, bookmark);
+      return items;
     });
+    notifyListeners();
   }
 
   Future<void> deleteBookmark(String id, {String? userId}) async {
-    await _synchronized(() async {
-      final list = await getBookmarks(userId: userId);
-      list.removeWhere((b) => b.id == id);
-      final prefs = await SharedPreferences.getInstance();
-      final key = _getKey(userId);
-      final raw = jsonEncode(list.map((e) => e.toJson()).toList());
-      await prefs.setString(key, raw);
-      _cachedBookmarks = List.from(list);
-      notifyListeners();
-    });
+    final key = _key(userId);
+    await _store.update(key, (items) => items..removeWhere((item) => item.id == id));
+    notifyListeners();
   }
 
-  Future<bool> isBookmarked(String id, {String? userId}) async {
-    final list = await getBookmarks(userId: userId);
-    return list.any((b) => b.id == id);
-  }
+  Future<bool> isBookmarked(String id, {String? userId}) async =>
+    (await getBookmarks(userId: userId)).any((item) => item.id == id);
 }
 
 ```
@@ -15214,9 +14594,8 @@ class NativeAgentLauncher {
 
 ### FLUTTER FILE: openturath_ai/lib/services/research_notes_service.dart
 ```dart
-import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'scoped_json_store.dart';
 
 /// Model Catatan Riset / Bookmark Hasil Pencarian Kitab
 class ResearchNote {
@@ -15286,70 +14665,190 @@ class ResearchNote {
 
 /// Service Penyimpanan Catatan & Bookmark Riset Lokal (Offline-first)
 class ResearchNotesService {
-  static const String _legacyKey = 'openturath_research_notes_v1';
-
-  String _getKey([String? userId]) {
+  final _store = ScopedJsonListStore<ResearchNote>(
+    storage: PreferencesStringStore(), decode: ResearchNote.fromMap,
+    encode: (note) => note.toMap(),
+  );
+  String _key(String? userId) {
     final uid = userId ?? FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null && uid.isNotEmpty) {
-      return 'openturath_${uid}_research_notes_v1';
-    }
-    return _legacyKey;
+    return uid == null || uid.isEmpty ? 'openturath_research_notes_v1' : 'openturath_${uid}_research_notes_v1';
   }
-
   Future<List<ResearchNote>> getNotes({String? agentId, String? userId}) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final key = _getKey(userId);
-      var raw = prefs.getString(key);
-
-      // Auto-migrasi data legacy
-      if ((raw == null || raw.isEmpty) && key != _legacyKey) {
-        final legacyRaw = prefs.getString(_legacyKey);
-        if (legacyRaw != null && legacyRaw.isNotEmpty) {
-          raw = legacyRaw;
-          await prefs.setString(key, legacyRaw);
-          await prefs.remove(_legacyKey);
-        }
-      }
-
-      if (raw == null || raw.isEmpty) return [];
-
-      final List<dynamic> list = jsonDecode(raw);
-      final notes = list.map((e) => ResearchNote.fromMap(e as Map<String, dynamic>)).toList();
-      
-      notes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-
-      if (agentId != null && agentId.isNotEmpty) {
-        return notes.where((n) => n.agentId == agentId).toList();
-      }
+    final key = _key(userId);
+    final notes = await _store.read(key);
+    notes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return agentId == null || agentId.isEmpty ? notes : notes.where((n) => n.agentId == agentId).toList();
+  }
+  Future<void> saveNote(ResearchNote note, {String? userId}) {
+    final key = _key(userId);
+    return _store.update(key, (notes) {
+      notes.removeWhere((n) => n.id == note.id);
+      notes.insert(0, note);
       return notes;
-    } catch (_) {
-      return [];
+    });
+  }
+  Future<void> deleteNote(String noteId, {String? userId}) {
+    final key = _key(userId);
+    return _store.update(key, (notes) => notes..removeWhere((n) => n.id == noteId));
+  }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/services/scoped_json_store.dart
+```dart
+import 'dart:async';
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+abstract class StringStore {
+  Future<String?> read(String key);
+  Future<bool> write(String key, String value);
+}
+
+class PreferencesStringStore implements StringStore {
+  @override
+  Future<String?> read(String key) async => (await SharedPreferences.getInstance()).getString(key);
+  @override
+  Future<bool> write(String key, String value) async => (await SharedPreferences.getInstance()).setString(key, value);
+}
+
+class ScopedJsonListStore<T> {
+  final StringStore storage;
+  final T Function(Map<String, dynamic>) decode;
+  final Map<String, dynamic> Function(T) encode;
+  static final Map<String, Future<void>> _tails = {};
+
+  ScopedJsonListStore({required this.storage, required this.decode, required this.encode});
+
+  Future<R> _locked<R>(String key, Future<R> Function() action) async {
+    final previous = _tails[key];
+    final done = Completer<void>();
+    _tails[key] = done.future;
+    try {
+      if (previous != null) await previous;
+      return await action();
+    } finally {
+      done.complete();
+      if (identical(_tails[key], done.future)) _tails.remove(key);
     }
   }
 
-  Future<void> saveNote(ResearchNote note, {String? userId}) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = _getKey(userId);
-    final currentNotes = await getNotes(userId: userId);
-    
-    // Hapus duplikat jika ID sama
-    currentNotes.removeWhere((n) => n.id == note.id);
-    currentNotes.insert(0, note);
-
-    final raw = jsonEncode(currentNotes.map((e) => e.toMap()).toList());
-    await prefs.setString(key, raw);
+  Future<List<T>> _read(String key) async {
+    final raw = await storage.read(key);
+    if (raw == null || raw.isEmpty) return <T>[];
+    try {
+      final data = jsonDecode(raw);
+      if (data is! List) throw const FormatException('Expected a list');
+      return data.map((row) {
+        if (row is! Map) throw const FormatException('Expected an object');
+        return decode(Map<String, dynamic>.from(row));
+      }).toList();
+    } on Object {
+      final digest = sha256.convert(utf8.encode(raw));
+      final quarantine = '${key}_corrupt_$digest';
+      if (await storage.read(quarantine) != raw && !await storage.write(quarantine, raw)) {
+        throw StateError('Cannot preserve damaged saved data');
+      }
+      return <T>[];
+    }
   }
 
-  Future<void> deleteNote(String noteId, {String? userId}) async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = _getKey(userId);
-    final currentNotes = await getNotes(userId: userId);
-    currentNotes.removeWhere((n) => n.id == noteId);
+  Future<List<T>> read(String key) => _locked(key, () => _read(key));
 
-    final raw = jsonEncode(currentNotes.map((e) => e.toMap()).toList());
-    await prefs.setString(key, raw);
+  Future<void> replace(String key, List<T> items) {
+    final snapshot = List<T>.of(items);
+    return _locked(key, () async {
+      await _read(key); // Preserve corrupt old bytes before replacing them.
+      await _write(key, snapshot);
+    });
   }
+
+  Future<void> update(String key, List<T> Function(List<T>) edit) => _locked(key, () async {
+    final current = await _read(key);
+    await _write(key, edit(current));
+  });
+
+  Future<void> _write(String key, List<T> items) async {
+    final raw = jsonEncode(items.map(encode).toList());
+    if (!await storage.write(key, raw)) throw StateError('Saved data could not be written');
+  }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/services/session_user_stream.dart
+```dart
+import 'dart:async';
+
+Stream<T?> sessionUserStream<T>({
+  required Stream<String?> auth,
+  required Future<T?> Function(String) cached,
+  required Stream<T?> Function(String) watch,
+}) {
+  final listeners = <MultiStreamController<T?>>{};
+  StreamSubscription<String?>? authSub;
+  StreamSubscription<T?>? documentSub;
+  var generation = 0;
+  var hasValue = false;
+  T? last;
+
+  bool current(int token) => token == generation && listeners.isNotEmpty;
+  void emit(int token, T? value) {
+    if (!current(token)) return;
+    hasValue = true;
+    last = value;
+    for (final listener in listeners.toList()) { listener.add(value); }
+  }
+  void error(int token, Object value, StackTrace stack) {
+    if (!current(token)) return;
+    for (final listener in listeners.toList()) { listener.addError(value, stack); }
+  }
+  Future<void> cancel(StreamSubscription<dynamic>? sub) async {
+    try { await sub?.cancel(); } catch (_) { /* Generation already invalidates events. */ }
+  }
+  Future<void> switchUser(String? uid) async {
+    final token = ++generation;
+    final previous = documentSub;
+    documentSub = null;
+    emit(token, null); // Clear prior identity before asynchronous cache lookup.
+    await cancel(previous);
+    if (!current(token) || uid == null) return;
+    try {
+      final value = await cached(uid).timeout(const Duration(seconds: 5));
+      if (!current(token)) return;
+      if (value != null) emit(token, value);
+    } catch (_) { /* Continue with the authoritative snapshot stream. */ }
+    if (!current(token)) return;
+    try {
+      documentSub = watch(uid).listen(
+        (value) => emit(token, value),
+        onError: (Object e, StackTrace stack) => error(token, e, stack),
+      );
+    } catch (e, stack) { error(token, e, stack); }
+  }
+
+  return Stream<T?>.multi((listener) {
+    listeners.add(listener);
+    if (hasValue) listener.add(last);
+    if (listeners.length == 1) {
+      authSub = auth.listen((uid) { unawaited(switchUser(uid)); },
+        onError: (Object e, StackTrace stack) => error(generation, e, stack));
+    }
+    listener.onCancel = () async {
+      listeners.remove(listener);
+      if (listeners.isNotEmpty) return;
+      generation++;
+      hasValue = false;
+      last = null;
+      final oldAuth = authSub;
+      final oldDocument = documentSub;
+      authSub = null;
+      documentSub = null;
+      await Future.wait([cancel(oldAuth), cancel(oldDocument)]);
+    };
+  }, isBroadcast: true);
 }
 
 ```
@@ -15381,7 +14880,7 @@ class SubscriptionService {
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }
-      return {'success': true, 'message': 'Kode akses berhasil diaktifkan!'};
+      return {'success': true, 'message': 'Kode akses sudah aktif.'};
     } on FirebaseFunctionsException catch (e) {
       return {'success': false, 'message': e.message ?? 'Gagal menukarkan kode akses.'};
     } catch (e) {
@@ -16303,7 +15802,7 @@ import 'package:flutter/material.dart';
 import '../models/agent_model.dart';
 
 /// Reusable SegmentedButton control to toggle between [CorpusKind.discipline] (Bidang Ilmu)
-/// and [CorpusKind.scholar] (Korpus Ulama).
+/// and [CorpusKind.scholar] (Karya Ulama).
 class CorpusKindControl extends StatelessWidget {
   const CorpusKindControl({
     super.key,
@@ -16333,7 +15832,7 @@ class CorpusKindControl extends StatelessWidget {
             ),
             ButtonSegment(
               value: CorpusKind.scholar,
-              label: Text('Korpus Ulama'),
+              label: Text('Karya Ulama'),
               icon: Icon(Icons.person_outline_rounded, size: 18),
             ),
           ],
@@ -16361,6 +15860,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/constants.dart';
+import '../core/checkout_completion.dart';
 import '../core/theme.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
@@ -16426,6 +15926,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
   int _pollAttempts = 0;
   bool _isShowingConfirmDialog = false;
   bool _hasPopped = false;
+  final _completion = CheckoutCompletion();
+  BuildContext? _confirmationContext;
 
   @override
   void initState() {
@@ -16457,7 +15959,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     }
 
     // 2. Active inquiry polling setiap 2 detik sebagai fail-safe
-    _pollTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       _checkPaymentStatus();
     });
   }
@@ -16480,10 +15982,20 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
     // Beri jeda 2.2 detik agar pengguna menikmati animasi sukses
     await Future.delayed(const Duration(milliseconds: 2200));
-    if (mounted && context.mounted && !_hasPopped) {
-      _hasPopped = true;
-      Navigator.of(context).pop(true);
-    }
+    await _completion.finish(
+      dismissConfirmation: () {
+        final dialogContext = _confirmationContext;
+        if (dialogContext != null && dialogContext.mounted && ModalRoute.of(dialogContext)?.isCurrent == true) {
+          Navigator.of(dialogContext).pop(false);
+        }
+      },
+      closeCheckout: () {
+        if (mounted && !_hasPopped && ModalRoute.of(context)?.isCurrent == true) {
+          _hasPopped = true;
+          Navigator.of(context).pop(true);
+        }
+      },
+    );
   }
 
   Future<void> _checkPaymentStatus() async {
@@ -16492,7 +16004,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
     _pollAttempts++;
     // F33: Batas maksimal polling 150 kali (5 menit) agar tidak memboroskan sumber daya
-    if (_pollAttempts > 150) {
+    if (_pollAttempts > 60) {
       _pollTimer?.cancel();
       return;
     }
@@ -16521,11 +16033,15 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     if (_isShowingConfirmDialog) return false;
 
     _isShowingConfirmDialog = true;
+    final confirmationDone = Completer<void>();
+    _completion.confirmation = confirmationDone.future;
     try {
       final isDark = Theme.of(context).brightness == Brightness.dark;
       final confirm = await showDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) {
+          _confirmationContext = ctx;
+          return AlertDialog(
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Text(
@@ -16563,12 +16079,16 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
               ),
             ),
           ],
-        ),
+          );
+        },
       );
 
-      return confirm ?? false;
+      return !_isSuccess && (confirm ?? false);
     } finally {
+      _confirmationContext = null;
       _isShowingConfirmDialog = false;
+      confirmationDone.complete();
+      _completion.confirmation = null;
     }
   }
 
@@ -16584,7 +16104,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return PopScope(
-      canPop: _isSuccess,
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldPop = await _handleWillPop();
@@ -18463,6 +17983,219 @@ class UpdateReadyBanner extends StatelessWidget {
 # BAGIAN 5: SUITE PENGUJIAN UNIT & INTEGRASI (openturath_ai/test/)
 ================================================================================
 
+### TEST FILE: openturath_ai/test/audit_auth_stream_test.dart
+```dart
+import 'dart:async';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/services/session_user_stream.dart';
+
+Future<void> tick() => Future<void>.delayed(Duration.zero);
+void main() {
+  test('A09 delayed old cache cannot emit or subscribe after logout', () async {
+    final auth = StreamController<String?>.broadcast(sync: true);
+    final oldCache = Completer<String?>();
+    final watched = <String>[];
+    final stream = sessionUserStream<String>(
+      auth: auth.stream,
+      cached: (uid) => oldCache.future,
+      watch: (uid) { watched.add(uid); return const Stream<String?>.empty(); },
+    );
+    final values = <String?>[];
+    final sub = stream.listen(values.add);
+    auth.add('A');
+    await tick();
+    auth.add(null);
+    await tick();
+    oldCache.complete('A cached');
+    await tick();
+    expect(values.last, isNull);
+    expect(values, isNot(contains('A cached')));
+    expect(watched, isEmpty);
+    await sub.cancel();
+    await auth.close();
+  });
+  test('A09 final cancellation invalidates pending cache and later listeners restart', () async {
+    final auth = StreamController<String?>.broadcast(sync: true);
+    final cache = Completer<String?>();
+    var watches = 0;
+    final stream = sessionUserStream<String>(auth: auth.stream, cached: (_) => cache.future,
+      watch: (_) { watches++; return const Stream<String?>.empty(); });
+    final sub = stream.listen((_) {});
+    auth.add('A');
+    await tick();
+    await sub.cancel();
+    cache.complete('A');
+    await tick();
+    expect(watches, 0);
+    final values = <String?>[];
+    final next = stream.listen(values.add);
+    auth.add(null);
+    await tick();
+    expect(values.last, isNull);
+    await next.cancel();
+    await auth.close();
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/audit_checkout_completion_test.dart
+```dart
+import 'dart:async';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/checkout_completion.dart';
+void main() {
+  test('A12 completion dismisses confirmation before closing checkout exactly once', () async {
+    final gate = CheckoutCompletion();
+    final events = <String>[];
+    final done = Completer<void>();
+    gate.confirmation = done.future;
+    final first = gate.finish(dismissConfirmation: () { events.add('dialog'); done.complete(); },
+      closeCheckout: () => events.add('checkout'));
+    final second = gate.finish(dismissConfirmation: () => events.add('duplicate'),
+      closeCheckout: () => events.add('duplicate'));
+    await Future.wait([first, second]);
+    expect(events, ['dialog', 'checkout']);
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/audit_entitlement_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/models/user_model.dart';
+
+void main() {
+  ModuleEntitlement entitlement({String status = 'active'}) => ModuleEntitlement(
+    plan: 'tholib_1m', status: status, expiry: DateTime.now().add(const Duration(days: 1)));
+  UserModel user(Map<String, ModuleEntitlement> entitlements) => UserModel(
+    uid: 'u', name: 'U', email: 'u@example.test', photoUrl: '', plan: 'trial',
+    questionsUsed: 0, entitlements: entitlements);
+  test('A10 specific paid module survives revoked all-access', () {
+    final u = user({'all_access': entitlement(status: 'revoked'), 'hadits': entitlement()});
+    expect(u.hasAccessToAgent('hadits'), isTrue);
+    expect(u.hasAccessToAgent('tafsir'), isFalse);
+  });
+  test('A10 all language aliases use the same canonical entitlement', () {
+    final u = user({'nahwu': entitlement()});
+    for (final id in ['nahwu_sharaf', 'bahasa_arab', 'lughah_nahwu', 'lughah_mujam']) {
+      expect(u.hasAccessToAgent(id), isTrue, reason: id);
+    }
+  });
+  test('A10 unrelated prefix cannot open a new module', () {
+    expect(user({'fiqh': entitlement()}).hasAccessToAgent('fiqh_syafii'), isFalse);
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/audit_navigation_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/notebook_navigation.dart';
+void main() {
+  test('A11 exact HTTPS authentication hosts allowed', () {
+    for (final host in ['notebooklm.google.com', 'accounts.google.com', 'accounts.youtube.com']) {
+      expect(NotebookNavigation.allowed(Uri.parse('https://$host/')), isTrue);
+    }
+  });
+  test('A11 user content origins, custom ports and deceptive URLs blocked', () {
+    for (final url in ['https://sites.google.com/site/phishing',
+      'https://evil.googleusercontent.com/', 'https://accounts.google.com.evil.test/',
+      'https://user@accounts.google.com/', 'https://accounts.google.com:8443/',
+      'http://accounts.google.com/', 'javascript:alert(1)', 'file:///etc/passwd']) {
+      expect(NotebookNavigation.allowed(Uri.parse(url)), isFalse, reason: url);
+    }
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/audit_storage_test.dart
+```dart
+import 'dart:async';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/services/scoped_json_store.dart';
+
+class MemoryStrings implements StringStore {
+  final values = <String, String>{};
+  bool fail = false;
+  Completer<void>? gate;
+  int writes = 0;
+  @override
+  Future<String?> read(String key) async => values[key];
+  @override
+  Future<bool> write(String key, String value) async {
+    writes++;
+    await gate?.future;
+    if (fail) return false;
+    values[key] = value;
+    return true;
+  }
+}
+
+void main() {
+  ScopedJsonListStore<String> store(MemoryStrings io) => ScopedJsonListStore(
+    storage: io, decode: (map) => map['value'] as String,
+    encode: (value) => {'value': value},
+  );
+  test('A07 values never cross account keys or caller mutation', () async {
+    final io = MemoryStrings();
+    final data = store(io);
+    await data.replace('user-a', ['private']);
+    expect(await data.read('user-b'), isEmpty);
+    final a = await data.read('user-a');
+    a.clear();
+    expect(await data.read('user-a'), ['private']);
+  });
+  test('A08 parallel updates through separate instances preserve both records', () async {
+    final io = MemoryStrings();
+    final a = store(io);
+    final b = store(io);
+    await Future.wait([
+      a.update('notes', (rows) => rows..add('A')),
+      b.update('notes', (rows) => rows..add('B')),
+    ]);
+    expect(await a.read('notes'), ['A', 'B']);
+  });
+  testWidgets('A08 slow write does not release exclusion after five seconds', (tester) async {
+    final io = MemoryStrings()..gate = Completer<void>();
+    final data = store(io);
+    final first = data.replace('slow', ['A']);
+    final next = data.update('slow', (rows) => rows..add('B'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 6));
+    expect(io.writes, 1);
+    io.gate!.complete();
+    await tester.pump();
+    await Future.wait([first, next]);
+    expect(await data.read('slow'), ['A', 'B']);
+  });
+  test('A08 failed write surfaces error and releases queue', () async {
+    final io = MemoryStrings()..fail = true;
+    final data = store(io);
+    await expectLater(data.replace('k', ['lost']), throwsStateError);
+    io.fail = false;
+    await data.replace('k', ['saved']);
+    expect(await data.read('k'), ['saved']);
+  });
+  test('A07 corrupted payload is preserved before any replacement', () async {
+    final io = MemoryStrings()..values['a'] = '[broken';
+    final data = store(io);
+    await data.update('a', (rows) => rows..add('new'));
+    expect(io.values.entries.where((e) => e.key.startsWith('a_corrupt_')).single.value, '[broken');
+    expect(await data.read('b'), isEmpty);
+  });
+  test('A07 failed quarantine prevents overwriting corrupt original', () async {
+    final io = MemoryStrings()..values['a'] = '[broken'..fail = true;
+    await expectLater(store(io).replace('a', ['new']), throwsStateError);
+    expect(io.values['a'], '[broken');
+  });
+}
+
+```
+
 ### TEST FILE: openturath_ai/test/canonical_catalog_test.dart
 ```dart
 import 'dart:io';
@@ -19220,8 +18953,8 @@ void main() {
 
       expect(check('https://notebooklm.google.com/notebook/abc-123'), isTrue);
       expect(check('https://accounts.google.com/ServiceLogin'), isTrue);
-      expect(check('https://fonts.gstatic.com/s/roboto/v20/xyz.woff2'), isTrue);
-      expect(check('https://apis.google.com/js/api.js'), isTrue);
+      expect(check('https://fonts.gstatic.com/s/roboto/v20/xyz.woff2'), isFalse); // Resource URL is not a top-level destination.
+      expect(check('https://apis.google.com/js/api.js'), isFalse);
       expect(check('http://notebooklm.google.com'), isFalse); // HTTP insecure rejected
       expect(check('https://evil-phishing.com/notebooklm.google.com'), isFalse);
       expect(check('javascript:alert(1)'), isFalse);
