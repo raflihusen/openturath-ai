@@ -20,13 +20,13 @@ abstract final class AppCopy {
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
   static const studySpace = 'Percakapan AI';
   static const openStudy = 'Membuka AI';
-  static const studyOptions = 'Menu percakapan';
+  static const studyOptions = 'Pengaturan Tampilan & Baca';
   static const referenceBooks = 'Kitab rujukan';
   static const savedCollection = 'Simpanan';
   static const bookDetails = 'Keterangan kitab';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
-  static const loadingReferences = 'Menyiapkan percakapan AI...';
+  static const loadingReferences = 'Menghubungkan ke Ruang Telaah AI...';
   static const modulePreparing = 'sedang disiapkan.';
   static const moduleUnavailable = 'Modul ini belum dapat dibuka. Coba lagi nanti.';
   static const cannotLoad = 'Tidak dapat dimuat. Periksa koneksi, lalu coba lagi.';
@@ -50,9 +50,9 @@ abstract final class AppCopy {
   static const adabDialogTitle = 'Catatan sebelum mulai';
   static const adabAcknowledgeButton = 'Saya mengerti';
 
-  static const adabHeading1 = 'Alat bantu, bukan pemberi fatwa';
+  static const adabHeading1 = 'Perkakas Telaah & Komparasi Naskah';
   static const adabBody1 =
-      'OpenTurath membantu mencari ibarah dan membandingkan keterangan dalam kitab. Aplikasi ini tidak menggantikan fatwa ulama.';
+      'OpenTurath membantu mencari ibarah dan membandingkan keterangan dalam kitab. Setiap kutipan dan ibarah perlu dicocokkan dengan sumber aslinya di Maktabah Syamilah atau naskah cetak fisik.';
 
   static const adabHeading2 = 'Belajar tetap perlu bimbingan';
   static const adabBody2 =
@@ -64,7 +64,7 @@ abstract final class AppCopy {
 
   // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
   static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
-  static const answerCopied = 'Jawaban tersalin.';
+  static const answerCopied = 'Jawaban disalin dan disimpan ke Catatan Riset.';
   static const copyFailed = 'Gagal menyalin. Coba lagi.';
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
   static const savedSuccess = 'Tersimpan.';

@@ -300,10 +300,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       final res = await _webController!.evaluateJavascript(source: """
         (function() {
           var bodyText = document.body ? (document.body.innerText || '') : '';
-          if (bodyText.includes('You need access') || 
+          var href = window.location.href || '';
+          if (href.includes('signin/v2/denied') ||
+              href.includes('access_denied') ||
+              bodyText.includes('You need access') || 
               bodyText.includes('You do not have access') || 
               bodyText.includes('Request access') ||
+              bodyText.includes('Anda memerlukan akses') ||
+              bodyText.includes('Minta akses') ||
+              bodyText.includes('Anda tidak memiliki akses') ||
+              bodyText.includes('beralih ke akun yang memiliki akses') ||
               document.querySelector('button[aria-label*="Request access"]') !== null ||
+              document.querySelector('button[aria-label*="Minta akses"]') !== null ||
               document.querySelector('.auth-error') !== null) {
             return 'DENIED';
           }
@@ -390,7 +398,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
-      if (isLogin || _readySamples >= 3) {
+      final elapsedMs = _loadingStarted != null ? DateTime.now().difference(_loadingStarted!).inMilliseconds : 0;
+      if (isLogin || (_readySamples >= 3 && elapsedMs >= 2000)) {
         _readinessTimer?.cancel();
         setState(() => _isWebViewLoading = false);
       } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
@@ -579,7 +588,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     if (ownerUid == null || url?.scheme != 'https' || !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) || args.isEmpty || args.first is! String) return false;
                     try {
                       await _saveCopiedAnswer(args.first as String, ownerUid);
-                      if (context.mounted) AppSnackBar.success(context, 'Jawaban ditambahkan ke Tersimpan.');
+                      if (context.mounted) AppSnackBar.success(context, AppCopy.answerCopied);
                       return true;
                     } catch (_) {
                       if (context.mounted) AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
@@ -901,7 +910,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
-              title: Text('Salin jawaban', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Salin jawaban (simpan otomatis)', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {

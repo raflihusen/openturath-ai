@@ -47,39 +47,49 @@ const notebookUiScript = r'''
     if (!document.getElementById('ot-conversation-ui')) {
       const style = document.createElement('style'); style.id = 'ot-conversation-ui';
       style.textContent = `
-        [data-ot-hidden], .chat-disclaimer, .disclaimer, .chat-footer-disclaimer,
+        [data-ot-hidden],
+        .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab"], div[class*="tab-bar"],
+        [role="tablist"], mat-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
+        .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer"], footer[class*="disclaimer"],
         .notebook-guide, notebook-guide, .notebook-overview, notebook-overview,
         .notebook-cover, .notebook-cover-container, .notebook-title-card,
         .notebook-header, .project-header, .chat-header, .chat-panel-header,
-        .mobile-tab-bar, .mobile-tabs, .mobile-navigation, mat-tab-header {
+        .header-content, .title-card, mat-card.title-card,
+        .loading-notebook, [class*="skeleton"] {
           display:none!important;
         }
       `;
       (document.head || document.documentElement).appendChild(style);
     }
-    document.querySelectorAll('[role="tablist"]').forEach(el => {
-      if (/sources|sumber/i.test(text(el)) && /studio/i.test(text(el))) hide(el);
-    });
-    document.querySelectorAll('p, span, div, footer').forEach(el => {
-      if (el.children.length > 2 || el.closest(answerSelector)) return;
-      const value = text(el);
-      if (value.length < 240 && /(?:Gemini Notebook|NotebookLM) can be inaccurate|please double.check its responses/i.test(value)) hide(el);
-    });
-    // The cover is identified by its metadata, never by generic answer cards.
-    document.querySelectorAll('h1, h2, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
-      if (el.closest(answerSelector)) return;
-      let card = el;
-      for (let i = 0; card && i < 5; i++, card = card.parentElement) {
-        if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
-        if (/\d+ sources\b|\d+ sumber\b/i.test(text(card)) && text(card).length < 1500) { hide(card); break; }
+    // Sembunyikan tab strip Sources | Chat | Studio
+    document.querySelectorAll('nav, div, [role="tablist"], ul').forEach(el => {
+      const t = (el.innerText || '').toLowerCase();
+      if ((t.includes('sources') || t.includes('sumber')) && (t.includes('studio') || t.includes('chat'))) {
+        if (!el.closest(answerSelector) && el.children.length <= 6) hide(el);
       }
     });
-    // Dismiss only the informational announcement shown in the reported screenshot.
-    document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane').forEach(dialog => {
-      if (!/more flexibility and control/i.test(text(dialog)) || !/limits refresh every 5 hours/i.test(text(dialog))) return;
+    // Sembunyikan disclaimer Google Gemini
+    document.querySelectorAll('p, span, div, footer, small').forEach(el => {
+      if (el.children.length > 2 || el.closest(answerSelector)) return;
+      const value = text(el);
+      if (value.length < 280 && /(?:Gemini Notebook|NotebookLM) can be inaccurate|please double.check its responses|harap periksa kembali/i.test(value)) hide(el);
+    });
+    // Sembunyikan card overview / cover di awal percakapan
+    document.querySelectorAll('h1, h2, h3, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
+      if (el.closest(answerSelector)) return;
+      let card = el;
+      for (let i = 0; card && i < 6; i++, card = card.parentElement) {
+        if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
+        if (/\b\d+\s+(sources|sumber)\b/i.test(text(card)) && text(card).length < 2000) { hide(card); break; }
+      }
+    });
+    // Auto-dismiss dialog pengumuman Google
+    document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane, [class*="announcement"]').forEach(dialog => {
+      const t = text(dialog).toLowerCase();
+      if (!t.includes('more flexibility and control') && !t.includes('limits refresh every 5 hours') && !t.includes('gemini notebook')) return;
       if (!dialog.hasAttribute('data-ot-dismissed')) {
         dialog.setAttribute('data-ot-dismissed', '');
-        const close = [...dialog.querySelectorAll('button')].find(b => /^(close|dismiss|got it|tutup|mengerti|done)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
+        const close = [...dialog.querySelectorAll('button, [role="button"]')].find(b => /^(close|dismiss|got it|tutup|mengerti|done|ok)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
         if (close) { close.click(); return; }
       }
       const pane = dialog.closest('.cdk-overlay-pane') || dialog;
@@ -94,9 +104,15 @@ const notebookUiScript = r'''
   }
   function ready() {
     clean();
+    const bodyText = document.body ? (document.body.innerText || '') : '';
+    if (/loading notebook|memuat notebook|\b0 sources\b/i.test(bodyText)) {
+      return false;
+    }
+    const hasSpinner = [...document.querySelectorAll('[role="progressbar"], mat-spinner, .loading-spinner, .mdc-circular-progress, svg.spinner')].some(visible);
+    if (hasSpinner) return false;
+
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
-    const loading = [...document.querySelectorAll('[role="progressbar"], mat-spinner, .loading-spinner')].some(visible) || [...document.querySelectorAll('h1, h2, [class*="notebook-title"]')].some(el => /loading notebook|memuat notebook/i.test(text(el)));
-    return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true' && !loading;
+    return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
   }
   window.otNotebook = {clean, ready, latest};
   let scheduled = false;
@@ -108,5 +124,4 @@ const notebookUiScript = r'''
   observer.observe(document, {subtree:true, childList:true, characterData:true});
   clean();
 })();
-
 ''';
