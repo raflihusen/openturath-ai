@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -8,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
-import 'package:crypto/crypto.dart';
+import '../core/copied_answer.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -21,7 +20,6 @@ import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
-import '../models/bookmark_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
@@ -348,13 +346,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (text.isEmpty || text.length > 200000 || _authService.currentUser?.uid != ownerUid) return;
     final agent = _agent;
     if (agent == null) return;
-    final id = sha256.convert(utf8.encode('${agent.id}:$text')).toString();
-    await _bookmarkService.addBookmark(BookmarkModel(
-      id: id,
-      title: text.split('\n').first.length > 80 ? text.split('\n').first.substring(0, 80) : text.split('\n').first,
-      agentId: agent.id, agentTitle: agent.title, fieldName: agent.category, fieldId: agent.fieldId,
-      arabicExcerpt: '', fullAnswer: text, bookReference: 'Rujukan belum diidentifikasi', pageNumber: '', createdAt: DateTime.now(),
-    ), userId: ownerUid);
+    await _bookmarkService.addBookmark(copiedAnswerBookmark(text, agent), userId: ownerUid);
   }
 
   Future<void> _copyLatestResponse() async {
@@ -587,10 +579,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     if (ownerUid == null || url?.scheme != 'https' || !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) || args.isEmpty || args.first is! String) return false;
                     try {
                       await _saveCopiedAnswer(args.first as String, ownerUid);
-                      if (mounted) AppSnackBar.success(context, 'Jawaban ditambahkan ke Tersimpan.');
+                      if (context.mounted) AppSnackBar.success(context, 'Jawaban ditambahkan ke Tersimpan.');
                       return true;
                     } catch (_) {
-                      if (mounted) AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
+                      if (context.mounted) AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
                       return false;
                     }
                   });
