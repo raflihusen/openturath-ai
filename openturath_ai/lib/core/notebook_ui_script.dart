@@ -50,13 +50,29 @@ const notebookUiScript = r'''
         [data-ot-hidden],
         .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab"], div[class*="tab-bar"],
         [role="tablist"], mat-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
-        .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer"], footer[class*="disclaimer"],
+        .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer" i], footer[class*="disclaimer" i],
+        div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
+        app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
+        .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
+        footer, .chat-footer, .conversation-footer,
+        div.chat-input-container + div,
+        div[class*="input-container" i] + div,
+        div[class*="query-container" i] + div,
         .notebook-guide, notebook-guide, .notebook-overview, notebook-overview,
         .notebook-cover, .notebook-cover-container, .notebook-title-card,
         .notebook-header, .project-header, .chat-header, .chat-panel-header,
         .header-content, .title-card, mat-card.title-card,
         .loading-notebook, [class*="skeleton"] {
           display:none!important;
+          visibility:hidden!important;
+          height:0px!important;
+          max-height:0px!important;
+          overflow:hidden!important;
+          margin:0px!important;
+          padding:0px!important;
+          opacity:0!important;
+          pointer-events:none!important;
+          border:none!important;
         }
       `;
       (document.head || document.documentElement).appendChild(style);
@@ -68,11 +84,28 @@ const notebookUiScript = r'''
         if (!el.closest(answerSelector) && el.children.length <= 6) hide(el);
       }
     });
-    // Sembunyikan disclaimer Google Gemini
-    document.querySelectorAll('p, span, div, footer, small').forEach(el => {
-      if (el.children.length > 2 || el.closest(answerSelector)) return;
+    // Sembunyikan disclaimer Google Gemini / NotebookLM secara komprehensif
+    const disclaimerPattern = /(?:inaccurate|double-check|double check|can make mistakes|make mistakes|may display inaccurate|tidak akurat|membuat kesalahan|periksa kembali|gemini notebook|notebooklm)/i;
+    document.querySelectorAll('p, span, div, footer, small, a').forEach(el => {
+      if (el.closest(answerSelector) || el.querySelector('textarea, [contenteditable="true"]') || el.closest('button, [role="button"]')) return;
       const value = text(el);
-      if (value.length < 280 && /(?:Gemini Notebook|NotebookLM) can be inaccurate|please double.check its responses|harap periksa kembali/i.test(value)) hide(el);
+      if (value.length > 5 && value.length < 350 && disclaimerPattern.test(value)) {
+        let target = el;
+        for (let i = 0; target && i < 4; i++) {
+          if (target.parentElement && 
+              !target.parentElement.querySelector('textarea, [contenteditable="true"]') && 
+              !target.parentElement.closest(answerSelector) && 
+              target.parentElement !== document.body && 
+              target.parentElement !== document.documentElement) {
+            target = target.parentElement;
+          } else {
+            break;
+          }
+        }
+        hide(target);
+        hide(el);
+        try { target.style.setProperty('display', 'none', 'important'); } catch (_) {}
+      }
     });
     // Sembunyikan card overview / cover di awal percakapan
     document.querySelectorAll('h1, h2, h3, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
