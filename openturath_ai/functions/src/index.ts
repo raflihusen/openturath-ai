@@ -10,8 +10,8 @@ const db = admin.firestore();
 // TELEGRAM NOTIFICATION HELPER
 // ================================================================
 async function sendTelegramNotification(text: string): Promise<void> {
-  const token = process.env.TELEGRAM_BOT_TOKEN || "8935430311:AAHajFoTtJBirH3DfyIh6za5-SVTQRBa_RI";
-  const chatId = process.env.TELEGRAM_CHAT_ID || "2015667548";
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return;
 
   try {
@@ -334,31 +334,27 @@ function generateDokuSignature(
 function resolvePlanPricing(agentId: string, plan: string): { amount: number; durationMonths: number; label: string; entitlementKey: string } {
   const isAllAi = agentId === "all_ai" || plan.startsWith("all_ai");
 
+  if (isAllAi) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Paket Semua AI sementara dinonaktifkan. Silakan pilih paket per modul spesialis."
+    );
+  }
+
   let durationMonths = 1;
   if (plan.includes("1y") || plan.includes("year") || plan === "bahits_1y") durationMonths = 12;
   else if (plan.includes("6m") || plan === "tholib_6m") durationMonths = 6;
   else durationMonths = 1;
 
-  if (isAllAi) {
-    const entitlementKey = "all_access";
-    if (durationMonths === 12) {
-      return { amount: 799000, durationMonths, label: "Paket Lengkap Semua AI (1 Tahun)", entitlementKey };
-    } else if (durationMonths === 6) {
-      return { amount: 499000, durationMonths, label: "Paket Lengkap Semua AI (6 Bulan)", entitlementKey };
-    } else {
-      return { amount: 99000, durationMonths, label: "Paket Promo Semua AI (1 Bulan)", entitlementKey };
-    }
-  }
-
-  // Masing-masing AI per-modul: Rp 50.000 / bulan
+  // Masing-masing AI per-modul: 1m = 49.000, 6m = 299.000, 1y = 499.000
   const entitlementKey = getEntitlementKey(agentId);
   const agentTitle = agentId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   if (durationMonths === 12) {
-    return { amount: 450000, durationMonths, label: `Modul AI ${agentTitle} (1 Tahun)`, entitlementKey };
+    return { amount: 499000, durationMonths, label: `Modul AI ${agentTitle} (1 Tahun)`, entitlementKey };
   } else if (durationMonths === 6) {
-    return { amount: 250000, durationMonths, label: `Modul AI ${agentTitle} (6 Bulan)`, entitlementKey };
+    return { amount: 299000, durationMonths, label: `Modul AI ${agentTitle} (6 Bulan)`, entitlementKey };
   } else {
-    return { amount: 50000, durationMonths, label: `Modul AI ${agentTitle} (1 Bulan)`, entitlementKey };
+    return { amount: 49000, durationMonths, label: `Modul AI ${agentTitle} (1 Bulan)`, entitlementKey };
   }
 }
 
