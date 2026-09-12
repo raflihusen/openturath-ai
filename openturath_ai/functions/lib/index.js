@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = void 0;
+exports.onClientErrorLogged = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -2202,4 +2202,30 @@ function getChatWrapperHTML(agent, agentId, email) {
 </body>
 </html>`;
 }
+// ================================================================
+// TELEMETRY CLOUD FUNCTION: Forward critical errors to Telegram
+// ================================================================
+exports.onClientErrorLogged = functions.firestore
+    .document("client_error_logs/{logId}")
+    .onCreate(async (snap, ctx) => {
+    const data = snap.data();
+    if (!data)
+        return;
+    const severity = data.severity || "error";
+    // Teruskan ke Telegram untuk severity error, critical, dan fatal
+    if (severity === "critical" || severity === "fatal" || severity === "error") {
+        const errorMsg = String(data.error || "Unknown Error");
+        const errContext = String(data.context || "general");
+        const user = String(data.userEmail || data.userId || "anonymous");
+        const platform = String(data.platform || "unknown");
+        const msg = `⚠️ <b>[ALERT CLIENT ERROR]</b>\n` +
+            `<b>Context:</b> ${errContext}\n` +
+            `<b>Severity:</b> ${severity.toUpperCase()}\n` +
+            `<b>Platform:</b> ${platform}\n` +
+            `<b>User:</b> ${user}\n` +
+            `<b>Error:</b> <code>${errorMsg.substring(0, 300)}</code>\n` +
+            `<b>ID:</b> <code>${ctx.params.logId}</code>`;
+        await sendTelegramNotification(msg);
+    }
+});
 //# sourceMappingURL=index.js.map

@@ -2419,3 +2419,33 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
 </body>
 </html>`;
 }
+
+// ================================================================
+// TELEMETRY CLOUD FUNCTION: Forward critical errors to Telegram
+// ================================================================
+export const onClientErrorLogged = functions.firestore
+  .document("client_error_logs/{logId}")
+  .onCreate(async (snap, ctx) => {
+    const data = snap.data();
+    if (!data) return;
+
+    const severity = data.severity || "error";
+    // Teruskan ke Telegram untuk severity error, critical, dan fatal
+    if (severity === "critical" || severity === "fatal" || severity === "error") {
+      const errorMsg = String(data.error || "Unknown Error");
+      const errContext = String(data.context || "general");
+      const user = String(data.userEmail || data.userId || "anonymous");
+      const platform = String(data.platform || "unknown");
+
+      const msg = `⚠️ <b>[ALERT CLIENT ERROR]</b>\n` +
+        `<b>Context:</b> ${errContext}\n` +
+        `<b>Severity:</b> ${severity.toUpperCase()}\n` +
+        `<b>Platform:</b> ${platform}\n` +
+        `<b>User:</b> ${user}\n` +
+        `<b>Error:</b> <code>${errorMsg.substring(0, 300)}</code>\n` +
+        `<b>ID:</b> <code>${ctx.params.logId}</code>`;
+
+      await sendTelegramNotification(msg);
+    }
+  });
+
