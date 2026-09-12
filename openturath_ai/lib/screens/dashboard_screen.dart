@@ -10,18 +10,13 @@ import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
-import '../models/bookmark_model.dart';
-import '../models/book_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
-import '../services/bookmark_service.dart';
-import '../services/canonical_library_service.dart';
 import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
-import '../widgets/evidence_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -41,8 +36,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   UserModel? _initialUser;
   List<AgentModel> _agents = AgentModel.defaultAgents;
-  List<BookmarkModel> _recentNotes = [];
-  String? _lastOpenedAgentId;
   String _searchQuery = '';
 
   @override
@@ -59,7 +52,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
     try {
       if (_authService.currentUser == null) {
         if (!mounted) return;
@@ -67,31 +59,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return;
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      final lastId = prefs.getString('last_opened_notebook_id');
-
       final results = await Future.wait([
         _authService.getCurrentUserModel(),
         _agentService.getAgents(),
-        BookmarkService().getBookmarks(),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [null, AgentModel.defaultAgents, <BookmarkModel>[]],
+        onTimeout: () => [null, AgentModel.defaultAgents],
       );
 
       if (!mounted) return;
       setState(() {
-        _lastOpenedAgentId = lastId;
         _initialUser = results[0] as UserModel?;
         _agents = results[1] as List<AgentModel>;
-        final notes = results[2] as List<BookmarkModel>;
-        _recentNotes = notes.take(3).toList();
       });
     } catch (_) {
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
   }
 
@@ -107,9 +88,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('last_opened_notebook_id', agent.id);
-      if (mounted) {
-        setState(() => _lastOpenedAgentId = agent.id);
-      }
     } catch (_) {}
 
     // Cek akses pengguna ke agent (paywall)
@@ -129,77 +107,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       AppRoutes.agentWebview,
       arguments: {'agent': agent, 'user': user},
     );
-  }
-
-  Future<void> _openBookmarkItem(BookmarkModel item) async {
-    if (item.id.startsWith('book_')) {
-      final editionId = item.id.replaceFirst('book_', '');
-      var books = CanonicalLibraryService.instance.cachedSyafiiBooks;
-      if (books == null) {
-        try {
-          books = await CanonicalLibraryService.instance.loadSyafiiCatalog();
-        } catch (_) {}
-      }
-      final matchedBook = books?.firstWhere(
-        (b) => b.editionId == editionId,
-        orElse: () => CanonicalBookPresentation(
-          editionId: editionId,
-          titleArabic: item.title,
-          authorArabic: item.author ?? '',
-        ),
-      );
-
-      if (matchedBook != null && mounted) {
-        Navigator.pushNamed(
-          context,
-          AppRoutes.bookDetail,
-          arguments: matchedBook,
-        );
-        return;
-      }
-    }
-
-    _showEvidence(item);
-  }
-
-  void _showEvidence(BookmarkModel item) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => EvidenceBottomSheet(
-        citationNumber: 1,
-        bookName: item.bookReference.isNotEmpty ? item.bookReference : 'Rujukan Naskah',
-        author: item.author ?? '',
-        pageNumber: item.pageNumber,
-        category: item.fieldName,
-        arabicExcerpt: item.arabicExcerpt,
-        explanation: item.fullAnswer,
-      ),
-    );
-  }
-
-  bool _isLoading = false;
-
-  List<AgentModel> _getRecentAgents() {
-    final List<AgentModel> recents = [];
-    if (_lastOpenedAgentId != null && _lastOpenedAgentId!.isNotEmpty) {
-      final match = _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive);
-      if (match.isNotEmpty) {
-        recents.add(match.first);
-      }
-    }
-    for (final a in _agents) {
-      if (recents.length >= 3) break;
-      if (!recents.any((r) => r.id == a.id) && a.isActive) {
-        recents.add(a);
-      }
-    }
-    if (recents.isEmpty && _agents.isNotEmpty) {
-      final activeAgents = _agents.where((a) => a.isActive).toList();
-      recents.addAll(activeAgents.take(2));
-    }
-    return recents;
   }
 
   static const List<({String fieldId, String name, int specialistCount})> _curatedDisciplines = [
@@ -238,8 +145,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               plan: AppConstants.planTrial,
               questionsUsed: 0,
             );
-
-        final recentAgents = _getRecentAgents();
 
         return Scaffold(
           backgroundColor: canvas,
@@ -427,21 +332,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 6. Catatan Riset Terbaru ──
-                      _buildRecentNotesSection(
-                        context: context,
-                        notes: _recentNotes,
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                        accent: accent,
-                      ),
-
-                      const SizedBox(height: 28),
-
-                      // ── 8. Section: Pilih Bidang Ilmu ──
+                      // ── Section: Pilih Bidang Ilmu ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -552,122 +443,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 28),
 
-                      // ── 9. Section: Modul Riset (Specialist Modules) ──
-                      Text(
-                        'Modul Riset',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-
-                      if (_isLoading)
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: CircularProgressIndicator(color: textPrimary, strokeWidth: 2),
-                          ),
-                        )
-                      else if (recentAgents.isEmpty)
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: surface,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: border, width: 1.0),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Belum ada riwayat sesi riset.',
-                              style: GoogleFonts.outfit(fontSize: 13, color: textSecondary),
-                            ),
-                          ),
-                        )
-                      else
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: recentAgents.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
-                          itemBuilder: (context, index) {
-                            final agent = recentAgents[index];
-                            final isFirst = index == 0;
-                            final timeLabel = isFirst ? 'Modul Aktif' : 'Siap Dikaji';
-
-                            return AppleInteractiveWrapper(
-                              onTap: () => _openNotebook(agent, user),
-                              pressedScale: 0.98,
-                              hapticType: HapticFeedbackType.selection,
-                              borderRadius: BorderRadius.circular(16),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                                decoration: BoxDecoration(
-                                  color: surface,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: border, width: 1.0),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Flexible(
-                                                child: Text(
-                                                  agent.title,
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w600,
-                                                    letterSpacing: -0.2,
-                                                    color: textPrimary,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                                decoration: BoxDecoration(
-                                                  color: isDark ? const Color(0xFF27272A) : const Color(0xFFF1F5F9),
-                                                  borderRadius: BorderRadius.circular(100),
-                                                ),
-                                                child: Text(
-                                                  timeLabel,
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 10.5,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: textSecondary,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Icon(
-                                      Icons.arrow_outward_rounded,
-                                      size: 18,
-                                      color: textPrimary,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-
-                      const SizedBox(height: 28),
-
-                      // ── 10. Adab & Prinsip Peneliti Turats ──
+                      // ── Adab & Prinsip Peneliti Turats ──
                       _buildScholarlyAdabCard(
                         isDark: isDark,
                         surface: surface,
@@ -698,162 +474,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildRecentNotesSection({
-    required BuildContext context,
-    required List<BookmarkModel> notes,
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color accent,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              'Catatan Riset Terbaru',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.2,
-                color: textPrimary,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                final shell = MainShellController.of(context);
-                if (shell != null) {
-                  shell.switchTab(2);
-                } else {
-                  Navigator.pushNamed(context, AppRoutes.bookmark);
-                }
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Lihat Semua',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: textPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        if (notes.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: border, width: 1.0),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.bookmark_outline_rounded, size: 22, color: textSecondary),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    'Belum ada catatan atau kutipan ibarah tersimpan. Simpan catatan naskah saat menelaah.',
-                    style: GoogleFonts.outfit(fontSize: 12.5, color: textSecondary, height: 1.4),
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: notes.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, idx) {
-              final note = notes[idx];
-              final isBookRef = note.id.startsWith('book_');
-              final subtitle = note.bookReference.isNotEmpty
-                  ? '${note.bookReference}${note.pageNumber.isNotEmpty ? ' (Hal. ${note.pageNumber})' : ''}'
-                  : (note.author != null && note.author!.isNotEmpty
-                      ? '${note.author} · ${note.agentTitle}'
-                      : note.agentTitle);
 
-              return AppleInteractiveWrapper(
-                onTap: () => _openBookmarkItem(note),
-                pressedScale: 0.985,
-                hapticType: HapticFeedbackType.selection,
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                          borderRadius: BorderRadius.circular(9),
-                        ),
-                        child: Icon(
-                          isBookRef ? Icons.menu_book_rounded : Icons.bookmark_added_rounded,
-                          size: 16,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              note.title,
-                              style: GoogleFonts.outfit(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w600,
-                                color: textPrimary,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              subtitle,
-                              style: GoogleFonts.outfit(
-                                fontSize: 11.5,
-                                color: textSecondary,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-      ],
-    );
-  }
 
   Widget _buildScholarlyAdabCard({
     required bool isDark,
