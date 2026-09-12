@@ -240,9 +240,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
 
         final recentAgents = _getRecentAgents();
-        final activeLastAgent = (_lastOpenedAgentId != null && _lastOpenedAgentId!.isNotEmpty)
-            ? _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive).firstOrNull
-            : null;
 
         return Scaffold(
           backgroundColor: canvas,
@@ -276,12 +273,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const UpdateReadyBanner(),
 
                     // ── 2. Editorial Desk Header: Dual Date & Scholarly Greeting ──
-                    Text(
-                      HijriDateUtils.formatDualDate(),
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: textSecondary,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: border)),
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Row(children: [
+                          Expanded(child: Text(HijriDateUtils.formatDualDate().split(' • ').last, textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
+                          Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text('•', style: TextStyle(color: textSecondary))),
+                          Expanded(child: Text(HijriDateUtils.formatHijriOnly(), textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
+                        ]),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -400,22 +401,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 5. Lanjutkan Sesi Terakhir ──
-                      if (activeLastAgent != null) ...[
-                        _buildResumeSessionCard(
-                          context: context,
-                          agent: activeLastAgent,
-                          user: user,
-                          isDark: isDark,
-                          surface: surface,
-                          border: border,
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                          accent: accent,
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-
                       // ── 6. Catatan Riset Terbaru ──
                       _buildRecentNotesSection(
                         context: context,
@@ -686,129 +671,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
     );
   }
-
-  Widget _buildResumeSessionCard({
-    required BuildContext context,
-    required AgentModel agent,
-    required UserModel user,
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color accent,
-  }) {
-    return AppleInteractiveWrapper(
-      onTap: () => _openNotebook(agent, user),
-      pressedScale: 0.98,
-      hapticType: HapticFeedbackType.selection,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: border, width: 1.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.history_rounded, size: 16, color: accent),
-                const SizedBox(width: 6),
-                Text(
-                  'Lanjutkan Sesi Terakhir',
-                  style: GoogleFonts.outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
-                    color: textSecondary,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF27272A) : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Text(
-                    'Aktif Terbuka',
-                    style: GoogleFonts.outfit(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w600,
-                      color: textSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        agent.title,
-                        style: GoogleFonts.newsreader(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.3,
-                          color: textPrimary,
-                        ),
-                      ),
-                      if (agent.titleArabic.isNotEmpty) ...[
-                        const SizedBox(height: 3),
-                        Text(
-                          agent.titleArabic,
-                          style: GoogleFonts.amiri(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: textSecondary,
-                          ),
-                          textDirection: TextDirection.rtl,
-                        ),
-                      ],
-                      const SizedBox(height: 4),
-                      Text(
-                        agent.subtitleAcademic,
-                        style: GoogleFonts.outfit(
-                          fontSize: 12.5,
-                          color: textSecondary,
-                          height: 1.35,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white : const Color(0xFF18181B),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 18,
-                    color: isDark ? const Color(0xFF18181B) : Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
 
   Widget _buildRecentNotesSection({
     required BuildContext context,
