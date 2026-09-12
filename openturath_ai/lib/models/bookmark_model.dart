@@ -62,4 +62,34 @@ class BookmarkModel {
           : DateTime.now(),
     );
   }
+
+  BookmarkModel copyWith({
+    String? id,
+    String? title,
+    String? agentId,
+    String? agentTitle,
+    String? fieldName,
+    String? fieldId,
+    String? arabicExcerpt,
+    String? fullAnswer,
+    String? bookReference,
+    String? pageNumber,
+    String? author,
+    DateTime? createdAt,
+  }) {
+    return BookmarkModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      agentId: agentId ?? this.agentId,
+      agentTitle: agentTitle ?? this.agentTitle,
+      fieldName: fieldName ?? this.fieldName,
+      fieldId: fieldId ?? this.fieldId,
+      arabicExcerpt: arabicExcerpt ?? this.arabicExcerpt,
+      fullAnswer: fullAnswer ?? this.fullAnswer,
+      bookReference: bookReference ?? this.bookReference,
+      pageNumber: pageNumber ?? this.pageNumber,
+      author: author ?? this.author,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }

@@ -14,7 +14,7 @@ abstract final class AppCopy {
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
   static const navStudies = 'Asisten AI';
-  static const navSaved = 'Tersimpan';
+  static const navSaved = 'Catatan';
   static const navSettings = 'Pengaturan';
 
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
@@ -22,11 +22,11 @@ abstract final class AppCopy {
   static const openStudy = 'Membuka AI';
   static const studyOptions = 'Pengaturan Tampilan & Baca';
   static const referenceBooks = 'Kitab rujukan';
-  static const savedCollection = 'Simpanan';
+  static const savedCollection = 'Catatan';
   static const bookDetails = 'Keterangan kitab';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
-  static const loadingReferences = 'Menghubungkan ke Ruang Telaah AI...';
+  static const loadingReferences = 'Menghubungkan AI dan Maktabah';
   static const modulePreparing = 'sedang disiapkan.';
   static const moduleUnavailable = 'Modul ini belum dapat dibuka. Coba lagi nanti.';
   static const cannotLoad = 'Tidak dapat dimuat. Periksa koneksi, lalu coba lagi.';
@@ -67,20 +67,20 @@ abstract final class AppCopy {
   static const answerCopied = 'Jawaban disalin dan disimpan ke Catatan Riset.';
   static const copyFailed = 'Gagal menyalin. Coba lagi.';
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
-  static const savedSuccess = 'Tersimpan.';
+  static const savedSuccess = 'Tersimpan ke Catatan.';
   static const saveFailed = 'Gagal menyimpan. Coba lagi.';
   static const emptyAnswerCannotSave = 'Belum ada jawaban untuk disimpan.';
 
-  // ── Simpanan / Bookmark ────────────────────────────────────────
-  static const searchSavedHint = 'Cari kitab, topik, atau kutipan...';
-  static const searchSavedTooltip = 'Cari simpanan';
-  static const noSavedTitle = 'Belum ada simpanan';
+  // ── Catatan Riset ───────────────────────────────────────────────
+  static const searchSavedHint = 'Cari catatan, topik, atau kutipan...';
+  static const searchSavedTooltip = 'Cari catatan';
+  static const noSavedTitle = 'Belum ada catatan';
   static const noSavedDescription =
-      'Simpan jawaban atau ibarah agar mudah dibuka kembali.';
+      'Simpan telaah atau ibarah ke dalam catatan riset Anda.';
   static const copyIbarahAction = 'Salin ibarah';
   static const viewReferenceAction = 'Lihat rujukan';
-  static const shareReferenceTooltip = 'Bagikan rujukan';
-  static const saveAnswerMenu = 'Simpan jawaban';
+  static const shareReferenceTooltip = 'Bagikan catatan';
+  static const saveAnswerMenu = 'Simpan ke Catatan';
 
   // ── Akun & Pengaturan ──────────────────────────────────────────
   static const profile = 'Profil';

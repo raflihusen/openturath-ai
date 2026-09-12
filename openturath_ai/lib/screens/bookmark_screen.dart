@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
@@ -14,7 +15,7 @@ import '../models/bookmark_model.dart';
 import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/canonical_library_service.dart';
-import '../widgets/evidence_bottom_sheet.dart';
+import '../widgets/note_editor_sheet.dart';
 import 'main_shell_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -36,6 +37,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   static const List<String> _categories = [
     'Semua',
+    'Catatan Riset',
     'Kutipan Ibarah',
     'Rujukan Kitab',
     'Fikih',
@@ -124,11 +126,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus Rujukan?',
+            'Hapus Catatan?',
             style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Rujukan ini akan dihapus dari simpanan Anda.',
+            'Catatan ini akan dihapus dari daftar catatan Anda.',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -160,7 +162,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       if (mounted) {
         AppSnackBar.show(
           context,
-          message: 'Rujukan telah dihapus dari simpanan.',
+          message: 'Catatan telah dihapus.',
           action: SnackBarAction(
             label: 'Urungkan',
             textColor: OTColors.accent(isDark),
@@ -205,6 +207,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     );
   }
 
+  Future<void> _openNoteEditor([BookmarkModel? item]) async {
+    final res = await NoteEditorSheet.show(context, item: item);
+    if (res != null && mounted) {
+      _loadBookmarks();
+    }
+  }
+
   Future<void> _openBookmarkItem(BookmarkModel item) async {
     if (item.id.startsWith('book_')) {
       final editionId = item.id.replaceFirst('book_', '');
@@ -233,24 +242,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       }
     }
 
-    _showEvidence(item);
-  }
-
-  void _showEvidence(BookmarkModel item) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => EvidenceBottomSheet(
-        citationNumber: 1,
-        bookName: item.bookReference.isNotEmpty ? item.bookReference : 'Rujukan Naskah',
-        author: item.author ?? '',
-        pageNumber: item.pageNumber,
-        category: item.fieldName,
-        arabicExcerpt: item.arabicExcerpt,
-        explanation: item.fullAnswer,
-      ),
-    );
+    _openNoteEditor(item);
   }
 
   @override
@@ -271,13 +263,18 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
-          'Tersimpan',
+          'Catatan',
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w600,
           ),
         ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.add_rounded, color: textPrimary),
+            tooltip: 'Tambah Catatan Baru',
+            onPressed: () => _openNoteEditor(),
+          ),
           IconButton(
             icon: Icon(
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
@@ -503,7 +500,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
                               accent: accent,
-                              onCopy: () => _copyIbarah(item.arabicExcerpt),
+                              onEdit: () => _openNoteEditor(item),
+                              onCopy: () => _copyIbarah(item.arabicExcerpt.isNotEmpty ? item.arabicExcerpt : item.fullAnswer),
                               onOpen: () => _openBookmarkItem(item),
                               onShare: () => _shareBookmark(item),
                               onDelete: () => _deleteBookmark(item),
@@ -526,6 +524,7 @@ class _BookmarkCard extends StatelessWidget {
   final Color textPrimary;
   final Color textSecondary;
   final Color accent;
+  final VoidCallback onEdit;
   final VoidCallback onCopy;
   final VoidCallback onOpen;
   final VoidCallback onShare;
@@ -539,6 +538,7 @@ class _BookmarkCard extends StatelessWidget {
     required this.textPrimary,
     required this.textSecondary,
     required this.accent,
+    required this.onEdit,
     required this.onCopy,
     required this.onOpen,
     required this.onShare,
@@ -548,167 +548,215 @@ class _BookmarkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isBookRef = item.id.startsWith('book_') || item.fieldName == 'Rujukan Kitab';
+    final hasValidBookRef = item.bookReference.isNotEmpty &&
+        !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
-    return Container(
-      padding: const EdgeInsets.all(OTSpacing.base),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: OTRadius.cardBorder,
-        border: Border.all(color: border, width: 0.8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header: Category Pill + Agent Title + Delete
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: accent.withValues(alpha: 0.12),
-                        borderRadius: OTRadius.chipBorder,
-                      ),
-                      child: Text(
-                        isBookRef ? 'Rujukan Kitab' : item.fieldName,
-                        style: OTTypography.captionMedium(color: accent).copyWith(
-                          fontSize: 11,
+    return InkWell(
+      onTap: onEdit,
+      borderRadius: OTRadius.cardBorder,
+      child: Container(
+        padding: const EdgeInsets.all(OTSpacing.base),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: OTRadius.cardBorder,
+          border: Border.all(color: border, width: 0.8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: Category Pill + Agent Title + Delete
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.12),
+                          borderRadius: OTRadius.chipBorder,
+                        ),
+                        child: Text(
+                          isBookRef ? 'Rujukan Kitab' : item.fieldName,
+                          style: OTTypography.captionMedium(color: accent).copyWith(
+                            fontSize: 11,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: OTSpacing.sm),
+                      const SizedBox(width: OTSpacing.sm),
+                      Flexible(
+                        child: Text(
+                          item.agentTitle,
+                          style: OTTypography.caption(color: textSecondary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 20,
+                    color: textSecondary.withValues(alpha: 0.7),
+                  ),
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  tooltip: 'Hapus Catatan',
+                  onPressed: onDelete,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: OTSpacing.sm),
+
+            // Title
+            Text(
+              item.title,
+              style: OTTypography.cardTitle(color: textPrimary),
+            ),
+
+            if (hasValidBookRef) ...[
+              const SizedBox(height: OTSpacing.sm),
+              // Book Reference Pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: surfaceSubtle,
+                  borderRadius: OTRadius.chipBorder,
+                  border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.menu_book_rounded, size: 14, color: accent),
+                    const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        item.agentTitle,
-                        style: OTTypography.caption(color: textSecondary),
-                        maxLines: 1,
+                        '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
+                        style: OTTypography.captionMedium(color: textPrimary),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 4),
-              IconButton(
-                icon: Icon(
-                  Icons.delete_outline_rounded,
-                  size: 20,
-                  color: textSecondary.withValues(alpha: 0.7),
+            ],
+
+            if (item.arabicExcerpt.isNotEmpty) ...[
+              const SizedBox(height: OTSpacing.md),
+              // Arabic Excerpt Box
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: surfaceSubtle,
+                  borderRadius: BorderRadius.circular(OTRadius.input),
+                  border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
                 ),
-                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                tooltip: 'Hapus Rujukan',
-                onPressed: onDelete,
+                child: Text(
+                  item.arabicExcerpt,
+                  textDirection: TextDirection.rtl,
+                  style: GoogleFonts.amiri(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    height: 1.7,
+                    color: textPrimary,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
-          ),
 
-          const SizedBox(height: OTSpacing.sm),
-
-          // Title
-          Text(
-            item.title,
-            style: OTTypography.cardTitle(color: textPrimary),
-          ),
-
-          const SizedBox(height: OTSpacing.sm),
-
-          // Book Reference Pill
-          if (item.bookReference.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: surfaceSubtle,
-                borderRadius: OTRadius.chipBorder,
-                border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
+            // Markdown Body Excerpt
+            if (item.fullAnswer.trim().isNotEmpty) ...[
+              const SizedBox(height: OTSpacing.sm),
+              MarkdownBody(
+                data: item.fullAnswer.length > 250
+                    ? '${item.fullAnswer.substring(0, 250).trim()}...'
+                    : item.fullAnswer.trim(),
+                styleSheet: MarkdownStyleSheet(
+                  p: GoogleFonts.outfit(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: textSecondary,
+                  ),
+                  strong: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: textPrimary,
+                  ),
+                  blockquote: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    fontStyle: FontStyle.italic,
+                    color: textSecondary,
+                  ),
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.menu_book_rounded, size: 14, color: accent),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
-                      style: OTTypography.captionMedium(color: textPrimary),
-                      overflow: TextOverflow.ellipsis,
+            ],
+
+            const SizedBox(height: OTSpacing.md),
+
+            // Action Buttons
+            Row(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit_outlined, size: 14),
+                  label: const Text('Edit'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: textPrimary,
+                    side: BorderSide(color: border, width: 0.8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    textStyle: OTTypography.captionMedium(),
+                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                  ),
+                ),
+                const SizedBox(width: OTSpacing.xs + 2),
+                OutlinedButton.icon(
+                  onPressed: onCopy,
+                  icon: const Icon(Icons.copy_rounded, size: 14),
+                  label: const Text(AppCopy.copyIbarahAction),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: textPrimary,
+                    side: BorderSide(color: border, width: 0.8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    textStyle: OTTypography.captionMedium(),
+                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                  ),
+                ),
+                if (isBookRef) ...[
+                  const SizedBox(width: OTSpacing.xs + 2),
+                  FilledButton.icon(
+                    onPressed: onOpen,
+                    icon: const Icon(Icons.menu_book, size: 14),
+                    label: const Text('Kitab'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: surfaceSubtle,
+                      foregroundColor: textPrimary,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      textStyle: OTTypography.captionMedium(),
+                      shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                     ),
                   ),
                 ],
-              ),
-            ),
-
-          if (item.arabicExcerpt.isNotEmpty) ...[
-            const SizedBox(height: OTSpacing.md),
-            // Arabic Excerpt Box
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: surfaceSubtle,
-                borderRadius: BorderRadius.circular(OTRadius.input),
-                border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
-              ),
-              child: Text(
-                item.arabicExcerpt,
-                textDirection: TextDirection.rtl,
-                style: GoogleFonts.amiri(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  height: 1.7,
-                  color: textPrimary,
+                const Spacer(),
+                IconButton(
+                  onPressed: onShare,
+                  icon: const Icon(Icons.share_outlined, size: 18),
+                  tooltip: AppCopy.shareReferenceTooltip,
+                  color: textSecondary,
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(),
                 ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
+              ],
             ),
           ],
-
-          const SizedBox(height: OTSpacing.md),
-
-          // Action Buttons
-          Row(
-            children: [
-              OutlinedButton.icon(
-                onPressed: onCopy,
-                icon: const Icon(Icons.copy_rounded, size: 14),
-                label: const Text(AppCopy.copyIbarahAction),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: textPrimary,
-                  side: BorderSide(color: border, width: 0.8),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: OTTypography.captionMedium(),
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-              ),
-              const SizedBox(width: OTSpacing.sm),
-              FilledButton.icon(
-                onPressed: onOpen,
-                icon: const Icon(Icons.menu_book, size: 14),
-                label: const Text(AppCopy.viewReferenceAction),
-                style: FilledButton.styleFrom(
-                  backgroundColor: surfaceSubtle,
-                  foregroundColor: textPrimary,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: OTTypography.captionMedium(),
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: onShare,
-                icon: const Icon(Icons.share_outlined, size: 18),
-                tooltip: AppCopy.shareReferenceTooltip,
-                color: textSecondary,
-                padding: const EdgeInsets.all(8),
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

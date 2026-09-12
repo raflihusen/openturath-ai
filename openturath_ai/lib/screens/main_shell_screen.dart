@@ -151,8 +151,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           const SizedBox(height: 16),
                           _RailItem(
-                            icon: Icons.bookmark_border_rounded,
-                            activeIcon: Icons.bookmark_rounded,
+                            icon: Icons.edit_note_rounded,
+                            activeIcon: Icons.edit_note_rounded,
                             label: AppCopy.navSaved,
                             isSelected: _currentIndex == 2,
                             accent: accent,
@@ -239,8 +239,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ),
                           Expanded(
                             child: _GoogleNavBarItem(
-                              icon: Icons.bookmark_border_rounded,
-                              activeIcon: Icons.bookmark_rounded,
+                              icon: Icons.edit_note_rounded,
+                              activeIcon: Icons.edit_note_rounded,
                               label: AppCopy.navSaved,
                               isSelected: _currentIndex == 2,
                               onTap: () => _onTabSelected(2),

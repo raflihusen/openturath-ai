@@ -11,6 +11,6 @@ BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
     id: sha256.convert(utf8.encode('${agent.id}:$text')).toString(),
     title: firstLine.length > 80 ? firstLine.substring(0, 80) : firstLine,
     agentId: agent.id, agentTitle: agent.title, fieldName: agent.category, fieldId: agent.fieldId,
-    arabicExcerpt: '', fullAnswer: text, bookReference: 'Rujukan belum diidentifikasi', pageNumber: '', createdAt: DateTime.now(),
+    arabicExcerpt: '', fullAnswer: text, bookReference: '', pageNumber: '', createdAt: DateTime.now(),
   );
 }
