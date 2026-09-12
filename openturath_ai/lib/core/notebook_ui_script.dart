@@ -71,7 +71,7 @@ const notebookUiScript = r'''
       let card = el;
       for (let i = 0; card && i < 5; i++, card = card.parentElement) {
         if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
-        if (/\b\d+ sources\b|\b\d+ sumber\b/i.test(text(card)) && text(card).length < 1500) { hide(card); break; }
+        if (/\d+ sources\b|\d+ sumber\b/i.test(text(card)) && text(card).length < 1500) { hide(card); break; }
       }
     });
     // Dismiss only the informational announcement shown in the reported screenshot.
