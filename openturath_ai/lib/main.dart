@@ -21,6 +21,7 @@ import 'firebase_options.dart';
 import 'core/app_config.dart';
 import 'core/app_copy.dart';
 import 'core/localization.dart';
+import 'services/telemetry_service.dart';
 import 'widgets/app_error_state.dart';
 
 Future<void> main() async {
@@ -50,9 +51,17 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // ── Inisialisasi Silent Telemetry ──
+    TelemetryService.instance.init();
     runApp(const OpenTurathApp());
   } catch (error, stackTrace) {
     debugPrint('[OpenTurath] Firebase initialization error: $error\n$stackTrace');
+    TelemetryService.instance.reportError(
+      error,
+      stackTrace,
+      context: 'firebase_init_failure',
+      severity: 'critical',
+    );
     final isUnsupportedPlatform = error is UnsupportedError;
     final title = isUnsupportedPlatform
         ? AppCopy.deviceNotSupportedTitle
