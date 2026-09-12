@@ -304,6 +304,27 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final tierPeriod = currentTier['period'] as String;
     final tierPlanId = currentTier['planId'] as String;
 
+    final isAllAccess = _user != null &&
+        (_user!.plan == 'all_access' ||
+            _user!.plan == 'sultan' ||
+            _user!.plan.startsWith('all_ai') ||
+            (_user!.entitlements['all_access']?.isActive ?? false));
+
+    final List<String> activeSubscribedModules = [];
+    if (_user != null) {
+      if (isAllAccess) {
+        activeSubscribedModules.add('Semua Modul AI (Akses Perdana)');
+      } else {
+        for (final ag in activeList) {
+          if (_user!.isAgentSubscriptionActive(ag.id)) {
+            activeSubscribedModules.add(ag.title);
+          }
+        }
+      }
+    }
+    final bool isUserActiveSubscribed =
+        activeSubscribedModules.isNotEmpty || (_user?.isSubscriptionActive ?? false);
+
     return Scaffold(
       backgroundColor: canvas,
       appBar: AppBar(
@@ -336,50 +357,122 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
                 children: [
+                  // ── Info Card Akun & Status Langganan Pengguna ──
+                  if (_user != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(OTSpacing.md),
+                      decoration: BoxDecoration(
+                        color: surface,
+                        borderRadius: OTRadius.cardBorder,
+                        border: Border.all(color: border, width: 0.8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: surfaceSubtle,
+                                child: Text(
+                                  _user!.name.isNotEmpty ? _user!.name[0].toUpperCase() : 'S',
+                                  style: OTTypography.captionMedium(color: textPrimary).copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _user!.name.isNotEmpty ? _user!.name : 'Santri Peneliti',
+                                      style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (_user!.email.isNotEmpty)
+                                      Text(
+                                        _user!.email,
+                                        style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: surfaceSubtle,
+                                  borderRadius: OTRadius.chipBorder,
+                                  border: Border.all(color: border, width: 0.6),
+                                ),
+                                child: Text(
+                                  isUserActiveSubscribed ? 'Aktif' : 'Belum Berlangganan',
+                                  style: OTTypography.captionMedium(
+                                    color: isUserActiveSubscribed ? textPrimary : textSecondary,
+                                  ).copyWith(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (activeSubscribedModules.isNotEmpty) ...[
+                            const SizedBox(height: OTSpacing.sm),
+                            Divider(color: border.withValues(alpha: 0.6), height: 1),
+                            const SizedBox(height: OTSpacing.sm),
+                            Text(
+                              'Modul Aktif:',
+                              style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
+                            ),
+                            const SizedBox(height: 6),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 6,
+                              children: activeSubscribedModules.map((agTitle) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: surfaceSubtle,
+                                    borderRadius: OTRadius.chipBorder,
+                                    border: Border.all(color: border, width: 0.6),
+                                  ),
+                                  child: Text(
+                                    agTitle,
+                                    style: OTTypography.captionMedium(color: textPrimary).copyWith(fontSize: 11),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: OTSpacing.md),
+                  ],
+
                   // Editorial Header
                   Text(
-                    'Pilih akses',
-                    style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 24),
+                    'Pilihan Langganan',
+                    style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 22),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
-                    'Akses ruang riset turats Islam dengan analisis naskah primer.',
+                    'Pilih langganan modul untuk menelaah ibarat dan naskah kitab turats.',
                     style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                   ),
 
                   const SizedBox(height: OTSpacing.sm),
 
-                  // ── Entitlement Status Card untuk Akses Perdana / All Access ──
-                  if (_user != null &&
-                      (_user!.plan == 'all_access' ||
-                          _user!.plan == 'sultan' ||
-                          _user!.plan.startsWith('all_ai') ||
-                          (_user!.entitlements['all_access']?.isActive ?? false)))
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: OTSpacing.sm),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF18181B) : const Color(0xFFF4F4F5),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: border, width: 0.8),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.verified_rounded, size: 18, color: textPrimary),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                'Semua Modul Terbuka (Akses Perdana Santri & Asatidz)',
-                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                  // Satu pintu masuk redeem kode akses
+                  // Pintu masuk redeem kode akses voucher
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AppleInteractiveWrapper(
@@ -396,7 +489,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             Icon(Icons.confirmation_number_outlined, size: 16, color: accent),
                             const SizedBox(width: 6),
                             Text(
-                              'Punya voucher atau kode redeem santri? Klaim di sini',
+                              'Punya kode voucher? Klaim di sini',
                               style: OTTypography.button(color: accent).copyWith(fontSize: 13.5),
                             ),
                           ],
@@ -559,14 +652,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Divider(color: border.withValues(alpha: 0.6), height: 1),
                         const SizedBox(height: OTSpacing.base),
 
-                        // Core Benefits
-                        _benefitRow('Akses penuh ke ${_agent?.title ?? "Modul Spesialis"}', textPrimary),
+                        // Core Benefits (Quiet Scholar Natural Phrasing, No generic green checkmarks)
+                        _benefitRow(
+                          'Akses musyawarah dan penelaahan kitab tanpa batas kuota harian',
+                          textPrimary,
+                        ),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Penelusuran mendalam tanpa batas kuota pertanyaan harian', textPrimary),
+                        _benefitRow(
+                          'Fokus telaah ibarat dan naskah primer ${_agent?.title ?? "modul keilmuan"}',
+                          textPrimary,
+                        ),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Sitasi marja\' kitab asli, nomor jilid, halaman & matan lengkap', textPrimary),
+                        _benefitRow(
+                          'Rujukan teks asli, penomoran jilid, dan halaman kitab',
+                          textPrimary,
+                        ),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Pencocokan kutipan dengan naskah Maktabah Syamilah atau cetak fisik', textPrimary),
+                        _benefitRow(
+                          'Verifikasi kutipan teks dengan naskah Maktabah Syamilah dan kitab cetak',
+                          textPrimary,
+                        ),
 
                         const SizedBox(height: OTSpacing.lg),
 
@@ -633,12 +738,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              'PAKET BUNDLING SELURUH AI (SEMUA SPESIALIS)',
-                              style: OTTypography.sectionHeading(color: textSecondary),
+                            Expanded(
+                              child: Text(
+                                'PAKET BUNDLING SEMUA AI',
+                                style: OTTypography.sectionHeading(color: textSecondary),
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
@@ -669,11 +777,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.base),
                         Divider(color: border.withValues(alpha: 0.5), height: 1),
                         const SizedBox(height: OTSpacing.base),
-                        _benefitRow('Kunci seluruh spesialis kecerdasan turats terbuka', textSecondary),
+                        _benefitRow('Akses serentak ke seluruh 7 bidang keilmuan Islam', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Integrasi telaah lintas disiplin keilmuan Islam', textSecondary),
+                        _benefitRow('Kajian terpadu lintas Fikih, Hadits, Tafsir, Ushul, Nahwu, Aqidah, dan Tarikh', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Akses penuh saat ini dapat diaktifkan melalui Kode Voucher Perdana', textSecondary),
+                        _benefitRow('Akses saat ini dapat diaktifkan menggunakan Kode Voucher Perdana', textSecondary),
                         const SizedBox(height: OTSpacing.md),
                         // Catatan Edukatif
                         Container(
@@ -698,7 +806,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Saat ini paket bundling sedang dipersiapkan. Untuk menikmati akses seluruh AI sekaligus, gunakan Kode Voucher Perdana pada peluncuran perdana santri & peneliti.',
+                                  'Paket langganan bundling sedang disiapkan. Untuk membuka seluruh modul sekaligus saat ini, silakan gunakan Kode Voucher Perdana.',
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 12,
                                     height: 1.4,
@@ -743,23 +851,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _benefitRow(String text, Color textPrimary) {
+  Widget _benefitRow(String text, Color textColor) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 2),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
           child: Icon(
-            Icons.check_circle_rounded,
+            Icons.check_rounded,
             size: 15,
-            color: OTColors.success,
+            color: textColor.withValues(alpha: 0.75),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: OTTypography.body(color: textPrimary).copyWith(
+            style: OTTypography.body(color: textColor).copyWith(
               fontSize: 12.5,
               height: 1.35,
             ),
