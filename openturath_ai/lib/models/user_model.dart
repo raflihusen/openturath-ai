@@ -20,7 +20,11 @@ class ModuleEntitlement {
 
   bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
 
-  bool get isActive => status == 'active' && expiry != null && expiry!.isAfter(DateTime.now());
+  bool get isActive =>
+      status != 'revoked' &&
+      status != 'expired' &&
+      expiry != null &&
+      expiry!.isAfter(DateTime.now());
 
   factory ModuleEntitlement.fromMap(Map<String, dynamic> map) {
     return ModuleEntitlement(
@@ -30,7 +34,7 @@ class ModuleEntitlement {
               ? (map['expiry'] as Timestamp).toDate()
               : DateTime.tryParse(map['expiry'].toString()))
           : null,
-      status: map['status'] ?? 'trial',
+      status: map['status'] ?? 'active',
       sourceTransactionId: map['source_transaction_id'] ?? map['trx_id'],
       updatedAt: map['updated_at'] != null
           ? (map['updated_at'] is Timestamp
@@ -138,7 +142,7 @@ class UserModel {
     if (specific != null && specific.isActive && specific.isPremium) return true;
 
     // If an explicit all_access was REVOKED, deny fallback
-    if (all != null && !all.isActive) {
+    if (all != null && all.status == 'revoked') {
       return false;
     }
 

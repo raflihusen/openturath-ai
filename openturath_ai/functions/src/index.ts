@@ -134,9 +134,10 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
     ? userData.entitlements as Record<string, any> : {};
   const now = Date.now();
   const active = (ent: any): boolean => {
-    if (!ent || ent.status !== "active" || typeof ent.plan !== "string") return false;
-    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|all_ai|voucher(?:_.*)?|redeem(?:_.*)?|custom|full|sultan|pro)$/.test(ent.plan);
-    const expiry = ent.expiry?.toDate ? ent.expiry.toDate() : new Date(ent.expiry ?? "");
+    if (!ent || typeof ent.plan !== "string") return false;
+    if (ent.status === "revoked" || ent.status === "expired") return false;
+    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
+    const expiry = ent.expiry?.toDate ? ent.expiry.toDate() : (ent.expiry?._seconds ? new Date(ent.expiry._seconds * 1000) : new Date(ent.expiry ?? ""));
     return allowed && Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
   };
   const all = entitlements.all_access ?? entitlements.all_ai;
@@ -144,8 +145,8 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
   const specific = entitlements[entitlementKey];
   if (active(specific)) return { premiumPlan: true, active: true };
 
-  // Explicit revoked all_access blocks global fallback
-  if (all && !active(all)) {
+  // Only explicit revocation of all_access blocks global subscription fallback
+  if (all && all.status === "revoked") {
     return { premiumPlan: true, active: false };
   }
 

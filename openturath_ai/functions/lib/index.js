@@ -119,11 +119,13 @@ function getEntitlementAccess(userData, entitlementKey) {
         ? userData.entitlements : {};
     const now = Date.now();
     const active = (ent) => {
-        var _a, _b;
-        if (!ent || ent.status !== "active" || typeof ent.plan !== "string")
+        var _a, _b, _c;
+        if (!ent || typeof ent.plan !== "string")
             return false;
-        const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|all_ai|voucher(?:_.*)?|redeem(?:_.*)?|custom|full|sultan|pro)$/.test(ent.plan);
-        const expiry = ((_a = ent.expiry) === null || _a === void 0 ? void 0 : _a.toDate) ? ent.expiry.toDate() : new Date((_b = ent.expiry) !== null && _b !== void 0 ? _b : "");
+        if (ent.status === "revoked" || ent.status === "expired")
+            return false;
+        const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
+        const expiry = ((_a = ent.expiry) === null || _a === void 0 ? void 0 : _a.toDate) ? ent.expiry.toDate() : (((_b = ent.expiry) === null || _b === void 0 ? void 0 : _b._seconds) ? new Date(ent.expiry._seconds * 1000) : new Date((_c = ent.expiry) !== null && _c !== void 0 ? _c : ""));
         return allowed && Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
     };
     const all = (_a = entitlements.all_access) !== null && _a !== void 0 ? _a : entitlements.all_ai;
@@ -132,8 +134,8 @@ function getEntitlementAccess(userData, entitlementKey) {
     const specific = entitlements[entitlementKey];
     if (active(specific))
         return { premiumPlan: true, active: true };
-    // Explicit revoked all_access blocks global fallback
-    if (all && !active(all)) {
+    // Only explicit revocation of all_access blocks global subscription fallback
+    if (all && all.status === "revoked") {
         return { premiumPlan: true, active: false };
     }
     // Account-level active subscription
