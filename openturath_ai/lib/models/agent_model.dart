@@ -108,9 +108,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 1,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',
@@ -170,9 +170,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 2,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_syafii_muhaqqiq',
@@ -218,9 +218,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 3,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanafi_muhaqqiq',
@@ -264,9 +264,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 4,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_maliki_muhaqqiq',
@@ -310,9 +310,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 5,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanbali_muhaqqiq',
@@ -356,9 +356,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 6,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_muqaran_muhaqqiq',
@@ -404,9 +404,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 7,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'hadits_muhaqqiq',
@@ -453,9 +453,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 8,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'tafsir_muhaqqiq',
@@ -502,9 +502,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 9,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'ushul_muhaqqiq',
@@ -551,9 +551,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 10,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'nahwu_sharaf_muerib',
@@ -612,9 +612,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 11,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
 
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
@@ -635,9 +635,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 12,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
 
         // ── 8. TASAWUF & ULAMA ────────────────────────────────

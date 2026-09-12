@@ -14,18 +14,17 @@ class SubscriptionService {
   }
 
   static String redeemErrorMessage(String code) {
-    switch (code.toLowerCase().replaceAll('_', '-')) {
-      case 'not-found': return 'Kode akses tidak ditemukan. Periksa kembali kode yang Anda masukkan.';
-      case 'already-exists': return 'Kode ini sudah pernah Anda gunakan.';
-      case 'deadline-exceeded': return 'Kode sudah kedaluwarsa atau layanan terlalu lama merespons. Coba lagi, atau gunakan kode lain.';
-      case 'failed-precondition': return 'Kode akses ini sudah tidak aktif.';
-      case 'resource-exhausted': return 'Batas penggunaan kode atau percobaan telah tercapai. Coba lagi nanti.';
-      case 'unauthenticated': return 'Silakan masuk ke akun Anda lalu coba kembali.';
-      case 'invalid-argument': return 'Format kode belum sesuai. Periksa kembali kode Anda.';
-      case 'permission-denied': return 'Kode ini tidak dapat digunakan untuk akun Anda.';
-      case 'unavailable': return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
-      default: return 'Kode belum dapat diaktifkan. Silakan coba lagi sebentar.';
-    }
+    final c = code.toLowerCase().replaceAll('_', '-');
+    if (c.contains('not-found')) return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+    if (c.contains('already-exists') || c.contains('already-used')) return 'Anda sudah pernah menukarkan kode voucher ini.';
+    if (c.contains('deadline-exceeded') || c.contains('expired')) return 'Masa berlaku kode voucher ini telah berakhir.';
+    if (c.contains('failed-precondition')) return 'Kode voucher ini sudah tidak aktif.';
+    if (c.contains('resource-exhausted') || c.contains('quota')) return 'Kuota penukaran untuk kode voucher ini sudah habis.';
+    if (c.contains('unauthenticated')) return 'Silakan masuk ke akun Anda lalu coba kembali.';
+    if (c.contains('invalid-argument')) return 'Format penulisan kode voucher belum sesuai.';
+    if (c.contains('permission-denied')) return 'Kode voucher ini tidak dapat digunakan untuk akun Anda.';
+    if (c.contains('unavailable')) return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
+    return 'Kode voucher belum dapat diaktifkan. Silakan periksa kembali kode Anda.';
   }
 
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
@@ -130,15 +129,13 @@ class SubscriptionService {
   String _getTitleForPlan(String plan) {
     switch (plan) {
       case AppConstants.planTholib1m:
-        return 'Paket Tholib (1 Bulan)';
+        return 'Modul AI (1 Bulan)';
       case AppConstants.planTholib6m:
-        return 'Paket Tholib (6 Bulan)';
+        return 'Modul AI (6 Bulan)';
       case AppConstants.planBahits1y:
-        return 'Paket Bahits (1 Tahun)';
-      case 'all_ai_1m':
-        return 'Paket Promo Semua AI (1 Bulan)';
+        return 'Modul AI (1 Tahun)';
       default:
-        return 'Langganan OpenTurath AI';
+        return 'Langganan Modul AI OpenTurath';
     }
   }
 }
