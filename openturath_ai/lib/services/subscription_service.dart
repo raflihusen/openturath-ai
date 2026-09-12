@@ -13,6 +13,21 @@ class SubscriptionService {
     return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
   }
 
+  static String redeemErrorMessage(String code) {
+    switch (code.toLowerCase().replaceAll('_', '-')) {
+      case 'not-found': return 'Kode akses tidak ditemukan. Periksa kembali kode yang Anda masukkan.';
+      case 'already-exists': return 'Kode ini sudah pernah Anda gunakan.';
+      case 'deadline-exceeded': return 'Kode sudah kedaluwarsa atau layanan terlalu lama merespons. Coba lagi, atau gunakan kode lain.';
+      case 'failed-precondition': return 'Kode akses ini sudah tidak aktif.';
+      case 'resource-exhausted': return 'Batas penggunaan kode atau percobaan telah tercapai. Coba lagi nanti.';
+      case 'unauthenticated': return 'Silakan masuk ke akun Anda lalu coba kembali.';
+      case 'invalid-argument': return 'Format kode belum sesuai. Periksa kembali kode Anda.';
+      case 'permission-denied': return 'Kode ini tidak dapat digunakan untuk akun Anda.';
+      case 'unavailable': return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
+      default: return 'Kode belum dapat diaktifkan. Silakan coba lagi sebentar.';
+    }
+  }
+
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
   Future<Map<String, dynamic>> redeemAccessCode(String code) async {
     try {
@@ -25,9 +40,9 @@ class SubscriptionService {
       }
       return {'success': true, 'message': 'Kode akses sudah aktif.'};
     } on FirebaseFunctionsException catch (e) {
-      return {'success': false, 'message': e.message ?? 'Gagal menukarkan kode akses.'};
+      return {'success': false, 'message': redeemErrorMessage(e.code)};
     } catch (e) {
-      return {'success': false, 'message': 'Terjadi kendala koneksi: $e'};
+      return {'success': false, 'message': 'Koneksi bermasalah. Periksa internet Anda lalu coba lagi.'};
     }
   }
 
