@@ -229,6 +229,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _fetchAgentUrl() async {
+    _readinessTimer?.cancel();
     setState(() {
       _isLoadingUrl = true;
       _isWebViewLoading = true;
@@ -393,7 +394,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     _checkingReady = true;
     try {
       final url = await _webController!.getUrl();
-      final isLogin = url?.host == 'accounts.google.com' || url?.host == 'accounts.youtube.com';
+      final isLogin = url?.host == 'accounts.google.com' || url?.host == 'accounts.youtube.com' || url?.host == 'consent.google.com';
       final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
