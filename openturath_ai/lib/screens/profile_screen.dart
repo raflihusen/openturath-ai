@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -255,50 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
               physics: const BouncingScrollPhysics(),
               children: [
-                // ── Card 1: User Email & Pro Badge ──
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          email,
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.2,
-                            color: textPrimary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white : const Color(0xFF18181B),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Text(
-                          isSubscribed ? 'Aktif' : 'Gratis',
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? const Color(0xFF18181B) : Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 2: Profile & Subscription ──
+                // ── Card 1: Akun & Status Hak Akses ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -307,10 +265,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Column(
                     children: [
-                      _SettingsTile(
-                        icon: Icons.person_outline_rounded,
-                        title: AppCopy.profile,
-                        subtitle: displayName,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.05),
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: Icon(Icons.person_outline_rounded, size: 22, color: textPrimary),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    displayName,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: -0.2,
+                                      color: textPrimary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    email,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 13,
+                                      color: textSecondary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isSubscribed
+                                    ? (isDark ? Colors.white : const Color(0xFF18181B))
+                                    : (isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5)),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Text(
+                                isSubscribed ? 'Aktif' : 'Gratis',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: isSubscribed
+                                      ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                      : textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Divider(height: 1, color: border),
                       _SettingsTile(
@@ -326,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // ── Card 3: Color Mode & Language ──
+                // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -338,19 +358,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ValueListenableBuilder<ThemeMode>(
                         valueListenable: AppConfig.themeNotifier,
                         builder: (context, currentMode, _) {
-                          final isCurrentDark = currentMode == ThemeMode.dark ||
-                              (currentMode == ThemeMode.system && isDark);
-                          return _SettingsTile(
-                            icon: Icons.dark_mode_outlined,
-                            title: AppCopy.appearance,
-                            subtitle: isCurrentDark ? AppCopy.modeDark : AppCopy.modeLight,
-                            trailing: Switch.adaptive(
-                              value: isCurrentDark,
-                              activeTrackColor: isDark ? Colors.white : const Color(0xFF18181B),
-                              activeThumbColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                              onChanged: (val) {
-                                AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
-                              },
+                          return Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.palette_outlined, size: 20, color: textSecondary),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      AppCopy.appearance,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      currentMode == ThemeMode.system
+                                          ? AppCopy.modeSystem
+                                          : currentMode == ThemeMode.dark
+                                              ? AppCopy.modeDark
+                                              : AppCopy.modeLight,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12.5,
+                                        color: textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      _buildThemeOption(
+                                        title: 'Ikuti Sistem',
+                                        icon: Icons.brightness_auto_rounded,
+                                        isSelected: currentMode == ThemeMode.system,
+                                        isDark: isDark,
+                                        textPrimary: textPrimary,
+                                        textSecondary: textSecondary,
+                                        onTap: () => AppConfig.setThemeMode(ThemeMode.system),
+                                      ),
+                                      _buildThemeOption(
+                                        title: 'Terang',
+                                        icon: Icons.light_mode_rounded,
+                                        isSelected: currentMode == ThemeMode.light,
+                                        isDark: isDark,
+                                        textPrimary: textPrimary,
+                                        textSecondary: textSecondary,
+                                        onTap: () => AppConfig.setThemeMode(ThemeMode.light),
+                                      ),
+                                      _buildThemeOption(
+                                        title: 'Gelap',
+                                        icon: Icons.dark_mode_rounded,
+                                        isSelected: currentMode == ThemeMode.dark,
+                                        isDark: isDark,
+                                        textPrimary: textPrimary,
+                                        textSecondary: textSecondary,
+                                        onTap: () => AppConfig.setThemeMode(ThemeMode.dark),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -845,6 +923,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: OTTypography.caption(color: textSecondary).copyWith(height: 1.5),
         ),
       ],
+    );
+  }
+
+  Widget _buildThemeOption({
+    required String title,
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    final activeBg = isDark ? const Color(0xFF18181B) : Colors.white;
+    final activeFg = isDark ? Colors.white : const Color(0xFF18181B);
+    final inactiveFg = textSecondary;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? activeBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(9),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 15, color: isSelected ? activeFg : inactiveFg),
+              const SizedBox(width: 6),
+              Text(
+                title,
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? activeFg : inactiveFg,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

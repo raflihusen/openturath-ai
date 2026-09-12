@@ -7,15 +7,21 @@ import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
+import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
+import '../models/bookmark_model.dart';
+import '../models/book_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
+import '../services/bookmark_service.dart';
+import '../services/canonical_library_service.dart';
 import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/evidence_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -35,6 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   UserModel? _initialUser;
   List<AgentModel> _agents = AgentModel.defaultAgents;
+  List<BookmarkModel> _recentNotes = [];
   String? _lastOpenedAgentId;
   String _searchQuery = '';
 
@@ -66,9 +73,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final results = await Future.wait([
         _authService.getCurrentUserModel(),
         _agentService.getAgents(),
+        BookmarkService().getBookmarks(),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [null, AgentModel.defaultAgents],
+        onTimeout: () => [null, AgentModel.defaultAgents, <BookmarkModel>[]],
       );
 
       if (!mounted) return;
@@ -76,6 +84,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _lastOpenedAgentId = lastId;
         _initialUser = results[0] as UserModel?;
         _agents = results[1] as List<AgentModel>;
+        final notes = results[2] as List<BookmarkModel>;
+        _recentNotes = notes.take(3).toList();
       });
     } catch (_) {
     } finally {
@@ -118,6 +128,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context,
       AppRoutes.agentWebview,
       arguments: {'agent': agent, 'user': user},
+    );
+  }
+
+  Future<void> _openBookmarkItem(BookmarkModel item) async {
+    if (item.id.startsWith('book_')) {
+      final editionId = item.id.replaceFirst('book_', '');
+      var books = CanonicalLibraryService.instance.cachedSyafiiBooks;
+      if (books == null) {
+        try {
+          books = await CanonicalLibraryService.instance.loadSyafiiCatalog();
+        } catch (_) {}
+      }
+      final matchedBook = books?.firstWhere(
+        (b) => b.editionId == editionId,
+        orElse: () => CanonicalBookPresentation(
+          editionId: editionId,
+          titleArabic: item.title,
+          authorArabic: item.author ?? '',
+        ),
+      );
+
+      if (matchedBook != null && mounted) {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.bookDetail,
+          arguments: matchedBook,
+        );
+        return;
+      }
+    }
+
+    _showEvidence(item);
+  }
+
+  void _showEvidence(BookmarkModel item) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EvidenceBottomSheet(
+        citationNumber: 1,
+        bookName: item.bookReference.isNotEmpty ? item.bookReference : 'Rujukan Naskah',
+        author: item.author ?? '',
+        pageNumber: item.pageNumber,
+        category: item.fieldName,
+        arabicExcerpt: item.arabicExcerpt,
+        explanation: item.fullAnswer,
+      ),
     );
   }
 
@@ -182,6 +240,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             );
 
         final recentAgents = _getRecentAgents();
+        final activeLastAgent = (_lastOpenedAgentId != null && _lastOpenedAgentId!.isNotEmpty)
+            ? _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive).firstOrNull
+            : null;
 
         return Scaffold(
           backgroundColor: canvas,
@@ -196,7 +257,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Header Centered: OpenTurath (Tanpa logo, tanpa keterangan baris bawah) ──
+                    // ── 1. Header Centered: OpenTurath ──
                     Center(
                       child: Text(
                         'OpenTurath',
@@ -209,11 +270,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
+                    // ── 2. Editorial Desk Header: Dual Date & Scholarly Greeting ──
+                    Text(
+                      HijriDateUtils.formatDualDate(),
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
                     Text(
                       user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
                       style: GoogleFonts.newsreader(
@@ -223,21 +294,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 16),
-
-                    // ── 3. Announcement Carousel Card ──
-                    _DashboardAnnouncementCarousel(
-                      isDark: isDark,
-                      surface: surface,
-                      border: border,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      accent: accent,
+                    const SizedBox(height: 2),
+                    Text(
+                      'Meja Baca & Ruang Kerja Riset Turats',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        color: textSecondary,
+                      ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
-                    // ── 4. Ergonomic Search Bar (Stadium Pill) ──
+                    // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
                       height: 48,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -284,7 +352,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 22),
 
-                    // ── 5. Jika Sedang Mencari (Hasil Realtime) ──
+                    // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
                         'Hasil Penelusuran',
@@ -340,7 +408,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 6. Section: Pilih Bidang Ilmu ──
+                      // ── 5. Lanjutkan Sesi Terakhir ──
+                      if (activeLastAgent != null) ...[
+                        _buildResumeSessionCard(
+                          context: context,
+                          agent: activeLastAgent,
+                          user: user,
+                          isDark: isDark,
+                          surface: surface,
+                          border: border,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                          accent: accent,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // ── 6. Akses Pustaka Kitab Kanonikal ──
+                      _buildLibraryCatalogCard(
+                        context: context,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        accent: accent,
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // ── 7. Catatan Riset Terbaru ──
+                      _buildRecentNotesSection(
+                        context: context,
+                        notes: _recentNotes,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        accent: accent,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── 8. Section: Pilih Bidang Ilmu ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -384,7 +495,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 14),
 
-                      // ── 7. 2-Column Minimalist Purism Grid (6 Cards, Aspect Ratio 1.45) ──
+                      // 2-Column Minimalist Purism Grid (6 Cards, Aspect Ratio 1.45)
                       GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -451,9 +562,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 28),
 
-                      // ── 8. Section: Mulai Riset (Recent Research Modules) ──
+                      // ── 9. Section: Modul Riset (Specialist Modules) ──
                       Text(
-                        'Mulai Riset',
+                        'Modul Riset',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -563,6 +674,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             );
                           },
                         ),
+
+                      const SizedBox(height: 28),
+
+                      // ── 10. Adab & Prinsip Peneliti Turats ──
+                      _buildScholarlyAdabCard(
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── 11. Announcement Carousel (Diposisikan tenang di bawah) ──
+                      _DashboardAnnouncementCarousel(
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        accent: accent,
+                      ),
                     ],
                   ],
                 ),
@@ -571,6 +705,467 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildResumeSessionCard({
+    required BuildContext context,
+    required AgentModel agent,
+    required UserModel user,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color accent,
+  }) {
+    return AppleInteractiveWrapper(
+      onTap: () => _openNotebook(agent, user),
+      pressedScale: 0.98,
+      hapticType: HapticFeedbackType.selection,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: border, width: 1.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.history_rounded, size: 16, color: accent),
+                const SizedBox(width: 6),
+                Text(
+                  'Lanjutkan Sesi Terakhir',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                    color: textSecondary,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF27272A) : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Text(
+                    'Aktif Terbuka',
+                    style: GoogleFonts.outfit(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        agent.title,
+                        style: GoogleFonts.newsreader(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
+                          color: textPrimary,
+                        ),
+                      ),
+                      if (agent.titleArabic.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          agent.titleArabic,
+                          style: GoogleFonts.amiri(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: textSecondary,
+                          ),
+                          textDirection: TextDirection.rtl,
+                        ),
+                      ],
+                      const SizedBox(height: 4),
+                      Text(
+                        agent.subtitleAcademic,
+                        style: GoogleFonts.outfit(
+                          fontSize: 12.5,
+                          color: textSecondary,
+                          height: 1.35,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white : const Color(0xFF18181B),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 18,
+                    color: isDark ? const Color(0xFF18181B) : Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLibraryCatalogCard({
+    required BuildContext context,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color accent,
+  }) {
+    return AppleInteractiveWrapper(
+      onTap: () {
+        Navigator.pushNamed(context, AppRoutes.bookCatalog);
+      },
+      pressedScale: 0.98,
+      hapticType: HapticFeedbackType.light,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: border, width: 1.0),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.auto_stories_rounded,
+                size: 22,
+                color: textPrimary,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '87 Kitab Mu\'tamad Syafi\'iyyah',
+                    style: GoogleFonts.newsreader(
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.2,
+                      color: textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Pustaka Kanonikal • 3 Era Kodifikasi • Naskah Lengkap',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11.5,
+                      color: textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.chevron_right_rounded, size: 20, color: textSecondary),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentNotesSection({
+    required BuildContext context,
+    required List<BookmarkModel> notes,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color accent,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'Catatan Riset Terbaru',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.2,
+                color: textPrimary,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                final shell = MainShellController.of(context);
+                if (shell != null) {
+                  shell.switchTab(2);
+                } else {
+                  Navigator.pushNamed(context, AppRoutes.bookmark);
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Lihat Semua',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (notes.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: border, width: 1.0),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.bookmark_outline_rounded, size: 22, color: textSecondary),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    'Belum ada catatan atau kutipan ibarah tersimpan. Simpan catatan naskah saat menelaah.',
+                    style: GoogleFonts.outfit(fontSize: 12.5, color: textSecondary, height: 1.4),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: notes.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, idx) {
+              final note = notes[idx];
+              final isBookRef = note.id.startsWith('book_');
+              final subtitle = note.bookReference.isNotEmpty
+                  ? '${note.bookReference}${note.pageNumber.isNotEmpty ? ' (Hal. ${note.pageNumber})' : ''}'
+                  : (note.author != null && note.author!.isNotEmpty
+                      ? '${note.author} · ${note.agentTitle}'
+                      : note.agentTitle);
+
+              return AppleInteractiveWrapper(
+                onTap: () => _openBookmarkItem(note),
+                pressedScale: 0.985,
+                hapticType: HapticFeedbackType.selection,
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                          borderRadius: BorderRadius.circular(9),
+                        ),
+                        child: Icon(
+                          isBookRef ? Icons.menu_book_rounded : Icons.bookmark_added_rounded,
+                          size: 16,
+                          color: textPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              note.title,
+                              style: GoogleFonts.outfit(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                                color: textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              subtitle,
+                              style: GoogleFonts.outfit(
+                                fontSize: 11.5,
+                                color: textSecondary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildScholarlyAdabCard({
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: border, width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.verified_outlined, size: 17, color: textPrimary),
+              const SizedBox(width: 8),
+              Text(
+                'Adab & Prinsip Peneliti Turats',
+                style: GoogleFonts.outfit(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildAdabItem(
+            number: '1',
+            title: 'Talaqqi Bersanad',
+            desc: 'AI adalah sarana komparasi dan indeksasi naskah; bukan mufti dan bukan pengganti bimbingan guru.',
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 8),
+          _buildAdabItem(
+            number: '2',
+            title: 'Ihtiyath & Verifikasi Naskah',
+            desc: 'Selalu luangkan waktu untuk membuka dan memeriksa naskah fisik primer sebelum menyimpulkan.',
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 8),
+          _buildAdabItem(
+            number: '3',
+            title: 'Amanah Ilmiah',
+            desc: 'Sertakan judul kitab, nama muallif, bab, dan nomor halaman dalam menukil ibarah.',
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdabItem({
+    required String number,
+    required String title,
+    required String desc,
+    required Color textPrimary,
+    required Color textSecondary,
+    required bool isDark,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 18,
+          height: 18,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.only(top: 1),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7),
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            number,
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: GoogleFonts.outfit(fontSize: 12, height: 1.4, color: textSecondary),
+              children: [
+                TextSpan(
+                  text: '$title: ',
+                  style: TextStyle(fontWeight: FontWeight.w600, color: textPrimary),
+                ),
+                TextSpan(text: desc),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
