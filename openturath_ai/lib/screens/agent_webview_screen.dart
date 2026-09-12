@@ -65,6 +65,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   bool _checkingReady = false;
   bool _hasCopied = false;
 
+  bool _isExiting = false;
   bool _isGoingBack = false;
 
   @override
@@ -147,7 +148,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           /* Google Account Bar, App Launcher & Setelan */
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-          button.mat-tonal-button, a[aria-label*="Google" i] {
+          button.mat-tonal-button, a[aria-label*="Google" i],
+          /* Disclaimer Google NotebookLM & Gemini */
+          .chat-disclaimer, .disclaimer, .footer-disclaimer, .chat-footer-disclaimer,
+          [class*="disclaimer" i], [id*="disclaimer" i], footer[class*="disclaimer" i],
+          div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
+          app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
+          .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
+          [aria-label*="disclaimer" i], footer, .chat-footer, .conversation-footer,
+          div.chat-input-container + div,
+          div[class*="input-container" i] + div,
+          div[class*="query-container" i] + div,
+          [data-ot-hidden] {
             display: none !important;
             visibility: hidden !important;
             height: 0px !important;
@@ -420,19 +432,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _handleBackPress() async {
     if (!mounted || _isGoingBack) return;
     _isGoingBack = true;
-    final controller = _webController;
+    setState(() => _isExiting = true);
     try {
-      final canGoBack = await controller?.canGoBack() ?? false;
-      if (!mounted) return;
-      if (canGoBack && controller != null && identical(controller, _webController)) {
-        await controller.goBack();
-      } else {
-        Navigator.pop(context);
-      }
-    } catch (_) {
-      if (mounted) Navigator.pop(context);
-    } finally {
-      _isGoingBack = false;
+      await _webController?.stopLoading();
+    } catch (_) {}
+    if (mounted) {
+      Navigator.pop(context);
     }
   }
 
@@ -578,7 +583,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       allowsInlineMediaPlayback: true,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
                       algorithmicDarkeningAllowed: false,
-                      transparentBackground: true,
+                      transparentBackground: false,
                     ),
                 onWebViewCreated: (controller) {
                   _webController = controller;
@@ -668,6 +673,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     onBack: () => Navigator.pop(context),
                     backLabel: 'Kembali ke Beranda',
                   ),
+                ),
+              ),
+
+            // ── 3. Solid Exit Overlay (Mencegah glitch/tearing SurfaceView Android saat pop) ──
+            if (_isExiting)
+              Positioned.fill(
+                child: Container(
+                  color: canvas,
                 ),
               ),
             ],
