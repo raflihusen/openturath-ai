@@ -12,6 +12,10 @@ import 'screens/profile_screen.dart';
 import 'screens/agent_webview_screen.dart';
 import 'screens/subscription_screen.dart';
 import 'screens/google_session_auth_screen.dart';
+import 'screens/book_catalog_screen.dart';
+import 'screens/book_detail_screen.dart';
+import 'models/book_model.dart';
+import 'models/agent_model.dart';
 import 'firebase_options.dart';
 
 import 'core/app_config.dart';
@@ -170,6 +174,17 @@ class OpenTurathApp extends StatelessWidget {
                     break;
                   case AppRoutes.googleSessionAuth:
                     page = const GoogleSessionAuthScreen();
+                    break;
+                  case AppRoutes.bookCatalog:
+                    page = BookCatalogScreen(
+                      agent: settings.arguments is AgentModel
+                          ? settings.arguments as AgentModel
+                          : null,
+                    );
+                    break;
+                  case AppRoutes.bookDetail:
+                    final book = settings.arguments as CanonicalBookPresentation;
+                    page = BookDetailScreen(book: book);
                     break;
                   default:
                     page = const SplashScreen();

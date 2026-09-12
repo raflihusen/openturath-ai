@@ -4,23 +4,22 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
 import 'apple_interactive_wrapper.dart';
 
-/// Opens the Canonical Research Library as a bottom sheet.
-/// Uses [useRootNavigator: true] so it overlays cleanly over WebViews without tearing down session state.
+/// Opens the Canonical Research Library as a dedicated full-screen scholarly catalog route.
+/// Eliminates sheet-on-sheet anti-pattern per Apple HIG.
 Future<void> showResearchLibrary(
   BuildContext context, {
   AgentModel? agent,
 }) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useRootNavigator: true,
-    backgroundColor: Colors.transparent,
-    builder: (ctx) => ResearchLibrarySheet(agent: agent),
+  return Navigator.pushNamed(
+    context,
+    AppRoutes.bookCatalog,
+    arguments: agent,
   );
 }
 
@@ -92,110 +91,10 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
   }
 
   void _showEditionDetails(CanonicalBookPresentation book) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
-
-    showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true,
-      backgroundColor: surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(OTSpacing.lg),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppCopy.bookDetails,
-                        style: OTTypography.sectionHeading(color: textSecondary),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.close_rounded, color: textSecondary),
-                        onPressed: () => Navigator.pop(ctx),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: OTSpacing.sm),
-                  Text(
-                    book.titleArabic,
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.right,
-                    style: OTTypography.arabicReading(color: textPrimary).copyWith(
-                      fontSize: 22,
-                      height: 1.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: OTSpacing.xs),
-                  Text(
-                    book.authorArabic,
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.right,
-                    style: OTTypography.arabicReading(color: textSecondary).copyWith(
-                      fontSize: 16,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: OTSpacing.base),
-                  Divider(color: border, height: 1),
-                  const SizedBox(height: OTSpacing.base),
-                  if (book.verifiedDeathYearHijri != null)
-                    _detailRow('Tahun Wafat', '${book.verifiedDeathYearHijri} H', textPrimary, textSecondary),
-                  if (book.reviewedTypeLabel != null)
-                    _detailRow('Kategori Teks', book.reviewedTypeLabel!, textPrimary, textSecondary),
-                  if (book.reviewedEraLabel != null)
-                    _detailRow('Masa Penulisan', book.reviewedEraLabel!, textPrimary, textSecondary),
-                  if (book.volumesCount != null)
-                    _detailRow('Jumlah Jilid', '${book.volumesCount} Jilid', textPrimary, textSecondary),
-                  if (book.publisher != null && book.publisher!.isNotEmpty)
-                    _detailRow('Penerbit', book.publisher!, textPrimary, textSecondary),
-                  if (book.muhaqqiq != null && book.muhaqqiq!.isNotEmpty)
-                    _detailRow('Tahqiq / Editor', book.muhaqqiq!, textPrimary, textSecondary),
-                  _detailRow('Pengidentifikasi Edisi', book.editionId, textPrimary, textSecondary),
-                  const SizedBox(height: OTSpacing.base),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _detailRow(String label, String value, Color textPrimary, Color textSecondary) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 140,
-            child: Text(
-              label,
-              style: OTTypography.caption(color: textSecondary),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              style: OTTypography.bodyMedium(color: textPrimary),
-            ),
-          ),
-        ],
-      ),
+    Navigator.pushNamed(
+      context,
+      AppRoutes.bookDetail,
+      arguments: book,
     );
   }
 
