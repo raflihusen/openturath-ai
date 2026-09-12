@@ -13,6 +13,8 @@ import 'specialist_list_screen.dart';
 import 'bookmark_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/openturath_brand.dart';
+import '../services/agent_session_manager.dart';
+import '../widgets/agent_multi_tab_room.dart';
 
 class MainShellController extends InheritedWidget {
   final void Function(int index, {String? fieldId, CorpusKind? kind}) switchTab;
@@ -105,17 +107,28 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final isWideScreen = MediaQuery.of(context).size.width >= 768;
     final screens = _buildScreens();
 
-    return MainShellController(
-      switchTab: _onTabSelected,
-      child: PopScope(
-        canPop: _currentIndex == 0,
-        onPopInvokedWithResult: (didPop, result) {
-          if (!didPop && _currentIndex != 0) {
-            _onTabSelected(0);
-          }
-        },
-        child: isWideScreen
-            ? Scaffold(
+    return ListenableBuilder(
+      listenable: AgentSessionManager.instance,
+      builder: (context, _) {
+        final sessionManager = AgentSessionManager.instance;
+        return MainShellController(
+          switchTab: _onTabSelected,
+          child: PopScope(
+            canPop: !sessionManager.isOpen && _currentIndex == 0,
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) return;
+              if (sessionManager.isOpen) {
+                sessionManager.closeRoom();
+                return;
+              }
+              if (_currentIndex != 0) {
+                _onTabSelected(0);
+              }
+            },
+            child: Stack(
+              children: [
+                isWideScreen
+                    ? Scaffold(
                 backgroundColor: canvas,
                 body: Row(
                   children: [
@@ -261,9 +274,19 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   ),
                 ),
               ),
-      ),
-    );
-  }
+              Positioned.fill(
+                child: Offstage(
+                  offstage: !sessionManager.isOpen,
+                  child: const AgentMultiTabRoom(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 }
 
 class _GoogleNavBarItem extends StatelessWidget {

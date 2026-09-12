@@ -12,6 +12,7 @@ import '../core/design/ot_motion.dart';
 import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
+import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
@@ -107,7 +108,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     }).toList();
   }
 
-  Future<void> _openAgent(AgentModel agent) async {
+  void _openAgent(AgentModel agent) {
     OTMotion.light();
     if (agent.isComingSoon) {
       AppSnackBar.warning(
@@ -117,20 +118,13 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       return;
     }
 
-    final user = await _authService.getCurrentUserModel();
-    if (!mounted) return;
-
+    final user = _authService.cachedCurrentUser;
     if (user != null && !user.hasAccessToAgent(agent.id)) {
       _openSubscriptionForAgent(agent);
       return;
     }
 
-    if (!mounted) return;
-    Navigator.pushNamed(
-      context,
-      AppRoutes.agentWebview,
-      arguments: {'agent': agent, 'user': user},
-    );
+    AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
   void _openSubscriptionForAgent(AgentModel agent) {

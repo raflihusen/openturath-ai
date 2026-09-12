@@ -11,6 +11,7 @@ import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
+import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
@@ -76,7 +77,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Future<void> _openNotebook(AgentModel agent, UserModel? user) async {
+  void _openNotebook(AgentModel agent, UserModel? user) {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
@@ -85,14 +86,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('last_opened_notebook_id', agent.id);
-    } catch (_) {}
+    // Rekam riwayat pembukaan terakhir secara asynchronous di background
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('last_opened_notebook_id', agent.id);
+    }).catchError((_) {});
 
     // Cek akses pengguna ke agent (paywall)
     if (user == null || !user.hasAccessToAgent(agent.id)) {
-      if (!mounted) return;
       Navigator.pushNamed(
         context,
         AppRoutes.subscription,
@@ -101,12 +101,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
 
-    if (!mounted) return;
-    Navigator.pushNamed(
-      context,
-      AppRoutes.agentWebview,
-      arguments: {'agent': agent, 'user': user},
-    );
+    // Buka ruang kajian multi-tab secara seketika (0ms delay)
+    AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
   static const List<({String fieldId, String name, int specialistCount})> _curatedDisciplines = [

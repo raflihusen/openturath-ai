@@ -1,0 +1,579 @@
+import 'dart:async';
+import 'dart:collection';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../core/app_copy.dart';
+import '../core/app_snackbar.dart';
+import '../core/notebook_navigation.dart';
+import '../core/notebook_ui_script.dart';
+import '../core/copied_answer.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../models/agent_model.dart';
+import '../services/agent_service.dart';
+import '../services/agent_session_manager.dart';
+import '../services/auth_service.dart';
+import '../services/bookmark_service.dart';
+import '../widgets/app_error_state.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/library_bottom_sheet.dart';
+
+/// AgentMultiTabRoom: Persistent, multi-tab AI Study Room inspired by Google Chrome tabs.
+/// Keeps up to 7 AI specialists running concurrently in memory without reloading.
+class AgentMultiTabRoom extends StatefulWidget {
+  const AgentMultiTabRoom({super.key});
+
+  @override
+  State<AgentMultiTabRoom> createState() => _AgentMultiTabRoomState();
+}
+
+class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
+  final AgentSessionManager _sessionManager = AgentSessionManager.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionManager.addListener(_onSessionsChanged);
+  }
+
+  @override
+  void dispose() {
+    _sessionManager.removeListener(_onSessionsChanged);
+    super.dispose();
+  }
+
+  void _onSessionsChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _openLibrarySheet(BuildContext context, AgentModel agent) {
+    showResearchLibrary(context, agent: agent);
+  }
+
+  void _showFontScaleDialog(BuildContext context, AgentSessionTab session) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final border = OTColors.border(isDark);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              border: Border.all(color: border, width: 0.8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: border,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Ukuran Teks Telaah',
+                  style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Sesuaikan ukuran huruf naskah dan ibarah agar nyaman dibaca.',
+                  style: OTTypography.caption(color: textSecondary),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Text('A', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: textSecondary)),
+                    Expanded(
+                      child: Slider(
+                        value: session.fontScale,
+                        min: 0.85,
+                        max: 1.6,
+                        divisions: 5,
+                        activeColor: textPrimary,
+                        inactiveColor: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                        onChanged: (val) {
+                          setModalState(() => session.fontScale = val);
+                          setState(() {});
+                          session.webController?.evaluateJavascript(
+                            source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($val); }',
+                          );
+                        },
+                      ),
+                    ),
+                    Text('A', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, color: textPrimary)),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
+    final activeTab = _sessionManager.activeTab;
+    final sessions = _sessionManager.tabs;
+
+    if (activeTab == null || sessions.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Scaffold(
+      backgroundColor: canvas,
+      appBar: AppBar(
+        toolbarHeight: 56,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: canvas,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
+          tooltip: 'Kembali ke Beranda',
+          onPressed: () => _sessionManager.closeRoom(),
+        ),
+        titleSpacing: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              activeTab.agent.title,
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: textPrimary,
+                letterSpacing: -0.2,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Row(
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF10B981),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'Ruang Kajian Aktif',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
+            tooltip: 'Ukuran Teks',
+            onPressed: () => _showFontScaleDialog(context, activeTab),
+          ),
+          IconButton(
+            icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
+            tooltip: 'Pustaka Kitab',
+            onPressed: () => _openLibrarySheet(context, activeTab.agent),
+          ),
+          const SizedBox(width: 4),
+        ],
+        // Chrome-like Multi-Tab Bar
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(42),
+          child: Container(
+            height: 42,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: surfaceSubtle,
+              border: Border(
+                top: BorderSide(color: border, width: 0.8),
+                bottom: BorderSide(color: border, width: 0.8),
+              ),
+            ),
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              itemCount: sessions.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 6),
+              itemBuilder: (context, index) {
+                final session = sessions[index];
+                final isActive = index == _sessionManager.activeIndex;
+
+                return InkWell(
+                  onTap: () => _sessionManager.selectTab(index),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isActive ? surface : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isActive ? border : Colors.transparent,
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          size: 13,
+                          color: isActive ? textPrimary : textSecondary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          session.agent.title.replaceFirst('AI ', ''),
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                            color: isActive ? textPrimary : textSecondary,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        InkWell(
+                          onTap: () => _sessionManager.closeTab(index),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 14,
+                              color: textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+      body: IndexedStack(
+        index: _sessionManager.activeIndex,
+        children: [
+          for (int i = 0; i < sessions.length; i++)
+            _SingleAgentTabWebView(
+              key: ValueKey('agent_tab_${sessions[i].agent.id}'),
+              session: sessions[i],
+              isActive: i == _sessionManager.activeIndex,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Single AI specialist WebView within the multi-tab IndexedStack.
+/// Preserves full state, DOM, and JavaScript execution in memory.
+class _SingleAgentTabWebView extends StatefulWidget {
+  final AgentSessionTab session;
+  final bool isActive;
+
+  const _SingleAgentTabWebView({
+    super.key,
+    required this.session,
+    required this.isActive,
+  });
+
+  @override
+  State<_SingleAgentTabWebView> createState() => _SingleAgentTabWebViewState();
+}
+
+class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
+  final AgentService _agentService = AgentService();
+  final BookmarkService _bookmarkService = BookmarkService();
+  final AuthService _authService = AuthService();
+
+  static const String _turatsMasterScript = r"""
+    (function() {
+      if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
+
+      var styleId = 'ot-hide-controls';
+      var existingStyle = document.getElementById(styleId);
+      if (!existingStyle) {
+        var style = document.createElement('style');
+        style.id = styleId;
+        style.type = 'text/css';
+        style.textContent = `
+          top-bar, .top-bar, header, .header, .app-header, app-header,
+          mat-toolbar, [role="banner"], .header-container, .header-row,
+          .mobile-header, div[class*="mobile-header" i],
+          labs-tailwind-logo, a.logo-link, .logo-container,
+          a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
+          .title-input, input.title-input, .title-container, .notebook-title,
+          .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+          div[class*="title-card" i], div[class*="notebook-header" i],
+          .project-header, div.source-badge-container,
+          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
+          .pro-badge,
+          #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button.mat-tonal-button, a[aria-label*="Google" i],
+          .chat-disclaimer, .disclaimer, .footer-disclaimer, .chat-footer-disclaimer,
+          [class*="disclaimer" i], [id*="disclaimer" i], footer[class*="disclaimer" i],
+          div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
+          app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
+          .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
+          [aria-label*="disclaimer" i], footer, .chat-footer, .conversation-footer,
+          div.chat-input-container + div,
+          div[class*="input-container" i] + div,
+          div[class*="query-container" i] + div,
+          [data-ot-hidden] {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0px !important;
+            max-height: 0px !important;
+            overflow: hidden !important;
+            margin: 0px !important;
+            padding: 0px !important;
+            font-size: 0px !important;
+            line-height: 0px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            border: none !important;
+          }
+          ::-webkit-scrollbar { display: none !important; width: 0px !important; }
+          html, body, * { scrollbar-width: none !important; }
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
+            padding-top: 14px !important;
+            padding-bottom: 24px !important;
+            margin-top: 0px !important;
+          }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+      }
+
+      window.applyTurathFontScale = function(value) {
+        var scale = Number(value);
+        if (!Number.isFinite(scale)) return;
+        scale = Math.max(0.85, Math.min(2, scale));
+        var fontStyle = document.getElementById('ot-font-scale-style');
+        if (!fontStyle) {
+          fontStyle = document.createElement('style');
+          fontStyle.id = 'ot-font-scale-style';
+          (document.head || document.documentElement).appendChild(fontStyle);
+        }
+        fontStyle.textContent = `
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"] {
+            font-size: ${Math.round(scale * 15)}px !important;
+            line-height: 1.65 !important;
+          }
+          .chat-panel-content p, .chat-view p, [role="article"] p,
+          .chat-panel-content span, .chat-view span, [role="article"] span,
+          .chat-panel-content li, .chat-view li, [role="article"] li {
+            font-size: inherit !important;
+            line-height: inherit !important;
+          }
+          [lang="ar"], .arabic {
+            font-size: ${Math.round(scale * 19)}px !important;
+            line-height: 1.8 !important;
+          }
+        `;
+      };
+    })();
+  """;
+
+  static final _cloakScript = UserScript(
+    source: _turatsMasterScript + notebookUiScript,
+    injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+    forMainFrameOnly: true,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.session.resolvedUrl == null) {
+      _fetchUrl();
+    }
+  }
+
+  Future<void> _fetchUrl() async {
+    final session = widget.session;
+    setState(() {
+      session.isUrlLoading = true;
+      session.errorMessage = null;
+    });
+
+    try {
+      final url = await _agentService.getAgentUrl(session.agent.id);
+      if (!mounted) return;
+      if (url != null && url.isNotEmpty) {
+        setState(() {
+          session.resolvedUrl = url;
+          session.isUrlLoading = false;
+        });
+      } else {
+        setState(() {
+          session.isUrlLoading = false;
+          session.errorMessage = 'Tautan ruang kajian tidak valid.';
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString().toLowerCase();
+      final isPaywall = msg.contains('permission-denied') || msg.contains('berlangganan');
+      setState(() {
+        session.isUrlLoading = false;
+        session.isPaywallRequired = isPaywall;
+        session.errorMessage = isPaywall
+            ? 'Akses modul ini memerlukan langganan aktif.'
+            : 'Gagal menghubungkan ke server kajian.';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final session = widget.session;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canvas = OTColors.canvas(isDark);
+
+    if (session.isUrlLoading) {
+      return AppLoader.fullscreen(
+        title: session.agent.title,
+        subtitle: AppCopy.loadingReferences,
+        onCancel: () => AgentSessionManager.instance.closeRoom(),
+      );
+    }
+
+    if (session.errorMessage != null) {
+      return Container(
+        color: canvas,
+        child: AppErrorState(
+          title: session.isPaywallRequired ? 'Akses Terbatas' : 'Gagal Membuka Kajian',
+          message: session.errorMessage!,
+          icon: session.isPaywallRequired ? Icons.workspace_premium_rounded : Icons.info_outline_rounded,
+          onRetry: _fetchUrl,
+          onBack: () => AgentSessionManager.instance.closeRoom(),
+          backLabel: 'Kembali ke Beranda',
+        ),
+      );
+    }
+
+    final initialUri = WebUri(session.resolvedUrl!);
+
+    return Stack(
+      children: [
+        InAppWebView(
+          initialUrlRequest: URLRequest(url: initialUri),
+          initialUserScripts: UnmodifiableListView([_cloakScript]),
+          initialSettings: InAppWebViewSettings(
+            javaScriptEnabled: true,
+            domStorageEnabled: true,
+            databaseEnabled: true,
+            useWideViewPort: true,
+            loadWithOverviewMode: true,
+            cacheEnabled: true,
+            clearCache: false,
+            transparentBackground: false,
+            allowsInlineMediaPlayback: true,
+            supportZoom: false,
+            displayZoomControls: false,
+            mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+            thirdPartyCookiesEnabled: true,
+            hardwareAcceleration: true,
+            verticalScrollBarEnabled: false,
+            horizontalScrollBarEnabled: false,
+            userAgent: 'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
+          ),
+          onWebViewCreated: (controller) {
+            session.webController = controller;
+            final ownerUid = _authService.currentUser?.uid;
+            controller.addJavaScriptHandler(
+              handlerName: 'otCopiedAnswer',
+              callback: (args) async {
+                final url = await controller.getUrl();
+                if (ownerUid == null ||
+                    url?.scheme != 'https' ||
+                    !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) ||
+                    args.isEmpty ||
+                    args.first is! String) {
+                  return false;
+                }
+                try {
+                  final text = (args.first as String).trim();
+                  if (text.isNotEmpty && text.length <= 200000) {
+                    await _bookmarkService.addBookmark(
+                      copiedAnswerBookmark(text, session.agent),
+                      userId: ownerUid,
+                    );
+                    if (context.mounted) {
+                      AppSnackBar.success(context, AppCopy.answerCopied);
+                    }
+                    return true;
+                  }
+                } catch (_) {
+                  if (context.mounted) {
+                    AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
+                  }
+                }
+                return false;
+              },
+            );
+          },
+          onLoadStop: (controller, uri) async {
+            if (mounted) {
+              setState(() => session.isWebLoading = false);
+              controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+              controller.evaluateJavascript(
+                source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
+              );
+            }
+          },
+          shouldOverrideUrlLoading: (controller, action) async {
+            final uri = action.request.url;
+            if (uri == null) return NavigationActionPolicy.CANCEL;
+            if (NotebookNavigation.allowed(uri.uriValue)) {
+              return NavigationActionPolicy.ALLOW;
+            }
+            return NavigationActionPolicy.CANCEL;
+          },
+        ),
+
+        // Minimal pulsing loader when initial webview page is connecting
+        if (session.isWebLoading)
+          Positioned.fill(
+            child: AppLoader.fullscreen(
+              title: session.agent.title,
+              subtitle: AppCopy.loadingReferences,
+              onCancel: () => AgentSessionManager.instance.closeRoom(),
+            ),
+          ),
+      ],
+    );
+  }
+}

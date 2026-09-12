@@ -55,6 +55,20 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  UserModel? get cachedCurrentUser {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+    return _userCache[user.uid] ??
+        UserModel(
+          uid: user.uid,
+          name: user.displayName ?? 'Pengguna',
+          email: user.email ?? '',
+          photoUrl: user.photoURL ?? '',
+          plan: AppConstants.planTrial,
+          questionsUsed: 0,
+        );
+  }
+
   // ── Google Sign In ─────────────────────────────────────────────
   Future<UserModel?> signInWithGoogle() async {
     try {
