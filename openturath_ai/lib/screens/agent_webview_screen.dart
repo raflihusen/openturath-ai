@@ -222,9 +222,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     forMainFrameOnly: true,
   );
 
+  bool? _lastIsDark;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final currentIsDark = Theme.of(context).brightness == Brightness.dark;
+    if (_lastIsDark != null && _lastIsDark != currentIsDark) {
+      _applyThemeCss();
+    }
+    _lastIsDark = currentIsDark;
+
     if (_agent == null) {
       final rawArgs = ModalRoute.of(context)?.settings.arguments;
       if (rawArgs is Map<String, dynamic>) {
@@ -354,9 +362,49 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   Future<void> _applyThemeCss() async {
     if (_webController == null) return;
-    // We let InAppWebViewSettings.forceDark handle dark mode natively,
-    // avoiding destructive DOM color injections that cause black-on-black text.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     try {
+      final themeScript = '''
+        (function() {
+          try {
+            var isDark = $isDark;
+            // 1. Standar W3C color-scheme meta tag
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.name = 'color-scheme';
+              (document.head || document.documentElement).appendChild(meta);
+            }
+            meta.content = isDark ? 'dark' : 'light';
+
+            // 2. Sinkronkan class Google Material / NotebookLM tema gelap
+            if (document.documentElement) {
+              document.documentElement.classList.toggle('dark-theme', isDark);
+              document.documentElement.classList.toggle('dark', isDark);
+              document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+              document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+            }
+            if (document.body) {
+              document.body.classList.toggle('dark-theme', isDark);
+              document.body.classList.toggle('dark', isDark);
+              document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            }
+
+            // 3. Pastikan latar belakang dasar selaras tanpa flash putih
+            var canvasStyleId = 'ot-theme-canvas-style';
+            var styleEl = document.getElementById(canvasStyleId);
+            if (!styleEl) {
+              styleEl = document.createElement('style');
+              styleEl.id = canvasStyleId;
+              (document.head || document.documentElement).appendChild(styleEl);
+            }
+            styleEl.textContent = isDark 
+              ? 'html, body { background-color: #0E0E10 !important; color: #E4E4E7 !important; }'
+              : 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+          } catch(e) {}
+        })();
+      ''';
+      await _webController!.evaluateJavascript(source: themeScript);
       await _applyCurrentFontScale();
     } catch (_) {}
   }
@@ -582,7 +630,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       mediaPlaybackRequiresUserGesture: false,
                       allowsInlineMediaPlayback: true,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                      algorithmicDarkeningAllowed: false,
+                      forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+                      algorithmicDarkeningAllowed: true,
                       transparentBackground: false,
                     ),
                 onWebViewCreated: (controller) {
