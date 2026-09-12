@@ -17,6 +17,7 @@ import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final FieldModel? field; // Nullable if opened as general Specialist tab
@@ -157,24 +158,42 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final title = isGeneralTab ? 'Asisten AI' : widget.field!.name;
     final filtered = _computeFilteredAgents();
 
-    return Scaffold(
-      backgroundColor: canvas,
-      appBar: AppBar(
-        title: Text(
-          title,
-          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
-        ),
-        centerTitle: false,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        final shell = MainShellController.of(context);
+        if (shell != null) {
+          shell.switchTab(0);
+        } else if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
         backgroundColor: canvas,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: isGeneralTab
-            ? null
-            : IconButton(
-                icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-                onPressed: () => Navigator.pop(context),
-              ),
-      ),
+        appBar: AppBar(
+          title: Text(
+            title,
+            style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
+          ),
+          centerTitle: false,
+          backgroundColor: canvas,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: isGeneralTab
+              ? null
+              : IconButton(
+                  icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+                  onPressed: () {
+                    final shell = MainShellController.of(context);
+                    if (shell != null) {
+                      shell.switchTab(0);
+                    } else if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+        ),
       body: SafeArea(
         top: false,
         child: Column(
@@ -344,8 +363,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _filterChip({
     required String label,
