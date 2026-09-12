@@ -13,24 +13,24 @@ abstract final class AppCopy {
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
-  static const navStudies = 'Kajian';
+  static const navStudies = 'Asisten AI';
   static const navSaved = 'Tersimpan';
   static const navSettings = 'Pengaturan';
 
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
-  static const studySpace = 'Ruang kajian';
-  static const openStudy = 'Membuka kajian';
-  static const studyOptions = 'Opsi kajian';
+  static const studySpace = 'Percakapan AI';
+  static const openStudy = 'Membuka AI';
+  static const studyOptions = 'Menu percakapan';
   static const referenceBooks = 'Kitab rujukan';
   static const savedCollection = 'Simpanan';
   static const bookDetails = 'Keterangan kitab';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
-  static const loadingReferences = 'Memuat kitab rujukan...';
+  static const loadingReferences = 'Menyiapkan percakapan AI...';
   static const modulePreparing = 'sedang disiapkan.';
   static const moduleUnavailable = 'Modul ini belum dapat dibuka. Coba lagi nanti.';
   static const cannotLoad = 'Tidak dapat dimuat. Periksa koneksi, lalu coba lagi.';
-  static const cannotLoadStudy = 'Tidak dapat memuat kajian';
+  static const cannotLoadStudy = 'AI belum dapat dibuka';
   static const studyNotLoadedYet = 'Kajian belum bisa dimuat. Coba lagi sebentar.';
   static const subscriptionRequiredTitle = 'Langganan diperlukan';
   static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
