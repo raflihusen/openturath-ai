@@ -206,7 +206,7 @@ class AgentModel {
           title: 'Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
-              'Literatur Fikih Mazhab Hanafi berbasis kitab induk Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
+              'Fikih Mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
           emoji: '⚖️',
           category: 'Fiqih',
           fieldId: 'fiqh',
@@ -252,7 +252,7 @@ class AgentModel {
           title: 'Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
-              'Kajian Fikih Mazhab Maliki dan \'Amal Ahlil Madinah berbasis Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
+              'Fikih Mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
           emoji: '⚖️',
           category: 'Fiqih',
           fieldId: 'fiqh',
@@ -490,7 +490,7 @@ class AgentModel {
           title: 'Ushul Fiqih',
           titleArabic: 'أصول الفقه',
           description:
-              'Metodologi istinbath hukum Islam dan kaidah ushuliyyah berbasis kitab-kitab ushul mu\'tabarah.',
+              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan yang diakui.',
           emoji: '📐',
           category: 'Ushul Fiqih',
           fieldId: 'usul',
@@ -539,7 +539,7 @@ class AgentModel {
           title: 'Bahasa Arab & Balaghah',
           titleArabic: 'النحو والصرف',
           description:
-              'Kaidah tata bahasa Arab (Nahwu, Sharaf, Balaghah, dan Mu\'jam) berbasis literatur kitab rujukan utama.',
+              'Nahwu, sharaf, balaghah, dan mu\'jam dengan rujukan kitab bahasa Arab.',
           emoji: '🔤',
           category: 'Bahasa Arab',
           fieldId: 'lughah',

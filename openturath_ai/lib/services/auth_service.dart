@@ -7,6 +7,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../core/constants.dart';
+import 'session_user_stream.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -225,69 +226,16 @@ class AuthService {
   // ── Stream user changes (real-time with single persistent cached stream, F10 & F41) ──
   Stream<UserModel?> get userStream => _cachedUserStream ??= _buildUserStream();
 
-  Stream<UserModel?> _buildUserStream() {
-    late StreamController<UserModel?> controller;
-    StreamSubscription<User?>? authSub;
-    StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? docSub;
-
-    controller = StreamController<UserModel?>.broadcast(
-      onListen: () {
-        authSub = _auth.authStateChanges().listen((user) async {
-          await docSub?.cancel();
-          docSub = null;
-
-          if (user == null) {
-            if (!controller.isClosed) controller.add(null);
-          } else {
-            // Optimistic emit from cache if available (stale-while-revalidate)
-            final cached = await _getCachedUser(user.uid);
-            if (cached != null && !controller.isClosed) {
-              controller.add(cached);
-            }
-
-            docSub = _db
-                .collection(AppConstants.colUsers)
-                .doc(user.uid)
-                .snapshots()
-                .listen(
-              (doc) {
-                if (controller.isClosed) return;
-                if (doc.exists) {
-                  final userModel = UserModel.fromFirestore(doc);
-                  _cacheUserLocally(userModel);
-                  controller.add(userModel);
-                } else {
-                  controller.add(null);
-                }
-              },
-              onError: (err) async {
-                if (controller.isClosed) return;
-                // Preserve last known state on Firestore error instead of degrading to empty trial (F41)
-                final fallback = await _getCachedUser(user.uid) ??
-                    UserModel(
-                      uid: user.uid,
-                      name: user.displayName ?? 'Pengguna',
-                      email: user.email ?? '',
-                      photoUrl: user.photoURL ?? '',
-                      plan: AppConstants.planTrial,
-                      questionsUsed: 0,
-                    );
-                controller.add(fallback);
-              },
-            );
-          }
-        }, onError: (err) {
-          if (!controller.isClosed) controller.addError(err);
-        });
-      },
-      onCancel: () {
-        docSub?.cancel();
-        authSub?.cancel();
-      },
-    );
-
-    return controller.stream;
-  }
+  Stream<UserModel?> _buildUserStream() => sessionUserStream<UserModel>(
+    auth: _auth.authStateChanges().map((user) => user?.uid),
+    cached: _getCachedUser,
+    watch: (uid) => _db.collection(AppConstants.colUsers).doc(uid).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      final user = UserModel.fromFirestore(doc);
+      if (_auth.currentUser?.uid == uid) { unawaited(_cacheUserLocally(user)); }
+      return user;
+    }),
+  );
 
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
@@ -335,43 +283,13 @@ class AuthService {
     final user = currentUser;
     if (user == null) return;
     final uid = user.uid;
-    final email = user.email ?? '';
 
-    // 1. Tandai dokumen sebagai pending_deletion & catat outbox revoke SEBELUM Auth dihapus
-    try {
-      await _db.collection(AppConstants.colUsers).doc(uid).set(
-        {
-          'pending_deletion': true,
-          'pending_deletion_at': FieldValue.serverTimestamp(),
-        },
-        SetOptions(merge: true),
-      ).timeout(const Duration(seconds: 4));
-
-      if (email.isNotEmpty) {
-        final outboxDoc = _db.collection('provisioning_outbox').doc('del_${uid}_${DateTime.now().millisecondsSinceEpoch}');
-        await outboxDoc.set({
-          'uid': uid,
-          'email': email,
-          'action': 'remove',
-          'plan': 'trial',
-          'entitlement_key': 'all_access',
-          'status': 'pending',
-          'attempts': 0,
-          'created_at': FieldValue.serverTimestamp(),
-        }).timeout(const Duration(seconds: 4));
-      }
-    } catch (_) {}
-
-    // 2. WAJIB Hapus Akun Auth Terlebih Dahulu. Jika gagal (misal requires-recent-login), stop di sini.
+    // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     await user.delete();
-
-    // 3. Hanya setelah Auth berhasil dihapus, bersihkan data Firestore
     try {
-      await _db
-          .collection(AppConstants.colUsers)
-          .doc(uid)
-          .delete()
-          .timeout(const Duration(seconds: 5));
+      await CookieManager.instance().deleteAllCookies();
+      await InAppWebViewController.clearAllCache();
+      await WebStorageManager.instance().deleteAllData();
     } catch (_) {}
 
     // 4. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())

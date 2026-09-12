@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/constants.dart';
+import '../core/entitlement_keys.dart';
 
 /// Model Hak Akses Per Modul Notebook / Kitab (Canonical Entitlement)
 class ModuleEntitlement {
@@ -17,30 +18,9 @@ class ModuleEntitlement {
     this.updatedAt,
   });
 
-  bool get isPremium =>
-      plan != AppConstants.planTrial &&
-      (plan == AppConstants.planTholib1m ||
-          plan == AppConstants.planTholib6m ||
-          plan == AppConstants.planBahits1y ||
-          plan == 'all_ai_1m' ||
-          plan == 'all_access' ||
-          plan == 'full' ||
-          plan.startsWith('all_ai') ||
-          plan.startsWith('redeem') ||
-          plan.startsWith('voucher') ||
-          plan == 'custom');
+  bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
 
-  bool get isActive {
-    if (status != 'active') return false;
-    if (plan == 'lifetime' || plan == 'sultan_lifetime' || plan == 'all_access_lifetime') {
-      return true;
-    }
-    if (expiry == null) {
-      // Paket bertenggat tanpa expiry date dianggap data tidak lengkap
-      return false;
-    }
-    return expiry!.isAfter(DateTime.now());
-  }
+  bool get isActive => status == 'active' && expiry != null && expiry!.isAfter(DateTime.now());
 
   factory ModuleEntitlement.fromMap(Map<String, dynamic> map) {
     return ModuleEntitlement(
@@ -50,7 +30,7 @@ class ModuleEntitlement {
               ? (map['expiry'] as Timestamp).toDate()
               : DateTime.tryParse(map['expiry'].toString()))
           : null,
-      status: map['status'] ?? 'active',
+      status: map['status'] ?? 'trial',
       sourceTransactionId: map['source_transaction_id'] ?? map['trx_id'],
       updatedAt: map['updated_at'] != null
           ? (map['updated_at'] is Timestamp
@@ -136,51 +116,16 @@ class UserModel {
       isTrial && questionsUsed >= AppConstants.trialQuestionLimit;
 
   // ── Modular Entitlement Helpers ──
-  ModuleEntitlement? getEntitlement(String agentId) {
-    // 1. Cek langsung dengan ID agent
-    if (entitlements.containsKey(agentId)) {
-      return entitlements[agentId];
-    }
-    // 2. Normalisasi sub-agen (misal fiqh_tahawwulat_muhaqqiq -> fiqh_tahawwulat)
-    for (final entry in entitlements.entries) {
-      if (agentId == entry.key || agentId.startsWith('${entry.key}_')) {
-        // Khusus fiqh_tahawwulat merupakan field independen, jangan tertukar dengan rumpun fiqh umum
-        if (entry.key == 'fiqh' && agentId.startsWith('fiqh_tahawwulat')) {
-          continue;
-        }
-        return entry.value;
-      }
-    }
-    return null;
-  }
+  ModuleEntitlement? getEntitlement(String agentId) => entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
-    // 1. Cek hak akses global All Access (Paket Semua AI)
-    final allAccess = entitlements['all_access'] ?? entitlements['all_ai'];
-    if (allAccess != null) {
-      if (allAccess.status == 'revoked') return false;
-      if (allAccess.isActive && allAccess.isPremium) {
-        return true;
-      }
-    }
-    // 2. Cek hak akses modul spesifik
-    final ent = getEntitlement(agentId);
-    if (ent != null) {
-      if (ent.status == 'revoked') return false;
-      return ent.isActive && ent.isPremium;
-    }
-    // 3. Jika peta entitlement terisi, batasi strictly pada modul yang terdaftar
-    if (entitlements.isNotEmpty) {
-      return false;
-    }
-    // 4. Fallback legacy HANYA jika plan akun adalah paket all_access eksplisit
-    final isLegacyAllAccess = plan == 'all_access' ||
-        plan == 'full' ||
-        plan == AppConstants.planBahits1y ||
-        plan.startsWith('all_ai') ||
-        plan.startsWith('redeem_all') ||
-        plan.startsWith('voucher_all');
-    return isLegacyAllAccess && isSubscriptionActive;
+    final all = entitlements['all_access'] ?? entitlements['all_ai'];
+    if (all != null && all.isActive && all.isPremium) return true;
+    final specific = getEntitlement(agentId);
+    if (specific != null && specific.isActive && specific.isPremium) return true;
+    if (entitlements.isNotEmpty) return false;
+    const legacyPlans = ['all_access', 'all_ai_1m', 'all_ai_6m', 'all_ai_1y', 'full'];
+    return legacyPlans.contains(plan) && isSubscriptionActive;
   }
 
   bool hasAccessToAgent(String agentId) {

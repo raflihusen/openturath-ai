@@ -26,7 +26,7 @@ class OTColors {
   // ── 4. Dark Typography (Clean White & High Contrast Gray) ──
   static const Color textPrimaryDark = Color(0xFFFAFAFA); // Zinc 50
   static const Color textSecondaryDark = Color(0xFFA1A1AA); // Zinc 400 (>7.0:1 WCAG AAA)
-  static const Color textTertiaryDark = Color(0xFF71717A); // Zinc 500
+  static const Color textTertiaryDark = Color(0xFFA1A1AA); // Zinc 500
 
   // ── 5. Scholarly Accents (Muted Intellectual Sapphire & Emerald) ──
   static const Color accentLight = Color(0xFF2563EB); // Intellectual sapphire
@@ -36,7 +36,7 @@ class OTColors {
 
   // ── 6. Semantic Colors ──
   static const Color success = Color(0xFF10B981); // Emerald green (hanya saat bermakna)
-  static const Color destructive = Color(0xFFEF4444); // Red (hanya logout/delete/error)
+  static const Color destructive = Color(0xFFDC2626); // Red (hanya logout/delete/error)
 
   // ── Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;

@@ -23,7 +23,7 @@ class SubscriptionService {
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }
-      return {'success': true, 'message': 'Kode akses berhasil diaktifkan!'};
+      return {'success': true, 'message': 'Kode akses sudah aktif.'};
     } on FirebaseFunctionsException catch (e) {
       return {'success': false, 'message': e.message ?? 'Gagal menukarkan kode akses.'};
     } catch (e) {
