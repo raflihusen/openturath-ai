@@ -6,7 +6,7 @@ void main() {
   group('OpenTurath Copywriting Overhaul — Quiet Scholar Principles', () {
     test('Canonical navigation labels use concise, quiet terms', () {
       expect(AppCopy.navHome, equals('Beranda'));
-      expect(AppCopy.navStudies, equals('Kajian'));
+      expect(AppCopy.navStudies, equals('Asisten AI'));
       expect(AppCopy.navSaved, equals('Tersimpan'));
       expect(AppCopy.navSettings, equals('Pengaturan'));
     });
