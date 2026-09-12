@@ -616,7 +616,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _buildAdabItem(
             number: '1',
             title: 'Talaqqi Bersanad',
-            desc: 'AI adalah sarana komparasi dan indeksasi naskah; bukan mufti dan bukan pengganti bimbingan guru.',
+            desc: 'OpenTurath membantu penelusuran ibarah dan komparasi pendapat ulama; pembaca tetap perlu bimbingan guru dan ulama yang berkompeten.',
             textPrimary: textPrimary,
             textSecondary: textSecondary,
             isDark: isDark,
