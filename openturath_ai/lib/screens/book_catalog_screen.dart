@@ -166,7 +166,9 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             Text(
-              '87 Kitab Mazhab Syafi\'i',
+              widget.agent != null && widget.agent!.id != 'fiqh_syafii'
+                  ? 'Katalog Induk Turats'
+                  : '87 Kitab Mazhab Syafi\'i',
               style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
             ),
           ],
@@ -346,6 +348,30 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         ),
                       ),
                   ],
+                ),
+              ),
+            if (widget.agent != null && widget.agent!.id != 'fiqh_syafii' && widget.agent!.catalogId != 'canonical_syafii')
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: 4),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: border, width: 0.8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline_rounded, size: 18, color: primaryAccent),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Naskah rujukan induk untuk ${widget.agent!.title} sedang dalam tahap kurasi ilmiah. Menampilkan katalog komparasi naskah primer.',
+                          style: OTTypography.caption(color: textSecondary).copyWith(height: 1.35),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 

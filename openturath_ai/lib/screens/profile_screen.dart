@@ -685,9 +685,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 14),
                     _buildLegalSection(
-                      title: '2. Batasan Tanggung Jawab & Penafian Fatwa',
+                      title: '2. Verifikasi Sumber Asli & Batasan Penggunaan',
                       content:
-                          'Hasil analisis, transkripsi, dan kutipan teks yang disajikan oleh sistem kecerdasan buatan bersifat sebagai referensi riset awal. OpenTurath BUKAN mufti dan tidak berwenang mengeluarkan fatwa syar\'i mandiri. Pengguna diwajibkan untuk mengonfirmasi hasil telaah dengan ulama dan guru yang bersanad (talaqqi) serta merujuk ke naskah fisik kitab primer.',
+                          'Hasil analisis, transkripsi, dan kutipan teks yang disajikan oleh sistem kecerdasan buatan berfungsi sebagai referensi riset awal. Kutipan dan ibarah perlu dicocokkan kembali dengan sumber aslinya di Maktabah Syamilah atau naskah cetak fisik.',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),

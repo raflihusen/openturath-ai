@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
-import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
@@ -12,7 +11,6 @@ import '../models/book_model.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
-import '../widgets/apple_interactive_wrapper.dart';
 
 /// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
 /// Mengeliminasi pola anti-desain modal bertingkat (sheet-on-sheet) sesuai Apple HIG.
@@ -107,9 +105,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           fullAnswer:
               'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
           bookReference: widget.book.titleArabic,
-          pageNumber: widget.book.volumesCount != null
-              ? '${widget.book.volumesCount} Jilid'
-              : '1 Jilid',
+          pageNumber: '',
           author: widget.book.authorArabic,
           createdAt: DateTime.now(),
         );
@@ -145,14 +141,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     }
   }
 
-  void _openStudySpace() {
-    final agent = _resolveTargetAgent();
-    Navigator.pushNamed(
-      context,
-      AppRoutes.agentWebview,
-      arguments: agent,
-    );
-  }
+
 
   void _copyScholarlyCitation() {
     final deathYearStr = widget.book.verifiedDeathYearHijri != null
@@ -448,121 +437,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
               const SizedBox(height: OTSpacing.md),
 
-              // ── KARTU 5: STATUS KORPUS & AKSI RISET ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildSectionHeader('AKSI & TELAAH RISET', textSecondary),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: primaryAccent.withValues(alpha: isDark ? 0.08 : 0.04),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: primaryAccent.withValues(alpha: isDark ? 0.2 : 0.1),
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.info_outline_rounded,
-                            size: 18,
-                            color: primaryAccent,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Naskah kanonikal ini telah dikodifikasi dalam basis data rujukan. Ruang dialog AI dapat langsung menelusuri ibarah dan dalil dari kitab ini.',
-                              style: OTTypography.caption(color: textSecondary).copyWith(
-                                height: 1.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: OTSpacing.md),
 
-                    // Primary Action Button: Buka Ruang Kajian
-                    AppleInteractiveWrapper(
-                      onTap: _openStudySpace,
-                      pressedScale: 0.98,
-                      borderRadius: BorderRadius.circular(14),
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryAccent,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.auto_awesome_rounded,
-                              size: 18,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Buka Ruang Kajian',
-                              style: OTTypography.button(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Secondary Action: Simpan / Hapus Rujukan
-                    AppleInteractiveWrapper(
-                      onTap: _toggleSaveBook,
-                      pressedScale: 0.98,
-                      borderRadius: BorderRadius.circular(14),
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.06)
-                              : Colors.black.withValues(alpha: 0.04),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: border, width: 0.8),
-                        ),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              _isSaved
-                                  ? Icons.bookmark_remove_outlined
-                                  : Icons.bookmark_add_outlined,
-                              size: 18,
-                              color: textPrimary,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _isSaved
-                                  ? 'Hapus dari Catatan Riset'
-                                  : 'Simpan ke Catatan Riset',
-                              style: OTTypography.button(color: textPrimary).copyWith(
-                                fontSize: 13.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
 
               const SizedBox(height: OTSpacing.xl),
             ],
