@@ -349,6 +349,36 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   const SizedBox(height: OTSpacing.sm),
 
+                  // ── Entitlement Status Card untuk Akses Perdana / All Access ──
+                  if (_user != null &&
+                      (_user!.plan == 'all_access' ||
+                          _user!.plan == 'sultan' ||
+                          _user!.plan.startsWith('all_ai') ||
+                          (_user!.entitlements['all_access']?.isActive ?? false)))
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF18181B) : const Color(0xFFF4F4F5),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: border, width: 0.8),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.verified_rounded, size: 18, color: textPrimary),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Semua Modul Terbuka (Akses Perdana Santri & Asatidz)',
+                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                   // Satu pintu masuk redeem kode akses
                   Align(
                     alignment: Alignment.centerLeft,
