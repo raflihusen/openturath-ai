@@ -3,7 +3,7 @@ const notebookUiScript = r'''
 (function () {
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
   if (window.otNotebook) { window.otNotebook.clean(); return; }
-  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .chat-message-pair .answer, [data-message-author-role="assistant"]';
+  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"]';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
@@ -15,8 +15,12 @@ const notebookUiScript = r'''
     const answers = [...document.querySelectorAll(answerSelector)].filter(visible);
     return answers.length ? answerText(answers[answers.length - 1]) : '';
   }
+  let lastCopy = '';
+  let lastCopyAt = 0;
   function sendCopy(value) {
     if (typeof value !== 'string' || !value.trim() || value.length > 200000) return;
+    if (value.trim() === lastCopy && Date.now() - lastCopyAt < 1000) return;
+    lastCopy = value.trim(); lastCopyAt = Date.now();
     if (window.flutter_inappwebview?.callHandler) window.flutter_inappwebview.callHandler('otCopiedAnswer', value.trim());
   }
   // Observe only explicit answer-copy gestures; never read the device clipboard.
@@ -91,7 +95,7 @@ const notebookUiScript = r'''
   function ready() {
     clean();
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
-    const loading = [...document.querySelectorAll('[role="progressbar"], mat-spinner, .loading-spinner')].some(visible);
+    const loading = [...document.querySelectorAll('[role="progressbar"], mat-spinner, .loading-spinner')].some(visible) || [...document.querySelectorAll('h1, h2, [class*="notebook-title"]')].some(el => /loading notebook|memuat notebook/i.test(text(el)));
     return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true' && !loading;
   }
   window.otNotebook = {clean, ready, latest};
