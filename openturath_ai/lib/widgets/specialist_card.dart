@@ -77,17 +77,17 @@ class SpecialistCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFFEF3C7),
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: isDark ? border : const Color(0xFFFDE68A),
+                            color: isDark ? border : const Color(0xFFE4E4E7),
                             width: 0.8,
                           ),
                         ),
                         child: Text(
                           statusLabel!,
                           style: GoogleFonts.outfit(
-                            color: isDark ? textSecondary : const Color(0xFFB45309),
+                            color: textSecondary,
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                           ),

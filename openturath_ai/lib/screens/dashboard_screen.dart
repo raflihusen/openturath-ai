@@ -205,8 +205,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Row(
                             children: [
                               Container(
-                                width: 48,
-                                height: 48,
+                                width: 44,
+                                height: 44,
+                                alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
@@ -215,22 +216,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     width: 1.0,
                                   ),
                                 ),
-                                child: ClipOval(
-                                  child: user.photoUrl.isNotEmpty
-                                      ? Image.network(
-                                          user.photoUrl,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) => Icon(
-                                            Icons.person_rounded,
-                                            size: 26,
-                                            color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
-                                          ),
-                                        )
-                                      : Icon(
-                                          Icons.person_rounded,
-                                          size: 26,
-                                          color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
-                                        ),
+                                child: Text(
+                                  user.name.trim().isNotEmpty
+                                      ? user.name.trim()[0].toUpperCase()
+                                      : 'S',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: textPrimary,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 14),
@@ -330,6 +324,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ],
                       ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // ── 3. Announcement & Adab Carousel (Tepat di bawah greeting card) ──
+                    _DashboardAnnouncementCarousel(
+                      isDark: isDark,
+                      surface: surface,
+                      border: border,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
                     ),
 
                     const SizedBox(height: 18),
@@ -545,29 +550,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           );
                         },
                       ),
-
-                      const SizedBox(height: 28),
-
-                      // ── Adab & Prinsip Peneliti Turats ──
-                      _buildScholarlyAdabCard(
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-
-                      const SizedBox(height: 28),
-
-                      // ── 11. Announcement Carousel (Diposisikan tenang di bawah) ──
-                      _DashboardAnnouncementCarousel(
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                        accent: accent,
-                      ),
                     ],
                   ],
                 ),
@@ -581,116 +563,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 
 
-  Widget _buildScholarlyAdabCard({
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: border, width: 1.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.verified_outlined, size: 17, color: textPrimary),
-              const SizedBox(width: 8),
-              Text(
-                'Adab & Prinsip Peneliti Turats',
-                style: GoogleFonts.outfit(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  color: textPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _buildAdabItem(
-            number: '1',
-            title: 'Talaqqi Bersanad',
-            desc: 'OpenTurath membantu penelusuran ibarah dan komparasi pendapat ulama; pembaca tetap perlu bimbingan guru dan ulama yang berkompeten.',
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 8),
-          _buildAdabItem(
-            number: '2',
-            title: 'Ihtiyath & Verifikasi Naskah',
-            desc: 'Selalu luangkan waktu untuk membuka dan memeriksa naskah fisik primer sebelum menyimpulkan.',
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 8),
-          _buildAdabItem(
-            number: '3',
-            title: 'Amanah Ilmiah',
-            desc: 'Sertakan judul kitab, nama muallif, bab, dan nomor halaman dalam menukil ibarah.',
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            isDark: isDark,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAdabItem({
-    required String number,
-    required String title,
-    required String desc,
-    required Color textPrimary,
-    required Color textSecondary,
-    required bool isDark,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 18,
-          height: 18,
-          alignment: Alignment.center,
-          margin: const EdgeInsets.only(top: 1),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7),
-            shape: BoxShape.circle,
-          ),
-          child: Text(
-            number,
-            style: GoogleFonts.outfit(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: textPrimary,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: GoogleFonts.outfit(fontSize: 12, height: 1.4, color: textSecondary),
-              children: [
-                TextSpan(
-                  text: '$title: ',
-                  style: TextStyle(fontWeight: FontWeight.w600, color: textPrimary),
-                ),
-                TextSpan(text: desc),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
@@ -699,7 +571,6 @@ class _DashboardAnnouncementCarousel extends StatefulWidget {
   final Color border;
   final Color textPrimary;
   final Color textSecondary;
-  final Color accent;
 
   const _DashboardAnnouncementCarousel({
     required this.isDark,
@@ -707,7 +578,6 @@ class _DashboardAnnouncementCarousel extends StatefulWidget {
     required this.border,
     required this.textPrimary,
     required this.textSecondary,
-    required this.accent,
   });
 
   @override
@@ -725,34 +595,37 @@ class _DashboardAnnouncementCarouselState
     _AnnouncementSlide(
       badge: 'TENTANG OPENTURATH',
       title: 'Mengenal OpenTurath AI',
-      summary:
-          'Membaca kitab dan menelusuri ibarah dari naskah rujukan.',
+      summary: 'Penelaahan ibarat dan rujukan langsung dari naskah primer turats.',
       detailedContent:
-          'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru.',
+          'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru dan ulama yang berkompeten.',
     ),
     _AnnouncementSlide(
-      badge: 'KEUNGGULAN RISET',
-      title: 'Menelusuri Sanad dan Takhrij',
-      summary:
-          'Dilengkapi kutipan ibarah teks asli, nomor halaman kitab muktamad, serta komparasi silang antar-mazhab.',
-      detailedContent:
-          'Setiap jawaban dan analisis yang dihasilkan OpenTurath selalu disertai rujukan langsung ke naskah primer. Peneliti dapat meninjau teks Arab asli, nama kitab, bab pembahasan, hingga nama pensyarah guna menjaga akurasi transmisi keilmuan Islam yang berakar kuat pada tradisi sanad.',
-    ),
-    _AnnouncementSlide(
-      badge: 'ADAB & DISCLAIMER',
+      badge: 'ADAB TALAQQI',
       title: 'Wasilah Bantu, Bukan Pengganti Guru',
-      summary:
-          'Kajian agama hakiki wajib melalui talaqqi dengan masyayikh bersanad. AI hanyalah sarana penunjang riset.',
+      summary: 'Kajian agama hakiki wajib melalui bimbingan guru dan ulama bersanad.',
       detailedContent:
-          'PENTING DIPAHAMI:\n\nTeknologi kecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur ilmiah. Setiap kutipan, ibarah, dan keterangan naskah perlu dicocokkan kembali dengan sumber aslinya di Maktabah Syamilah atau naskah cetak fisik.',
+          'PENTING DIPAHAMI:\n\nKecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur ilmiah untuk mempercepat pencarian teks dan matan. Pemahaman fikih dan fatwa tetap membutuhkan bimbingan guru dan ulama yang bersanad.',
     ),
     _AnnouncementSlide(
-      badge: 'PANDUAN RISET',
-      title: 'Gunakan dengan Sikap Wara\' & Bijak',
-      summary:
-          'Verifikasi setiap kutipan dalil ke naskah fisik primer sebelum dijadikan landasan kajian atau karya ilmiah.',
+      badge: 'IHTIYATH',
+      title: 'Verifikasi Naskah Primer',
+      summary: 'Selalu luangkan waktu memeriksa naskah Maktabah Syamilah atau cetak fisik.',
       detailedContent:
-          'Sebagai seorang peneliti turats, sikap wara\' dan kehati-hatian (ihtiyath) adalah adab utama. Selalu luangkan waktu untuk membuka dan mengonfirmasi naskah cetak fisik kitab primer sebelum mengutip atau menyebarluaskan hasil telaah ke khalayak luas.',
+          'Sikap wara\' dan kehati-hatian (ihtiyath) menuntut peneliti untuk meninjau langsung naskah fisik primer sebelum menyimpulkan dan menyebarluaskan hasil kajian ke khalayak.',
+    ),
+    _AnnouncementSlide(
+      badge: 'AMANAH ILMIAH',
+      title: 'Ketepatan Sitasi Turats',
+      summary: 'Sertakan nama muallif, kitab, bab, dan nomor halaman dalam menukil ibarah.',
+      detailedContent:
+          'Dalam tradisi keilmuan Islam, amanah ilmiah dijaga dengan menyertakan rujukan yang sahih: judul kitab asli, nama pengarang, bab pembahasan, serta nomor jilid dan halaman.',
+    ),
+    _AnnouncementSlide(
+      badge: 'SANAD & TAKHRIJ',
+      title: 'Penelusuran Rujukan Ilmiah',
+      summary: 'Dilengkapi kutipan ibarat teks asli dan penomoran jilid dari kitab muktamad.',
+      detailedContent:
+          'Setiap rujukan yang ditampilkan mengacu langsung ke naskah turats, memudahkan santri dan peneliti meninjau matan dan syarah secara tertib dan presisi.',
     ),
   ];
 
@@ -816,8 +689,12 @@ class _DashboardAnnouncementCarouselState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.accent.withValues(alpha: 0.12),
+                  color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                   borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                    color: widget.isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                    width: 0.8,
+                  ),
                 ),
                 child: Text(
                   slide.badge,
@@ -825,7 +702,7 @@ class _DashboardAnnouncementCarouselState
                     fontSize: 10.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.4,
-                    color: widget.accent,
+                    color: widget.textSecondary,
                   ),
                 ),
               ),
@@ -925,16 +802,20 @@ class _DashboardAnnouncementCarouselState
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
-                                color: widget.accent.withValues(alpha: 0.1),
+                                color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                                 borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                  color: widget.isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                  width: 0.8,
+                                ),
                               ),
                               child: Text(
                                 slide.badge,
                                 style: GoogleFonts.outfit(
-                                  fontSize: 11,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.3,
-                                  color: widget.accent,
+                                  color: widget.textSecondary,
                                 ),
                               ),
                             ),
