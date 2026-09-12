@@ -154,7 +154,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
 
     final isGeneralTab = widget.field == null;
-    final title = isGeneralTab ? 'Keilmuan' : widget.field!.name;
+    final title = isGeneralTab ? 'Asisten AI' : widget.field!.name;
     final filtered = _computeFilteredAgents();
 
     return Scaffold(
