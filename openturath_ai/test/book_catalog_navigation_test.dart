@@ -8,7 +8,7 @@ import 'package:openturath_ai/widgets/book_row_item.dart';
 
 void main() {
   group('Milestone 1 — Book Catalog & Navigation Architecture', () {
-    final sampleBook = CanonicalBookPresentation(
+    const sampleBook = CanonicalBookPresentation(
       editionId: 'kitab_al_umm_shafii',
       titleArabic: 'كتاب الأم',
       authorArabic: 'الإمام محمد بن إدريس الشافعي',
@@ -50,7 +50,7 @@ void main() {
 
     testWidgets('BookDetailScreen renders 5 scholarly metadata sections', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: BookDetailScreen(book: sampleBook),
         ),
       );
@@ -74,10 +74,10 @@ void main() {
       expect(find.text('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
       expect(find.text('Dr. Rifa\'at Fauzi Abdul Muthalib'), findsOneWidget);
 
-      // Card 5: Aksi Riset
-      expect(find.text('AKSI & TELAAH RISET'), findsOneWidget);
-      expect(find.text('Buka Ruang Kajian'), findsOneWidget);
-      expect(find.text('Simpan ke Catatan Riset'), findsOneWidget);
+      // Card 5: Aksi Riset telah dihapus sesuai instruksi
+      expect(find.text('AKSI & TELAAH RISET'), findsNothing);
+      expect(find.text('Buka Ruang Kajian'), findsNothing);
+      expect(find.text('Simpan ke Catatan Riset'), findsNothing);
     });
 
     testWidgets('BookCatalogScreen displays title and search input', (tester) async {

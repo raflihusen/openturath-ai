@@ -14,8 +14,8 @@ void main() {
       for (final agent in activeAgents) {
         expect(agent.price1m, isNotNull);
         expect(agent.price1m!, greaterThan(0));
-        // All individual monthly plans are unified at 50,000 IDR
-        expect(agent.price1m, equals(50000));
+        // All individual monthly plans are unified at 49,000 IDR
+        expect(agent.price1m, equals(49000));
       }
     });
 

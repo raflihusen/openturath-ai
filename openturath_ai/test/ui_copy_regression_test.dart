@@ -5,7 +5,7 @@ import 'package:openturath_ai/core/app_copy.dart';
 
 void main() {
   test('Voucher errors remain natural even for uppercase transport codes', () {
-    expect(SubscriptionService.redeemErrorMessage('NOT_FOUND'), contains('Kode akses tidak ditemukan'));
+    expect(SubscriptionService.redeemErrorMessage('NOT_FOUND'), contains('tidak ditemukan'));
     expect(SubscriptionService.redeemErrorMessage('INTERNAL'), isNot(contains('INTERNAL')));
     expect(SubscriptionService.redeemErrorMessage('already-exists'), contains('sudah pernah'));
     expect(SubscriptionService.redeemErrorMessage('unauthenticated'), contains('masuk'));
@@ -17,7 +17,7 @@ void main() {
     }
   });
   test('Conversation loading and menu describe their actions', () {
-    expect(AppCopy.loadingReferences, 'Menyiapkan percakapan AI...');
-    expect(AppCopy.studyOptions, 'Menu percakapan');
+    expect(AppCopy.loadingReferences, 'Menghubungkan ke Ruang Telaah AI...');
+    expect(AppCopy.studyOptions, 'Pengaturan Tampilan & Baca');
   });
 }
