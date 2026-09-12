@@ -48,6 +48,17 @@ service cloud.firestore {
     }
 
     // ================================================================
+    // CLIENT ERROR LOGS (Telemetry & Crash Reports - Write Only)
+    // ================================================================
+    match /client_error_logs/{logId} {
+      allow create: if request.resource.data.keys().hasOnly([
+        'error', 'context', 'severity', 'stackTrace', 'breadcrumbs',
+        'extra', 'userId', 'userEmail', 'platform', 'deviceTimestamp', 'createdAt'
+      ]) && request.resource.data.error is string && request.resource.data.error.size() <= 2500;
+      allow read, update, delete: if false;
+    }
+
+    // ================================================================
     // APP CONFIG (Termasuk Dynamic Script & Info Aplikasi)
     // ================================================================
     match /app_config/{configId} {
