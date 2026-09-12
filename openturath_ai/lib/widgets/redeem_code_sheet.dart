@@ -85,9 +85,13 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
         (success ? 'Akses berhasil diaktifkan' : 'Kode tidak valid atau sudah kedaluwarsa');
 
     if (success) {
+      final isAllAccess = code.toUpperCase() == 'PERDANA' || (result['plan'] == 'all_access');
+      final successMsg = isAllAccess
+          ? 'Alhamdulillah! Kode Voucher Perdana berhasil diaktifkan. Anda mendapatkan Akses Penuh ke Seluruh Spesialis AI (7 Hari Masa Uji Coba).'
+          : 'Alhamdulillah! Akses riset berhasil diaktifkan.';
       AppSnackBar.show(
         context,
-        message: 'Akses berhasil diaktifkan',
+        message: successMsg,
         type: SnackType.success,
       );
       widget.onSuccess?.call();
@@ -146,6 +150,11 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Gunakan voucher peluncuran (misal: PERDANA untuk akses 7 hari ke seluruh AI) atau kode beasiswa santri.',
+              style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
             TextField(
