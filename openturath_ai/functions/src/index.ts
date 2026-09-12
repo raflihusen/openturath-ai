@@ -6,6 +6,29 @@ import * as crypto from "crypto";
 admin.initializeApp();
 const db = admin.firestore();
 
+// ================================================================
+// TELEGRAM NOTIFICATION HELPER
+// ================================================================
+async function sendTelegramNotification(text: string): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN || "8935430311:AAHajFoTtJBirH3DfyIh6za5-SVTQRBa_RI";
+  const chatId = process.env.TELEGRAM_CHAT_ID || "2015667548";
+  if (!token || !chatId) return;
+
+  try {
+    await axios.post(
+      `https://api.telegram.org/bot${token}/sendMessage`,
+      {
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+      },
+      { timeout: 5000 }
+    );
+  } catch (err: any) {
+    console.error("[Telegram] Failed to send notification:", err?.message || err);
+  }
+}
+
 
 // ================================================================
 // HARGA & DURASI OTORITATIF — Ditentukan oleh `resolvePlanPricing`
@@ -964,7 +987,7 @@ export const checkPaymentStatus = functions
 // Mengaktifkan entitlement berbatas waktu & trigger email sharing
 // ================================================================
 export const redeemCode = functions
-  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
+  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
   .https.onCall(async (data, context) => {
     if (!context.auth) {
       throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk menukarkan kode akses.");
@@ -1120,6 +1143,38 @@ export const redeemCode = functions
 
     // F63: Redaksi log kode voucher mentah
     console.log(`[Redeem] Voucher berhasil ditukarkan oleh ${uid}. Modul: ${redeemResult.entitlementKey}, aktif s/d ${redeemResult.expiryIso}`);
+
+    // 1. Kirim notifikasi Telegram seketika ke admin
+    const tgMessage = 
+      `🔔 <b>[VOUCHER SANTRI DIKLAIM]</b>\n` +
+      `🕌 OpenTurath AI\n` +
+      `🎟️ Kode: <b>${rawCode}</b>\n` +
+      `📧 Email: <code>${redeemResult.email}</code>\n` +
+      `👤 Nama: <b>${redeemResult.name}</b>\n` +
+      `📦 Produk: <b>${redeemResult.serviceTitle}</b>\n` +
+      `🏷️ Durasi: <b>${redeemResult.durationDays} Hari</b>\n` +
+      `⏳ Berlaku s/d: <code>${redeemResult.expiryIso}</code>\n` +
+      `✅ Status: Sukses terdaftar & hak akses aktif.`;
+    
+    await sendTelegramNotification(tgMessage);
+
+    // 2. Trigger auto-provisioning ke server NotebookLM (Cloud Run)
+    try {
+      const targetService = redeemResult.entitlementKey === "all_access" ? "Paket Semua AI" : redeemResult.serviceTitle;
+      await notifySubscriptionServer(
+        redeemResult.email,
+        redeemResult.name,
+        "voucher_access",
+        "add",
+        targetService
+      );
+      await db.collection("provisioning_outbox").doc(`redeem_${rawCode}_${uid}`).update({
+        status: "completed",
+        provisioned_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (err: any) {
+      console.error("[Redeem] Auto-provisioning via Cloud Run error:", err?.message || err);
+    }
 
     return {
       success: true,
