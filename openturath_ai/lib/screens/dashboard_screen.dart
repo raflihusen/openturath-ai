@@ -177,53 +177,158 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
-                    // ── 2. Editorial Desk Header: Dual Date & Scholarly Greeting ──
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                        decoration: BoxDecoration(
-                          color: surface,
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: border, width: 0.8),
+                    // ── 2. Minimalist Monochrome Greeting Card (Black/White/Grey Palette) ──
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF141416) : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB),
+                          width: 1.0,
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              HijriDateUtils.formatMasehiOnly(),
-                              style: GoogleFonts.outfit(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w500,
-                                color: textSecondary,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                '•',
-                                style: TextStyle(color: textSecondary, fontSize: 11),
-                              ),
-                            ),
-                            Text(
-                              HijriDateUtils.formatHijriOnly(),
-                              style: GoogleFonts.outfit(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w500,
-                                color: textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
+                        boxShadow: isDark
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.04),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
-                      style: GoogleFonts.newsreader(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.3,
-                        color: textPrimary,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Baris Atas: Avatar + Ahlan [Nama]
+                          Row(
+                            children: [
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                  border: Border.all(
+                                    color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                    width: 1.0,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child: user.photoUrl.isNotEmpty
+                                      ? Image.network(
+                                          user.photoUrl,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) => Icon(
+                                            Icons.person_rounded,
+                                            size: 26,
+                                            color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.person_rounded,
+                                          size: 26,
+                                          color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                        ),
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Text(
+                                  user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.2,
+                                    color: isDark ? Colors.white : const Color(0xFF18181B),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          // Baris Bawah: Dua Pill Tanggal Monokrom (Masehi & Hijriah)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today_outlined,
+                                        size: 13,
+                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Flexible(
+                                        child: Text(
+                                          HijriDateUtils.formatMasehiOnly(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.nightlight_outlined,
+                                        size: 13,
+                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Flexible(
+                                        child: Text(
+                                          HijriDateUtils.formatHijriOnly(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
 
