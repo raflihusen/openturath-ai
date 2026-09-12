@@ -24,6 +24,7 @@ import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
+import '../services/telemetry_service.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -248,6 +249,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   Future<void> _fetchAgentUrl() async {
     _readinessTimer?.cancel();
+    TelemetryService.instance.leaveBreadcrumb(
+      'Membuka telaah modul: ${_agent?.id}',
+      category: 'webview',
+    );
     setState(() {
       _isLoadingUrl = true;
       _isWebViewLoading = true;
@@ -339,6 +344,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         })();
       """);
       if (res == 'DENIED' && mounted) {
+        TelemetryService.instance.reportError(
+          'Google 403 Access Denied on NotebookLM WebView',
+          null,
+          context: 'webview_access_denied_403',
+          severity: 'warning',
+          extra: {
+            'agentId': _agent?.id ?? '',
+            'agentTitle': _agent?.title ?? '',
+            'userEmail': _user?.email ?? '',
+          },
+        );
         setState(() {
           final alreadyEntitled = _user?.hasAccessToAgent(_agent?.id ?? '') ?? false;
           _isPaywallRequired = !alreadyEntitled;
@@ -680,6 +696,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   }
                 },
                 onReceivedError: (controller, request, error) {
+                  if (request.isForMainFrame == true) {
+                    TelemetryService.instance.reportError(
+                      'WebView Main Frame Error: ${error.description} (code ${error.type})',
+                      null,
+                      context: 'webview_main_frame_error',
+                      severity: 'error',
+                      extra: {
+                        'agentId': _agent?.id ?? '',
+                        'url': request.url.toString(),
+                      },
+                    );
+                  }
                   if (mounted && (request.isForMainFrame == true)) {
                     setState(() {
                       _isWebViewLoading = false;
