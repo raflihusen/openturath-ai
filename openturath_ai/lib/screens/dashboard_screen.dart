@@ -201,47 +201,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Baris Atas: Avatar + Ahlan [Nama]
-                          Row(
-                            children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                                  border: Border.all(
-                                    color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
-                                    width: 1.0,
-                                  ),
-                                ),
-                                child: Text(
-                                  user.name.trim().isNotEmpty
-                                      ? user.name.trim()[0].toUpperCase()
-                                      : 'S',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: textPrimary,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Text(
-                                  user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -0.2,
-                                    color: isDark ? Colors.white : const Color(0xFF18181B),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          // Baris Atas: Sapaan [Nama]
+                          Text(
+                            user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.3,
+                              color: isDark ? Colors.white : const Color(0xFF18181B),
+                            ),
                           ),
                           const SizedBox(height: 14),
                           // Baris Bawah: Dua Pill Tanggal Monokrom (Masehi & Hijriah)

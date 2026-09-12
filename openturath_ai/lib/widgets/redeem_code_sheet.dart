@@ -87,7 +87,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     if (success) {
       final isAllAccess = code.toUpperCase() == 'PERDANA' || (result['plan'] == 'all_access');
       final successMsg = isAllAccess
-          ? 'Alhamdulillah! Kode Voucher Perdana berhasil diaktifkan. Anda mendapatkan Akses Penuh ke Seluruh Spesialis AI (Uji Coba 7 Hari).'
+          ? 'Alhamdulillah! Kode voucher berhasil diaktifkan. Anda mendapatkan Akses Penuh ke Seluruh Spesialis AI (7 Hari).'
           : 'Alhamdulillah! Akses riset berhasil diaktifkan.';
       AppSnackBar.show(
         context,
@@ -153,7 +153,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Gunakan voucher peluncuran (misal: PERDANA untuk akses 7 hari ke seluruh AI) atau kode beasiswa santri.',
+              'Masukkan kode voucher akses atau beasiswa santri yang Anda miliki.',
               style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),

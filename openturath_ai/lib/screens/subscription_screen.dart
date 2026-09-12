@@ -313,7 +313,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final List<String> activeSubscribedModules = [];
     if (_user != null) {
       if (isAllAccess) {
-        activeSubscribedModules.add('Semua Modul AI (Akses Perdana)');
+        activeSubscribedModules.add('Semua Modul AI (Akses Penuh)');
       } else {
         for (final ag in activeList) {
           if (_user!.isAgentSubscriptionActive(ag.id)) {
@@ -781,7 +781,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow('Kajian terpadu lintas Fikih, Hadits, Tafsir, Ushul, Nahwu, Aqidah, dan Tarikh', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Akses saat ini dapat diaktifkan menggunakan Kode Voucher Perdana', textSecondary),
+                        _benefitRow('Pembaruan berkala rujukan khazanah ulama terverifikasi', textSecondary),
                         const SizedBox(height: OTSpacing.md),
                         // Catatan Edukatif
                         Container(
@@ -806,7 +806,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Paket langganan bundling sedang disiapkan. Untuk membuka seluruh modul sekaligus saat ini, silakan gunakan Kode Voucher Perdana.',
+                                  'Paket langganan bundling seluruh modul AI sedang disiapkan untuk rilis mendatang.',
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 12,
                                     height: 1.4,

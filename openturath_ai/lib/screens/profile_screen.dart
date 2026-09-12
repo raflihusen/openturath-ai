@@ -240,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               if (isAllAccess) {
                 if (isPerdanaOrTrial) {
-                  subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI (Uji Coba Perdana - 7 Hari)$expStr';
+                  subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI (7 Hari)$expStr';
                 } else {
                   subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI$expStr';
                 }
