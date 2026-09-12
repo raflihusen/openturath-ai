@@ -87,7 +87,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     if (success) {
       final isAllAccess = code.toUpperCase() == 'PERDANA' || (result['plan'] == 'all_access');
       final successMsg = isAllAccess
-          ? 'Alhamdulillah! Kode Voucher Perdana berhasil diaktifkan. Anda mendapatkan Akses Penuh ke Seluruh Spesialis AI (7 Hari Masa Uji Coba).'
+          ? 'Alhamdulillah! Kode Voucher Perdana berhasil diaktifkan. Anda mendapatkan Akses Penuh ke Seluruh Spesialis AI (Uji Coba 7 Hari).'
           : 'Alhamdulillah! Akses riset berhasil diaktifkan.';
       AppSnackBar.show(
         context,
