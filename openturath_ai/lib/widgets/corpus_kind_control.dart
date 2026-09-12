@@ -32,7 +32,7 @@ class CorpusKindControl extends StatelessWidget {
             ),
             ButtonSegment(
               value: CorpusKind.scholar,
-              label: Text('Karya Ulama'),
+              label: Text('Khazanah Ulama'),
               icon: Icon(Icons.person_outline_rounded, size: 18),
             ),
           ],

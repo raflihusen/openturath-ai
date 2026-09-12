@@ -80,6 +80,16 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       _errorMessage = null;
     });
 
+    if (widget.agent != null && widget.agent!.id != 'fiqh_syafii') {
+      if (!mounted) return;
+      setState(() {
+        _allBooks = [];
+        _filteredBooks = [];
+        _isLoading = false;
+      });
+      return;
+    }
+
     try {
       final books = await _service.loadSyafiiCatalog();
       if (!mounted) return;
@@ -147,6 +157,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
     final primaryAccent = OTColors.accent(isDark);
 
+    final isNonSyafii = widget.agent != null && widget.agent!.id != 'fiqh_syafii';
+
     return Scaffold(
       backgroundColor: background,
       appBar: AppBar(
@@ -162,19 +174,17 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Pustaka Kitab Kanonikal',
+              'Daftar Kitab Rujukan',
               style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             Text(
-              widget.agent != null && widget.agent!.id != 'fiqh_syafii'
-                  ? 'Katalog Induk Turats'
-                  : '87 Kitab Mazhab Syafi\'i',
+              isNonSyafii ? widget.agent!.title : '87 Kitab Mazhab Syafi\'i',
               style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
             ),
           ],
         ),
         actions: [
-          if (_selectedEra != null || _selectedType != null || _searchQuery.isNotEmpty)
+          if (!isNonSyafii && (_selectedEra != null || _selectedType != null || _searchQuery.isNotEmpty))
             TextButton(
               onPressed: _clearFilters,
               child: Text(
@@ -187,7 +197,43 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: Column(
+        child: isNonSyafii
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(OTSpacing.xl),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.menu_book_outlined, size: 48, color: textSecondary),
+                      const SizedBox(height: 14),
+                      Text(
+                        'Sedang Disusun',
+                        style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Daftar kitab rujukan untuk ${widget.agent?.title ?? "modul ini"} sedang disusun.',
+                        textAlign: TextAlign.center,
+                        style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                      ),
+                      const SizedBox(height: 20),
+                      OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: textPrimary,
+                          side: BorderSide(color: border),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: const Text('Kembali'),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Column(
           children: [
             // ── SEARCH CONTAINER ──
             Padding(

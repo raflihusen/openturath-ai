@@ -73,6 +73,16 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
       _errorMessage = null;
     });
 
+    if (widget.agent != null && widget.agent!.id != 'fiqh_syafii') {
+      if (!mounted) return;
+      setState(() {
+        _allBooks = [];
+        _filteredBooks = [];
+        _isLoading = false;
+      });
+      return;
+    }
+
     try {
       final books = await _service.loadSyafiiCatalog();
       if (!mounted) return;
@@ -235,10 +245,19 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.search_off_rounded, size: 40, color: textSecondary),
+                                      Icon(
+                                        widget.agent != null && widget.agent!.id != 'fiqh_syafii'
+                                            ? Icons.menu_book_outlined
+                                            : Icons.search_off_rounded,
+                                        size: 40,
+                                        color: textSecondary,
+                                      ),
                                       const SizedBox(height: OTSpacing.sm),
                                       Text(
-                                        'Tidak ada kitab yang cocok dengan pencarian',
+                                        widget.agent != null && widget.agent!.id != 'fiqh_syafii'
+                                            ? 'Daftar kitab rujukan untuk ${widget.agent!.title} sedang disusun.'
+                                            : 'Tidak ada kitab yang cocok dengan pencarian',
+                                        textAlign: TextAlign.center,
                                         style: OTTypography.body(color: textSecondary),
                                       ),
                                     ],
