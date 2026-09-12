@@ -9,6 +9,8 @@ import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
+import '../models/bookmark_model.dart';
+import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
@@ -41,10 +43,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   Future<void> _checkIfSaved() async {
     try {
-      final notes = await _notesService.getNotes();
-      final exists = notes.any((n) => n.id == 'book_${widget.book.editionId}');
+      final noteId = 'book_${widget.book.editionId}';
+      final isBookmarked = await BookmarkService().isBookmarked(noteId);
       if (mounted) {
-        setState(() => _isSaved = exists);
+        setState(() => _isSaved = isBookmarked);
       }
     } catch (_) {}
   }
@@ -57,6 +59,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       final noteId = 'book_${widget.book.editionId}';
       if (_isSaved) {
         await _notesService.deleteNote(noteId);
+        await BookmarkService().deleteBookmark(noteId);
         if (mounted) {
           setState(() {
             _isSaved = false;
@@ -93,7 +96,26 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           createdAt: DateTime.now(),
         );
 
+        final newBookmark = BookmarkModel(
+          id: noteId,
+          title: widget.book.titleArabic,
+          agentId: agent.id,
+          agentTitle: agent.title,
+          fieldName: 'Rujukan Kitab',
+          fieldId: 'fiqh',
+          arabicExcerpt: widget.book.titleArabic,
+          fullAnswer:
+              'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
+          bookReference: widget.book.titleArabic,
+          pageNumber: widget.book.volumesCount != null
+              ? '${widget.book.volumesCount} Jilid'
+              : '1 Jilid',
+          author: widget.book.authorArabic,
+          createdAt: DateTime.now(),
+        );
+
         await _notesService.saveNote(newNote);
+        await BookmarkService().addBookmark(newBookmark);
         if (mounted) {
           setState(() {
             _isSaved = true;

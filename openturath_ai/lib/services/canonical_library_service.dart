@@ -1,13 +1,17 @@
 import 'package:flutter/services.dart';
+import '../core/arabic_utils.dart';
 import '../models/book_model.dart';
 
-/// Service to load, cache, and search canonical book catalogs.
+/// Service to load, cache, and search canonical book catalogs with diacritic-tolerant Arabic search.
 class CanonicalLibraryService {
   CanonicalLibraryService._();
   static final CanonicalLibraryService instance = CanonicalLibraryService._();
 
   CanonicalImport? _syafiiCatalog;
   List<CanonicalBookPresentation>? _syafiiPresentations;
+
+  /// Normalizes Arabic text by stripping diacritics and unifying letter variants.
+  static String normalizeArabic(String text) => ArabicUtils.normalize(text);
 
   /// Loads the canonical Syafi'i catalog from asset bundle.
   Future<List<CanonicalBookPresentation>> loadSyafiiCatalog() async {
@@ -35,14 +39,14 @@ class CanonicalLibraryService {
   /// Get parsed canonical import or null if not yet loaded.
   CanonicalImport? get rawSyafiiCatalog => _syafiiCatalog;
 
-  /// Filter books by query string (Arabic or Latin transliteration/field match).
+  /// Filter books by query string with diacritic-tolerant Arabic & Latin normalization.
   List<CanonicalBookPresentation> filterBooks(
     List<CanonicalBookPresentation> books,
     String query, {
     String? eraFilter,
     String? typeFilter,
   }) {
-    final cleanQuery = query.trim().toLowerCase();
+    final cleanQuery = query.trim();
 
     return books.where((book) {
       if (eraFilter != null && eraFilter.isNotEmpty && book.reviewedEraLabel != eraFilter) {
@@ -54,12 +58,12 @@ class CanonicalLibraryService {
 
       if (cleanQuery.isEmpty) return true;
 
-      final matchTitle = book.titleArabic.toLowerCase().contains(cleanQuery) ||
-          (book.titleLatin?.toLowerCase().contains(cleanQuery) ?? false);
-      final matchAuthor = book.authorArabic.toLowerCase().contains(cleanQuery) ||
-          (book.authorLatin?.toLowerCase().contains(cleanQuery) ?? false);
-      final matchPublisher = book.publisher?.toLowerCase().contains(cleanQuery) ?? false;
-      final matchMuhaqqiq = book.muhaqqiq?.toLowerCase().contains(cleanQuery) ?? false;
+      final matchTitle = ArabicUtils.matches(book.titleArabic, cleanQuery) ||
+          (book.titleLatin != null && ArabicUtils.matches(book.titleLatin!, cleanQuery));
+      final matchAuthor = ArabicUtils.matches(book.authorArabic, cleanQuery) ||
+          (book.authorLatin != null && ArabicUtils.matches(book.authorLatin!, cleanQuery));
+      final matchPublisher = book.publisher != null && ArabicUtils.matches(book.publisher!, cleanQuery);
+      final matchMuhaqqiq = book.muhaqqiq != null && ArabicUtils.matches(book.muhaqqiq!, cleanQuery);
 
       return matchTitle || matchAuthor || matchPublisher || matchMuhaqqiq;
     }).toList();

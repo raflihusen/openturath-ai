@@ -9,8 +9,11 @@ import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/routes.dart';
 import '../models/bookmark_model.dart';
+import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
+import '../services/canonical_library_service.dart';
 import '../widgets/evidence_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 
@@ -33,6 +36,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   static const List<String> _categories = [
     'Semua',
+    'Kutipan Ibarah',
+    'Rujukan Kitab',
     'Fikih',
     'Hadis',
     'Tafsir',
@@ -78,13 +83,24 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     final q = _searchQuery.toLowerCase().trim();
     _filteredBookmarks = _allBookmarks.where((b) {
       final fieldLower = b.fieldName.toLowerCase();
-      final matchesCategory = _selectedCategory == 'Semua' ||
-          fieldLower.contains(_selectedCategory.toLowerCase()) ||
-          (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
-          (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
-          (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
-          (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
-          (_selectedCategory == 'Tasawuf' && fieldLower.contains('tasawwuf'));
+      final isBookRef = b.id.startsWith('book_') || fieldLower.contains('rujukan kitab');
+
+      bool matchesCategory;
+      if (_selectedCategory == 'Semua') {
+        matchesCategory = true;
+      } else if (_selectedCategory == 'Rujukan Kitab') {
+        matchesCategory = isBookRef;
+      } else if (_selectedCategory == 'Kutipan Ibarah') {
+        matchesCategory = !isBookRef;
+      } else {
+        matchesCategory = fieldLower.contains(_selectedCategory.toLowerCase()) ||
+            (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
+            (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
+            (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
+            (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
+            (_selectedCategory == 'Tasawuf' && fieldLower.contains('tasawwuf'));
+      }
+
       if (!matchesCategory) return false;
       if (q.isEmpty) return true;
       return b.title.toLowerCase().contains(q) ||
@@ -108,11 +124,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus dari Tersimpan',
-            style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
+            'Hapus Rujukan?',
+            style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Yakin ingin menghapus catatan rujukan ini dari daftar simpanan?',
+            'Rujukan ini akan dihapus dari simpanan Anda.',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -139,26 +155,20 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       },
     );
 
-    if (confirm != true) return;
-
-    OTMotion.success();
-    await _bookmarkService.deleteBookmark(item.id);
-    await _loadBookmarks();
-
-    if (!mounted) return;
-    AppSnackBar.info(
-      context,
-      'Dihapus dari simpanan.',
-      action: SnackBarAction(
-        label: 'Urungkan',
-        textColor: const Color(0xFFFBBF24),
-        onPressed: () async {
-          OTMotion.light();
-          await _bookmarkService.addBookmark(item);
-          await _loadBookmarks();
-        },
-      ),
-    );
+    if (confirm == true) {
+      await _bookmarkService.deleteBookmark(item.id);
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          message: 'Rujukan telah dihapus dari simpanan.',
+          action: SnackBarAction(
+            label: 'Urungkan',
+            textColor: OTColors.accent(isDark),
+            onPressed: () => _bookmarkService.addBookmark(item),
+          ),
+        );
+      }
+    }
   }
 
   void _copyIbarah(String ibarah) {
@@ -169,30 +179,61 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   void _shareBookmark(BookmarkModel item) {
     final buffer = StringBuffer();
-    buffer.writeln('📖 *${item.title}*');
-    buffer.writeln('Disiplin: ${item.fieldName} | ${item.agentTitle}');
-    if (item.bookReference.isNotEmpty) {
-      buffer.writeln('Sumber: ${item.bookReference}${item.pageNumber.isNotEmpty ? " (Hlm. ${item.pageNumber})" : ""}');
-    }
-    buffer.writeln();
     if (item.arabicExcerpt.isNotEmpty) {
-      buffer.writeln('نص العبارة:');
-      buffer.writeln('« ${item.arabicExcerpt} »');
+      buffer.writeln('"${item.arabicExcerpt}"');
       buffer.writeln();
     }
-    if (item.fullAnswer.isNotEmpty) {
-      buffer.writeln('Jawaban:');
-      buffer.writeln(item.fullAnswer);
-      buffer.writeln();
+    buffer.write('— ');
+    if (item.bookReference.isNotEmpty) {
+      buffer.write('Kitab ${item.bookReference}');
+      if (item.pageNumber.isNotEmpty) {
+        buffer.write(' (Hal. ${item.pageNumber})');
+      }
+    } else {
+      buffer.write(item.title);
     }
-    buffer.writeln('—');
-    buffer.writeln('Disimpan melalui *OpenTurath*');
+    if (item.author != null && item.author!.isNotEmpty) {
+      buffer.write(', karya ${item.author}');
+    }
+    buffer.writeln('.');
+    buffer.write('Disimpan melalui OpenTurath AI (${item.agentTitle}).');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Rujukan tersalin.',
+      'Sitasi standar ilmiah tersalin ke papan klip.',
     );
+  }
+
+  Future<void> _openBookmarkItem(BookmarkModel item) async {
+    if (item.id.startsWith('book_')) {
+      final editionId = item.id.replaceFirst('book_', '');
+      var books = CanonicalLibraryService.instance.cachedSyafiiBooks;
+      if (books == null) {
+        try {
+          books = await CanonicalLibraryService.instance.loadSyafiiCatalog();
+        } catch (_) {}
+      }
+      final matchedBook = books?.firstWhere(
+        (b) => b.editionId == editionId,
+        orElse: () => CanonicalBookPresentation(
+          editionId: editionId,
+          titleArabic: item.title,
+          authorArabic: item.author ?? '',
+        ),
+      );
+
+      if (matchedBook != null && mounted) {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.bookDetail,
+          arguments: matchedBook,
+        );
+        return;
+      }
+    }
+
+    _showEvidence(item);
   }
 
   void _showEvidence(BookmarkModel item) {
@@ -463,7 +504,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               textSecondary: textSecondary,
                               accent: accent,
                               onCopy: () => _copyIbarah(item.arabicExcerpt),
-                              onOpen: () => _showEvidence(item),
+                              onOpen: () => _openBookmarkItem(item),
                               onShare: () => _shareBookmark(item),
                               onDelete: () => _deleteBookmark(item),
                             );
@@ -506,6 +547,8 @@ class _BookmarkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBookRef = item.id.startsWith('book_') || item.fieldName == 'Rujukan Kitab';
+
     return Container(
       padding: const EdgeInsets.all(OTSpacing.base),
       decoration: BoxDecoration(
@@ -530,7 +573,7 @@ class _BookmarkCard extends StatelessWidget {
                         borderRadius: OTRadius.chipBorder,
                       ),
                       child: Text(
-                        item.fieldName,
+                        isBookRef ? 'Rujukan Kitab' : item.fieldName,
                         style: OTTypography.captionMedium(color: accent).copyWith(
                           fontSize: 11,
                         ),

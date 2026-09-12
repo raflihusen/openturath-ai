@@ -80,6 +80,18 @@ void main() {
       expect(find.text('Simpan ke Catatan Riset'), findsOneWidget);
     });
 
+    testWidgets('BookCatalogScreen displays title and search input', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: BookCatalogScreen(),
+        ),
+      );
+
+      expect(find.text('Pustaka Kitab Kanonikal'), findsOneWidget);
+      expect(find.text('87 Kitab Mazhab Syafi\'i'), findsOneWidget);
+      expect(find.text('Semua Era'), findsOneWidget);
+    });
+
     testWidgets('AppRoutes contains bookCatalog and bookDetail', (tester) async {
       expect(AppRoutes.bookCatalog, equals('/catalog'));
       expect(AppRoutes.bookDetail, equals('/book_detail'));
