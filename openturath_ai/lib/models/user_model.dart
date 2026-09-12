@@ -18,7 +18,7 @@ class ModuleEntitlement {
     this.updatedAt,
   });
 
-  bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
+  bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
 
   bool get isActive => status == 'active' && expiry != null && expiry!.isAfter(DateTime.now());
 
@@ -79,20 +79,30 @@ class UserModel {
   });
 
   // ── Global Legacy Helpers ──
-  bool get isTrial => plan == AppConstants.planTrial;
+  bool get isTrial => plan == AppConstants.planTrial || plan == 'trial';
   bool get isGuest => email.isEmpty || uid.startsWith('guest_');
   bool get isPremium =>
-      plan != AppConstants.planTrial &&
+      !isTrial &&
+      plan != 'free' &&
       (plan == AppConstants.planTholib1m ||
           plan == AppConstants.planTholib6m ||
           plan == AppConstants.planBahits1y ||
+          plan == 'tholib' ||
+          plan == 'bahits' ||
           plan == 'all_ai_1m' ||
+          plan == 'all_ai_6m' ||
+          plan == 'all_ai_1y' ||
           plan == 'all_access' ||
+          plan == 'all_ai' ||
           plan == 'full' ||
+          plan == 'sultan' ||
+          plan == 'pro' ||
+          plan == 'premium' ||
           plan.startsWith('all_ai') ||
           plan.startsWith('redeem') ||
           plan.startsWith('voucher') ||
-          plan == 'custom');
+          plan == 'custom' ||
+          (subscriptionExpiry != null && subscriptionExpiry!.isAfter(DateTime.now())));
 
   bool get isSubscriptionActive {
     if (isPremium && subscriptionExpiry != null) {
@@ -119,13 +129,50 @@ class UserModel {
   ModuleEntitlement? getEntitlement(String agentId) => entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
+    // 1. Explicit all_access entitlement
     final all = entitlements['all_access'] ?? entitlements['all_ai'];
     if (all != null && all.isActive && all.isPremium) return true;
+
+    // 2. Specific module entitlement
     final specific = getEntitlement(agentId);
     if (specific != null && specific.isActive && specific.isPremium) return true;
-    if (entitlements.isNotEmpty) return false;
-    const legacyPlans = ['all_access', 'all_ai_1m', 'all_ai_6m', 'all_ai_1y', 'full'];
-    return legacyPlans.contains(plan) && isSubscriptionActive;
+
+    // If an explicit all_access was REVOKED, deny fallback
+    if (all != null && !all.isActive) {
+      return false;
+    }
+
+    // 3. Account-level active subscription (tholib_1m, tholib_6m, bahits_1y, all_ai*, sultan, full, voucher, etc.)
+    if (isSubscriptionActive) {
+      if (plan == 'single') {
+        return specific != null && specific.isActive && specific.isPremium;
+      }
+      return true;
+    }
+
+    // 4. Fallback legacy plan check
+    const legacyPlans = [
+      'all_access',
+      'all_ai_1m',
+      'all_ai_6m',
+      'all_ai_1y',
+      'all_ai',
+      'full',
+      'sultan',
+      'tholib_1m',
+      'tholib_6m',
+      'bahits_1y',
+      'tholib',
+      'bahits',
+      'pro',
+      'premium',
+      'custom',
+    ];
+    final isLegacyMatching = legacyPlans.contains(plan) ||
+        plan.startsWith('all_ai') ||
+        plan.startsWith('redeem') ||
+        plan.startsWith('voucher');
+    return isLegacyMatching && isSubscriptionActive;
   }
 
   bool hasAccessToAgent(String agentId) {

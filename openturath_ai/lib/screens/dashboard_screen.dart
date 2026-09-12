@@ -294,14 +294,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Meja Baca & Ruang Kerja Riset Turats',
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        color: textSecondary,
-                      ),
-                    ),
 
                     const SizedBox(height: 18),
 
@@ -424,20 +416,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         const SizedBox(height: 16),
                       ],
 
-                      // ── 6. Akses Pustaka Kitab Kanonikal ──
-                      _buildLibraryCatalogCard(
-                        context: context,
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                        accent: accent,
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // ── 7. Catatan Riset Terbaru ──
+                      // ── 6. Catatan Riset Terbaru ──
                       _buildRecentNotesSection(
                         context: context,
                         notes: _recentNotes,
@@ -830,76 +809,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildLibraryCatalogCard({
-    required BuildContext context,
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color accent,
-  }) {
-    return AppleInteractiveWrapper(
-      onTap: () {
-        Navigator.pushNamed(context, AppRoutes.bookCatalog);
-      },
-      pressedScale: 0.98,
-      hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: border, width: 1.0),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.auto_stories_rounded,
-                size: 22,
-                color: textPrimary,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '87 Kitab Mu\'tamad Syafi\'iyyah',
-                    style: GoogleFonts.newsreader(
-                      fontSize: 16.5,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.2,
-                      color: textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Pustaka Kanonikal • 3 Era Kodifikasi • Naskah Lengkap',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11.5,
-                      color: textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Icon(Icons.chevron_right_rounded, size: 20, color: textSecondary),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildRecentNotesSection({
     required BuildContext context,

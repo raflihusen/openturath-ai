@@ -135,7 +135,7 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
   const now = Date.now();
   const active = (ent: any): boolean => {
     if (!ent || ent.status !== "active" || typeof ent.plan !== "string") return false;
-    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
+    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|all_ai|voucher(?:_.*)?|redeem(?:_.*)?|custom|full|sultan|pro)$/.test(ent.plan);
     const expiry = ent.expiry?.toDate ? ent.expiry.toDate() : new Date(ent.expiry ?? "");
     return allowed && Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
   };
@@ -143,14 +143,30 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
   if (active(all)) return { premiumPlan: true, active: true };
   const specific = entitlements[entitlementKey];
   if (active(specific)) return { premiumPlan: true, active: true };
-  // An explicit entitlement map is authoritative, including revoked entries.
-  if (Object.keys(entitlements).length > 0) {
-    return { premiumPlan: !!(all || specific), active: false };
+
+  // Explicit revoked all_access blocks global fallback
+  if (all && !active(all)) {
+    return { premiumPlan: true, active: false };
   }
-  const legacy = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "full"].includes(userData.plan);
+
+  // Account-level active subscription
   const expiry = userData.subscription_expiry?.toDate
     ? userData.subscription_expiry.toDate() : new Date(userData.subscription_expiry ?? "");
-  return { premiumPlan: legacy, active: legacy && Number.isFinite(expiry.getTime()) && expiry.getTime() > now };
+  const isGlobalExpiryValid = Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
+
+  const globalPlanPattern = /^(all_access|all_ai.*|full|sultan|tholib.*|bahits.*|premium|pro|custom|voucher.*|redeem.*)$/;
+  const isGlobalPlan = typeof userData.plan === "string" && globalPlanPattern.test(userData.plan);
+
+  if (isGlobalPlan && isGlobalExpiryValid) {
+    return { premiumPlan: true, active: true };
+  }
+
+  if (userData.plan === "single") {
+    return { premiumPlan: !!specific, active: false };
+  }
+
+  const legacy = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "all_ai", "full", "sultan", "tholib_1m", "tholib_6m", "bahits_1y", "tholib", "bahits", "premium", "pro", "custom"].includes(userData.plan);
+  return { premiumPlan: legacy, active: legacy && isGlobalExpiryValid };
 }
 
 // ================================================================

@@ -202,20 +202,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: textPrimary,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.info_outline_rounded, color: textPrimary),
-            onPressed: () => _showAboutModal(
-              context,
-              isDark,
-              textPrimary,
-              textSecondary,
-              surface,
-              border,
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
       ),
       body: SafeArea(
         child: StreamBuilder<UserModel?>(
