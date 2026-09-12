@@ -90,7 +90,7 @@ class AgentModel {
         // ── 1. FIKIH TAHAWWULAT (SOVEREIGN FLAGSHIP) ─────────
         AgentModel(
           id: 'fiqh_tahawwulat',
-          title: 'Fikih Tahawwulat',
+          title: 'AI Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
               'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan muhadharah Habib Abu Bakar al-Masyhur.',
@@ -152,7 +152,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_syafii',
-          title: 'Fikih Syafi\'i',
+          title: 'AI Fikih Syafi\'i',
           titleArabic: 'الفقه الشافعي',
           description:
               'Bantuan untuk mencari keterangan dalam kitab-kitab mazhab Syafi\'i.',
@@ -203,7 +203,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanafi',
-          title: 'Fikih Hanafi',
+          title: 'AI Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
               'Fikih Mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
@@ -249,7 +249,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_maliki',
-          title: 'Fikih Maliki',
+          title: 'AI Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
               'Fikih Mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
@@ -295,7 +295,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanbali',
-          title: 'Fikih Hanbali',
+          title: 'AI Fikih Hanbali',
           titleArabic: 'الفقه الحنبلي',
           description:
               'Khazanah Fikih Mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
@@ -341,7 +341,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_muqaran',
-          title: 'Perbandingan Mazhab',
+          title: 'AI Perbandingan Mazhab',
           titleArabic: 'الفقه المقارن',
           description:
               'Komparasi hukum lintas mazhab empat (Arba\'ah), analisis wajh al-dilalah, dan tarjih dalil mu\'tabar.',
@@ -389,7 +389,7 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'Hadits & Syarah Sunnah',
+          title: 'AI Hadits & Syarah Sunnah',
           titleArabic: 'الحديث الشريف',
           description:
               'Kajian matan hadits, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah & syuruhnya).',
@@ -438,7 +438,7 @@ class AgentModel {
         // ── 3. TAFSIR ─────────────────────────────────────────
         AgentModel(
           id: 'tafsir',
-          title: 'Tafsir Al-Qur\'an',
+          title: 'AI Tafsir Al-Qur\'an',
           titleArabic: 'تفسير القرآن',
           description:
               'Penelusuran makna ayat, asbabun nuzul, dan istinbath hukum dari kitab-kitab tafsir mu\'tabarah.',
@@ -487,7 +487,7 @@ class AgentModel {
         // ── 4. USUL FIQH ──────────────────────────────────────
         AgentModel(
           id: 'ushul_fiqh',
-          title: 'Ushul Fiqih',
+          title: 'AI Ushul Fiqih',
           titleArabic: 'أصول الفقه',
           description:
               'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan yang diakui.',
@@ -536,7 +536,7 @@ class AgentModel {
         // ── 5. BAHASA ARAB ────────────────────────────────────
         AgentModel(
           id: 'nahwu_sharaf',
-          title: 'Bahasa Arab & Balaghah',
+          title: 'AI Bahasa Arab & Balaghah',
           titleArabic: 'النحو والصرف',
           description:
               'Nahwu, sharaf, balaghah, dan mu\'jam dengan rujukan kitab bahasa Arab.',
@@ -597,7 +597,7 @@ class AgentModel {
         // ── 6. AQIDAH ─────────────────────────────────────────
         AgentModel(
           id: 'aqidah',
-          title: 'Aqidah & Ilmu Kalam',
+          title: 'AI Aqidah & Ilmu Kalam',
           titleArabic: 'العقيدة والتوحيد',
           description:
               'Pembahasan ushuluddin, tauhid sifat dua puluh, dan manhaj Ahlussunnah wal Jama\'ah.',
@@ -620,7 +620,7 @@ class AgentModel {
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
         AgentModel(
           id: 'tarikh',
-          title: 'Sejarah & Sirah',
+          title: 'AI Sejarah & Sirah',
           titleArabic: 'السيرة والتاريخ',
           description:
               'Rekam jejak Sirah Nabawiyyah, Khulafaur Rasyidin, dan thabaqat ulama salaf.',
@@ -643,7 +643,7 @@ class AgentModel {
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
         AgentModel(
           id: 'habib_umar',
-          title: 'Habib Umar bin Hafizh',
+          title: 'AI Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
               'Kitab dan rekaman muhadharah Habib Umar bin Hafizh dengan rujukan terpercaya.',
@@ -664,7 +664,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'imam_ghazali',
-          title: 'Hujjatul Islam Al-Ghazali',
+          title: 'AI Hujjatul Islam Al-Ghazali',
           titleArabic: 'حجة الإسلام الغزالي',
           description:
               'Kajian kitab Ihya Ulumuddin, Al-Mustashfa, Tahafut al-Falasifah, dan karya-karya Imam Al-Ghazali.',
