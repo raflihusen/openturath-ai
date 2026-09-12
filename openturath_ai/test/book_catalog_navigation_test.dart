@@ -87,7 +87,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Pustaka Kitab Kanonikal'), findsOneWidget);
+      expect(find.text('Daftar Kitab Rujukan'), findsOneWidget);
       expect(find.text('87 Kitab Mazhab Syafi\'i'), findsOneWidget);
       expect(find.text('Semua Era'), findsOneWidget);
     });

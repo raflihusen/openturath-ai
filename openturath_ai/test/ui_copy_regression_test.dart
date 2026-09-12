@@ -17,7 +17,7 @@ void main() {
     }
   });
   test('Conversation loading and menu describe their actions', () {
-    expect(AppCopy.loadingReferences, 'Menghubungkan ke Ruang Telaah AI...');
+    expect(AppCopy.loadingReferences, 'Menghubungkan AI dan Maktabah');
     expect(AppCopy.studyOptions, 'Pengaturan Tampilan & Baca');
   });
 }

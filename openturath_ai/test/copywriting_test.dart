@@ -7,7 +7,7 @@ void main() {
     test('Canonical navigation labels use concise, quiet terms', () {
       expect(AppCopy.navHome, equals('Beranda'));
       expect(AppCopy.navStudies, equals('Asisten AI'));
-      expect(AppCopy.navSaved, equals('Tersimpan'));
+      expect(AppCopy.navSaved, equals('Catatan'));
       expect(AppCopy.navSettings, equals('Pengaturan'));
     });
 
