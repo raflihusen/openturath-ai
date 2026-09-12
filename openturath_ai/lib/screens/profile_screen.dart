@@ -225,8 +225,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final String subscriptionSubtitle;
 
             if (isSubscribed) {
-              if (plan == 'sultan' || plan == 'all_access' || plan == 'all_ai_1m' || plan == 'all_ai') {
-                subscriptionSubtitle = 'Semua Kajian$expStr';
+              final isAllAccess = plan == 'sultan' ||
+                  plan == 'all_access' ||
+                  plan == 'all_ai_1m' ||
+                  plan == 'all_ai_6m' ||
+                  plan == 'all_ai_1y' ||
+                  plan == 'all_ai' ||
+                  (userModel?.entitlements['all_access']?.isActive ?? false);
+              final isPerdanaOrTrial = plan == 'all_access' ||
+                  plan.startsWith('redeem') ||
+                  plan.startsWith('voucher') ||
+                  (userModel?.entitlements['all_access']?.plan.contains('voucher') ?? false) ||
+                  (userModel?.entitlements['all_access']?.plan.contains('perdana') ?? false);
+
+              if (isAllAccess) {
+                if (isPerdanaOrTrial) {
+                  subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI (Uji Coba Perdana - 7 Hari)$expStr';
+                } else {
+                  subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI$expStr';
+                }
               } else if (plan == 'field') {
                 subscriptionSubtitle = 'Rumpun Kajian$expStr';
               } else if (plan == 'single') {
