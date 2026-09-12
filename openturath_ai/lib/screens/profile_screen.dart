@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
 
-    if (confirm != true) return;
+    if (!mounted || confirm != true) return;
 
     setState(() => _isLoggingOut = true);
     try {
@@ -139,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
 
-    if (confirm != true) return;
+    if (!mounted || confirm != true) return;
 
     setState(() => _isDeletingAccount = true);
     try {
@@ -615,7 +615,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildLegalSection(
                       title: '1. Ruang Lingkup & Tujuan Riset',
                       content:
-                          'OpenTurath AI adalah platform penelaahan komputasi naskah primer keilmuan Islam (turats). Layanan ini dirancang khusus untuk mempermudah santri, akademisi, asatidz, dan peneliti dalam mencari ibarah, membandingkan matan dan syarah, serta melacak rujukan kitab muktamad.',
+                          'OpenTurath membantu pembaca mencari ibarah, membandingkan matan dan syarah, serta menelusuri rujukan kitab. Hasilnya perlu diperiksa kembali pada naskah asli.',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
@@ -801,7 +801,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Antarmuka aplikasi saat ini dioptimalkan untuk Bahasa Indonesia dengan dukungan penuh teks Arab gundul/berharakat pada naskah kitab kuning primer.',
+              'Menu tersedia dalam bahasa Indonesia. Teks Arab dapat dibaca dengan atau tanpa harakat.',
               style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 10),

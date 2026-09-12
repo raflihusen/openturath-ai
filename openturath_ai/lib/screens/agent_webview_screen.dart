@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../core/notebook_navigation.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -36,17 +36,7 @@ class AgentWebviewScreen extends StatefulWidget {
   const AgentWebviewScreen({super.key, this.agent});
 
   /// Kebijakan keamanan URL: Hanya izinkan HTTPS pada ekosistem resmi Google NotebookLM
-  static bool isAllowedNotebookUrl(Uri uri) {
-    if (uri.scheme.toLowerCase() != 'https') return false;
-    final host = uri.host.toLowerCase();
-    const allowedDomains = [
-      'google.com',
-      'gstatic.com',
-      'googleapis.com',
-      'googleusercontent.com',
-    ];
-    return allowedDomains.any((d) => host == d || host.endsWith('.$d'));
-  }
+  static bool isAllowedNotebookUrl(Uri uri) => NotebookNavigation.allowed(uri);
 
   @override
   State<AgentWebviewScreen> createState() => _AgentWebviewScreenState();
@@ -72,6 +62,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   bool _isBookmarking = false;
   bool _hasCopied = false;
   bool _hasBookmarked = false;
+  bool _isGoingBack = false;
 
   @override
   void initState() {
@@ -82,7 +73,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _loadFontScale() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final scale = prefs.getDouble('turath_font_zoom_level') ?? 1.0;
+      final value = prefs.getDouble('turath_font_zoom_level') ?? 1.0;
+      final scale = value.isFinite ? value.clamp(0.85, 2.0).toDouble() : 1.0;
       if (mounted) {
         setState(() => _fontScale = scale);
       }
@@ -90,16 +82,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _setFontScale(double scale) async {
+    if (!mounted || !scale.isFinite) return;
+    scale = scale.clamp(0.85, 2.0).toDouble();
     setState(() => _fontScale = scale);
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('turath_font_zoom_level', scale);
+      if (!mounted) return;
+      await _applyCurrentFontScale();
     } catch (_) {}
-    if (_webController != null) {
-      await _webController!.evaluateJavascript(
-        source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($scale); }',
-      );
-    }
   }
 
   Future<void> _applyCurrentFontScale() async {
@@ -113,24 +104,23 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   @override
   void dispose() {
-    try {
-      _webController?.evaluateJavascript(source: '''
-        if (window.otMasterObserver) {
-          window.otMasterObserver.disconnect();
-          window.otMasterObserver = null;
-        }
-      ''');
-      _webController?.stopLoading();
-    } catch (_) {
-    } finally {
-      _webController = null;
+    final controller = _webController;
+    _webController = null;
+    if (controller != null) {
+      unawaited(_stopWebView(controller));
     }
     super.dispose();
   }
 
+  static Future<void> _stopWebView(InAppWebViewController controller) async {
+    try { await controller.stopLoading(); } catch (_) {}
+  }
+
   static const String _turatsMasterScript = r"""
     (function() {
-      // 1. Injeksi Style CSS Penting
+      if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
+
+      // 1. Injeksi Style CSS: Sembunyikan Header Resmi, Logo Google & NotebookLM
       var styleId = 'ot-hide-controls';
       var existingStyle = document.getElementById(styleId);
       if (!existingStyle) {
@@ -138,38 +128,25 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         style.id = styleId;
         style.type = 'text/css';
         style.textContent = `
+          /* Header, Top Bar, Logo, dan Banner Google NotebookLM */
           top-bar, .top-bar, header, .header, .app-header, app-header,
           mat-toolbar, [role="banner"], .header-container, .header-row,
-          div[class*="header" i], div[class*="top-bar" i], div[class*="topbar" i],
+          .mobile-header, div[class*="mobile-header" i],
           labs-tailwind-logo, a.logo-link, .logo-container,
           a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
           .title-input, input.title-input, .title-container, .notebook-title,
           .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
           div[class*="title-card" i], div[class*="notebook-header" i],
-          div[class*="source-summary" i], div[class*="source-count" i],
-          div[class*="notebook-info" i], .project-header, div.source-badge-container,
-          div[class*="notebook-title" i], [class*="artifact-card" i],
-          .mobile-header, div[class*="mobile-header" i],
-          app-chat-guide, .chat-guide, div[class*="guide" i],
-          div[class*="landing" i], div[class*="banner" i],
-          div[class*="cover" i], [class*="notebook-info" i],
-          mat-card[class*="guide" i], mat-card[class*="info" i],
-          button[aria-label*="Copy" i], button[aria-label*="Salin" i],
-          button[aria-label*="Create" i], button[aria-label*="Buat" i],
-          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-          button.mat-tonal-button, a[aria-label*="Google" i],
-          .gb_C, #gb, #gbwa, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          .project-header, div.source-badge-container,
+          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
           .pro-badge,
-          .disclaimer, [class*="disclaimer" i], [class*="footnote" i], .compliance-notice, .legal-text,
-          .input-footer, div[class*="input-footer" i], div[class*="footer" i],
-          p[class*="disclaimer" i], span[class*="disclaimer" i],
-          div[aria-label*="disclaimer" i], div[aria-label*="inaccurate" i],
-          .bottom-disclaimer, div[class*="bottom-disclaimer" i],
-          div[class*="terms" i] {
+          /* Google Account Bar, App Launcher & Setelan */
+          #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button.mat-tonal-button, a[aria-label*="Google" i] {
             display: none !important;
             visibility: hidden !important;
             height: 0px !important;
-            min-height: 0px !important;
             max-height: 0px !important;
             overflow: hidden !important;
             margin: 0px !important;
@@ -180,9 +157,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             pointer-events: none !important;
             border: none !important;
           }
-          ::-webkit-scrollbar { display: none !important; width: 0px !important; height: 0px !important; }
-          html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
-          /* Padding atas dan bawah yang cukup agar pesan teratas tidak terpotong */
+          ::-webkit-scrollbar { display: none !important; width: 0px !important; }
+          html, body, * { scrollbar-width: none !important; }
+          /* Padding atas dan bawah agar percakapan tidak terpotong */
           .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
             padding-top: 14px !important;
             padding-bottom: 24px !important;
@@ -192,87 +169,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         (document.head || document.documentElement).appendChild(style);
       }
 
-      // Helper untuk komunikasi aman ke Flutter
-      function sendToFlutter(name, data) {
-        if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
-          window.flutter_inappwebview.callHandler(name, data);
+      // 2. Font Scale Presisi
+      window.applyTurathFontScale = function(value) {
+        var scale = Number(value);
+        if (!Number.isFinite(scale)) return;
+        scale = Math.max(0.85, Math.min(2, scale));
+        var fontStyle = document.getElementById('ot-font-scale-style');
+        if (!fontStyle) {
+          fontStyle = document.createElement('style');
+          fontStyle.id = 'ot-font-scale-style';
+          (document.head || document.documentElement).appendChild(fontStyle);
         }
-      }
-
-      // 2. Sembunyikan Kartu Landing NotebookLM yang Memuat Metadata Teknis & Poster
-      function sweepNotebookLandingCard() {
-        try {
-          var allCandidates = document.querySelectorAll('app-chat-guide, mat-card, .mat-mdc-card, [role="region"], div[class*="guide" i], div[class*="card" i], div[class*="header" i], div[class*="banner" i], div[class*="cover" i], div');
-          for (var i = 0; i < allCandidates.length; i++) {
-            var el = allCandidates[i];
-            if (el.querySelector('textarea, input, [role="article"], .chat-message, .message-content, .query-text')) {
-              continue;
-            }
-            var txt = (el.innerText || '').toLowerCase();
-            var isBanner = txt.includes('0 sources') || txt.includes('sources ·') ||
-                           txt.includes('super ai') || txt.includes('bridging turath') ||
-                           txt.includes('asisten penelitian berbasis turath') ||
-                           (txt.includes('sources') && (txt.includes('dec 22') || txt.includes('feb 22') || /\b(19|20)\d{2}\b/.test(txt)));
-            if (isBanner && el.clientHeight > 15 && el.clientHeight < 700) {
-              el.style.setProperty('display', 'none', 'important');
-              el.style.setProperty('visibility', 'hidden', 'important');
-              el.style.setProperty('height', '0px', 'important');
-              el.style.setProperty('min-height', '0px', 'important');
-              el.style.setProperty('max-height', '0px', 'important');
-              el.style.setProperty('margin', '0px', 'important');
-              el.style.setProperty('padding', '0px', 'important');
-              el.style.setProperty('overflow', 'hidden', 'important');
-              el.style.setProperty('opacity', '0', 'important');
-              el.style.setProperty('pointer-events', 'none', 'important');
-            }
-          }
-
-          // Sembunyikan SEMUA elemen disclaimer Gemini / NotebookLM inaccurate
-          var disclaimers = document.querySelectorAll('p, span, div, small, footer, [role="contentinfo"]');
-          for (var d = 0; d < disclaimers.length; d++) {
-            var del = disclaimers[d];
-            if (del.querySelector('textarea, input, [role="article"], .chat-message, .message-content, .query-text')) continue;
-            var dtxt = (del.innerText || '').toLowerCase();
-            if (dtxt.includes('inaccurate') ||
-                dtxt.includes('can make mistakes') ||
-                dtxt.includes('gemini may') ||
-                dtxt.includes('double-check') ||
-                dtxt.includes('notebooklm can') ||
-                dtxt.includes('tidak akurat') ||
-                dtxt.includes('membuat kesalahan')) {
-              del.style.setProperty('display', 'none', 'important');
-              del.style.setProperty('visibility', 'hidden', 'important');
-              del.style.setProperty('height', '0px', 'important');
-              del.style.setProperty('opacity', '0', 'important');
-              del.style.setProperty('margin', '0px', 'important');
-              del.style.setProperty('padding', '0px', 'important');
-            }
-          }
-
-          // Poles Input Placeholder ke Bahasa Indonesia Ilmiah
-          var inputs = document.querySelectorAll('textarea, input[type="text"]');
-          for (var k = 0; k < inputs.length; k++) {
-            if (inputs[k].placeholder && (inputs[k].placeholder.includes('Ask a question') || inputs[k].placeholder.includes('create something'))) {
-              inputs[k].placeholder = 'Tanyakan sesuatu tentang kitab ini...';
-            }
-          }
-        } catch(e) {}
-      }
-
-      // 3. Font scale aman tanpa compound font explosion (F36)
-      window.applyTurathFontScale = function(scale) {
-        var id = 'ot-font-scale-style';
-        var st = document.getElementById(id);
-        if (!st) {
-          st = document.createElement('style');
-          st.id = id;
-          (document.head || document.documentElement).appendChild(st);
-        }
-        var basePx = Math.round(scale * 15);
-        var arabicPx = Math.round(scale * 19);
-        st.textContent = `
+        fontStyle.textContent = `
           .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"] {
-            font-size: ${basePx}px !important;
+            font-size: ${Math.round(scale * 15)}px !important;
             line-height: 1.65 !important;
           }
           .chat-panel-content p, .chat-view p, [role="article"] p,
@@ -281,31 +191,19 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             font-size: inherit !important;
             line-height: inherit !important;
           }
-          [lang="ar"], .arabic, *[class*="arabic" i] {
-            font-size: ${arabicPx}px !important;
+          [lang="ar"], .arabic {
+            font-size: ${Math.round(scale * 19)}px !important;
             line-height: 1.8 !important;
           }
         `;
       };
-
-      // 4. Observer Ringan dengan Debounce (Anti CPU Drain & Bebas Perulangan Berantai)
-      sweepNotebookLandingCard();
-      if (!window.__otMasterObserver) {
-        var timeout = null;
-        window.__otMasterObserver = new MutationObserver(function() {
-          if (timeout) clearTimeout(timeout);
-          timeout = setTimeout(function() {
-            sweepNotebookLandingCard();
-          }, 250);
-        });
-        window.__otMasterObserver.observe(document.documentElement || document.body, { childList: true, subtree: true });
-      }
     })();
   """;
 
   static final _cloakScript = UserScript(
     source: _turatsMasterScript,
     injectionTime: UserScriptInjectionTime.AT_DOCUMENT_END,
+    forMainFrameOnly: true,
   );
 
   @override
@@ -319,7 +217,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       } else if (rawArgs is AgentModel) {
         _agent = rawArgs;
       }
-      _agent ??= AgentModel.defaultAgents.first;
+      _agent ??= widget.agent ?? AgentModel.defaultAgents.first;
       _fetchAgentUrl();
     }
   }
@@ -406,10 +304,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       """);
       if (res == 'DENIED' && mounted) {
         setState(() {
-          _isPaywallRequired = true;
+          final alreadyEntitled = _user?.hasAccessToAgent(_agent?.id ?? '') ?? false;
+          _isPaywallRequired = !alreadyEntitled;
           _isLoadingUrl = false;
           _isWebViewLoading = false;
-          _errorMessage = AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
+          _errorMessage = alreadyEntitled
+              ? 'Hak akses sudah tercatat. NotebookLM belum mengenali akun ini. Pastikan akun Google sesuai, lalu coba muat kembali.'
+              : AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
         });
       }
     } catch (_) {}
@@ -487,7 +388,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _bookmarkLatestResponse() async {
-    if (_webController == null) return;
+    if (_webController == null || _isBookmarking) return;
+    final ownerUid = _authService.currentUser?.uid;
+    if (ownerUid == null) return;
     HapticFeedback.mediumImpact();
     setState(() => _isBookmarking = true);
 
@@ -548,10 +451,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           // F28 & F30: Pisahkan nama spesialis AI dari rujukan kitab primer
           final bookRef = detectedBook.isNotEmpty
               ? detectedBook
-              : 'Sumber Primer (${_agent?.category ?? "Turats"})';
+              : 'Rujukan belum diidentifikasi';
 
           final bookmark = BookmarkModel(
-            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            id: DateTime.now().microsecondsSinceEpoch.toString(),
             title: 'Kajian ${_agent?.category ?? "Turats"}: ${bookRef.length > 28 ? "${bookRef.substring(0, 28)}..." : bookRef}',
             agentId: _agent?.id ?? 'umum',
             agentTitle: _agent?.title ?? 'Spesialis Turats',
@@ -564,7 +467,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             createdAt: DateTime.now(),
           );
 
-          await _bookmarkService.addBookmark(bookmark);
+          await _bookmarkService.addBookmark(bookmark, userId: ownerUid);
           if (mounted) {
             setState(() => _hasBookmarked = true);
             AppSnackBar.success(
@@ -572,7 +475,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               AppCopy.savedSuccess,
               action: SnackBarAction(
                 label: 'Lihat',
-                textColor: Colors.white,
+                textColor: OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark),
                 onPressed: () => Navigator.pushNamed(context, AppRoutes.bookmark),
               ),
             );
@@ -592,13 +495,21 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _handleBackPress() async {
-    HapticFeedback.lightImpact();
-    if (_webController != null && await _webController!.canGoBack()) {
-      await _webController!.goBack();
-    } else {
-      if (mounted) {
+    if (!mounted || _isGoingBack) return;
+    _isGoingBack = true;
+    final controller = _webController;
+    try {
+      final canGoBack = await controller?.canGoBack() ?? false;
+      if (!mounted) return;
+      if (canGoBack && controller != null && identical(controller, _webController)) {
+        await controller.goBack();
+      } else {
         Navigator.pop(context);
       }
+    } catch (_) {
+      if (mounted) Navigator.pop(context);
+    } finally {
+      _isGoingBack = false;
     }
   }
 
@@ -734,8 +645,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       useHybridComposition: true,
                       mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       allowFileAccess: false,
-                      allowContentAccess: true,
-                      javaScriptCanOpenWindowsAutomatically: true,
+                      allowContentAccess: false,
+                      javaScriptCanOpenWindowsAutomatically: false,
+                      useShouldOverrideUrlLoading: true,
                       supportZoom: true,
                       builtInZoomControls: true,
                       displayZoomControls: false,
@@ -745,103 +657,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       algorithmicDarkeningAllowed: false,
                       transparentBackground: true,
                     ),
-                onWebViewCreated: (controller) {
-                  _webController = controller;
-
-                  // Injeksi Callback Simpan Bookmark Langsung dari Respon AI
-                  controller.addJavaScriptHandler(
-                    handlerName: 'onSaveBookmark',
-                    callback: (args) async {
-                      if (args.isNotEmpty && args[0] is Map) {
-                        final map = Map<String, dynamic>.from(args[0] as Map);
-                        final fullAnswer = (map['fullAnswer'] as String? ?? '').trim();
-                        final arabicExcerpt = (map['arabicExcerpt'] as String? ?? '').trim();
-                        final question = (map['question'] as String? ?? '').trim();
-
-                        if (fullAnswer.isEmpty) {
-                          if (context.mounted) {
-                            AppSnackBar.show(
-                              context,
-                              message: AppCopy.emptyAnswerCannotSave,
-                              type: SnackType.error,
-                            );
-                          }
-                          return;
-                        }
-
-                        final title = question.isNotEmpty
-                            ? (question.length > 55 ? '${question.substring(0, 52)}...' : question)
-                            : (_agent?.title != null ? 'Kajian ${_agent!.title}' : 'Kajian Kitab');
-
-                        final category = _agent?.category ?? 'Fikih';
-
-                        final bookmark = BookmarkModel(
-                          id: DateTime.now().millisecondsSinceEpoch.toString(),
-                          title: title,
-                          agentId: _agent?.id ?? 'umum',
-                          agentTitle: _agent?.title ?? 'Kutubut Turats',
-                          fieldName: category,
-                          fieldId: category.toLowerCase().replaceAll(' ', '_'),
-                          arabicExcerpt: arabicExcerpt,
-                          fullAnswer: fullAnswer,
-                          bookReference: _agent?.title ?? 'Kutubut Turats',
-                          pageNumber: '',
-                          createdAt: DateTime.now(),
-                        );
-
-                        await _bookmarkService.addBookmark(bookmark);
-                        if (context.mounted) {
-                          AppSnackBar.show(
-                            context,
-                            message: AppCopy.savedSuccess,
-                            type: SnackType.success,
-                            action: SnackBarAction(
-                              label: 'Lihat',
-                              textColor: Colors.white,
-                              onPressed: () => Navigator.pushNamed(context, AppRoutes.bookmark),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  );
-
-                  // Callback Konfirmasi Salin Teks
-                  controller.addJavaScriptHandler(
-                    handlerName: 'onCopySuccess',
-                    callback: (args) {
-                      if (mounted) {
-                        AppSnackBar.show(
-                          context,
-                          message: AppCopy.answerCopied,
-                          type: SnackType.info,
-                        );
-                      }
-                    },
-                  );
-                },
-                onPermissionRequest: (controller, request) async {
-                  final isAudio = request.resources.contains(PermissionResourceType.MICROPHONE);
-                  return PermissionResponse(
-                    resources: request.resources,
-                    action: isAudio ? PermissionResponseAction.GRANT : PermissionResponseAction.DENY,
-                  );
-                },
+                onWebViewCreated: (controller) { _webController = controller; },
+                onPermissionRequest: (controller, request) async => PermissionResponse(
+                  resources: request.resources, action: PermissionResponseAction.DENY,
+                ),
                 shouldOverrideUrlLoading: (controller, navigationAction) async {
                   final uri = navigationAction.request.url;
-                  if (uri == null) return NavigationActionPolicy.ALLOW;
-
-                  if (AgentWebviewScreen.isAllowedNotebookUrl(uri)) {
-                    return NavigationActionPolicy.ALLOW;
-                  }
-
-                  try {
-                    if (await canLaunchUrl(uri)) {
-                      await launchUrl(uri, mode: LaunchMode.externalApplication);
-                      return NavigationActionPolicy.CANCEL;
-                    }
-                  } catch (_) {}
-                  return NavigationActionPolicy.CANCEL;
+                  return uri != null && NotebookNavigation.allowed(uri)
+                    ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL;
                 },
                 onLoadStop: (controller, url) async {
                   await _applyHideScript();

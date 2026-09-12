@@ -70,9 +70,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<String?> _getOrPromptPhone() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return null;
+    final phoneKey = 'openturath_${uid}_user_phone';
     try {
       final prefs = await SharedPreferences.getInstance();
-      final saved = prefs.getString('user_phone') ?? '';
+      final saved = prefs.getString(phoneKey) ?? '';
       if (saved.isNotEmpty && saved.length >= 8) {
         return saved;
       }
@@ -163,7 +166,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (phone != null && phone.isNotEmpty) {
       try {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user_phone', phone);
+        await prefs.setString(phoneKey, phone);
       } catch (_) {}
     }
     return phone;
@@ -489,7 +492,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.base),
 
                         // Core Benefits
-                        _benefitRow('Akses simultan ke seluruh ruang riset & korpus kitab', textPrimary),
+                        _benefitRow('Akses ke seluruh kajian dan kitab', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow('Penelusuran mendalam tanpa batas kuota pertanyaan harian', textPrimary),
                         const SizedBox(height: OTSpacing.sm),

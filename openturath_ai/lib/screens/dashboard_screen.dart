@@ -608,13 +608,13 @@ class _DashboardAnnouncementCarouselState
       badge: 'TENTANG OPENTURATH',
       title: 'Mengenal OpenTurath AI',
       summary:
-          'Asisten riset keilmuan Islam berbasis korpus naskah primer mu\'tabar untuk mempermudah penelaahan turats.',
+          'Membaca kitab dan menelusuri ibarah dari naskah rujukan.',
       detailedContent:
-          'OpenTurath dirancang sebagai ruang telaah digital bagi para santri, asatidz, dan akademisi. Sistem ini mengintegrasikan ribuan halaman naskah primer kitab kuning (turats) dengan kemampuan pemrosesan bahasa alami untuk mencari referensi, memahami konteks ibarah, dan melacak perbandingan lintas matan dan syarah secara presisi.',
+          'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru.',
     ),
     _AnnouncementSlide(
       badge: 'KEUNGGULAN RISET',
-      title: 'Riset Berbasis Sanad & Takhrij',
+      title: 'Menelusuri Sanad dan Takhrij',
       summary:
           'Dilengkapi kutipan ibarah teks asli, nomor halaman kitab muktamad, serta komparasi silang antar-mazhab.',
       detailedContent:

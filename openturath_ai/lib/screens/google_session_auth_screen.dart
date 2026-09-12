@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/routes.dart';
+import '../core/notebook_navigation.dart';
 import '../core/theme.dart';
 import '../services/auth_service.dart';
 import '../widgets/app_loader.dart';
@@ -39,7 +40,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   /// Simpan status sesi dan arahkan ke Dashboard
   Future<void> _onSessionAuthenticated() async {
-    if (_isSessionReady) return;
+    if (!mounted || _isSessionReady) return;
     setState(() => _isSessionReady = true);
 
     try {
@@ -122,7 +123,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         body: const Center(
           child: AppLoader(
             title: 'Sesi Google Terhubung',
-            subtitle: 'Menyiapkan akses korpus riset kitab...',
+            subtitle: 'Menyiapkan akses kitab.',
             dotSize: 10,
           ),
         ),
@@ -133,7 +134,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        if (await _webController?.canGoBack() ?? false) {
+        final canGoBack = await _webController?.canGoBack() ?? false;
+        if (!mounted) return;
+        if (canGoBack) {
           await _webController?.goBack();
         } else {
           await _confirmCancelAndSignOut();
@@ -239,8 +242,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       sharedCookiesEnabled: true,
                       thirdPartyCookiesEnabled: true,
                       useHybridComposition: true,
-                      supportMultipleWindows: true,
-                      javaScriptCanOpenWindowsAutomatically: true,
+                      supportMultipleWindows: false,
+                      useShouldOverrideUrlLoading: true,
+                      javaScriptCanOpenWindowsAutomatically: false,
                       mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       allowFileAccess: false,
                       allowContentAccess: false,
@@ -251,27 +255,16 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       final uri = navigationAction.request.url;
                       if (uri == null) return NavigationActionPolicy.CANCEL;
 
-                      final scheme = uri.scheme.toLowerCase();
-                      if (scheme != 'https') return NavigationActionPolicy.CANCEL;
-
-                      final host = uri.host.toLowerCase();
-                      final isAllowed = host.endsWith('.google.com') ||
-                          host == 'google.com' ||
-                          host.endsWith('.gstatic.com') ||
-                          host.endsWith('.googleusercontent.com');
-
-                      return isAllowed
-                          ? NavigationActionPolicy.ALLOW
-                          : NavigationActionPolicy.CANCEL;
+                      return NotebookNavigation.allowed(uri)
+                          ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL;
                     },
                     onWebViewCreated: (controller) => _webController = controller,
                     onProgressChanged: (controller, progress) {
-                      _loadProgress.value = progress / 100;
+                      if (mounted) _loadProgress.value = progress / 100;
                     },
                     onLoadStop: (controller, url) async {
-                      if (url == null) return;
+                      if (!mounted || url == null) return;
                       final urlStr = url.toString();
-                      final host = url.host.toLowerCase();
 
                       final cookieManager = CookieManager.instance();
                       final cookies = await cookieManager.getCookies(
@@ -284,8 +277,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                           c.name == 'OSID');
 
                       if (hasSession ||
-                          ((host.contains('notebook.google.com') ||
-                                  host.contains('notebooklm.google.com')) &&
+                          (NotebookNavigation.notebook(url) &&
                               !urlStr.contains('ServiceLogin') &&
                               !urlStr.contains('signin'))) {
                         await _onSessionAuthenticated();

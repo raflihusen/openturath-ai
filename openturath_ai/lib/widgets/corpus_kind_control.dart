@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/agent_model.dart';
 
 /// Reusable SegmentedButton control to toggle between [CorpusKind.discipline] (Bidang Ilmu)
-/// and [CorpusKind.scholar] (Korpus Ulama).
+/// and [CorpusKind.scholar] (Karya Ulama).
 class CorpusKindControl extends StatelessWidget {
   const CorpusKindControl({
     super.key,
@@ -32,7 +32,7 @@ class CorpusKindControl extends StatelessWidget {
             ),
             ButtonSegment(
               value: CorpusKind.scholar,
-              label: Text('Korpus Ulama'),
+              label: Text('Karya Ulama'),
               icon: Icon(Icons.person_outline_rounded, size: 18),
             ),
           ],

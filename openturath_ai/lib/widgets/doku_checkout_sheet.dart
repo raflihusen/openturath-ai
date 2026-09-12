@@ -6,6 +6,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/constants.dart';
+import '../core/checkout_completion.dart';
 import '../core/theme.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
@@ -71,6 +72,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
   int _pollAttempts = 0;
   bool _isShowingConfirmDialog = false;
   bool _hasPopped = false;
+  final _completion = CheckoutCompletion();
+  BuildContext? _confirmationContext;
 
   @override
   void initState() {
@@ -102,7 +105,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     }
 
     // 2. Active inquiry polling setiap 2 detik sebagai fail-safe
-    _pollTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       _checkPaymentStatus();
     });
   }
@@ -125,10 +128,20 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
     // Beri jeda 2.2 detik agar pengguna menikmati animasi sukses
     await Future.delayed(const Duration(milliseconds: 2200));
-    if (mounted && context.mounted && !_hasPopped) {
-      _hasPopped = true;
-      Navigator.of(context).pop(true);
-    }
+    await _completion.finish(
+      dismissConfirmation: () {
+        final dialogContext = _confirmationContext;
+        if (dialogContext != null && dialogContext.mounted && ModalRoute.of(dialogContext)?.isCurrent == true) {
+          Navigator.of(dialogContext).pop(false);
+        }
+      },
+      closeCheckout: () {
+        if (mounted && !_hasPopped && ModalRoute.of(context)?.isCurrent == true) {
+          _hasPopped = true;
+          Navigator.of(context).pop(true);
+        }
+      },
+    );
   }
 
   Future<void> _checkPaymentStatus() async {
@@ -137,7 +150,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
     _pollAttempts++;
     // F33: Batas maksimal polling 150 kali (5 menit) agar tidak memboroskan sumber daya
-    if (_pollAttempts > 150) {
+    if (_pollAttempts > 60) {
       _pollTimer?.cancel();
       return;
     }
@@ -166,11 +179,15 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     if (_isShowingConfirmDialog) return false;
 
     _isShowingConfirmDialog = true;
+    final confirmationDone = Completer<void>();
+    _completion.confirmation = confirmationDone.future;
     try {
       final isDark = Theme.of(context).brightness == Brightness.dark;
       final confirm = await showDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) {
+          _confirmationContext = ctx;
+          return AlertDialog(
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Text(
@@ -208,12 +225,16 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
               ),
             ),
           ],
-        ),
+          );
+        },
       );
 
-      return confirm ?? false;
+      return !_isSuccess && (confirm ?? false);
     } finally {
+      _confirmationContext = null;
       _isShowingConfirmDialog = false;
+      confirmationDone.complete();
+      _completion.confirmation = null;
     }
   }
 
@@ -229,7 +250,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return PopScope(
-      canPop: _isSuccess,
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldPop = await _handleWillPop();
