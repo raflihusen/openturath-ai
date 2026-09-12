@@ -134,6 +134,28 @@ const notebookUiScript = r'''
         if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
       }
     });
+    // Perbarui placeholder input ke bahasa santri alami
+    const targetPlaceholder = 'Ajukan pertanyaan atau masalah';
+    document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]').forEach(input => {
+      if (input.placeholder && input.placeholder !== targetPlaceholder) {
+        input.placeholder = targetPlaceholder;
+      }
+      if (input.getAttribute('data-placeholder') && input.getAttribute('data-placeholder') !== targetPlaceholder) {
+        input.setAttribute('data-placeholder', targetPlaceholder);
+      }
+      if (input.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(input.getAttribute('aria-label'))) {
+        input.setAttribute('aria-label', targetPlaceholder);
+      }
+    });
+    document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {
+      if (el.closest(answerSelector)) return;
+      const t = text(el).toLowerCase();
+      if (t.includes('start typing') || t.includes('ask a question') || t.includes('tanyakan') || t.includes('ketik pesan') || t.includes('ajukan')) {
+        if (el.innerText !== targetPlaceholder && el.children.length === 0) {
+          el.innerText = targetPlaceholder;
+        }
+      }
+    });
   }
   function ready() {
     clean();

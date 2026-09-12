@@ -457,60 +457,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // ── Card 4: Legal & About ──
+                // ── Card 4: Tentang OpenTurath ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: border, width: 1.0),
                   ),
-                  child: Column(
-                    children: [
-                      _SettingsTile(
-                        icon: Icons.article_outlined,
-                        title: 'Ketentuan Layanan',
-                        subtitle: 'Syarat dan ketentuan OpenTurath',
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => _showTermsOfService(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.security_outlined,
-                        title: 'Kebijakan Privasi',
-                        subtitle: 'Perlindungan kerahasiaan data pengguna',
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => _showPrivacyPolicy(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.info_outline_rounded,
-                        title: AppCopy.aboutTitle,
-                        subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => _showAboutModal(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                    ],
+                  child: _SettingsTile(
+                    icon: Icons.info_outline_rounded,
+                    title: AppCopy.aboutTitle,
+                    subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
+                    trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                    onTap: () => _showAboutModal(
+                      context,
+                      isDark,
+                      textPrimary,
+                      textSecondary,
+                      surface,
+                      border,
+                    ),
                   ),
                 ),
 
@@ -621,6 +587,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               AppCopy.aboutScholarlyPrinciple,
               style: OTTypography.caption(color: textSecondary),
+            ),
+            const SizedBox(height: 16),
+            Divider(height: 1, color: border),
+            const SizedBox(height: 8),
+            InkWell(
+              onTap: () {
+                Navigator.pop(ctx);
+                _showTermsOfService(context, isDark, textPrimary, textSecondary, surface, border);
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Row(
+                  children: [
+                    Icon(Icons.article_outlined, size: 18, color: textSecondary),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Ketentuan Layanan',
+                        style: OTTypography.captionMedium(color: textPrimary),
+                      ),
+                    ),
+                    Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.pop(ctx);
+                _showPrivacyPolicy(context, isDark, textPrimary, textSecondary, surface, border);
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                child: Row(
+                  children: [
+                    Icon(Icons.security_outlined, size: 18, color: textSecondary),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Kebijakan Privasi',
+                        style: OTTypography.captionMedium(color: textPrimary),
+                      ),
+                    ),
+                    Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

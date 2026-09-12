@@ -497,6 +497,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (!mounted || _isGoingBack) return;
     _isGoingBack = true;
     setState(() => _isExiting = true);
+    // Beri jeda 1 frame agar solid canvas overlay ter-render menutupi SurfaceView WebView
+    // sehingga transisi pop route halus tanpa tearing/glitch putih di Android
+    await Future.delayed(const Duration(milliseconds: 40));
     try {
       await _webController?.stopLoading();
     } catch (_) {}
