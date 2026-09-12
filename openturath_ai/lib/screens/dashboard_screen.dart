@@ -113,7 +113,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } catch (_) {}
 
     // Cek akses pengguna ke agent (paywall)
-    if (user != null && !user.hasAccessToAgent(agent.id)) {
+    if (user == null || !user.hasAccessToAgent(agent.id)) {
       if (!mounted) return;
       Navigator.pushNamed(
         context,
@@ -273,19 +273,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const UpdateReadyBanner(),
 
                     // ── 2. Editorial Desk Header: Dual Date & Scholarly Greeting ──
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: border)),
-                      child: Directionality(
-                        textDirection: TextDirection.ltr,
-                        child: Row(children: [
-                          Expanded(child: Text(HijriDateUtils.formatDualDate().split(' • ').last, textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
-                          Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text('•', style: TextStyle(color: textSecondary))),
-                          Expanded(child: Text(HijriDateUtils.formatHijriOnly(), textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
-                        ]),
+                    Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: surface,
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(color: border, width: 0.8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              HijriDateUtils.formatMasehiOnly(),
+                              style: GoogleFonts.outfit(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w500,
+                                color: textSecondary,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Text(
+                                '•',
+                                style: TextStyle(color: textSecondary, fontSize: 11),
+                              ),
+                            ),
+                            Text(
+                              HijriDateUtils.formatHijriOnly(),
+                              style: GoogleFonts.outfit(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w500,
+                                color: textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 10),
                     Text(
                       user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
                       style: GoogleFonts.newsreader(
@@ -992,7 +1018,7 @@ class _DashboardAnnouncementCarouselState
       summary:
           'Kajian agama hakiki wajib melalui talaqqi dengan masyayikh bersanad. AI hanyalah sarana penunjang riset.',
       detailedContent:
-          'PENTING DIPAHAMI:\n\nTeknologi kecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur, bukan mufti dan bukan pengganti otoritas guru (masyayikh). Pemahaman fikih, fatwa hukum, dan kedalaman spiritual tetap wajib dikonfirmasi langsung melalui proses talaqqi dan bimbingan ulama yang kompeten.',
+          'PENTING DIPAHAMI:\n\nTeknologi kecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur ilmiah. Setiap kutipan, ibarah, dan keterangan naskah perlu dicocokkan kembali dengan sumber aslinya di Maktabah Syamilah atau naskah cetak fisik.',
     ),
     _AnnouncementSlide(
       badge: 'PANDUAN RISET',

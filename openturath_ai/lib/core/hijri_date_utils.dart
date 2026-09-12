@@ -102,6 +102,16 @@ class HijriDateUtils {
     return '${h.day} $hMonthName ${h.year} H';
   }
 
+  /// Menghasilkan hanya tanggal Masehi pendek:
+  /// Contoh: "12 September 2026 M"
+  static String formatMasehiOnly([DateTime? date]) {
+    final now = date ?? DateTime.now();
+    final mMonthName = (now.month >= 1 && now.month <= 12)
+        ? _masehiMonths[now.month - 1]
+        : '';
+    return '${now.day} $mMonthName ${now.year} M';
+  }
+
   /// Menambahkan durasi bulan kalender dengan month-end clamping deterministik.
   /// Contoh: 31 Januari + 1 bulan = 28 Februari (atau 29 pada kabisat).
   /// 31 Maret + 1 bulan = 30 April.
