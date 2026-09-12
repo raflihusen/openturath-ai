@@ -291,14 +291,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final activeList = _activeAgents;
 
-    // Pricing tiers for Akses Penuh
-    const fullAccessTiers = [
-      {'name': 'Bulanan', 'price': 99000, 'label': 'Rp 99.000', 'period': '/ bulan', 'planId': 'all_ai_1m'},
-      {'name': '6 Bulan', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ 6 bulan', 'planId': 'all_ai_6m'},
-      {'name': '1 Tahun · Hemat 33%', 'price': 799000, 'label': 'Rp 799.000', 'period': '/ tahun', 'planId': 'all_ai_1y'},
+    // Pricing tiers untuk Modul Satuan Terpilih
+    final moduleTiers = [
+      {'name': '1 Bulan', 'price': 49000, 'label': 'Rp 49.000', 'period': '/ bulan', 'planId': AppConstants.planTholib1m},
+      {'name': '6 Bulan', 'price': 299000, 'label': 'Rp 299.000', 'period': '/ 6 bulan', 'planId': AppConstants.planTholib6m},
+      {'name': '1 Tahun', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ tahun', 'planId': AppConstants.planBahits1y},
     ];
 
-    final currentTier = fullAccessTiers[_selectedDurationIndex];
+    final currentTier = moduleTiers[_selectedDurationIndex];
     final tierPrice = currentTier['price'] as int;
     final tierLabel = currentTier['label'] as String;
     final tierPeriod = currentTier['period'] as String;
@@ -377,7 +377,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   const SizedBox(height: OTSpacing.sm),
 
-                  // ── Hero Package Card: Akses Penuh Semua AI ──
+                  // ── Unified Module Package Card: Modul Spesialis Terpilih ──
                   Container(
                     decoration: BoxDecoration(
                       color: surface,
@@ -395,7 +395,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'AKSES PENUH',
+                              'MODUL SPESIALIS TERPILIH',
                               style: OTTypography.sectionHeading(color: accent),
                             ),
                             Container(
@@ -405,7 +405,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                'SEMUA 11+ MODUL',
+                                '1 MODUL FOKUS',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
@@ -413,13 +413,51 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Paket Seluruh AI Keilmuan',
-                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 21),
+                          'Pilih Disiplin Modul AI',
+                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Fikih 4 mazhab, Tahawwulat, hadits, tafsir, aqidah, ushul, dan sastra bahasa.',
+                          'Fokus telaah mendalam pada satu disiplin keilmuan Islam berbasis naskah primer.',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                        ),
+
+                        const SizedBox(height: OTSpacing.md),
+
+                        DropdownButtonFormField<String>(
+                          initialValue: _agent?.id ?? (activeList.isNotEmpty ? activeList.first.id : 'fiqh_tahawwulat'),
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            filled: true,
+                            fillColor: surfaceSubtle,
+                            border: OutlineInputBorder(
+                              borderRadius: OTRadius.inputBorder,
+                              borderSide: BorderSide(color: border),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: OTRadius.inputBorder,
+                              borderSide: BorderSide(color: border),
+                            ),
+                          ),
+                          dropdownColor: surface,
+                          items: activeList.map((a) {
+                            return DropdownMenuItem<String>(
+                              value: a.id,
+                              child: Text(
+                                a.title,
+                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _agent = activeList.firstWhere((a) => a.id == val);
+                              });
+                            }
+                          },
                         ),
 
                         const SizedBox(height: OTSpacing.lg),
@@ -433,8 +471,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             border: Border.all(color: border, width: 0.8),
                           ),
                           child: Row(
-                            children: List.generate(fullAccessTiers.length, (idx) {
-                              final tier = fullAccessTiers[idx];
+                            children: List.generate(moduleTiers.length, (idx) {
+                              final tier = moduleTiers[idx];
                               final isSelected = _selectedDurationIndex == idx;
                               return Expanded(
                                 child: AppleInteractiveWrapper(
@@ -492,13 +530,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.base),
 
                         // Core Benefits
-                        _benefitRow('Akses ke seluruh kajian dan kitab', textPrimary),
+                        _benefitRow('Akses penuh ke ${_agent?.title ?? "Modul Spesialis"}', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow('Penelusuran mendalam tanpa batas kuota pertanyaan harian', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Sitasi marja\' kitab asli, nomor halaman & matan lengkap', textPrimary),
+                        _benefitRow('Sitasi marja\' kitab asli, nomor jilid, halaman & matan lengkap', textPrimary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Prioritas pembaruan naskah dan kurasi kitab primer', textPrimary),
+                        _benefitRow('Pencocokan kutipan dengan naskah Maktabah Syamilah atau cetak fisik', textPrimary),
 
                         const SizedBox(height: OTSpacing.lg),
 
@@ -510,20 +548,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             onTap: _isProcessing
                                 ? null
                                 : () {
-                                    final allAiAgent = AgentModel(
-                                      id: 'all_ai',
-                                      title: 'Semua Ruang Riset',
-                                      description: 'Akses ke seluruh modul AI OpenTurath',
-                                      emoji: '✨',
-                                      category: 'All Access',
-                                      status: 'active',
-                                      sortOrder: 0,
-                                    );
                                     _handleSubscribe(
                                       plan: tierPlanId,
-                                      planTitle: 'Paket Akses Penuh (${currentTier['name']})',
+                                      planTitle: '${currentTier['name']} ${_agent?.title ?? "Modul AI"}',
                                       price: tierPrice,
-                                      targetAgent: allAiAgent,
+                                      targetAgent: _agent,
                                     );
                                   },
                             pressedScale: 0.97,
@@ -533,20 +562,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               onPressed: _isProcessing
                                   ? null
                                   : () {
-                                      final allAiAgent = AgentModel(
-                                        id: 'all_ai',
-                                        title: 'Semua Ruang Riset',
-                                        description: 'Akses ke seluruh modul AI OpenTurath',
-                                        emoji: '✨',
-                                        category: 'All Access',
-                                        status: 'active',
-                                        sortOrder: 0,
-                                      );
                                       _handleSubscribe(
                                         plan: tierPlanId,
-                                        planTitle: 'Paket Akses Penuh (${currentTier['name']})',
+                                        planTitle: '${currentTier['name']} ${_agent?.title ?? "Modul AI"}',
                                         price: tierPrice,
-                                        targetAgent: allAiAgent,
+                                        targetAgent: _agent,
                                       );
                                     },
                               style: FilledButton.styleFrom(
@@ -556,139 +576,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 elevation: 0,
                               ),
                               child: Text(
-                                'Pilih Paket Ini ($tierLabel)',
+                                'Berlangganan ${_agent?.title ?? "Modul"} ($tierLabel)',
                                 style: OTTypography.button(color: canvas),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: OTSpacing.xl),
-
-                  // ── Add-On / Modul Satuan Terpisah ──
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4, bottom: 6),
-                    child: Text(
-                      'PILIHAN MODUL SATUAN',
-                      style: OTTypography.sectionHeading(color: textSecondary),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: surface,
-                      borderRadius: OTRadius.cardBorder,
-                      border: Border.all(color: border, width: 0.8),
-                    ),
-                    padding: const EdgeInsets.all(OTSpacing.base),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '1 Modul Spesialis Terpilih',
-                                    style: OTTypography.cardTitle(color: textPrimary),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    'Fokus telaah pada satu disiplin keilmuan tertentu',
-                                    style: OTTypography.caption(color: textSecondary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              'Rp50.000 / bulan',
-                              style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: OTSpacing.md),
-
-                        DropdownButtonFormField<String>(
-                          initialValue: _agent?.id ?? 'fiqh_tahawwulat',
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            filled: true,
-                            fillColor: surfaceSubtle,
-                            border: OutlineInputBorder(
-                              borderRadius: OTRadius.inputBorder,
-                              borderSide: BorderSide(color: border),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: OTRadius.inputBorder,
-                              borderSide: BorderSide(color: border),
-                            ),
-                          ),
-                          dropdownColor: surface,
-                          items: activeList.map((a) {
-                            return DropdownMenuItem<String>(
-                              value: a.id,
-                              child: Text(
-                                a.title,
-                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) {
-                              setState(() {
-                                _agent = activeList.firstWhere((a) => a.id == val);
-                              });
-                            }
-                          },
-                        ),
-
-                        const SizedBox(height: OTSpacing.md),
-
-                        SizedBox(
-                          width: double.infinity,
-                          height: 44,
-                          child: AppleInteractiveWrapper(
-                            onTap: _isProcessing
-                                ? null
-                                : () => _handleSubscribe(
-                                      plan: AppConstants.planTholib1m,
-                                      planTitle: '1 Bulan ${_agent?.title ?? "Modul AI"}',
-                                      price: _agent?.price1m ?? AppConstants.priceTholib1m,
-                                    ),
-                            pressedScale: 0.97,
-                            hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(OTRadius.button),
-                            child: OutlinedButton(
-                              onPressed: _isProcessing
-                                  ? null
-                                  : () => _handleSubscribe(
-                                        plan: AppConstants.planTholib1m,
-                                        planTitle: '1 Bulan ${_agent?.title ?? "Modul AI"}',
-                                        price: _agent?.price1m ?? AppConstants.priceTholib1m,
-                                      ),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: textPrimary,
-                                side: BorderSide(color: border, width: 0.8),
-                                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                              ),
-                              child: Builder(
-                                builder: (context) {
-                                  final p = _agent?.price1m ?? AppConstants.priceTholib1m;
-                                  final formatted = 'Rp ${p.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
-                                  return Text(
-                                    'Langganan Modul ($formatted)',
-                                    style: OTTypography.button(),
-                                  );
-                                },
                               ),
                             ),
                           ),

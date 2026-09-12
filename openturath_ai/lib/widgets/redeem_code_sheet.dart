@@ -41,6 +41,29 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     super.dispose();
   }
 
+  String _humanizeErrorMessage(String raw) {
+    final lower = raw.toLowerCase().replaceAll('_', '-');
+    if (lower.contains('not-found')) {
+      return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+    }
+    if (lower.contains('already-exists') || lower.contains('already-used')) {
+      return 'Anda sudah pernah menukarkan kode voucher ini.';
+    }
+    if (lower.contains('resource-exhausted') || lower.contains('quota')) {
+      return 'Kuota penukaran untuk kode voucher ini sudah habis.';
+    }
+    if (lower.contains('deadline-exceeded') || lower.contains('expired')) {
+      return 'Masa berlaku kode voucher ini telah berakhir.';
+    }
+    if (lower.contains('failed-precondition')) {
+      return 'Kode voucher ini sudah tidak aktif.';
+    }
+    if (lower.contains('invalid-argument')) {
+      return 'Format penulisan kode voucher belum sesuai.';
+    }
+    return raw;
+  }
+
   Future<void> _handleRedeem() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
@@ -70,7 +93,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
       widget.onSuccess?.call();
       Navigator.of(context).pop();
     } else {
-      setState(() => _inlineError = message);
+      setState(() => _inlineError = _humanizeErrorMessage(message));
     }
   }
 
