@@ -585,6 +585,125 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ],
                     ),
                   ),
+
+                  const SizedBox(height: OTSpacing.lg),
+
+                  // ── Bundling Card: Semua AI (Segera Hadir) ──
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surfaceSubtle,
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(
+                        color: border,
+                        width: 0.8,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(OTSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'PAKET BUNDLING SELURUH AI (SEMUA SPESIALIS)',
+                              style: OTTypography.sectionHeading(color: textSecondary),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: surface,
+                                borderRadius: OTRadius.chipBorder,
+                                border: Border.all(color: border, width: 0.6),
+                              ),
+                              child: Text(
+                                'SEGERA HADIR',
+                                style: OTTypography.captionMedium(color: textSecondary).copyWith(
+                                  fontSize: 10,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        Text(
+                          'Akses Seluruh 7 Modul Spesialis AI',
+                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Satu langganan untuk mengakses seluruh modul turats (Fikih Syafi\'i, Hadits, Tafsir, Ushul Fikih, Nahwu, Aqidah, dan Tarikh).',
+                          style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
+                        ),
+                        const SizedBox(height: OTSpacing.base),
+                        Divider(color: border.withValues(alpha: 0.5), height: 1),
+                        const SizedBox(height: OTSpacing.base),
+                        _benefitRow('Kunci seluruh spesialis kecerdasan turats terbuka', textSecondary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Integrasi telaah lintas disiplin keilmuan Islam', textSecondary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Akses penuh saat ini dapat diaktifkan melalui Kode Voucher Perdana', textSecondary),
+                        const SizedBox(height: OTSpacing.md),
+                        // Catatan Edukatif
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(OTSpacing.md),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF18181B) : Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: border.withValues(alpha: 0.8),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline_rounded,
+                                size: 16,
+                                color: textSecondary,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Saat ini paket bundling sedang dipersiapkan. Untuk menikmati akses seluruh AI sekaligus, gunakan Kode Voucher Perdana pada peluncuran perdana santri & peneliti.',
+                                  style: OTTypography.body(color: textSecondary).copyWith(
+                                    fontSize: 12,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: OTSpacing.lg),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 46,
+                          child: OutlinedButton(
+                            onPressed: null, // Dinonaktifkan sesuai arahan
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: border),
+                              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.lock_outline_rounded, size: 16, color: textSecondary),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Segera Hadir',
+                                  style: OTTypography.button(color: textSecondary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
