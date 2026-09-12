@@ -6,7 +6,7 @@ output_txt = os.path.join(base_dir, 'OPENTURATH_AI_MASTER_AUDIT_PACK.txt')
 
 sections = []
 
-header = """# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.20+21)
+header = """# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.21+22)
 # ==============================================================================
 # PERHATIAN UNTUK AI AUDITOR (CLAUDE / CHATGPT / GEMINI):
 # Dokumen ini adalah SATU KESATUAN BERKAS TUNGGAL (SINGLE MONOLITHIC AUDIT PACK)
@@ -39,7 +39,7 @@ Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dar
 ---
 
 ### 2. KONTEKS PROYEK & SUMBER DAYA
-- **Nama Proyek:** OpenTurath AI (v1.0.20+21)
+- **Nama Proyek:** OpenTurath AI (v1.0.21+22)
 - **Karakter Produk:** Meja Telaah Digital (*Scholarly Research Desk*) naskah primer kitab kuning (turats) berbasis RAG engine Google NotebookLM untuk kalangan santri, asatidz, dan peneliti akademis.
 - **Basis Kode Terlampir:** Seluruh dokumen arsitektur, aturan keamanan, backend Cloud Functions, seluruh kode Flutter (52 berkas), dan suite pengujian unit telah **TERLAMPIR LENGKAP PADA BAGIAN 2 SAMPAI BAGIAN 5 DI BAWAH INI**.
 - **Dokumen Referensi Kunci dalam Berkas Ini:**

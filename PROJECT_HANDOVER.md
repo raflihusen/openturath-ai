@@ -1,5 +1,5 @@
 # OpenTurath AI — Project Handover & Context Snapshot
-**Terakhir Diperbarui:** 11 September 2026 (Fase: Arsitektur UI/UX "Quiet Scholar Adaptive" Selesai & Terverifikasi)
+**Terakhir Diperbarui:** 12 September 2026 (Fase: Copywriting Overhaul Lengkap & Rilis APK v1.0.21+22 Terverifikasi)
 
 Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context handover*). Setiap agen atau sesi chat baru di Antigravity IDE dapat langsung membaca dokumen ini untuk melanjutkan pekerjaan tanpa perlu penjelasan ulang dari pengguna.
 
@@ -7,53 +7,38 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ## 1. Identitas & Batasan Mutlak Proyek (Non-Negotiable)
 - **Target Platform**: **Android** (Material 3 Adaptive), **macOS & Windows** (Desktop Adaptive).
+- **Versi Rilis Terkini**: **`v1.0.21+22`** (Binary: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`).
 - **Batasan Eksplisit**:
   - **TIDAK ADA rilis iOS / App Store**.
   - **TIDAK ADA rilis Google Play Store**. Pembaruan aplikasi mandiri via internal updater berbasis SHA-256.
   - **TIDAK ADA open trial bebas** (kuota pertanyaan terbuka). Digantikan dengan **Sistem Voucher Redeem Kode Terkontrol** (`redeemCode`) terintegrasi Google Cloud NotebookLM share invite.
-  - **DILARANG membuat/menimpa APK rilis final** (`/Users/apple/Downloads/ramadhan/app-release-latest.apk`) sampai pengguna memberikan instruksi eksplisit untuk build rilis.
 - **Protokol Wajib `AGENTS.md`**:
   - **Rule 1: Automatic Checkpoint Protocol**: Setiap modifikasi sekecil apapun WAJIB langsung di-commit ke Git secara otomatis (`git add <files> && git commit -m "<type>(<scope>): <pesan>"`).
-  - **Rule 2: Integritas Build & Release**: Verifikasi 100% proses kompilasi sebelum rilis.
+  - **Rule 2: Integritas Build & Release**: Verifikasi 100% proses kompilasi sebelum rilis, update binary rilis dengan timestamp valid.
 
 ---
 
-## 2. Status Terkini: 100% Selesai & Terverifikasi (Forensic Audit Hardened)
+## 2. Status Terkini: 100% Selesai & Terverifikasi (v1.0.21+22)
 
-### A. Resolusi Audit Forensik 360° (Putaran 1 & Putaran 2)
-1. **Layer 1 — Client Flutter & Ergonomi UI**:
-   - **F-03 & F-10**: Subtitle langganan palsu di Profil dieliminasi. Status langganan kini 100% dinamis dan akurat.
-   - **F-09**: Rasio kontras tombol destruktif "Hapus Akun & Data Riset" ditingkatkan hingga memenuhi standar aksesibilitas WCAG AA (>= 4.5:1).
-   - **F-10**: `userStream` di-cache sebagai broadcast stream terkelola tunggal (mencegah listener Firestore churn & memory leak saat mengetik di search bar).
-   - **F-11**: Tombol Back Android (`onPopInvokedWithResult`) memanggil `_onTabSelected(0)` sehingga `_pageController` tersinkronisasi mulus ke tab Beranda.
-   - **F-04**: Pembersihan `window.otMasterObserver` eksplisit di JS dan controller cleanup dalam `finally` pada `dispose()` WebView.
-   - **F-12**: Deteksi tahun banner NotebookLM menggunakan regex generik `/\b(19|20)\d{2}\b/`.
-   - **F-08**: Debounce timer 200ms pada pencarian katalog perpustakaan.
-   - **F-05**: Timeout 5 detik pada antrean mutex `_synchronized` BookmarkService.
-   - **F-19**: Serialisasi tanggal ISO-8601 pada `ModuleEntitlement` dan `UserModel` untuk cache offline aman tanpa crash `jsonEncode`.
-   - **F-20**: DOKU checkout sheet mendeteksi status `'paid'` (server) di samping `'success'`.
-   - **F-31**: Tipografi judul korpus spesialis menerapkan Newsreader serif ilmiah 3 lapis.
-   - **F-28**: Slogan konsisten dalam Bahasa Indonesia ilmiah: `'Telaah ibarah dari marja\' mu\'tamad'`.
-
-2. **Layer 2 — Backend Cloud Functions & Aturan Firestore**:
-   - **F-01 (P0)**: `dailyRevoke` memeriksa masa aktif tiap modular entitlement di peta `entitlements`, mencabut modul satuan yang telah kedaluwarsa, dan merekam job ke `provisioning_outbox`.
-   - **F-02 (P0)**: Cron worker `processProvisioningOutbox` (setiap 5 menit) memproses outbox provisioning/revocation NotebookLM hingga 8 kali percobaan dengan backoff aman.
-   - **F-02 (Audit 2)**: Rate-limiting pada callable `checkPaymentStatus` (maksimal 15 panggilan/menit per UID).
-   - **F-03 & F-05**: Rate-limiting brute force protection pada `redeemCode` (maksimal 8 percobaan/15 menit per UID).
-   - **F-06**: Signature webhook DOKU diverifikasi menggunakan constant-time `crypto.timingSafeEqual` dan penolakan timestamp skew > 15 menit dengan HTTP 401.
-   - **F-07**: Tulis dokumen transaksi berstatus `"pending"` sebelum memanggil API checkout gateway DOKU.
-   - **F-08**: Eliminasi pembuatan dokumen user ber-ID acak (`db.collection("users").doc()`).
-   - **F-01 (Audit 2)**: Cron harian `cleanupOrphanedDeletions` untuk membersihkan dokumen Firestore bertanda `pending_deletion` jika akun Auth telah terhapus.
-   - **F-15**: Pemetaan judul spesialis lengkap untuk `aqidah`, `tarikh`, `tasawwuf`, dan `sirah`.
-   - **firestore.rules**: Mengunci koleksi server-only (`rate_limits`, `redeem_attempts`, `provisioning_outbox`) dan memvalidasi `photo_url.size() <= 1000`.
-
-3. **Layer 3 — Pengujian Unit & Sinkronisasi Katalog**:
-   - **F-29**: Sinkronisasi jumlah katalog menjadi **87 kitab mu'tamad** (sesuai data riil `canonical_syafii.json`).
-   - **F-17**: Pengujian unit langsung terhadap kode produksi `AgentWebviewScreen.isAllowedNotebookUrl` dan `SubscriptionService.normalizeCode`.
-   - **F-11 (Audit 2)**: Pengujian batas kalender kabisat (29 Februari) dan non-kabisat (28 Februari) pada `HijriDateUtils.addCalendarMonthsClamped`.
-   - `flutter analyze lib/`: **0 issues found** (100% bersih).
-   - `flutter test`: **52 dari 52 test case LULUS 100%**.
-   - `npm run build` (Functions): **Kompilasi TypeScript tsc 100% BERSIH tanpa error**.
+### A. Copywriting Overhaul Lengkap (Quiet Scholar Principles)
+1. **Pusat String Kanonik (`AppCopy` di `lib/core/app_copy.dart`)**:
+   - Single source of truth untuk seluruh teks UI dan pesan dinamis.
+   - Bersih dari kata-kata brosur AI (*korpus*, *penelaahan*, *fasilitas*, *komprehensif*, *secara menyeluruh*, *berbasis*, *terintegrasi*, *optimal*, *presisi*, *solusi*).
+   - Larangan tanda seru (`!`) pada notifikasi keberhasilan umum (*"Tersimpan ke simpanan."*, *"Jawaban tersalin."*, *"Akun Anda sudah dihapus."*).
+2. **Navigasi & Ruang Kajian**:
+   - Tab navigasi: `Beranda`, `Kajian`, `Tersimpan`, `Pengaturan`.
+   - Slogan resmi: `Membaca kitab, menelusuri ibarah.`
+   - Loader tenang: *"Membuka kajian..."*, dialog adab telaah *"Catatan sebelum mulai"*, placeholder *"Tanyakan sesuatu tentang kitab ini..."*.
+3. **Backend Cloud Functions & Chat Wrapper (`functions/src/index.ts`)**:
+   - Redeem voucher: *"Kode diterima. Akses ke [service] sudah aktif."*
+   - Pembayaran: *"Pembayaran terverifikasi. Akses Anda sudah aktif."* dan *"Pembayaran masih menunggu penyelesaian."*
+   - Batas kuota: *"Kuota uji coba sudah habis. Berlangganan untuk lanjut."*
+   - Web wrapper chat: Prompt terstandardisasi, toast tenang *"Pertanyaan tersalin. Tempelkan di kolom chat."*.
+4. **Verifikasi Mutu & Pengujian**:
+   - `flutter analyze lib/`: **0 issues found**.
+   - `flutter test`: **58 dari 58 test case LULUS 100%** (termasuk unit test suite `test/copywriting_test.dart`).
+   - `npm run build` (Functions): **TypeScript tsc 100% BERSIH tanpa error**.
+   - **Kompilasi Rilis**: `flutter build apk --release` sukses 100% (58.6 MB, SHA-256: `38170f3b2f6b72be5566ee241db730bf2ac06cf5af10ddf19a570de35e156a7d`).
 
 ---
 
@@ -67,10 +52,14 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 ---
 
 ## 4. Git Commits Riwayat Terkini
-- `147befb`: `fix(client): resolve forensic audit findings F-03, F-04, F-05, F-08, F-10, F-11, F-19, F-20, F-22, F-31 in Flutter app`
-- `f138228`: `fix(security): lock server collections and permit pending_deletion update in firestore.rules`
-- `8d8e6c1`: `fix(backend): resolve forensic audit findings F-01, F-02, F-04, F-06, F-07, F-08, F-15 in Cloud Functions`
-- `583e50b`: `test(hardening): verify calendar leap year clamping, test production code directly, and align catalog count to 87`
+- `257cdcd`: `chore(release): bump version to 1.0.21+22 for release build`
+- `d43d293`: `test(copy): add copywriting regression assertions and update audit pack`
+- `4db467b`: `fix(copy): update backend messages, prompts, and wrapper toast in Cloud Functions`
+- `ce2b36b`: `fix(copy): align library sheet, error states, and app initialization with AppCopy`
+- `66e02a6`: `fix(copy): overhaul navigation, profile, settings, and bookmark screens to calm library tone`
+- `7b13c82`: `fix(copy): update model descriptions, suggested prompts, and app tagline to calm library tone`
+- `27f642a`: `fix(copy): apply calm scholarly Indonesian copywriting to agent_webview_screen`
+- `cf1ec77`: `feat(copy): add centralized AppCopy repository with canonical quiet scholar strings`
 
 ---
 
