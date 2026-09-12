@@ -2125,6 +2125,29 @@ import * as crypto from "crypto";
 admin.initializeApp();
 const db = admin.firestore();
 
+// ================================================================
+// TELEGRAM NOTIFICATION HELPER
+// ================================================================
+async function sendTelegramNotification(text: string): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN || "8935430311:AAHajFoTtJBirH3DfyIh6za5-SVTQRBa_RI";
+  const chatId = process.env.TELEGRAM_CHAT_ID || "2015667548";
+  if (!token || !chatId) return;
+
+  try {
+    await axios.post(
+      `https://api.telegram.org/bot${token}/sendMessage`,
+      {
+        chat_id: chatId,
+        text,
+        parse_mode: "HTML",
+      },
+      { timeout: 5000 }
+    );
+  } catch (err: any) {
+    console.error("[Telegram] Failed to send notification:", err?.message || err);
+  }
+}
+
 
 // ================================================================
 // HARGA & DURASI OTORITATIF — Ditentukan oleh `resolvePlanPricing`
@@ -2253,23 +2276,40 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
     ? userData.entitlements as Record<string, any> : {};
   const now = Date.now();
   const active = (ent: any): boolean => {
-    if (!ent || ent.status !== "active" || typeof ent.plan !== "string") return false;
-    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
-    const expiry = ent.expiry?.toDate ? ent.expiry.toDate() : new Date(ent.expiry ?? "");
+    if (!ent || typeof ent.plan !== "string") return false;
+    if (ent.status === "revoked" || ent.status === "expired") return false;
+    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
+    const expiry = ent.expiry?.toDate ? ent.expiry.toDate() : (ent.expiry?._seconds ? new Date(ent.expiry._seconds * 1000) : new Date(ent.expiry ?? ""));
     return allowed && Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
   };
   const all = entitlements.all_access ?? entitlements.all_ai;
   if (active(all)) return { premiumPlan: true, active: true };
   const specific = entitlements[entitlementKey];
   if (active(specific)) return { premiumPlan: true, active: true };
-  // An explicit entitlement map is authoritative, including revoked entries.
-  if (Object.keys(entitlements).length > 0) {
-    return { premiumPlan: !!(all || specific), active: false };
+
+  // Only explicit revocation of all_access blocks global subscription fallback
+  if (all && all.status === "revoked") {
+    return { premiumPlan: true, active: false };
   }
-  const legacy = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "full"].includes(userData.plan);
+
+  // Account-level active subscription
   const expiry = userData.subscription_expiry?.toDate
     ? userData.subscription_expiry.toDate() : new Date(userData.subscription_expiry ?? "");
-  return { premiumPlan: legacy, active: legacy && Number.isFinite(expiry.getTime()) && expiry.getTime() > now };
+  const isGlobalExpiryValid = Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
+
+  const globalPlanPattern = /^(all_access|all_ai.*|full|sultan|tholib.*|bahits.*|premium|pro|custom|voucher.*|redeem.*)$/;
+  const isGlobalPlan = typeof userData.plan === "string" && globalPlanPattern.test(userData.plan);
+
+  if (isGlobalPlan && isGlobalExpiryValid) {
+    return { premiumPlan: true, active: true };
+  }
+
+  if (userData.plan === "single") {
+    return { premiumPlan: !!specific, active: false };
+  }
+
+  const legacy = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "all_ai", "full", "sultan", "tholib_1m", "tholib_6m", "bahits_1y", "tholib", "bahits", "premium", "pro", "custom"].includes(userData.plan);
+  return { premiumPlan: legacy, active: legacy && isGlobalExpiryValid };
 }
 
 // ================================================================
@@ -3066,7 +3106,7 @@ export const checkPaymentStatus = functions
 // Mengaktifkan entitlement berbatas waktu & trigger email sharing
 // ================================================================
 export const redeemCode = functions
-  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
+  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 120 })
   .https.onCall(async (data, context) => {
     if (!context.auth) {
       throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk menukarkan kode akses.");
@@ -3222,6 +3262,38 @@ export const redeemCode = functions
 
     // F63: Redaksi log kode voucher mentah
     console.log(`[Redeem] Voucher berhasil ditukarkan oleh ${uid}. Modul: ${redeemResult.entitlementKey}, aktif s/d ${redeemResult.expiryIso}`);
+
+    // 1. Kirim notifikasi Telegram seketika ke admin
+    const tgMessage = 
+      `🔔 <b>[VOUCHER SANTRI DIKLAIM]</b>\n` +
+      `🕌 OpenTurath AI\n` +
+      `🎟️ Kode: <b>${rawCode}</b>\n` +
+      `📧 Email: <code>${redeemResult.email}</code>\n` +
+      `👤 Nama: <b>${redeemResult.name}</b>\n` +
+      `📦 Produk: <b>${redeemResult.serviceTitle}</b>\n` +
+      `🏷️ Durasi: <b>${redeemResult.durationDays} Hari</b>\n` +
+      `⏳ Berlaku s/d: <code>${redeemResult.expiryIso}</code>\n` +
+      `✅ Status: Sukses terdaftar & hak akses aktif.`;
+    
+    await sendTelegramNotification(tgMessage);
+
+    // 2. Trigger auto-provisioning ke server NotebookLM (Cloud Run)
+    try {
+      const targetService = redeemResult.entitlementKey === "all_access" ? "Paket Semua AI" : redeemResult.serviceTitle;
+      await notifySubscriptionServer(
+        redeemResult.email,
+        redeemResult.name,
+        "voucher_access",
+        "add",
+        targetService
+      );
+      await db.collection("provisioning_outbox").doc(`redeem_${rawCode}_${uid}`).update({
+        status: "completed",
+        provisioned_at: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    } catch (err: any) {
+      console.error("[Redeem] Auto-provisioning via Cloud Run error:", err?.message || err);
+    }
 
     return {
       success: true,
@@ -4549,24 +4621,24 @@ abstract final class AppCopy {
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
-  static const navStudies = 'Kajian';
+  static const navStudies = 'Asisten AI';
   static const navSaved = 'Tersimpan';
   static const navSettings = 'Pengaturan';
 
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
-  static const studySpace = 'Ruang kajian';
-  static const openStudy = 'Membuka kajian';
-  static const studyOptions = 'Opsi kajian';
+  static const studySpace = 'Percakapan AI';
+  static const openStudy = 'Membuka AI';
+  static const studyOptions = 'Menu percakapan';
   static const referenceBooks = 'Kitab rujukan';
   static const savedCollection = 'Simpanan';
   static const bookDetails = 'Keterangan kitab';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
-  static const loadingReferences = 'Memuat kitab rujukan...';
+  static const loadingReferences = 'Menyiapkan percakapan AI...';
   static const modulePreparing = 'sedang disiapkan.';
   static const moduleUnavailable = 'Modul ini belum dapat dibuka. Coba lagi nanti.';
   static const cannotLoad = 'Tidak dapat dimuat. Periksa koneksi, lalu coba lagi.';
-  static const cannotLoadStudy = 'Tidak dapat memuat kajian';
+  static const cannotLoadStudy = 'AI belum dapat dibuka';
   static const studyNotLoadedYet = 'Kajian belum bisa dimuat. Coba lagi sebentar.';
   static const subscriptionRequiredTitle = 'Langganan diperlukan';
   static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
@@ -4883,6 +4955,27 @@ class AppConstants {
   static const int priceTholib6m = 250000;
   static const int priceBahits1y = 450000;
   static const int priceAllAiPromo1m = 99000;
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/core/copied_answer.dart
+```dart
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import '../models/agent_model.dart';
+import '../models/bookmark_model.dart';
+
+BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
+  final text = answer.trim();
+  if (text.isEmpty || text.length > 200000) throw ArgumentError('Invalid answer length');
+  final firstLine = text.split('\n').first;
+  return BookmarkModel(
+    id: sha256.convert(utf8.encode('${agent.id}:$text')).toString(),
+    title: firstLine.length > 80 ? firstLine.substring(0, 80) : firstLine,
+    agentId: agent.id, agentTitle: agent.title, fieldName: agent.category, fieldId: agent.fieldId,
+    arabicExcerpt: '', fullAnswer: text, bookReference: 'Rujukan belum diidentifikasi', pageNumber: '', createdAt: DateTime.now(),
+  );
 }
 
 ```
@@ -5532,6 +5625,123 @@ class NotebookNavigation {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/core/notebook_ui_script.dart
+```dart
+/// Conversation cleanup and explicit copy capture, restricted to NotebookLM.
+const notebookUiScript = r'''
+(function () {
+  if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
+  if (window.otNotebook) { window.otNotebook.clean(); return; }
+  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"]';
+  const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
+  const text = el => (el?.innerText || el?.textContent || '').trim();
+  function answerText(el) {
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll('button, [role="button"], .message-actions, .feedback-buttons').forEach(e => e.remove());
+    return text(clone);
+  }
+  function latest() {
+    const answers = [...document.querySelectorAll(answerSelector)].filter(visible);
+    return answers.length ? answerText(answers[answers.length - 1]) : '';
+  }
+  let lastCopy = '';
+  let lastCopyAt = 0;
+  function sendCopy(value) {
+    if (typeof value !== 'string' || !value.trim() || value.length > 200000) return;
+    if (value.trim() === lastCopy && Date.now() - lastCopyAt < 1000) return;
+    lastCopy = value.trim(); lastCopyAt = Date.now();
+    if (window.flutter_inappwebview?.callHandler) window.flutter_inappwebview.callHandler('otCopiedAnswer', value.trim());
+  }
+  // Observe only explicit answer-copy gestures; never read the device clipboard.
+  let copyUntil = 0;
+  let selectedAnswer = '';
+  document.addEventListener('click', event => {
+    const button = event.target.closest?.('button, [role="button"]');
+    if (!button) return;
+    const label = [button.getAttribute('aria-label'), button.getAttribute('title'), text(button)].filter(Boolean).join(' ');
+    if (!/\b(copy|salin|content_copy)\b|نسخ/i.test(label)) return;
+    const answer = button.closest(answerSelector);
+    if (!answer) return;
+    selectedAnswer = answerText(answer);
+    copyUntil = Date.now() + 2000;
+    // Save the selected answer even where the host uses a private clipboard API.
+    sendCopy(selectedAnswer);
+  }, true);
+  document.addEventListener('copy', event => {
+    if (Date.now() < copyUntil && selectedAnswer) sendCopy(selectedAnswer);
+  });
+  function hide(el) { if (el && !el.hasAttribute('data-ot-hidden')) el.setAttribute('data-ot-hidden', ''); }
+  function clean() {
+    if (!document.documentElement) return;
+    if (!document.getElementById('ot-conversation-ui')) {
+      const style = document.createElement('style'); style.id = 'ot-conversation-ui';
+      style.textContent = `
+        [data-ot-hidden], .chat-disclaimer, .disclaimer, .chat-footer-disclaimer,
+        .notebook-guide, notebook-guide, .notebook-overview, notebook-overview,
+        .notebook-cover, .notebook-cover-container, .notebook-title-card,
+        .notebook-header, .project-header, .chat-header, .chat-panel-header,
+        .mobile-tab-bar, .mobile-tabs, .mobile-navigation, mat-tab-header {
+          display:none!important;
+        }
+      `;
+      (document.head || document.documentElement).appendChild(style);
+    }
+    document.querySelectorAll('[role="tablist"]').forEach(el => {
+      if (/sources|sumber/i.test(text(el)) && /studio/i.test(text(el))) hide(el);
+    });
+    document.querySelectorAll('p, span, div, footer').forEach(el => {
+      if (el.children.length > 2 || el.closest(answerSelector)) return;
+      const value = text(el);
+      if (value.length < 240 && /(?:Gemini Notebook|NotebookLM) can be inaccurate|please double.check its responses/i.test(value)) hide(el);
+    });
+    // The cover is identified by its metadata, never by generic answer cards.
+    document.querySelectorAll('h1, h2, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
+      if (el.closest(answerSelector)) return;
+      let card = el;
+      for (let i = 0; card && i < 5; i++, card = card.parentElement) {
+        if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
+        if (/\d+ sources\b|\d+ sumber\b/i.test(text(card)) && text(card).length < 1500) { hide(card); break; }
+      }
+    });
+    // Dismiss only the informational announcement shown in the reported screenshot.
+    document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane').forEach(dialog => {
+      if (!/more flexibility and control/i.test(text(dialog)) || !/limits refresh every 5 hours/i.test(text(dialog))) return;
+      if (!dialog.hasAttribute('data-ot-dismissed')) {
+        dialog.setAttribute('data-ot-dismissed', '');
+        const close = [...dialog.querySelectorAll('button')].find(b => /^(close|dismiss|got it|tutup|mengerti|done)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
+        if (close) { close.click(); return; }
+      }
+      const pane = dialog.closest('.cdk-overlay-pane') || dialog;
+      hide(pane);
+      const wrapper = pane.parentElement;
+      if (wrapper?.classList.contains('cdk-global-overlay-wrapper')) {
+        hide(wrapper);
+        const backdrop = wrapper.previousElementSibling;
+        if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
+      }
+    });
+  }
+  function ready() {
+    clean();
+    const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
+    const loading = [...document.querySelectorAll('[role="progressbar"], mat-spinner, .loading-spinner')].some(visible) || [...document.querySelectorAll('h1, h2, [class*="notebook-title"]')].some(el => /loading notebook|memuat notebook/i.test(text(el)));
+    return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true' && !loading;
+  }
+  window.otNotebook = {clean, ready, latest};
+  let scheduled = false;
+  const observer = new MutationObserver(() => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => { scheduled = false; clean(); });
+  });
+  observer.observe(document, {subtree:true, childList:true, characterData:true});
+  clean();
+})();
+
+''';
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/core/routes.dart
 ```dart
 class AppRoutes {
@@ -5544,6 +5754,8 @@ class AppRoutes {
   static const String agentWebview = '/agent';
   static const String subscription = '/subscription';
   static const String googleSessionAuth = '/google_session_auth';
+  static const String bookCatalog = '/catalog';
+  static const String bookDetail = '/book_detail';
 }
 
 ```
@@ -6151,6 +6363,10 @@ import 'screens/profile_screen.dart';
 import 'screens/agent_webview_screen.dart';
 import 'screens/subscription_screen.dart';
 import 'screens/google_session_auth_screen.dart';
+import 'screens/book_catalog_screen.dart';
+import 'screens/book_detail_screen.dart';
+import 'models/book_model.dart';
+import 'models/agent_model.dart';
 import 'firebase_options.dart';
 
 import 'core/app_config.dart';
@@ -6310,6 +6526,17 @@ class OpenTurathApp extends StatelessWidget {
                   case AppRoutes.googleSessionAuth:
                     page = const GoogleSessionAuthScreen();
                     break;
+                  case AppRoutes.bookCatalog:
+                    page = BookCatalogScreen(
+                      agent: settings.arguments is AgentModel
+                          ? settings.arguments as AgentModel
+                          : null,
+                    );
+                    break;
+                  case AppRoutes.bookDetail:
+                    final book = settings.arguments as CanonicalBookPresentation;
+                    page = BookDetailScreen(book: book);
+                    break;
                   default:
                     page = const SplashScreen();
                     break;
@@ -6445,7 +6672,7 @@ class AgentModel {
         // ── 1. FIKIH TAHAWWULAT (SOVEREIGN FLAGSHIP) ─────────
         AgentModel(
           id: 'fiqh_tahawwulat',
-          title: 'Fikih Tahawwulat',
+          title: 'AI Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
               'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan muhadharah Habib Abu Bakar al-Masyhur.',
@@ -6507,7 +6734,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_syafii',
-          title: 'Fikih Syafi\'i',
+          title: 'AI Fikih Syafi\'i',
           titleArabic: 'الفقه الشافعي',
           description:
               'Bantuan untuk mencari keterangan dalam kitab-kitab mazhab Syafi\'i.',
@@ -6558,7 +6785,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanafi',
-          title: 'Fikih Hanafi',
+          title: 'AI Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
               'Fikih Mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
@@ -6604,7 +6831,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_maliki',
-          title: 'Fikih Maliki',
+          title: 'AI Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
               'Fikih Mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
@@ -6650,7 +6877,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanbali',
-          title: 'Fikih Hanbali',
+          title: 'AI Fikih Hanbali',
           titleArabic: 'الفقه الحنبلي',
           description:
               'Khazanah Fikih Mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
@@ -6696,7 +6923,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_muqaran',
-          title: 'Perbandingan Mazhab',
+          title: 'AI Perbandingan Mazhab',
           titleArabic: 'الفقه المقارن',
           description:
               'Komparasi hukum lintas mazhab empat (Arba\'ah), analisis wajh al-dilalah, dan tarjih dalil mu\'tabar.',
@@ -6744,7 +6971,7 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'Hadits & Syarah Sunnah',
+          title: 'AI Hadits & Syarah Sunnah',
           titleArabic: 'الحديث الشريف',
           description:
               'Kajian matan hadits, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah & syuruhnya).',
@@ -6793,7 +7020,7 @@ class AgentModel {
         // ── 3. TAFSIR ─────────────────────────────────────────
         AgentModel(
           id: 'tafsir',
-          title: 'Tafsir Al-Qur\'an',
+          title: 'AI Tafsir Al-Qur\'an',
           titleArabic: 'تفسير القرآن',
           description:
               'Penelusuran makna ayat, asbabun nuzul, dan istinbath hukum dari kitab-kitab tafsir mu\'tabarah.',
@@ -6842,7 +7069,7 @@ class AgentModel {
         // ── 4. USUL FIQH ──────────────────────────────────────
         AgentModel(
           id: 'ushul_fiqh',
-          title: 'Ushul Fiqih',
+          title: 'AI Ushul Fiqih',
           titleArabic: 'أصول الفقه',
           description:
               'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan yang diakui.',
@@ -6891,7 +7118,7 @@ class AgentModel {
         // ── 5. BAHASA ARAB ────────────────────────────────────
         AgentModel(
           id: 'nahwu_sharaf',
-          title: 'Bahasa Arab & Balaghah',
+          title: 'AI Bahasa Arab & Balaghah',
           titleArabic: 'النحو والصرف',
           description:
               'Nahwu, sharaf, balaghah, dan mu\'jam dengan rujukan kitab bahasa Arab.',
@@ -6952,7 +7179,7 @@ class AgentModel {
         // ── 6. AQIDAH ─────────────────────────────────────────
         AgentModel(
           id: 'aqidah',
-          title: 'Aqidah & Ilmu Kalam',
+          title: 'AI Aqidah & Ilmu Kalam',
           titleArabic: 'العقيدة والتوحيد',
           description:
               'Pembahasan ushuluddin, tauhid sifat dua puluh, dan manhaj Ahlussunnah wal Jama\'ah.',
@@ -6975,7 +7202,7 @@ class AgentModel {
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
         AgentModel(
           id: 'tarikh',
-          title: 'Sejarah & Sirah',
+          title: 'AI Sejarah & Sirah',
           titleArabic: 'السيرة والتاريخ',
           description:
               'Rekam jejak Sirah Nabawiyyah, Khulafaur Rasyidin, dan thabaqat ulama salaf.',
@@ -6998,7 +7225,7 @@ class AgentModel {
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
         AgentModel(
           id: 'habib_umar',
-          title: 'Habib Umar bin Hafizh',
+          title: 'AI Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
               'Kitab dan rekaman muhadharah Habib Umar bin Hafizh dengan rujukan terpercaya.',
@@ -7019,7 +7246,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'imam_ghazali',
-          title: 'Hujjatul Islam Al-Ghazali',
+          title: 'AI Hujjatul Islam Al-Ghazali',
           titleArabic: 'حجة الإسلام الغزالي',
           description:
               'Kajian kitab Ihya Ulumuddin, Al-Mustashfa, Tahafut al-Falasifah, dan karya-karya Imam Al-Ghazali.',
@@ -7533,9 +7760,13 @@ class ModuleEntitlement {
     this.updatedAt,
   });
 
-  bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai_(1m|6m|1y)|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
+  bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
 
-  bool get isActive => status == 'active' && expiry != null && expiry!.isAfter(DateTime.now());
+  bool get isActive =>
+      status != 'revoked' &&
+      status != 'expired' &&
+      expiry != null &&
+      expiry!.isAfter(DateTime.now());
 
   factory ModuleEntitlement.fromMap(Map<String, dynamic> map) {
     return ModuleEntitlement(
@@ -7545,7 +7776,7 @@ class ModuleEntitlement {
               ? (map['expiry'] as Timestamp).toDate()
               : DateTime.tryParse(map['expiry'].toString()))
           : null,
-      status: map['status'] ?? 'trial',
+      status: map['status'] ?? 'active',
       sourceTransactionId: map['source_transaction_id'] ?? map['trx_id'],
       updatedAt: map['updated_at'] != null
           ? (map['updated_at'] is Timestamp
@@ -7594,20 +7825,30 @@ class UserModel {
   });
 
   // ── Global Legacy Helpers ──
-  bool get isTrial => plan == AppConstants.planTrial;
+  bool get isTrial => plan == AppConstants.planTrial || plan == 'trial';
   bool get isGuest => email.isEmpty || uid.startsWith('guest_');
   bool get isPremium =>
-      plan != AppConstants.planTrial &&
+      !isTrial &&
+      plan != 'free' &&
       (plan == AppConstants.planTholib1m ||
           plan == AppConstants.planTholib6m ||
           plan == AppConstants.planBahits1y ||
+          plan == 'tholib' ||
+          plan == 'bahits' ||
           plan == 'all_ai_1m' ||
+          plan == 'all_ai_6m' ||
+          plan == 'all_ai_1y' ||
           plan == 'all_access' ||
+          plan == 'all_ai' ||
           plan == 'full' ||
+          plan == 'sultan' ||
+          plan == 'pro' ||
+          plan == 'premium' ||
           plan.startsWith('all_ai') ||
           plan.startsWith('redeem') ||
           plan.startsWith('voucher') ||
-          plan == 'custom');
+          plan == 'custom' ||
+          (subscriptionExpiry != null && subscriptionExpiry!.isAfter(DateTime.now())));
 
   bool get isSubscriptionActive {
     if (isPremium && subscriptionExpiry != null) {
@@ -7634,13 +7875,50 @@ class UserModel {
   ModuleEntitlement? getEntitlement(String agentId) => entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
+    // 1. Explicit all_access entitlement
     final all = entitlements['all_access'] ?? entitlements['all_ai'];
     if (all != null && all.isActive && all.isPremium) return true;
+
+    // 2. Specific module entitlement
     final specific = getEntitlement(agentId);
     if (specific != null && specific.isActive && specific.isPremium) return true;
-    if (entitlements.isNotEmpty) return false;
-    const legacyPlans = ['all_access', 'all_ai_1m', 'all_ai_6m', 'all_ai_1y', 'full'];
-    return legacyPlans.contains(plan) && isSubscriptionActive;
+
+    // If an explicit all_access was REVOKED, deny fallback
+    if (all != null && all.status == 'revoked') {
+      return false;
+    }
+
+    // 3. Account-level active subscription (tholib_1m, tholib_6m, bahits_1y, all_ai*, sultan, full, voucher, etc.)
+    if (isSubscriptionActive) {
+      if (plan == 'single') {
+        return specific != null && specific.isActive && specific.isPremium;
+      }
+      return true;
+    }
+
+    // 4. Fallback legacy plan check
+    const legacyPlans = [
+      'all_access',
+      'all_ai_1m',
+      'all_ai_6m',
+      'all_ai_1y',
+      'all_ai',
+      'full',
+      'sultan',
+      'tholib_1m',
+      'tholib_6m',
+      'bahits_1y',
+      'tholib',
+      'bahits',
+      'pro',
+      'premium',
+      'custom',
+    ];
+    final isLegacyMatching = legacyPlans.contains(plan) ||
+        plan.startsWith('all_ai') ||
+        plan.startsWith('redeem') ||
+        plan.startsWith('voucher');
+    return isLegacyMatching && isSubscriptionActive;
   }
 
   bool hasAccessToAgent(String agentId) {
@@ -7741,13 +8019,14 @@ class UserModel {
 ```dart
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/notebook_navigation.dart';
+import '../core/notebook_ui_script.dart';
+import '../core/copied_answer.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -7760,7 +8039,6 @@ import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
-import '../models/bookmark_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
@@ -7800,9 +8078,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   String? _errorMessage;
   double _fontScale = 1.0;
   bool _isCopying = false;
-  bool _isBookmarking = false;
+  Timer? _readinessTimer;
+  DateTime? _loadingStarted;
+  int _readySamples = 0;
+  bool _checkingReady = false;
   bool _hasCopied = false;
-  bool _hasBookmarked = false;
+
   bool _isGoingBack = false;
 
   @override
@@ -7845,6 +8126,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   @override
   void dispose() {
+    _readinessTimer?.cancel();
     final controller = _webController;
     _webController = null;
     if (controller != null) {
@@ -7942,8 +8224,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   """;
 
   static final _cloakScript = UserScript(
-    source: _turatsMasterScript,
-    injectionTime: UserScriptInjectionTime.AT_DOCUMENT_END,
+    source: _turatsMasterScript + notebookUiScript,
+    injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
     forMainFrameOnly: true,
   );
 
@@ -7964,8 +8246,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   Future<void> _fetchAgentUrl() async {
+    _readinessTimer?.cancel();
     setState(() {
       _isLoadingUrl = true;
+      _isWebViewLoading = true;
+      _isPaywallRequired = false;
+      _agentUrl = null;
       _errorMessage = null;
     });
 
@@ -8060,7 +8346,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _applyHideScript() async {
     if (_webController == null) return;
     try {
-      await _webController!.evaluateJavascript(source: _turatsMasterScript);
+      await _webController!.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
       await _applyThemeCss();
     } catch (_) {}
   }
@@ -8074,165 +8360,71 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     } catch (_) {}
   }
 
+  Future<void> _saveCopiedAnswer(String text, String ownerUid) async {
+    text = text.trim();
+    if (text.isEmpty || text.length > 200000 || _authService.currentUser?.uid != ownerUid) return;
+    final agent = _agent;
+    if (agent == null) return;
+    await _bookmarkService.addBookmark(copiedAnswerBookmark(text, agent), userId: ownerUid);
+  }
+
   Future<void> _copyLatestResponse() async {
-    if (_webController == null) return;
-    HapticFeedback.lightImpact();
+    if (_webController == null || _isCopying) return;
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
     setState(() => _isCopying = true);
-
     try {
-      final res = await _webController!.evaluateJavascript(source: """
-        (function() {
-          var selectors = [
-            '.chat-message[data-sender="model"]',
-            '.model-message',
-            '.response-message',
-            '.chat-panel-content .message:last-child',
-            '[role="article"]:last-of-type',
-            '.markdown-content:last-of-type',
-            '.message:last-of-type'
-          ];
-          for (var i = 0; i < selectors.length; i++) {
-            var els = document.querySelectorAll(selectors[i]);
-            if (els.length > 0) {
-              var lastEl = els[els.length - 1];
-              var txt = (lastEl.innerText || lastEl.textContent || '').trim();
-              if (txt.length > 10) return txt;
-            }
-          }
-          var main = document.querySelector('main, .chat-panel-content, .conversation-container');
-          return main ? (main.innerText || main.textContent || '').trim() : '';
-        })();
-      """);
-
-      final text = (res as String? ?? '').trim();
+      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
+      final text = result is String ? result.trim() : '';
       if (text.isEmpty) {
-        if (mounted) {
-          AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
-        }
-      } else {
-        await Clipboard.setData(ClipboardData(text: text));
-        if (mounted) {
-          setState(() => _hasCopied = true);
-          AppSnackBar.success(context, AppCopy.answerCopied);
-          Future.delayed(const Duration(seconds: 2), () {
-            if (mounted) setState(() => _hasCopied = false);
-          });
-        }
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
+        return;
       }
-    } catch (e) {
+      await Clipboard.setData(ClipboardData(text: text));
+      await _saveCopiedAnswer(text, uid);
       if (mounted) {
-        AppSnackBar.error(context, AppCopy.copyFailed);
+        setState(() => _hasCopied = true);
+        AppSnackBar.success(context, 'Jawaban disalin dan ditambahkan ke Tersimpan.');
       }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, 'Jawaban belum berhasil disalin dan disimpan. Coba lagi.');
     } finally {
       if (mounted) setState(() => _isCopying = false);
     }
   }
 
-  Future<void> _bookmarkLatestResponse() async {
-    if (_webController == null || _isBookmarking) return;
-    final ownerUid = _authService.currentUser?.uid;
-    if (ownerUid == null) return;
-    HapticFeedback.mediumImpact();
-    setState(() => _isBookmarking = true);
+  void _startReadinessCheck() {
+    _readinessTimer?.cancel();
+    _loadingStarted = DateTime.now();
+    _readySamples = 0;
+    _readinessTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+  }
 
+  Future<void> _checkReady() async {
+    if (_checkingReady || _webController == null || !mounted) return;
+    _checkingReady = true;
     try {
-      final res = await _webController!.evaluateJavascript(source: """
-        (function() {
-          var selectors = [
-            '.chat-message[data-sender="model"]',
-            '.model-message',
-            '.response-message',
-            '.chat-panel-content .message:last-child',
-            '[role="article"]:last-of-type',
-            '.markdown-content:last-of-type',
-            '.message:last-of-type'
-          ];
-          var answer = '';
-          for (var i = 0; i < selectors.length; i++) {
-            var els = document.querySelectorAll(selectors[i]);
-            if (els.length > 0) {
-              var lastEl = els[els.length - 1];
-              answer = (lastEl.innerText || lastEl.textContent || '').trim();
-              if (answer.length > 10) break;
-            }
-          }
-
-          // Regex Arab yang mendukung frasa dan spasi (F29)
-          var arabicRegex = /[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]+(?:\\s+[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\uFB50-\\uFDFF\\uFE70-\\uFEFF]+){1,}/g;
-          var arabicMatch = answer.match(arabicRegex);
-          var arabicExcerpt = arabicMatch ? arabicMatch.slice(0, 3).join(' ... ') : '';
-
-          // Ekstraksi sitasi rujukan kitab primer jika tersedia (F28, F30)
-          var bookMatch = answer.match(/(?:Kitab|Rujukan|Sumber|Maraji'|Pustaka)\\s*:\\s*([^\\n\\r,]+)/i);
-          var pageMatch = answer.match(/(?:Hal(?:aman)?|Juz|Hlm|Sahifah)\\s*[:.]?\\s*([0-9\\/\\-]+)/i);
-          var detectedBook = bookMatch ? bookMatch[1].trim() : '';
-          var detectedPage = pageMatch ? pageMatch[1].trim() : '';
-
-          return JSON.stringify({
-            fullAnswer: answer,
-            arabicExcerpt: arabicExcerpt,
-            detectedBook: detectedBook,
-            detectedPage: detectedPage
-          });
-        })();
-      """);
-
-      if (res != null) {
-        final Map<String, dynamic> data = jsonDecode(res.toString());
-        final fullAnswer = (data['fullAnswer'] as String? ?? '').trim();
-        final arabicExcerpt = (data['arabicExcerpt'] as String? ?? '').trim();
-        final detectedBook = (data['detectedBook'] as String? ?? '').trim();
-        final detectedPage = (data['detectedPage'] as String? ?? '').trim();
-
-        if (fullAnswer.isEmpty) {
-          if (mounted) {
-            AppSnackBar.warning(context, AppCopy.noAnswerToSave);
-          }
-        } else {
-          // F28 & F30: Pisahkan nama spesialis AI dari rujukan kitab primer
-          final bookRef = detectedBook.isNotEmpty
-              ? detectedBook
-              : 'Rujukan belum diidentifikasi';
-
-          final bookmark = BookmarkModel(
-            id: DateTime.now().microsecondsSinceEpoch.toString(),
-            title: 'Kajian ${_agent?.category ?? "Turats"}: ${bookRef.length > 28 ? "${bookRef.substring(0, 28)}..." : bookRef}',
-            agentId: _agent?.id ?? 'umum',
-            agentTitle: _agent?.title ?? 'Spesialis Turats',
-            fieldName: _agent?.category ?? 'Fikih',
-            fieldId: (_agent?.category ?? 'fikih').toLowerCase().replaceAll(' ', '_'),
-            arabicExcerpt: arabicExcerpt,
-            fullAnswer: fullAnswer,
-            bookReference: bookRef,
-            pageNumber: detectedPage,
-            createdAt: DateTime.now(),
-          );
-
-          await _bookmarkService.addBookmark(bookmark, userId: ownerUid);
-          if (mounted) {
-            setState(() => _hasBookmarked = true);
-            AppSnackBar.success(
-              context,
-              AppCopy.savedSuccess,
-              action: SnackBarAction(
-                label: 'Lihat',
-                textColor: OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark),
-                onPressed: () => Navigator.pushNamed(context, AppRoutes.bookmark),
-              ),
-            );
-            Future.delayed(const Duration(seconds: 3), () {
-              if (mounted) setState(() => _hasBookmarked = false);
-            });
-          }
-        }
+      final url = await _webController!.getUrl();
+      final isLogin = url?.host == 'accounts.google.com' || url?.host == 'accounts.youtube.com' || url?.host == 'consent.google.com';
+      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.ready() : false');
+      _readySamples = result == true ? _readySamples + 1 : 0;
+      if (!mounted) return;
+      if (isLogin || _readySamples >= 3) {
+        _readinessTimer?.cancel();
+        setState(() => _isWebViewLoading = false);
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+        _readinessTimer?.cancel();
+        setState(() {
+          _isWebViewLoading = false;
+          _errorMessage = 'AI belum siap merespons. Periksa koneksi lalu coba muat kembali.';
+        });
       }
-    } catch (e) {
-      if (mounted) {
-        AppSnackBar.error(context, AppCopy.saveFailed);
+    } catch (_) {
+      if (mounted && _loadingStarted != null && DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+        _readinessTimer?.cancel();
+        setState(() { _isWebViewLoading = false; _errorMessage = AppCopy.cannotLoad; });
       }
-    } finally {
-      if (mounted) setState(() => _isBookmarking = false);
-    }
+    } finally { _checkingReady = false; }
   }
 
   Future<void> _handleBackPress() async {
@@ -8398,7 +8590,27 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       algorithmicDarkeningAllowed: false,
                       transparentBackground: true,
                     ),
-                onWebViewCreated: (controller) { _webController = controller; },
+                onWebViewCreated: (controller) {
+                  _webController = controller;
+                  final ownerUid = _authService.currentUser?.uid;
+                  controller.addJavaScriptHandler(handlerName: 'otCopiedAnswer', callback: (args) async {
+                    final url = await controller.getUrl();
+                    if (ownerUid == null || url?.scheme != 'https' || !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) || args.isEmpty || args.first is! String) return false;
+                    try {
+                      await _saveCopiedAnswer(args.first as String, ownerUid);
+                      if (context.mounted) AppSnackBar.success(context, 'Jawaban ditambahkan ke Tersimpan.');
+                      return true;
+                    } catch (_) {
+                      if (context.mounted) AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
+                      return false;
+                    }
+                  });
+                  _startReadinessCheck();
+                },
+                onLoadStart: (controller, url) {
+                  if (mounted) setState(() => _isWebViewLoading = true);
+                  _startReadinessCheck();
+                },
                 onPermissionRequest: (controller, request) async => PermissionResponse(
                   resources: request.resources, action: PermissionResponseAction.DENY,
                 ),
@@ -8411,9 +8623,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   await _applyHideScript();
                   await _applyCurrentFontScale();
                   await _detectGoogleAccessDenied();
-                  if (mounted && _isWebViewLoading) {
-                    setState(() => _isWebViewLoading = false);
-                  }
+                  await _checkReady();
                 },
                 onProgressChanged: (controller, progress) async {
                   if (progress >= 25) {
@@ -8422,9 +8632,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   }
                   if (progress >= 45) {
                     await _detectGoogleAccessDenied();
-                    if (_isWebViewLoading && mounted) {
-                      setState(() => _isWebViewLoading = false);
-                    }
+
                   }
                 },
                 onReceivedError: (controller, request, error) {
@@ -8720,17 +8928,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       _copyLatestResponse();
                     },
             ),
-            Divider(height: 1, color: border.withValues(alpha: 0.5)),
-            ListTile(
-              leading: Icon(_hasBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, color: _hasBookmarked ? OTColors.sovereignAmber : textPrimary, size: 20),
-              title: Text(AppCopy.saveAnswerMenu, style: OTTypography.bodyMedium(color: textPrimary)),
-              onTap: _isBookmarking
-                  ? null
-                  : () {
-                      Navigator.pop(ctx);
-                      _bookmarkLatestResponse();
-                    },
-            ),
           ],
         ),
       ),
@@ -8838,6 +9035,1183 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/screens/book_catalog_screen.dart
+```dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../core/app_copy.dart';
+import '../core/routes.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_spacing.dart';
+import '../models/agent_model.dart';
+import '../models/book_model.dart';
+import '../services/canonical_library_service.dart';
+import '../widgets/book_row_item.dart';
+import '../widgets/apple_interactive_wrapper.dart';
+
+/// Halaman Katalog Naskah Penuh (Full-Screen Route).
+/// Menggantikan modal bottom sheet sempit agar pengguna memiliki ruang baca yang lapang,
+/// tenang, dan mudah ditelusuri sesuai standar Apple HIG.
+class BookCatalogScreen extends StatefulWidget {
+  final AgentModel? agent;
+  final String? initialQuery;
+
+  const BookCatalogScreen({
+    super.key,
+    this.agent,
+    this.initialQuery,
+  });
+
+  @override
+  State<BookCatalogScreen> createState() => _BookCatalogScreenState();
+}
+
+class _BookCatalogScreenState extends State<BookCatalogScreen> {
+  final TextEditingController _searchCtrl = TextEditingController();
+  final CanonicalLibraryService _service = CanonicalLibraryService.instance;
+  Timer? _debounce;
+
+  List<CanonicalBookPresentation>? _allBooks;
+  List<CanonicalBookPresentation>? _filteredBooks;
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  String? _selectedEra;
+  String? _selectedType;
+  String _searchQuery = '';
+
+  final List<String> _eras = [
+    'Mutaqaddimin',
+    'Ashab Al-Wujuh',
+    'Muta\'akhkhirin',
+  ];
+
+  final List<String> _types = [
+    'Asal Mazhab',
+    'Matan',
+    'Syarah',
+    'Hasyiyah',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialQuery != null && widget.initialQuery!.isNotEmpty) {
+      _searchCtrl.text = widget.initialQuery!;
+      _searchQuery = widget.initialQuery!;
+    }
+    _loadCatalog();
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadCatalog() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final books = await _service.loadSyafiiCatalog();
+      if (!mounted) return;
+      setState(() {
+        _allBooks = books;
+        _isLoading = false;
+        _applyFilters();
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = AppCopy.catalogLoadFailed;
+      });
+    }
+  }
+
+  void _onSearchChanged(String val) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        setState(() {
+          _searchQuery = val.trim();
+          _applyFilters();
+        });
+      }
+    });
+  }
+
+  void _applyFilters() {
+    if (_allBooks == null) return;
+    _filteredBooks = _service.filterBooks(
+      _allBooks!,
+      _searchQuery,
+      eraFilter: _selectedEra,
+      typeFilter: _selectedType,
+    );
+  }
+
+  void _clearFilters() {
+    _searchCtrl.clear();
+    setState(() {
+      _searchQuery = '';
+      _selectedEra = null;
+      _selectedType = null;
+      _applyFilters();
+    });
+  }
+
+  void _openBookDetail(CanonicalBookPresentation book) {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.bookDetail,
+      arguments: book,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final background = OTColors.canvas(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final primaryAccent = OTColors.accent(isDark);
+
+    return Scaffold(
+      backgroundColor: background,
+      appBar: AppBar(
+        backgroundColor: background,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+          tooltip: 'Kembali',
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Pustaka Kitab Kanonikal',
+              style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
+            ),
+            Text(
+              '87 Kitab Mazhab Syafi\'i',
+              style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
+            ),
+          ],
+        ),
+        actions: [
+          if (_selectedEra != null || _selectedType != null || _searchQuery.isNotEmpty)
+            TextButton(
+              onPressed: _clearFilters,
+              child: Text(
+                'Reset',
+                style: OTTypography.button(color: primaryAccent).copyWith(fontSize: 13),
+              ),
+            ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            // ── SEARCH CONTAINER ──
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: OTSpacing.lg,
+                vertical: OTSpacing.sm,
+              ),
+              child: Container(
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(color: border, width: 0.8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.search_rounded, size: 20, color: textSecondary),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchCtrl,
+                        onChanged: _onSearchChanged,
+                        style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
+                        decoration: InputDecoration(
+                          hintText: 'Cari judul Arab/Latin, pengarang, muhaqqiq...',
+                          hintStyle: GoogleFonts.outfit(
+                            fontSize: 13.5,
+                            color: textSecondary.withValues(alpha: 0.7),
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedErrorBorder: InputBorder.none,
+                          filled: false,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                    if (_searchQuery.isNotEmpty)
+                      GestureDetector(
+                        onTap: () {
+                          _searchCtrl.clear();
+                          setState(() {
+                            _searchQuery = '';
+                            _applyFilters();
+                          });
+                        },
+                        child: Icon(Icons.close_rounded, size: 18, color: textSecondary),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
+            // ── HORIZONTAL ERA & TYPE FILTER CHIPS ──
+            SizedBox(
+              height: 38,
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+                children: [
+                  _filterChip(
+                    label: 'Semua Era',
+                    isSelected: _selectedEra == null,
+                    onTap: () {
+                      setState(() {
+                        _selectedEra = null;
+                        _applyFilters();
+                      });
+                    },
+                    isDark: isDark,
+                    border: border,
+                    surface: surface,
+                    textPrimary: textPrimary,
+                    textSecondary: textSecondary,
+                  ),
+                  for (final era in _eras)
+                    _filterChip(
+                      label: era,
+                      isSelected: _selectedEra == era,
+                      onTap: () {
+                        setState(() {
+                          _selectedEra = _selectedEra == era ? null : era;
+                          _applyFilters();
+                        });
+                      },
+                      isDark: isDark,
+                      border: border,
+                      surface: surface,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                    width: 1,
+                    color: border,
+                  ),
+                  for (final type in _types)
+                    _filterChip(
+                      label: type,
+                      isSelected: _selectedType == type,
+                      onTap: () {
+                        setState(() {
+                          _selectedType = _selectedType == type ? null : type;
+                          _applyFilters();
+                        });
+                      },
+                      isDark: isDark,
+                      border: border,
+                      surface: surface,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: OTSpacing.sm),
+
+            // ── RESULTS COUNT HEADER ──
+            if (!_isLoading && _filteredBooks != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: OTSpacing.lg,
+                  vertical: 4,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'Menampilkan ${_filteredBooks!.length} naskah rujukan',
+                      style: OTTypography.caption(color: textSecondary).copyWith(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (_selectedEra != null || _selectedType != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: primaryAccent.withValues(alpha: isDark ? 0.12 : 0.06),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          [
+                            if (_selectedEra != null) _selectedEra!,
+                            if (_selectedType != null) _selectedType!,
+                          ].join(' · '),
+                          style: OTTypography.caption(color: primaryAccent).copyWith(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+            // ── MAIN CONTENT LIST / EMPTY / ERROR / LOADING ──
+            Expanded(
+              child: _buildContent(
+                isDark: isDark,
+                surface: surface,
+                border: border,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                primaryAccent: primaryAccent,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent({
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color primaryAccent,
+  }) {
+    if (_isLoading) {
+      return ListView.builder(
+        padding: const EdgeInsets.all(OTSpacing.lg),
+        itemCount: 8,
+        itemBuilder: (ctx, i) => _buildSkeletonItem(surface, border),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(OTSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline_rounded, size: 48, color: textSecondary),
+              const SizedBox(height: 12),
+              Text(
+                _errorMessage!,
+                textAlign: TextAlign.center,
+                style: OTTypography.body(color: textPrimary),
+              ),
+              const SizedBox(height: 16),
+              AppleInteractiveWrapper(
+                onTap: _loadCatalog,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: primaryAccent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    AppCopy.tryAgain,
+                    style: OTTypography.button(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_filteredBooks == null || _filteredBooks!.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(OTSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search_off_rounded, size: 48, color: textSecondary),
+              const SizedBox(height: 12),
+              Text(
+                'Tidak ditemukan kitab yang sesuai.',
+                style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Coba gunakan kata kunci Arab, nama pengarang, atau hapus filter era.',
+                textAlign: TextAlign.center,
+                style: OTTypography.caption(color: textSecondary),
+              ),
+              const SizedBox(height: 16),
+              AppleInteractiveWrapper(
+                onTap: _clearFilters,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: border),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Hapus Semua Filter',
+                    style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadCatalog,
+      color: primaryAccent,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        padding: const EdgeInsets.symmetric(
+          horizontal: OTSpacing.lg,
+          vertical: OTSpacing.sm,
+        ),
+        itemCount: _filteredBooks!.length,
+        itemBuilder: (context, index) {
+          final book = _filteredBooks![index];
+          return BookRowItem(
+            book: book,
+            searchQuery: _searchQuery,
+            onTap: () => _openBookDetail(book),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSkeletonItem(Color surface, Color border) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: OTSpacing.sm),
+      height: 72,
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: border, width: 0.8),
+      ),
+    );
+  }
+
+  Widget _filterChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+    required Color border,
+    required Color surface,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    final activeBg = textPrimary;
+    final activeFg = isDark ? Colors.black : Colors.white;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: AppleInteractiveWrapper(
+        onTap: onTap,
+        pressedScale: 0.94,
+        hapticType: HapticFeedbackType.selection,
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected ? activeBg : surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? activeBg : border,
+              width: 0.8,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: OTTypography.caption(color: isSelected ? activeFg : textSecondary).copyWith(
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/screens/book_detail_screen.dart
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../core/app_copy.dart';
+import '../core/app_snackbar.dart';
+import '../core/routes.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
+import '../models/agent_model.dart';
+import '../models/book_model.dart';
+import '../models/bookmark_model.dart';
+import '../services/bookmark_service.dart';
+import '../services/research_notes_service.dart';
+import '../widgets/apple_interactive_wrapper.dart';
+
+/// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
+/// Mengeliminasi pola anti-desain modal bertingkat (sheet-on-sheet) sesuai Apple HIG.
+class BookDetailScreen extends StatefulWidget {
+  final CanonicalBookPresentation book;
+  final AgentModel? agent;
+
+  const BookDetailScreen({
+    super.key,
+    required this.book,
+    this.agent,
+  });
+
+  @override
+  State<BookDetailScreen> createState() => _BookDetailScreenState();
+}
+
+class _BookDetailScreenState extends State<BookDetailScreen> {
+  final ResearchNotesService _notesService = ResearchNotesService();
+  bool _isSaving = false;
+  bool _isSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfSaved();
+  }
+
+  Future<void> _checkIfSaved() async {
+    try {
+      final noteId = 'book_${widget.book.editionId}';
+      final isBookmarked = await BookmarkService().isBookmarked(noteId);
+      if (mounted) {
+        setState(() => _isSaved = isBookmarked);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _toggleSaveBook() async {
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
+
+    try {
+      final noteId = 'book_${widget.book.editionId}';
+      if (_isSaved) {
+        await _notesService.deleteNote(noteId);
+        await BookmarkService().deleteBookmark(noteId);
+        if (mounted) {
+          setState(() {
+            _isSaved = false;
+            _isSaving = false;
+          });
+          AppSnackBar.show(context, message: 'Rujukan dihapus dari Catatan Riset.');
+        }
+      } else {
+        final agent = _resolveTargetAgent();
+        final deathYearStr = widget.book.verifiedDeathYearHijri != null
+            ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
+            : '';
+        final publisherStr = widget.book.publisher != null
+            ? ', Terbitan ${widget.book.publisher}'
+            : '';
+        final muhaqqiqStr = widget.book.muhaqqiq != null
+            ? ', Tahqiq: ${widget.book.muhaqqiq}'
+            : '';
+
+        final newNote = ResearchNote(
+          id: noteId,
+          agentId: agent.id,
+          agentTitle: agent.title,
+          title: widget.book.titleArabic,
+          excerpt:
+              'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
+          bookTitle: widget.book.titleArabic,
+          bookVolume: widget.book.volumesCount?.toString(),
+          tags: [
+            'Rujukan Kitab',
+            if (widget.book.reviewedTypeLabel != null) widget.book.reviewedTypeLabel!,
+            if (widget.book.reviewedEraLabel != null) widget.book.reviewedEraLabel!,
+          ],
+          createdAt: DateTime.now(),
+        );
+
+        final newBookmark = BookmarkModel(
+          id: noteId,
+          title: widget.book.titleArabic,
+          agentId: agent.id,
+          agentTitle: agent.title,
+          fieldName: 'Rujukan Kitab',
+          fieldId: 'fiqh',
+          arabicExcerpt: widget.book.titleArabic,
+          fullAnswer:
+              'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
+          bookReference: widget.book.titleArabic,
+          pageNumber: widget.book.volumesCount != null
+              ? '${widget.book.volumesCount} Jilid'
+              : '1 Jilid',
+          author: widget.book.authorArabic,
+          createdAt: DateTime.now(),
+        );
+
+        await _notesService.saveNote(newNote);
+        await BookmarkService().addBookmark(newBookmark);
+        if (mounted) {
+          setState(() {
+            _isSaved = true;
+            _isSaving = false;
+          });
+          HapticFeedback.mediumImpact();
+          AppSnackBar.success(context, 'Kitab disimpan ke Catatan Riset.');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        AppSnackBar.error(context, 'Gagal memperbarui catatan riset.');
+      }
+    }
+  }
+
+  AgentModel _resolveTargetAgent() {
+    if (widget.agent != null) return widget.agent!;
+    try {
+      return AgentModel.defaultAgents.firstWhere(
+        (a) => a.catalogId == 'canonical_syafii' || a.id == 'fiqh',
+        orElse: () => AgentModel.defaultAgents.first,
+      );
+    } catch (_) {
+      return AgentModel.defaultAgents.first;
+    }
+  }
+
+  void _openStudySpace() {
+    final agent = _resolveTargetAgent();
+    Navigator.pushNamed(
+      context,
+      AppRoutes.agentWebview,
+      arguments: agent,
+    );
+  }
+
+  void _copyScholarlyCitation() {
+    final deathYearStr = widget.book.verifiedDeathYearHijri != null
+        ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
+        : '';
+    final publisherStr = widget.book.publisher != null
+        ? ', ${widget.book.publisher}'
+        : '';
+    final muhaqqiqStr = widget.book.muhaqqiq != null
+        ? ', Tahqiq: ${widget.book.muhaqqiq}'
+        : '';
+    final volStr = widget.book.volumesCount != null
+        ? ', ${widget.book.volumesCount} Jilid'
+        : '';
+
+    final citation =
+        '${widget.book.authorArabic}$deathYearStr. ${widget.book.titleArabic}$volStr$publisherStr$muhaqqiqStr. OpenTurath AI Canonical Corpus.';
+
+    Clipboard.setData(ClipboardData(text: citation));
+    HapticFeedback.selectionClick();
+    AppSnackBar.success(context, 'Sitasi standar ilmiah tersalin ke papan klip.');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final background = OTColors.canvas(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final primaryAccent = OTColors.accent(isDark);
+
+    return Scaffold(
+      backgroundColor: background,
+      appBar: AppBar(
+        backgroundColor: background,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+          tooltip: 'Kembali',
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          AppCopy.bookDetails,
+          style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+              color: _isSaved ? primaryAccent : textSecondary,
+            ),
+            tooltip: _isSaved ? 'Hapus Rujukan' : 'Simpan Rujukan',
+            onPressed: _toggleSaveBook,
+          ),
+          IconButton(
+            icon: Icon(Icons.share_outlined, color: textSecondary),
+            tooltip: 'Salin Sitasi Standar',
+            onPressed: _copyScholarlyCitation,
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(
+            horizontal: OTSpacing.lg,
+            vertical: OTSpacing.md,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── KARTU 1: IDENTITAS KITAB (ARABIC HERO) ──
+              _buildCard(
+                isDark: isDark,
+                surface: surface,
+                border: border,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: primaryAccent.withValues(alpha: isDark ? 0.15 : 0.08),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Naskah Kanonikal · Syafi\'i',
+                            style: OTTypography.caption(color: primaryAccent).copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          widget.book.editionId,
+                          style: OTTypography.caption(color: textSecondary).copyWith(
+                            fontFamily: 'Courier',
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: OTSpacing.md),
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Text(
+                        widget.book.titleArabic,
+                        textAlign: TextAlign.right,
+                        style: OTTypography.arabicDisplay(color: textPrimary).copyWith(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                    if (widget.book.titleLatin != null &&
+                        widget.book.titleLatin!.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.book.titleLatin!,
+                        style: OTTypography.body(color: textSecondary).copyWith(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: OTSpacing.md),
+
+              // ── KARTU 2: MUALLIF / PENGARANG ──
+              _buildCard(
+                isDark: isDark,
+                surface: surface,
+                border: border,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionHeader('MUALLIF / PENGARANG', textSecondary),
+                    const SizedBox(height: 10),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.person_outline_rounded,
+                          size: 20,
+                          color: primaryAccent,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.book.authorArabic,
+                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              if (widget.book.authorLatin != null) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  widget.book.authorLatin!,
+                                  style: OTTypography.caption(color: textSecondary),
+                                ),
+                              ],
+                              const SizedBox(height: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2.5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.06)
+                                      : Colors.black.withValues(alpha: 0.04),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  widget.book.verifiedDeathYearHijri != null
+                                      ? 'Wafat: ${widget.book.verifiedDeathYearHijri} Hijriyah'
+                                      : 'Wafat: Dalam verifikasi sanad',
+                                  style: OTTypography.caption(color: textSecondary).copyWith(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: OTSpacing.md),
+
+              // ── KARTU 3: KLASIFIKASI ILMIAH & THABAQAT ──
+              _buildCard(
+                isDark: isDark,
+                surface: surface,
+                border: border,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionHeader('KLASIFIKASI ILMIAH', textSecondary),
+                    const SizedBox(height: 12),
+                    _buildMetaRow(
+                      icon: Icons.category_outlined,
+                      label: 'Tipe Naskah',
+                      value: widget.book.reviewedTypeLabel ?? 'Kitab Referensi Mazhab',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const Divider(height: 16, thickness: 0.5),
+                    _buildMetaRow(
+                      icon: Icons.history_edu_rounded,
+                      label: 'Era Keilmuan',
+                      value: widget.book.reviewedEraLabel ?? 'Ulama Mazhab Syafi\'i',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const Divider(height: 16, thickness: 0.5),
+                    _buildMetaRow(
+                      icon: Icons.auto_stories_outlined,
+                      label: 'Jumlah Jilid',
+                      value: widget.book.volumesCount != null
+                          ? '${widget.book.volumesCount} Jilid'
+                          : '1 Jilid / Naskah Tunggal',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    if (widget.book.canShowAuthority) ...[
+                      const Divider(height: 16, thickness: 0.5),
+                      _buildMetaRow(
+                        icon: Icons.verified_outlined,
+                        label: 'Derajat Mu\'tabar',
+                        value: widget.book.reviewedAuthorityLabel!,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: OTSpacing.md),
+
+              // ── KARTU 4: DATA EDISI & TAHQIQ ──
+              _buildCard(
+                isDark: isDark,
+                surface: surface,
+                border: border,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSectionHeader('DATA EDISI & TAHQIQ', textSecondary),
+                    const SizedBox(height: 12),
+                    _buildMetaRow(
+                      icon: Icons.business_outlined,
+                      label: 'Penerbit Rujukan',
+                      value: widget.book.publisher ?? 'Informasi penerbit belum tersedia',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                    const Divider(height: 16, thickness: 0.5),
+                    _buildMetaRow(
+                      icon: Icons.edit_note_rounded,
+                      label: 'Pentahqiq / Muhaqqiq',
+                      value: widget.book.muhaqqiq ?? 'Cetakan klasik / belum tercatat',
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: OTSpacing.md),
+
+              // ── KARTU 5: STATUS KORPUS & AKSI RISET ──
+              _buildCard(
+                isDark: isDark,
+                surface: surface,
+                border: border,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildSectionHeader('AKSI & TELAAH RISET', textSecondary),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: primaryAccent.withValues(alpha: isDark ? 0.08 : 0.04),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: primaryAccent.withValues(alpha: isDark ? 0.2 : 0.1),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            size: 18,
+                            color: primaryAccent,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Naskah kanonikal ini telah dikodifikasi dalam basis data rujukan. Ruang dialog AI dapat langsung menelusuri ibarah dan dalil dari kitab ini.',
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: OTSpacing.md),
+
+                    // Primary Action Button: Buka Ruang Kajian
+                    AppleInteractiveWrapper(
+                      onTap: _openStudySpace,
+                      pressedScale: 0.98,
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: primaryAccent,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Buka Ruang Kajian',
+                              style: OTTypography.button(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Secondary Action: Simpan / Hapus Rujukan
+                    AppleInteractiveWrapper(
+                      onTap: _toggleSaveBook,
+                      pressedScale: 0.98,
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.06)
+                              : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: border, width: 0.8),
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              _isSaved
+                                  ? Icons.bookmark_remove_outlined
+                                  : Icons.bookmark_add_outlined,
+                              size: 18,
+                              color: textPrimary,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _isSaved
+                                  ? 'Hapus dari Catatan Riset'
+                                  : 'Simpan ke Catatan Riset',
+                              style: OTTypography.button(color: textPrimary).copyWith(
+                                fontSize: 13.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: OTSpacing.xl),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard({
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Widget child,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(OTSpacing.lg),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(OTRadius.card),
+        border: Border.all(color: border, width: 0.8),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildSectionHeader(String title, Color color) {
+    return Text(
+      title,
+      style: OTTypography.sectionHeading(color: color),
+    );
+  }
+
+  Widget _buildMetaRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: textSecondary),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: OTTypography.caption(color: textSecondary),
+        ),
+        const Spacer(),
+        Flexible(
+          child: Text(
+            value,
+            textAlign: TextAlign.right,
+            style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/screens/bookmark_screen.dart
 ```dart
 import 'package:flutter/material.dart';
@@ -8851,8 +10225,11 @@ import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/routes.dart';
 import '../models/bookmark_model.dart';
+import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
+import '../services/canonical_library_service.dart';
 import '../widgets/evidence_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 
@@ -8875,6 +10252,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   static const List<String> _categories = [
     'Semua',
+    'Kutipan Ibarah',
+    'Rujukan Kitab',
     'Fikih',
     'Hadis',
     'Tafsir',
@@ -8920,13 +10299,24 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     final q = _searchQuery.toLowerCase().trim();
     _filteredBookmarks = _allBookmarks.where((b) {
       final fieldLower = b.fieldName.toLowerCase();
-      final matchesCategory = _selectedCategory == 'Semua' ||
-          fieldLower.contains(_selectedCategory.toLowerCase()) ||
-          (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
-          (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
-          (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
-          (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
-          (_selectedCategory == 'Tasawuf' && fieldLower.contains('tasawwuf'));
+      final isBookRef = b.id.startsWith('book_') || fieldLower.contains('rujukan kitab');
+
+      bool matchesCategory;
+      if (_selectedCategory == 'Semua') {
+        matchesCategory = true;
+      } else if (_selectedCategory == 'Rujukan Kitab') {
+        matchesCategory = isBookRef;
+      } else if (_selectedCategory == 'Kutipan Ibarah') {
+        matchesCategory = !isBookRef;
+      } else {
+        matchesCategory = fieldLower.contains(_selectedCategory.toLowerCase()) ||
+            (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
+            (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
+            (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
+            (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
+            (_selectedCategory == 'Tasawuf' && fieldLower.contains('tasawwuf'));
+      }
+
       if (!matchesCategory) return false;
       if (q.isEmpty) return true;
       return b.title.toLowerCase().contains(q) ||
@@ -8950,11 +10340,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus dari Tersimpan',
-            style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
+            'Hapus Rujukan?',
+            style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Yakin ingin menghapus catatan rujukan ini dari daftar simpanan?',
+            'Rujukan ini akan dihapus dari simpanan Anda.',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -8981,26 +10371,20 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       },
     );
 
-    if (confirm != true) return;
-
-    OTMotion.success();
-    await _bookmarkService.deleteBookmark(item.id);
-    await _loadBookmarks();
-
-    if (!mounted) return;
-    AppSnackBar.info(
-      context,
-      'Dihapus dari simpanan.',
-      action: SnackBarAction(
-        label: 'Urungkan',
-        textColor: const Color(0xFFFBBF24),
-        onPressed: () async {
-          OTMotion.light();
-          await _bookmarkService.addBookmark(item);
-          await _loadBookmarks();
-        },
-      ),
-    );
+    if (confirm == true) {
+      await _bookmarkService.deleteBookmark(item.id);
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          message: 'Rujukan telah dihapus dari simpanan.',
+          action: SnackBarAction(
+            label: 'Urungkan',
+            textColor: OTColors.accent(isDark),
+            onPressed: () => _bookmarkService.addBookmark(item),
+          ),
+        );
+      }
+    }
   }
 
   void _copyIbarah(String ibarah) {
@@ -9011,30 +10395,61 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   void _shareBookmark(BookmarkModel item) {
     final buffer = StringBuffer();
-    buffer.writeln('📖 *${item.title}*');
-    buffer.writeln('Disiplin: ${item.fieldName} | ${item.agentTitle}');
-    if (item.bookReference.isNotEmpty) {
-      buffer.writeln('Sumber: ${item.bookReference}${item.pageNumber.isNotEmpty ? " (Hlm. ${item.pageNumber})" : ""}');
-    }
-    buffer.writeln();
     if (item.arabicExcerpt.isNotEmpty) {
-      buffer.writeln('نص العبارة:');
-      buffer.writeln('« ${item.arabicExcerpt} »');
+      buffer.writeln('"${item.arabicExcerpt}"');
       buffer.writeln();
     }
-    if (item.fullAnswer.isNotEmpty) {
-      buffer.writeln('Jawaban:');
-      buffer.writeln(item.fullAnswer);
-      buffer.writeln();
+    buffer.write('— ');
+    if (item.bookReference.isNotEmpty) {
+      buffer.write('Kitab ${item.bookReference}');
+      if (item.pageNumber.isNotEmpty) {
+        buffer.write(' (Hal. ${item.pageNumber})');
+      }
+    } else {
+      buffer.write(item.title);
     }
-    buffer.writeln('—');
-    buffer.writeln('Disimpan melalui *OpenTurath*');
+    if (item.author != null && item.author!.isNotEmpty) {
+      buffer.write(', karya ${item.author}');
+    }
+    buffer.writeln('.');
+    buffer.write('Disimpan melalui OpenTurath AI (${item.agentTitle}).');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Rujukan tersalin.',
+      'Sitasi standar ilmiah tersalin ke papan klip.',
     );
+  }
+
+  Future<void> _openBookmarkItem(BookmarkModel item) async {
+    if (item.id.startsWith('book_')) {
+      final editionId = item.id.replaceFirst('book_', '');
+      var books = CanonicalLibraryService.instance.cachedSyafiiBooks;
+      if (books == null) {
+        try {
+          books = await CanonicalLibraryService.instance.loadSyafiiCatalog();
+        } catch (_) {}
+      }
+      final matchedBook = books?.firstWhere(
+        (b) => b.editionId == editionId,
+        orElse: () => CanonicalBookPresentation(
+          editionId: editionId,
+          titleArabic: item.title,
+          authorArabic: item.author ?? '',
+        ),
+      );
+
+      if (matchedBook != null && mounted) {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.bookDetail,
+          arguments: matchedBook,
+        );
+        return;
+      }
+    }
+
+    _showEvidence(item);
   }
 
   void _showEvidence(BookmarkModel item) {
@@ -9305,7 +10720,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               textSecondary: textSecondary,
                               accent: accent,
                               onCopy: () => _copyIbarah(item.arabicExcerpt),
-                              onOpen: () => _showEvidence(item),
+                              onOpen: () => _openBookmarkItem(item),
                               onShare: () => _shareBookmark(item),
                               onDelete: () => _deleteBookmark(item),
                             );
@@ -9348,6 +10763,8 @@ class _BookmarkCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBookRef = item.id.startsWith('book_') || item.fieldName == 'Rujukan Kitab';
+
     return Container(
       padding: const EdgeInsets.all(OTSpacing.base),
       decoration: BoxDecoration(
@@ -9372,7 +10789,7 @@ class _BookmarkCard extends StatelessWidget {
                         borderRadius: OTRadius.chipBorder,
                       ),
                       child: Text(
-                        item.fieldName,
+                        isBookRef ? 'Rujukan Kitab' : item.fieldName,
                         style: OTTypography.captionMedium(color: accent).copyWith(
                           fontSize: 11,
                         ),
@@ -9526,15 +10943,21 @@ import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
+import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
+import '../models/bookmark_model.dart';
+import '../models/book_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
+import '../services/bookmark_service.dart';
+import '../services/canonical_library_service.dart';
 import '../services/update_service.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/evidence_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -9554,6 +10977,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   UserModel? _initialUser;
   List<AgentModel> _agents = AgentModel.defaultAgents;
+  List<BookmarkModel> _recentNotes = [];
   String? _lastOpenedAgentId;
   String _searchQuery = '';
 
@@ -9585,9 +11009,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final results = await Future.wait([
         _authService.getCurrentUserModel(),
         _agentService.getAgents(),
+        BookmarkService().getBookmarks(),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [null, AgentModel.defaultAgents],
+        onTimeout: () => [null, AgentModel.defaultAgents, <BookmarkModel>[]],
       );
 
       if (!mounted) return;
@@ -9595,6 +11020,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _lastOpenedAgentId = lastId;
         _initialUser = results[0] as UserModel?;
         _agents = results[1] as List<AgentModel>;
+        final notes = results[2] as List<BookmarkModel>;
+        _recentNotes = notes.take(3).toList();
       });
     } catch (_) {
     } finally {
@@ -9637,6 +11064,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context,
       AppRoutes.agentWebview,
       arguments: {'agent': agent, 'user': user},
+    );
+  }
+
+  Future<void> _openBookmarkItem(BookmarkModel item) async {
+    if (item.id.startsWith('book_')) {
+      final editionId = item.id.replaceFirst('book_', '');
+      var books = CanonicalLibraryService.instance.cachedSyafiiBooks;
+      if (books == null) {
+        try {
+          books = await CanonicalLibraryService.instance.loadSyafiiCatalog();
+        } catch (_) {}
+      }
+      final matchedBook = books?.firstWhere(
+        (b) => b.editionId == editionId,
+        orElse: () => CanonicalBookPresentation(
+          editionId: editionId,
+          titleArabic: item.title,
+          authorArabic: item.author ?? '',
+        ),
+      );
+
+      if (matchedBook != null && mounted) {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.bookDetail,
+          arguments: matchedBook,
+        );
+        return;
+      }
+    }
+
+    _showEvidence(item);
+  }
+
+  void _showEvidence(BookmarkModel item) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EvidenceBottomSheet(
+        citationNumber: 1,
+        bookName: item.bookReference.isNotEmpty ? item.bookReference : 'Rujukan Naskah',
+        author: item.author ?? '',
+        pageNumber: item.pageNumber,
+        category: item.fieldName,
+        arabicExcerpt: item.arabicExcerpt,
+        explanation: item.fullAnswer,
+      ),
     );
   }
 
@@ -9715,7 +11190,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Header Centered: OpenTurath (Tanpa logo, tanpa keterangan baris bawah) ──
+                    // ── 1. Header Centered: OpenTurath ──
                     Center(
                       child: Text(
                         'OpenTurath',
@@ -9728,11 +11203,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 18),
 
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
+                    // ── 2. Editorial Desk Header: Dual Date & Scholarly Greeting ──
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: border)),
+                      child: Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Row(children: [
+                          Expanded(child: Text(HijriDateUtils.formatDualDate().split(' • ').last, textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
+                          Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text('•', style: TextStyle(color: textSecondary))),
+                          Expanded(child: Text(HijriDateUtils.formatHijriOnly(), textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
+                        ]),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
                     Text(
                       user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
                       style: GoogleFonts.newsreader(
@@ -9742,21 +11231,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         color: textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 16),
 
-                    // ── 3. Announcement Carousel Card ──
-                    _DashboardAnnouncementCarousel(
-                      isDark: isDark,
-                      surface: surface,
-                      border: border,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                      accent: accent,
-                    ),
+                    const SizedBox(height: 18),
 
-                    const SizedBox(height: 16),
-
-                    // ── 4. Ergonomic Search Bar (Stadium Pill) ──
+                    // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
                       height: 48,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -9803,7 +11281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 22),
 
-                    // ── 5. Jika Sedang Mencari (Hasil Realtime) ──
+                    // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
                         'Hasil Penelusuran',
@@ -9859,7 +11337,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 6. Section: Pilih Bidang Ilmu ──
+                      // ── 6. Catatan Riset Terbaru ──
+                      _buildRecentNotesSection(
+                        context: context,
+                        notes: _recentNotes,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        accent: accent,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── 8. Section: Pilih Bidang Ilmu ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -9903,7 +11395,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 14),
 
-                      // ── 7. 2-Column Minimalist Purism Grid (6 Cards, Aspect Ratio 1.45) ──
+                      // 2-Column Minimalist Purism Grid (6 Cards, Aspect Ratio 1.45)
                       GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -9970,9 +11462,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 28),
 
-                      // ── 8. Section: Mulai Riset (Recent Research Modules) ──
+                      // ── 9. Section: Modul Riset (Specialist Modules) ──
                       Text(
-                        'Mulai Riset',
+                        'Modul Riset',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -10082,6 +11574,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             );
                           },
                         ),
+
+                      const SizedBox(height: 28),
+
+                      // ── 10. Adab & Prinsip Peneliti Turats ──
+                      _buildScholarlyAdabCard(
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── 11. Announcement Carousel (Diposisikan tenang di bawah) ──
+                      _DashboardAnnouncementCarousel(
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        accent: accent,
+                      ),
                     ],
                   ],
                 ),
@@ -10090,6 +11605,274 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildRecentNotesSection({
+    required BuildContext context,
+    required List<BookmarkModel> notes,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color accent,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'Catatan Riset Terbaru',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.2,
+                color: textPrimary,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                final shell = MainShellController.of(context);
+                if (shell != null) {
+                  shell.switchTab(2);
+                } else {
+                  Navigator.pushNamed(context, AppRoutes.bookmark);
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Lihat Semua',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (notes.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: border, width: 1.0),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.bookmark_outline_rounded, size: 22, color: textSecondary),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    'Belum ada catatan atau kutipan ibarah tersimpan. Simpan catatan naskah saat menelaah.',
+                    style: GoogleFonts.outfit(fontSize: 12.5, color: textSecondary, height: 1.4),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: notes.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, idx) {
+              final note = notes[idx];
+              final isBookRef = note.id.startsWith('book_');
+              final subtitle = note.bookReference.isNotEmpty
+                  ? '${note.bookReference}${note.pageNumber.isNotEmpty ? ' (Hal. ${note.pageNumber})' : ''}'
+                  : (note.author != null && note.author!.isNotEmpty
+                      ? '${note.author} · ${note.agentTitle}'
+                      : note.agentTitle);
+
+              return AppleInteractiveWrapper(
+                onTap: () => _openBookmarkItem(note),
+                pressedScale: 0.985,
+                hapticType: HapticFeedbackType.selection,
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                          borderRadius: BorderRadius.circular(9),
+                        ),
+                        child: Icon(
+                          isBookRef ? Icons.menu_book_rounded : Icons.bookmark_added_rounded,
+                          size: 16,
+                          color: textPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              note.title,
+                              style: GoogleFonts.outfit(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                                color: textPrimary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              subtitle,
+                              style: GoogleFonts.outfit(
+                                fontSize: 11.5,
+                                color: textSecondary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildScholarlyAdabCard({
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: border, width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.verified_outlined, size: 17, color: textPrimary),
+              const SizedBox(width: 8),
+              Text(
+                'Adab & Prinsip Peneliti Turats',
+                style: GoogleFonts.outfit(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildAdabItem(
+            number: '1',
+            title: 'Talaqqi Bersanad',
+            desc: 'AI adalah sarana komparasi dan indeksasi naskah; bukan mufti dan bukan pengganti bimbingan guru.',
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 8),
+          _buildAdabItem(
+            number: '2',
+            title: 'Ihtiyath & Verifikasi Naskah',
+            desc: 'Selalu luangkan waktu untuk membuka dan memeriksa naskah fisik primer sebelum menyimpulkan.',
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 8),
+          _buildAdabItem(
+            number: '3',
+            title: 'Amanah Ilmiah',
+            desc: 'Sertakan judul kitab, nama muallif, bab, dan nomor halaman dalam menukil ibarah.',
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+            isDark: isDark,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdabItem({
+    required String number,
+    required String title,
+    required String desc,
+    required Color textPrimary,
+    required Color textSecondary,
+    required bool isDark,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 18,
+          height: 18,
+          alignment: Alignment.center,
+          margin: const EdgeInsets.only(top: 1),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7),
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            number,
+            style: GoogleFonts.outfit(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: GoogleFonts.outfit(fontSize: 12, height: 1.4, color: textSecondary),
+              children: [
+                TextSpan(
+                  text: '$title: ',
+                  style: TextStyle(fontWeight: FontWeight.w600, color: textPrimary),
+                ),
+                TextSpan(text: desc),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -11760,6 +13543,7 @@ class _RailItem extends StatelessWidget {
 ### FLUTTER FILE: openturath_ai/lib/screens/profile_screen.dart
 ```dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -11962,20 +13746,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: textPrimary,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.info_outline_rounded, color: textPrimary),
-            onPressed: () => _showAboutModal(
-              context,
-              isDark,
-              textPrimary,
-              textSecondary,
-              surface,
-              border,
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
       ),
       body: SafeArea(
         child: StreamBuilder<UserModel?>(
@@ -12016,50 +13786,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
               physics: const BouncingScrollPhysics(),
               children: [
-                // ── Card 1: User Email & Pro Badge ──
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          email,
-                          style: GoogleFonts.outfit(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.2,
-                            color: textPrimary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white : const Color(0xFF18181B),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Text(
-                          isSubscribed ? 'Aktif' : 'Gratis',
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? const Color(0xFF18181B) : Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 2: Profile & Subscription ──
+                // ── Card 1: Akun & Status Hak Akses ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -12068,10 +13795,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Column(
                     children: [
-                      _SettingsTile(
-                        icon: Icons.person_outline_rounded,
-                        title: AppCopy.profile,
-                        subtitle: displayName,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.05),
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: Icon(Icons.person_outline_rounded, size: 22, color: textPrimary),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    displayName,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: -0.2,
+                                      color: textPrimary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    email,
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 13,
+                                      color: textSecondary,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: isSubscribed
+                                    ? (isDark ? Colors.white : const Color(0xFF18181B))
+                                    : (isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5)),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Text(
+                                isSubscribed ? 'Aktif' : 'Gratis',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: isSubscribed
+                                      ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                      : textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Divider(height: 1, color: border),
                       _SettingsTile(
@@ -12087,7 +13876,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // ── Card 3: Color Mode & Language ──
+                // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -12099,19 +13888,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ValueListenableBuilder<ThemeMode>(
                         valueListenable: AppConfig.themeNotifier,
                         builder: (context, currentMode, _) {
-                          final isCurrentDark = currentMode == ThemeMode.dark ||
-                              (currentMode == ThemeMode.system && isDark);
-                          return _SettingsTile(
-                            icon: Icons.dark_mode_outlined,
-                            title: AppCopy.appearance,
-                            subtitle: isCurrentDark ? AppCopy.modeDark : AppCopy.modeLight,
-                            trailing: Switch.adaptive(
-                              value: isCurrentDark,
-                              activeTrackColor: isDark ? Colors.white : const Color(0xFF18181B),
-                              activeThumbColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                              onChanged: (val) {
-                                AppConfig.setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
-                              },
+                          return Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.palette_outlined, size: 20, color: textSecondary),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      AppCopy.appearance,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      currentMode == ThemeMode.system
+                                          ? AppCopy.modeSystem
+                                          : currentMode == ThemeMode.dark
+                                              ? AppCopy.modeDark
+                                              : AppCopy.modeLight,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12.5,
+                                        color: textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      _buildThemeOption(
+                                        title: 'Ikuti Sistem',
+                                        icon: Icons.brightness_auto_rounded,
+                                        isSelected: currentMode == ThemeMode.system,
+                                        isDark: isDark,
+                                        textPrimary: textPrimary,
+                                        textSecondary: textSecondary,
+                                        onTap: () => AppConfig.setThemeMode(ThemeMode.system),
+                                      ),
+                                      _buildThemeOption(
+                                        title: 'Terang',
+                                        icon: Icons.light_mode_rounded,
+                                        isSelected: currentMode == ThemeMode.light,
+                                        isDark: isDark,
+                                        textPrimary: textPrimary,
+                                        textSecondary: textSecondary,
+                                        onTap: () => AppConfig.setThemeMode(ThemeMode.light),
+                                      ),
+                                      _buildThemeOption(
+                                        title: 'Gelap',
+                                        icon: Icons.dark_mode_rounded,
+                                        isSelected: currentMode == ThemeMode.dark,
+                                        isDark: isDark,
+                                        textPrimary: textPrimary,
+                                        textSecondary: textSecondary,
+                                        onTap: () => AppConfig.setThemeMode(ThemeMode.dark),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -12608,6 +14455,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ],
     );
   }
+
+  Widget _buildThemeOption({
+    required String title,
+    required IconData icon,
+    required bool isSelected,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    final activeBg = isDark ? const Color(0xFF18181B) : Colors.white;
+    final activeFg = isDark ? Colors.white : const Color(0xFF18181B);
+    final inactiveFg = textSecondary;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? activeBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(9),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 15, color: isSelected ? activeFg : inactiveFg),
+              const SizedBox(width: 6),
+              Text(
+                title,
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? activeFg : inactiveFg,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _SettingsTile extends StatelessWidget {
@@ -12818,7 +14721,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
 
     final isGeneralTab = widget.field == null;
-    final title = isGeneralTab ? 'Keilmuan' : widget.field!.name;
+    final title = isGeneralTab ? 'Asisten AI' : widget.field!.name;
     final filtered = _computeFilteredAgents();
 
     return Scaffold(
@@ -14383,15 +16286,19 @@ class BookmarkService extends ChangeNotifier {
 ### FLUTTER FILE: openturath_ai/lib/services/canonical_library_service.dart
 ```dart
 import 'package:flutter/services.dart';
+import '../core/arabic_utils.dart';
 import '../models/book_model.dart';
 
-/// Service to load, cache, and search canonical book catalogs.
+/// Service to load, cache, and search canonical book catalogs with diacritic-tolerant Arabic search.
 class CanonicalLibraryService {
   CanonicalLibraryService._();
   static final CanonicalLibraryService instance = CanonicalLibraryService._();
 
   CanonicalImport? _syafiiCatalog;
   List<CanonicalBookPresentation>? _syafiiPresentations;
+
+  /// Normalizes Arabic text by stripping diacritics and unifying letter variants.
+  static String normalizeArabic(String text) => ArabicUtils.normalize(text);
 
   /// Loads the canonical Syafi'i catalog from asset bundle.
   Future<List<CanonicalBookPresentation>> loadSyafiiCatalog() async {
@@ -14419,14 +16326,14 @@ class CanonicalLibraryService {
   /// Get parsed canonical import or null if not yet loaded.
   CanonicalImport? get rawSyafiiCatalog => _syafiiCatalog;
 
-  /// Filter books by query string (Arabic or Latin transliteration/field match).
+  /// Filter books by query string with diacritic-tolerant Arabic & Latin normalization.
   List<CanonicalBookPresentation> filterBooks(
     List<CanonicalBookPresentation> books,
     String query, {
     String? eraFilter,
     String? typeFilter,
   }) {
-    final cleanQuery = query.trim().toLowerCase();
+    final cleanQuery = query.trim();
 
     return books.where((book) {
       if (eraFilter != null && eraFilter.isNotEmpty && book.reviewedEraLabel != eraFilter) {
@@ -14438,12 +16345,12 @@ class CanonicalLibraryService {
 
       if (cleanQuery.isEmpty) return true;
 
-      final matchTitle = book.titleArabic.toLowerCase().contains(cleanQuery) ||
-          (book.titleLatin?.toLowerCase().contains(cleanQuery) ?? false);
-      final matchAuthor = book.authorArabic.toLowerCase().contains(cleanQuery) ||
-          (book.authorLatin?.toLowerCase().contains(cleanQuery) ?? false);
-      final matchPublisher = book.publisher?.toLowerCase().contains(cleanQuery) ?? false;
-      final matchMuhaqqiq = book.muhaqqiq?.toLowerCase().contains(cleanQuery) ?? false;
+      final matchTitle = ArabicUtils.matches(book.titleArabic, cleanQuery) ||
+          (book.titleLatin != null && ArabicUtils.matches(book.titleLatin!, cleanQuery));
+      final matchAuthor = ArabicUtils.matches(book.authorArabic, cleanQuery) ||
+          (book.authorLatin != null && ArabicUtils.matches(book.authorLatin!, cleanQuery));
+      final matchPublisher = book.publisher != null && ArabicUtils.matches(book.publisher!, cleanQuery);
+      final matchMuhaqqiq = book.muhaqqiq != null && ArabicUtils.matches(book.muhaqqiq!, cleanQuery);
 
       return matchTitle || matchAuthor || matchPublisher || matchMuhaqqiq;
     }).toList();
@@ -14870,6 +16777,21 @@ class SubscriptionService {
     return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
   }
 
+  static String redeemErrorMessage(String code) {
+    switch (code.toLowerCase().replaceAll('_', '-')) {
+      case 'not-found': return 'Kode akses tidak ditemukan. Periksa kembali kode yang Anda masukkan.';
+      case 'already-exists': return 'Kode ini sudah pernah Anda gunakan.';
+      case 'deadline-exceeded': return 'Kode sudah kedaluwarsa atau layanan terlalu lama merespons. Coba lagi, atau gunakan kode lain.';
+      case 'failed-precondition': return 'Kode akses ini sudah tidak aktif.';
+      case 'resource-exhausted': return 'Batas penggunaan kode atau percobaan telah tercapai. Coba lagi nanti.';
+      case 'unauthenticated': return 'Silakan masuk ke akun Anda lalu coba kembali.';
+      case 'invalid-argument': return 'Format kode belum sesuai. Periksa kembali kode Anda.';
+      case 'permission-denied': return 'Kode ini tidak dapat digunakan untuk akun Anda.';
+      case 'unavailable': return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
+      default: return 'Kode belum dapat diaktifkan. Silakan coba lagi sebentar.';
+    }
+  }
+
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
   Future<Map<String, dynamic>> redeemAccessCode(String code) async {
     try {
@@ -14882,9 +16804,9 @@ class SubscriptionService {
       }
       return {'success': true, 'message': 'Kode akses sudah aktif.'};
     } on FirebaseFunctionsException catch (e) {
-      return {'success': false, 'message': e.message ?? 'Gagal menukarkan kode akses.'};
+      return {'success': false, 'message': redeemErrorMessage(e.code)};
     } catch (e) {
-      return {'success': false, 'message': 'Terjadi kendala koneksi: $e'};
+      return {'success': false, 'message': 'Koneksi bermasalah. Periksa internet Anda lalu coba lagi.'};
     }
   }
 
@@ -15372,6 +17294,50 @@ class AppErrorState extends StatelessWidget {
     this.backLabel = 'Kembali',
   });
 
+  const AppErrorState.network({
+    super.key,
+    this.title = 'Koneksi Terputus',
+    this.message = 'Tidak dapat memuat data naskah saat ini. Periksa koneksi internet lalu coba lagi.',
+    this.icon = Icons.wifi_off_rounded,
+    this.onRetry,
+    this.retryLabel = 'Coba lagi',
+    this.onBack,
+    this.backLabel = 'Kembali',
+  });
+
+  const AppErrorState.unauthorized({
+    super.key,
+    this.title = 'Akses Dibatasi',
+    this.message = 'Sesi akun kedaluwarsa atau modul riset membutuhkan peningkatan hak akses.',
+    this.icon = Icons.lock_outline_rounded,
+    this.onRetry,
+    this.retryLabel = 'Buka Langganan',
+    this.onBack,
+    this.backLabel = 'Kembali',
+  });
+
+  const AppErrorState.empty({
+    super.key,
+    this.title = 'Naskah Tidak Ditemukan',
+    this.message = 'Tidak ada naskah atau catatan yang sesuai dengan kata kunci atau filter.',
+    this.icon = Icons.find_in_page_outlined,
+    this.onRetry,
+    this.retryLabel = 'Reset Pencarian',
+    this.onBack,
+    this.backLabel = 'Kembali',
+  });
+
+  const AppErrorState.generic({
+    super.key,
+    this.title = 'Terjadi Kendala Teknis',
+    this.message = 'Sistem mengalami kendala saat memproses telaah naskah. Silakan coba kembali sesaat lagi.',
+    this.icon = Icons.error_outline_rounded,
+    this.onRetry,
+    this.retryLabel = 'Muat Ulang',
+    this.onBack,
+    this.backLabel = 'Kembali',
+  });
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -15791,6 +17757,188 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
     }
 
     return result;
+  }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/widgets/book_row_item.dart
+```dart
+import 'package:flutter/material.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_spacing.dart';
+import '../models/book_model.dart';
+import 'apple_interactive_wrapper.dart';
+
+/// Item baris naskah kanonikal dengan tinggi adaptif, tipografi Amiri berharakat,
+/// isolasi arah baca RTL, dan target sentuh ramah Apple HIG (>= 48px).
+class BookRowItem extends StatelessWidget {
+  const BookRowItem({
+    super.key,
+    required this.book,
+    required this.onTap,
+    this.searchQuery,
+  });
+
+  final CanonicalBookPresentation book;
+  final VoidCallback onTap;
+  final String? searchQuery;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final primaryAccent = OTColors.accent(isDark);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+      child: AppleInteractiveWrapper(
+        onTap: onTap,
+        pressedScale: 0.98,
+        hapticType: HapticFeedbackType.light,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 68),
+          padding: const EdgeInsets.symmetric(
+            horizontal: OTSpacing.md,
+            vertical: OTSpacing.sm + 2,
+          ),
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: 0.8),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Leading Icon / Book Badge
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: primaryAccent.withValues(alpha: isDark ? 0.15 : 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: primaryAccent.withValues(alpha: isDark ? 0.3 : 0.2),
+                    width: 0.8,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.menu_book_rounded,
+                  size: 20,
+                  color: primaryAccent,
+                ),
+              ),
+              const SizedBox(width: OTSpacing.md),
+
+              // Title and Meta Section
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Arabic Title with RTL Isolation
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Text(
+                        book.titleArabic,
+                        textAlign: TextAlign.right,
+                        style: OTTypography.arabicReading(
+                          color: textPrimary,
+                        ).copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+
+                    // Author & Death Year
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            book.authorArabic,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: OTTypography.caption(color: textSecondary).copyWith(
+                              fontSize: 12.5,
+                            ),
+                          ),
+                        ),
+                        if (book.verifiedDeathYearHijri != null) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 1.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.06)
+                                  : Colors.black.withValues(alpha: 0.04),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'w. ${book.verifiedDeathYearHijri} H',
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+
+                    // Tags & Labels (Type, Era, Volumes)
+                    if (book.compactLabels.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: book.compactLabels.map((lbl) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: primaryAccent.withValues(alpha: isDark ? 0.12 : 0.06),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              lbl,
+                              style: OTTypography.caption(color: primaryAccent).copyWith(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 8),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: textSecondary.withValues(alpha: 0.6),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -16908,23 +19056,22 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
 import 'apple_interactive_wrapper.dart';
 
-/// Opens the Canonical Research Library as a bottom sheet.
-/// Uses [useRootNavigator: true] so it overlays cleanly over WebViews without tearing down session state.
+/// Opens the Canonical Research Library as a dedicated full-screen scholarly catalog route.
+/// Eliminates sheet-on-sheet anti-pattern per Apple HIG.
 Future<void> showResearchLibrary(
   BuildContext context, {
   AgentModel? agent,
 }) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useRootNavigator: true,
-    backgroundColor: Colors.transparent,
-    builder: (ctx) => ResearchLibrarySheet(agent: agent),
+  return Navigator.pushNamed(
+    context,
+    AppRoutes.bookCatalog,
+    arguments: agent,
   );
 }
 
@@ -16996,110 +19143,10 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
   }
 
   void _showEditionDetails(CanonicalBookPresentation book) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
-
-    showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true,
-      backgroundColor: surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(OTSpacing.lg),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppCopy.bookDetails,
-                        style: OTTypography.sectionHeading(color: textSecondary),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.close_rounded, color: textSecondary),
-                        onPressed: () => Navigator.pop(ctx),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: OTSpacing.sm),
-                  Text(
-                    book.titleArabic,
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.right,
-                    style: OTTypography.arabicReading(color: textPrimary).copyWith(
-                      fontSize: 22,
-                      height: 1.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: OTSpacing.xs),
-                  Text(
-                    book.authorArabic,
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.right,
-                    style: OTTypography.arabicReading(color: textSecondary).copyWith(
-                      fontSize: 16,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: OTSpacing.base),
-                  Divider(color: border, height: 1),
-                  const SizedBox(height: OTSpacing.base),
-                  if (book.verifiedDeathYearHijri != null)
-                    _detailRow('Tahun Wafat', '${book.verifiedDeathYearHijri} H', textPrimary, textSecondary),
-                  if (book.reviewedTypeLabel != null)
-                    _detailRow('Kategori Teks', book.reviewedTypeLabel!, textPrimary, textSecondary),
-                  if (book.reviewedEraLabel != null)
-                    _detailRow('Masa Penulisan', book.reviewedEraLabel!, textPrimary, textSecondary),
-                  if (book.volumesCount != null)
-                    _detailRow('Jumlah Jilid', '${book.volumesCount} Jilid', textPrimary, textSecondary),
-                  if (book.publisher != null && book.publisher!.isNotEmpty)
-                    _detailRow('Penerbit', book.publisher!, textPrimary, textSecondary),
-                  if (book.muhaqqiq != null && book.muhaqqiq!.isNotEmpty)
-                    _detailRow('Tahqiq / Editor', book.muhaqqiq!, textPrimary, textSecondary),
-                  _detailRow('Pengidentifikasi Edisi', book.editionId, textPrimary, textSecondary),
-                  const SizedBox(height: OTSpacing.base),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _detailRow(String label, String value, Color textPrimary, Color textSecondary) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 140,
-            child: Text(
-              label,
-              style: OTTypography.caption(color: textSecondary),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              style: OTTypography.bodyMedium(color: textPrimary),
-            ),
-          ),
-        ],
-      ),
+    Navigator.pushNamed(
+      context,
+      AppRoutes.bookDetail,
+      arguments: book,
     );
   }
 
@@ -17983,6 +20030,341 @@ class UpdateReadyBanner extends StatelessWidget {
 # BAGIAN 5: SUITE PENGUJIAN UNIT & INTEGRASI (openturath_ai/test/)
 ================================================================================
 
+### TEST FILE: openturath_ai/test/active_subscription_access_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/models/user_model.dart';
+import 'package:openturath_ai/core/constants.dart';
+
+void main() {
+  group('Active Subscription Access Verification', () {
+    final futureExpiry = DateTime.now().add(const Duration(days: 365));
+    final pastExpiry = DateTime.now().subtract(const Duration(days: 1));
+
+    test('Active subscriber with plan tholib_1m has access to all agents even with empty entitlements', () {
+      final user = UserModel(
+        uid: 'user_active_tholib',
+        name: 'Rafli Husen',
+        email: 'chenhuha135@gmail.com',
+        photoUrl: '',
+        plan: AppConstants.planTholib1m,
+        subscriptionExpiry: futureExpiry,
+        questionsUsed: 0,
+        entitlements: {},
+      );
+
+      expect(user.isPremium, isTrue);
+      expect(user.isSubscriptionActive, isTrue);
+      expect(user.hasAccess, isTrue);
+      expect(user.hasAccessToAgent('fiqh_syafii'), isTrue);
+      expect(user.hasAccessToAgent('hadits'), isTrue);
+      expect(user.hasAccessToAgent('ushul_fiqh'), isTrue);
+      expect(user.hasAccessToAgent('nahwu_sharaf'), isTrue);
+    });
+
+    test('Active subscriber with plan bahits_1y or tholib_6m has full access', () {
+      for (final planName in [AppConstants.planBahits1y, AppConstants.planTholib6m, 'sultan', 'all_ai_1m', 'full']) {
+        final user = UserModel(
+          uid: 'user_full_$planName',
+          name: 'Peneliti',
+          email: 'peneliti@example.com',
+          photoUrl: '',
+          plan: planName,
+          subscriptionExpiry: futureExpiry,
+          questionsUsed: 0,
+          entitlements: {},
+        );
+
+        expect(user.isSubscriptionActive, isTrue, reason: planName);
+        expect(user.hasAccessToAgent('fiqh_syafii'), isTrue, reason: planName);
+        expect(user.hasAccessToAgent('tafsir'), isTrue, reason: planName);
+      }
+    });
+
+    test('Active subscriber with redeem voucher code has full access', () {
+      final user = UserModel(
+        uid: 'user_redeem',
+        name: 'Santri',
+        email: 'santri@example.com',
+        photoUrl: '',
+        plan: 'redeem_1y',
+        subscriptionExpiry: futureExpiry,
+        questionsUsed: 0,
+        entitlements: {},
+      );
+
+      expect(user.isSubscriptionActive, isTrue);
+      expect(user.hasAccessToAgent('fiqh_syafii'), isTrue);
+    });
+
+    test('Expired subscriber is denied access', () {
+      final user = UserModel(
+        uid: 'user_expired',
+        name: 'Expired User',
+        email: 'expired@example.com',
+        photoUrl: '',
+        plan: AppConstants.planTholib1m,
+        subscriptionExpiry: pastExpiry,
+        questionsUsed: 0,
+        entitlements: {},
+      );
+
+      expect(user.isSubscriptionActive, isFalse);
+      expect(user.hasAccessToAgent('fiqh_syafii'), isFalse);
+    });
+
+    test('Single-module subscriber only has access to entitled module', () {
+      final user = UserModel(
+        uid: 'user_single',
+        name: 'Single User',
+        email: 'single@example.com',
+        photoUrl: '',
+        plan: 'single',
+        subscriptionExpiry: futureExpiry,
+        questionsUsed: 0,
+        entitlements: {
+          'fiqh_syafii': ModuleEntitlement(
+            plan: 'single',
+            expiry: futureExpiry,
+            status: 'active',
+          ),
+        },
+      );
+
+      expect(user.isSubscriptionActive, isTrue);
+      expect(user.hasAccessToAgent('fiqh_syafii'), isTrue);
+      expect(user.hasAccessToAgent('hadits'), isFalse);
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/application_states_test.dart
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/widgets/app_loader.dart';
+import 'package:openturath_ai/widgets/app_error_state.dart';
+import 'package:openturath_ai/models/user_model.dart';
+import 'package:openturath_ai/core/constants.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('Milestone 4: 14 Application States Verification', () {
+    testWidgets('State 2 & 3: AppLoader renders inline and fullscreen pulse states', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppLoader(
+              title: 'Menelaah Naskah...',
+              subtitle: 'Menghubungkan ke korpus kitab',
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Menelaah Naskah...'), findsOneWidget);
+      expect(find.text('Menghubungkan ke korpus kitab'), findsOneWidget);
+    });
+
+    testWidgets('State 9: AppErrorState.network renders peaceful scholarly network error', (tester) async {
+      bool retried = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AppErrorState.network(
+              onRetry: () => retried = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Koneksi Terputus'), findsOneWidget);
+      expect(find.byIcon(Icons.wifi_off_rounded), findsOneWidget);
+
+      await tester.tap(find.text('Coba lagi'));
+      expect(retried, isTrue);
+    });
+
+    testWidgets('State 10: AppErrorState.unauthorized renders locked module state', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppErrorState.unauthorized(),
+          ),
+        ),
+      );
+
+      expect(find.text('Akses Dibatasi'), findsOneWidget);
+      expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
+    });
+
+    testWidgets('State 7 & 8: AppErrorState.empty renders scholarly empty state', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppErrorState.empty(),
+          ),
+        ),
+      );
+
+      expect(find.text('Naskah Tidak Ditemukan'), findsOneWidget);
+      expect(find.byIcon(Icons.find_in_page_outlined), findsOneWidget);
+    });
+
+    testWidgets('State 11: AppErrorState.generic renders serene fallback state', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: AppErrorState.generic(),
+          ),
+        ),
+      );
+
+      expect(find.text('Terjadi Kendala Teknis'), findsOneWidget);
+      expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
+    });
+
+    test('State 13: Disabled/Locked entitlement check accurately enforces paywall', () {
+      final freeUser = UserModel(
+        uid: 'user_free',
+        name: 'Santri Pemula',
+        email: 'santri@openturath.ai',
+        photoUrl: '',
+        plan: AppConstants.planTrial,
+        questionsUsed: 50,
+      );
+
+      // Free user without entitlements does not have access to notebook agents
+      expect(freeUser.hasAccessToAgent('fiqh_muamalat'), isFalse);
+      expect(freeUser.hasAccessToAgent('fiqh_syafii'), isFalse);
+    });
+
+    test('State 12: Active selected agent entitlement check allows access for subscribed user', () {
+      final futureExpiry = DateTime.now().add(const Duration(days: 30));
+      final fullUser = UserModel(
+        uid: 'user_subscribed',
+        name: 'Kyai Peneliti',
+        email: 'kyai@openturath.ai',
+        photoUrl: '',
+        plan: 'all_access',
+        questionsUsed: 5,
+        subscriptionExpiry: futureExpiry,
+        entitlements: {
+          'all_access': ModuleEntitlement(
+            plan: 'all_access',
+            expiry: futureExpiry,
+            status: 'active',
+          ),
+        },
+      );
+
+      expect(fullUser.hasAccessToAgent('fiqh_muamalat'), isTrue);
+      expect(fullUser.hasAccessToAgent('fiqh_tahawwulat'), isTrue);
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/arabic_search_normalization_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/arabic_utils.dart';
+import 'package:openturath_ai/models/book_model.dart';
+import 'package:openturath_ai/services/canonical_library_service.dart';
+
+void main() {
+  group('Milestone 2 — Arabic Search Normalization & Scholarly Citations', () {
+    test('ArabicUtils strips all diacritics and tatweel', () {
+      const withTashkil = 'كِتَابُ الأُمِّ لِلإِمَامِ الشَّافِعِيِّ';
+      final normalized = ArabicUtils.normalize(withTashkil);
+
+      // Harakat removed and alif variants normalized to 'ا'
+      expect(normalized, isNot(contains('\u064E'))); // Fathah
+      expect(normalized, isNot(contains('\u0650'))); // Kasrah
+      expect(normalized, isNot(contains('\u064F'))); // Dammah
+      expect(normalized, isNot(contains('\u0651'))); // Shaddah
+      expect(normalized, equals('كتاب الام للامام الشافعي'));
+    });
+
+    test('ArabicUtils unifies alif variants (أ, إ, آ, ٱ -> ا)', () {
+      expect(ArabicUtils.normalize('أحمد'), equals('احمد'));
+      expect(ArabicUtils.normalize('إبراهيم'), equals('ابراهيم'));
+      expect(ArabicUtils.normalize('آدم'), equals('ادم'));
+      expect(ArabicUtils.normalize('ٱبن'), equals('ابن'));
+    });
+
+    test('ArabicUtils unifies Ta Marbuthah and Ya Makhfufah', () {
+      expect(ArabicUtils.normalize('رسالة'), equals('رساله'));
+      expect(ArabicUtils.normalize('موسى'), equals('موسي'));
+      expect(ArabicUtils.normalize('فتوى'), equals('فتوي'));
+    });
+
+    test('ArabicUtils.matches matches text with and without harakat', () {
+      const source = 'الإِمَامُ أَبُو حَامِدٍ الغَزَالِيُّ';
+      expect(ArabicUtils.matches(source, 'الغزالي'), isTrue);
+      expect(ArabicUtils.matches(source, 'أبو حامد'), isTrue);
+      expect(ArabicUtils.matches(source, 'ابو حامد'), isTrue); // Bare alif matches
+      expect(ArabicUtils.matches(source, 'الامام'), isTrue); // Bare alif matches
+    });
+
+    test('CanonicalLibraryService.filterBooks finds books with diacritic variations', () {
+      final books = [
+        const CanonicalBookPresentation(
+          editionId: 'umm',
+          titleArabic: 'كِتَابُ الأُمِّ',
+          authorArabic: 'الإِمَامُ مُحَمَّدُ بْنُ إِدْرِيسَ الشَّافِعِيُّ',
+          titleLatin: 'Kitab Al-Umm',
+          authorLatin: 'Imam Asy-Syafi\'i',
+          reviewedEraLabel: 'Mutaqaddimin',
+          reviewedTypeLabel: 'Asal Mazhab',
+          publisher: 'Darul Kutub Al-Ilmiyyah',
+          muhaqqiq: 'Dr. Rifa\'at',
+        ),
+        const CanonicalBookPresentation(
+          editionId: 'tanbih',
+          titleArabic: 'التَّنْبِيهُ فِي الفِقْهِ الشَّافِعِيِّ',
+          authorArabic: 'أَبُو إِسْحَاقَ الشِّيرَازِيُّ',
+          titleLatin: 'At-Tanbih',
+          reviewedEraLabel: 'Mutaqaddimin',
+          reviewedTypeLabel: 'Matan',
+        ),
+      ];
+
+      final service = CanonicalLibraryService.instance;
+
+      // Search with bare alif 'الام'
+      final res1 = service.filterBooks(books, 'الام');
+      expect(res1.length, equals(1));
+      expect(res1.first.editionId, equals('umm'));
+
+      // Search with unvowelled 'الشافعي'
+      final res2 = service.filterBooks(books, 'الشافعي');
+      expect(res2.length, equals(2)); // Both mention Syafi'i (author / title)
+
+      // Search with unvowelled 'الشيرازي'
+      final res3 = service.filterBooks(books, 'الشيرازي');
+      expect(res3.length, equals(1));
+      expect(res3.first.editionId, equals('tanbih'));
+
+      // Search by publisher
+      final res4 = service.filterBooks(books, 'Ilmiyyah');
+      expect(res4.length, equals(1));
+      expect(res4.first.editionId, equals('umm'));
+
+      // Search by muhaqqiq
+      final res5 = service.filterBooks(books, 'Rifa\'at');
+      expect(res5.length, equals(1));
+      expect(res5.first.editionId, equals('umm'));
+    });
+  });
+}
+
+```
+
 ### TEST FILE: openturath_ai/test/audit_auth_stream_test.dart
 ```dart
 import 'dart:async';
@@ -18196,6 +20578,111 @@ void main() {
 
 ```
 
+### TEST FILE: openturath_ai/test/book_catalog_navigation_test.dart
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/routes.dart';
+import 'package:openturath_ai/models/book_model.dart';
+import 'package:openturath_ai/screens/book_catalog_screen.dart';
+import 'package:openturath_ai/screens/book_detail_screen.dart';
+import 'package:openturath_ai/widgets/book_row_item.dart';
+
+void main() {
+  group('Milestone 1 — Book Catalog & Navigation Architecture', () {
+    final sampleBook = CanonicalBookPresentation(
+      editionId: 'kitab_al_umm_shafii',
+      titleArabic: 'كتاب الأم',
+      authorArabic: 'الإمام محمد بن إدريس الشافعي',
+      titleLatin: 'Kitab Al-Umm',
+      authorLatin: 'Imam Muhammad bin Idris Asy-Syafi\'i',
+      verifiedDeathYearHijri: 204,
+      reviewedTypeLabel: 'Asal Mazhab',
+      reviewedEraLabel: 'Mutaqaddimin',
+      publisher: 'Darul Kutub Al-Ilmiyyah',
+      muhaqqiq: 'Dr. Rifa\'at Fauzi Abdul Muthalib',
+      volumesCount: 8,
+    );
+
+    testWidgets('BookRowItem displays Arabic title in RTL and compact tags', (tester) async {
+      bool tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BookRowItem(
+              book: sampleBook,
+              onTap: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      // Verify Arabic Title and author
+      expect(find.text('كتاب الأم'), findsOneWidget);
+      expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
+      expect(find.text('w. 204 H'), findsOneWidget);
+      expect(find.text('Asal Mazhab'), findsOneWidget);
+      expect(find.text('Mutaqaddimin'), findsOneWidget);
+      expect(find.text('8 Jilid'), findsOneWidget);
+
+      // Tap the item
+      await tester.tap(find.byType(BookRowItem));
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('BookDetailScreen renders 5 scholarly metadata sections', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BookDetailScreen(book: sampleBook),
+        ),
+      );
+
+      // Card 1: Identitas Kitab
+      expect(find.text('كتاب الأم'), findsOneWidget);
+      expect(find.text('kitab_al_umm_shafii'), findsOneWidget);
+
+      // Card 2: Muallif
+      expect(find.text('MUALLIF / PENGARANG'), findsOneWidget);
+      expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
+
+      // Card 3: Klasifikasi Ilmiah
+      expect(find.text('KLASIFIKASI ILMIAH'), findsOneWidget);
+      expect(find.text('Asal Mazhab'), findsOneWidget);
+      expect(find.text('Mutaqaddimin'), findsOneWidget);
+      expect(find.text('8 Jilid'), findsOneWidget);
+
+      // Card 4: Data Edisi & Tahqiq
+      expect(find.text('DATA EDISI & TAHQIQ'), findsOneWidget);
+      expect(find.text('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
+      expect(find.text('Dr. Rifa\'at Fauzi Abdul Muthalib'), findsOneWidget);
+
+      // Card 5: Aksi Riset
+      expect(find.text('AKSI & TELAAH RISET'), findsOneWidget);
+      expect(find.text('Buka Ruang Kajian'), findsOneWidget);
+      expect(find.text('Simpan ke Catatan Riset'), findsOneWidget);
+    });
+
+    testWidgets('BookCatalogScreen displays title and search input', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: BookCatalogScreen(),
+        ),
+      );
+
+      expect(find.text('Pustaka Kitab Kanonikal'), findsOneWidget);
+      expect(find.text('87 Kitab Mazhab Syafi\'i'), findsOneWidget);
+      expect(find.text('Semua Era'), findsOneWidget);
+    });
+
+    testWidgets('AppRoutes contains bookCatalog and bookDetail', (tester) async {
+      expect(AppRoutes.bookCatalog, equals('/catalog'));
+      expect(AppRoutes.bookDetail, equals('/book_detail'));
+    });
+  });
+}
+
+```
+
 ### TEST FILE: openturath_ai/test/canonical_catalog_test.dart
 ```dart
 import 'dart:io';
@@ -18237,6 +20724,45 @@ void main() {
 
 ```
 
+### TEST FILE: openturath_ai/test/copied_answer_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:openturath_ai/core/copied_answer.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/services/bookmark_service.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+  test('Copied answer persists in Saved, keeps full text, and never crosses accounts', () async {
+    final service = BookmarkService();
+    final agent = AgentModel.defaultAgents.first;
+    final answer = copiedAnswerBookmark('Jawaban pertama\nالنص العربي', agent);
+    await service.addBookmark(answer, userId: 'alice');
+    final saved = await service.getBookmarks(userId: 'alice');
+    expect(saved.single.fullAnswer, 'Jawaban pertama\nالنص العربي');
+    expect(saved.single.agentId, agent.id);
+    expect(await service.getBookmarks(userId: 'bob'), isEmpty);
+  });
+  test('Repeated copy deduplicates but different answers and assistants stay separate', () async {
+    final service = BookmarkService();
+    final agents = AgentModel.defaultAgents;
+    for (var i = 0; i < 2; i++) {
+      await service.addBookmark(copiedAnswerBookmark('Jawaban satu', agents.first), userId: 'alice');
+    }
+    expect((await service.getBookmarks(userId: 'alice')).length, 1);
+    await service.addBookmark(copiedAnswerBookmark('Jawaban dua', agents.first), userId: 'alice');
+    await service.addBookmark(copiedAnswerBookmark('Jawaban satu', agents[1]), userId: 'alice');
+    expect((await service.getBookmarks(userId: 'alice')).length, 3);
+  });
+  test('Empty copies cannot create a saved item', () {
+    expect(() => copiedAnswerBookmark('  ', AgentModel.defaultAgents.first), throwsArgumentError);
+  });
+}
+
+```
+
 ### TEST FILE: openturath_ai/test/copywriting_test.dart
 ```dart
 import 'package:flutter_test/flutter_test.dart';
@@ -18247,7 +20773,7 @@ void main() {
   group('OpenTurath Copywriting Overhaul — Quiet Scholar Principles', () {
     test('Canonical navigation labels use concise, quiet terms', () {
       expect(AppCopy.navHome, equals('Beranda'));
-      expect(AppCopy.navStudies, equals('Kajian'));
+      expect(AppCopy.navStudies, equals('Asisten AI'));
       expect(AppCopy.navSaved, equals('Tersimpan'));
       expect(AppCopy.navSettings, equals('Pengaturan'));
     });
@@ -18335,6 +20861,87 @@ void main() {
           equals('Akun ini belum mendapat akses ke Fikih Syafi\'i. Aktifkan langganan untuk melanjutkan.'));
       expect(AppCopy.planWithAgent('Fikih Syafi\'i', '1 Bulan'),
           equals('Fikih Syafi\'i — 1 Bulan'));
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/dashboard_and_theme_restructure_test.dart
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:openturath_ai/core/app_config.dart';
+import 'package:openturath_ai/core/hijri_date_utils.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/models/bookmark_model.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  group('Milestone 3: 3-Mode Theme & Dashboard Restructuring', () {
+    test('AppConfig supports ThemeMode.system, ThemeMode.light, and ThemeMode.dark', () async {
+      await AppConfig.setThemeMode(ThemeMode.light);
+      expect(AppConfig.themeNotifier.value, ThemeMode.light);
+
+      await AppConfig.setThemeMode(ThemeMode.dark);
+      expect(AppConfig.themeNotifier.value, ThemeMode.dark);
+
+      await AppConfig.setThemeMode(ThemeMode.system);
+      expect(AppConfig.themeNotifier.value, ThemeMode.system);
+    });
+
+    test('HijriDateUtils formatDualDate produces elegant scholarly date with H and M', () {
+      final now = DateTime(2026, 9, 12);
+      final dual = HijriDateUtils.formatDualDate(now);
+      expect(dual.contains('H'), isTrue);
+      expect(dual.contains('M'), isTrue);
+      expect(dual.contains('•'), isTrue);
+      expect(dual.contains('September'), isTrue);
+      expect(dual.contains('2026'), isTrue);
+    });
+
+    test('HijriDateUtils formatHijriOnly produces valid Hijri format', () {
+      final now = DateTime(2026, 9, 12);
+      final hijriOnly = HijriDateUtils.formatHijriOnly(now);
+      expect(hijriOnly.contains('H'), isTrue);
+      expect(hijriOnly.isNotEmpty, isTrue);
+    });
+
+    test('Dashboard resume session selects matching active agent when last opened exists', () {
+      final agents = AgentModel.defaultAgents;
+      final target = agents.firstWhere((a) => a.id == 'fiqh_syafii');
+      final lastOpenedId = target.id;
+
+      final matched = agents.where((a) => a.id == lastOpenedId && a.isActive).firstOrNull;
+      expect(matched, isNotNull);
+      expect(matched!.id, 'fiqh_syafii');
+    });
+
+    test('Recent notes can store and format canonical book and ibarah citations', () {
+      final note1 = BookmarkModel(
+        id: 'book_minhaj_al_talibin',
+        title: 'منهاج الطالبين وعمدة المفتين',
+        agentId: 'fiqh_syafii',
+        agentTitle: 'Spesialis Fiqh Syafi\'i',
+        fieldName: 'Fikih',
+        fieldId: 'fiqh',
+        arabicExcerpt: 'كتاب الطهارة: يرفع الحدث وينجس الخbث بالماء المطلق',
+        fullAnswer: 'Teks asal bab Thaharah',
+        bookReference: 'Minhaj al-Talibin',
+        pageNumber: '12',
+        author: 'Imam an-Nawawi',
+        createdAt: DateTime.now(),
+      );
+
+      expect(note1.id.startsWith('book_'), isTrue);
+      expect(note1.author, 'Imam an-Nawawi');
+      expect(note1.bookReference, 'Minhaj al-Talibin');
     });
   });
 }
@@ -19206,6 +21813,34 @@ void main() {
       expect(restored.arabicExcerpt, equals('الْأُمُورُ بِمَقَاصِدِهَا'));
       expect(restored.fieldId, equals('fiqh'));
     });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/ui_copy_regression_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/services/subscription_service.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/core/app_copy.dart';
+
+void main() {
+  test('Voucher errors remain natural even for uppercase transport codes', () {
+    expect(SubscriptionService.redeemErrorMessage('NOT_FOUND'), contains('Kode akses tidak ditemukan'));
+    expect(SubscriptionService.redeemErrorMessage('INTERNAL'), isNot(contains('INTERNAL')));
+    expect(SubscriptionService.redeemErrorMessage('already-exists'), contains('sudah pernah'));
+    expect(SubscriptionService.redeemErrorMessage('unauthenticated'), contains('masuk'));
+  });
+  test('All assistant titles identify AI without changing entitlement IDs', () {
+    for (final agent in AgentModel.defaultAgents) {
+      expect(agent.title, startsWith('AI '));
+      expect(agent.id, isNot(startsWith('AI ')));
+    }
+  });
+  test('Conversation loading and menu describe their actions', () {
+    expect(AppCopy.loadingReferences, 'Menyiapkan percakapan AI...');
+    expect(AppCopy.studyOptions, 'Menu percakapan');
   });
 }
 
