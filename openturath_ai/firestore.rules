@@ -35,7 +35,7 @@ service cloud.firestore {
         && request.resource.data.pending_deletion == true;
 
       // DELETE: Pengguna boleh menghapus datanya sendiri
-      allow delete: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
 
       // Sub-koleksi chat / conversations milik user
       match /conversations/{convId} {
