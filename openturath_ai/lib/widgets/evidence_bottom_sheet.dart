@@ -47,13 +47,13 @@ class EvidenceBottomSheet extends StatelessWidget {
 
   void _copyIbarah(BuildContext context) {
     Clipboard.setData(ClipboardData(text: arabicExcerpt));
-    AppSnackBar.success(context, 'Teks disalin');
+    AppSnackBar.success(context, 'Ibarah tersalin.');
   }
 
   void _shareEvidence(BuildContext context) {
     final buffer = StringBuffer();
     buffer.writeln('📖 *Rujukan Ilmiah: $bookName*');
-    buffer.writeln('Musannif/Pengarang: $author');
+    buffer.writeln('Pengarang: $author');
     buffer.writeln('Disiplin: $category | Halaman: $pageNumber');
     buffer.writeln();
     if (arabicExcerpt.isNotEmpty) {
@@ -70,7 +70,7 @@ class EvidenceBottomSheet extends StatelessWidget {
     buffer.writeln('Disimpan melalui *OpenTurath*');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
-    AppSnackBar.success(context, 'Sitasi disalin');
+    AppSnackBar.success(context, 'Sitasi rujukan tersalin.');
   }
 
   Widget _stagger(int index, Widget child) {
@@ -144,7 +144,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         Icon(Icons.menu_book_rounded, size: 20, color: accent),
                         const SizedBox(width: 8),
                         Text(
-                          'Sumber $citationNumber',
+                          'Ibarah & rujukan',
                           style: GoogleFonts.outfit(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
@@ -201,7 +201,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Penulis', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                Text('Pengarang', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
                                 Flexible(
                                   child: Text(
                                     author,
@@ -232,7 +232,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Kategori', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                Text('Disiplin', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
                                 Text(
                                   category,
                                   style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
@@ -257,7 +257,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                               Icon(Icons.format_quote_rounded, size: 18, color: accent),
                               const SizedBox(width: 6),
                               Text(
-                                'Kutipan Ibarah Asli (Arab)',
+                                'Naskah ibarah asli',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -309,7 +309,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Intisari & Analisis Kontekstual',
+                            'Intisari & penjelasan',
                             style: GoogleFonts.outfit(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -340,7 +340,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: OutlinedButton.icon(
                               onPressed: () => _copyIbarah(context),
                               icon: const Icon(Icons.copy_rounded, size: 16),
-                              label: const Text('Salin Teks'),
+                              label: const Text('Salin ibarah'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: accent,
                                 side: BorderSide(color: accent.withValues(alpha: 0.6)),
@@ -360,7 +360,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: FilledButton.icon(
                               onPressed: () => _launchExternal(context),
                               icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                              label: const Text('Cari di Syamilah'),
+                              label: const Text('Buka di Maktabah Syamilah'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: accent,
                                 foregroundColor: isDark
@@ -381,7 +381,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           IconButton.filledTonal(
                             onPressed: () => _shareEvidence(context),
                             icon: const Icon(Icons.share_outlined, size: 18),
-                            tooltip: 'Salin sitasi',
+                            tooltip: 'Salin rujukan ilmiah',
                             style: IconButton.styleFrom(
                               padding: const EdgeInsets.all(13),
                               shape: RoundedRectangleBorder(

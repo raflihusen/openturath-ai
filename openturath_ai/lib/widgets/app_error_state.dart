@@ -26,8 +26,8 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState.network({
     super.key,
-    this.title = 'Koneksi Terputus',
-    this.message = 'Tidak dapat memuat data naskah saat ini. Periksa koneksi internet lalu coba lagi.',
+    this.title = 'Koneksi terputus',
+    this.message = 'Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -37,33 +37,33 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState.unauthorized({
     super.key,
-    this.title = 'Akses Dibatasi',
-    this.message = 'Sesi akun kedaluwarsa atau modul riset membutuhkan peningkatan hak akses.',
+    this.title = 'Akses dibatasi',
+    this.message = 'Sesi akun kedaluwarsa atau modul telaah membutuhkan paket langganan aktif.',
     this.icon = Icons.lock_outline_rounded,
     this.onRetry,
-    this.retryLabel = 'Buka Langganan',
+    this.retryLabel = 'Lihat paket langganan',
     this.onBack,
     this.backLabel = 'Kembali',
   });
 
   const AppErrorState.empty({
     super.key,
-    this.title = 'Naskah Tidak Ditemukan',
-    this.message = 'Tidak ada naskah atau catatan yang sesuai dengan kata kunci atau filter.',
+    this.title = 'Rujukan tidak ditemukan',
+    this.message = 'Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.',
     this.icon = Icons.find_in_page_outlined,
     this.onRetry,
-    this.retryLabel = 'Reset Pencarian',
+    this.retryLabel = 'Atur ulang pencarian',
     this.onBack,
     this.backLabel = 'Kembali',
   });
 
   const AppErrorState.generic({
     super.key,
-    this.title = 'Terjadi Kendala Teknis',
-    this.message = 'Sistem mengalami kendala saat memproses telaah naskah. Silakan coba kembali sesaat lagi.',
+    this.title = 'Terjadi kendala teknis',
+    this.message = 'Sistem mengalami kendala saat memproses telaah. Silakan coba kembali beberapa saat lagi.',
     this.icon = Icons.error_outline_rounded,
     this.onRetry,
-    this.retryLabel = 'Muat Ulang',
+    this.retryLabel = 'Muat ulang',
     this.onBack,
     this.backLabel = 'Kembali',
   });

@@ -185,7 +185,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Cari judul, pengarang, penerbit, atau tahqiq...',
+                    hintText: 'Cari judul, pengarang, penerbit, atau tahkik...',
                     hintStyle: OTTypography.caption(color: textSecondary),
                     prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
