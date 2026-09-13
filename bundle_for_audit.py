@@ -6,22 +6,22 @@ output_txt = os.path.join(base_dir, 'OPENTURATH_AI_MASTER_AUDIT_PACK.txt')
 
 sections = []
 
-header = """# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.21+22)
+header = """# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.23+24)
 # ==============================================================================
-# PERHATIAN UNTUK AI AUDITOR (CLAUDE / CHATGPT / GEMINI):
+# PERHATIAN UNTUK AI AUDITOR (CLAUDE / CHATGPT / GEMINI / DEEPSEEK):
 # Dokumen ini adalah SATU KESATUAN BERKAS TUNGGAL (SINGLE MONOLITHIC AUDIT PACK)
 # yang memuat seluruh instrumen audit, spesifikasi arsitektur, dan seluruh
-# kode sumber resmi aplikasi OpenTurath AI tanpa ada yang dipotong:
+# kode sumber resmi aplikasi OpenTurath AI / Maktabah AI tanpa ada yang dipotong:
 #
-#   BAGIAN 1: INSTRUKSI & MASTER PROMPT AUDIT FORENSIK 360° (7 PILAR AUDIT)
+#   BAGIAN 1: INSTRUKSI & MASTER PROMPT AUDIT FORENSIK 360° (8 PILAR AUDIT)
 #   BAGIAN 2: DOKUMENTASI KONTEKS PROYEK & ATURAN KERJA
 #   BAGIAN 3: KEAMANAN DATABASE (firestore.rules) & BACKEND (functions/src/index.ts)
-#   BAGIAN 4: SELURUH BASIS KODE SUMBER FLUTTER (52 berkas lengkap di openturath_ai/lib/)
-#   BAGIAN 5: SUITE PENGUJIAN UNIT & INTEGRASI (8 berkas lengkap di openturath_ai/test/)
+#   BAGIAN 4: SELURUH BASIS KODE SUMBER FLUTTER (lengkap di openturath_ai/lib/)
+#   BAGIAN 5: SUITE PENGUJIAN UNIT & INTEGRASI (lengkap di openturath_ai/test/)
 #
 # TUGAS ANDA:
 # Pelajari seluruh arsitektur dan baris kode pada Bagian 2 sampai Bagian 5,
-# kemudian hasilkan Laporan Audit Forensik 360° sesuai 5 format output yang
+# kemudian hasilkan Laporan Audit Forensik 360° sesuai format output yang
 # diinstruksikan pada Bagian 1 di bawah ini.
 # ==============================================================================
 
@@ -29,68 +29,66 @@ header = """# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.21+22)
 
 ### 1. PERAN & SIKAP AUDITOR
 Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dari:
-1. **Principal Mobile & Flutter Architect** (Spesialis optimasi performa, siklus hidup memori, arsitektur reaktif, dan pencegahan resource leak).
-2. **Principal Cloud Security & FinTech Systems Auditor** (Spesialis keamanan transaksi, idempotensi webhook, aturan keamanan Firestore, dan proteksi otentikasi).
+1. **Principal Mobile & Flutter Architect** (Spesialis optimasi performa 60/120 FPS, siklus hidup memori, arsitektur reaktif, dan pencegahan resource leak).
+2. **Principal Cloud Security & FinTech Systems Auditor** (Spesialis keamanan transaksi, idempotensi webhook, aturan keamanan Firestore, proteksi anti-abuse voucher, dan isolasi identitas perangkat).
 3. **Staff Product Designer & Ergonomist** (Standar produk kelas dunia setara Apple, Linear, Readwise, dan Notion; spesialis "Minimalist Purism").
-4. **Chief Islamic Scholarship Editor & Pakar Turats** (Menjaga adab ilmiah, sanad naskah, ketepatan marja' mu'tamad, dan membasmi bahasa buatan bot / anti-AI slop).
+4. **Chief Islamic Scholarship Editor & Pakar Turats** (Menjaga adab ilmiah, sanad naskah, ketepatan marja' mu'tamad, khat Arab Naskh klasik, dan membasmi bahasa buatan bot / anti-AI slop).
 
-> **PRINSIP AUDIT:** Bersikaplah objektif, kritis, jujur tanpa basa-basi (*brutally honest*), dan jangan tutupi kelemahan apa pun. Tugas Anda adalah menemukan bug tersembunyi, celah keamanan, kelemahan ergonomi, inkonsistensi arsitektur, dan bahasa yang kaku di seluruh basis kode proyek.
+> **PRINSIP AUDIT:** Bersikaplah objektif, kritis, jujur tanpa basa-basi (*brutally honest*), dan jangan tutupi kelemahan apa pun. Tugas Anda adalah membongkar bug tersembunyi, celah keamanan, kelemahan ergonomi, inkonsistensi arsitektur, potensi crash, dan bahasa kaku di seluruh basis kode proyek.
 
 ---
 
 ### 2. KONTEKS PROYEK & SUMBER DAYA
-- **Nama Proyek:** OpenTurath AI (v1.0.21+22)
+- **Nama Entitas & Produk:** OpenTurath (Induk Lembaga) & Maktabah AI (Aplikasi Meja Telaah Kitab).
+- **Versi Rilis Terkini:** v1.0.23+24
 - **Karakter Produk:** Meja Telaah Digital (*Scholarly Research Desk*) naskah primer kitab kuning (turats) berbasis RAG engine Google NotebookLM untuk kalangan santri, asatidz, dan peneliti akademis.
-- **Basis Kode Terlampir:** Seluruh dokumen arsitektur, aturan keamanan, backend Cloud Functions, seluruh kode Flutter (52 berkas), dan suite pengujian unit telah **TERLAMPIR LENGKAP PADA BAGIAN 2 SAMPAI BAGIAN 5 DI BAWAH INI**.
-- **Dokumen Referensi Kunci dalam Berkas Ini:**
-  - `PROJECT_HANDOVER.md` (Konteks status terkini & katalog harga tunggal).
-  - `AGENTS.md` (Protokol ketat pengerjaan & aturan git).
-  - `canonical_syafii.json` (Katalog 89 kitab mu'tamad Mazhab Syafi'i).
-  - `openturath_ai/lib/` (Seluruh layer antarmuka dan logika Flutter).
-  - `openturath_ai/functions/src/index.ts` (Backend Cloud Functions & webhook DOKU).
-  - `openturath_ai/firestore.rules` (Aturan keamanan database NoSQL).
+- **Basis Kode Terlampir:** Seluruh dokumen arsitektur, aturan keamanan, backend Cloud Functions, seluruh kode Flutter (`openturath_ai/lib/`), dan suite pengujian unit (`openturath_ai/test/`) telah **TERLAMPIR LENGKAP PADA BAGIAN 2 SAMPAI BAGIAN 5 DI BAWAH INI**.
 
 ---
 
-### 3. TUJUH PILAR AUDIT YANG WAJIB ANDA BEDAH
+### 3. DELAPAN PILAR AUDIT YANG WAJIB ANDA BEDAH
 
-#### PILAR 1: Ergonomi UI/UX & Desain "Minimalist Purism"
-1. **Pembersihan Visual & Clutter**: Evaluasi konsistensi prinsip *minimalist purism* (tanpa logo grafis berlebih, tanpa ikon kotak warna-warni yang mengganggu fokus telaah, tanpa teks deskripsi yang membuat layar penuh sesak).
-2. **Hierarki Tipografi**: Periksa penerapan 3 lapis font:
+#### PILAR 1: Concurrency, Re-entrancy & Anti-Lag Navigation Guard
+1. **Single-Flight Navigation Guard**: Analisis implementasi `NavigationGuard.safePushNamed` di `lib/core/navigation_guard.dart`. Apakah ada skenario ekstrem di mana navigasi tetap bisa tembus (bypass) saat async timeout, exception, atau navigasi bersarang?
+2. **Asynchronous Tap Debounce**: Periksa seluruh layar (`ProfileScreen`, `SpecialistListScreen`, `DashboardScreen`, `AgentWebviewScreen`, `BookDetailScreen`). Apakah semua aksi tombol (terutama langganan, checkout, bookmark, dan pergantian tab) terlindung dari multiple rapid taps saat HP mengalami frame drop / lag jaringan?
+3. **Penyimpanan Status Bersama (Session Concurrency)**: Audit `AgentSessionManager`. Apakah pembukaan tab yang bersamaan dapat memicu race condition pada urutan tab atau state WebView?
+
+#### PILAR 2: Animasi "Fathul Kitab", Ergonomi UI/UX & Desain "Minimalist Purism"
+1. **Koreografi Buka-Tutup Ruang AI**: Periksa implementasi `AnimationController` (380ms `Curves.fastOutSlowIn`, 300ms `Curves.easeInOutCubic`) di `MainShellScreen`. Apakah sinkronisasi antara backdrop dimmer, depth scale (0.975), dan slide transition benar-benar mulus di 60/120 FPS tanpa frame drop?
+2. **Predictive Back Navigation (`PopScope`)**: Uji penanganan tombol kembali di Android. Apakah ada kondisi di mana menekan tombol kembali saat ruang AI terbuka malah menutup aplikasi secara tidak sengaja?
+3. **Pembersihan Visual & Clutter**: Evaluasi konsistensi prinsip *minimalist purism* (tanpa logo grafis berlebih, tanpa ikon kotak warna-warni yang mengganggu fokus telaah, tanpa teks deskripsi yang membuat layar penuh sesak).
+4. **Hierarki Tipografi 3 Lapis**:
    - *Newsreader* (Serif): Judul korpus, brand, dan aksen editorial.
    - *Outfit* (Sans): UI, navigasi, tombol, metadata.
-   - *Amiri* (Arabic): Teks Arab naskah asli (keterbacaan harakat, line-height 1.6–1.8, RTL).
-3. **Ergonomi Input & Formulir**: Pastikan tidak ada "border dalam border" pada bilah pencarian stadium pill saat fokus aktif, serta pastikan kontras warna memenuhi standar WCAG AA (minimal 4.5:1 untuk teks normal).
-4. **Mikro-Interaksi & Transisi Animasi**: Evaluasi kehalusan transisi antar layar dan tab navigasi (`PageView` kurva `Curves.easeOutCubic`), serta umpan balik taktil pegas (`AppleInteractiveWrapper`).
+   - *Scheherazade New* (Khat Naskh Klasik): Teks Arab naskah asli (keterbacaan harakat, penataan margin, Directionality RTL murni).
 
-#### PILAR 2: Arsitektur Flutter, State Lifecycle & Performa Memori
-1. **Pencegahan Memory Leak**: Periksa apakah ada `TextEditingController`, `PageController`, `AnimationController`, `Timer`, atau listener `StreamSubscription` yang tidak di-dispose dengan aman pada blok `try...finally`.
-2. **Rekonstruksi Widget (Rebuild Optimization)**: Audit penggunaan `setState`, `ValueListenableBuilder`, dan `ChangeNotifier` (`BookmarkService`, `AppConfig`). Apakah ada rebuild berlebih (*unnecessary tree rebuild*) pada daftar scroll panjang?
-3. **List Virtualization**: Pastikan seluruh list dinamis menggunakan `.builder` atau `.separated` dengan `shrinkWrap: true` yang tidak memicu lag rendering GPU.
+#### PILAR 3: Arsitektur Flutter, State Lifecycle & Performa Memori
+1. **Pencegahan Memory Leak**: Periksa apakah ada `TextEditingController`, `PageController`, `AnimationController`, `Timer`, atau listener `StreamSubscription` yang tidak di-dispose dengan aman.
+2. **Zero-Reload WebView**: Periksa apakah `const AgentMultiTabRoom()` diikat dengan benar pada `AnimatedBuilder` sehingga native WebView tidak pernah di-destroy atau reload saat ruang AI dibuka/ditutup.
+3. **Rekonstruksi Widget (Rebuild Optimization)**: Audit penggunaan `setState`, `ListenableBuilder`, dan `ChangeNotifier`. Apakah ada rebuild berlebih (*unnecessary tree rebuild*) pada scroll list panjang atau saat tema berubah?
 
-#### PILAR 3: Keamanan Cloud Functions, Transaksi Finansial (DOKU) & Hak Akses
+#### PILAR 4: Keamanan Cloud Functions, Transaksi Finansial (DOKU) & Hak Akses
 1. **Idempotensi Webhook & Anti-Replay**: Analisis `processSuccessfulPayment` di `functions/src/index.ts`. Apakah ada celah transaksi ganda jika webhook DOKU ditembak berulang kali secara simultan?
 2. **Atomisitas Firestore**: Verifikasi bahwa pembaruan status transaksi, aktivasi hak akses (`entitlements`), dan pencatatan outbox dijalankan dalam satu `db.runTransaction` atomik.
-3. **Decoupling Identitas Akun**: Pastikan email yang dimasukkan saat pembayaran DOKU tidak pernah menimpa UID atau email autentikasi Firebase pengguna.
-4. **Sistem Kode Redeem (Voucher)**: Audit logika `redeemCode`. Apakah tahan terhadap serangan *brute force*, race condition klaim ganda, atau penipuan durasi kedaluwarsa?
-5. **Kepatuhan Firestore Rules (`firestore.rules`)**: Uji apakah pengguna biasa dapat memodifikasi koleksi `entitlements`, `transactions`, atau `provisioning_outbox` secara ilegal dari client SDK.
+3. **Proteksi Multi-Akun Kode Redeem (Device Fingerprinting)**: Audit implementasi pembatasan voucher 1 klaim per perangkat fisik via SHA-256 salted hash di `DeviceService` dan `functions/src/index.ts`. Apakah ada celah pemalsuan fingerprint atau bypass via emulator?
+4. **Kepatuhan Firestore Rules (`firestore.rules`)**: Uji apakah pengguna biasa dapat memodifikasi koleksi `entitlements`, `transactions`, `device_redemptions`, atau `provisioning_outbox` secara ilegal dari client SDK.
 
-#### PILAR 4: Isolasi WebView, Kontainerisasi RAG & Anti-Disclaimer
-1. **Scrubbing Disclaimer Google/Gemini**: Evaluasi efektivitas injeksi CSS dan script JavaScript DOM cleaner dalam menyembunyikan teks disclaimer (*"Gemini may display inaccurate info..."*, *"NotebookLM can be inaccurate"*, *"can make mistakes"*, header Google, logo bar, dsb.). Apakah script ini tahan terhadap mutasi DOM asinkron?
-2. **Pencegahan Compound Font Explosion**: Periksa fungsi zoom teks `applyTurathFontScale`. Apakah perkalian font stabil atau memicu lonjakan ukuran eksponensial pada elemen bersarang?
+#### PILAR 5: Isolasi WebView, Native Dark Mode & RAG Engine Stability
+1. **Native Dark Mode Integration**: Evaluasi efektivitas injeksi CSS dan script JavaScript DOM `applyOtTheme(isDark)` pada `notebook_ui_script.dart` serta pengaturan engine `forceDark: ForceDark.ON`. Apakah ada kebocoran kontras putih (#FFFFFF) saat tema gelap aktif?
+2. **Scrubbing Disclaimer Google/Gemini**: Evaluasi script JavaScript DOM cleaner dalam menyembunyikan disclaimer Google (*"Gemini may display inaccurate info..."*, header bar, logo bar, dsb.). Apakah script ini tahan terhadap mutasi DOM asinkron dari Google NotebookLM?
 3. **Keamanan URL & Redirection Guard**: Pastikan `shouldOverrideUrlLoading` memblokir redirect keluar yang tidak sah tanpa merusak alur autentikasi resmi akun Google atau sesi NotebookLM.
 
-#### PILAR 5: Anti-AI Slop, Copywriting Ilmiah & Adab Turats
-1. **Pembasmian Bahasa Robotik / Generik**: Cari kalimat-kalimat klise hasil generate AI yang kaku, bertele-tele, atau terasa palsu.
-2. **Register Bahasa Santri Akademis**: Pastikan seluruh teks navigasi, pesan kesalahan (*AppSnackBar*), dialog langganan, dan empty state menggunakan bahasa Indonesia yang **tenang, ringkas, berwibawa, ilmiah, dan beradab** (misal: menghargai tradisi sanad talaqqi dan kehati-hatian/ihtiyath ilmiah).
+#### PILAR 6: Adab Turats, Bahasa Fusha & Anti-AI Slop
+1. **Layar Tentang Kitab Full Bahasa Arab**: Audit `book_detail_screen.dart`. Apakah istilah turats baku (`بطاقة الكتاب`, `متن معتمد`, `شرح`, `حاشية`, `عصر المتقدمين`) dan tata letak RTL murni telah diterapkan secara sempurna tanpa ada teks latin yang janggal?
+2. **Pembasmian Bahasa Robotik / Generik**: Cari kalimat-kalimat klise hasil generate AI yang kaku, bertele-tele, atau terasa palsu. Seluruh copywriting harus berwibawa, tenang, dan santun.
 
-#### PILAR 6: Ketahanan Offline, Penanganan Error & Kepatuhan Platform
-1. **Resiliensi Jaringan**: Bagaimana aplikasi merespons kegagalan koneksi saat membuka WebView, memuat daftar spesialis, atau mengecek status langganan? Apakah in-memory cache dan fallback lokal berfungsi optimal?
+#### PILAR 7: Ketahanan Offline, Penanganan Error & Kepatuhan Platform
+1. **Resiliensi Jaringan & Timeout**: Bagaimana aplikasi merespons kegagalan koneksi saat membuka WebView, memuat daftar spesialis, atau mengecek status langganan? Apakah in-memory cache dan fallback lokal berfungsi optimal?
 2. **Kepatuhan Google Play (Account Deletion Protocol)**: Audit alur `AuthService.deleteAccount()`. Apakah proses menghapus akun Auth Firebase dilakukan sebelum data Firestore dibersihkan untuk mencegah data terhapus saat terjadi error `requires-recent-login`?
-3. **Karantina Data Korup**: Pada `BookmarkService`, apakah kegagalan parsing JSON mengarantina data yang rusak atau langsung menghapus seluruh bookmark pengguna?
+3. **Standarisasi Email Kontak**: Pastikan seluruh rujukan email bantuan dan refund konsisten ke `openturath@gmail.com`.
 
-#### PILAR 7: Validasi Unit Test & Boundary Coverage
-1. **Analisis Suite Pengujian**: Tinjau berkas-berkas di `test/` (51 test case). Apakah tes tersebut menguji batas logika nyata (*boundary conditions*, *leap years*, *clamped month-ends*, *token expiration*) atau hanya *mock assertions* dangkal?
+#### PILAR 8: Validasi Unit Test & Boundary Coverage
+1. **Analisis Suite Pengujian**: Tinjau berkas-berkas di `openturath_ai/test/` (129 unit tests). Apakah pengujian mencakup batas logika nyata (*boundary conditions*, *leap years 29 Feb*, *clamped month-ends*, *concurrent double tap*, *device binding*, *arabic search diacritics*)?
 2. **Area Tanpa Tes (Blind Spots)**: Identifikasi fungsi kritis apa saja yang belum memiliki cakupan unit test.
 
 ---
@@ -100,13 +98,13 @@ Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dar
 Sajikan hasil audit secara terstruktur dan mendalam dengan sistematika berikut:
 
 #### 1. EXECUTIVE SCORECARD (Rapor 360°)
-Berikan nilai (A / B / C / D / F) beserta ringkasan temuan kunci untuk masing-masing dari 7 pilar di atas.
+Berikan nilai (A / B / C / D / F) beserta ringkasan temuan kunci untuk masing-masing dari 8 pilar di atas.
 
 #### 2. INVENTARISASI DEFECT & TEMUAN BUG (Tabel P0 – P3)
 Kelompokkan temuan dengan format tabel:
 - **Tingkat Keparahan:**
   - **P0 (Critical/Fatal):** Kebocoran keamanan, transaksi rusak, crash fatal, atau hak akses bocor.
-  - **P1 (High):** Fitur utama tidak berjalan sebagaimana mestinya, memory leak, atau inkonsistensi status.
+  - **P1 (High):** Fitur utama tidak berjalan sebagaimana mestinya, memory leak, atau inkonsistensi status navigasi.
   - **P2 (Medium):** Masalah visual, animasi tersendat, border ganda, atau ketidaknyamanan ergonomis.
   - **P3 (Low):** Ketidakrapian kode, komentar usang, atau ketidakseragaman minor.
 - **Kolom Tabel:** `ID Temuan` | `Tingkat (P0-P3)` | `Pilar Terkait` | `Nama File & No. Baris` | `Deskripsi Masalah & Dampak`
