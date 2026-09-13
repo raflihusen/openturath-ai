@@ -156,6 +156,7 @@ class CanonicalBookPresentation {
     this.printYear,
     this.volumesDescription,
     this.volumesCount,
+    this.pagesDescription,
   });
 
   final String editionId, titleArabic, authorArabic;
@@ -169,15 +170,18 @@ class CanonicalBookPresentation {
   final String? printYear;
   final String? volumesDescription;
   final int? volumesCount;
+  final String? pagesDescription;
 
   List<String> get compactLabels => [
         if (sectionArabic != null && sectionArabic!.isNotEmpty) sectionArabic!,
         if (volumesDescription != null && volumesDescription!.isNotEmpty)
-          (volumesDescription!.length <= 22
+          (volumesDescription!.contains('جزء') || volumesDescription!.contains('مجلد') || volumesDescription!.contains('Jilid')
               ? volumesDescription!
-              : (volumesCount != null && volumesCount! > 0 ? '$volumesCount Jilid' : ''))
+              : '$volumesDescription Jilid')
         else if (volumesCount != null && volumesCount! > 1)
           '$volumesCount Jilid',
+        if (pagesDescription != null && pagesDescription!.isNotEmpty && pagesDescription != '-')
+          '$pagesDescription Hlm',
         if (verifiedDeathYearHijri != null && verifiedDeathYearHijri! > 0)
           'ت $verifiedDeathYearHijri هـ',
         if (reviewedTypeLabel != null) reviewedTypeLabel!,
@@ -212,6 +216,7 @@ class CanonicalBookPresentation {
       }
     }
 
+    final rawPages = clean(json['عدد_الصفحات']);
     final fullTitle = (json['الكتاب'] ?? json['full_title'] ?? '').toString().trim();
     final shortTitle = clean(json['الاسم_المختصر'] ?? json['canonical_short_title']);
     final author = (json['المؤلف'] ?? json['author_canonical'] ?? json['author_full'] ?? '').toString().trim();
@@ -233,6 +238,7 @@ class CanonicalBookPresentation {
       printYear: printYear,
       volumesDescription: rawVolumes,
       volumesCount: volCount,
+      pagesDescription: rawPages,
     );
   }
 
