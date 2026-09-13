@@ -288,7 +288,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: GoogleFonts.amiri(
+                              style: GoogleFonts.scheherazadeNew(
                                 fontSize: 19,
                                 fontWeight: FontWeight.bold,
                                 height: 1.7,

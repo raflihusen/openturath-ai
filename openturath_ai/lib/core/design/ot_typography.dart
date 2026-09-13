@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// OpenTurath Design System v2 — Typography (3-Layer Strict Architecture)
 /// 1. Brand Layer: Editorial Serif (hanya untuk Brand, Editorial Hero, dan Judul Korpus)
 /// 2. Interface Layer: Clean Sans (untuk tombol, navigasi, pengaturan, formulir, metadata, harga)
-/// 3. Arabic Scholarly Layer: Amiri (teks Arab dengan line-height longgar, perataan RTL)
+/// 3. Arabic Scholarly Layer: Scheherazade New (Naskh klasik, tanpa Amiri)
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
@@ -62,7 +62,7 @@ class OTTypography {
     );
   }
 
-  static TextStyle _amiri({
+  static TextStyle _scheherazade({
     required double fontSize,
     FontWeight? fontWeight,
     double? letterSpacing,
@@ -71,7 +71,7 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: 'Amiri',
+        fontFamily: 'Scheherazade New',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
@@ -79,7 +79,7 @@ class OTTypography {
         color: color,
       );
     }
-    return GoogleFonts.amiri(
+    return GoogleFonts.scheherazadeNew(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -174,22 +174,22 @@ class OTTypography {
         color: color,
       );
 
-  // ── 3. Arabic Scholarly Layer (Amiri) ──
-  static TextStyle arabicDisplay({Color? color}) => _amiri(
+  // ── 3. Arabic Scholarly Layer (Scheherazade New) ──
+  static TextStyle arabicDisplay({Color? color}) => _scheherazade(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         height: 1.6,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color}) => _amiri(
+  static TextStyle arabicReading({Color? color}) => _scheherazade(
         fontSize: 19,
         fontWeight: FontWeight.w500,
         height: 1.75,
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color}) => _amiri(
+  static TextStyle arabicQuote({Color? color}) => _scheherazade(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         height: 1.8,

@@ -91,38 +91,40 @@ Sistem tipografi OpenTurath membagi hierarki teks ke dalam 3 lapisan fungsional 
 │ 2. INTERFACE LAYER               (Outfit Sans)              │
 │    Digunakan untuk Tombol, Input, Metadata, Navigasi, Angka │
 ├─────────────────────────────────────────────────────────────┤
-│ 3. ARABIC SCHOLARLY LAYER        (Amiri Naskh)              │
+│ 3. ARABIC SCHOLARLY LAYER        (Scheherazade New Naskh)   │
 │    Digunakan untuk Matan, Kutipan Ibarah, Teks Arab Kitab   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### 1. Brand & Editorial Layer (`Newsreader`)
 Memberikan sentuhan penerbitan buku literatur klasik dan percetakan ilmiah terkemuka.
-- **Brand Wordmark**: `Newsreader`, 21-22px, `FontWeight.w600`, `letterSpacing: -0.4`.
-- **Editorial Hero**: `Newsreader`, 26px, `FontWeight.w600`, `letterSpacing: -0.5`, `height: 1.25`.
-- **Corpus Title**: `Newsreader`, 18px, `FontWeight.w600`, `letterSpacing: -0.2`.
+- **Brand Logo**: `Newsreader`, 22px, `FontWeight.w600`, `letterSpacing: -0.4`.
+- **Editorial Hero**: `Newsreader`, 26px, `FontWeight.w600`, `letterSpacing: -0.5`.
+- **Editorial Title**: `Newsreader`, 20px, `FontWeight.w600`, `letterSpacing: -0.3`.
+- **Editorial Subheading**: `Newsreader`, 16px, `FontWeight.w500`, `letterSpacing: -0.2`.
+- **Corpus Title**: `Newsreader`, 17px, `FontWeight.w600`, `letterSpacing: -0.2`.
 
 ### 2. Interface Layer (`Outfit`)
-Sans-serif geometris humanis kontemporer yang sangat tajam pada resolusi retina. Karakter huruf dirapatkan sedikit (*tight tracking*) untuk kesan modern, bersih, dan ringkas.
-- **Screen Title**: `Outfit`, 20px, `FontWeight.w600`, `letterSpacing: -0.3`.
-- **Card Title / Author**: `Outfit`, 15px, `FontWeight.w600`, `letterSpacing: -0.1`.
-- **Body Regular**: `Outfit`, 14px, `FontWeight.w400`, `height: 1.45`.
+Memberikan kenyamanan keterbacaan modern setingkat sistem operasi Apple dan Google, ringkas, geometris, dan netral.
+- **Screen Title**: `Outfit`, 18px, `FontWeight.w600`, `letterSpacing: -0.3`.
+- **Card Title**: `Outfit`, 15px, `FontWeight.w600`, `letterSpacing: -0.2`.
+- **Body**: `Outfit`, 14px, `FontWeight.w400`, `height: 1.45`.
 - **Body Medium**: `Outfit`, 14px, `FontWeight.w500`, `height: 1.40`.
 - **Caption**: `Outfit`, 12px, `FontWeight.w400`, `height: 1.35`.
 - **Micro Label / Section Header**: `Outfit`, 11px, `FontWeight.w600`, `letterSpacing: 0.8` (Uppercase).
 - **Button Action**: `Outfit`, 14px, `FontWeight.w600`, `letterSpacing: 0.1`.
 - **Price Metric**: `Outfit`, 24px, `FontWeight.w700`, `letterSpacing: -0.5`.
 
-### 3. Arabic Scholarly Layer (`Amiri`)
-Tulisan Arab klasik menggunakan khat Naskh berbobot proporsional yang menjaga kejelasan syakal/harakat.
+### 3. Arabic Scholarly Layer (`Scheherazade New`)
+Tulisan Arab klasik menggunakan khat Naskh murni berbobot proporsional yang menjaga kejelasan syakal/harakat tanpa font Amiri.
 - **Aturan Wajib Teks Arab**:
   1. Wajib menggunakan `textDirection: TextDirection.rtl`.
   2. Wajib menggunakan `height: 1.6` hingga `1.8` agar harakat atas (fathah, tanwin, fathatain) dan harakat bawah (kasrah) tidak terpotong tepi baris (*clipping*).
   3. Warna teks Arab pada mode gelap wajib putih bersih (`#FAFAFA` atau `#F8FAFC`).
 - **Tingkatan Ukuran Arab**:
-  - `arabicDisplay` (Judul Utama Kitab): `Amiri`, 22-24px, `FontWeight.w700`, `height: 1.6`.
-  - `arabicReading` (Daftar Baris Naskah): `Amiri`, 18-19px, `FontWeight.w600` - `w700`, `height: 1.7`.
-  - `arabicQuote` (Ibarah & Sanad): `Amiri`, 16-17px, `FontWeight.w500`, `height: 1.8`.
+  - `arabicDisplay` (Judul Utama Kitab): `Scheherazade New`, 22-24px, `FontWeight.w700`, `height: 1.6`.
+  - `arabicReading` (Daftar Baris Naskah): `Scheherazade New`, 18-19px, `FontWeight.w600` - `w700`, `height: 1.7`.
+  - `arabicQuote` (Ibarah & Sanad): `Scheherazade New`, 16-17px, `FontWeight.w500`, `height: 1.8`.
 
 ---
 
@@ -165,7 +167,7 @@ Kartu naskah tidak menggunakan pita vertikal warna-warni. Menggunakan bahasa des
    - Tag disiplin ilmu (`القسم`) di sisi kiri.
    - Tahun wafat mualif: `w. [Tahun] H` di sisi kanan dengan border 0.5px.
 2. **Hero Area**:
-   - Judul Arab berukuran 18px (Amiri RTL Bold).
+   - Judul Arab berukuran 18px (Scheherazade New RTL Bold).
    - Nama pengarang (Latin atau Arab) dengan ikon orang monokrom.
 3. **Strip Informasi EXIF Micro-Pill (Horizontal Wrap)**:
    - Deretan pil mikro dengan ikon outline 12px dan teks 11px:
@@ -189,7 +191,7 @@ Kartu naskah tidak menggunakan pita vertikal warna-warni. Menggunakan bahasa des
 
 ### B. Lembar Rujukan & Kutipan Ilmiah (`EvidenceBottomSheet`)
 - **Header**: Berjudul tenang `'Ibarah & rujukan'`.
-- **Naskah Asli**: Ditampilkan dalam kontainer berbingkai halus dengan font Amiri ukuran 19px, teks RTL, teks tebal berharakat.
+- **Naskah Asli**: Ditampilkan dalam kontainer berbingkai halus dengan font Scheherazade New ukuran 19px, teks RTL, teks tebal berharakat.
 - **Intisari & Penjelasan**: Bagian syarah dan penjelasan kontekstual.
 - **Aksi Baku**:
   - Tombol kiri: `Salin ibarah` (Ikon Copy, Outlined Button).
@@ -288,7 +290,7 @@ Gunakan checklist ini sebelum merilis modul, layar, atau aplikasi turunan baru:
 
 - [ ] **Tanpa Warna Emas**: Apakah sama sekali tidak ada warna kuning emas `#D4AF37` di seluruh layar?
 - [ ] **Integritas Dark Mode**: Apakah latar belakang pada mode gelap menggunakan `#0E0E10` pekat dan border hairline `#27272A` (bukan abu-abu terang)?
-- [ ] **Tipografi 3-Lapis**: Apakah judul brand memakai `Newsreader`, antarmuka memakai `Outfit`, dan teks Arab memakai `Amiri`?
+- [ ] **Tipografi 3-Lapis**: Apakah judul brand memakai `Newsreader`, antarmuka memakai `Outfit`, dan teks Arab memakai `Scheherazade New`?
 - [ ] **Line-Height Teks Arab**: Apakah teks Arab berharakat memiliki line-height minimal `1.6` - `1.8` dan RTL?
 - [ ] **Format Kartu EXIF Minimalis**: Apakah kartu naskah menggunakan badge micro-pill EXIF horizontal tanpa strip pita biru?
 - [ ] **Bebas Tanda Seru**: Apakah seluruh pesan sukses, toast, dan dialog konfirmasi 100% bebas dari tanda seru (`!`)?

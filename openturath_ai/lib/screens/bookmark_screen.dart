@@ -666,7 +666,7 @@ class _BookmarkCard extends StatelessWidget {
                 child: Text(
                   item.arabicExcerpt,
                   textDirection: TextDirection.rtl,
-                  style: GoogleFonts.amiri(
+                  style: GoogleFonts.scheherazadeNew(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                     height: 1.7,

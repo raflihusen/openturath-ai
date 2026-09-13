@@ -78,7 +78,7 @@ void main() {
       expect(button.fontSize, 14);
       expect(button.fontWeight, FontWeight.w600);
 
-      // 3. Arabic Scholarly layer (Amiri)
+      // 3. Arabic Scholarly layer (Scheherazade New)
       final arDisplay = OTTypography.arabicDisplay();
       expect(arDisplay.fontSize, 24);
       expect(arDisplay.fontWeight, FontWeight.w700);
