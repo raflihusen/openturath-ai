@@ -7,33 +7,62 @@
     "source": "functions",
     "runtime": "nodejs20"
   },
-  "hosting": {
-    "site": "openturath",
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/chat/**",
-        "function": "chatGate"
-      },
-      {
-        "source": "/login",
-        "function": "chatGate"
-      },
-      {
-        "source": "/logout",
-        "function": "chatGate"
-      },
-      {
-        "source": "/doku-webhook",
-        "function": "dokuWebhook"
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "site": "openturath",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/chat/**",
+          "function": "chatGate"
+        },
+        {
+          "source": "/login",
+          "function": "chatGate"
+        },
+        {
+          "source": "/logout",
+          "function": "chatGate"
+        },
+        {
+          "source": "/doku-webhook",
+          "function": "dokuWebhook"
+        }
+      ]
+    },
+    {
+      "site": "open-turath",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/chat/**",
+          "function": "chatGate"
+        },
+        {
+          "source": "/login",
+          "function": "chatGate"
+        },
+        {
+          "source": "/logout",
+          "function": "chatGate"
+        },
+        {
+          "source": "/doku-webhook",
+          "function": "dokuWebhook"
+        }
+      ]
+    }
+  ],
   "flutter": {
     "platforms": {
       "android": {
