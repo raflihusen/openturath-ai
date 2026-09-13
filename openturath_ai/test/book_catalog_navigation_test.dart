@@ -41,7 +41,7 @@ void main() {
       expect(find.text('w. 204 H'), findsOneWidget);
       expect(find.text('Asal Mazhab'), findsOneWidget);
       expect(find.text('Mutaqaddimin'), findsOneWidget);
-      expect(find.text('8 Jilid'), findsOneWidget);
+      expect(find.text('8 jilid'), findsOneWidget);
 
       // Tap the item
       await tester.tap(find.byType(BookRowItem));
@@ -59,18 +59,18 @@ void main() {
       expect(find.text('كتاب الأم'), findsOneWidget);
       expect(find.text('kitab_al_umm_shafii'), findsOneWidget);
 
-      // Card 2: Muallif
-      expect(find.text('MUALLIF / PENGARANG'), findsOneWidget);
+      // Card 2: Pengarang
+      expect(find.text('PENGARANG'), findsOneWidget);
       expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
 
-      // Card 3: Klasifikasi Ilmiah
-      expect(find.text('KLASIFIKASI ILMIAH'), findsOneWidget);
+      // Card 3: Klasifikasi & Kandungan
+      expect(find.text('KLASIFIKASI & KANDUNGAN'), findsOneWidget);
       expect(find.text('Asal Mazhab'), findsOneWidget);
       expect(find.text('Mutaqaddimin'), findsOneWidget);
       expect(find.text('8 Jilid'), findsOneWidget);
 
-      // Card 4: Data Edisi & Tahqiq
-      expect(find.text('DATA EDISI & TAHQIQ'), findsOneWidget);
+      // Card 4: Penerbitan & Tahkik
+      expect(find.text('PENERBITAN & TAHKIK'), findsOneWidget);
       expect(find.text('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
       expect(find.text('Dr. Rifa\'at Fauzi Abdul Muthalib'), findsOneWidget);
 
@@ -87,7 +87,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Daftar Kitab Rujukan'), findsOneWidget);
+      expect(find.text('Kitab rujukan'), findsOneWidget);
       expect(find.text('87 Kitab Mazhab Syafi\'i'), findsOneWidget);
       expect(find.text('Semua Era'), findsOneWidget);
     });

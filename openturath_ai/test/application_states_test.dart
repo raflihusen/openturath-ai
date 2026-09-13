@@ -37,7 +37,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Koneksi Terputus'), findsOneWidget);
+      expect(find.text('Koneksi terputus'), findsOneWidget);
       expect(find.byIcon(Icons.wifi_off_rounded), findsOneWidget);
 
       await tester.tap(find.text('Coba lagi'));
@@ -53,7 +53,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Akses Dibatasi'), findsOneWidget);
+      expect(find.text('Akses dibatasi'), findsOneWidget);
       expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
     });
 
@@ -66,7 +66,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Naskah Tidak Ditemukan'), findsOneWidget);
+      expect(find.text('Rujukan tidak ditemukan'), findsOneWidget);
       expect(find.byIcon(Icons.find_in_page_outlined), findsOneWidget);
     });
 
@@ -79,7 +79,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Terjadi Kendala Teknis'), findsOneWidget);
+      expect(find.text('Terjadi kendala teknis'), findsOneWidget);
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
     });
 
