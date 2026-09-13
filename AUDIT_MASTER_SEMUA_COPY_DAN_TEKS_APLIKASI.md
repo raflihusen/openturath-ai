@@ -1,20 +1,25 @@
-# Dokumen Audit Komprehensif: Seluruh Teks, Narasi, dan Copywriting Aplikasi OpenTurath AI
+# Master revisi teks aplikasi OpenTurath
 
-Dokumen ini memuat seluruh kompilasi teks, copywriting, judul, label tombol, dialog konfirmasi, placeholder form, pesan kesalahan (*error message*), notifikasi (*snackbar*), serta materi literatur ilmiah dan disclaimer yang ada di dalam aplikasi **OpenTurath AI**. 
+Revisi redaksional berdasarkan seluruh 12 bagian dalam AUDIT_MASTER_SEMUA_COPY_DAN_TEKS_APLIKASI.md yang dilampirkan pengguna. Tanggal audit: 13 September 2026.
 
-Dokumen ini disusun dalam satu berkas terpadu untuk mempermudah peninjauan menyeluruh (*audit copywriting*), penyesuaian nada bahasa (*tone of voice*), serta penyelarasan istilah keilmuan Islam (*turats*).
+**Status:** teks pengganti sudah disusun di dokumen ini. Kode aplikasi dan tampilan aplikasi yang berjalan belum diubah atau diuji karena tidak disertakan dalam lampiran saat ini.
+
+Gunakan bersama OPENTURATH_HASIL_AUDIT_COPY.md dan OPENTURATH_PETA_PENGGANTIAN_COPY.json. Baris bertanda perlu pemeriksaan di peta penggantian masih harus disesuaikan dengan perilaku atau data produk. Bagian kebijakan memuat draf yang belum siap tayang, termasuk isian dalam kurung siku. Jangan memasukkan catatan editorial dan isian tersebut ke antarmuka.
+
+Nama konstanta, ID asisten, jalur berkas, judul bibliografis, dan teks sumber Arab dipertahankan. Perubahan label tampilan tidak mengubah nilai teknisnya. Angka katalog, harga, versi, platform, dan metadata kitab mengikuti dokumen asal dan belum diverifikasi terhadap aplikasi aktif.
 
 ---
 
 ## Daftar Isi
-1. [Kamus Teks Kanonikal Terpusat (AppCopy)](#1-kamus-teks-kanonikal-terpusat-appcopy)
+
+1. [Kamus teks utama (AppCopy)](#1-kamus-teks-utama-appcopy)
 2. [Data Master Asisten AI, Disiplin Ilmu & Literatur (Models)](#2-data-master-asisten-ai-disiplin-ilmu--literatur-models)
 3. [Layar Masuk & Autentikasi (Login & Session Auth)](#3-layar-masuk--autentikasi-login--session-auth)
 4. [Layar Beranda / Dashboard Utama](#4-layar-beranda--dashboard-utama)
 5. [Layar Eksplorasi Spesialis AI (Specialist List)](#5-layar-eksplorasi-spesialis-ai-specialist-list)
 6. [Layar Ruang Percakapan AI / Webview & Multi-Tab](#6-layar-ruang-percakapan-ai--webview--multi-tab)
-7. [Katalog Naskah Kanonikal 2.226 Kitab (Katalog & Detail Kitab)](#7-katalog-naskah-kanonikal-2226-kitab-katalog--detail-kitab)
-8. [Layar Catatan Riset, Simpanan & Editor Catatan (Bookmark & Notes)](#8-layar-catatan-riset-simpanan--editor-catatan-bookmark--notes)
+7. [Katalog 2.226 Kitab Rujukan (Katalog & Detail Kitab)](#7-katalog-2226-kitab-rujukan-katalog--detail-kitab)
+8. [Layar Catatan, Simpanan & Editor Catatan (Bookmark & Notes)](#8-layar-catatan-simpanan--editor-catatan-bookmark--notes)
 9. [Layar Langganan, Paket Riset & Checkout DOKU](#9-layar-langganan-paket-riset--checkout-doku)
 10. [Lembar Klaim Voucher Akses (Redeem Code Sheet)](#10-lembar-klaim-voucher-akses-redeem-code-sheet)
 11. [Layar Profil, Pengaturan Akun & Dokumen Legal (Terms, Privacy, Adab)](#11-layar-profil-pengaturan-akun--dokumen-legal-terms-privacy-adab)
@@ -22,62 +27,62 @@ Dokumen ini disusun dalam satu berkas terpadu untuk mempermudah peninjauan menye
 
 ---
 
-## 1. Kamus Teks Kanonikal Terpusat (AppCopy)
+## 1. Kamus teks utama (AppCopy)
 
 Sumber berkas: `openturath_ai/lib/core/app_copy.dart`  
-Fungsi: Sumber kebenaran tunggal (*single source of truth*) untuk istilah berulang, navigasi, dialog adab talaqqi, dan umpan balik sistem.
+Fungsi: Acuan utama untuk istilah berulang, navigasi, dialog adab talaqqi, dan umpan balik sistem.
 
-| Kategori | Konstanta | Teks Asli Aplikasi | Konteks & Catatan Penggunaan |
+| Kategori | Konstanta | Teks Revisi | Konteks & Catatan Penggunaan |
 |:---|:---|:---|:---|
 | **Identitas & Merek** | `appName` | `OpenTurath` | Nama resmi aplikasi |
 | | `appTagline` | `Membaca kitab, menelusuri ibarah.` | Tagline utama pada profil & splash |
-| | `defaultFieldDesc` | `Beragam kajian dari kitab-kitab Islam.` | Deskripsi bidang umum |
+| | `defaultFieldDesc` | `Pelajari berbagai bidang ilmu melalui kitab-kitab Islam.` | Deskripsi bidang umum |
 | | `aboutTitle` | `Tentang OpenTurath` | Judul modal informasi aplikasi |
 | | `aboutDescription` | `OpenTurath membantu Anda membaca, mencari, dan membandingkan keterangan dari kitab-kitab rujukan.` | Deskripsi ringkas visi aplikasi |
-| | `aboutScholarlyPrinciple` | `Gunakan jawaban sebagai pintu masuk untuk menelusuri ibarah. Untuk memahami dan menetapkan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.` | Prinsip adab riset ilmiah |
+| | `aboutScholarlyPrinciple` | `Gunakan jawaban AI untuk membantu menelusuri rujukan. Periksa kutipannya pada kitab asal dan mintalah bimbingan guru atau ulama saat mempelajari persoalan agama.` | Prinsip adab riset ilmiah |
 | **Navigasi Utama** | `navHome` | `Beranda` | Tab navigasi 1 di Bottom Bar |
 | | `navStudies` | `Asisten AI` | Tab navigasi 2 di Bottom Bar |
 | | `navSaved` | `Catatan` | Tab navigasi 3 di Bottom Bar |
 | | `navSettings` | `Pengaturan` | Tab navigasi 4 di Bottom Bar |
-| **Istilah Ruang & Kajian** | `studySpace` | `Percakapan AI` | Istilah resmi ruang interaksi |
-| | `openStudy` | `Membuka AI` | Status memuat sesi percakapan |
-| | `studyOptions` | `Pengaturan Tampilan & Baca` | Menu modal reader / font size |
+| **Istilah Ruang & Kajian** | `studySpace` | `Percakapan` | Istilah resmi ruang interaksi |
+| | `openStudy` | `Membuka percakapan…` | Status memuat sesi percakapan |
+| | `studyOptions` | `Tampilan bacaan` | Menu modal reader / font size |
 | | `referenceBooks` | `Kitab rujukan` | Label daftar kitab rujukan |
 | | `savedCollection` | `Catatan` | Label koleksi riset |
-| | `bookDetails` | `Keterangan kitab` | Header AppBar detail naskah |
-| **Loading & Akses** | `loadingReferences` | `Menghubungkan AI dan Maktabah` | Subtitle loading saat inisialisasi AI |
+| | `bookDetails` | `Detail kitab` | Header AppBar detail naskah |
+| **Loading & Akses** | `loadingReferences` | `Menyiapkan percakapan…` | Subtitle loading saat inisialisasi AI |
 | | `modulePreparing` | `sedang disiapkan.` | Status modul coming soon |
-| | `moduleUnavailable` | `Modul ini belum dapat dibuka. Coba lagi nanti.` | Pesan modul belum aktif |
-| | `cannotLoad` | `Tidak dapat dimuat. Periksa koneksi, lalu coba lagi.` | Pesan kegagalan umum |
-| | `cannotLoadStudy` | `AI belum dapat dibuka` | Pesan kegagalan buka AI |
-| | `studyNotLoadedYet` | `Kajian belum bisa dimuat. Coba lagi sebentar.` | Pesan penundaan sesi |
-| | `subscriptionRequiredTitle`| `Langganan diperlukan` | Dialog pengingat langganan |
+| | `moduleUnavailable` | `Asisten ini belum tersedia. Coba lagi nanti.` | Pesan modul belum aktif |
+| | `cannotLoad` | `Konten belum bisa dimuat. Coba lagi.` | Pesan kegagalan umum |
+| | `cannotLoadStudy` | `Percakapan belum bisa dibuka` | Pesan kegagalan buka AI |
+| | `studyNotLoadedYet` | `Percakapan belum bisa dimuat. Coba lagi sebentar.` | Pesan penundaan sesi |
+| | `subscriptionRequiredTitle`| `Pilih paket untuk melanjutkan` | Dialog pengingat langganan |
 | | `catalogLoadFailed` | `Daftar kitab belum bisa dimuat.` | Pesan error muat katalog |
-| | `inputQuestionHint` | `Tanyakan sesuatu tentang kitab ini...` | Placeholder input teks |
-| | `viewSubscription` | `Lihat langganan` | Tombol CTA langganan |
+| | `inputQuestionHint` | `Tulis pertanyaan tentang kitab ini` | Placeholder input teks |
+| | `viewSubscription` | `Lihat paket` | Tombol CTA langganan |
 | | `tryAgain` | `Coba lagi` | Tombol retry |
 | **Platform & Perangkat** | `deviceNotSupportedTitle` | `Perangkat belum didukung` | Error platform guard |
 | | `deviceNotSupportedMessage`| `OpenTurath saat ini mendukung Android, macOS, dan Windows. Perangkat ini belum didukung.` | Penjelasan kompatibilitas platform |
-| | `cannotConnectTitle` | `Tidak dapat terhubung` | Header dialog offline |
-| | `cannotConnectMessage` | `Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi, lalu coba lagi.` | Pesan offline |
+| | `cannotConnectTitle` | `Belum bisa terhubung` | Header dialog offline |
+| | `cannotConnectMessage` | `OpenTurath belum bisa terhubung. Periksa koneksi internet, lalu coba lagi.` | Pesan offline |
 | **Dialog Adab Talaqqi** | `adabDialogTitle` | `Catatan sebelum mulai` | Judul dialog pengingat adab |
-| | `adabAcknowledgeButton` | `Saya mengerti` | Tombol persetujuan dialog adab |
-| | `adabHeading1` | `Perkakas Telaah & Komparasi Naskah` | Poin adab 1 |
-| | `adabBody1` | `OpenTurath membantu mencari ibarah dan membandingkan keterangan dalam kitab. Setiap kutipan dan ibarah perlu dicocokkan dengan sumber aslinya di Maktabah Syamilah atau naskah cetak fisik.` | Uraian poin adab 1 |
+| | `adabAcknowledgeButton` | `Mengerti` | Tombol persetujuan dialog adab |
+| | `adabHeading1` | `Bantuan untuk membaca kitab` | Poin adab 1 |
+| | `adabBody1` | `OpenTurath membantu mencari ibarah, yaitu kutipan teks dari kitab, dan membandingkan penjelasannya. Jawaban AI bisa keliru. Cocokkan kutipan dengan kitab asal di Maktabah Syamilah atau edisi cetaknya.` | Uraian poin adab 1 |
 | | `adabHeading2` | `Belajar tetap perlu bimbingan` | Poin adab 2 |
-| | `adabBody2` | `Untuk memahami agama dengan baik, belajarlah kepada guru dan ulama yang berkompeten.` | Uraian poin adab 2 |
+| | `adabBody2` | `Pelajari persoalan agama bersama guru atau ulama yang memahami bidangnya.` | Uraian poin adab 2 |
 | | `adabHeading3` | `Periksa kembali rujukan` | Poin adab 3 |
-| | `adabBody3` | `Periksa kembali dalil dan ibarah pada kitab rujukan sebelum menjadikannya pegangan.` | Uraian poin adab 3 |
+| | `adabBody3` | `Baca konteks pembahasan dalam kitab sebelum menggunakan atau membagikan jawaban.` | Uraian poin adab 3 |
 | **Umpan Balik (Feedback)** | `noAnswerToCopy` | `Belum ada jawaban untuk disalin.` | SnackBar validasi salin |
-| | `answerCopied` | `Jawaban disalin dan disimpan ke Catatan Riset.` | SnackBar salin sukses |
-| | `copyFailed` | `Gagal menyalin. Coba lagi.` | SnackBar salin gagal |
+| | `answerCopied` | `Jawaban disalin dan disimpan di Catatan.` | SnackBar salin sukses |
+| | `copyFailed` | `Belum bisa menyalin. Coba lagi.` | SnackBar salin gagal |
 | | `noAnswerToSave` | `Belum ada jawaban untuk disimpan.` | SnackBar simpan kosong |
-| | `savedSuccess` | `Tersimpan ke Catatan.` | SnackBar simpan sukses |
-| | `saveFailed` | `Gagal menyimpan. Coba lagi.` | SnackBar simpan gagal |
-| **Catatan Riset** | `searchSavedHint` | `Cari catatan, topik, atau kutipan...` | Placeholder search box catatan |
+| | `savedSuccess` | `Tersimpan di Catatan.` | SnackBar simpan sukses |
+| | `saveFailed` | `Belum bisa menyimpan. Coba lagi.` | SnackBar simpan gagal |
+| **Catatan** | `searchSavedHint` | `Cari catatan, topik, atau kutipan` | Placeholder search box catatan |
 | | `searchSavedTooltip` | `Cari catatan` | Tooltip icon search |
 | | `noSavedTitle` | `Belum ada catatan` | Judul empty state catatan |
-| | `noSavedDescription` | `Simpan telaah atau ibarah ke dalam catatan riset Anda.` | Deskripsi empty state catatan |
+| | `noSavedDescription` | `Simpan jawaban, kutipan, atau rujukan kitab di sini.` | Deskripsi empty state catatan |
 | | `copyIbarahAction` | `Salin ibarah` | Tombol aksi salin kutipan |
 | | `viewReferenceAction` | `Lihat rujukan` | Tombol buka rujukan kitab |
 | | `shareReferenceTooltip` | `Bagikan catatan` | Tooltip aksi share |
@@ -85,22 +90,22 @@ Fungsi: Sumber kebenaran tunggal (*single source of truth*) untuk istilah berula
 | **Akun & Pengaturan** | `profile` | `Profil` | Header menu profil |
 | | `subscription` | `Langganan` | Label item langganan |
 | | `activeSubscription` | `Langganan aktif` | Status akun aktif |
-| | `inactiveSubscription` | `Belum berlangganan. Akses dibuka dengan voucher atau paket.` | Status akun belum bayar |
+| | `inactiveSubscription` | `Pilih paket atau gunakan voucher untuk mengakses asisten AI.` | Status akun belum bayar |
 | | `appearance` | `Tampilan` | Label preferensi tema |
 | | `modeDark` | `Gelap` | Pilihan tema dark |
 | | `modeLight` | `Terang` | Pilihan tema light |
-| | `modeSystem` | `Sistem` | Pilihan tema auto/system |
+| | `modeSystem` | `Ikuti perangkat` | Pilihan tema auto/system |
 | | `language` | `Bahasa` | Label pengaturan bahasa |
 | | `languageIndonesian` | `Bahasa Indonesia` | Bahasa aktif saat ini |
-| | `logoutDialogTitle` | `Keluar dari akun?` | Judul konfirmasi keluar |
+| | `logoutDialogTitle` | `Keluar dari akun` | Judul konfirmasi keluar |
 | | `logoutDialogBody` | `Anda akan keluar dari akun ini.` | Pesan konfirmasi keluar |
 | | `logoutButton` | `Keluar` | Tombol konfirmasi logout |
-| | `deleteAccountTitle` | `Hapus akun?` | Judul konfirmasi hapus akun |
-| | `deleteAccountBody` | `Tindakan ini tidak dapat dibatalkan. Profil, simpanan, dan data akun Anda akan dihapus dari server.` | Pesan peringatan hapus akun |
+| | `deleteAccountTitle` | `Hapus akun` | Judul konfirmasi hapus akun |
+| | `deleteAccountBody` | `Akun Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.` | Pesan peringatan hapus akun |
 | | `deleteAccountButton` | `Hapus akun` | Tombol aksi destruktif |
 | | `deleteAccountSuccess` | `Akun Anda sudah dihapus.` | SnackBar notifikasi akun terhapus |
-| | `recentLoginRequired` | `Untuk menghapus akun, masuk ulang terlebih dahulu.` | Pesan keamanan re-auth |
-| | `networkError` | `Koneksi bermasalah. Coba lagi.` | Pesan kendala jaringan |
+| | `recentLoginRequired` | `Masuk kembali untuk melanjutkan penghapusan akun.` | Pesan keamanan re-auth |
+| | `networkError` | `Koneksi internet bermasalah. Coba lagi.` | Pesan kendala jaringan |
 
 ---
 
@@ -108,124 +113,124 @@ Fungsi: Sumber kebenaran tunggal (*single source of truth*) untuk istilah berula
 
 Sumber berkas: `openturath_ai/lib/models/agent_model.dart` & `openturath_ai/lib/models/field_model.dart`
 
-### A. Daftar 6 Disiplin Keilmuan Utama (FieldModel)
+### A. Daftar 9 Bidang Ilmu (FieldModel)
 1. **Fikih Tahawwulat** (`fiqh_tahawwulat`)  
-   *Deskripsi:* "Manhaj eskatologi Islam, rukun keempat, tanda-tanda zaman, dan sanad Al-Habib Abu Bakar Al-Masyhur."
+   *Deskripsi:* "Pembahasan perubahan zaman dan tanda-tanda akhir zaman dalam pemikiran Habib Abu Bakar al-Masyhur."
 2. **Fikih** (`fiqh`)  
-   *Deskripsi:* "Hukum ibadah, muamalah, fatwa, dan perbandingan mazhab mu'tabar."
-3. **Hadits** (`hadith`)  
-   *Deskripsi:* "Takhrij sanad, dirayah perawi, dan syarah Kutubus Sittah."
+   *Deskripsi:* "Pelajari hukum ibadah, muamalah, fatwa, dan perbedaan pendapat antarmazhab."
+3. **Hadis** (`hadith`)  
+   *Deskripsi:* "Telusuri sumber hadis, keterangan tentang perawi, dan penjelasan ulama dalam Kutubus Sittah."
 4. **Tafsir** (`tafsir`)  
-   *Deskripsi:* "Asbabun nuzul, munasabah, dan khazanah tafsir bil-ma'tsur wal-ra'yi."
-5. **Aqidah** (`aqidah`)  
-   *Deskripsi:* "Kalam Asy'ariyyah, Maturidiyyah, pembelaan ushuludin, dan dalil aqli-naqli."
-6. **Usul Fiqh** (`usul`)  
-   *Deskripsi:* "Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah."
+   *Deskripsi:* "Pelajari penafsiran Al-Qur'an, sebab turunnya ayat, dan hubungan antarayat."
+5. **Akidah** (`aqidah`)  
+   *Deskripsi:* "Pelajari akidah Asy'ariyyah dan Maturidiyyah beserta dalil dan penjelasannya."
+6. **Usul Fikih** (`usul`)  
+   *Deskripsi:* "Pelajari cara ulama menggali hukum, memahami dalil, serta membahas tujuan syariat dan kaidah fikih."
 7. **Bahasa Arab** (`lughah`)  
-   *Deskripsi:* "Nahwu, sharaf, balaghah, dan leksikografi kamus mu'jam klasik."
-8. **Sejarah & Sirah** (`tarikh`)  
-   *Deskripsi:* "Sirah Nabawiyyah, khulafaur rasyidin, thabaqat ulama, dan peradaban Islam."
-9. **Tasawuf & Akhlaq** (`tasawwuf`)  
-   *Deskripsi:* "Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih."
+   *Deskripsi:* "Pelajari nahwu, saraf, balagah, dan kosakata dalam kamus Arab klasik."
+8. **Sejarah dan Sirah** (`tarikh`)  
+   *Deskripsi:* "Telusuri kehidupan Nabi, Khulafaur Rasyidin, biografi ulama, dan sejarah peradaban Islam."
+9. **Tasawuf dan Akhlak** (`tasawwuf`)  
+   *Deskripsi:* "Pelajari penyucian jiwa, adab, akhlak, dan nasihat para ulama."
 
 ---
 
 ### B. Profil & Copy Asisten AI (AgentModel)
 
-#### 1. AI Fikih Tahawwulat (`fiqh_tahawwulat`) — Status: Aktif
+#### 1. AI Fikih Tahawwulat (`fiqh_tahawwulat`) : Status: Aktif
 - **Judul:** AI Fikih Tahawwulat
 - **Judul Arab:** فقه التحولات
-- **Subtitle Akademik:** Manhaj Abu Bakr al-Masyhur
-- **Deskripsi:** "Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan muhadharah Habib Abu Bakar al-Masyhur."
-- **Contoh Pertanyaan (Suggested Prompts):**
-  1. *Bagaimana penjelasan al-ghutsā'iyyah dalam kitab?*
-  2. *Apa yang dimaksud Rukun Keempat dalam Fikih Tahawwulat?*
-  3. *Bagaimana para ulama menjelaskan sikap saat masa fitnah?*
+- **Subtitle Akademik:** Pemikiran Habib Abu Bakar al-Masyhur
+- **Deskripsi:** "Telusuri pembahasan Fikih Tahawwulat dalam kitab dan ceramah Habib Abu Bakar al-Masyhur."
+- **Contoh permintaan:**
+  1. *Jelaskan makna al-ghutsā'iyyah berdasarkan kitab rujukan.*
+  2. *Jelaskan istilah Rukun Keempat dalam Fikih Tahawwulat menurut Habib Abu Bakar al-Masyhur.*
+  3. *Telusuri penjelasan ulama tentang sikap menghadapi masa fitnah.*
 - **Sub-Agen Spesialis:**
-  - **Al-Muhaqqiq (المحقق):** "Membantu menemukan dalil, ibarah, dan rujukan yang relevan." (البحث والتحقيق وعزو النصوص إلى مصادرها)
-  - **Al-Bayan (البيان):** "Menjelaskan pokok bahasan dengan bahasa yang lebih ringkas." (الشرح والبيان والتبسيط المنهجي)
+  - **Al-Muhaqqiq (المحقق):** "Telusuri dalil, ibarah, dan sumber rujukannya." (البحث والتحقيق وعزو النصوص إلى مصادرها)
+  - **Al-Bayan (البيان):** "Membantu memahami pokok bahasan melalui penjelasan yang lebih sederhana." (الشرح والبيان والتبسيط المنهجي)
 - **Kitab Rujukan Utama:**
   - *Nubdzah Al-Bayan fi Ma'rifati Sunan Al-Khalaq* (نبذة البيان في معرفة سنن الخلق والبيان)
   - *Al-Fiqh Al-Manhaji fi Fiqh Al-Tahawwulat* (الفقه المنهجي في فقه التحولات)
-- **Paket Harga:** 1 Bulan: Rp 49.000 \| 6 Bulan: Rp 299.000 \| 1 Tahun: Rp 499.000
+- **Paket Harga:** 1 Bulan: Rp49.000 \| 6 Bulan: Rp299.000 \| 1 Tahun: Rp499.000
 
-#### 2. AI Fikih Syafi'i (`fiqh_syafii`) — Status: Aktif
+#### 2. AI Fikih Syafi'i (`fiqh_syafii`) : Status: Aktif
 - **Judul:** AI Fikih Syafi'i
 - **Judul Arab:** الفقه الشافعي
-- **Subtitle Akademik:** Matan · Syarah · Hasyiyah Mu'tabarah
-- **Deskripsi:** "Bantuan untuk mencari keterangan dalam kitab-kitab mazhab Syafi'i."
-- **Contoh Pertanyaan (Suggested Prompts):**
-  1. *Apa rukun wudu menurut pendapat mu'tamad dalam mazhab Syafi'i?*
-  2. *Apa syarat sah salat berjamaah menurut Minhāj al-Ṭālibīn?*
-  3. *Bagaimana ketentuan zakat perdagangan menurut Imam al-Nawawi?*
+- **Subtitle Akademik:** Matan · Syarah · Hasyiyah
+- **Deskripsi:** "Temukan penjelasan fikih dalam kitab-kitab mazhab Syafi'i."
+- **Contoh permintaan:**
+  1. *Jelaskan rukun wudu menurut pendapat mu'tamad dalam mazhab Syafi'i dan sertakan rujukannya.*
+  2. *Jelaskan syarat sah salat berjamaah dalam Minhāj al-Ṭālibīn.*
+  3. *Telusuri ketentuan zakat perdagangan menurut Imam al-Nawawi.*
 - **Sub-Agen Spesialis:**
-  - **Al-Muhaqqiq Fikih Syafi'i (المحقق):** "Membantu menemukan dalil, ibarah, dan rujukan dalam mazhab Syafi'i." (تحقيق المعتمد في المذهب الشافعي)
+  - **Al-Muhaqqiq Fikih Syafi'i (المحقق):** "Telusuri dalil, ibarah, dan rujukan dalam mazhab Syafi'i." (تحقيق المعتمد في المذهب الشافعي)
 - **Kitab Rujukan Utama:**
-  - *Al-Umm* (الأم) — Imam Asy-Syafi'i
-  - *Al-Majmu' Syarah Al-Muhadzdzab* (المجموع شرح المهذب) — Imam An-Nawawi
-- **Paket Harga:** 1 Bulan: Rp 49.000 \| 6 Bulan: Rp 299.000 \| 1 Tahun: Rp 499.000
+  - *Al-Umm* (الأم) : Imam Asy-Syafi'i
+  - *Al-Majmu' Syarah Al-Muhadzdzab* (المجموع شرح المهذب) : Imam An-Nawawi
+- **Paket Harga:** 1 Bulan: Rp49.000 \| 6 Bulan: Rp299.000 \| 1 Tahun: Rp499.000
 
-#### 3. AI Hadits & Syarah Sunnah (`hadits`) — Status: Aktif
-- **Judul:** AI Hadits & Syarah Sunnah
+#### 3. AI Hadis dan Syarah (`hadits`) : Status: Aktif
+- **Judul:** AI Hadis dan Syarah
 - **Judul Arab:** الحديث الشريف وشروحه
 - **Subtitle Akademik:** Kutub Sittah · Takhrij · Syarah
-- **Deskripsi:** "Membantu menelusuri sanad, matan, derajat hadits, dan syarah para ulama ahli hadits."
-- **Contoh Pertanyaan (Suggested Prompts):**
-  1. *Bagaimana takhrij hadits innamal a'malu bin niyyat dalam Kutubus Sittah?*
-  2. *Bagaimana syarah Ibnu Hajar terhadap hadits niat dalam Fathul Bari?*
-  3. *Apa saja hadits mutawatir tentang larangan berdusta atas nama Rasulullah?*
+- **Deskripsi:** "Telusuri teks hadis, sanad, penilaian derajat hadis, dan penjelasan para ulama."
+- **Contoh permintaan:**
+  1. *Telusuri sumber hadis innamal a'malu bin niyyat dalam Kutubus Sittah.*
+  2. *Jelaskan uraian Ibnu Hajar tentang hadis niat dalam Fathul Bari.*
+  3. *Telusuri hadis tentang larangan berdusta atas nama Rasulullah dan penilaian ulama terhadap riwayatnya.*
 - **Sub-Agen Spesialis:**
-  - **Al-Muhaqqiq Hadits (المحقق):** "Spesialis penelusuran riwayat, takhrij sanad, dan syarah hadits." (تخريج الأحاديث وبيان عللها وشروحها)
-- **Paket Harga:** 1 Bulan: Rp 49.000 \| 6 Bulan: Rp 299.000 \| 1 Tahun: Rp 499.000
+  - **Al-Muhaqqiq Hadis (المحقق):** "Membantu menelusuri sumber riwayat dan penjelasan ulama tentang hadis." (تخريج الأحاديث وبيان عللها وشروحها)
+- **Paket Harga:** 1 Bulan: Rp49.000 \| 6 Bulan: Rp299.000 \| 1 Tahun: Rp499.000
 
-#### 4. AI Tafsir Al-Qur'an (`tafsir`) — Status: Aktif
+#### 4. AI Tafsir Al-Qur'an (`tafsir`) : Status: Aktif
 - **Judul:** AI Tafsir Al-Qur'an
 - **Judul Arab:** التفسير وعلوم القرآن
-- **Subtitle Akademik:** Tafsir bil Ma'tsur & bil Ra'yi
-- **Deskripsi:** "Membantu menelaah tafsir ayat Al-Qur'an, asbabun nuzul, qira'at, dan kaidah tafsir."
-- **Contoh Pertanyaan (Suggested Prompts):**
-  1. *Apa asbabun nuzul surah Al-Baqarah ayat 183 tentang kewajiban puasa?*
-  2. *Bagaimana penjelasan Thabari dan Ibnu Katsir mengenai ayat kursi?*
-  3. *Apa penafsiran ulama tentang makna lafadz hikmah dalam Al-Qur'an?*
+- **Subtitle Akademik:** Tafsir ayat dan ilmu tafsir
+- **Deskripsi:** "Pelajari tafsir ayat Al-Qur'an, sebab turunnya ayat, ragam bacaan, dan kaidah tafsir."
+- **Contoh permintaan:**
+  1. *Telusuri keterangan tentang sebab turunnya Surah Al-Baqarah ayat 183. Jika tidak ditemukan riwayat yang mendukung, sampaikan keterbatasannya.*
+  2. *Bandingkan penjelasan Thabari dan Ibnu Katsir tentang Ayat Kursi.*
+  3. *Jelaskan penafsiran ulama tentang kata hikmah dalam Al-Qur'an, disertai ayat dan rujukannya.*
 - **Sub-Agen Spesialis:**
-  - **Al-Mufassir (المفسر):** "Penelaah ayat Al-Qur'an berbasis rujukan tafsir mu'tabar." (استنباط المعاني والبيان القرآني)
-- **Paket Harga:** 1 Bulan: Rp 49.000 \| 6 Bulan: Rp 299.000 \| 1 Tahun: Rp 499.000
+  - **Al-Mufassir (المفسر):** "Membantu memahami penjelasan ayat Al-Qur'an dalam kitab tafsir." (استنباط المعاني والبيان القرآني)
+- **Paket Harga:** 1 Bulan: Rp49.000 \| 6 Bulan: Rp299.000 \| 1 Tahun: Rp499.000
 
-#### 5. AI Ushul Fiqih (`ushul_fiqh`) — Status: Aktif
-- **Judul:** AI Ushul Fiqih
+#### 5. AI Usul Fikih (`ushul_fiqh`) : Status: Aktif
+- **Judul:** AI Usul Fikih
 - **Judul Arab:** أصول الفقه والقواعد
-- **Subtitle Akademik:** Risalah · Jam'ul Jawami' · Mustashfa
-- **Deskripsi:** "Menelaah kaidah istinbath, dalil ijmali, qawaid fiqhiyyah, dan metodologi ushuliyyah."
-- **Contoh Pertanyaan (Suggested Prompts):**
-  1. *Apa perbedaan muthlaq dan 'amm serta implikasinya dalam istinbath hukum?*
-  2. *Bagaimana kaidah al-ashlu fil amri lil wujub menurut ulama ushul?*
-  3. *Apa saja rukun qiyas dan contoh penerapannya dalam kasus kontemporer?*
+- **Subtitle Akademik:** Dalil · Kaidah · Metode penetapan hukum
+- **Deskripsi:** "Pelajari cara ulama memahami dalil dan menggali hukum, beserta kaidah usul fikih dan kaidah fikih."
+- **Contoh permintaan:**
+  1. *Jelaskan perbedaan muthlaq dan 'amm beserta pengaruhnya dalam penetapan hukum.*
+  2. *Jelaskan kaidah al-ashlu fil amri lil wujub menurut ulama usul fikih.*
+  3. *Uraikan rukun qiyas dan contoh penerapannya dalam persoalan masa kini berdasarkan rujukan.*
 - **Sub-Agen Spesialis:**
-  - **Al-Ushuli (الأصولي):** "Spesialis metodologi dalil, kaidah ushuliyyah, dan qawa'id fiqhiyyah." (تحرير المسائل الأصولية والقواعد الفقهية)
-- **Paket Harga:** 1 Bulan: Rp 49.000 \| 6 Bulan: Rp 299.000 \| 1 Tahun: Rp 499.000
+  - **Al-Ushuli (الأصولي):** "Membantu mempelajari dalil, kaidah usul fikih, dan kaidah fikih." (تحرير المسائل الأصولية والقواعد الفقهية)
+- **Paket Harga:** 1 Bulan: Rp49.000 \| 6 Bulan: Rp299.000 \| 1 Tahun: Rp499.000
 
-#### 6. AI Bahasa Arab & Balaghah (`nahwu_sharaf`) — Status: Aktif
-- **Judul:** AI Bahasa Arab & Balaghah
+#### 6. AI Bahasa Arab dan Balagah (`nahwu_sharaf`) : Status: Aktif
+- **Judul:** AI Bahasa Arab dan Balagah
 - **Judul Arab:** علوم اللغة العربية
-- **Subtitle Akademik:** Nahwu · Sharaf · Balaghah · Ma'ajim
-- **Deskripsi:** "Bantuan menelaah sintaksis (i'rab), morfologi (sharaf), balaghah, dan leksikon bahasa Arab turats."
-- **Contoh Pertanyaan (Suggested Prompts):**
-  1. *Jelaskan i'rab bismillahirrahmanirrahim secara terperinci!*
-  2. *Apa wazan dan makna fa'ala, taf'il, dan istif'al dalam kaidah sharaf?*
-  3. *Apa rahasia balaghah taqdim dan ta'khir dalam surah Al-Fatihah?*
+- **Subtitle Akademik:** Nahwu · Saraf · Balagah · Kamus
+- **Deskripsi:** "Pelajari susunan kalimat, perubahan bentuk kata, gaya bahasa, dan kosakata dalam kitab berbahasa Arab."
+- **Contoh permintaan:**
+  1. *Jelaskan i'rab bismillahirrahmanirrahim kata demi kata.*
+  2. *Bandingkan bentuk dan makna fa'ala, taf'il, dan istif'al berdasarkan kaidah saraf.*
+  3. *Jelaskan taqdim dan ta'khir beserta contoh yang didukung rujukan dalam Surah Al-Fatihah.*
 - **Sub-Agen Spesialis:**
-  - **Al-Lughawi (اللغوي):** "Spesialis i'rab kalimat, timbangan sharaf, dan uslub balaghah." (إعراب التراكيب وتحليل الأساليب البيانية)
-- **Paket Harga:** 1 Bulan: Rp 49.000 \| 6 Bulan: Rp 299.000 \| 1 Tahun: Rp 499.000
+  - **Al-Lughawi (اللغوي):** "Membantu memahami susunan kalimat, pola perubahan kata, dan gaya bahasa Arab." (إعراب التراكيب وتحليل الأساليب البيانية)
+- **Paket Harga:** 1 Bulan: Rp49.000 \| 6 Bulan: Rp299.000 \| 1 Tahun: Rp499.000
 
 #### 7. Modul Segera Hadir (Coming Soon)
-- **AI Fikih Hanafi (`fiqh_hanafi`):** "Fikih Mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani."
-- **AI Fikih Maliki (`fiqh_maliki`):** "Fikih Mazhab Maliki berbasis naskah Al-Mudawwanah, Mukhtashar Khalil, dan Al-Qawanin Al-Fiqhiyyah."
-- **AI Fikih Hanbali (`fiqh_hanbali`):** "Fikih Mazhab Hanbali merujuk Al-Mughni, Al-Inshaf, dan Zad Al-Mustaqni'."
-- **AI Perbandingan Mazhab (`fiqh_muqaran`):** "Komparasi dalil dan pandangan 4 mazhab mu'tabar (Hanafi, Maliki, Syafi'i, Hanbali)."
-- **AI Aqidah & Ilmu Kalam (`aqidah`):** "Kajian teologi Islam Asy'ariyyah, Maturidiyyah, dalil aqli-naqli, dan bantahan syubhat."
-- **AI Sejarah & Sirah (`tarikh`):** "Sirah Nabawiyyah, khulafaur rasyidin, tarikh daulah Islam, dan thabaqat ulama."
-- **AI Habib Umar bin Hafizh (`habib_umar`):** "Kumpulan fatwa, khutbah, risalah, dan arahan dakwah Al-Habib Umar bin Hafizh."
-- **AI Hujjatul Islam Al-Ghazali (`imam_ghazali`):** "Khazanah pemikiran tasawuf, akhlaq, ushul, dan karya agung Ihya Ulumiddin."
+- **AI Fikih Hanafi (`fiqh_hanafi`):** "Pelajari fikih mazhab Hanafi melalui Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani."
+- **AI Fikih Maliki (`fiqh_maliki`):** "Pelajari fikih mazhab Maliki melalui Al-Mudawwanah, Mukhtashar Khalil, dan Al-Qawanin Al-Fiqhiyyah."
+- **AI Fikih Hanbali (`fiqh_hanbali`):** "Pelajari fikih mazhab Hanbali melalui Al-Mughni, Al-Inshaf, dan Zad Al-Mustaqni'."
+- **AI Perbandingan Mazhab (`fiqh_muqaran`):** "Bandingkan pendapat dan dalil dalam mazhab Hanafi, Maliki, Syafi'i, dan Hanbali."
+- **AI Akidah dan Ilmu Kalam (`aqidah`):** "Pelajari akidah Asy'ariyyah dan Maturidiyyah, beserta dalil dan penjelasan atas persoalan yang dibahas."
+- **AI Sejarah dan Sirah (`tarikh`):** "Telusuri kehidupan Nabi, Khulafaur Rasyidin, sejarah pemerintahan Islam, dan biografi ulama."
+- **AI Kajian Habib Umar bin Hafizh (`habib_umar`):** "Telusuri fatwa, khutbah, tulisan, dan nasihat dakwah Habib Umar bin Hafizh."
+- **AI Kajian Imam al-Ghazali (`imam_ghazali`):** "Pelajari pemikiran Imam al-Ghazali tentang tasawuf, akhlak, dan usul fikih, termasuk dalam Ihya Ulumiddin."
 
 ---
 
@@ -237,27 +242,27 @@ Sumber berkas: `openturath_ai/lib/screens/login_screen.dart` & `google_session_a
 - **Simbol & Identitas:**
   - Logo: Arch Artwork (*Gerbang Turats*)
   - Nama Brand: `OpenTurath`
-  - Slogan Editorial: `AI for Islamic Scholarship`
+  - Slogan Editorial: `Asisten AI untuk membaca dan mempelajari kitab.`
 - **Tombol Masuk Google:**
   - Teks Tombol: `Lanjutkan dengan Google`
   - Status Memuat: Indikator spinner melingkar (*Progress Indicator*)
 - **Persetujuan Ketentuan Legal:**
   - Teks Pengantar: `Dengan masuk, Anda menyetujui`
   - Tautan 1: `Ketentuan Layanan` (mengarah ke `https://openturath.ai/terms`)
-  - Penghubung: ` & `
+  - Penghubung: ` dan `
   - Tautan 2: `Kebijakan Privasi` (mengarah ke `https://openturath.ai/privacy`)
   - Penutup: `.`
 - **Pesan Kesalahan & SnackBar:**
-  - Kegagalan Buka Tautan: `Tidak dapat membuka tautan halaman.`
-  - Kendala Jaringan: `Koneksi internet bermasalah. Periksa jaringan Anda.`
-  - Kegagalan Masuk: `Gagal masuk akun Google. Silakan coba kembali.`
+  - Kegagalan Buka Tautan: `Tautan belum bisa dibuka. Coba lagi.`
+  - Kendala Jaringan: `Koneksi internet bermasalah. Periksa koneksi, lalu coba lagi.`
+  - Kegagalan Masuk: `Belum bisa masuk dengan Google. Coba lagi.`
 
 ### B. Layar Sinkronisasi Sesi Google (GoogleSessionAuthScreen)
-- **Header:** `Menyiapkan Sesi Riset`
-- **Subtitle:** `Menghubungkan akun Google Anda dengan ekosistem NotebookLM OpenTurath.`
-- **Status Loading:** `Memverifikasi kredensial Google Cloud...`
-- **Tombol Lanjut:** `Buka Ruang Riset`
-- **Tombol Batal:** `Kembali ke Masuk`
+- **Header:** `Menyiapkan percakapan`
+- **Subtitle:** `Gunakan akun Google untuk melanjutkan ke percakapan di NotebookLM.`
+- **Status Loading:** `Memeriksa akun Google…`
+- **Tombol Lanjut:** `Buka percakapan`
+- **Tombol Batal:** `Kembali`
 
 ---
 
@@ -268,59 +273,57 @@ Sumber berkas: `openturath_ai/lib/screens/dashboard_screen.dart`
 ### A. Bilah Status Atas & Sapaan Pengguna
 - **Judul Aplikasi di Header:** `OpenTurath`
 - **Format Sapaan:** `Ahlan, [Nama Pengguna]`  
-  *Fallback jika nama kosong:* `Ahlan, Peneliti Turats`
+  *Fallback jika nama kosong:* `Ahlan`
 - **Penanggalan Ganda:**
   - Kalender Masehi: Format lokal Indonesia (misal: *Minggu, 13 September 2026*)
   - Kalender Hijriyah: Format Arab-Hijriyah (misal: *29 Rabiul Awal 1448 H*)
 
 ### B. Kotak Penelusuran (Search Box)
-- **Placeholder Input:** `Cari spesialis, bab fikih, atau kitab...`
-- **Header Hasil Penelusuran:** `Hasil Penelusuran`
-- **Pesan Hasil Kosong:** `Tidak ditemukan naskah atau spesialis yang sesuai.`
+- **Placeholder Input:** `Cari asisten atau kitab`
+- **Header Hasil Penelusuran:** `Hasil pencarian`
+- **Pesan Hasil Kosong:** `Asisten atau kitab belum ditemukan. Coba kata kunci lain.`
 
 ### C. Seksi Bidang Keilmuan Terpilih (Curated Disciplines)
-- **Judul Seksi:** `Pilih Bidang Ilmu`
-- **Aksi Cepat:** `Lihat Semua` (menuju ke tab Daftar Asisten AI)
+- **Judul Seksi:** `Pilih bidang ilmu`
+- **Aksi Cepat:** `Lihat semua` (menuju ke tab Daftar Asisten AI)
 - **Kartu Bidang yang Tampil:**
-  1. `Fikih` — 6 spesialis
-  2. `Hadits` — 1 spesialis
-  3. `Tafsir` — 1 spesialis
-  4. `Aqidah` — 1 spesialis
-  5. `Usul Fiqh` — 1 spesialis
-  6. `Bahasa Arab` — 1 spesialis
+  1. `Fikih` : 6 asisten
+  2. `Hadis` : 1 asisten
+  3. `Tafsir` : 1 asisten
+  4. `Akidah` : 1 asisten
+  5. `Usul Fikih` : 1 asisten
+  6. `Bahasa Arab` : 1 asisten
 
 ### D. Carousel Edukasi & Pengingat Ilmiah (5 Slide)
 1. **Slide 1: Pengenalan**
-   - *Badge:* `TENTANG OPENTURATH`
-   - *Judul:* `Mengenal OpenTurath AI`
-   - *Ringkasan:* `Penelaahan ibarat dan rujukan langsung dari naskah primer turats.`
-   - *Penjelasan Lengkap (Modal):* `Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru dan ulama yang berkompeten.`
+   - *Badge:* `Tentang OpenTurath`
+   - *Judul:* `Mengenal OpenTurath`
+   - *Ringkasan:* `Temukan penjelasan dan rujukan untuk membantu membaca kitab.`
+   - *Penjelasan Lengkap (Modal):* `Gunakan OpenTurath untuk mencari rujukan dan membandingkan penjelasan dalam kitab. Cocokkan hasilnya dengan sumber asal, lalu pelajari bagian yang belum jelas bersama guru.`
 2. **Slide 2: Adab Talaqqi**
-   - *Badge:* `ADAB TALAQQI`
-   - *Judul:* `Wasilah Bantu, Bukan Pengganti Guru`
-   - *Ringkasan:* `Kajian agama hakiki wajib melalui bimbingan guru dan ulama bersanad.`
-   - *Penjelasan Lengkap (Modal):* `PENTING DIPAHAMI:
-
-Kecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur ilmiah untuk mempercepat pencarian teks dan matan. Pemahaman fikih dan fatwa tetap membutuhkan bimbingan guru dan ulama yang bersanad.`
+   - *Badge:* `Adab belajar`
+   - *Judul:* `Tetap belajar bersama guru`
+   - *Ringkasan:* `Bimbingan guru membantu Anda memahami konteks dan maksud pembahasan.`
+   - *Penjelasan Lengkap (Modal):* `OpenTurath membantu mencari teks dan membandingkan penjelasan dalam kitab. Untuk memahami persoalan agama dan pembahasan fatwa, tetaplah belajar bersama guru atau ulama yang memahami bidangnya.`
 3. **Slide 3: Ihtiyath (Kehati-hatian)**
-   - *Badge:* `IHTIYATH`
-   - *Judul:* `Verifikasi Naskah Primer`
-   - *Ringkasan:* `Selalu luangkan waktu memeriksa naskah Maktabah Syamilah atau cetak fisik.`
-   - *Penjelasan Lengkap (Modal):* `Sikap wara' dan kehati-hatian (ihtiyath) menuntut peneliti untuk meninjau langsung naskah fisik primer sebelum menyimpulkan dan menyebarluaskan hasil kajian ke khalayak.`
+   - *Badge:* `Periksa sumber`
+   - *Judul:* `Cocokkan dengan kitab asal`
+   - *Ringkasan:* `Periksa kutipan pada kitab asal di Maktabah Syamilah atau edisi cetaknya.`
+   - *Penjelasan Lengkap (Modal):* `AI bisa keliru mengutip atau memahami teks. Baca bagian sebelum dan sesudah kutipan pada kitab asal sebelum menyimpulkan atau membagikannya.`
 4. **Slide 4: Amanah Ilmiah**
-   - *Badge:* `AMANAH ILMIAH`
-   - *Judul:* `Ketepatan Sitasi Turats`
-   - *Ringkasan:* `Sertakan nama muallif, kitab, bab, dan nomor halaman dalam menukil ibarah.`
-   - *Penjelasan Lengkap (Modal):* `Dalam tradisi keilmuan Islam, amanah ilmiah dijaga dengan menyertakan rujukan yang sahih: judul kitab asli, nama pengarang, bab pembahasan, serta nomor jilid dan halaman.`
+   - *Badge:* `Amanah ilmiah`
+   - *Judul:* `Cantumkan rujukan dengan jelas`
+   - *Ringkasan:* `Saat mengutip, sertakan nama pengarang, judul kitab, serta jilid dan halaman jika tersedia.`
+   - *Penjelasan Lengkap (Modal):* `Cantumkan pengarang, judul kitab, edisi, serta jilid dan halaman sesuai sumber yang digunakan. Jika ada data yang belum tersedia, lengkapi dari kitab asal sebelum memakai kutipan untuk keperluan akademik.`
 5. **Slide 5: Sanad & Takhrij**
-   - *Badge:* `SANAD & TAKHRIJ`
-   - *Judul:* `Penelusuran Rujukan Ilmiah`
-   - *Ringkasan:* `Dilengkapi kutipan ibarat teks asli dan penomoran jilid dari kitab muktamad.`
-   - *Penjelasan Lengkap (Modal):* `Setiap rujukan yang ditampilkan mengacu langsung ke naskah turats, memudahkan santri dan peneliti meninjau matan dan syarah secara tertib dan presisi.`
+   - *Badge:* `Telusuri rujukan`
+   - *Judul:* `Lihat sumber kutipan`
+   - *Ringkasan:* `Gunakan informasi rujukan yang tersedia untuk menelusuri asal kutipan.`
+   - *Penjelasan Lengkap (Modal):* `Buka informasi rujukan untuk melihat asal kutipan. Cocokkan judul, edisi, jilid, dan halaman dengan kitab yang Anda gunakan.`
 
 - **Tombol Modal Slide:**
-  - Teks Aksi: `Baca Selengkapnya`
-  - Tombol Tutup Modal: `Mengerti & Tutup`
+  - Teks Aksi: `Baca selengkapnya`
+  - Tombol Tutup Modal: `Tutup`
 
 ---
 
@@ -329,17 +332,17 @@ Kecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur ilmiah unt
 Sumber berkas: `openturath_ai/lib/screens/specialist_list_screen.dart`
 
 - **Header Layar:** `Asisten AI`
-- **Subtitle Header:** `Khazanah asisten riset naskah primer turats`
+- **Subtitle Header:** `Pilih asisten sesuai bidang ilmu atau karya ulama yang ingin Anda pelajari.`
 - **Kontrol Segmentasi (Corpus Kind Control):**
-  - Opsi 1: `Berdasarkan Disiplin Ilmu`
-  - Opsi 2: `Berdasarkan Tokoh Ulama`
+  - Opsi 1: `Bidang ilmu`
+  - Opsi 2: `Tokoh ulama`
 - **Filter Chips Disiplin:**
-  - `Semua Bidang`, `Fikih`, `Fikih Tahawwulat`, `Hadits`, `Tafsir`, `Aqidah`, `Usul Fiqh`, `Bahasa Arab`
+  - `Semua bidang`, `Fikih`, `Fikih Tahawwulat`, `Hadis`, `Tafsir`, `Akidah`, `Usul Fikih`, `Bahasa Arab`
 - **Pesan Status Asisten:**
-  - Badge Aktif: `Aktif` / `Buka AI`
-  - Badge Segera Hadir: `Segera Hadir`
-  - SnackBar Saat Klik Coming Soon: `${agent.title} sedang dalam tahap kurasi naskah kitab primer (Segera Hadir).`
-- **Empty State:** `Belum ada spesialis pada kategori ini.`
+  - Badge ketersediaan: `Tersedia` / tombol `Buka asisten`
+  - Badge Segera Hadir: `Dalam persiapan`
+  - SnackBar Saat Klik Coming Soon: `${agent.title} sedang disiapkan dan belum bisa dibuka.`
+- **Empty State:** `Belum ada asisten dalam kategori ini.`
 
 ---
 
@@ -348,151 +351,152 @@ Sumber berkas: `openturath_ai/lib/screens/specialist_list_screen.dart`
 Sumber berkas: `openturath_ai/lib/screens/agent_webview_screen.dart` & `widgets/agent_multi_tab_room.dart`
 
 ### A. Bilah Tab Multi-Room (Multi-Tab Bar)
-- **Indikator Tab:** Menampilkan judul asisten yang sedang dibuka (misal: *AI Fikih Syafi'i*, *AI Hadits*)
-- **Tombol Tambah Tab:** Tooltip `Buka AI Lain`
+- **Indikator Tab:** Menampilkan judul asisten yang sedang dibuka (misal: *AI Fikih Syafi'i*, *AI Hadis*)
+- **Tombol Tambah Tab:** Tooltip `Buka asisten lain`
 - **Tombol Tutup Tab:** Icon silang (*close*) pada tab
 - **Dialog Konfirmasi Tutup Tab Terakhir:**
-  - Judul: `Tutup Percakapan AI?`
-  - Pesan: `Sesi percakapan akan diakhiri. Catatan yang belum disimpan ke catatan riset akan tertutup.`
+  - Judul: `Tutup percakapan`
+  - Pesan: `Percakapan ini akan ditutup. Simpan bagian yang ingin Anda baca kembali ke Catatan sebelum melanjutkan.`
   - Tombol Batal: `Batal`
-  - Tombol Setuju: `Tutup Percakapan`
+  - Tombol Setuju: `Tutup percakapan`
 
 ### B. Bilah Tindakan Header (Action Bar)
-- **Tombol Buku Rujukan (Maktabah):** Tooltip `Katalog Kitab Rujukan`
-- **Tombol Pengaturan Tampilan & Baca:** Tooltip `Pengaturan Tampilan & Baca`
-- **Status Sesi:** `Menghubungkan AI dan Maktabah...`
+- **Tombol Buku Rujukan (Maktabah):** Tooltip `Kitab rujukan`
+- **Tombol Pengaturan Tampilan & Baca:** Tooltip `Tampilan bacaan`
+- **Status Sesi:** `Menyiapkan percakapan…`
 
 ### C. Menu Pengaturan Tampilan & Baca (Study Options Sheet)
-- **Judul Sheet:** `Pengaturan Tampilan & Baca`
+- **Judul Sheet:** `Tampilan bacaan`
 - **Pilihan Ukuran Huruf:**
-  - `Kecil (85%)`, `Standar (100%)`, `Besar (115%)`, `Ekstra Besar (130%)`
-- **Pilihan Perataan Teks Arab:**
-  - `Kanan ke Kiri (RTL)`, `Justified / Rata Kanan-Kiri`
-- **Tombol Simpan:** `Terapkan Pengaturan`
+  - `Kecil (85%)`, `Standar (100%)`, `Besar (115%)`, `Sangat besar (130%)`
+- **Arah teks Arab:** `Kanan ke kiri`
+- **Perataan teks:** `Rata kanan-kiri`
+  *Catatan penerapan: pisahkan arah tulisan dari perataan. Penyesuaian kontrol perlu dilakukan pada kode, bukan hanya mengganti label.*
+- **Tombol Simpan:** `Terapkan`
 
 ### D. Umpan Balik & SnackBar Ruang AI
-- Salin Berhasil: `Jawaban disalin dan disimpan ke Catatan Riset.`
-- Salin Gagal: `Jawaban belum tersimpan. Coba salin lagi.`
-- Blokir Redirect Eksternal: `Navigasi ke situs eksternal dibatasi demi keamanan sesi riset.`
+- Salin Berhasil: `Jawaban disalin dan disimpan di Catatan.`
+- Salin Gagal: `Jawaban belum bisa disalin. Coba lagi.`
+- Blokir Redirect Eksternal: `Tautan ini tidak bisa dibuka dari percakapan.`
 
 ---
 
-## 7. Katalog Naskah Kanonikal 2.226 Kitab (Katalog & Detail Kitab)
+## 7. Katalog 2.226 Kitab Rujukan (Katalog & Detail Kitab)
 
 Sumber berkas: `openturath_ai/lib/screens/book_catalog_screen.dart` & `book_detail_screen.dart`
 
 ### A. Layar Katalog Lengkap (BookCatalogScreen)
-- **Header AppBar:** `Daftar Kitab Rujukan`
+- **Header AppBar:** `Kitab rujukan`
 - **Subtitle Dinamis (Contoh Realistis):**
-  - Fikih Syafi'i: `87 Kitab Mazhab Syafi'i`
-  - Hadits & Syarah: `1.173 Kitab AI Hadits & Syarah Sunnah`
-  - Ushul Fiqih: `241 Kitab AI Ushul Fiqih`
-  - Bahasa & Sastra Arab: `449 Kitab AI Bahasa Arab & Balaghah`
-  - Tafsir & Ulumul Qur'an: `218 Kitab AI Tafsir Al-Qur'an`
-  - Fikih Tahawwulat: `58 Kitab AI Fikih Tahawwulat`
+  - Fikih Syafi'i: `87 kitab fikih Syafi'i`
+  - Hadis & Syarah: `1.173 kitab hadis dan syarah`
+  - Ushul Fiqih: `241 kitab usul fikih`
+  - Bahasa & Sastra Arab: `449 kitab bahasa Arab dan balagah`
+  - Tafsir & Ulumul Qur'an: `218 kitab tafsir Al-Qur'an`
+  - Fikih Tahawwulat: `58 kitab Fikih Tahawwulat`
 - **Kolom Pencarian:**
-  - Placeholder: `Cari judul Arab/Latin, pengarang, muhaqqiq...`
+  - Placeholder: `Cari judul kitab, pengarang, atau penahkik`
   - Tombol Bersihkan: Icon close
 - **Bilah Filter Dinamis (Filter Chips Bar):**
-  - *Mode 1 (Tafsir & Bahasa Arab — Multipel Sub-Bagian):*
-    - `Semua Bagian`, `النحو والصرف`, `البلاغة`, `الغريب والمعاجم`, `كتب اللغة`, `Tafsir bi al-Ma'tsur`, `Tafsir bi al-Ra'y`, `Ahkam al-Qur'an`, dll.
-  - *Mode 2 (Fikih Syafi'i — Era & Tipe):*
-    - Era: `Semua Era`, `Mutaqaddimin`, `Ashab Al-Wujuh`, `Muta'akhkhirin`
-    - Tipe: `Asal Mazhab`, `Matan`, `Syarah`, `Hasyiyah`
-  - *Mode 3 (Hadits, Ushul & Tahawwulat — Abad Kronologis):*
-    - `Semua Era`, `Salaf (≤ 300 H)`, `Mutaqaddimin (301-600 H)`, `Muta'akhkhirin (601-1100 H)`, `Mu'ashir (> 1100 H)`
+  - *Mode 1 (Tafsir & Bahasa Arab : Multipel Sub-Bagian):*
+    - `Semua kategori`, `Nahwu dan saraf · النحو والصرف`, `Balagah · البلاغة`, `Kosakata sulit dan kamus · الغريب والمعاجم`, `Ilmu bahasa · كتب اللغة`, `Tafsir bi al-Ma'tsur`, `Tafsir bi al-Ra'y`, `Ahkam al-Qur'an`, dll.
+  - *Mode 2 (Fikih Syafi'i : Era & Tipe):*
+    - Era: `Semua periode`, `Mutaqaddimin`, `Ashab al-Wujuh`, `Muta'akhkhirin`
+    - Tipe: `Rujukan dasar mazhab`, `Matan`, `Syarah`, `Hasyiyah`
+  - *Mode 3 (Hadis, Ushul & Tahawwulat : Abad Kronologis):*
+    - `Semua periode`, `Hingga 300 H`, `301–600 H`, `601–1100 H`, `Setelah 1100 H`
 - **Header Jumlah Temuan:**
-  - `Menampilkan X dari Y naskah`
-- **Tombol Reset Filter:** `Reset`
+  - `Menampilkan X dari Y kitab`
+- **Tombol Reset Filter:** `Hapus filter`
 - **Empty State:**
-  - Judul: `Tidak ditemukan kitab yang sesuai.`
-  - Subtitle: `Coba gunakan kata kunci judul Arab, nama pengarang, atau muhaqqiq.`
-  - Tombol Aksi: `Hapus Semua Filter`
+  - Judul: `Kitab belum ditemukan`
+  - Subtitle: `Coba judul dalam huruf Arab atau Latin, nama pengarang, atau penahkik.`
+  - Tombol Aksi: `Hapus filter`
 - **Error State:**
   - Pesan: `Daftar kitab belum bisa dimuat.`
   - Tombol Aksi: `Coba lagi`
 
 ### B. Layar Detail Edisi Kitab (BookDetailScreen)
-- **Header AppBar:** `Keterangan kitab`
+- **Header AppBar:** `Detail kitab`
 - **Tombol Aksi Header:**
-  - Bookmark: Tooltip `Simpan Rujukan` / `Hapus Rujukan`
-  - Share/Sitasi: Tooltip `Salin Sitasi Standar`
+  - Bookmark: Tooltip `Simpan rujukan` / `Hapus dari Catatan`
+  - Share/Sitasi: Tooltip `Salin rujukan`
 - **Kartu 1: Identitas Kitab (Hero Card)**
-  - Badge: `[Nama Bagian/Disiplin]` (misal: *كتب السنة* atau *Naskah Kanonikal · Syafi'i*)
+  - Badge: `[Nama Bagian/Disiplin]` (misal: *كتب السنة* atau *Kitab rujukan · Syafi'i*)
   - Nomor Identitas Naskah: `#[ID Edisi]` (misal: *#1*, *#kitab_al_umm_shafii*)
   - Judul Arab Lengkap: Format RTL tipografi besar
-  - Nama Ringkas (*al-Ism al-Mukhtashar*): `المختصر: [Nama Pendek]`
+  - Nama Ringkas (*al-Ism al-Mukhtashar*): `Judul singkat: [Nama Pendek]`
   - Transliterasi Latin: Nama Latin miring (italic)
 - **Kartu 2: Muallif / Pengarang**
-  - Header Seksi: `MUALLIF / PENGARANG`
+  - Header Seksi: `Pengarang`
   - Nama Pengarang Arab: Teks tebal
   - Nama Pengarang Latin: Teks sekunder
-  - Badge Wafat Hijriyah: `Wafat: [Tahun] Hijriyah` atau `Wafat: Dalam verifikasi sanad`
+  - Badge Wafat Hijriyah: `Wafat: [Tahun] H` atau `Tahun wafat belum tersedia`
 - **Kartu 3: Klasifikasi Ilmiah**
-  - Header Seksi: `KLASIFIKASI ILMIAH`
-  - Baris 1: Label `Tipe Naskah` — Nilai: *Kitab Referensi Mazhab / Matan / Syarah*
-  - Baris 2: Label `Era Keilmuan` — Nilai: *Mutaqaddimin / Salaf / Abad ke-X H*
-  - Baris 3: Label `Jumlah Jilid` — Nilai: *[X] Jilid / Naskah Tunggal*
-  - Baris 4 (Opsional): Label `Derajat Mu'tabar` — Nilai: *Mu'tamad Mazhab*
+  - Header Seksi: `Jenis dan periode kitab`
+  - Baris 1: Label `Jenis kitab` : Nilai: *Rujukan mazhab / Matan / Syarah*
+  - Baris 2: Label `Periode` : Nilai: *Mutaqaddimin / Salaf / Abad ke-X H*
+  - Baris 3: Label `Jumlah jilid` : Nilai: *[X] jilid / Jumlah jilid belum tersedia*
+  - Baris 4 (Opsional): Label `Kedudukan dalam mazhab` : Nilai: *Mu'tamad Mazhab*
 - **Kartu 4: Data Edisi & Tahqiq**
-  - Header Seksi: `DATA EDISI & TAHQIQ`
-  - Baris 1: Label `Penerbit Rujukan` — Nilai: *[Nama Penerbit] / Informasi penerbit belum tersedia*
-  - Baris 2: Label `Pentahqiq / Muhaqqiq` — Nilai: *[Nama Muhaqqiq] / Cetakan klasik / belum tercatat*
-  - Baris 3 (Opsional): Label `Tahun / Edisi Cetak` — Nilai: *[Tahun Cetak]*
+  - Header Seksi: `Edisi dan tahkik`
+  - Baris 1: Label `Penerbit` : Nilai: *[Nama Penerbit] / Informasi penerbit belum tersedia*
+  - Baris 2: Label `Penahkik` : Nilai: *[Nama Muhaqqiq] / Penahkik belum tercatat*
+  - Baris 3 (Opsional): Label `Tahun atau edisi cetak` : Nilai: *[Tahun Cetak]*
 - **Format Salinan Sitasi Ilmiah:**
-  - `[Pengarang] (w. [Tahun] H). [Judul Kitab], [Jumlah Jilid] Jilid, [Muhaqqiq], Penerbit: [Penerbit], Th. [Tahun Cetak]. OpenTurath AI Canonical Corpus.`
-  - Pesan Sukses: `Sitasi standar ilmiah tersalin ke papan klip.`
-  - Pesan Simpan Rujukan: `Kitab disimpan ke Catatan Riset.`
-  - Pesan Hapus Rujukan: `Rujukan dihapus dari Catatan Riset.`
+  - `[Pengarang]. [Judul Kitab]. Tahkik: [Muhaqqiq]. [Penerbit], [Tahun Cetak]. [Jumlah Jilid] jilid.`
+  - Pesan Sukses: `Rujukan disalin.`
+  - Pesan Simpan Rujukan: `Rujukan kitab disimpan di Catatan.`
+  - Pesan Hapus Rujukan: `Rujukan dihapus dari Catatan.`
 
 ---
 
-## 8. Layar Catatan Riset, Simpanan & Editor Catatan (Bookmark & Notes)
+## 8. Layar Catatan, Simpanan & Editor Catatan (Bookmark & Notes)
 
 Sumber berkas: `openturath_ai/lib/screens/bookmark_screen.dart` & `widgets/note_editor_sheet.dart`
 
-### A. Layar Catatan Riset (BookmarkScreen)
-- **Header Layar:** `Catatan Riset`
+### A. Layar Catatan (BookmarkScreen)
+- **Header Layar:** `Catatan`
 - **Tombol Aksi:**
-  - Tambah Catatan: Tooltip `Tambah Catatan Baru`
+  - Tambah Catatan: Tooltip `Buat catatan`
   - Cari Catatan: Tooltip `Cari catatan` / `Tutup pencarian`
-- **Kotak Pencarian:** Placeholder `Cari catatan, topik, atau kutipan...`
+- **Kotak Pencarian:** Placeholder `Cari catatan, topik, atau kutipan`
 - **Filter Tab Kategori:**
-  - `Semua`, `Catatan Riset`, `Kutipan Ibarah`, `Rujukan Kitab`
+  - `Semua`, `Catatan`, `Ibarah`, `Rujukan kitab`
 - **Filter Chips Disiplin:**
-  - `Semua`, `Fikih`, `Hadis`, `Tafsir`, `Akidah`, `Usul Fiqih`
+  - `Semua`, `Fikih`, `Hadis`, `Tafsir`, `Akidah`, `Usul Fikih`
 - **Kartu Catatan:**
   - Badge Asisten: Menampilkan asisten perujuk
-  - Tombol Aksi per Kartu: `Edit`, `Salin ibarah`, `Kitab`
-  - Tooltip Hapus: `Hapus Catatan`
+  - Tombol Aksi per Kartu: `Ubah`, `Salin ibarah`, `Lihat rujukan`
+  - Tooltip Hapus: `Hapus catatan`
   - Tooltip Bagikan: `Bagikan catatan`
 - **Empty State:**
   - Judul: `Belum ada catatan`
-  - Penjelasan: `Simpan telaah atau ibarah ke dalam catatan riset Anda.`
-  - Tombol CTA: `Buka kajian`
+  - Penjelasan: `Simpan jawaban, kutipan, atau rujukan kitab di sini.`
+  - Tombol CTA: `Pilih asisten`
 - **Dialog Hapus Catatan:**
-  - Judul: `Hapus Catatan Riset?`
-  - Pesan: `Catatan ini akan dihapus secara permanen dari penyimpanan perangkat Anda.`
+  - Judul: `Hapus catatan`
+  - Pesan: `Catatan ini akan dihapus dari perangkat ini dan tidak dapat dipulihkan.`
   - Tombol Batal: `Batal`
-  - Tombol Hapus: `Hapus`
-  - SnackBar: `Catatan riset telah dihapus.`
+  - Tombol Hapus: `Hapus catatan`
+  - SnackBar: `Catatan dihapus.`
 
-### B. Editor Catatan Riset (NoteEditorSheet)
-- **Header Modal:** `Edit Catatan` / `Catatan Baru`
-- **Input Judul:** Placeholder `Judul Catatan...`
-- **Input Isi/Ibarah:** Placeholder `Tulis atau edit telaah, ibarat naskah, dan catatan riset...`
+### B. Editor Catatan (NoteEditorSheet)
+- **Header Modal:** `Ubah catatan` / `Catatan baru`
+- **Input Judul:** Placeholder `Judul catatan`
+- **Input Isi/Ibarah:** Placeholder `Tulis catatan atau tempel kutipan di sini`
 - **Toolbar Format Teks:**
-  - Tooltips: `Tebal`, `Miring`, `Daftar Poin`, `Kutipan`, `Kutipan Arab`, `Judul Bab`, `Sub-bab`
+  - Tooltips: `Tebal`, `Miring`, `Daftar poin`, `Kutipan`, `Kutipan Arab`, `Judul bagian`, `Subjudul`
 - **Input Rujukan:**
-  - Label: `Rujukan Kitab`
-  - Input Kitab: Placeholder `Nama kitab rujukan...`
-  - Input Halaman/Jilid: Placeholder `Jilid/Hal...`
+  - Label: `Rujukan kitab`
+  - Input Kitab: Placeholder `Judul kitab`
+  - Input Halaman/Jilid: Placeholder `Contoh: jilid 2, halaman 45`
 - **Tombol Aksi:**
   - Batal: `Batal`
-  - Simpan: `Simpan Perubahan` / `Simpan Catatan`
+  - Simpan: `Simpan perubahan` / `Simpan catatan`
 - **Pesan SnackBar:**
-  - Validasi: `Judul atau isi catatan tidak boleh kosong.`
-  - Berhasil: `Catatan riset berhasil disimpan.`
+  - Validasi: `Isi judul atau tulis catatan terlebih dahulu.`
+  - Berhasil: `Catatan disimpan.`
 
 ---
 
@@ -501,55 +505,55 @@ Sumber berkas: `openturath_ai/lib/screens/bookmark_screen.dart` & `widgets/note_
 Sumber berkas: `openturath_ai/lib/screens/subscription_screen.dart` & `widgets/doku_checkout_sheet.dart`
 
 ### A. Layar Langganan (SubscriptionScreen)
-- **Header AppBar:** `Langganan & Akses AI`
-- **Tombol Tukar Voucher di Header:** `Klaim Voucher`
+- **Header AppBar:** `Langganan`
+- **Tombol Tukar Voucher di Header:** `Gunakan voucher`
 - **Status Langganan Pengguna:**
-  - *Jika Aktif:* `Langganan Aktif` — `Berlaku hingga [Tanggal]`
-  - *Jika Belum/Kedaluwarsa:* `Belum Berlangganan` — `Akses penuh dibuka dengan paket atau voucher.`
+  - *Jika Aktif:* `Langganan aktif` : `Berlaku hingga [Tanggal]`
+  - *Jika Belum/Kedaluwarsa:* `Belum berlangganan` : `Pilih paket atau gunakan voucher untuk mengakses asisten AI.`
 - **Pilihan Paket:**
   1. **Paket 1 Bulan:**
-     - Harga: `Rp 49.000` / bulan
-     - Deskripsi: `Akses riset intensif modul terpilih selama 30 hari penuh.`
+     - Harga: `Rp49.000` / bulan
+     - Deskripsi: `Akses asisten yang dipilih selama 30 hari.`
   2. **Paket 6 Bulan:**
-     - Harga: `Rp 299.000` / 6 bulan
-     - Badge: `HEMAT 15%`
-     - Deskripsi: `Pilihan ideal untuk santri dan peneliti tugas akhir.`
+     - Harga: `Rp299.000` / 6 bulan
+     - Badge: `6 bulan`
+     - Deskripsi: `Pilih durasi 6 bulan untuk melanjutkan belajar secara rutin.`
   3. **Paket 1 Tahun (Full Year):**
-     - Harga: `Rp 499.000` / tahun
-     - Badge: `PALING HEMAT`
-     - Deskripsi: `Akses tanpa batas setahun penuh untuk seluruh khazanah naskah.`
+     - Harga: `Rp499.000` / tahun
+     - Badge: `1 tahun`
+     - Deskripsi: `Pilih durasi 1 tahun untuk belajar secara berkelanjutan.`
 - **Daftar Keunggulan Paket:**
-  - `Akses tanpa batas ke ribuan naskah turats kanonikal.`
-  - `Pencarian ibarah presisi dengan kutipan jilid dan halaman asli.`
-  - `Multi-Room: Buka banyak asisten sekaligus tanpa memuat ulang.`
-  - `Penyimpanan Catatan Riset tak terbatas langsung di perangkat.`
+  - `Telusuri rujukan kitab sesuai cakupan paket.`
+  - `Cari ibarah dan periksa informasi rujukan yang tersedia.`
+  - `Buka beberapa asisten dalam tab terpisah.`
+  - `Simpan catatan dan kutipan di perangkat Anda.`
 - **Dialog Input WhatsApp Konfirmasi:**
-  - Judul: `Nomor WhatsApp Konfirmasi`
-  - Penjelasan: `Masukkan nomor WhatsApp aktif untuk pengiriman bukti aktivasi langganan dan rincian transaksi riset Anda.`
+  - Judul: `Nomor WhatsApp`
+  - Penjelasan: `Masukkan nomor WhatsApp aktif untuk menerima konfirmasi langganan dan rincian pembayaran.`
   - Placeholder: `Contoh: 081234567890`
   - Tombol Batal: `Batal`
-  - Tombol Lanjut: `Lanjutkan Pembayaran`
-  - Validasi Error: `Masukkan nomor telepon yang valid.`
+  - Tombol Lanjut: `Lanjut ke pembayaran`
+  - Validasi Error: `Masukkan nomor WhatsApp lengkap, misalnya 081234567890.`
 
 ### B. Lembar Pembayaran DOKU (DokuCheckoutSheet)
-- **Header:** `Pembayaran Aman DOKU`
-- **Subtitle:** `Transaksi terenkripsi dan diverifikasi secara instan.`
+- **Header:** `Pembayaran melalui DOKU`
+- **Subtitle:** `Pilih metode pembayaran yang tersedia di DOKU.`
 - **Metode Pembayaran yang Didukung:**
-  - `QRIS (GoPay, OVO, Dana, ShopeePay, BCA, dll.)`
-  - `Virtual Account (BCA, Mandiri, BNI, BRI, Permata)`
-  - `Gerai Retail / Minimarket`
+  - `QRIS`
+  - `Virtual account`
+  - `Gerai retail atau minimarket`
 - **Tombol Status:**
-  - Tooltip: `Periksa Status Pembayaran & Muat Ulang`
+  - Tooltip: `Periksa status pembayaran`
   - Tooltip Tutup: `Tutup`
-- **Dialog Konfirmasi Batalkan Pembayaran:**
-  - Judul: `Tutup Laman Pembayaran?`
-  - Pesan: `Apakah Anda ingin menutup sesi pembayaran? Transaksi Anda tetap tercatat di sistem.`
-  - Tombol 1: `Lanjutkan Bayar`
-  - Tombol 2: `Ya, Tutup`
+- **Dialog konfirmasi menutup pembayaran:**
+  - Judul: `Tutup pembayaran`
+  - Pesan: `Halaman pembayaran akan ditutup.`
+  - Tombol 1: `Lanjutkan pembayaran`
+  - Tombol 2: `Tutup`
 - **Pesan Status Transaksi:**
-  - Berhasil: `Pembayaran berhasil dikonfirmasi! Akses langganan telah aktif.`
-  - Menunggu: `Menunggu konfirmasi pembayaran dari DOKU.`
-  - Gagal/Batal: `Sesi pembayaran telah berakhir atau dibatalkan.`
+  - Berhasil: `Pembayaran berhasil. Langganan Anda sudah aktif.`
+  - Menunggu: `Menunggu konfirmasi pembayaran.`
+  - Gagal/Batal: `Pembayaran belum selesai. Periksa status pembayaran untuk melihat detailnya.`
 
 ---
 
@@ -557,21 +561,21 @@ Sumber berkas: `openturath_ai/lib/screens/subscription_screen.dart` & `widgets/d
 
 Sumber berkas: `openturath_ai/lib/widgets/redeem_code_sheet.dart`
 
-- **Header Lembar:** `Tukar Kode Voucher`
-- **Deskripsi:** `Masukkan kode akses atau voucher khusus untuk mengaktifkan langganan modul riset OpenTurath.`
+- **Header Lembar:** `Gunakan voucher`
+- **Deskripsi:** `Masukkan kode voucher untuk mengaktifkan akses sesuai ketentuannya.`
 - **Form Input:**
-  - Placeholder: `Masukkan kode akses`
+  - Placeholder: `Kode voucher`
   - Format Teks: Huruf kapital otomatis (*Auto-capitalized*)
 - **Tombol Aksi:**
-  - Teks Tombol: `Klaim Akses Sekarang`
+  - Teks Tombol: `Gunakan voucher`
   - Status Loading: Spinner animasi melingkar
 - **Kamus Pesan Validasi & Kesalahan:**
-  - Input Kosong: `Silakan masukkan kode akses terlebih dahulu.`
-  - Kode Salah: `Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.`
-  - Sudah Digunakan: `Anda sudah pernah menukarkan kode voucher ini.`
-  - Kuota Habis: `Kuota penukaran untuk kode voucher ini sudah habis.`
-  - Kedaluwarsa: `Masa berlaku kode voucher ini telah berakhir.`
-  - Sukses Penukaran: `Voucher berhasil ditukarkan! Akses modul telah diaktifkan.`
+  - Input Kosong: `Masukkan kode voucher terlebih dahulu.`
+  - Kode Salah: `Kode voucher tidak ditemukan. Periksa penulisannya, lalu coba lagi.`
+  - Sudah Digunakan: `Anda sudah menggunakan voucher ini.`
+  - Kuota Habis: `Voucher ini sudah mencapai batas penggunaan.`
+  - Kedaluwarsa: `Voucher ini sudah kedaluwarsa.`
+  - Sukses Penukaran: `Voucher berhasil digunakan. Akses Anda sudah aktif.`
 
 ---
 
@@ -581,58 +585,61 @@ Sumber berkas: `openturath_ai/lib/screens/profile_screen.dart`
 
 ### A. Informasi Akun Pengguna
 - **Header Layar:** `Pengaturan`
-- **Badge Tipe Akun:** `Pengguna OpenTurath` / `Santri Peneliti`
+- **Badge Tipe Akun:** `Pengguna OpenTurath`
 - **Detail Akun:** Menampilkan Nama Lengkap, Alamat Email Google, serta ID Pengguna
 - **Status Langganan:**
-  - `Akses Penuh Seluruh Modul AI · Aktif sampai [Tanggal]`
-  - `Belum berlangganan. Akses dibuka dengan voucher atau paket.`
+  - `Langganan aktif hingga [Tanggal]`
+  - `Pilih paket atau gunakan voucher untuk mengakses asisten AI.`
 
 ### B. Menu Preferensi & Tampilan
-- **Seksi:** `Tampilan & Kebahasaan`
+- **Seksi:** `Tampilan dan bahasa`
 - **Pengaturan Tema:**
   - Judul: `Tampilan`
-  - Pilihan: `Ikuti Sistem`, `Terang`, `Gelap`
+  - Pilihan: `Ikuti perangkat`, `Terang`, `Gelap`
 - **Pengaturan Bahasa:**
   - Judul: `Bahasa`
   - Nilai: `Bahasa Indonesia`
 
 ### C. Dokumen Kebijakan & Legalitas (Modal Dialogs)
+
+**Catatan editorial:** butir Ketentuan Layanan dan Kebijakan Privasi di bawah ini merupakan draf dari ringkasan. Bagian ini belum siap ditayangkan. Lengkapi informasi faktual dan isi kurung siku sebelum penerapan.
+
 1. **Tentang OpenTurath (About OpenTurath)**
    - Judul: `Tentang OpenTurath`
    - Versi: `Versi 1.0.9 · Membaca kitab, menelusuri ibarah.`
-   - Isi: `OpenTurath adalah platform kecerdasan buatan terapan untuk literatur dan turats Islam klasik. Dibangun untuk mempermudah santri, asatidz, akademisi, dan peneliti dalam menelusuri matan, syarah, takhrij, dan ibarah mu'tabarah secara terstruktur.`
+   - Isi: `OpenTurath membantu Anda membaca dan mempelajari kitab-kitab Islam dengan bantuan AI. Telusuri penjelasan dan rujukan, bandingkan pembahasan, lalu simpan bagian penting ke Catatan.`
    - Tombol: `Tutup`
 2. **Ketentuan Layanan (Terms of Service)**
    - Judul: `Ketentuan Layanan OpenTurath`
-   - Butir 1: `1. Ruang Lingkup & Tujuan Riset` — Digunakan untuk riset akademis dan literatur keislaman.
-   - Butir 2: `2. Verifikasi Sumber Asli & Batasan Penggunaan` — Kecerdasan buatan bukan pemberi fatwa mutlak. Pengguna wajib mencocokkan kutipan dengan naskah fisik.
-   - Butir 3: `3. Akun Pengguna & Hak Akses` — Akun bersifat personal dan tidak boleh disalahgunakan.
-   - Butir 4: `4. Ketentuan Pembayaran & Berlangganan` — Pembayaran resmi diproses melalui gateway pembayaran terlisensi.
-   - Tombol Persetujuan: `Saya Pahami & Setuju`
+   - Butir 1: `1. Kegunaan OpenTurath` : OpenTurath digunakan untuk membantu mempelajari dan menelusuri rujukan dalam kitab-kitab Islam.
+   - Butir 2: `2. Ketepatan jawaban dan pemeriksaan sumber` : Jawaban AI merupakan bantuan untuk mempelajari sumber dan tidak berfungsi sebagai fatwa. Periksa kutipan pada kitab asal dan pelajari persoalan agama bersama guru atau ulama.
+   - Butir 3: `3. Akun dan akses` : Gunakan akun pribadi Anda dan patuhi ketentuan akses OpenTurath.
+   - Butir 4: `4. Pembayaran dan langganan` : Pembayaran langganan diproses melalui DOKU. Periksa harga, durasi, dan cakupan akses sebelum membayar.
+   - Tombol Persetujuan: `Setuju`
 3. **Kebijakan Privasi (Privacy Policy)**
-   - Judul: `Kebijakan Privasi Pengguna`
-   - Butir 1: `1. Pengumpulan & Penggunaan Data` — Mengumpulkan data email dan profil Google dasar demi kelancaran otentikasi.
-   - Butir 2: `2. Kerahasiaan Sesi & Catatan Riset` — Catatan riset dan bookmark disimpan secara aman dan terenkripsi.
-   - Butir 3: `3. Keamanan Sesi Google & NotebookLM` — Mematuhi protokol otentikasi resmi Google OAuth.
-   - Butir 4: `4. Hak Penghapusan Data Pengguna` — Pengguna berhak menghapus akun dan seluruh datanya kapan saja.
+   - Judul: `Kebijakan Privasi`
+   - Butir 1: `1. Data yang digunakan` : Alamat email dan informasi profil Google digunakan untuk membantu proses masuk ke akun.
+   - Butir 2: `2. Penyimpanan percakapan dan catatan` : Catatan dan rujukan disimpan di [lokasi penyimpanan yang telah diperiksa]. [Jelaskan cara perlindungan data yang benar-benar diterapkan].
+   - Butir 3: `3. Penggunaan Google dan NotebookLM` : Percakapan menggunakan NotebookLM. [Jelaskan data yang diteruskan ke Google, cara sesi dikelola, dan kebijakan yang berlaku].
+   - Butir 4: `4. Penghapusan akun dan data` : Anda dapat meminta penghapusan akun melalui Pengaturan. [Jelaskan data yang dihapus, data yang disimpan sementara, alasannya, dan jangka waktunya].
    - Tombol Tutup: `Tutup`
 4. **Metodologi Riset & Verifikasi Naskah**
-   - Judul: `Metodologi Naskah & Sanad Rujukan`
-   - Isi: `Setiap asisten AI di OpenTurath terhubung dengan korpus naskah primer yang telah diverifikasi kelengkapan jilid, nama muallif, dan tahun wafat hijriyahnya berstandar Maktabah Syamilah.`
+   - Judul: `Tentang sumber rujukan`
+   - Isi: `Setiap asisten memiliki daftar kitab rujukan sesuai bidangnya. Buka detail kitab untuk melihat informasi pengarang dan edisi yang tersedia. Cocokkan kutipan AI dengan kitab asal sebelum menggunakannya.`
    - Tombol: `Tutup`
 
 ### D. Manajemen Sesi & Keamanan Akun
 - **Tombol Keluar (Logout):**
-  - Label: `Keluar dari Akun`
-  - Dialog Konfirmasi: `Keluar dari akun?` — `Anda akan keluar dari akun ini.`
+  - Label: `Keluar dari akun`
+  - Dialog Konfirmasi: `Keluar dari akun` : `Anda akan keluar dari akun ini.`
   - Tombol: `Batal` \| `Keluar`
 - **Tombol Hapus Akun (Destructive Action):**
-  - Label: `Hapus Akun & Data Riset`
-  - Dialog Peringatan: `Hapus akun?`
-  - Pesan Bahaya: `Tindakan ini tidak dapat dibatalkan. Profil, simpanan, dan data akun Anda akan dihapus dari server.`
+  - Label: `Hapus akun`
+  - Dialog Peringatan: `Hapus akun`
+  - Pesan Bahaya: `Akun Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.`
   - Tombol: `Batal` \| `Hapus akun`
   - Pesan Berhasil: `Akun Anda sudah dihapus.`
-  - Pesan Keamanan Re-Login: `Untuk menghapus akun, masuk ulang terlebih dahulu.`
+  - Pesan Keamanan Re-Login: `Masuk kembali untuk melanjutkan penghapusan akun.`
 
 ---
 
@@ -640,30 +647,30 @@ Sumber berkas: `openturath_ai/lib/screens/profile_screen.dart`
 
 ### A. Lembar Bukti Ibarah (EvidenceBottomSheet)
 Sumber berkas: `openturath_ai/lib/widgets/evidence_bottom_sheet.dart`
-- **Header Sheet:** `Kutipan Ibarah Asli`
+- **Header Sheet:** `Ibarah dan rujukan`
 - **Metadata Kutipan:**
-  - Label Penulis: `Penulis`
+  - Label Penulis: `Pengarang`
   - Label Halaman: `Halaman` / `Jilid`
   - Label Kategori: `Kategori`
 - **Teks Arab:** Teks asli matan/ibarah berharakat
 - **Tombol Aksi:**
-  - `Salin Teks` (Pesan: *Teks disalin*)
-  - `Cari di Syamilah`
-  - Tooltip: `Salin sitasi` (Pesan: *Sitasi disalin*)
+  - `Salin teks` (Pesan: *Teks disalin.*)
+  - `Cari di Maktabah Syamilah`
+  - Tooltip: `Salin rujukan` (Pesan: *Rujukan disalin.*)
 
 ### B. Banner Pembaruan Aplikasi (UpdateReadyBanner)
 Sumber berkas: `openturath_ai/lib/widgets/update_ready_banner.dart`
-- **Badge:** `PEMBARUAN TERSEDIA`
-- **Judul Banner:** `Versi Baru OpenTurath Siap Dipasang`
-- **Penjelasan:** `Pembaruan sistem membawa perbaikan stabilitas dan penambahan naskah kitab rujukan.`
-- **Tombol Pasang:** `Perbarui Sekarang`
-- **Tombol Nanti:** `Nanti Saja`
+- **Badge:** `Pembaruan tersedia`
+- **Judul Banner:** `Versi baru OpenTurath tersedia`
+- **Penjelasan:** `Perbarui OpenTurath untuk menggunakan versi terbaru.`
+- **Tombol Pasang:** `Perbarui sekarang`
+- **Tombol Nanti:** `Nanti`
 
 ### C. Status Gangguan & Error Global (AppErrorState)
 Sumber berkas: `openturath_ai/lib/widgets/app_error_state.dart`
-- **Judul:** `Gagal Memuat Data`
-- **Deskripsi:** `Terjadi kendala saat menghubungkan ke server naskah. Periksa sambungan internet Anda.`
-- **Tombol:** `Muat Ulang Halaman`
+- **Judul:** `Data belum bisa dimuat`
+- **Deskripsi:** `Coba lagi dalam beberapa saat.`
+- **Tombol:** `Coba lagi`
 
 ---
-*Dokumen ini digenerasi secara otomatis dari audit kode sumber aktif OpenTurath AI.*
+*Revisi ini disusun melalui audit editorial atas inventaris teks yang dilampirkan. Pemeriksaan kode sumber dan perilaku aplikasi belum dilakukan.*
