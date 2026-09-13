@@ -2376,7 +2376,7 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
       
       <div style="flex-grow: 1;"></div>
       
-      <a href="mailto:support@openturath.com" class="btn-help">
+      <a href="mailto:openturath@gmail.com" class="btn-help">
         💬 Bantuan
       </a>
     </aside>
