@@ -239,7 +239,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Daftar Kitab Rujukan',
+              AppCopy.referenceBooks,
               style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             Text(
@@ -253,7 +253,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             TextButton(
               onPressed: _clearFilters,
               child: Text(
-                'Reset',
+                'Hapus filter',
                 style: OTTypography.button(color: primaryAccent).copyWith(fontSize: 13),
               ),
             ),
@@ -288,7 +288,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         onChanged: _onSearchChanged,
                         style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                         decoration: InputDecoration(
-                          hintText: 'Cari judul Arab/Latin, pengarang, muhaqqiq...',
+                          hintText: 'Cari kitab, pengarang, atau penahkik…',
                           hintStyle: GoogleFonts.outfit(
                             fontSize: 13.5,
                             color: textSecondary.withValues(alpha: 0.7),
@@ -620,14 +620,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               Icon(Icons.search_off_rounded, size: 48, color: textSecondary),
               const SizedBox(height: 12),
               Text(
-                'Tidak ditemukan kitab yang sesuai.',
+                'Belum ada kitab yang cocok',
                 style: OTTypography.bodyMedium(color: textPrimary).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Coba gunakan kata kunci judul Arab, nama pengarang, atau muhaqqiq.',
+                'Coba gunakan kata kunci lain, nama pengarang, atau penahkik.',
                 textAlign: TextAlign.center,
                 style: OTTypography.caption(color: textSecondary),
               ),
@@ -642,7 +642,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Hapus Semua Filter',
+                      'Hapus filter',
                       style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
                     ),
                   ),

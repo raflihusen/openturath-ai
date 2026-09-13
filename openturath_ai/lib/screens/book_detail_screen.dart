@@ -63,7 +63,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaved = false;
             _isSaving = false;
           });
-          AppSnackBar.show(context, message: 'Rujukan dihapus dari Catatan Riset.');
+          AppSnackBar.show(context, message: 'Rujukan dihapus dari catatan.');
         }
       } else {
         final agent = _resolveTargetAgent();
@@ -74,7 +74,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             ? ', Terbitan ${widget.book.publisher}'
             : '';
         final muhaqqiqStr = widget.book.muhaqqiq != null
-            ? ', Tahqiq: ${widget.book.muhaqqiq}'
+            ? ', Tahkik: ${widget.book.muhaqqiq}'
             : '';
 
         final newNote = ResearchNote(
@@ -118,13 +118,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaving = false;
           });
           HapticFeedback.mediumImpact();
-          AppSnackBar.success(context, 'Kitab disimpan ke Catatan Riset.');
+          AppSnackBar.success(context, 'Kitab disimpan ke catatan.');
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.error(context, 'Gagal memperbarui catatan riset.');
+        AppSnackBar.error(context, 'Gagal memperbarui catatan.');
       }
     }
   }
@@ -141,31 +141,29 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     }
   }
 
-
-
   void _copyScholarlyCitation() {
     final deathYearStr = widget.book.verifiedDeathYearHijri != null
         ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
         : '';
     final publisherStr = widget.book.publisher != null
-        ? ', Penerbit: ${widget.book.publisher}'
+        ? ', ${widget.book.publisher}'
         : '';
     final muhaqqiqStr = widget.book.muhaqqiq != null
-        ? ', ${widget.book.muhaqqiq}'
+        ? ', Tahkik: ${widget.book.muhaqqiq}'
         : '';
     final volStr = (widget.book.volumesDescription != null && widget.book.volumesDescription!.isNotEmpty)
-        ? ', ${widget.book.volumesDescription} Jilid'
-        : (widget.book.volumesCount != null ? ', ${widget.book.volumesCount} Jilid' : '');
+        ? ', ${widget.book.volumesDescription} jilid'
+        : (widget.book.volumesCount != null ? ', ${widget.book.volumesCount} jilid' : '');
     final printYearStr = (widget.book.printYear != null && widget.book.printYear != '-')
-        ? ', Th. ${widget.book.printYear}'
+        ? ', ${widget.book.printYear}'
         : '';
 
     final citation =
-        '${widget.book.authorArabic}$deathYearStr. ${widget.book.titleArabic}$volStr$muhaqqiqStr$publisherStr$printYearStr. OpenTurath AI Canonical Corpus.';
+        '${widget.book.authorArabic}$deathYearStr. ${widget.book.titleArabic}$muhaqqiqStr$publisherStr$printYearStr$volStr.';
 
     Clipboard.setData(ClipboardData(text: citation));
     HapticFeedback.selectionClick();
-    AppSnackBar.success(context, 'Sitasi standar ilmiah tersalin ke papan klip.');
+    AppSnackBar.success(context, 'Sitasi rujukan tersalin.');
   }
 
   @override
@@ -199,12 +197,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
               color: _isSaved ? (isDark ? Colors.white : Colors.black) : textSecondary,
             ),
-            tooltip: _isSaved ? 'Hapus Rujukan' : 'Simpan Rujukan',
+            tooltip: _isSaved ? 'Hapus rujukan' : 'Simpan rujukan',
             onPressed: _toggleSaveBook,
           ),
           IconButton(
             icon: Icon(Icons.share_outlined, color: textSecondary),
-            tooltip: 'Salin Sitasi Standar',
+            tooltip: 'Salin sitasi',
             onPressed: _copyScholarlyCitation,
           ),
           const SizedBox(width: 8),
@@ -313,7 +311,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('MUALLIF / PENGARANG', textSecondary),
+                    _buildSectionHeader('PENGARANG', textSecondary),
                     const SizedBox(height: 10),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +355,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 child: Text(
                                   widget.book.verifiedDeathYearHijri != null
                                       ? 'Wafat: ${widget.book.verifiedDeathYearHijri} Hijriyah'
-                                      : 'Wafat: Dalam verifikasi sanad',
+                                      : 'Wafat: Belum tercatat',
                                   style: OTTypography.caption(color: textSecondary).copyWith(
                                     fontSize: 11.5,
                                     fontWeight: FontWeight.w500,
@@ -383,7 +381,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('KLASIFIKASI ILMIAH', textSecondary),
+                    _buildSectionHeader('KLASIFIKASI & KANDUNGAN', textSecondary),
                     const SizedBox(height: 12),
                     if (widget.book.sectionArabic != null && widget.book.sectionArabic!.isNotEmpty) ...[
                       _buildMetaRow(
@@ -468,20 +466,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('DATA EDISI & TAHQIQ', textSecondary),
+                    _buildSectionHeader('PENERBITAN & TAHKIK', textSecondary),
                     const SizedBox(height: 12),
                     _buildMetaRow(
                       icon: Icons.business_outlined,
-                      label: 'Penerbit Rujukan',
-                      value: widget.book.publisher ?? 'Informasi penerbit belum tersedia',
+                      label: 'Penerbit',
+                      value: widget.book.publisher ?? 'Belum tercatat',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
                     const Divider(height: 16, thickness: 0.5),
                     _buildMetaRow(
                       icon: Icons.edit_note_rounded,
-                      label: 'Pentahqiq / Muhaqqiq',
-                      value: widget.book.muhaqqiq ?? 'Cetakan klasik / belum tercatat',
+                      label: 'Penahkik',
+                      value: widget.book.muhaqqiq ?? 'Belum tercatat',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
@@ -489,7 +487,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       const Divider(height: 16, thickness: 0.5),
                       _buildMetaRow(
                         icon: Icons.calendar_today_outlined,
-                        label: 'Tahun / Edisi Cetak',
+                        label: 'Tahun cetak',
                         value: widget.book.printYear!,
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,

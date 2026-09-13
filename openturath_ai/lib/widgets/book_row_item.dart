@@ -33,11 +33,11 @@ class BookRowItem extends StatelessWidget {
     String? formattedVolumes;
     if (book.volumesDescription != null && book.volumesDescription!.isNotEmpty) {
       final v = book.volumesDescription!;
-      formattedVolumes = (v.contains('جزء') || v.contains('مجلد') || v.contains('Jilid'))
+      formattedVolumes = (v.contains('جزء') || v.contains('مجلد') || v.contains('jilid') || v.contains('Jilid'))
           ? v
-          : '$v Jilid';
+          : '$v jilid';
     } else if (book.volumesCount != null && book.volumesCount! > 0) {
-      formattedVolumes = '${book.volumesCount} Jilid';
+      formattedVolumes = '${book.volumesCount} jilid';
     }
 
     final hasPages = book.pagesDescription != null &&
@@ -241,7 +241,7 @@ class BookRowItem extends StatelessWidget {
                         if (hasPages)
                           _buildExifPill(
                             icon: Icons.article_outlined,
-                            text: '${book.pagesDescription} Hlm',
+                            text: '${book.pagesDescription} hlm',
                             isDark: isDark,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,
