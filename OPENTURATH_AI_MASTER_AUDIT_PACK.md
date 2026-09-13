@@ -1,19 +1,19 @@
-# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.21+22)
+# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.23+24)
 # ==============================================================================
-# PERHATIAN UNTUK AI AUDITOR (CLAUDE / CHATGPT / GEMINI):
+# PERHATIAN UNTUK AI AUDITOR (CLAUDE / CHATGPT / GEMINI / DEEPSEEK):
 # Dokumen ini adalah SATU KESATUAN BERKAS TUNGGAL (SINGLE MONOLITHIC AUDIT PACK)
 # yang memuat seluruh instrumen audit, spesifikasi arsitektur, dan seluruh
-# kode sumber resmi aplikasi OpenTurath AI tanpa ada yang dipotong:
+# kode sumber resmi aplikasi OpenTurath AI / Maktabah AI tanpa ada yang dipotong:
 #
-#   BAGIAN 1: INSTRUKSI & MASTER PROMPT AUDIT FORENSIK 360° (7 PILAR AUDIT)
+#   BAGIAN 1: INSTRUKSI & MASTER PROMPT AUDIT FORENSIK 360° (8 PILAR AUDIT)
 #   BAGIAN 2: DOKUMENTASI KONTEKS PROYEK & ATURAN KERJA
 #   BAGIAN 3: KEAMANAN DATABASE (firestore.rules) & BACKEND (functions/src/index.ts)
-#   BAGIAN 4: SELURUH BASIS KODE SUMBER FLUTTER (52 berkas lengkap di openturath_ai/lib/)
-#   BAGIAN 5: SUITE PENGUJIAN UNIT & INTEGRASI (8 berkas lengkap di openturath_ai/test/)
+#   BAGIAN 4: SELURUH BASIS KODE SUMBER FLUTTER (lengkap di openturath_ai/lib/)
+#   BAGIAN 5: SUITE PENGUJIAN UNIT & INTEGRASI (lengkap di openturath_ai/test/)
 #
 # TUGAS ANDA:
 # Pelajari seluruh arsitektur dan baris kode pada Bagian 2 sampai Bagian 5,
-# kemudian hasilkan Laporan Audit Forensik 360° sesuai 5 format output yang
+# kemudian hasilkan Laporan Audit Forensik 360° sesuai format output yang
 # diinstruksikan pada Bagian 1 di bawah ini.
 # ==============================================================================
 
@@ -21,68 +21,66 @@
 
 ### 1. PERAN & SIKAP AUDITOR
 Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dari:
-1. **Principal Mobile & Flutter Architect** (Spesialis optimasi performa, siklus hidup memori, arsitektur reaktif, dan pencegahan resource leak).
-2. **Principal Cloud Security & FinTech Systems Auditor** (Spesialis keamanan transaksi, idempotensi webhook, aturan keamanan Firestore, dan proteksi otentikasi).
+1. **Principal Mobile & Flutter Architect** (Spesialis optimasi performa 60/120 FPS, siklus hidup memori, arsitektur reaktif, dan pencegahan resource leak).
+2. **Principal Cloud Security & FinTech Systems Auditor** (Spesialis keamanan transaksi, idempotensi webhook, aturan keamanan Firestore, proteksi anti-abuse voucher, dan isolasi identitas perangkat).
 3. **Staff Product Designer & Ergonomist** (Standar produk kelas dunia setara Apple, Linear, Readwise, dan Notion; spesialis "Minimalist Purism").
-4. **Chief Islamic Scholarship Editor & Pakar Turats** (Menjaga adab ilmiah, sanad naskah, ketepatan marja' mu'tamad, dan membasmi bahasa buatan bot / anti-AI slop).
+4. **Chief Islamic Scholarship Editor & Pakar Turats** (Menjaga adab ilmiah, sanad naskah, ketepatan marja' mu'tamad, khat Arab Naskh klasik, dan membasmi bahasa buatan bot / anti-AI slop).
 
-> **PRINSIP AUDIT:** Bersikaplah objektif, kritis, jujur tanpa basa-basi (*brutally honest*), dan jangan tutupi kelemahan apa pun. Tugas Anda adalah menemukan bug tersembunyi, celah keamanan, kelemahan ergonomi, inkonsistensi arsitektur, dan bahasa yang kaku di seluruh basis kode proyek.
+> **PRINSIP AUDIT:** Bersikaplah objektif, kritis, jujur tanpa basa-basi (*brutally honest*), dan jangan tutupi kelemahan apa pun. Tugas Anda adalah membongkar bug tersembunyi, celah keamanan, kelemahan ergonomi, inkonsistensi arsitektur, potensi crash, dan bahasa kaku di seluruh basis kode proyek.
 
 ---
 
 ### 2. KONTEKS PROYEK & SUMBER DAYA
-- **Nama Proyek:** OpenTurath AI (v1.0.21+22)
+- **Nama Entitas & Produk:** OpenTurath (Induk Lembaga) & Maktabah AI (Aplikasi Meja Telaah Kitab).
+- **Versi Rilis Terkini:** v1.0.23+24
 - **Karakter Produk:** Meja Telaah Digital (*Scholarly Research Desk*) naskah primer kitab kuning (turats) berbasis RAG engine Google NotebookLM untuk kalangan santri, asatidz, dan peneliti akademis.
-- **Basis Kode Terlampir:** Seluruh dokumen arsitektur, aturan keamanan, backend Cloud Functions, seluruh kode Flutter (52 berkas), dan suite pengujian unit telah **TERLAMPIR LENGKAP PADA BAGIAN 2 SAMPAI BAGIAN 5 DI BAWAH INI**.
-- **Dokumen Referensi Kunci dalam Berkas Ini:**
-  - `PROJECT_HANDOVER.md` (Konteks status terkini & katalog harga tunggal).
-  - `AGENTS.md` (Protokol ketat pengerjaan & aturan git).
-  - `canonical_syafii.json` (Katalog 89 kitab mu'tamad Mazhab Syafi'i).
-  - `openturath_ai/lib/` (Seluruh layer antarmuka dan logika Flutter).
-  - `openturath_ai/functions/src/index.ts` (Backend Cloud Functions & webhook DOKU).
-  - `openturath_ai/firestore.rules` (Aturan keamanan database NoSQL).
+- **Basis Kode Terlampir:** Seluruh dokumen arsitektur, aturan keamanan, backend Cloud Functions, seluruh kode Flutter (`openturath_ai/lib/`), dan suite pengujian unit (`openturath_ai/test/`) telah **TERLAMPIR LENGKAP PADA BAGIAN 2 SAMPAI BAGIAN 5 DI BAWAH INI**.
 
 ---
 
-### 3. TUJUH PILAR AUDIT YANG WAJIB ANDA BEDAH
+### 3. DELAPAN PILAR AUDIT YANG WAJIB ANDA BEDAH
 
-#### PILAR 1: Ergonomi UI/UX & Desain "Minimalist Purism"
-1. **Pembersihan Visual & Clutter**: Evaluasi konsistensi prinsip *minimalist purism* (tanpa logo grafis berlebih, tanpa ikon kotak warna-warni yang mengganggu fokus telaah, tanpa teks deskripsi yang membuat layar penuh sesak).
-2. **Hierarki Tipografi**: Periksa penerapan 3 lapis font:
+#### PILAR 1: Concurrency, Re-entrancy & Anti-Lag Navigation Guard
+1. **Single-Flight Navigation Guard**: Analisis implementasi `NavigationGuard.safePushNamed` di `lib/core/navigation_guard.dart`. Apakah ada skenario ekstrem di mana navigasi tetap bisa tembus (bypass) saat async timeout, exception, atau navigasi bersarang?
+2. **Asynchronous Tap Debounce**: Periksa seluruh layar (`ProfileScreen`, `SpecialistListScreen`, `DashboardScreen`, `AgentWebviewScreen`, `BookDetailScreen`). Apakah semua aksi tombol (terutama langganan, checkout, bookmark, dan pergantian tab) terlindung dari multiple rapid taps saat HP mengalami frame drop / lag jaringan?
+3. **Penyimpanan Status Bersama (Session Concurrency)**: Audit `AgentSessionManager`. Apakah pembukaan tab yang bersamaan dapat memicu race condition pada urutan tab atau state WebView?
+
+#### PILAR 2: Animasi "Fathul Kitab", Ergonomi UI/UX & Desain "Minimalist Purism"
+1. **Koreografi Buka-Tutup Ruang AI**: Periksa implementasi `AnimationController` (380ms `Curves.fastOutSlowIn`, 300ms `Curves.easeInOutCubic`) di `MainShellScreen`. Apakah sinkronisasi antara backdrop dimmer, depth scale (0.975), dan slide transition benar-benar mulus di 60/120 FPS tanpa frame drop?
+2. **Predictive Back Navigation (`PopScope`)**: Uji penanganan tombol kembali di Android. Apakah ada kondisi di mana menekan tombol kembali saat ruang AI terbuka malah menutup aplikasi secara tidak sengaja?
+3. **Pembersihan Visual & Clutter**: Evaluasi konsistensi prinsip *minimalist purism* (tanpa logo grafis berlebih, tanpa ikon kotak warna-warni yang mengganggu fokus telaah, tanpa teks deskripsi yang membuat layar penuh sesak).
+4. **Hierarki Tipografi 3 Lapis**:
    - *Newsreader* (Serif): Judul korpus, brand, dan aksen editorial.
    - *Outfit* (Sans): UI, navigasi, tombol, metadata.
-   - *Amiri* (Arabic): Teks Arab naskah asli (keterbacaan harakat, line-height 1.6–1.8, RTL).
-3. **Ergonomi Input & Formulir**: Pastikan tidak ada "border dalam border" pada bilah pencarian stadium pill saat fokus aktif, serta pastikan kontras warna memenuhi standar WCAG AA (minimal 4.5:1 untuk teks normal).
-4. **Mikro-Interaksi & Transisi Animasi**: Evaluasi kehalusan transisi antar layar dan tab navigasi (`PageView` kurva `Curves.easeOutCubic`), serta umpan balik taktil pegas (`AppleInteractiveWrapper`).
+   - *Scheherazade New* (Khat Naskh Klasik): Teks Arab naskah asli (keterbacaan harakat, penataan margin, Directionality RTL murni).
 
-#### PILAR 2: Arsitektur Flutter, State Lifecycle & Performa Memori
-1. **Pencegahan Memory Leak**: Periksa apakah ada `TextEditingController`, `PageController`, `AnimationController`, `Timer`, atau listener `StreamSubscription` yang tidak di-dispose dengan aman pada blok `try...finally`.
-2. **Rekonstruksi Widget (Rebuild Optimization)**: Audit penggunaan `setState`, `ValueListenableBuilder`, dan `ChangeNotifier` (`BookmarkService`, `AppConfig`). Apakah ada rebuild berlebih (*unnecessary tree rebuild*) pada daftar scroll panjang?
-3. **List Virtualization**: Pastikan seluruh list dinamis menggunakan `.builder` atau `.separated` dengan `shrinkWrap: true` yang tidak memicu lag rendering GPU.
+#### PILAR 3: Arsitektur Flutter, State Lifecycle & Performa Memori
+1. **Pencegahan Memory Leak**: Periksa apakah ada `TextEditingController`, `PageController`, `AnimationController`, `Timer`, atau listener `StreamSubscription` yang tidak di-dispose dengan aman.
+2. **Zero-Reload WebView**: Periksa apakah `const AgentMultiTabRoom()` diikat dengan benar pada `AnimatedBuilder` sehingga native WebView tidak pernah di-destroy atau reload saat ruang AI dibuka/ditutup.
+3. **Rekonstruksi Widget (Rebuild Optimization)**: Audit penggunaan `setState`, `ListenableBuilder`, dan `ChangeNotifier`. Apakah ada rebuild berlebih (*unnecessary tree rebuild*) pada scroll list panjang atau saat tema berubah?
 
-#### PILAR 3: Keamanan Cloud Functions, Transaksi Finansial (DOKU) & Hak Akses
+#### PILAR 4: Keamanan Cloud Functions, Transaksi Finansial (DOKU) & Hak Akses
 1. **Idempotensi Webhook & Anti-Replay**: Analisis `processSuccessfulPayment` di `functions/src/index.ts`. Apakah ada celah transaksi ganda jika webhook DOKU ditembak berulang kali secara simultan?
 2. **Atomisitas Firestore**: Verifikasi bahwa pembaruan status transaksi, aktivasi hak akses (`entitlements`), dan pencatatan outbox dijalankan dalam satu `db.runTransaction` atomik.
-3. **Decoupling Identitas Akun**: Pastikan email yang dimasukkan saat pembayaran DOKU tidak pernah menimpa UID atau email autentikasi Firebase pengguna.
-4. **Sistem Kode Redeem (Voucher)**: Audit logika `redeemCode`. Apakah tahan terhadap serangan *brute force*, race condition klaim ganda, atau penipuan durasi kedaluwarsa?
-5. **Kepatuhan Firestore Rules (`firestore.rules`)**: Uji apakah pengguna biasa dapat memodifikasi koleksi `entitlements`, `transactions`, atau `provisioning_outbox` secara ilegal dari client SDK.
+3. **Proteksi Multi-Akun Kode Redeem (Device Fingerprinting)**: Audit implementasi pembatasan voucher 1 klaim per perangkat fisik via SHA-256 salted hash di `DeviceService` dan `functions/src/index.ts`. Apakah ada celah pemalsuan fingerprint atau bypass via emulator?
+4. **Kepatuhan Firestore Rules (`firestore.rules`)**: Uji apakah pengguna biasa dapat memodifikasi koleksi `entitlements`, `transactions`, `device_redemptions`, atau `provisioning_outbox` secara ilegal dari client SDK.
 
-#### PILAR 4: Isolasi WebView, Kontainerisasi RAG & Anti-Disclaimer
-1. **Scrubbing Disclaimer Google/Gemini**: Evaluasi efektivitas injeksi CSS dan script JavaScript DOM cleaner dalam menyembunyikan teks disclaimer (*"Gemini may display inaccurate info..."*, *"NotebookLM can be inaccurate"*, *"can make mistakes"*, header Google, logo bar, dsb.). Apakah script ini tahan terhadap mutasi DOM asinkron?
-2. **Pencegahan Compound Font Explosion**: Periksa fungsi zoom teks `applyTurathFontScale`. Apakah perkalian font stabil atau memicu lonjakan ukuran eksponensial pada elemen bersarang?
+#### PILAR 5: Isolasi WebView, Native Dark Mode & RAG Engine Stability
+1. **Native Dark Mode Integration**: Evaluasi efektivitas injeksi CSS dan script JavaScript DOM `applyOtTheme(isDark)` pada `notebook_ui_script.dart` serta pengaturan engine `forceDark: ForceDark.ON`. Apakah ada kebocoran kontras putih (#FFFFFF) saat tema gelap aktif?
+2. **Scrubbing Disclaimer Google/Gemini**: Evaluasi script JavaScript DOM cleaner dalam menyembunyikan disclaimer Google (*"Gemini may display inaccurate info..."*, header bar, logo bar, dsb.). Apakah script ini tahan terhadap mutasi DOM asinkron dari Google NotebookLM?
 3. **Keamanan URL & Redirection Guard**: Pastikan `shouldOverrideUrlLoading` memblokir redirect keluar yang tidak sah tanpa merusak alur autentikasi resmi akun Google atau sesi NotebookLM.
 
-#### PILAR 5: Anti-AI Slop, Copywriting Ilmiah & Adab Turats
-1. **Pembasmian Bahasa Robotik / Generik**: Cari kalimat-kalimat klise hasil generate AI yang kaku, bertele-tele, atau terasa palsu.
-2. **Register Bahasa Santri Akademis**: Pastikan seluruh teks navigasi, pesan kesalahan (*AppSnackBar*), dialog langganan, dan empty state menggunakan bahasa Indonesia yang **tenang, ringkas, berwibawa, ilmiah, dan beradab** (misal: menghargai tradisi sanad talaqqi dan kehati-hatian/ihtiyath ilmiah).
+#### PILAR 6: Adab Turats, Bahasa Fusha & Anti-AI Slop
+1. **Layar Tentang Kitab Full Bahasa Arab**: Audit `book_detail_screen.dart`. Apakah istilah turats baku (`بطاقة الكتاب`, `متن معتمد`, `شرح`, `حاشية`, `عصر المتقدمين`) dan tata letak RTL murni telah diterapkan secara sempurna tanpa ada teks latin yang janggal?
+2. **Pembasmian Bahasa Robotik / Generik**: Cari kalimat-kalimat klise hasil generate AI yang kaku, bertele-tele, atau terasa palsu. Seluruh copywriting harus berwibawa, tenang, dan santun.
 
-#### PILAR 6: Ketahanan Offline, Penanganan Error & Kepatuhan Platform
-1. **Resiliensi Jaringan**: Bagaimana aplikasi merespons kegagalan koneksi saat membuka WebView, memuat daftar spesialis, atau mengecek status langganan? Apakah in-memory cache dan fallback lokal berfungsi optimal?
+#### PILAR 7: Ketahanan Offline, Penanganan Error & Kepatuhan Platform
+1. **Resiliensi Jaringan & Timeout**: Bagaimana aplikasi merespons kegagalan koneksi saat membuka WebView, memuat daftar spesialis, atau mengecek status langganan? Apakah in-memory cache dan fallback lokal berfungsi optimal?
 2. **Kepatuhan Google Play (Account Deletion Protocol)**: Audit alur `AuthService.deleteAccount()`. Apakah proses menghapus akun Auth Firebase dilakukan sebelum data Firestore dibersihkan untuk mencegah data terhapus saat terjadi error `requires-recent-login`?
-3. **Karantina Data Korup**: Pada `BookmarkService`, apakah kegagalan parsing JSON mengarantina data yang rusak atau langsung menghapus seluruh bookmark pengguna?
+3. **Standarisasi Email Kontak**: Pastikan seluruh rujukan email bantuan dan refund konsisten ke `openturath@gmail.com`.
 
-#### PILAR 7: Validasi Unit Test & Boundary Coverage
-1. **Analisis Suite Pengujian**: Tinjau berkas-berkas di `test/` (51 test case). Apakah tes tersebut menguji batas logika nyata (*boundary conditions*, *leap years*, *clamped month-ends*, *token expiration*) atau hanya *mock assertions* dangkal?
+#### PILAR 8: Validasi Unit Test & Boundary Coverage
+1. **Analisis Suite Pengujian**: Tinjau berkas-berkas di `openturath_ai/test/` (129 unit tests). Apakah pengujian mencakup batas logika nyata (*boundary conditions*, *leap years 29 Feb*, *clamped month-ends*, *concurrent double tap*, *device binding*, *arabic search diacritics*)?
 2. **Area Tanpa Tes (Blind Spots)**: Identifikasi fungsi kritis apa saja yang belum memiliki cakupan unit test.
 
 ---
@@ -92,13 +90,13 @@ Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dar
 Sajikan hasil audit secara terstruktur dan mendalam dengan sistematika berikut:
 
 #### 1. EXECUTIVE SCORECARD (Rapor 360°)
-Berikan nilai (A / B / C / D / F) beserta ringkasan temuan kunci untuk masing-masing dari 7 pilar di atas.
+Berikan nilai (A / B / C / D / F) beserta ringkasan temuan kunci untuk masing-masing dari 8 pilar di atas.
 
 #### 2. INVENTARISASI DEFECT & TEMUAN BUG (Tabel P0 – P3)
 Kelompokkan temuan dengan format tabel:
 - **Tingkat Keparahan:**
   - **P0 (Critical/Fatal):** Kebocoran keamanan, transaksi rusak, crash fatal, atau hak akses bocor.
-  - **P1 (High):** Fitur utama tidak berjalan sebagaimana mestinya, memory leak, atau inkonsistensi status.
+  - **P1 (High):** Fitur utama tidak berjalan sebagaimana mestinya, memory leak, atau inkonsistensi status navigasi.
   - **P2 (Medium):** Masalah visual, animasi tersendat, border ganda, atau ketidaknyamanan ergonomis.
   - **P3 (Low):** Ketidakrapian kode, komentar usang, atau ketidakseragaman minor.
 - **Kolom Tabel:** `ID Temuan` | `Tingkat (P0-P3)` | `Pilar Terkait` | `Nama File & No. Baris` | `Deskripsi Masalah & Dampak`
@@ -215,7 +213,7 @@ Jika pengguna membuka chat baru dan meminta:
 name: openturath_ai
 description: "OpenTurath AI - الذكاء الاصطناعي للعلوم الإسلامية"
 publish_to: 'none'
-version: 1.0.21+22
+version: 1.0.23+24
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -254,6 +252,7 @@ dependencies:
   crypto: ^3.0.7
   path_provider: ^2.1.6
   open_filex: ^4.7.0
+  device_info_plus: ^12.4.0
 
 dev_dependencies:
   flutter_test:
@@ -2063,6 +2062,17 @@ service cloud.firestore {
     }
 
     // ================================================================
+    // CLIENT ERROR LOGS (Telemetry & Crash Reports - Write Only)
+    // ================================================================
+    match /client_error_logs/{logId} {
+      allow create: if request.resource.data.keys().hasOnly([
+        'error', 'context', 'severity', 'stackTrace', 'breadcrumbs',
+        'extra', 'userId', 'userEmail', 'platform', 'deviceTimestamp', 'createdAt'
+      ]) && request.resource.data.error is string && request.resource.data.error.size() <= 2500;
+      allow read, update, delete: if false;
+    }
+
+    // ================================================================
     // APP CONFIG (Termasuk Dynamic Script & Info Aplikasi)
     // ================================================================
     match /app_config/{configId} {
@@ -2129,8 +2139,8 @@ const db = admin.firestore();
 // TELEGRAM NOTIFICATION HELPER
 // ================================================================
 async function sendTelegramNotification(text: string): Promise<void> {
-  const token = process.env.TELEGRAM_BOT_TOKEN || "8935430311:AAHajFoTtJBirH3DfyIh6za5-SVTQRBa_RI";
-  const chatId = process.env.TELEGRAM_CHAT_ID || "2015667548";
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return;
 
   try {
@@ -2453,31 +2463,27 @@ function generateDokuSignature(
 function resolvePlanPricing(agentId: string, plan: string): { amount: number; durationMonths: number; label: string; entitlementKey: string } {
   const isAllAi = agentId === "all_ai" || plan.startsWith("all_ai");
 
+  if (isAllAi) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Paket Semua AI sementara dinonaktifkan. Silakan pilih paket per modul spesialis."
+    );
+  }
+
   let durationMonths = 1;
   if (plan.includes("1y") || plan.includes("year") || plan === "bahits_1y") durationMonths = 12;
   else if (plan.includes("6m") || plan === "tholib_6m") durationMonths = 6;
   else durationMonths = 1;
 
-  if (isAllAi) {
-    const entitlementKey = "all_access";
-    if (durationMonths === 12) {
-      return { amount: 799000, durationMonths, label: "Paket Lengkap Semua AI (1 Tahun)", entitlementKey };
-    } else if (durationMonths === 6) {
-      return { amount: 499000, durationMonths, label: "Paket Lengkap Semua AI (6 Bulan)", entitlementKey };
-    } else {
-      return { amount: 99000, durationMonths, label: "Paket Promo Semua AI (1 Bulan)", entitlementKey };
-    }
-  }
-
-  // Masing-masing AI per-modul: Rp 50.000 / bulan
+  // Masing-masing AI per-modul: 1m = 49.000, 6m = 299.000, 1y = 499.000
   const entitlementKey = getEntitlementKey(agentId);
   const agentTitle = agentId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   if (durationMonths === 12) {
-    return { amount: 450000, durationMonths, label: `Modul AI ${agentTitle} (1 Tahun)`, entitlementKey };
+    return { amount: 499000, durationMonths, label: `Modul AI ${agentTitle} (1 Tahun)`, entitlementKey };
   } else if (durationMonths === 6) {
-    return { amount: 250000, durationMonths, label: `Modul AI ${agentTitle} (6 Bulan)`, entitlementKey };
+    return { amount: 299000, durationMonths, label: `Modul AI ${agentTitle} (6 Bulan)`, entitlementKey };
   } else {
-    return { amount: 50000, durationMonths, label: `Modul AI ${agentTitle} (1 Bulan)`, entitlementKey };
+    return { amount: 49000, durationMonths, label: `Modul AI ${agentTitle} (1 Bulan)`, entitlementKey };
   }
 }
 
@@ -3124,6 +3130,11 @@ export const redeemCode = functions
     }
 
     const uid = context.auth.uid;
+    const rawDeviceId = typeof data?.deviceId === "string" ? data.deviceId.trim().toLowerCase() : "";
+    const isPhysicalDevice = data?.isPhysicalDevice !== false;
+    const deviceModel = typeof data?.deviceModel === "string" ? data.deviceModel.slice(0, 100) : "";
+    const deviceBrand = typeof data?.deviceBrand === "string" ? data.deviceBrand.slice(0, 100) : "";
+
     // F-03 & F-05: Rate limit penukaran voucher per UID (maksimal 8 percobaan per 15 menit)
     await enforceRateLimit(
       `rdm_${uid}`,
@@ -3166,11 +3177,47 @@ export const redeemCode = functions
         throw new functions.https.HttpsError("deadline-exceeded", "Masa berlaku penukaran kode ini telah kedaluwarsa.");
       }
 
+      // F-12: Enforce Single-Device Binding untuk kode keluarga promo / perdana
+      const isSingleDeviceEnforced =
+        codeData.one_per_device === true ||
+        codeData.type === "perdana" ||
+        rawCode.startsWith("PERDANA") ||
+        rawCode.startsWith("TRIAL") ||
+        rawCode.startsWith("WELCOME");
+
+      const promoFamily = (codeData.promo_family as string) || (rawCode.startsWith("PERDANA") ? "perdana" : "trial_default");
+      const deviceRedemptionKey = `dev_${rawDeviceId}_${promoFamily}`;
+      const deviceRedemptionRef = db.collection("device_redemptions").doc(deviceRedemptionKey);
+
+      if (isSingleDeviceEnforced) {
+        if (isPhysicalDevice === false) {
+          throw new functions.https.HttpsError(
+            "failed-precondition",
+            "Kode ini hanya dapat diaktifkan melalui ponsel fisik asli."
+          );
+        }
+
+        if (!rawDeviceId || !/^[a-f0-9]{64}$/.test(rawDeviceId)) {
+          throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Identitas perangkat diperlukan untuk mengaktifkan kode ini."
+          );
+        }
+
+        const deviceRedemptionDoc = await transaction.get(deviceRedemptionRef);
+        if (deviceRedemptionDoc.exists) {
+          throw new functions.https.HttpsError(
+            "already-exists",
+            "Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya."
+          );
+        }
+      }
+
       // Periksa apakah pengguna sudah pernah menukarkan kode ini
       const redemptionRef = codeRef.collection("redemptions").doc(uid);
       const redemptionDoc = await transaction.get(redemptionRef);
       if (redemptionDoc.exists) {
-        throw new functions.https.HttpsError("already-exists", "Anda sudah pernah menukarkan kode ini sebelumnya.");
+        throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.");
       }
 
       const entitlementKey = (codeData.entitlement_key as string) || "fiqh_syafii";
@@ -3197,8 +3244,22 @@ export const redeemCode = functions
       transaction.set(redemptionRef, {
         uid,
         email: userEmail,
+        device_id: rawDeviceId || null,
         redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
       });
+
+      if (isSingleDeviceEnforced && rawDeviceId) {
+        transaction.set(deviceRedemptionRef, {
+          device_id: rawDeviceId,
+          promo_family: promoFamily,
+          code: rawCode,
+          uid,
+          email: userEmail,
+          brand: deviceBrand,
+          model: deviceModel,
+          redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
 
       // 2. Increment pemakaian kode
       transaction.update(codeRef, {
@@ -4499,7 +4560,7 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
       
       <div style="flex-grow: 1;"></div>
       
-      <a href="mailto:support@openturath.com" class="btn-help">
+      <a href="mailto:openturath@gmail.com" class="btn-help">
         💬 Bantuan
       </a>
     </aside>
@@ -4542,6 +4603,36 @@ function getChatWrapperHTML(agent: any, agentId: string, email: string): string 
 </body>
 </html>`;
 }
+
+// ================================================================
+// TELEMETRY CLOUD FUNCTION: Forward critical errors to Telegram
+// ================================================================
+export const onClientErrorLogged = functions.firestore
+  .document("client_error_logs/{logId}")
+  .onCreate(async (snap, ctx) => {
+    const data = snap.data();
+    if (!data) return;
+
+    const severity = data.severity || "error";
+    // Teruskan ke Telegram untuk severity error, critical, dan fatal
+    if (severity === "critical" || severity === "fatal" || severity === "error") {
+      const errorMsg = String(data.error || "Unknown Error");
+      const errContext = String(data.context || "general");
+      const user = String(data.userEmail || data.userId || "anonymous");
+      const platform = String(data.platform || "unknown");
+
+      const msg = `⚠️ <b>[ALERT CLIENT ERROR]</b>\n` +
+        `<b>Context:</b> ${errContext}\n` +
+        `<b>Severity:</b> ${severity.toUpperCase()}\n` +
+        `<b>Platform:</b> ${platform}\n` +
+        `<b>User:</b> ${user}\n` +
+        `<b>Error:</b> <code>${errorMsg.substring(0, 300)}</code>\n` +
+        `<b>ID:</b> <code>${ctx.params.logId}</code>`;
+
+      await sendTelegramNotification(msg);
+    }
+  });
+
 
 ```
 
@@ -4606,43 +4697,46 @@ class AppConfig {
 
 ### FLUTTER FILE: openturath_ai/lib/core/app_copy.dart
 ```dart
+import 'legal_copy.dart';
+
 /// AppCopy: Sumber teks kanonik terpusat untuk OpenTurath.
 /// Menjaga nada bahasa tetap tenang, ringkas, jelas, dan wajar untuk kajian keislaman.
 abstract final class AppCopy {
   // ── Identitas & Merek ──────────────────────────────────────────
   static const appName = 'OpenTurath';
-  static const appTagline = 'Membaca kitab, menelusuri ibarah.';
-  static const defaultFieldDesc = 'Beragam kajian dari kitab-kitab Islam.';
-  static const aboutTitle = 'Tentang OpenTurath';
-  static const aboutDescription =
-      'OpenTurath membantu Anda membaca, mencari, dan membandingkan keterangan dari kitab-kitab rujukan.';
-  static const aboutScholarlyPrinciple =
-      'Gunakan jawaban sebagai pintu masuk untuk menelusuri ibarah. Untuk memahami dan menetapkan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.';
+  static const appTagline = LegalCopy.aboutAppTagline;
+  static const defaultFieldDesc =
+      'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.';
+  static const aboutTitle = LegalCopy.aboutAppTitle;
+  static const aboutDescription = LegalCopy.aboutAppParagraph1;
+  static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
   static const navStudies = 'Asisten AI';
-  static const navSaved = 'Tersimpan';
+  static const navSaved = 'Catatan';
   static const navSettings = 'Pengaturan';
 
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
-  static const studySpace = 'Percakapan AI';
-  static const openStudy = 'Membuka AI';
-  static const studyOptions = 'Menu percakapan';
+  static const studySpace = 'Percakapan';
+  static const openStudy = 'Membuka asisten…';
+  static const studyOptions = 'Tampilan bacaan';
   static const referenceBooks = 'Kitab rujukan';
-  static const savedCollection = 'Simpanan';
-  static const bookDetails = 'Keterangan kitab';
+  static const savedCollection = 'Catatan';
+  static const bookDetails = 'Tentang kitab';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
-  static const loadingReferences = 'Menyiapkan percakapan AI...';
+  static const loadingReferences = 'Menyiapkan asisten…';
   static const modulePreparing = 'sedang disiapkan.';
-  static const moduleUnavailable = 'Modul ini belum dapat dibuka. Coba lagi nanti.';
-  static const cannotLoad = 'Tidak dapat dimuat. Periksa koneksi, lalu coba lagi.';
-  static const cannotLoadStudy = 'AI belum dapat dibuka';
-  static const studyNotLoadedYet = 'Kajian belum bisa dimuat. Coba lagi sebentar.';
-  static const subscriptionRequiredTitle = 'Langganan diperlukan';
+  static const moduleUnavailable =
+      'Asisten ini belum tersedia. Coba lagi nanti.';
+  static const cannotLoad = 'Data belum bisa dimuat. Coba lagi.';
+  static const cannotLoadStudy = 'Asisten belum bisa dibuka';
+  static const studyNotLoadedYet =
+      'Percakapan belum bisa dimuat. Coba lagi sebentar.';
+  static const subscriptionRequiredTitle = 'Berlangganan untuk melanjutkan';
   static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
-  static const inputQuestionHint = 'Tanyakan sesuatu tentang kitab ini...';
+  static const inputQuestionHint = 'Tulis pertanyaan seputar kitab ini…';
   static const viewSubscription = 'Lihat langganan';
   static const tryAgain = 'Coba lagi';
 
@@ -4652,15 +4746,15 @@ abstract final class AppCopy {
       'OpenTurath saat ini mendukung Android, macOS, dan Windows. Perangkat ini belum didukung.';
   static const cannotConnectTitle = 'Tidak dapat terhubung';
   static const cannotConnectMessage =
-      'Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi, lalu coba lagi.';
+      'Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi internet, lalu coba lagi.';
 
   // ── Dialog Catatan Sebelum Mulai (Adab) ────────────────────────
   static const adabDialogTitle = 'Catatan sebelum mulai';
   static const adabAcknowledgeButton = 'Saya mengerti';
 
-  static const adabHeading1 = 'Alat bantu, bukan pemberi fatwa';
+  static const adabHeading1 = 'Bantuan untuk menelusuri kitab';
   static const adabBody1 =
-      'OpenTurath membantu mencari ibarah dan membandingkan keterangan dalam kitab. Aplikasi ini tidak menggantikan fatwa ulama.';
+      'Gunakan OpenTurath untuk mencari ibarah dan membandingkan penjelasan dalam kitab. Cocokkan hasilnya dengan sumber di Maktabah Syamilah atau kitab cetak.';
 
   static const adabHeading2 = 'Belajar tetap perlu bimbingan';
   static const adabBody2 =
@@ -4668,53 +4762,63 @@ abstract final class AppCopy {
 
   static const adabHeading3 = 'Periksa kembali rujukan';
   static const adabBody3 =
-      'Periksa kembali dalil dan ibarah pada kitab rujukan sebelum menjadikannya pegangan.';
+      'Periksa dalil dan ibarah pada kitab rujukan sebelum menjadikannya pegangan.';
 
   // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
   static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
-  static const answerCopied = 'Jawaban tersalin.';
-  static const copyFailed = 'Gagal menyalin. Coba lagi.';
+  static const answerCopied = 'Jawaban disalin dan disimpan ke Catatan.';
+  static const copyFailed = 'Jawaban belum bisa disalin. Coba lagi.';
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
-  static const savedSuccess = 'Tersimpan.';
-  static const saveFailed = 'Gagal menyimpan. Coba lagi.';
+  static const savedSuccess = 'Tersimpan ke Catatan.';
+  static const saveFailed = 'Jawaban belum tersimpan. Coba lagi.';
   static const emptyAnswerCannotSave = 'Belum ada jawaban untuk disimpan.';
 
-  // ── Simpanan / Bookmark ────────────────────────────────────────
-  static const searchSavedHint = 'Cari kitab, topik, atau kutipan...';
-  static const searchSavedTooltip = 'Cari simpanan';
-  static const noSavedTitle = 'Belum ada simpanan';
+  // ── Catatan ───────────────────────────────────────────────────
+  static const searchSavedHint = 'Cari catatan atau ibarah…';
+  static const searchSavedTooltip = 'Cari catatan';
+  static const noSavedTitle = 'Belum ada catatan';
   static const noSavedDescription =
-      'Simpan jawaban atau ibarah agar mudah dibuka kembali.';
+      'Simpan jawaban atau ibarah penting di sini agar mudah dibaca kembali.';
   static const copyIbarahAction = 'Salin ibarah';
   static const viewReferenceAction = 'Lihat rujukan';
-  static const shareReferenceTooltip = 'Bagikan rujukan';
-  static const saveAnswerMenu = 'Simpan jawaban';
+  static const shareReferenceTooltip = 'Bagikan catatan';
+  static const saveAnswerMenu = 'Simpan ke Catatan';
 
   // ── Akun & Pengaturan ──────────────────────────────────────────
   static const profile = 'Profil';
   static const subscription = 'Langganan';
   static const activeSubscription = 'Langganan aktif';
   static const inactiveSubscription =
-      'Belum berlangganan. Akses dibuka dengan voucher atau paket.';
+      'Pilih paket atau gunakan voucher untuk mulai berlangganan.';
   static const appearance = 'Tampilan';
   static const modeDark = 'Gelap';
   static const modeLight = 'Terang';
-  static const modeSystem = 'Sistem';
+  static const modeSystem = 'Ikuti perangkat';
   static const language = 'Bahasa';
   static const languageIndonesian = 'Bahasa Indonesia';
 
-  static const logoutDialogTitle = 'Keluar dari akun?';
-  static const logoutDialogBody = 'Anda akan keluar dari akun ini.';
+  static const logoutDialogTitle = 'Keluar dari akun';
+  static const logoutDialogBody =
+      'Anda perlu masuk kembali untuk menggunakan akun ini.';
   static const logoutButton = 'Keluar';
 
-  static const deleteAccountTitle = 'Hapus akun?';
-  static const deleteAccountBody =
-      'Tindakan ini tidak dapat dibatalkan. Profil, simpanan, dan data akun Anda akan dihapus dari server.';
-  static const deleteAccountButton = 'Hapus akun';
-  static const deleteAccountSuccess = 'Akun Anda sudah dihapus.';
+  static const deleteAccountTitle = 'Hapus akun';
+  static const deleteAccountBody = LegalCopy.deleteAccountConfirmationBody;
+  static const deleteAccountButton = LegalCopy.deleteAccountConfirmationConfirm;
+  static const deleteAccountCancel = LegalCopy.deleteAccountConfirmationCancel;
+  static const deleteAccountSuccess = 'Akun berhasil dihapus.';
   static const recentLoginRequired =
-      'Untuk menghapus akun, masuk ulang terlebih dahulu.';
-  static const networkError = 'Koneksi bermasalah. Coba lagi.';
+      'Masuk kembali untuk melanjutkan penghapusan akun.';
+  static const networkError = 'Periksa koneksi internet, lalu coba lagi.';
+
+  // ── Kebijakan, Hukum & Bantuan ─────────────────────────────────
+  static const termsOfService = LegalCopy.termsTitle;
+  static const privacyPolicy = LegalCopy.privacyTitle;
+  static const paymentAndRefund = LegalCopy.refundTitle;
+  static const aiGuideline = LegalCopy.aiGuidelineTitle;
+  static const supportAndContact = LegalCopy.contactTitle;
+  static const manualRenewalNotice =
+      'Langganan diperpanjang secara manual tanpa penagihan berulang otomatis. Masa akses dihitung sejak pembayaran berhasil.';
 
   // ── Helper Interpolasi Dinamis ─────────────────────────────────
   static String preparingModule(String module) => '$module sedang disiapkan.';
@@ -4951,10 +5055,10 @@ class AppConstants {
   static const String fnCheckPaymentStatus = 'checkPaymentStatus';
 
   // ── Pricing (Rupiah) ──────────────────────────────────────────
-  static const int priceTholib1m = 50000;
-  static const int priceTholib6m = 250000;
-  static const int priceBahits1y = 450000;
-  static const int priceAllAiPromo1m = 99000;
+  static const int priceTholib1m = 49000;
+  static const int priceTholib6m = 299000;
+  static const int priceBahits1y = 499000;
+  static const int priceAllAiPromo1m = 99000; // Dinonaktifkan sementara
 }
 
 ```
@@ -4974,7 +5078,7 @@ BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
     id: sha256.convert(utf8.encode('${agent.id}:$text')).toString(),
     title: firstLine.length > 80 ? firstLine.substring(0, 80) : firstLine,
     agentId: agent.id, agentTitle: agent.title, fieldName: agent.category, fieldId: agent.fieldId,
-    arabicExcerpt: '', fullAnswer: text, bookReference: 'Rujukan belum diidentifikasi', pageNumber: '', createdAt: DateTime.now(),
+    arabicExcerpt: '', fullAnswer: text, bookReference: '', pageNumber: '', createdAt: DateTime.now(),
   );
 }
 
@@ -5012,9 +5116,9 @@ class OTColors {
   static const Color textSecondaryDark = Color(0xFFA1A1AA); // Zinc 400 (>7.0:1 WCAG AAA)
   static const Color textTertiaryDark = Color(0xFFA1A1AA); // Zinc 500
 
-  // ── 5. Scholarly Accents (Muted Intellectual Sapphire & Emerald) ──
-  static const Color accentLight = Color(0xFF2563EB); // Intellectual sapphire
-  static const Color accentDark = Color(0xFF60A5FA); // Soft scholarly sapphire
+  // ── 5. Scholarly Accents (Pure Monochrome The Quiet Scholar) ──
+  static const Color accentLight = Color(0xFF18181B); // Ink black
+  static const Color accentDark = Color(0xFFFAFAFA); // Clean white
   static const Color sovereignAmber = Color(0xFFD97706); // Amber for Tahawwulat sovereign corpus
   static const Color sovereignAmberBg = Color(0x1AD97706); // 10% amber wash
 
@@ -5137,7 +5241,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// OpenTurath Design System v2 — Typography (3-Layer Strict Architecture)
 /// 1. Brand Layer: Editorial Serif (hanya untuk Brand, Editorial Hero, dan Judul Korpus)
 /// 2. Interface Layer: Clean Sans (untuk tombol, navigasi, pengaturan, formulir, metadata, harga)
-/// 3. Arabic Scholarly Layer: Amiri (teks Arab dengan line-height longgar, perataan RTL)
+/// 3. Arabic Scholarly Layer: Scheherazade New (Naskh klasik, tanpa Amiri)
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
@@ -5195,7 +5299,7 @@ class OTTypography {
     );
   }
 
-  static TextStyle _amiri({
+  static TextStyle _scheherazade({
     required double fontSize,
     FontWeight? fontWeight,
     double? letterSpacing,
@@ -5204,7 +5308,7 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: 'Amiri',
+        fontFamily: 'Scheherazade New',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
@@ -5212,7 +5316,7 @@ class OTTypography {
         color: color,
       );
     }
-    return GoogleFonts.amiri(
+    return GoogleFonts.scheherazadeNew(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -5307,22 +5411,22 @@ class OTTypography {
         color: color,
       );
 
-  // ── 3. Arabic Scholarly Layer (Amiri) ──
-  static TextStyle arabicDisplay({Color? color}) => _amiri(
+  // ── 3. Arabic Scholarly Layer (Scheherazade New) ──
+  static TextStyle arabicDisplay({Color? color}) => _scheherazade(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         height: 1.6,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color}) => _amiri(
+  static TextStyle arabicReading({Color? color}) => _scheherazade(
         fontSize: 19,
         fontWeight: FontWeight.w500,
         height: 1.75,
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color}) => _amiri(
+  static TextStyle arabicQuote({Color? color}) => _scheherazade(
         fontSize: 16,
         fontWeight: FontWeight.w400,
         height: 1.8,
@@ -5487,6 +5591,16 @@ class HijriDateUtils {
     return '${h.day} $hMonthName ${h.year} H';
   }
 
+  /// Menghasilkan hanya tanggal Masehi pendek:
+  /// Contoh: "12 September 2026 M"
+  static String formatMasehiOnly([DateTime? date]) {
+    final now = date ?? DateTime.now();
+    final mMonthName = (now.month >= 1 && now.month <= 12)
+        ? _masehiMonths[now.month - 1]
+        : '';
+    return '${now.day} $mMonthName ${now.year} M';
+  }
+
   /// Menambahkan durasi bulan kalender dengan month-end clamping deterministik.
   /// Contoh: 31 Januari + 1 bulan = 28 Februari (atau 29 pada kabisat).
   /// 31 Maret + 1 bulan = 30 April.
@@ -5514,6 +5628,419 @@ class HijriDateUtils {
       baseDate.microsecond,
     );
   }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/core/legal_copy.dart
+```dart
+/// LegalCopy: Sumber data dan teks kanonik hukum dan kebijakan OpenTurath.
+/// Mengintegrasikan naskah resmi dari OpenTurath_Identitas_dan_Kebijakan.md.
+/// Seluruh penanda placeholder [[...]] telah diselesaikan dengan nilai kanonik
+/// dan mematuhi etika "The Quiet Scholar" (tanpa tanda seru, jujur, dan bersahaja).
+library;
+
+class LegalSection {
+  final String title;
+  final String content;
+
+  const LegalSection({
+    required this.title,
+    required this.content,
+  });
+}
+
+abstract final class LegalCopy {
+  // ── Identitas & Versi Kebijakan ────────────────────────────────
+  static const documentVersion = '1.0';
+  static const effectiveDate = '13 September 2026';
+  static const managerName = 'Pengelola OpenTurath';
+  static const managerAddress = 'Indonesia';
+  static const contactSupportEmail = 'openturath@gmail.com';
+  static const contactPrivacyEmail = 'openturath@gmail.com';
+  static const contactCopyrightEmail = 'openturath@gmail.com';
+  static const serviceHours = 'Senin – Jumat, 09.00 – 17.00 WIB';
+  static const supportSla = '2 (dua) hari kerja';
+  static const refundSla = '7 (tujuh) hari kerja';
+
+  // ── Bab 1.2: Tentang OpenTurath untuk Aplikasi ─────────────────
+  static const aboutAppTitle = 'Tentang OpenTurath';
+  static const aboutAppTagline = 'Membaca kitab, menelusuri ibarah.';
+
+  static const aboutAppParagraph1 =
+      'OpenTurath membantu Anda menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. '
+      'Pilih bidang yang ingin dipelajari, ajukan pertanyaan, lalu baca kutipan dan keterangan kitab yang tersedia. '
+      'Simpan jawaban atau kutipan ke Catatan untuk dipelajari kembali.';
+
+  static const aboutAppParagraph2 =
+      'Kami ingin membuat proses mencari rujukan lebih mudah, sambil menjaga kebiasaan membaca sumber dengan teliti. '
+      'Jawaban AI tetap perlu diperiksa pada kitab yang dirujuk, terutama sebelum digunakan untuk mengajar, menulis, atau mengambil kesimpulan. '
+      'Pemahaman agama dan penetapan hukum tetap memerlukan bimbingan guru serta ulama yang berkompeten.';
+
+  // ── Bab 2: Ketentuan Layanan (Terms of Service) ───────────────
+  static const termsTitle = 'Ketentuan Layanan';
+
+  static const List<LegalSection> termsSections = [
+    LegalSection(
+      title: '1. Pengelola dan Cakupan Ketentuan',
+      content:
+          'OpenTurath dikelola oleh $managerName, beralamat di $managerAddress, selanjutnya disebut "kami". '
+          'Pengguna aplikasi disebut "Anda". Kontak layanan tersedia melalui $contactSupportEmail.\n\n'
+          'Ketentuan ini mengatur penggunaan akun, asisten AI, katalog rujukan, Catatan, dan fitur berbayar yang disediakan melalui OpenTurath. '
+          'Informasi paket yang ditampilkan sebelum pembelian, Kebijakan Pembayaran dan Pengembalian Dana, serta Panduan Penggunaan AI dan Pemeriksaan Rujukan menjadi bagian dari ketentuan penggunaan yang relevan.',
+    ),
+    LegalSection(
+      title: '2. Persetujuan dan Persyaratan Pengguna',
+      content:
+          'Sebelum membuat akun atau membeli paket, Anda diberi kesempatan membaca ketentuan yang berlaku. '
+          'Penggunaan mandiri OpenTurath ditujukan bagi pengguna berusia sekurang-kurangnya 18 tahun. '
+          'Anda juga harus memiliki kecakapan atau kewenangan yang diperlukan untuk membuat perjanjian dan melakukan pembayaran.\n\n'
+          'Akses bagi pengguna di bawah 18 tahun belum dibuka melalui pendaftaran mandiri. '
+          'Jika bertindak untuk lembaga, Anda harus berwenang mewakilinya. Pembelian individu tidak otomatis memberikan hak penggunaan bersama untuk seluruh anggota lembaga.',
+    ),
+    LegalSection(
+      title: '3. Akun dan Keamanan Akses',
+      content:
+          'Gunakan informasi akun yang benar dan akses masuk yang menjadi hak Anda. Akun bersifat pribadi, kecuali suatu paket secara tertulis menyediakan penggunaan untuk beberapa orang.\n\n'
+          'Jaga perangkat dan akses masuk Anda. Jangan memberikan kata sandi atau kode sekali pakai kepada pihak lain. '
+          'Laporkan dugaan penggunaan tanpa izin melalui $contactSupportEmail. '
+          'Laporan pengambilalihan akun akan diperiksa berdasarkan keadaan dan bukti yang tersedia.',
+    ),
+    LegalSection(
+      title: '4. Fungsi Layanan dan Batas Jawaban AI',
+      content:
+          'OpenTurath membantu penelusuran literatur, pembacaan kutipan, dan penyusunan bahan belajar. '
+          'Jawaban dapat mengandung kesalahan pada penjelasan, atribusi, terjemahan, atau keterangan rujukan.\n\n'
+          'Periksa kutipan pada kitab dan edisi yang digunakan sebelum menjadikannya dasar tulisan, pengajaran, keputusan, atau penyampaian hukum kepada orang lain. '
+          'Nomor halaman pada satu edisi tidak selalu sama dengan edisi lain.\n\n'
+          'Jawaban AI bukan merupakan fatwa resmi, penetapan hukum yang mengikat, atau pengganti bimbingan guru dan ulama yang berkompeten. '
+          'Tidak ditemukannya rujukan dalam hasil pencarian berarti layanan belum menemukannya pada penelusuran tersebut, bukan bukti bahwa pembahasannya tidak ada.',
+    ),
+    LegalSection(
+      title: '5. Paket, Pembayaran, dan Masa Akses',
+      content:
+          'Harga, cakupan asisten, masa akses, batas penggunaan, kebutuhan akun pihak ketiga, serta biaya yang berlaku ditampilkan sebelum Anda membayar.\n\n'
+          'Langganan diperpanjang secara manual. Kami tidak melakukan penagihan berulang otomatis (auto-debit) dari pembelian paket ini.\n\n'
+          'Masa akses dimulai ketika aktivasi berhasil dan tanggal berakhir ditampilkan pada akun. '
+          'Pembayaran diproses melalui DOKU menurut metode yang tersedia pada saat transaksi. '
+          'Keberhasilan pembayaran dan aktivasi akses adalah dua status yang berbeda. Jika dana telah dibayarkan namun langganan belum aktif, hubungi bantuan dengan nomor transaksi.',
+    ),
+    LegalSection(
+      title: '6. Layanan Pihak Ketiga (Google NotebookLM)',
+      content:
+          'Fitur percakapan menggunakan NotebookLM dari Google. Aksesnya dapat bergantung pada akun, wilayah, batas penggunaan, dan ketentuan penyedia yang berlaku untuk Anda. '
+          'Pembelian OpenTurath tidak dengan sendirinya mengubah jenis langganan atau hak akses akun Google Anda.\n\n'
+          'Jika perubahan layanan pihak ketiga menyebabkan fitur berbayar tidak dapat diberikan sesuai yang ditawarkan, kami akan menilai pemulihan akses, penggantian layanan yang Anda setujui, atau pengembalian dana sesuai hak Anda.',
+    ),
+    LegalSection(
+      title: '7. Penggunaan yang Diperbolehkan dan Dilarang',
+      content:
+          'Anda dapat menggunakan layanan untuk belajar, menyiapkan pengajaran, dan melakukan penelusuran sesuai paket yang dimiliki. '
+          'Penggunaan hasilnya tetap harus memperhatikan hak cipta, ketepatan atribusi, serta adab keilmuan.\n\n'
+          'Dilarang menggunakan OpenTurath untuk mengambil alih akun, menghindari pembatasan akses secara tidak sah, menyebarkan perangkat lunak berbahaya, atau menjual kembali akses berbayar kepada pihak lain.\n\n'
+          'Dilarang membuat atau menyebarkan kutipan yang sengaja dipalsukan dan diatasnamakan kepada ulama atau sumber tertentu. '
+          'Pembahasan ilmiah yang sah, termasuk perbedaan pendapat dan kritik terhadap suatu penafsiran, tidak dengan sendirinya merupakan pelanggaran.',
+    ),
+    LegalSection(
+      title: '8. Catatan dan Materi Pengguna',
+      content:
+          'Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. '
+          'Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\n'
+          'Catatan disimpan secara lokal pada perangkat Anda melalui basis data terenkripsi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.',
+    ),
+    LegalSection(
+      title: '9. Hak atas Aplikasi dan Kitab',
+      content:
+          'Hak atas perangkat lunak, tampilan, dan merek OpenTurath tetap berada pada pemegang haknya. '
+          'Materi kitab, terjemahan, dan tahkik mengikuti status hak masing-masing.\n\n'
+          'Akses berbayar tidak memindahkan hak cipta atas kitab atau memberi izin umum untuk menyebarluaskan seluruh isi kitab secara komersial. '
+          'Penggunaan kutipan harus memperhatikan batas penggunaan wajar dan kewajiban atribusi.',
+    ),
+    LegalSection(
+      title: '10. Ketersediaan dan Perubahan Fitur',
+      content:
+          'Layanan dapat mengalami pemeliharaan berkala atau pembaruan teknis. Kami berupaya memberi pemberitahuan mengenai pemeliharaan terencana.\n\n'
+          'Perubahan yang secara material mengurangi manfaat paket berbayar akan disertai pilihan penyelesaian yang wajar. '
+          'Kami tidak menggunakan perubahan ketentuan untuk menghapus hak yang sudah timbul dari pembelian Anda.',
+    ),
+    LegalSection(
+      title: '11. Pembatasan dan Penutupan Akun',
+      content:
+          'Kami dapat membatasi akses jika terdapat dasar yang wajar mengenai pelanggaran serius, risiko keamanan, atau penggunaan tanpa hak. '
+          'Tindakan disesuaikan dengan tingkat masalah, mulai dari peringatan, penghentian sementara, hingga penutupan akun.\n\n'
+          'Jika keadaan memungkinkan, kami menyampaikan alasan dan memberi kesempatan klarifikasi melalui $contactSupportEmail.',
+    ),
+    LegalSection(
+      title: '12. Tanggung Jawab dan Hak Pengguna',
+      content:
+          'Kami bertanggung jawab menyediakan layanan sesuai perjanjian dan hukum yang berlaku. '
+          'Penjelasan mengenai keterbatasan AI tidak menghapus kewajiban kami untuk memberikan informasi yang benar, menangani keluhan, atau menyelesaikan layanan berbayar.\n\n'
+          'Anda bertanggung jawab menilai kesesuaian hasil untuk tujuan penggunaannya dan memeriksa sumber sebelum mengambil kesimpulan. '
+          'Tidak ada ketentuan yang meniadakan hak konsumen yang dilindungi undang-undang.',
+    ),
+    LegalSection(
+      title: '13. Pengaduan dan Musyawarah',
+      content:
+          'Hubungi $contactSupportEmail dengan penjelasan masalah dan informasi yang relevan. '
+          'Kami akan mencatat pengaduan, menyampaikan perkembangan penanganan dalam $supportSla, dan mengupayakan penyelesaian secara musyawarah.\n\n'
+          'Ketentuan ini tunduk pada hukum Republik Indonesia.',
+    ),
+    LegalSection(
+      title: '14. Perubahan Ketentuan dan Kontak',
+      content:
+          'Versi dokumen: $documentVersion (Berlaku sejak $effectiveDate).\n\n'
+          'Perubahan penting akan diberitahukan sebelum berlaku dan tidak berlaku surut untuk menghilangkan hak yang telah timbul.\n\n'
+          'Pengelola: $managerName\n'
+          'Alamat: $managerAddress\n'
+          'Bantuan: $contactSupportEmail\n'
+          'Privasi: $contactPrivacyEmail\n'
+          'Hak Cipta: $contactCopyrightEmail',
+    ),
+  ];
+
+  // ── Bab 3: Kebijakan Privasi (Privacy Policy) ──────────────────
+  static const privacyTitle = 'Kebijakan Privasi';
+
+  static const List<LegalSection> privacySections = [
+    LegalSection(
+      title: '1. Pengelola Data dan Ruang Lingkup',
+      content:
+          'Kebijakan Privasi ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi OpenTurath, pembayaran, dan bantuan layanan. '
+          '$managerName ($managerAddress) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh OpenTurath, sesuai UU Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi.\n\n'
+          'Untuk pertanyaan privasi, hubungi $contactPrivacyEmail.',
+    ),
+    LegalSection(
+      title: '2. Data yang Diproses',
+      content:
+          'Kami memproses data sesuai fitur yang Anda gunakan:\n'
+          '• Akun: Nama, alamat email, dan identitas profil publik dari akun Google untuk autentikasi dan personalisasi.\n'
+          '• Langganan: Paket yang dipilih, status, masa aktif, dan penggunaan voucher.\n'
+          '• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia DOKU.\n'
+          '• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n'
+          '• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.\n'
+          '• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n'
+          '• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n'
+          '• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.',
+    ),
+    LegalSection(
+      title: '3. Tujuan dan Dasar Pemrosesan',
+      content:
+          'Data akun dan transaksi diproses untuk menyediakan layanan yang Anda minta, mengelola langganan, dan melaksanakan perjanjian. '
+          'Pencatatan transaksi juga diperlukan untuk memenuhi kewajiban hukum administrasi perpajakan dan transaksi keuangan.\n\n'
+          'Kami tidak menjual data pribadi Anda kepada pihak ketiga manapun, dan tidak menggunakan percakapan Anda untuk iklan bertarget.',
+    ),
+    LegalSection(
+      title: '4. Percakapan AI dan Peran Google',
+      content:
+          'Ketika Anda mengirim pertanyaan melalui fitur percakapan, teks dan konteks diproses melalui layanan Google NotebookLM. '
+          'Kebijakan pemrosesan Google mengikuti Kebijakan Privasi Google dan ketentuan NotebookLM.\n\n'
+          'Aplikasi OpenTurath tidak menggunakan isi percakapan atau catatan pribadi pengguna untuk melatih model kecerdasan buatan publik. '
+          'Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.',
+    ),
+    LegalSection(
+      title: '5. Catatan dan Penyimpanan Perangkat',
+      content:
+          'Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan basis data SQLite terenkripsi. '
+          'Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. '
+          'Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain.',
+    ),
+    LegalSection(
+      title: '6. Penerima dan Penyedia Layanan',
+      content:
+          'Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n'
+          '• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.\n'
+          '• DOKU: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n'
+          '• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\n'
+          'Seluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.',
+    ),
+    LegalSection(
+      title: '7. Kebijakan Iklan, Analitik, dan Promosi',
+      content:
+          'OpenTurath bebas dari iklan pihak ketiga dan tidak menjual data pribadi Anda. '
+          'Pemberitahuan transaksi dan pembaruan layanan dikirimkan semata-mata untuk keperluan operasional akun Anda.',
+    ),
+    LegalSection(
+      title: '8. Pemrosesan Data Lintas Wilayah',
+      content:
+          'Infrastruktur autentikasi Google dan basis data cloud dapat memproses sebagian data teknis di pusat data yang aman di dalam maupun luar wilayah Indonesia, dengan perlindungan enkripsi transit dan at-rest berstandar global.',
+    ),
+    LegalSection(
+      title: '9. Masa Penyimpanan Data (Retensi)',
+      content:
+          '• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n'
+          '• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n'
+          '• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n'
+          '• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan.',
+    ),
+    LegalSection(
+      title: '10. Keamanan dan Perlindungan Data',
+      content:
+          'Kami menerapkan langkah-langkah pengamanan teknis, termasuk komunikasi terenkripsi SSL/TLS, pembatasan akses data, dan perlindungan token sesi. '
+          'Kata sandi akun Google Anda tidak pernah disimpan di server OpenTurath.',
+    ),
+    LegalSection(
+      title: '11. Hak Subjek Data Pengguna',
+      content:
+          'Sesuai UU Perlindungan Data Pribadi, Anda berhak:\n'
+          '• Mengakses dan memperoleh informasi mengenai data pribadi yang diproses.\n'
+          '• Memperbarui atau memperbaiki data profil yang keliru.\n'
+          '• Meminta penghapusan akun dan data pribadi Anda kapan saja melalui aplikasi.\n'
+          '• Menyampaikan keberatan atau pertanyaan seputar privasi ke $contactPrivacyEmail.',
+    ),
+    LegalSection(
+      title: '12. Pengguna di Bawah Umur',
+      content:
+          'Pendaftaran akun mandiri ditujukan bagi pengguna berusia 18 tahun ke atas. '
+          'Jika Anda orang tua atau wali dan mendapati akun dibuka tanpa izin yang diperlukan, hubungi $contactPrivacyEmail untuk penanganan dan penghapusan data.',
+    ),
+    LegalSection(
+      title: '13. Kontak dan Pembaruan Kebijakan',
+      content:
+          'Versi dokumen: $documentVersion (Berlaku sejak $effectiveDate).\n\n'
+          'Untuk pertanyaan atau permohonan hak privasi, hubungi:\n'
+          'Email: $contactPrivacyEmail\n'
+          'Pengelola: $managerName ($managerAddress)',
+    ),
+  ];
+
+  // ── Bab 4: Langganan, Pembayaran, dan Pengembalian Dana ────────
+  static const refundTitle = 'Pembayaran dan Pengembalian Dana';
+
+  static const List<LegalSection> refundSections = [
+    LegalSection(
+      title: '1. Informasi Sebelum Pembelian',
+      content:
+          'Sebelum melakukan pembayaran, rincian harga total, cakupan modul asisten, durasi masa akses, dan metode pembayaran ditampilkan secara jelas pada halaman langganan.\n\n'
+          'Durasi paket 30 hari dihitung sebagai 30 hari kalender penuh sejak aktivasi berhasil. '
+          'Perubahan harga di masa mendatang tidak akan memengaruhi paket yang sedang berjalan.',
+    ),
+    LegalSection(
+      title: '2. Pembayaran dan Aktivasi Akses',
+      content:
+          'Pembayaran diproses melalui gerbang pembayaran resmi DOKU dengan metode QRIS, transfer bank (virtual account), maupun dompet digital.\n\n'
+          'Bukti pembayaran resmi dikirimkan melalui notifikasi DOKU dan email akun Anda. '
+          'Masa akses aktif seketika transaksi dinyatakan berhasil dan tersinkronisasi. '
+          'Jika dana telah terpotong namun status belum aktif, jangan melakukan pembayaran ulang; hubungi $contactSupportEmail dengan menyertakan nomor transaksi.',
+    ),
+    LegalSection(
+      title: '3. Perpanjangan Manual (Tanpa Auto-Debit)',
+      content:
+          'Seluruh paket langganan OpenTurath diperpanjang secara manual tanpa penagihan berulang otomatis (tanpa auto-debit). '
+          'Setelah masa aktif berakhir, akses berbayar akan berhenti dengan sendirinya kecuali Anda memilih untuk memperpanjang secara sadar.',
+    ),
+    LegalSection(
+      title: '4. Ketentuan Voucher',
+      content:
+          'Voucher promosi atau mitra mengikuti masa berlaku, cakupan asisten, dan batas penukaran yang tercantum saat diterbitkan. '
+          'Voucher tidak dapat diuangkan dan berlaku untuk satu kali penukaran pada akun yang berhak.',
+    ),
+    LegalSection(
+      title: '5. Dasar Pengajuan Pengembalian Dana (Refund)',
+      content:
+          'Anda berhak mengajukan pemeriksaan dan pengembalian dana apabila terjadi:\n'
+          '• Pembayaran ganda akibat kendala teknis pada sistem transaksi.\n'
+          '• Dana telah terpotong namun hak akses tidak aktif setelah dilakukan verifikasi.\n'
+          '• Gangguan teknis berkepanjangan pada layanan inti berbayar yang tidak dapat dipulihkan.\n\n'
+          'Penyelesaian dapat berupa pemulihan akses, penyesuaian masa aktif yang Anda setujui, atau pengembalian dana penuh.',
+    ),
+    LegalSection(
+      title: '6. Alur dan Waktu Penanganan Refund',
+      content:
+          'Kirim permohonan ke $contactSupportEmail dengan menyertakan:\n'
+          '1. Alamat email akun OpenTurath.\n'
+          '2. Nomor transaksi / invoice pembayaran.\n'
+          '3. Bukti pembayaran resmi dari bank/e-wallet.\n'
+          '4. Penjelasan kendala yang dialami.\n\n'
+          'Konfirmasi penerimaan dikirimkan maksimal dalam $supportSla. '
+          'Pemeriksaan dan keputusan pengembalian dana diselesaikan dalam $refundSla. '
+          'Jika disetujui, pengembalian dana diproses ke rekening atau dompet asal sesuai ketentuan perbankan ($refundSla).',
+    ),
+    LegalSection(
+      title: '7. Saluran Bantuan Transaksi',
+      content:
+          'Kendala pembayaran dan transaksi dipantau setiap hari kerja ($serviceHours).\n'
+          'Email layanan transaksi: $contactSupportEmail',
+    ),
+  ];
+
+  // ── Bab 7: Panduan Penggunaan AI dan Rujukan (Adab) ───────────
+  static const aiGuidelineTitle = 'Panduan Penggunaan AI & Rujukan';
+
+  static const List<LegalSection> aiGuidelineSections = [
+    LegalSection(
+      title: '1. Peran OpenTurath dalam Belajar',
+      content:
+          'OpenTurath membantu menelusuri pembahasan dalam kitab dan menyusun penjelasan awal berdasarkan sumber yang tersedia. '
+          'Gunakan hasilnya untuk memperluas pembacaan, menyiapkan pertanyaan kepada guru, atau menemukan rujukan yang perlu diperiksa.\n\n'
+          'Jawaban AI dapat keliru meskipun disampaikan dengan kalimat yang meyakinkan. '
+          'Kehadiran judul kitab atau nomor halaman belum membuktikan bahwa seluruh isi jawaban bebas dari kekeliruan.',
+    ),
+    LegalSection(
+      title: '2. Membaca Kutipan Bersama Konteks',
+      content:
+          'Periksa judul kitab, nama pengarang, edisi, jilid, dan halaman yang dirujuk. '
+          'Baca bagian sebelum dan sesudah kutipan untuk memahami hubungan pembahasan secara utuh. '
+          'Syarat, pengecualian, dan konteks pembahasan sangat memengaruhi maksud ibarah hukum.\n\n'
+          'Jika penomoran halaman berbeda, cocokkan dengan cetakan atau edisi yang Anda gunakan.',
+    ),
+    LegalSection(
+      title: '3. Menjaga Adab Perbedaan Pendapat',
+      content:
+          'Penjelasan tentang mazhab atau kedudukan suatu pendapat perlu dibaca sesuai bidang dan rujukannya. '
+          'Ringkasan perbandingan tidak otomatis mencakup seluruh pandangan ulama.\n\n'
+          'Istilah khusus seperti mu\'tamad, sanad, dan derajat hadis memiliki metodologi ilmiah yang ketat. '
+          'Untuk pemahaman agama yang mendalam dan penetapan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.',
+    ),
+    LegalSection(
+      title: '4. Mengutip dan Membagikan Hasil',
+      content:
+          'Bedakan dengan jujur antara naskah kitab asli, kutipan terjemahan, dan sintesis penjelasan AI. '
+          'Cantumkan sumber yang benar-benar Anda periksa pada naskah aslinya. '
+          'Jangan memberi kesan telah membaca kitab secara utuh apabila penelusuran baru dilakukan melalui ringkasan AI.',
+    ),
+    LegalSection(
+      title: '5. Melaporkan Kesalahan Teks atau Rujukan',
+      content:
+          'Apabila Anda menemukan kekeliruan kutipan teks Arab, salah atribusi pengarang, atau kesalahan jilid dan halaman, '
+          'kirimkan laporan ke $contactSupportEmail dengan menyertakan nama kitab, pertanyaan, dan usulan koreksi yang benar.',
+    ),
+  ];
+
+  // ── Bab 9: Bantuan dan Kontak Resmi ───────────────────────────
+  static const contactTitle = 'Bantuan dan Kontak';
+
+  static const List<LegalSection> contactSections = [
+    LegalSection(
+      title: '1. Layanan Bantuan dan Pengaduan',
+      content:
+          'Tim OpenTurath siap membantu kendala akun, aktivasi langganan, pembayaran, penggunaan Catatan, serta laporan koreksi naskah kitab rujukan.',
+    ),
+    LegalSection(
+      title: '2. Saluran Komunikasi Resmi',
+      content:
+          '• Bantuan & Transaksi: $contactSupportEmail\n'
+          '• Permintaan Privasi & Data: $contactPrivacyEmail\n'
+          '• Laporan Hak Cipta: $contactCopyrightEmail\n'
+          '• Alamat Usaha: $managerAddress\n'
+          '• Waktu Operasional: $serviceHours\n'
+          '• Target Tanggapan: Maksimal $supportSla',
+    ),
+    LegalSection(
+      title: '3. Keamanan Informasi',
+      content:
+          'Jangan pernah mengirimkan kata sandi, kode OTP, atau informasi kartu pembayaran rahasia kepada siapapun, termasuk pihak yang mengaku sebagai tim OpenTurath. '
+          'Gunakan hanya saluran email resmi yang tercantum di atas.',
+    ),
+  ];
+
+  // ── Bab 6 & 10.5: Teks Konfirmasi Penghapusan Akun Kanonik ─────
+  static const deleteAccountConfirmationBody =
+      'Akun OpenTurath akan dihapus dan akses akun berakhir. '
+      'Data yang masih perlu disimpan untuk kewajiban hukum mengikuti Kebijakan Privasi. '
+      'Simpan catatan penting sebelum melanjutkan.';
+
+  static const deleteAccountConfirmationCancel = 'Batal';
+  static const deleteAccountConfirmationConfirm = 'Hapus akun';
 }
 
 ```
@@ -5610,6 +6137,85 @@ class Loc {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/core/navigation_guard.dart
+```dart
+import 'package:flutter/material.dart';
+
+/// [NavigationGuard] mencegah masalah navigasi bertumpuk (*stacked pages*)
+/// yang timbul ketika pengguna mengetuk tombol navigasi secara berulang-ulang
+/// dalam jeda waktu singkat saat perangkat sedang sibuk atau mengalami lag.
+class NavigationGuard {
+  NavigationGuard._();
+
+  static bool _isNavigating = false;
+  static String? _activeRoute;
+
+  /// Mengetahui apakah saat ini ada operasi navigasi yang sedang berlangsung (*in-flight*).
+  static bool get isNavigating => _isNavigating;
+
+  /// Rute yang saat ini sedang aktif dibuka.
+  static String? get activeRoute => _activeRoute;
+
+  /// Mengeksekusi [Navigator.pushNamed] dengan perlindungan *Single-Flight Guard*.
+  ///
+  /// Jika ada navigasi lain yang sedang berjalan atau rute yang sama sedang
+  /// dalam proses dibuka, pemanggilan berikutnya akan langsung diabaikan secara aman.
+  static Future<T?> safePushNamed<T>(
+    BuildContext context,
+    String routeName, {
+    Object? arguments,
+  }) async {
+    if (_isNavigating) {
+      debugPrint('[NavigationGuard] Menolak push duplikat untuk "$routeName" (operasi navigasi sedang aktif)');
+      return null;
+    }
+
+    _isNavigating = true;
+    _activeRoute = routeName;
+
+    try {
+      if (!context.mounted) return null;
+      return await Navigator.pushNamed<T>(
+        context,
+        routeName,
+        arguments: arguments,
+      );
+    } finally {
+      _isNavigating = false;
+      _activeRoute = null;
+    }
+  }
+
+  /// Mengeksekusi navigasi kustom dengan pengunci *Single-Flight Guard*.
+  static Future<T?> safeNavigate<T>(
+    BuildContext context,
+    Future<T?> Function() navigationAction,
+  ) async {
+    if (_isNavigating) {
+      debugPrint('[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)');
+      return null;
+    }
+
+    _isNavigating = true;
+    try {
+      if (!context.mounted) return null;
+      return await navigationAction();
+    } finally {
+      _isNavigating = false;
+      _activeRoute = null;
+    }
+  }
+
+  /// Reset internal state untuk keperluan unit test.
+  @visibleForTesting
+  static void resetForTesting() {
+    _isNavigating = false;
+    _activeRoute = null;
+  }
+}
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/core/notebook_navigation.dart
 ```dart
 class NotebookNavigation {
@@ -5670,45 +6276,200 @@ const notebookUiScript = r'''
   document.addEventListener('copy', event => {
     if (Date.now() < copyUntil && selectedAnswer) sendCopy(selectedAnswer);
   });
+  function applyOtTheme(isDark) {
+    if (typeof isDark !== 'boolean') {
+      isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    try {
+      var meta = document.querySelector('meta[name="color-scheme"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'color-scheme';
+        (document.head || document.documentElement).appendChild(meta);
+      }
+      meta.content = isDark ? 'dark' : 'light';
+
+      if (document.documentElement) {
+        document.documentElement.classList.toggle('dark-theme', isDark);
+        document.documentElement.classList.toggle('dark', isDark);
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+      }
+      if (document.body) {
+        document.body.classList.toggle('dark-theme', isDark);
+        document.body.classList.toggle('dark', isDark);
+        document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      }
+
+      var styleEl = document.getElementById('ot-native-dark-mode');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'ot-native-dark-mode';
+        (document.head || document.documentElement).appendChild(styleEl);
+      }
+      if (isDark) {
+        styleEl.textContent = `
+          :root {
+            color-scheme: dark !important;
+            --mdc-theme-background: #0E0E10 !important;
+            --mdc-theme-surface: #18181B !important;
+            --mdc-theme-on-surface: #FAFAFA !important;
+            --mat-sys-color-surface: #0E0E10 !important;
+            --mat-sys-color-on-surface: #FAFAFA !important;
+            --mat-sys-color-surface-container: #18181B !important;
+            --mat-sys-color-surface-container-high: #202024 !important;
+            --mat-sys-color-surface-container-highest: #27272A !important;
+            --mat-sys-color-outline: #3F3F46 !important;
+            --mat-sys-color-outline-variant: #27272A !important;
+          }
+          html, body {
+            background-color: #0E0E10 !important;
+            color: #FAFAFA !important;
+            color-scheme: dark !important;
+          }
+          main, [role="main"], .chat-view, .chat-viewport, .conversation-container,
+          .chat-panel-content, .message-list, mat-sidenav-content, mat-sidenav-container,
+          .notebook-content, .scrollable-content, div.content-container,
+          app-chat-window, app-chat-message, app-chat-response {
+            background-color: #0E0E10 !important;
+            color: #FAFAFA !important;
+          }
+          .to-user-container, [data-message-author-role="user"], .user-query-container,
+          div[class*="user-query" i], div[class*="to-user" i], .chat-message[data-sender="user"] {
+            background-color: #27272A !important;
+            color: #FFFFFF !important;
+            border-radius: 16px !important;
+            border: 1px solid #3F3F46 !important;
+          }
+          .to-user-container *, [data-message-author-role="user"] * {
+            color: #FFFFFF !important;
+          }
+          .chat-message[data-sender="model"], .model-message, .response-message,
+          [data-message-author-role="assistant"], .rendered-markdown,
+          div[class*="response-container" i] {
+            background-color: transparent !important;
+            color: #E4E4E7 !important;
+          }
+          .rendered-markdown p, .rendered-markdown span, .rendered-markdown div,
+          .rendered-markdown li, .rendered-markdown blockquote {
+            color: #E4E4E7 !important;
+          }
+          .rendered-markdown strong, .rendered-markdown b {
+            color: #FFFFFF !important;
+          }
+          .chat-input-container, div[class*="chat-input" i], div[class*="input-container" i],
+          .bottom-bar, div[class*="bottom-bar" i] {
+            background-color: #18181B !important;
+            border-top: 1px solid #27272A !important;
+          }
+          textarea, [contenteditable="true"], [role="textbox"], input[type="text"] {
+            background-color: #18181B !important;
+            color: #FAFAFA !important;
+            border: 1px solid #27272A !important;
+          }
+          textarea::placeholder, input::placeholder, [class*="placeholder"] {
+            color: #71717A !important;
+          }
+          button.send-button, button[aria-label*="Send" i], button[aria-label*="Kirim" i],
+          button.mat-mdc-icon-button {
+            color: #A1A1AA !important;
+          }
+        `;
+      } else {
+        styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+      }
+    } catch(e) {}
+  }
+  window.otSetTheme = applyOtTheme;
+
   function hide(el) { if (el && !el.hasAttribute('data-ot-hidden')) el.setAttribute('data-ot-hidden', ''); }
   function clean() {
     if (!document.documentElement) return;
+    applyOtTheme();
     if (!document.getElementById('ot-conversation-ui')) {
       const style = document.createElement('style'); style.id = 'ot-conversation-ui';
       style.textContent = `
-        [data-ot-hidden], .chat-disclaimer, .disclaimer, .chat-footer-disclaimer,
+        [data-ot-hidden],
+        .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab"], div[class*="tab-bar"],
+        [role="tablist"], mat-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
+        mat-progress-spinner, mat-spinner, .mdc-circular-progress, [role="progressbar"],
+        svg.spinner, div[class*="spinner" i], div[class*="skeleton" i], div[class*="shimmer" i],
+        div[class*="placeholder-bar" i],
+        button[aria-label*="More" i], button[aria-label*="Opsi" i],
+        button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+        .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer" i], footer[class*="disclaimer" i],
+        div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
+        app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
+        .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
+        footer, .chat-footer, .conversation-footer,
+        div.chat-input-container + div,
+        div[class*="input-container" i] + div,
+        div[class*="query-container" i] + div,
         .notebook-guide, notebook-guide, .notebook-overview, notebook-overview,
         .notebook-cover, .notebook-cover-container, .notebook-title-card,
         .notebook-header, .project-header, .chat-header, .chat-panel-header,
-        .mobile-tab-bar, .mobile-tabs, .mobile-navigation, mat-tab-header {
+        .header-content, .title-card, mat-card.title-card,
+        .loading-notebook, [class*="skeleton"] {
           display:none!important;
+          visibility:hidden!important;
+          height:0px!important;
+          max-height:0px!important;
+          overflow:hidden!important;
+          margin:0px!important;
+          padding:0px!important;
+          opacity:0!important;
+          pointer-events:none!important;
+          border:none!important;
         }
       `;
       (document.head || document.documentElement).appendChild(style);
     }
-    document.querySelectorAll('[role="tablist"]').forEach(el => {
-      if (/sources|sumber/i.test(text(el)) && /studio/i.test(text(el))) hide(el);
-    });
-    document.querySelectorAll('p, span, div, footer').forEach(el => {
-      if (el.children.length > 2 || el.closest(answerSelector)) return;
-      const value = text(el);
-      if (value.length < 240 && /(?:Gemini Notebook|NotebookLM) can be inaccurate|please double.check its responses/i.test(value)) hide(el);
-    });
-    // The cover is identified by its metadata, never by generic answer cards.
-    document.querySelectorAll('h1, h2, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
-      if (el.closest(answerSelector)) return;
-      let card = el;
-      for (let i = 0; card && i < 5; i++, card = card.parentElement) {
-        if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
-        if (/\d+ sources\b|\d+ sumber\b/i.test(text(card)) && text(card).length < 1500) { hide(card); break; }
+    // Sembunyikan tab strip Sources | Chat | Studio
+    document.querySelectorAll('nav, div, [role="tablist"], ul').forEach(el => {
+      const t = (el.innerText || '').toLowerCase();
+      if ((t.includes('sources') || t.includes('sumber')) && (t.includes('studio') || t.includes('chat'))) {
+        if (!el.closest(answerSelector) && el.children.length <= 6) hide(el);
       }
     });
-    // Dismiss only the informational announcement shown in the reported screenshot.
-    document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane').forEach(dialog => {
-      if (!/more flexibility and control/i.test(text(dialog)) || !/limits refresh every 5 hours/i.test(text(dialog))) return;
+    // Sembunyikan disclaimer Google Gemini / NotebookLM secara komprehensif
+    const disclaimerPattern = /(?:inaccurate|double-check|double check|can make mistakes|make mistakes|may display inaccurate|tidak akurat|membuat kesalahan|periksa kembali|gemini notebook|notebooklm)/i;
+    document.querySelectorAll('p, span, div, footer, small, a').forEach(el => {
+      if (el.closest(answerSelector) || el.querySelector('textarea, [contenteditable="true"]') || el.closest('button, [role="button"]')) return;
+      const value = text(el);
+      if (value.length > 5 && value.length < 350 && disclaimerPattern.test(value)) {
+        let target = el;
+        for (let i = 0; target && i < 4; i++) {
+          if (target.parentElement && 
+              !target.parentElement.querySelector('textarea, [contenteditable="true"]') && 
+              !target.parentElement.closest(answerSelector) && 
+              target.parentElement !== document.body && 
+              target.parentElement !== document.documentElement) {
+            target = target.parentElement;
+          } else {
+            break;
+          }
+        }
+        hide(target);
+        hide(el);
+        try { target.style.setProperty('display', 'none', 'important'); } catch (_) {}
+      }
+    });
+    // Sembunyikan card overview / cover di awal percakapan
+    document.querySelectorAll('h1, h2, h3, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
+      if (el.closest(answerSelector)) return;
+      let card = el;
+      for (let i = 0; card && i < 6; i++, card = card.parentElement) {
+        if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
+        if (/\b\d+\s+(sources|sumber)\b/i.test(text(card)) && text(card).length < 2000) { hide(card); break; }
+      }
+    });
+    // Auto-dismiss dialog pengumuman Google
+    document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane, [class*="announcement"]').forEach(dialog => {
+      const t = text(dialog).toLowerCase();
+      if (!t.includes('more flexibility and control') && !t.includes('limits refresh every 5 hours') && !t.includes('gemini notebook')) return;
       if (!dialog.hasAttribute('data-ot-dismissed')) {
         dialog.setAttribute('data-ot-dismissed', '');
-        const close = [...dialog.querySelectorAll('button')].find(b => /^(close|dismiss|got it|tutup|mengerti|done)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
+        const close = [...dialog.querySelectorAll('button, [role="button"]')].find(b => /^(close|dismiss|got it|tutup|mengerti|done|ok)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
         if (close) { close.click(); return; }
       }
       const pane = dialog.closest('.cdk-overlay-pane') || dialog;
@@ -5720,14 +6481,45 @@ const notebookUiScript = r'''
         if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
       }
     });
+    // Perbarui placeholder input ke bahasa santri alami
+    const targetPlaceholder = 'Ajukan pertanyaan atau masalah';
+    document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]').forEach(input => {
+      if (input.placeholder && input.placeholder !== targetPlaceholder) {
+        input.placeholder = targetPlaceholder;
+      }
+      if (input.getAttribute('data-placeholder') && input.getAttribute('data-placeholder') !== targetPlaceholder) {
+        input.setAttribute('data-placeholder', targetPlaceholder);
+      }
+      if (input.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(input.getAttribute('aria-label'))) {
+        input.setAttribute('aria-label', targetPlaceholder);
+      }
+    });
+    document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {
+      if (el.closest(answerSelector)) return;
+      const t = text(el).toLowerCase();
+      if (t.includes('start typing') || t.includes('ask a question') || t.includes('tanyakan') || t.includes('ketik pesan') || t.includes('ajukan')) {
+        if (el.innerText !== targetPlaceholder && el.children.length === 0) {
+          el.innerText = targetPlaceholder;
+        }
+      }
+    });
   }
   function ready() {
     clean();
+    const bodyText = document.body ? (document.body.innerText || '') : '';
+    if (/loading notebook|memuat notebook|\b0 sources\b/i.test(bodyText)) {
+      return false;
+    }
+    const hasSpinner = [...document.querySelectorAll('[role="progressbar"], mat-progress-spinner, mat-spinner, .loading-spinner, .mdc-circular-progress, svg.spinner, div[class*="spinner" i], div[class*="skeleton" i], div[class*="shimmer" i]')].some(el => {
+      if (!el) return false;
+      return el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0;
+    });
+    if (hasSpinner) return false;
+
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
-    const loading = [...document.querySelectorAll('[role="progressbar"], mat-spinner, .loading-spinner')].some(visible) || [...document.querySelectorAll('h1, h2, [class*="notebook-title"]')].some(el => /loading notebook|memuat notebook/i.test(text(el)));
-    return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true' && !loading;
+    return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
   }
-  window.otNotebook = {clean, ready, latest};
+  window.otNotebook = {clean, ready, latest, setTheme: applyOtTheme};
   let scheduled = false;
   const observer = new MutationObserver(() => {
     if (scheduled) return;
@@ -5737,7 +6529,6 @@ const notebookUiScript = r'''
   observer.observe(document, {subtree:true, childList:true, characterData:true});
   clean();
 })();
-
 ''';
 
 ```
@@ -5805,16 +6596,16 @@ class AppTheme {
   static const Color textPrimaryDark      = Color(0xFFFAFAFA); // Main Title & Body
   static const Color textSecondaryDark    = Color(0xFFA1A1AA); // Muted Subtitles
   static const Color textTertiaryDark     = Color(0xFFA1A1AA); // WCAG AA Compliant (7.3:1) Disclaimers
-  static const Color accentDark           = Color(0xFF60A5FA); // Scholarly Sapphire Blue (Muted Intellectual Dignity)
+  static const Color accentDark           = Color(0xFFFAFAFA); // Monochrome White Action
   static const Color pillActionBgDark     = Color(0xFFFFFFFF); // Solid White Action Pill
   static const Color pillActionTextDark   = Color(0xFF18181B);
   static const Color pillSecondaryBgDark  = Color(0xFF18181B);
   static const Color citationBgDark       = Color(0xFF1E1E22); // Deep Pill
-  static const Color citationTextDark     = Color(0xFF93C5FD); // Soft Scholar Blue Citation Text
+  static const Color citationTextDark     = Color(0xFFFAFAFA); // Monochrome Citation Text
   static const Color queryBoxBgDark       = Color(0xFF18181B); // Stadium Chat Input
   static const Color queryBoxBorderDark   = Color(0xFF27272A);
   static const Color surfaceElevated      = Color(0xFF18181B); // Elevated chip / pill container
-  static const Color scholarlyIndigo      = Color(0xFF4F46E5); // Intellectual Indigo
+  static const Color scholarlyIndigo      = Color(0xFF18181B); // Monochrome Ink
   static const Color readingCanvasParchmentLight = Color(0xFFFBF7EE); // Warm parchment reading surface
   static const Color readingCanvasParchmentDark  = Color(0xFF1C1A17);
 
@@ -6372,6 +7163,7 @@ import 'firebase_options.dart';
 import 'core/app_config.dart';
 import 'core/app_copy.dart';
 import 'core/localization.dart';
+import 'services/telemetry_service.dart';
 import 'widgets/app_error_state.dart';
 
 Future<void> main() async {
@@ -6401,9 +7193,17 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // ── Inisialisasi Silent Telemetry ──
+    TelemetryService.instance.init();
     runApp(const OpenTurathApp());
   } catch (error, stackTrace) {
     debugPrint('[OpenTurath] Firebase initialization error: $error\n$stackTrace');
+    TelemetryService.instance.reportError(
+      error,
+      stackTrace,
+      context: 'firebase_init_failure',
+      severity: 'critical',
+    );
     final isUnsupportedPlatform = error is UnsupportedError;
     final title = isUnsupportedPlatform
         ? AppCopy.deviceNotSupportedTitle
@@ -6675,7 +7475,7 @@ class AgentModel {
           title: 'AI Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
-              'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan muhadharah Habib Abu Bakar al-Masyhur.',
+              'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan ceramah Habib Abu Bakar Al-Masyhur.',
           emoji: '📜',
           category: 'Fikih Tahawwulat',
           kind: CorpusKind.discipline,
@@ -6688,11 +7488,12 @@ class AgentModel {
             'Apa yang dimaksud Rukun Keempat dalam Fikih Tahawwulat?',
             'Bagaimana para ulama menjelaskan sikap saat masa fitnah?',
           ],
+          catalogId: 'canonical_tahawwulat',
           status: 'active',
           sortOrder: 1,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',
@@ -6737,9 +7538,9 @@ class AgentModel {
           title: 'AI Fikih Syafi\'i',
           titleArabic: 'الفقه الشافعي',
           description:
-              'Bantuan untuk mencari keterangan dalam kitab-kitab mazhab Syafi\'i.',
+              'Cari penjelasan dan rujukan dalam kitab-kitab mazhab Syafi\'i.',
           emoji: '📜',
-          category: 'Fiqih',
+          category: 'Fikih',
           kind: CorpusKind.discipline,
           disciplineIds: const ['fiqh'],
           catalogId: 'canonical_syafii',
@@ -6752,9 +7553,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 2,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_syafii_muhaqqiq',
@@ -6788,9 +7589,9 @@ class AgentModel {
           title: 'AI Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
-              'Fikih Mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
+              'Pelajari fikih mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Zhahir Ar-Riwayah · Syuruh & Fatawa',
           suggestedPrompts: [
@@ -6800,9 +7601,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 3,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanafi_muhaqqiq',
@@ -6834,9 +7635,9 @@ class AgentModel {
           title: 'AI Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
-              'Fikih Mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
+              'Pelajari fikih mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Al-Mudawwanah · Mukhtashar Khalil & Syarah',
           suggestedPrompts: [
@@ -6846,9 +7647,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 4,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_maliki_muhaqqiq',
@@ -6880,9 +7681,9 @@ class AgentModel {
           title: 'AI Fikih Hanbali',
           titleArabic: 'الفقه الحنبلي',
           description:
-              'Khazanah Fikih Mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
+              'Pelajari fikih mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Al-Mughni · Zad Al-Mustaqni\' & Syuruh',
           suggestedPrompts: [
@@ -6892,9 +7693,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 5,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanbali_muhaqqiq',
@@ -6926,9 +7727,9 @@ class AgentModel {
           title: 'AI Perbandingan Mazhab',
           titleArabic: 'الفقه المقارن',
           description:
-              'Komparasi hukum lintas mazhab empat (Arba\'ah), analisis wajh al-dilalah, dan tarjih dalil mu\'tabar.',
+              'Bandingkan dalil dan pandangan mazhab Hanafi, Maliki, Syafi\'i, dan Hanbali.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Perbandingan Mazhab Empat & Tarjih Dalil',
           suggestedPrompts: [
@@ -6938,9 +7739,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 6,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_muqaran_muhaqqiq',
@@ -6971,12 +7772,12 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'AI Hadits & Syarah Sunnah',
+          title: 'AI Hadis & Syarah',
           titleArabic: 'الحديث الشريف',
           description:
-              'Kajian matan hadits, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah & syuruhnya).',
+              'Kajian matan hadis, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah dan syarahnya).',
           emoji: '📖',
-          category: 'Hadits',
+          category: 'Hadis',
           fieldId: 'hadith',
           subtitleAcademic: 'Kutubus Sittah · Takhrij & Rijal',
           suggestedPrompts: [
@@ -6984,18 +7785,19 @@ class AgentModel {
             'Bagaimana menilai sanad riwayat ini?',
             'Bagaimana status perawi hadis talqin dalam Kutubus Sittah?',
           ],
+          catalogId: 'canonical_hadits',
           status: 'active',
           sortOrder: 7,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'hadits_muhaqqiq',
-              name: 'Al-Muhaqqiq (Takhrij Hadits)',
+              name: 'Al-Muhaqqiq (Takhrij Hadis)',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis takhrij hadits, telaah rijalul hadits, dan derajat kesahihan sanad.',
+                  'Membantu takhrij hadis, telaah rijalul hadis, dan derajat kesahihan sanad.',
               descriptionArabic: 'تخريج الحديث ودراسة الأسانيد والرجال',
               emoji: '🔍',
               badge: 'Takhrij & Rijal',
@@ -7023,7 +7825,7 @@ class AgentModel {
           title: 'AI Tafsir Al-Qur\'an',
           titleArabic: 'تفسير القرآن',
           description:
-              'Penelusuran makna ayat, asbabun nuzul, dan istinbath hukum dari kitab-kitab tafsir mu\'tabarah.',
+              'Penelusuran makna ayat, asbabun nuzul, dan penjelasan ulama dari kitab-kitab tafsir mu\'tabar.',
           emoji: '🌟',
           category: 'Tafsir',
           fieldId: 'tafsir',
@@ -7033,11 +7835,12 @@ class AgentModel {
             'Bagaimana tafsir ayat Muhkamat dan Mutasyabihat menurut Al-Qurtubi?',
             'Kompilasi pandangan mufassirin tentang tafsir "Ihdinas shiratal mustaqim"!',
           ],
+          catalogId: 'canonical_tafsir',
           status: 'active',
           sortOrder: 8,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'tafsir_muhaqqiq',
@@ -7069,12 +7872,12 @@ class AgentModel {
         // ── 4. USUL FIQH ──────────────────────────────────────
         AgentModel(
           id: 'ushul_fiqh',
-          title: 'AI Ushul Fiqih',
+          title: 'AI Usul Fikih',
           titleArabic: 'أصول الفقه',
           description:
-              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan yang diakui.',
+              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan.',
           emoji: '📐',
-          category: 'Ushul Fiqih',
+          category: 'Usul Fikih',
           fieldId: 'usul',
           subtitleAcademic: 'Kaidah Istinbath & Maqashid Syariah',
           suggestedPrompts: [
@@ -7082,21 +7885,22 @@ class AgentModel {
             'Bagaimana kaidah "Al-Amru ba\'dan-nahyi yufidul ibahah"?',
             'Bawakan ibarah Al-Waraqat tentang pembagian hukum taklifi!',
           ],
+          catalogId: 'canonical_ushul_fikih',
           status: 'active',
           sortOrder: 9,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'ushul_muhaqqiq',
-              name: 'Al-Muhaqqiq (Kaidah Ushul)',
+              name: 'Al-Muhaqqiq (Kaidah Usul)',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis penelusuran kaidah ushuliyyah dan metode istinbath dalil.',
+                  'Membantu penelusuran kaidah usuliyyah dan metode istinbath dalil.',
               descriptionArabic: 'تحقيق القواعد الأصولية والاستنباط',
               emoji: '📐',
-              badge: 'Kaidah Ushul',
+              badge: 'Kaidah Usul',
             ),
           ],
           referenceBooks: [
@@ -7121,7 +7925,7 @@ class AgentModel {
           title: 'AI Bahasa Arab & Balaghah',
           titleArabic: 'النحو والصرف',
           description:
-              'Nahwu, sharaf, balaghah, dan mu\'jam dengan rujukan kitab bahasa Arab.',
+              'Pelajari nahwu, sharaf, balaghah, dan makna kata dalam kitab berbahasa Arab.',
           emoji: '🔤',
           category: 'Bahasa Arab',
           fieldId: 'lughah',
@@ -7131,11 +7935,12 @@ class AgentModel {
             'Jelaskan faidah wazan Fa\'ala dan Af\'ala dalam ilmu sharaf!',
             'Bawakan kaidah Munada dalam bait Alfiyah Ibnu Malik!',
           ],
+          catalogId: 'canonical_bahasa_arab',
           status: 'active',
           sortOrder: 10,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
           subAgents: [
             SubAgentModel(
               id: 'nahwu_sharaf_muerib',
@@ -7179,12 +7984,12 @@ class AgentModel {
         // ── 6. AQIDAH ─────────────────────────────────────────
         AgentModel(
           id: 'aqidah',
-          title: 'AI Aqidah & Ilmu Kalam',
+          title: 'AI Akidah Islamiyah',
           titleArabic: 'العقيدة والتوحيد',
           description:
               'Pembahasan ushuluddin, tauhid sifat dua puluh, dan manhaj Ahlussunnah wal Jama\'ah.',
           emoji: '🛡️',
-          category: 'Aqidah',
+          category: 'Akidah',
           fieldId: 'aqidah',
           subtitleAcademic: 'Asy\'ariyyah · Maturidiyyah · Dalil Aqli',
           suggestedPrompts: [
@@ -7194,9 +7999,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 11,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
 
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
@@ -7205,9 +8010,9 @@ class AgentModel {
           title: 'AI Sejarah & Sirah',
           titleArabic: 'السيرة والتاريخ',
           description:
-              'Rekam jejak Sirah Nabawiyyah, Khulafaur Rasyidin, dan thabaqat ulama salaf.',
+              'Telusuri perjalanan hidup Nabi, Khulafaur Rasyidin, dan biografi ulama salaf.',
           emoji: '📜',
-          category: 'Sejarah',
+          category: 'Sejarah & Sirah',
           fieldId: 'tarikh',
           subtitleAcademic: 'Sirah Ibnu Hisyam & Tarikh Thabari',
           suggestedPrompts: [
@@ -7217,9 +8022,9 @@ class AgentModel {
           ],
           status: 'coming_soon',
           sortOrder: 12,
-          price1m: 50000,
-          price6m: 250000,
-          price1y: 450000,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
 
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
@@ -7228,9 +8033,9 @@ class AgentModel {
           title: 'AI Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
-              'Kitab dan rekaman muhadharah Habib Umar bin Hafizh dengan rujukan terpercaya.',
+              'Telusuri fatwa, khutbah, tulisan, dan nasihat dakwah Habib Umar bin Hafizh.',
           emoji: '🕌',
-          category: 'Kajian Ulama',
+          category: 'Khazanah Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['habib_umar'],
           disciplineIds: const ['tasawwuf'],
@@ -7249,9 +8054,9 @@ class AgentModel {
           title: 'AI Hujjatul Islam Al-Ghazali',
           titleArabic: 'حجة الإسلام الغزالي',
           description:
-              'Kajian kitab Ihya Ulumuddin, Al-Mustashfa, Tahafut al-Falasifah, dan karya-karya Imam Al-Ghazali.',
+              'Pelajari tasawuf, akhlak, dan usul fikih dalam karya-karya Imam Al-Ghazali, termasuk Ihya Ulumiddin.',
           emoji: '🕯️',
-          category: 'Kajian Ulama',
+          category: 'Khazanah Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['imam_ghazali'],
           disciplineIds: const ['tasawwuf', 'usul', 'aqidah'],
@@ -7395,6 +8200,20 @@ CanonicalImport parseCanonicalCatalog(String source) {
   );
 }
 
+List<CanonicalBookPresentation> parseSyamilahCatalog(String source) {
+  final dynamic root = jsonDecode(source);
+  if (root is List) {
+    return root
+        .whereType<Map<String, dynamic>>()
+        .map((item) => CanonicalBookPresentation.fromSyamilahCard(item))
+        .toList();
+  } else if (root is Map<String, dynamic>) {
+    final legacy = parseCanonicalCatalog(source);
+    return legacy.entries.map((e) => CanonicalBookPresentation.fromEntry(e)).toList();
+  }
+  return [];
+}
+
 /// Presentation model for catalog books reviewed for display.
 /// Prevents UI widgets from turning unverified authority ranks into scientific claims.
 class CanonicalBookPresentation {
@@ -7402,6 +8221,8 @@ class CanonicalBookPresentation {
     required this.editionId,
     required this.titleArabic,
     required this.authorArabic,
+    this.shortTitleArabic,
+    this.sectionArabic,
     this.titleLatin,
     this.authorLatin,
     this.verifiedDeathYearHijri,
@@ -7411,26 +8232,94 @@ class CanonicalBookPresentation {
     this.authorityEvidence,
     this.publisher,
     this.muhaqqiq,
+    this.printYear,
+    this.volumesDescription,
     this.volumesCount,
+    this.pagesDescription,
   });
 
   final String editionId, titleArabic, authorArabic;
+  final String? shortTitleArabic;
+  final String? sectionArabic;
   final String? titleLatin, authorLatin;
   final int? verifiedDeathYearHijri;
   final String? reviewedTypeLabel, reviewedEraLabel;
   final String? reviewedAuthorityLabel, authorityEvidence;
   final String? publisher, muhaqqiq;
+  final String? printYear;
+  final String? volumesDescription;
   final int? volumesCount;
+  final String? pagesDescription;
 
   List<String> get compactLabels => [
+        if (sectionArabic != null && sectionArabic!.isNotEmpty) sectionArabic!,
+        if (volumesDescription != null && volumesDescription!.isNotEmpty)
+          (volumesDescription!.contains('جزء') || volumesDescription!.contains('مجلد') || volumesDescription!.contains('Jilid')
+              ? volumesDescription!
+              : '$volumesDescription Jilid')
+        else if (volumesCount != null && volumesCount! > 1)
+          '$volumesCount Jilid',
+        if (pagesDescription != null && pagesDescription!.isNotEmpty && pagesDescription != '-')
+          '$pagesDescription Hlm',
+        if (verifiedDeathYearHijri != null && verifiedDeathYearHijri! > 0)
+          'ت $verifiedDeathYearHijri هـ',
         if (reviewedTypeLabel != null) reviewedTypeLabel!,
         if (reviewedEraLabel != null) reviewedEraLabel!,
-        if (volumesCount != null && volumesCount! > 1) '$volumesCount Jilid',
-      ];
+      ].where((l) => l.isNotEmpty).toList();
 
   bool get canShowAuthority =>
       reviewedAuthorityLabel?.isNotEmpty == true &&
       authorityEvidence?.isNotEmpty == true;
+
+  factory CanonicalBookPresentation.fromSyamilahCard(Map<String, dynamic> json) {
+    final rawDeath = json['tahun_wafat'];
+    int? deathYear;
+    if (rawDeath is int) {
+      deathYear = rawDeath;
+    } else if (rawDeath is String) {
+      deathYear = int.tryParse(rawDeath);
+    }
+
+    String? clean(dynamic v) {
+      if (v == null) return null;
+      final s = v.toString().trim();
+      return (s.isEmpty || s == '-') ? null : s;
+    }
+
+    final rawVolumes = clean(json['عدد_الأجزاء']);
+    int? volCount;
+    if (rawVolumes != null) {
+      final match = RegExp(r'^\d+').firstMatch(rawVolumes);
+      if (match != null) {
+        volCount = int.tryParse(match.group(0)!);
+      }
+    }
+
+    final rawPages = clean(json['عدد_الصفحات']);
+    final fullTitle = (json['الكتاب'] ?? json['full_title'] ?? '').toString().trim();
+    final shortTitle = clean(json['الاسم_المختصر'] ?? json['canonical_short_title']);
+    final author = (json['المؤلف'] ?? json['author_canonical'] ?? json['author_full'] ?? '').toString().trim();
+    final section = clean(json['القسم']);
+    final publisher = clean(json['الناشر'] ?? json['publisher']);
+    final muhaqqiq = clean(json['المحقق_أو_المعتني'] ?? json['muhaqqiq']);
+    final printYear = clean(json['سنة_الطبع_والطبعة'] ?? json['سنة_الطبع']);
+    final id = json['id']?.toString() ?? json['edition_id']?.toString() ?? '1';
+
+    return CanonicalBookPresentation(
+      editionId: id,
+      titleArabic: fullTitle.isNotEmpty ? fullTitle : (shortTitle ?? 'بدون عنوان'),
+      shortTitleArabic: shortTitle,
+      authorArabic: author.isNotEmpty ? author : 'غير معروف',
+      sectionArabic: section,
+      verifiedDeathYearHijri: deathYear,
+      publisher: publisher,
+      muhaqqiq: muhaqqiq,
+      printYear: printYear,
+      volumesDescription: rawVolumes,
+      volumesCount: volCount,
+      pagesDescription: rawPages,
+    );
+  }
 
   factory CanonicalBookPresentation.fromEntry(CanonicalEntry entry) {
     String? typeLabel;
@@ -7568,6 +8457,36 @@ class BookmarkModel {
           : DateTime.now(),
     );
   }
+
+  BookmarkModel copyWith({
+    String? id,
+    String? title,
+    String? agentId,
+    String? agentTitle,
+    String? fieldName,
+    String? fieldId,
+    String? arabicExcerpt,
+    String? fullAnswer,
+    String? bookReference,
+    String? pageNumber,
+    String? author,
+    DateTime? createdAt,
+  }) {
+    return BookmarkModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      agentId: agentId ?? this.agentId,
+      agentTitle: agentTitle ?? this.agentTitle,
+      fieldName: fieldName ?? this.fieldName,
+      fieldId: fieldId ?? this.fieldId,
+      arabicExcerpt: arabicExcerpt ?? this.arabicExcerpt,
+      fullAnswer: fullAnswer ?? this.fullAnswer,
+      bookReference: bookReference ?? this.bookReference,
+      pageNumber: pageNumber ?? this.pageNumber,
+      author: author ?? this.author,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
 
 ```
@@ -7621,7 +8540,7 @@ class FieldModel {
     ),
     FieldModel(
       id: 'hadith',
-      name: 'Hadits',
+      name: 'Hadis',
       description: 'Takhrij sanad, dirayah perawi, dan syarah Kutubus Sittah.',
       icon: Icons.auto_stories_rounded,
       specialistCount: 1,
@@ -7641,8 +8560,8 @@ class FieldModel {
     ),
     FieldModel(
       id: 'aqidah',
-      name: 'Aqidah',
-      description: 'Kalam Asy\'ariyyah, Maturidiyyah, pembelaan ushuludin, dan dalil aqli-naqli.',
+      name: 'Akidah',
+      description: 'Kalam Asy\'ariyyah, Maturidiyyah, pembahasan ushuluddin, dan dalil aqli-naqli.',
       icon: Icons.shield_outlined,
       specialistCount: 1,
       agentIds: [
@@ -7651,7 +8570,7 @@ class FieldModel {
     ),
     FieldModel(
       id: 'usul',
-      name: 'Usul Fiqh',
+      name: 'Usul Fikih',
       description: 'Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah.',
       icon: Icons.architecture_rounded,
       specialistCount: 1,
@@ -7681,7 +8600,7 @@ class FieldModel {
     ),
     FieldModel(
       id: 'tasawwuf',
-      name: 'Tasawuf & Akhlaq',
+      name: 'Tasawuf & Akhlak',
       description: 'Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih.',
       icon: Icons.spa_rounded,
       specialistCount: 2,
@@ -7704,7 +8623,7 @@ class FieldModel {
         const FieldModel(
           id: 'umum',
           name: 'Umum & Turats',
-          description: 'Beragam kajian dari kitab-kitab Islam.',
+          description: 'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.',
           icon: Icons.menu_book_rounded,
           specialistCount: 0,
           agentIds: [],
@@ -8032,6 +8951,7 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
+import '../core/navigation_guard.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -8042,7 +8962,9 @@ import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
+import '../widgets/legal_document_sheet.dart';
 import '../services/bookmark_service.dart';
+import '../services/telemetry_service.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -8084,6 +9006,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   bool _checkingReady = false;
   bool _hasCopied = false;
 
+  bool _isExiting = false;
   bool _isGoingBack = false;
 
   @override
@@ -8166,7 +9089,26 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           /* Google Account Bar, App Launcher & Setelan */
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-          button.mat-tonal-button, a[aria-label*="Google" i] {
+          button[aria-label*="More" i], button[aria-label*="Opsi" i],
+          button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+          button[aria-label*="Option" i],
+          button.mat-tonal-button, a[aria-label*="Google" i],
+          /* Spinner, Circular Progress & Skeleton Placeholder */
+          mat-progress-spinner, mat-spinner, .mdc-circular-progress,
+          [role="progressbar"], svg.spinner, div[class*="spinner" i],
+          div[class*="skeleton" i], div[class*="shimmer" i],
+          div[class*="placeholder-bar" i],
+          /* Disclaimer Google NotebookLM & Gemini */
+          .chat-disclaimer, .disclaimer, .footer-disclaimer, .chat-footer-disclaimer,
+          [class*="disclaimer" i], [id*="disclaimer" i], footer[class*="disclaimer" i],
+          div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
+          app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
+          .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
+          [aria-label*="disclaimer" i], footer, .chat-footer, .conversation-footer,
+          div.chat-input-container + div,
+          div[class*="input-container" i] + div,
+          div[class*="query-container" i] + div,
+          [data-ot-hidden] {
             display: none !important;
             visibility: hidden !important;
             height: 0px !important;
@@ -8229,9 +9171,24 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     forMainFrameOnly: true,
   );
 
+  bool? _lastIsDark;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final currentIsDark = Theme.of(context).brightness == Brightness.dark;
+    if (_lastIsDark != null && _lastIsDark != currentIsDark) {
+      _webController?.setSettings(
+        settings: InAppWebViewSettings(
+          forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
+          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+          algorithmicDarkeningAllowed: true,
+        ),
+      );
+      _applyThemeCss();
+    }
+    _lastIsDark = currentIsDark;
+
     if (_agent == null) {
       final rawArgs = ModalRoute.of(context)?.settings.arguments;
       if (rawArgs is Map<String, dynamic>) {
@@ -8247,6 +9204,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   Future<void> _fetchAgentUrl() async {
     _readinessTimer?.cancel();
+    TelemetryService.instance.leaveBreadcrumb(
+      'Membuka telaah modul: ${_agent?.id}',
+      category: 'webview',
+    );
     setState(() {
       _isLoadingUrl = true;
       _isWebViewLoading = true;
@@ -8319,10 +9280,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       final res = await _webController!.evaluateJavascript(source: """
         (function() {
           var bodyText = document.body ? (document.body.innerText || '') : '';
-          if (bodyText.includes('You need access') || 
+          var href = window.location.href || '';
+          if (href.includes('signin/v2/denied') ||
+              href.includes('access_denied') ||
+              bodyText.includes('You need access') || 
               bodyText.includes('You do not have access') || 
               bodyText.includes('Request access') ||
+              bodyText.includes('Anda memerlukan akses') ||
+              bodyText.includes('Minta akses') ||
+              bodyText.includes('Anda tidak memiliki akses') ||
+              bodyText.includes('beralih ke akun yang memiliki akses') ||
               document.querySelector('button[aria-label*="Request access"]') !== null ||
+              document.querySelector('button[aria-label*="Minta akses"]') !== null ||
               document.querySelector('.auth-error') !== null) {
             return 'DENIED';
           }
@@ -8330,6 +9299,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         })();
       """);
       if (res == 'DENIED' && mounted) {
+        TelemetryService.instance.reportError(
+          'Google 403 Access Denied on NotebookLM WebView',
+          null,
+          context: 'webview_access_denied_403',
+          severity: 'warning',
+          extra: {
+            'agentId': _agent?.id ?? '',
+            'agentTitle': _agent?.title ?? '',
+            'userEmail': _user?.email ?? '',
+          },
+        );
         setState(() {
           final alreadyEntitled = _user?.hasAccessToAgent(_agent?.id ?? '') ?? false;
           _isPaywallRequired = !alreadyEntitled;
@@ -8353,9 +9333,67 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   Future<void> _applyThemeCss() async {
     if (_webController == null) return;
-    // We let InAppWebViewSettings.forceDark handle dark mode natively,
-    // avoiding destructive DOM color injections that cause black-on-black text.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     try {
+      final themeScript = '''
+        (function() {
+          try {
+            var isDark = $isDark;
+            // 1. Standar W3C color-scheme meta tag
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.name = 'color-scheme';
+              (document.head || document.documentElement).appendChild(meta);
+            }
+            meta.content = isDark ? 'dark' : 'light';
+
+            // 2. Sinkronkan class Google Material / NotebookLM tema gelap
+            if (document.documentElement) {
+              document.documentElement.classList.toggle('dark-theme', isDark);
+              document.documentElement.classList.toggle('dark', isDark);
+              document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+              document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+            }
+            if (document.body) {
+              document.body.classList.toggle('dark-theme', isDark);
+              document.body.classList.toggle('dark', isDark);
+              document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            }
+
+            // 3. Pastikan latar belakang dasar & elemen internal selaras tanpa flash putih
+            var canvasStyleId = 'ot-theme-canvas-style';
+            var styleEl = document.getElementById(canvasStyleId);
+            if (!styleEl) {
+              styleEl = document.createElement('style');
+              styleEl.id = canvasStyleId;
+              (document.head || document.documentElement).appendChild(styleEl);
+            }
+            if (isDark) {
+              styleEl.textContent = `
+                html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
+                .chat-container, .chat-viewport, .to-user-container, .message-content,
+                .rendered-markdown, .query-container, .response-container,
+                table, tr, td, th, mat-card, .mat-mdc-card, app-chat-message, app-chat-response,
+                .chat-message-container, .notebook-content, .scrollable-content,
+                .sources-panel, .studio-panel, div.content-container {
+                  background-color: #0E0E10 !important;
+                  color: #E4E4E7 !important;
+                }
+                table, th, td {
+                  border-color: #27272A !important;
+                }
+                a {
+                  color: #A1A1AA !important;
+                }
+              `;
+            } else {
+              styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+            }
+          } catch(e) {}
+        })();
+      ''';
+      await _webController!.evaluateJavascript(source: themeScript);
       await _applyCurrentFontScale();
     } catch (_) {}
   }
@@ -8384,10 +9422,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       await _saveCopiedAnswer(text, uid);
       if (mounted) {
         setState(() => _hasCopied = true);
-        AppSnackBar.success(context, 'Jawaban disalin dan ditambahkan ke Tersimpan.');
+        AppSnackBar.success(context, AppCopy.answerCopied);
       }
     } catch (_) {
-      if (mounted) AppSnackBar.error(context, 'Jawaban belum berhasil disalin dan disimpan. Coba lagi.');
+      if (mounted) AppSnackBar.error(context, AppCopy.copyFailed);
     } finally {
       if (mounted) setState(() => _isCopying = false);
     }
@@ -8409,7 +9447,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
-      if (isLogin || _readySamples >= 3) {
+      final elapsedMs = _loadingStarted != null ? DateTime.now().difference(_loadingStarted!).inMilliseconds : 0;
+      if (isLogin || (_readySamples >= 7 && elapsedMs >= 6500)) {
         _readinessTimer?.cancel();
         setState(() => _isWebViewLoading = false);
       } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
@@ -8430,41 +9469,49 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _handleBackPress() async {
     if (!mounted || _isGoingBack) return;
     _isGoingBack = true;
-    final controller = _webController;
+    setState(() => _isExiting = true);
+    // Beri jeda 1 frame agar solid canvas overlay ter-render menutupi SurfaceView WebView
+    // sehingga transisi pop route halus tanpa tearing/glitch putih di Android
+    await Future.delayed(const Duration(milliseconds: 40));
     try {
-      final canGoBack = await controller?.canGoBack() ?? false;
-      if (!mounted) return;
-      if (canGoBack && controller != null && identical(controller, _webController)) {
-        await controller.goBack();
-      } else {
-        Navigator.pop(context);
-      }
-    } catch (_) {
-      if (mounted) Navigator.pop(context);
-    } finally {
-      _isGoingBack = false;
+      await _webController?.stopLoading();
+    } catch (_) {}
+    if (mounted) {
+      Navigator.pop(context);
     }
   }
 
+  bool _isNavigatingToSubscription = false;
+
   Future<void> _navigateToSubscription() async {
-    final currentUser = _user ?? await AuthService().getCurrentUserModel();
-    if (!mounted) return;
-    await Navigator.pushNamed(
-      context,
-      AppRoutes.subscription,
-      arguments: {
-        'agent': _agent,
-        'user': currentUser,
-      },
-    );
-    if (!mounted) return;
-    final refreshedUser = await AuthService().getCurrentUserModel();
-    if (mounted && refreshedUser != null) {
-      setState(() {
-        _user = refreshedUser;
-      });
-      if (_isPaywallRequired && refreshedUser.hasAccessToAgent(_agent?.id ?? '')) {
-        _fetchAgentUrl();
+    if (_isNavigatingToSubscription) return;
+    _isNavigatingToSubscription = true;
+    try {
+      final currentUser = _user ?? await AuthService().getCurrentUserModel();
+      if (!mounted) return;
+      await NavigationGuard.safePushNamed(
+        context,
+        AppRoutes.subscription,
+        arguments: {
+          'agent': _agent,
+          'user': currentUser,
+        },
+      );
+      if (!mounted) return;
+      final refreshedUser = await AuthService().getCurrentUserModel();
+      if (mounted && refreshedUser != null) {
+        setState(() {
+          _user = refreshedUser;
+        });
+        if (_isPaywallRequired && refreshedUser.hasAccessToAgent(_agent?.id ?? '')) {
+          _fetchAgentUrl();
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isNavigatingToSubscription = false);
+      } else {
+        _isNavigatingToSubscription = false;
       }
     }
   }
@@ -8587,8 +9634,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       mediaPlaybackRequiresUserGesture: false,
                       allowsInlineMediaPlayback: true,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                      algorithmicDarkeningAllowed: false,
-                      transparentBackground: true,
+                      forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+                      algorithmicDarkeningAllowed: true,
+                      transparentBackground: false,
                     ),
                 onWebViewCreated: (controller) {
                   _webController = controller;
@@ -8598,10 +9646,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     if (ownerUid == null || url?.scheme != 'https' || !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) || args.isEmpty || args.first is! String) return false;
                     try {
                       await _saveCopiedAnswer(args.first as String, ownerUid);
-                      if (context.mounted) AppSnackBar.success(context, 'Jawaban ditambahkan ke Tersimpan.');
+                      if (context.mounted) AppSnackBar.success(context, AppCopy.answerCopied);
                       return true;
                     } catch (_) {
-                      if (context.mounted) AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
+                      if (context.mounted) AppSnackBar.error(context, AppCopy.saveFailed);
                       return false;
                     }
                   });
@@ -8636,6 +9684,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   }
                 },
                 onReceivedError: (controller, request, error) {
+                  if (request.isForMainFrame == true) {
+                    TelemetryService.instance.reportError(
+                      'WebView Main Frame Error: ${error.description} (code ${error.type})',
+                      null,
+                      context: 'webview_main_frame_error',
+                      severity: 'error',
+                      extra: {
+                        'agentId': _agent?.id ?? '',
+                        'url': request.url.toString(),
+                      },
+                    );
+                  }
                   if (mounted && (request.isForMainFrame == true)) {
                     setState(() {
                       _isWebViewLoading = false;
@@ -8678,6 +9738,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     onBack: () => Navigator.pop(context),
                     backLabel: 'Kembali ke Beranda',
                   ),
+                ),
+              ),
+
+            // ── 3. Solid Exit Overlay (Mencegah glitch/tearing SurfaceView Android saat pop) ──
+            if (_isExiting)
+              Positioned.fill(
+                child: Container(
+                  color: canvas,
                 ),
               ),
             ],
@@ -8761,10 +9829,19 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'التعلم بالتلقي عن الأشياخ هو الأصل',
-                  style: GoogleFonts.amiri(
-                    fontSize: 15,
+                  style: GoogleFonts.scheherazadeNew(
+                    fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'OpenTurath membantu mencari kutipan dan mempelajari penjelasan dalam kitab. Periksa hasilnya pada sumber yang dirujuk. Untuk memahami agama dan menetapkan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    height: 1.45,
+                    color: textSecondary,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -8815,6 +9892,23 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogCtx);
+                      LegalDocumentSheet.showAiGuideline(context);
+                    },
+                    child: Text(
+                      'Baca panduan rujukan selengkapnya',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        color: textSecondary,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
@@ -8920,7 +10014,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
-              title: Text('Salin jawaban', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Salin jawaban ke Catatan', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
@@ -8944,6 +10038,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (ctx) {
         return Container(
           decoration: BoxDecoration(
@@ -8970,20 +10065,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Ukuran teks',
+                    AppCopy.studyOptions,
                     style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 17),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Sesuaikan ukuran teks untuk kenyamanan membaca',
+                    'Sesuaikan ukuran huruf percakapan agar nyaman dibaca.',
                     style: OTTypography.caption(color: textSecondary),
                   ),
                   const SizedBox(height: 14),
-                  _buildScaleOption(ctx, label: 'Ringkas (85%)', scale: 0.85, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Normal (100%)', scale: 1.0, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Kecil (85%)', scale: 0.85, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Standar (100%)', scale: 1.0, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Sedang (120%)', scale: 1.20, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Besar (140%)', scale: 1.40, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Ekstra Besar (165%)', scale: 1.65, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Sangat besar (165%)', scale: 1.65, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Maksimal (200%)', scale: 2.00, isDark: isDark),
                   const SizedBox(height: 8),
                 ],
@@ -9053,8 +10148,8 @@ import '../widgets/book_row_item.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
 /// Halaman Katalog Naskah Penuh (Full-Screen Route).
-/// Menggantikan modal bottom sheet sempit agar pengguna memiliki ruang baca yang lapang,
-/// tenang, dan mudah ditelusuri sesuai standar Apple HIG.
+/// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
+/// filter hierarki disiplin (القسم), abad keilmuan, dan kartu naskah minimalis bergaya turath.
 class BookCatalogScreen extends StatefulWidget {
   final AgentModel? agent;
   final String? initialQuery;
@@ -9079,9 +10174,15 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   bool _isLoading = true;
   String? _errorMessage;
 
+  String? _selectedSection;
   String? _selectedEra;
   String? _selectedType;
+  String? _selectedCentury;
   String _searchQuery = '';
+
+  List<String> _availableSections = [];
+  bool _hasEras = false;
+  bool _hasTypes = false;
 
   final List<String> _eras = [
     'Mutaqaddimin',
@@ -9094,6 +10195,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     'Matan',
     'Syarah',
     'Hasyiyah',
+  ];
+
+  final List<String> _centuries = [
+    'Salaf (≤ 300 H)',
+    'Mutaqaddimin (301-600 H)',
+    'Muta\'akhkhirin (601-1100 H)',
+    'Mu\'ashir (> 1100 H)',
   ];
 
   @override
@@ -9120,10 +10228,35 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     });
 
     try {
-      final books = await _service.loadSyafiiCatalog();
+      final List<CanonicalBookPresentation> books;
+      if (widget.agent != null) {
+        books = await _service.loadCatalogForAgent(widget.agent!);
+      } else {
+        books = await _service.loadSyafiiCatalog();
+      }
+
+      final Set<String> rawSections = {};
+      bool hasEras = false;
+      bool hasTypes = false;
+
+      for (final b in books) {
+        if (b.sectionArabic != null && b.sectionArabic!.trim().isNotEmpty) {
+          rawSections.add(b.sectionArabic!.trim());
+        }
+        if (b.reviewedEraLabel != null && b.reviewedEraLabel!.isNotEmpty) {
+          hasEras = true;
+        }
+        if (b.reviewedTypeLabel != null && b.reviewedTypeLabel!.isNotEmpty) {
+          hasTypes = true;
+        }
+      }
+
       if (!mounted) return;
       setState(() {
         _allBooks = books;
+        _availableSections = rawSections.toList()..sort();
+        _hasEras = hasEras;
+        _hasTypes = hasTypes;
         _isLoading = false;
         _applyFilters();
       });
@@ -9138,7 +10271,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
   void _onSearchChanged(String val) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 200), () {
+    _debounce = Timer(const Duration(milliseconds: 180), () {
       if (mounted) {
         setState(() {
           _searchQuery = val.trim();
@@ -9153,8 +10286,10 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     _filteredBooks = _service.filterBooks(
       _allBooks!,
       _searchQuery,
+      sectionFilter: _selectedSection,
       eraFilter: _selectedEra,
       typeFilter: _selectedType,
+      centuryFilter: _selectedCentury,
     );
   }
 
@@ -9162,11 +10297,20 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     _searchCtrl.clear();
     setState(() {
       _searchQuery = '';
+      _selectedSection = null;
       _selectedEra = null;
       _selectedType = null;
+      _selectedCentury = null;
       _applyFilters();
     });
   }
+
+  bool get _hasActiveFilters =>
+      _searchQuery.isNotEmpty ||
+      _selectedSection != null ||
+      _selectedEra != null ||
+      _selectedType != null ||
+      _selectedCentury != null;
 
   void _openBookDetail(CanonicalBookPresentation book) {
     Navigator.pushNamed(
@@ -9174,6 +10318,34 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       AppRoutes.bookDetail,
       arguments: book,
     );
+  }
+
+  String _formatNumber(int number) {
+    return number.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    );
+  }
+
+  String _cleanSectionLabel(String full) {
+    final match = RegExp(r'\((.*?)\)').firstMatch(full);
+    if (match != null && match.group(1) != null) {
+      return match.group(1)!.trim();
+    }
+    return full;
+  }
+
+  String _resolveSubtitle() {
+    if (widget.agent != null) {
+      if (_allBooks != null && _allBooks!.isNotEmpty) {
+        return '${_formatNumber(_allBooks!.length)} Kitab ${widget.agent!.title}';
+      }
+      return widget.agent!.title;
+    }
+    if (_allBooks != null && _allBooks!.isNotEmpty) {
+      return '${_formatNumber(_allBooks!.length)} Kitab Mazhab Syafi\'i';
+    }
+    return '87 Kitab Mazhab Syafi\'i';
   }
 
   @override
@@ -9201,21 +10373,21 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Pustaka Kitab Kanonikal',
+              AppCopy.referenceBooks,
               style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             Text(
-              '87 Kitab Mazhab Syafi\'i',
+              _resolveSubtitle(),
               style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
             ),
           ],
         ),
         actions: [
-          if (_selectedEra != null || _selectedType != null || _searchQuery.isNotEmpty)
+          if (_hasActiveFilters)
             TextButton(
               onPressed: _clearFilters,
               child: Text(
-                'Reset',
+                'Hapus filter',
                 style: OTTypography.button(color: primaryAccent).copyWith(fontSize: 13),
               ),
             ),
@@ -9250,7 +10422,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         onChanged: _onSearchChanged,
                         style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                         decoration: InputDecoration(
-                          hintText: 'Cari judul Arab/Latin, pengarang, muhaqqiq...',
+                          hintText: 'Cari kitab, pengarang, atau penahkik…',
                           hintStyle: GoogleFonts.outfit(
                             fontSize: 13.5,
                             color: textSecondary.withValues(alpha: 0.7),
@@ -9283,74 +10455,20 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               ),
             ),
 
-            // ── HORIZONTAL ERA & TYPE FILTER CHIPS ──
-            SizedBox(
-              height: 38,
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-                children: [
-                  _filterChip(
-                    label: 'Semua Era',
-                    isSelected: _selectedEra == null,
-                    onTap: () {
-                      setState(() {
-                        _selectedEra = null;
-                        _applyFilters();
-                      });
-                    },
-                    isDark: isDark,
-                    border: border,
-                    surface: surface,
-                    textPrimary: textPrimary,
-                    textSecondary: textSecondary,
-                  ),
-                  for (final era in _eras)
-                    _filterChip(
-                      label: era,
-                      isSelected: _selectedEra == era,
-                      onTap: () {
-                        setState(() {
-                          _selectedEra = _selectedEra == era ? null : era;
-                          _applyFilters();
-                        });
-                      },
-                      isDark: isDark,
-                      border: border,
-                      surface: surface,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                    width: 1,
-                    color: border,
-                  ),
-                  for (final type in _types)
-                    _filterChip(
-                      label: type,
-                      isSelected: _selectedType == type,
-                      onTap: () {
-                        setState(() {
-                          _selectedType = _selectedType == type ? null : type;
-                          _applyFilters();
-                        });
-                      },
-                      isDark: isDark,
-                      border: border,
-                      surface: surface,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                ],
-              ),
+            // ── DYNAMIC HORIZONTAL FILTER CHIPS ──
+            _buildFilterChipsBar(
+              isDark: isDark,
+              surface: surface,
+              border: border,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+              primaryAccent: primaryAccent,
             ),
 
             const SizedBox(height: OTSpacing.sm),
 
             // ── RESULTS COUNT HEADER ──
-            if (!_isLoading && _filteredBooks != null)
+            if (!_isLoading && _filteredBooks != null && _allBooks != null)
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: OTSpacing.lg,
@@ -9359,14 +10477,17 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 child: Row(
                   children: [
                     Text(
-                      'Menampilkan ${_filteredBooks!.length} naskah rujukan',
+                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} naskah',
                       style: OTTypography.caption(color: textSecondary).copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const Spacer(),
-                    if (_selectedEra != null || _selectedType != null)
+                    if (_selectedSection != null ||
+                        _selectedEra != null ||
+                        _selectedType != null ||
+                        _selectedCentury != null)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
@@ -9375,8 +10496,10 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         ),
                         child: Text(
                           [
+                            if (_selectedSection != null) _cleanSectionLabel(_selectedSection!),
                             if (_selectedEra != null) _selectedEra!,
                             if (_selectedType != null) _selectedType!,
+                            if (_selectedCentury != null) _selectedCentury!,
                           ].join(' · '),
                           style: OTTypography.caption(color: primaryAccent).copyWith(
                             fontSize: 11,
@@ -9401,6 +10524,175 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChipsBar({
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color primaryAccent,
+  }) {
+    // Mode 1: Multipel Sub-Bagian (seperti Tafsir & Sastra Arab)
+    if (_availableSections.length > 1) {
+      return SizedBox(
+        height: 38,
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+          children: [
+            _filterChip(
+              label: 'Semua Bagian',
+              isSelected: _selectedSection == null,
+              onTap: () {
+                setState(() {
+                  _selectedSection = null;
+                  _applyFilters();
+                });
+              },
+              isDark: isDark,
+              border: border,
+              surface: surface,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+            for (final section in _availableSections)
+              _filterChip(
+                label: _cleanSectionLabel(section),
+                isSelected: _selectedSection == section,
+                onTap: () {
+                  setState(() {
+                    _selectedSection = _selectedSection == section ? null : section;
+                    _applyFilters();
+                  });
+                },
+                isDark: isDark,
+                border: border,
+                surface: surface,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Mode 2: Mazhab Syafi'i (Era & Tipe Matan/Syarah)
+    final isSyafii = widget.agent == null ||
+        widget.agent!.id == 'fiqh_syafii' ||
+        widget.agent!.catalogId == 'canonical_syafii' ||
+        widget.agent!.fieldId == 'fiqh';
+    if (isSyafii && (_hasEras || _hasTypes)) {
+      return SizedBox(
+        height: 38,
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+          children: [
+            _filterChip(
+              label: 'Semua Era',
+              isSelected: _selectedEra == null,
+              onTap: () {
+                setState(() {
+                  _selectedEra = null;
+                  _applyFilters();
+                });
+              },
+              isDark: isDark,
+              border: border,
+              surface: surface,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+            for (final era in _eras)
+              _filterChip(
+                label: era,
+                isSelected: _selectedEra == era,
+                onTap: () {
+                  setState(() {
+                    _selectedEra = _selectedEra == era ? null : era;
+                    _applyFilters();
+                  });
+                },
+                isDark: isDark,
+                border: border,
+                surface: surface,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+            if (_types.isNotEmpty) ...[
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                width: 1,
+                color: border,
+              ),
+              for (final type in _types)
+                _filterChip(
+                  label: type,
+                  isSelected: _selectedType == type,
+                  onTap: () {
+                    setState(() {
+                      _selectedType = _selectedType == type ? null : type;
+                      _applyFilters();
+                    });
+                  },
+                  isDark: isDark,
+                  border: border,
+                  surface: surface,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    // Mode 3: Hadits, Ushul Fikih, & Tahawwulat (Abad Kronologis Turath)
+    return SizedBox(
+      height: 38,
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+        children: [
+          _filterChip(
+            label: 'Semua Era',
+            isSelected: _selectedCentury == null,
+            onTap: () {
+              setState(() {
+                _selectedCentury = null;
+                _applyFilters();
+              });
+            },
+            isDark: isDark,
+            border: border,
+            surface: surface,
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+          ),
+          for (final century in _centuries)
+            _filterChip(
+              label: century,
+              isSelected: _selectedCentury == century,
+              onTap: () {
+                setState(() {
+                  _selectedCentury = _selectedCentury == century ? null : century;
+                  _applyFilters();
+                });
+              },
+              isDark: isDark,
+              border: border,
+              surface: surface,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+        ],
       ),
     );
   }
@@ -9466,32 +10758,34 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               Icon(Icons.search_off_rounded, size: 48, color: textSecondary),
               const SizedBox(height: 12),
               Text(
-                'Tidak ditemukan kitab yang sesuai.',
+                'Belum ada kitab yang cocok',
                 style: OTTypography.bodyMedium(color: textPrimary).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Coba gunakan kata kunci Arab, nama pengarang, atau hapus filter era.',
+                'Coba gunakan kata kunci lain, nama pengarang, atau penahkik.',
                 textAlign: TextAlign.center,
                 style: OTTypography.caption(color: textSecondary),
               ),
-              const SizedBox(height: 16),
-              AppleInteractiveWrapper(
-                onTap: _clearFilters,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: border),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'Hapus Semua Filter',
-                    style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
+              if (_hasActiveFilters) ...[
+                const SizedBox(height: 16),
+                AppleInteractiveWrapper(
+                  onTap: _clearFilters,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: border),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Hapus filter',
+                      style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
@@ -9584,9 +10878,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
-import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
@@ -9596,10 +10888,10 @@ import '../models/book_model.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
-import '../widgets/apple_interactive_wrapper.dart';
 
 /// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
-/// Mengeliminasi pola anti-desain modal bertingkat (sheet-on-sheet) sesuai Apple HIG.
+/// Dirancang sepenuhnya dalam Bahasa Arab Turats dan Tata Letak RTL murni.
+/// Menggunakan font Naskh Scheherazade New tanpa font Amiri sama sekali.
 class BookDetailScreen extends StatefulWidget {
   final CanonicalBookPresentation book;
   final AgentModel? agent;
@@ -9649,18 +10941,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaved = false;
             _isSaving = false;
           });
-          AppSnackBar.show(context, message: 'Rujukan dihapus dari Catatan Riset.');
+          AppSnackBar.show(context, message: 'تمت إزالة الكتاب من الملاحظات');
         }
       } else {
         final agent = _resolveTargetAgent();
         final deathYearStr = widget.book.verifiedDeathYearHijri != null
-            ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
+            ? ' (ت: ${widget.book.verifiedDeathYearHijri} هـ)'
             : '';
         final publisherStr = widget.book.publisher != null
-            ? ', Terbitan ${widget.book.publisher}'
+            ? '، دار النشر: ${widget.book.publisher}'
             : '';
         final muhaqqiqStr = widget.book.muhaqqiq != null
-            ? ', Tahqiq: ${widget.book.muhaqqiq}'
+            ? '، تحقيق: ${widget.book.muhaqqiq}'
             : '';
 
         final newNote = ResearchNote(
@@ -9669,11 +10961,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           agentTitle: agent.title,
           title: widget.book.titleArabic,
           excerpt:
-              'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
+              'كتاب ${widget.book.titleArabic}، للمؤلف ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
           bookTitle: widget.book.titleArabic,
           bookVolume: widget.book.volumesCount?.toString(),
           tags: [
-            'Rujukan Kitab',
+            'بطاقة كتاب',
             if (widget.book.reviewedTypeLabel != null) widget.book.reviewedTypeLabel!,
             if (widget.book.reviewedEraLabel != null) widget.book.reviewedEraLabel!,
           ],
@@ -9685,15 +10977,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           title: widget.book.titleArabic,
           agentId: agent.id,
           agentTitle: agent.title,
-          fieldName: 'Rujukan Kitab',
+          fieldName: 'بطاقة كتاب',
           fieldId: 'fiqh',
           arabicExcerpt: widget.book.titleArabic,
           fullAnswer:
-              'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
+              'كتاب ${widget.book.titleArabic}، للمؤلف ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
           bookReference: widget.book.titleArabic,
-          pageNumber: widget.book.volumesCount != null
-              ? '${widget.book.volumesCount} Jilid'
-              : '1 Jilid',
+          pageNumber: '',
           author: widget.book.authorArabic,
           createdAt: DateTime.now(),
         );
@@ -9706,13 +10996,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaving = false;
           });
           HapticFeedback.mediumImpact();
-          AppSnackBar.success(context, 'Kitab disimpan ke Catatan Riset.');
+          AppSnackBar.success(context, 'تم حفظ بيانات الكتاب في الملاحظات');
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.error(context, 'Gagal memperbarui catatan riset.');
+        AppSnackBar.error(context, 'تعذر تحديث الملاحظات');
       }
     }
   }
@@ -9729,35 +11019,61 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     }
   }
 
-  void _openStudySpace() {
-    final agent = _resolveTargetAgent();
-    Navigator.pushNamed(
-      context,
-      AppRoutes.agentWebview,
-      arguments: agent,
-    );
-  }
-
   void _copyScholarlyCitation() {
     final deathYearStr = widget.book.verifiedDeathYearHijri != null
-        ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
+        ? ' (ت: ${widget.book.verifiedDeathYearHijri} هـ)'
         : '';
     final publisherStr = widget.book.publisher != null
-        ? ', ${widget.book.publisher}'
+        ? '، دار النشر: ${widget.book.publisher}'
         : '';
     final muhaqqiqStr = widget.book.muhaqqiq != null
-        ? ', Tahqiq: ${widget.book.muhaqqiq}'
+        ? '، تحقيق: ${widget.book.muhaqqiq}'
         : '';
-    final volStr = widget.book.volumesCount != null
-        ? ', ${widget.book.volumesCount} Jilid'
+    final volStr = (widget.book.volumesDescription != null && widget.book.volumesDescription!.isNotEmpty)
+        ? '، ${widget.book.volumesDescription}'
+        : (widget.book.volumesCount != null ? '، ${widget.book.volumesCount} أجزاء' : '');
+    final printYearStr = (widget.book.printYear != null && widget.book.printYear != '-')
+        ? '، سنة الطبع: ${widget.book.printYear}'
         : '';
 
     final citation =
-        '${widget.book.authorArabic}$deathYearStr. ${widget.book.titleArabic}$volStr$publisherStr$muhaqqiqStr. OpenTurath AI Canonical Corpus.';
+        '${widget.book.authorArabic}$deathYearStr، ${widget.book.titleArabic}$muhaqqiqStr$publisherStr$printYearStr$volStr.';
 
     Clipboard.setData(ClipboardData(text: citation));
     HapticFeedback.selectionClick();
-    AppSnackBar.success(context, 'Sitasi standar ilmiah tersalin ke papan klip.');
+    AppSnackBar.success(context, 'تم نسخ بطاقة الكتاب بنجاح');
+  }
+
+  String _translateType(String? type) {
+    if (type == null || type.isEmpty) return 'مصنف علمي';
+    final l = type.toLowerCase();
+    if (l.contains('matn') || l.contains('matan')) return 'متن معتمد';
+    if (l.contains('syarah') || l.contains('sharh')) return 'شرح';
+    if (l.contains('hasyiyah') || l.contains('hashiyah')) return 'حاشية';
+    if (l.contains('mukhtasar') || l.contains('ringkasan')) return 'مختصر';
+    if (l.contains('ensiklopedia') || l.contains('mausuah')) return 'موسوعة فقهية';
+    if (l.contains('manzhumah') || l.contains('nazham')) return 'منظومة علمية';
+    return type;
+  }
+
+  String _translateEra(String? era) {
+    if (era == null || era.isEmpty) return 'التراث الإسلامي';
+    final l = era.toLowerCase();
+    if (l.contains('mutaqaddim') || l.contains('awal')) return 'عصر المتقدمين (حتى ٤٠٠ هـ)';
+    if (l.contains('mutawassith') || l.contains('pertengahan')) return 'عصر المتوسطين (٤٠٠ - ٨٠٠ هـ)';
+    if (l.contains('muta\'akhkhir') || l.contains('mutaakhir') || l.contains('lanjut')) return 'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)';
+    if (l.contains('mu\'ashir') || l.contains('kontemporer') || l.contains('modern')) return 'العصر المعاصر (بعد ١٢٠٠ هـ)';
+    return era;
+  }
+
+  String _formatVolumes() {
+    final vd = widget.book.volumesDescription;
+    if (vd != null && vd.isNotEmpty) {
+      return (vd.contains('جزء') || vd.contains('مجلد')) ? vd : '$vd أجزاء';
+    }
+    final count = widget.book.volumesCount;
+    if (count != null && count > 1) return '$count أجزاء';
+    return 'جزء واحد (مجلد مفرد)';
   }
 
   @override
@@ -9768,92 +11084,99 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final primaryAccent = OTColors.accent(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
 
-    return Scaffold(
-      backgroundColor: background,
-      appBar: AppBar(
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
         backgroundColor: background,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-          tooltip: 'Kembali',
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          AppCopy.bookDetails,
-          style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-              color: _isSaved ? primaryAccent : textSecondary,
+        appBar: AppBar(
+          backgroundColor: background,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+            tooltip: 'رجوع',
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            'بطاقة الكتاب',
+            style: OTTypography.arabicReading(color: textPrimary).copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
             ),
-            tooltip: _isSaved ? 'Hapus Rujukan' : 'Simpan Rujukan',
-            onPressed: _toggleSaveBook,
           ),
-          IconButton(
-            icon: Icon(Icons.share_outlined, color: textSecondary),
-            tooltip: 'Salin Sitasi Standar',
-            onPressed: _copyScholarlyCitation,
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(
-            horizontal: OTSpacing.lg,
-            vertical: OTSpacing.md,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── KARTU 1: IDENTITAS KITAB (ARABIC HERO) ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: primaryAccent.withValues(alpha: isDark ? 0.15 : 0.08),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'Naskah Kanonikal · Syafi\'i',
-                            style: OTTypography.caption(color: primaryAccent).copyWith(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
+          actions: [
+            IconButton(
+              icon: Icon(
+                _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                color: _isSaved ? (isDark ? Colors.white : Colors.black) : textSecondary,
+              ),
+              tooltip: _isSaved ? 'إزالة من الملاحظات' : 'حفظ في الملاحظات',
+              onPressed: _toggleSaveBook,
+            ),
+            IconButton(
+              icon: Icon(Icons.share_outlined, color: textSecondary),
+              tooltip: 'نسخ بطاقة الكتاب',
+              onPressed: _copyScholarlyCitation,
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(
+              horizontal: OTSpacing.lg,
+              vertical: OTSpacing.md,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── KARTU 1: IDENTITAS KITAB (ARABIC HERO) ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 3.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: surfaceSubtle,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: border.withValues(alpha: 0.7), width: 0.6),
+                            ),
+                            child: Text(
+                              widget.book.sectionArabic ?? 'نص محقق معتمد',
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                              ),
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          widget.book.editionId,
-                          style: OTTypography.caption(color: textSecondary).copyWith(
-                            fontFamily: 'Courier',
-                            fontSize: 11,
+                          const Spacer(),
+                          Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: Text(
+                              widget.book.editionId,
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                fontFamily: 'Courier',
+                                fontSize: 11,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: OTSpacing.md),
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
+                        ],
+                      ),
+                      const SizedBox(height: OTSpacing.md),
+                      Text(
                         widget.book.titleArabic,
                         textAlign: TextAlign.right,
                         style: OTTypography.arabicDisplay(color: textPrimary).copyWith(
@@ -9862,294 +11185,230 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           height: 1.6,
                         ),
                       ),
-                    ),
-                    if (widget.book.titleLatin != null &&
-                        widget.book.titleLatin!.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.book.titleLatin!,
-                        style: OTTypography.body(color: textSecondary).copyWith(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: OTSpacing.md),
-
-              // ── KARTU 2: MUALLIF / PENGARANG ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader('MUALLIF / PENGARANG', textSecondary),
-                    const SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.person_outline_rounded,
-                          size: 20,
-                          color: primaryAccent,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.book.authorArabic,
-                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              if (widget.book.authorLatin != null) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  widget.book.authorLatin!,
-                                  style: OTTypography.caption(color: textSecondary),
-                                ),
-                              ],
-                              const SizedBox(height: 6),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2.5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.06)
-                                      : Colors.black.withValues(alpha: 0.04),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  widget.book.verifiedDeathYearHijri != null
-                                      ? 'Wafat: ${widget.book.verifiedDeathYearHijri} Hijriyah'
-                                      : 'Wafat: Dalam verifikasi sanad',
-                                  style: OTTypography.caption(color: textSecondary).copyWith(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
+                      if (widget.book.shortTitleArabic != null &&
+                          widget.book.shortTitleArabic!.isNotEmpty &&
+                          widget.book.shortTitleArabic != widget.book.titleArabic) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          'المختصر: ${widget.book.shortTitleArabic!}',
+                          textAlign: TextAlign.right,
+                          style: OTTypography.arabicReading(color: textSecondary).copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: OTSpacing.md),
-
-              // ── KARTU 3: KLASIFIKASI ILMIAH & THABAQAT ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader('KLASIFIKASI ILMIAH', textSecondary),
-                    const SizedBox(height: 12),
-                    _buildMetaRow(
-                      icon: Icons.category_outlined,
-                      label: 'Tipe Naskah',
-                      value: widget.book.reviewedTypeLabel ?? 'Kitab Referensi Mazhab',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const Divider(height: 16, thickness: 0.5),
-                    _buildMetaRow(
-                      icon: Icons.history_edu_rounded,
-                      label: 'Era Keilmuan',
-                      value: widget.book.reviewedEraLabel ?? 'Ulama Mazhab Syafi\'i',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const Divider(height: 16, thickness: 0.5),
-                    _buildMetaRow(
-                      icon: Icons.auto_stories_outlined,
-                      label: 'Jumlah Jilid',
-                      value: widget.book.volumesCount != null
-                          ? '${widget.book.volumesCount} Jilid'
-                          : '1 Jilid / Naskah Tunggal',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    if (widget.book.canShowAuthority) ...[
-                      const Divider(height: 16, thickness: 0.5),
-                      _buildMetaRow(
-                        icon: Icons.verified_outlined,
-                        label: 'Derajat Mu\'tabar',
-                        value: widget.book.reviewedAuthorityLabel!,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: OTSpacing.md),
-
-              // ── KARTU 4: DATA EDISI & TAHQIQ ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader('DATA EDISI & TAHQIQ', textSecondary),
-                    const SizedBox(height: 12),
-                    _buildMetaRow(
-                      icon: Icons.business_outlined,
-                      label: 'Penerbit Rujukan',
-                      value: widget.book.publisher ?? 'Informasi penerbit belum tersedia',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const Divider(height: 16, thickness: 0.5),
-                    _buildMetaRow(
-                      icon: Icons.edit_note_rounded,
-                      label: 'Pentahqiq / Muhaqqiq',
-                      value: widget.book.muhaqqiq ?? 'Cetakan klasik / belum tercatat',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: OTSpacing.md),
-
-              // ── KARTU 5: STATUS KORPUS & AKSI RISET ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildSectionHeader('AKSI & TELAAH RISET', textSecondary),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: primaryAccent.withValues(alpha: isDark ? 0.08 : 0.04),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: primaryAccent.withValues(alpha: isDark ? 0.2 : 0.1),
-                          width: 0.8,
+                      if (widget.book.titleLatin != null &&
+                          widget.book.titleLatin!.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: Text(
+                            widget.book.titleLatin!,
+                            textAlign: TextAlign.right,
+                            style: OTTypography.body(color: textSecondary).copyWith(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Row(
+                      ],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: OTSpacing.md),
+
+                // ── KARTU 2: MUALLIF / PENGARANG ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('المؤلف والوفاة', textSecondary),
+                      const SizedBox(height: 10),
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
-                            Icons.info_outline_rounded,
-                            size: 18,
-                            color: primaryAccent,
+                            Icons.person_outline_rounded,
+                            size: 20,
+                            color: textSecondary,
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 10),
                           Expanded(
-                            child: Text(
-                              'Naskah kanonikal ini telah dikodifikasi dalam basis data rujukan. Ruang dialog AI dapat langsung menelusuri ibarah dan dalil dari kitab ini.',
-                              style: OTTypography.caption(color: textSecondary).copyWith(
-                                height: 1.4,
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.book.authorArabic,
+                                  style: OTTypography.arabicReading(color: textPrimary).copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                if (widget.book.authorLatin != null) ...[
+                                  const SizedBox(height: 2),
+                                  Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Text(
+                                      widget.book.authorLatin!,
+                                      style: OTTypography.caption(color: textSecondary),
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? Colors.white.withValues(alpha: 0.06)
+                                        : Colors.black.withValues(alpha: 0.04),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    widget.book.verifiedDeathYearHijri != null
+                                        ? 'سنة الوفاة: ${widget.book.verifiedDeathYearHijri} هـ'
+                                        : 'سنة الوفاة: غير مدونة',
+                                    style: OTTypography.arabicReading(color: textSecondary).copyWith(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: OTSpacing.md),
-
-                    // Primary Action Button: Buka Ruang Kajian
-                    AppleInteractiveWrapper(
-                      onTap: _openStudySpace,
-                      pressedScale: 0.98,
-                      borderRadius: BorderRadius.circular(14),
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: primaryAccent,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.auto_awesome_rounded,
-                              size: 18,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Buka Ruang Kajian',
-                              style: OTTypography.button(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // Secondary Action: Simpan / Hapus Rujukan
-                    AppleInteractiveWrapper(
-                      onTap: _toggleSaveBook,
-                      pressedScale: 0.98,
-                      borderRadius: BorderRadius.circular(14),
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.06)
-                              : Colors.black.withValues(alpha: 0.04),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: border, width: 0.8),
-                        ),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              _isSaved
-                                  ? Icons.bookmark_remove_outlined
-                                  : Icons.bookmark_add_outlined,
-                              size: 18,
-                              color: textPrimary,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _isSaved
-                                  ? 'Hapus dari Catatan Riset'
-                                  : 'Simpan ke Catatan Riset',
-                              style: OTTypography.button(color: textPrimary).copyWith(
-                                fontSize: 13.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: OTSpacing.xl),
-            ],
+                const SizedBox(height: OTSpacing.md),
+
+                // ── KARTU 3: SPESIFIKASI & KLASIFIKASI NASKAH ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('التصنيف والمصنف', textSecondary),
+                      const SizedBox(height: 12),
+                      if (widget.book.sectionArabic != null && widget.book.sectionArabic!.isNotEmpty) ...[
+                        _buildMetaRow(
+                          icon: Icons.category_outlined,
+                          label: 'القسم العلمي',
+                          value: widget.book.sectionArabic!,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                        const Divider(height: 16, thickness: 0.5),
+                      ],
+                      if (widget.book.reviewedTypeLabel != null && widget.book.reviewedTypeLabel!.isNotEmpty) ...[
+                        _buildMetaRow(
+                          icon: Icons.menu_book_outlined,
+                          label: 'نوع المصنف',
+                          value: _translateType(widget.book.reviewedTypeLabel),
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                        const Divider(height: 16, thickness: 0.5),
+                      ],
+                      if (widget.book.reviewedEraLabel != null && widget.book.reviewedEraLabel!.isNotEmpty) ...[
+                        _buildMetaRow(
+                          icon: Icons.history_edu_rounded,
+                          label: 'عصر المؤلف',
+                          value: _translateEra(widget.book.reviewedEraLabel),
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                        const Divider(height: 16, thickness: 0.5),
+                      ],
+                      _buildMetaRow(
+                        icon: Icons.auto_stories_outlined,
+                        label: 'عدد الأجزاء',
+                        value: _formatVolumes(),
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      if (widget.book.pagesDescription != null &&
+                          widget.book.pagesDescription!.isNotEmpty &&
+                          widget.book.pagesDescription != '-') ...[
+                        const Divider(height: 16, thickness: 0.5),
+                        _buildMetaRow(
+                          icon: Icons.article_outlined,
+                          label: 'عدد الصفحات',
+                          value: '${widget.book.pagesDescription} صفحة',
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                      ],
+                      if (widget.book.canShowAuthority) ...[
+                        const Divider(height: 16, thickness: 0.5),
+                        _buildMetaRow(
+                          icon: Icons.verified_outlined,
+                          label: 'رتبة الاعتماد',
+                          value: 'معتمد في المذهب والفتوى',
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: OTSpacing.md),
+
+                // ── KARTU 4: DATA EDISI & TAHQIQ ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('بيانات الطبع والتحقيق', textSecondary),
+                      const SizedBox(height: 12),
+                      _buildMetaRow(
+                        icon: Icons.business_outlined,
+                        label: 'دار النشر',
+                        value: widget.book.publisher ?? 'غير مدون',
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      const Divider(height: 16, thickness: 0.5),
+                      _buildMetaRow(
+                        icon: Icons.edit_note_rounded,
+                        label: 'المحقق',
+                        value: widget.book.muhaqqiq ?? 'غير مدون',
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      if (widget.book.printYear != null && widget.book.printYear != '-') ...[
+                        const Divider(height: 16, thickness: 0.5),
+                        _buildMetaRow(
+                          icon: Icons.calendar_today_outlined,
+                          label: 'سنة الطبع',
+                          value: widget.book.printYear!,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: OTSpacing.xl),
+              ],
+            ),
           ),
         ),
       ),
@@ -10176,7 +11435,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget _buildSectionHeader(String title, Color color) {
     return Text(
       title,
-      style: OTTypography.sectionHeading(color: color),
+      style: OTTypography.arabicReading(color: color).copyWith(
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 
@@ -10193,15 +11455,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         const SizedBox(width: 8),
         Text(
           label,
-          style: OTTypography.caption(color: textSecondary),
+          style: OTTypography.arabicReading(color: textSecondary).copyWith(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const Spacer(),
         Flexible(
           child: Text(
             value,
-            textAlign: TextAlign.right,
-            style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-              fontSize: 13,
+            textAlign: TextAlign.left,
+            style: OTTypography.arabicReading(color: textPrimary).copyWith(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -10216,6 +11482,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
@@ -10230,7 +11497,7 @@ import '../models/bookmark_model.dart';
 import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/canonical_library_service.dart';
-import '../widgets/evidence_bottom_sheet.dart';
+import '../widgets/note_editor_sheet.dart';
 import 'main_shell_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -10252,7 +11519,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   static const List<String> _categories = [
     'Semua',
-    'Kutipan Ibarah',
+    'Catatan',
+    'Ibarah Kitab',
     'Rujukan Kitab',
     'Fikih',
     'Hadis',
@@ -10261,7 +11529,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     'Usul Fikih',
     'Bahasa Arab',
     'Sejarah',
-    'Tasawuf',
+    'Tasawuf & Akhlak',
   ];
 
   @override
@@ -10306,15 +11574,20 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         matchesCategory = true;
       } else if (_selectedCategory == 'Rujukan Kitab') {
         matchesCategory = isBookRef;
-      } else if (_selectedCategory == 'Kutipan Ibarah') {
-        matchesCategory = !isBookRef;
+      } else if (_selectedCategory == 'Ibarah Kitab') {
+        matchesCategory = !isBookRef && !fieldLower.contains('catatan');
+      } else if (_selectedCategory == 'Catatan') {
+        matchesCategory = fieldLower.contains('catatan');
       } else {
         matchesCategory = fieldLower.contains(_selectedCategory.toLowerCase()) ||
             (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
             (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
             (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
             (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
-            (_selectedCategory == 'Tasawuf' && fieldLower.contains('tasawwuf'));
+            (_selectedCategory == 'Tasawuf & Akhlak' &&
+                (fieldLower.contains('tasawuf') ||
+                    fieldLower.contains('tasawwuf') ||
+                    fieldLower.contains('akhlak')));
       }
 
       if (!matchesCategory) return false;
@@ -10340,11 +11613,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus Rujukan?',
+            'Hapus catatan?',
             style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Rujukan ini akan dihapus dari simpanan Anda.',
+            'Catatan ini akan dihapus permanen.',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -10376,7 +11649,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       if (mounted) {
         AppSnackBar.show(
           context,
-          message: 'Rujukan telah dihapus dari simpanan.',
+          message: 'Catatan dihapus.',
           action: SnackBarAction(
             label: 'Urungkan',
             textColor: OTColors.accent(isDark),
@@ -10417,8 +11690,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Sitasi standar ilmiah tersalin ke papan klip.',
+      'Sitasi rujukan tersalin.',
     );
+  }
+
+  Future<void> _openNoteEditor([BookmarkModel? item]) async {
+    final res = await NoteEditorSheet.show(context, item: item);
+    if (res != null && mounted) {
+      _loadBookmarks();
+    }
   }
 
   Future<void> _openBookmarkItem(BookmarkModel item) async {
@@ -10449,24 +11729,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       }
     }
 
-    _showEvidence(item);
-  }
-
-  void _showEvidence(BookmarkModel item) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => EvidenceBottomSheet(
-        citationNumber: 1,
-        bookName: item.bookReference.isNotEmpty ? item.bookReference : 'Rujukan Naskah',
-        author: item.author ?? '',
-        pageNumber: item.pageNumber,
-        category: item.fieldName,
-        arabicExcerpt: item.arabicExcerpt,
-        explanation: item.fullAnswer,
-      ),
-    );
+    _openNoteEditor(item);
   }
 
   @override
@@ -10487,13 +11750,18 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
-          'Tersimpan',
+          'Catatan',
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w600,
           ),
         ),
         actions: [
+          IconButton(
+            icon: Icon(Icons.add_rounded, color: textPrimary),
+            tooltip: 'Tambah catatan',
+            onPressed: () => _openNoteEditor(),
+          ),
           IconButton(
             icon: Icon(
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
@@ -10681,7 +11949,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                     shell?.switchTab(1);
                                   },
                                   icon: const Icon(Icons.menu_book_outlined, size: 16),
-                                  label: const Text('Buka kajian'),
+                                  label: const Text('Mulai telaah'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: textPrimary,
                                     side: BorderSide(color: border, width: 1.0),
@@ -10719,7 +11987,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
                               accent: accent,
-                              onCopy: () => _copyIbarah(item.arabicExcerpt),
+                              onEdit: () => _openNoteEditor(item),
+                              onCopy: () => _copyIbarah(item.arabicExcerpt.isNotEmpty ? item.arabicExcerpt : item.fullAnswer),
                               onOpen: () => _openBookmarkItem(item),
                               onShare: () => _shareBookmark(item),
                               onDelete: () => _deleteBookmark(item),
@@ -10742,6 +12011,7 @@ class _BookmarkCard extends StatelessWidget {
   final Color textPrimary;
   final Color textSecondary;
   final Color accent;
+  final VoidCallback onEdit;
   final VoidCallback onCopy;
   final VoidCallback onOpen;
   final VoidCallback onShare;
@@ -10755,6 +12025,7 @@ class _BookmarkCard extends StatelessWidget {
     required this.textPrimary,
     required this.textSecondary,
     required this.accent,
+    required this.onEdit,
     required this.onCopy,
     required this.onOpen,
     required this.onShare,
@@ -10764,167 +12035,223 @@ class _BookmarkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isBookRef = item.id.startsWith('book_') || item.fieldName == 'Rujukan Kitab';
+    final hasValidBookRef = item.bookReference.isNotEmpty &&
+        !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
-    return Container(
-      padding: const EdgeInsets.all(OTSpacing.base),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: OTRadius.cardBorder,
-        border: Border.all(color: border, width: 0.8),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header: Category Pill + Agent Title + Delete
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: accent.withValues(alpha: 0.12),
-                        borderRadius: OTRadius.chipBorder,
-                      ),
-                      child: Text(
-                        isBookRef ? 'Rujukan Kitab' : item.fieldName,
-                        style: OTTypography.captionMedium(color: accent).copyWith(
-                          fontSize: 11,
+    return InkWell(
+      onTap: onEdit,
+      borderRadius: OTRadius.cardBorder,
+      child: Container(
+        padding: const EdgeInsets.all(OTSpacing.base),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: OTRadius.cardBorder,
+          border: Border.all(color: border, width: 0.8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: Category Pill + Agent Title + Delete
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.12),
+                          borderRadius: OTRadius.chipBorder,
+                        ),
+                        child: Text(
+                          isBookRef
+                              ? 'Rujukan Kitab'
+                              : (item.fieldName.contains('Catatan') ? 'Catatan' : item.fieldName),
+                          style: OTTypography.captionMedium(color: accent).copyWith(
+                            fontSize: 11,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: OTSpacing.sm),
+                      const SizedBox(width: OTSpacing.sm),
+                      Flexible(
+                        child: Text(
+                          item.agentTitle,
+                          style: OTTypography.caption(color: textSecondary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 20,
+                    color: textSecondary.withValues(alpha: 0.7),
+                  ),
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  tooltip: 'Hapus catatan',
+                  onPressed: onDelete,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: OTSpacing.sm),
+
+            // Title
+            Text(
+              item.title,
+              style: OTTypography.cardTitle(color: textPrimary),
+            ),
+
+            if (hasValidBookRef) ...[
+              const SizedBox(height: OTSpacing.sm),
+              // Book Reference Pill
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: surfaceSubtle,
+                  borderRadius: OTRadius.chipBorder,
+                  border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.menu_book_rounded, size: 14, color: accent),
+                    const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        item.agentTitle,
-                        style: OTTypography.caption(color: textSecondary),
-                        maxLines: 1,
+                        '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
+                        style: OTTypography.captionMedium(color: textPrimary),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 4),
-              IconButton(
-                icon: Icon(
-                  Icons.delete_outline_rounded,
-                  size: 20,
-                  color: textSecondary.withValues(alpha: 0.7),
+            ],
+
+            if (item.arabicExcerpt.isNotEmpty) ...[
+              const SizedBox(height: OTSpacing.md),
+              // Arabic Excerpt Box
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: surfaceSubtle,
+                  borderRadius: BorderRadius.circular(OTRadius.input),
+                  border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
                 ),
-                constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                tooltip: 'Hapus Rujukan',
-                onPressed: onDelete,
+                child: Text(
+                  item.arabicExcerpt,
+                  textDirection: TextDirection.rtl,
+                  style: GoogleFonts.scheherazadeNew(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    height: 1.7,
+                    color: textPrimary,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
-          ),
 
-          const SizedBox(height: OTSpacing.sm),
-
-          // Title
-          Text(
-            item.title,
-            style: OTTypography.cardTitle(color: textPrimary),
-          ),
-
-          const SizedBox(height: OTSpacing.sm),
-
-          // Book Reference Pill
-          if (item.bookReference.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: surfaceSubtle,
-                borderRadius: OTRadius.chipBorder,
-                border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
+            // Markdown Body Excerpt
+            if (item.fullAnswer.trim().isNotEmpty) ...[
+              const SizedBox(height: OTSpacing.sm),
+              MarkdownBody(
+                data: item.fullAnswer.length > 250
+                    ? '${item.fullAnswer.substring(0, 250).trim()}...'
+                    : item.fullAnswer.trim(),
+                styleSheet: MarkdownStyleSheet(
+                  p: GoogleFonts.outfit(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: textSecondary,
+                  ),
+                  strong: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: textPrimary,
+                  ),
+                  blockquote: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    fontStyle: FontStyle.italic,
+                    color: textSecondary,
+                  ),
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.menu_book_rounded, size: 14, color: accent),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
-                      style: OTTypography.captionMedium(color: textPrimary),
-                      overflow: TextOverflow.ellipsis,
+            ],
+
+            const SizedBox(height: OTSpacing.md),
+
+            // Action Buttons
+            Row(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit_outlined, size: 14),
+                  label: const Text('Edit'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: textPrimary,
+                    side: BorderSide(color: border, width: 0.8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    textStyle: OTTypography.captionMedium(),
+                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                  ),
+                ),
+                const SizedBox(width: OTSpacing.xs + 2),
+                OutlinedButton.icon(
+                  onPressed: onCopy,
+                  icon: const Icon(Icons.copy_rounded, size: 14),
+                  label: Text(
+                    item.arabicExcerpt.isNotEmpty
+                        ? AppCopy.copyIbarahAction
+                        : (isBookRef
+                            ? 'Salin rujukan'
+                            : (item.fieldName.contains('Catatan') ? 'Salin catatan' : 'Salin jawaban')),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: textPrimary,
+                    side: BorderSide(color: border, width: 0.8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    textStyle: OTTypography.captionMedium(),
+                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                  ),
+                ),
+                if (isBookRef) ...[
+                  const SizedBox(width: OTSpacing.xs + 2),
+                  FilledButton.icon(
+                    onPressed: onOpen,
+                    icon: const Icon(Icons.menu_book, size: 14),
+                    label: const Text('Lihat rujukan'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: surfaceSubtle,
+                      foregroundColor: textPrimary,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      textStyle: OTTypography.captionMedium(),
+                      shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                     ),
                   ),
                 ],
-              ),
-            ),
-
-          if (item.arabicExcerpt.isNotEmpty) ...[
-            const SizedBox(height: OTSpacing.md),
-            // Arabic Excerpt Box
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: surfaceSubtle,
-                borderRadius: BorderRadius.circular(OTRadius.input),
-                border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
-              ),
-              child: Text(
-                item.arabicExcerpt,
-                textDirection: TextDirection.rtl,
-                style: GoogleFonts.amiri(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  height: 1.7,
-                  color: textPrimary,
+                const Spacer(),
+                IconButton(
+                  onPressed: onShare,
+                  icon: const Icon(Icons.share_outlined, size: 18),
+                  tooltip: AppCopy.shareReferenceTooltip,
+                  color: textSecondary,
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(),
                 ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
+              ],
             ),
           ],
-
-          const SizedBox(height: OTSpacing.md),
-
-          // Action Buttons
-          Row(
-            children: [
-              OutlinedButton.icon(
-                onPressed: onCopy,
-                icon: const Icon(Icons.copy_rounded, size: 14),
-                label: const Text(AppCopy.copyIbarahAction),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: textPrimary,
-                  side: BorderSide(color: border, width: 0.8),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: OTTypography.captionMedium(),
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-              ),
-              const SizedBox(width: OTSpacing.sm),
-              FilledButton.icon(
-                onPressed: onOpen,
-                icon: const Icon(Icons.menu_book, size: 14),
-                label: const Text(AppCopy.viewReferenceAction),
-                style: FilledButton.styleFrom(
-                  backgroundColor: surfaceSubtle,
-                  foregroundColor: textPrimary,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: OTTypography.captionMedium(),
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: onShare,
-                icon: const Icon(Icons.share_outlined, size: 18),
-                tooltip: AppCopy.shareReferenceTooltip,
-                color: textSecondary,
-                padding: const EdgeInsets.all(8),
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -10946,18 +12273,15 @@ import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
-import '../models/bookmark_model.dart';
-import '../models/book_model.dart';
 import '../services/agent_service.dart';
+import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
-import '../services/bookmark_service.dart';
-import '../services/canonical_library_service.dart';
 import '../services/update_service.dart';
+import '../core/navigation_guard.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
-import '../widgets/evidence_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -10977,8 +12301,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   UserModel? _initialUser;
   List<AgentModel> _agents = AgentModel.defaultAgents;
-  List<BookmarkModel> _recentNotes = [];
-  String? _lastOpenedAgentId;
   String _searchQuery = '';
 
   @override
@@ -10995,7 +12317,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
     try {
       if (_authService.currentUser == null) {
         if (!mounted) return;
@@ -11003,35 +12324,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return;
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      final lastId = prefs.getString('last_opened_notebook_id');
-
       final results = await Future.wait([
         _authService.getCurrentUserModel(),
         _agentService.getAgents(),
-        BookmarkService().getBookmarks(),
       ]).timeout(
         const Duration(seconds: 4),
-        onTimeout: () => [null, AgentModel.defaultAgents, <BookmarkModel>[]],
+        onTimeout: () => [null, AgentModel.defaultAgents],
       );
 
       if (!mounted) return;
       setState(() {
-        _lastOpenedAgentId = lastId;
         _initialUser = results[0] as UserModel?;
         _agents = results[1] as List<AgentModel>;
-        final notes = results[2] as List<BookmarkModel>;
-        _recentNotes = notes.take(3).toList();
       });
     } catch (_) {
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
   }
 
-  Future<void> _openNotebook(AgentModel agent, UserModel? user) async {
+  void _openNotebook(AgentModel agent, UserModel? user) {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
@@ -11040,18 +12350,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
 
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('last_opened_notebook_id', agent.id);
-      if (mounted) {
-        setState(() => _lastOpenedAgentId = agent.id);
-      }
-    } catch (_) {}
+    // Rekam riwayat pembukaan terakhir secara asynchronous di background
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('last_opened_notebook_id', agent.id);
+    }).catchError((_) {});
 
     // Cek akses pengguna ke agent (paywall)
-    if (user != null && !user.hasAccessToAgent(agent.id)) {
-      if (!mounted) return;
-      Navigator.pushNamed(
+    if (user == null || !user.hasAccessToAgent(agent.id)) {
+      NavigationGuard.safePushNamed(
         context,
         AppRoutes.subscription,
         arguments: {'user': user, 'agent': agent},
@@ -11059,91 +12365,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
 
-    if (!mounted) return;
-    Navigator.pushNamed(
-      context,
-      AppRoutes.agentWebview,
-      arguments: {'agent': agent, 'user': user},
-    );
-  }
-
-  Future<void> _openBookmarkItem(BookmarkModel item) async {
-    if (item.id.startsWith('book_')) {
-      final editionId = item.id.replaceFirst('book_', '');
-      var books = CanonicalLibraryService.instance.cachedSyafiiBooks;
-      if (books == null) {
-        try {
-          books = await CanonicalLibraryService.instance.loadSyafiiCatalog();
-        } catch (_) {}
-      }
-      final matchedBook = books?.firstWhere(
-        (b) => b.editionId == editionId,
-        orElse: () => CanonicalBookPresentation(
-          editionId: editionId,
-          titleArabic: item.title,
-          authorArabic: item.author ?? '',
-        ),
-      );
-
-      if (matchedBook != null && mounted) {
-        Navigator.pushNamed(
-          context,
-          AppRoutes.bookDetail,
-          arguments: matchedBook,
-        );
-        return;
-      }
-    }
-
-    _showEvidence(item);
-  }
-
-  void _showEvidence(BookmarkModel item) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => EvidenceBottomSheet(
-        citationNumber: 1,
-        bookName: item.bookReference.isNotEmpty ? item.bookReference : 'Rujukan Naskah',
-        author: item.author ?? '',
-        pageNumber: item.pageNumber,
-        category: item.fieldName,
-        arabicExcerpt: item.arabicExcerpt,
-        explanation: item.fullAnswer,
-      ),
-    );
-  }
-
-  bool _isLoading = false;
-
-  List<AgentModel> _getRecentAgents() {
-    final List<AgentModel> recents = [];
-    if (_lastOpenedAgentId != null && _lastOpenedAgentId!.isNotEmpty) {
-      final match = _agents.where((a) => a.id == _lastOpenedAgentId && a.isActive);
-      if (match.isNotEmpty) {
-        recents.add(match.first);
-      }
-    }
-    for (final a in _agents) {
-      if (recents.length >= 3) break;
-      if (!recents.any((r) => r.id == a.id) && a.isActive) {
-        recents.add(a);
-      }
-    }
-    if (recents.isEmpty && _agents.isNotEmpty) {
-      final activeAgents = _agents.where((a) => a.isActive).toList();
-      recents.addAll(activeAgents.take(2));
-    }
-    return recents;
+    // Buka ruang kajian multi-tab secara seketika (0ms delay)
+    AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
   static const List<({String fieldId, String name, int specialistCount})> _curatedDisciplines = [
     (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
-    (fieldId: 'hadith', name: 'Hadits', specialistCount: 1),
+    (fieldId: 'hadith', name: 'Hadis', specialistCount: 1),
     (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
-    (fieldId: 'aqidah', name: 'Aqidah', specialistCount: 1),
-    (fieldId: 'usul', name: 'Usul Fiqh', specialistCount: 1),
+    (fieldId: 'aqidah', name: 'Akidah', specialistCount: 1),
+    (fieldId: 'usul', name: 'Usul Fikih', specialistCount: 1),
     (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1),
   ];
 
@@ -11168,14 +12399,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               uid: curFirebaseUser?.uid ?? 'user',
               name: curFirebaseUser?.displayName?.isNotEmpty == true
                   ? curFirebaseUser!.displayName!
-                  : 'Santri Peneliti',
+                  : 'Ahlan',
               email: curFirebaseUser?.email ?? '',
               photoUrl: curFirebaseUser?.photoURL ?? '',
               plan: AppConstants.planTrial,
               questionsUsed: 0,
             );
-
-        final recentAgents = _getRecentAgents();
 
         return Scaffold(
           backgroundColor: canvas,
@@ -11208,28 +12437,134 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
-                    // ── 2. Editorial Desk Header: Dual Date & Scholarly Greeting ──
+                    // ── 2. Minimalist Monochrome Greeting Card (Black/White/Grey Palette) ──
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      decoration: BoxDecoration(color: surface, borderRadius: BorderRadius.circular(18), border: Border.all(color: border)),
-                      child: Directionality(
-                        textDirection: TextDirection.ltr,
-                        child: Row(children: [
-                          Expanded(child: Text(HijriDateUtils.formatDualDate().split(' • ').last, textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
-                          Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text('•', style: TextStyle(color: textSecondary))),
-                          Expanded(child: Text(HijriDateUtils.formatHijriOnly(), textAlign: TextAlign.center, style: GoogleFonts.outfit(fontSize: 11, color: textSecondary))),
-                        ]),
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF141416) : Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB),
+                          width: 1.0,
+                        ),
+                        boxShadow: isDark
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.04),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Baris Atas: Sapaan [Nama]
+                          Text(
+                            user.name.isNotEmpty && user.name != 'Ahlan' ? 'Ahlan, ${user.name}' : 'Ahlan',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.outfit(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.3,
+                              color: isDark ? Colors.white : const Color(0xFF18181B),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          // Baris Bawah: Dua Pill Tanggal Monokrom (Masehi & Hijriah)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today_outlined,
+                                        size: 13,
+                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Flexible(
+                                        child: Text(
+                                          HijriDateUtils.formatMasehiOnly(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.nightlight_outlined,
+                                        size: 13,
+                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Flexible(
+                                        child: Text(
+                                          HijriDateUtils.formatHijriOnly(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
-                      style: GoogleFonts.newsreader(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.3,
-                        color: textPrimary,
-                      ),
+
+                    const SizedBox(height: 16),
+
+                    // ── 3. Announcement & Adab Carousel (Tepat di bawah greeting card) ──
+                    _DashboardAnnouncementCarousel(
+                      isDark: isDark,
+                      surface: surface,
+                      border: border,
+                      textPrimary: textPrimary,
+                      textSecondary: textSecondary,
                     ),
 
                     const SizedBox(height: 18),
@@ -11253,7 +12588,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onChanged: (val) => setState(() => _searchQuery = val.trim()),
                               style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari spesialis, bab fikih, atau kitab...',
+                                hintText: 'Cari asisten, kitab, atau bab…',
                                 hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -11284,7 +12619,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil Penelusuran',
+                        'Hasil Pencarian',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -11310,7 +12645,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Tidak ditemukan naskah atau spesialis yang sesuai.',
+                                  'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.',
                                   style: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                                 ),
                               ),
@@ -11326,7 +12661,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
-                                statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
+                                statusLabel: agent.isComingSoon ? 'Segera hadir' : null,
                                 onOpen: () => _openNotebook(agent, user),
                                 onOpenLibrary: agent.catalogId != null
                                     ? () => showResearchLibrary(context, agent: agent)
@@ -11337,21 +12672,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── 6. Catatan Riset Terbaru ──
-                      _buildRecentNotesSection(
-                        context: context,
-                        notes: _recentNotes,
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                        accent: accent,
-                      ),
-
-                      const SizedBox(height: 28),
-
-                      // ── 8. Section: Pilih Bidang Ilmu ──
+                      // ── Section: Pilih Bidang Ilmu ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -11446,7 +12767,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    '${disc.specialistCount} spesialis',
+                                    '${disc.specialistCount} asisten',
                                     style: GoogleFonts.outfit(
                                       fontSize: 12.5,
                                       color: textSecondary,
@@ -11459,144 +12780,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           );
                         },
                       ),
-
-                      const SizedBox(height: 28),
-
-                      // ── 9. Section: Modul Riset (Specialist Modules) ──
-                      Text(
-                        'Modul Riset',
-                        style: GoogleFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-
-                      if (_isLoading)
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: CircularProgressIndicator(color: textPrimary, strokeWidth: 2),
-                          ),
-                        )
-                      else if (recentAgents.isEmpty)
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: surface,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: border, width: 1.0),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Belum ada riwayat sesi riset.',
-                              style: GoogleFonts.outfit(fontSize: 13, color: textSecondary),
-                            ),
-                          ),
-                        )
-                      else
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: recentAgents.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
-                          itemBuilder: (context, index) {
-                            final agent = recentAgents[index];
-                            final isFirst = index == 0;
-                            final timeLabel = isFirst ? 'Modul Aktif' : 'Siap Dikaji';
-
-                            return AppleInteractiveWrapper(
-                              onTap: () => _openNotebook(agent, user),
-                              pressedScale: 0.98,
-                              hapticType: HapticFeedbackType.selection,
-                              borderRadius: BorderRadius.circular(16),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                                decoration: BoxDecoration(
-                                  color: surface,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: border, width: 1.0),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Flexible(
-                                                child: Text(
-                                                  agent.title,
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w600,
-                                                    letterSpacing: -0.2,
-                                                    color: textPrimary,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                                decoration: BoxDecoration(
-                                                  color: isDark ? const Color(0xFF27272A) : const Color(0xFFF1F5F9),
-                                                  borderRadius: BorderRadius.circular(100),
-                                                ),
-                                                child: Text(
-                                                  timeLabel,
-                                                  style: GoogleFonts.outfit(
-                                                    fontSize: 10.5,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: textSecondary,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Icon(
-                                      Icons.arrow_outward_rounded,
-                                      size: 18,
-                                      color: textPrimary,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-
-                      const SizedBox(height: 28),
-
-                      // ── 10. Adab & Prinsip Peneliti Turats ──
-                      _buildScholarlyAdabCard(
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-
-                      const SizedBox(height: 28),
-
-                      // ── 11. Announcement Carousel (Diposisikan tenang di bawah) ──
-                      _DashboardAnnouncementCarousel(
-                        isDark: isDark,
-                        surface: surface,
-                        border: border,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                        accent: accent,
-                      ),
                     ],
                   ],
                 ),
@@ -11608,273 +12791,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildRecentNotesSection({
-    required BuildContext context,
-    required List<BookmarkModel> notes,
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color accent,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              'Catatan Riset Terbaru',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.2,
-                color: textPrimary,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                final shell = MainShellController.of(context);
-                if (shell != null) {
-                  shell.switchTab(2);
-                } else {
-                  Navigator.pushNamed(context, AppRoutes.bookmark);
-                }
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Lihat Semua',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: textPrimary,
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        if (notes.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: border, width: 1.0),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.bookmark_outline_rounded, size: 22, color: textSecondary),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    'Belum ada catatan atau kutipan ibarah tersimpan. Simpan catatan naskah saat menelaah.',
-                    style: GoogleFonts.outfit(fontSize: 12.5, color: textSecondary, height: 1.4),
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: notes.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, idx) {
-              final note = notes[idx];
-              final isBookRef = note.id.startsWith('book_');
-              final subtitle = note.bookReference.isNotEmpty
-                  ? '${note.bookReference}${note.pageNumber.isNotEmpty ? ' (Hal. ${note.pageNumber})' : ''}'
-                  : (note.author != null && note.author!.isNotEmpty
-                      ? '${note.author} · ${note.agentTitle}'
-                      : note.agentTitle);
 
-              return AppleInteractiveWrapper(
-                onTap: () => _openBookmarkItem(note),
-                pressedScale: 0.985,
-                hapticType: HapticFeedbackType.selection,
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
-                          borderRadius: BorderRadius.circular(9),
-                        ),
-                        child: Icon(
-                          isBookRef ? Icons.menu_book_rounded : Icons.bookmark_added_rounded,
-                          size: 16,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              note.title,
-                              style: GoogleFonts.outfit(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w600,
-                                color: textPrimary,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              subtitle,
-                              style: GoogleFonts.outfit(
-                                fontSize: 11.5,
-                                color: textSecondary,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-      ],
-    );
-  }
 
-  Widget _buildScholarlyAdabCard({
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: border, width: 1.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.verified_outlined, size: 17, color: textPrimary),
-              const SizedBox(width: 8),
-              Text(
-                'Adab & Prinsip Peneliti Turats',
-                style: GoogleFonts.outfit(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  color: textPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _buildAdabItem(
-            number: '1',
-            title: 'Talaqqi Bersanad',
-            desc: 'AI adalah sarana komparasi dan indeksasi naskah; bukan mufti dan bukan pengganti bimbingan guru.',
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 8),
-          _buildAdabItem(
-            number: '2',
-            title: 'Ihtiyath & Verifikasi Naskah',
-            desc: 'Selalu luangkan waktu untuk membuka dan memeriksa naskah fisik primer sebelum menyimpulkan.',
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            isDark: isDark,
-          ),
-          const SizedBox(height: 8),
-          _buildAdabItem(
-            number: '3',
-            title: 'Amanah Ilmiah',
-            desc: 'Sertakan judul kitab, nama muallif, bab, dan nomor halaman dalam menukil ibarah.',
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            isDark: isDark,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAdabItem({
-    required String number,
-    required String title,
-    required String desc,
-    required Color textPrimary,
-    required Color textSecondary,
-    required bool isDark,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 18,
-          height: 18,
-          alignment: Alignment.center,
-          margin: const EdgeInsets.only(top: 1),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7),
-            shape: BoxShape.circle,
-          ),
-          child: Text(
-            number,
-            style: GoogleFonts.outfit(
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: textPrimary,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: GoogleFonts.outfit(fontSize: 12, height: 1.4, color: textSecondary),
-              children: [
-                TextSpan(
-                  text: '$title: ',
-                  style: TextStyle(fontWeight: FontWeight.w600, color: textPrimary),
-                ),
-                TextSpan(text: desc),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
@@ -11883,7 +12801,6 @@ class _DashboardAnnouncementCarousel extends StatefulWidget {
   final Color border;
   final Color textPrimary;
   final Color textSecondary;
-  final Color accent;
 
   const _DashboardAnnouncementCarousel({
     required this.isDark,
@@ -11891,7 +12808,6 @@ class _DashboardAnnouncementCarousel extends StatefulWidget {
     required this.border,
     required this.textPrimary,
     required this.textSecondary,
-    required this.accent,
   });
 
   @override
@@ -11908,35 +12824,38 @@ class _DashboardAnnouncementCarouselState
   static const List<_AnnouncementSlide> _slides = [
     _AnnouncementSlide(
       badge: 'TENTANG OPENTURATH',
-      title: 'Mengenal OpenTurath AI',
-      summary:
-          'Membaca kitab dan menelusuri ibarah dari naskah rujukan.',
+      title: 'Mengenal OpenTurath',
+      summary: 'Membaca ibarah dan menelusuri rujukan langsung dari kitab.',
       detailedContent:
-          'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru.',
+          'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru dan ulama yang berkompeten.',
     ),
     _AnnouncementSlide(
-      badge: 'KEUNGGULAN RISET',
-      title: 'Menelusuri Sanad dan Takhrij',
-      summary:
-          'Dilengkapi kutipan ibarah teks asli, nomor halaman kitab muktamad, serta komparasi silang antar-mazhab.',
+      badge: 'ADAB BELAJAR',
+      title: 'Tetap Belajar Bersama Guru',
+      summary: 'Belajarlah dengan bimbingan guru dan ulama yang bersanad.',
       detailedContent:
-          'Setiap jawaban dan analisis yang dihasilkan OpenTurath selalu disertai rujukan langsung ke naskah primer. Peneliti dapat meninjau teks Arab asli, nama kitab, bab pembahasan, hingga nama pensyarah guna menjaga akurasi transmisi keilmuan Islam yang berakar kuat pada tradisi sanad.',
+          'AI membantu mencari ibarah dan membandingkan penjelasan dalam kitab. Untuk memahami fikih dan fatwa, tetaplah belajar kepada guru dan ulama yang bersanad.',
     ),
     _AnnouncementSlide(
-      badge: 'ADAB & DISCLAIMER',
-      title: 'Wasilah Bantu, Bukan Pengganti Guru',
-      summary:
-          'Kajian agama hakiki wajib melalui talaqqi dengan masyayikh bersanad. AI hanyalah sarana penunjang riset.',
+      badge: 'PERIKSA SUMBER',
+      title: 'Cocokkan dengan Kitab Asal',
+      summary: 'Periksa kembali kutipan di Maktabah Syamilah atau kitab cetak.',
       detailedContent:
-          'PENTING DIPAHAMI:\n\nTeknologi kecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur, bukan mufti dan bukan pengganti otoritas guru (masyayikh). Pemahaman fikih, fatwa hukum, dan kedalaman spiritual tetap wajib dikonfirmasi langsung melalui proses talaqqi dan bimbingan ulama yang kompeten.',
+          'Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasil kajian.',
     ),
     _AnnouncementSlide(
-      badge: 'PANDUAN RISET',
-      title: 'Gunakan dengan Sikap Wara\' & Bijak',
-      summary:
-          'Verifikasi setiap kutipan dalil ke naskah fisik primer sebelum dijadikan landasan kajian atau karya ilmiah.',
+      badge: 'AMANAH ILMIAH',
+      title: 'Cantumkan Rujukan Saat Mengutip',
+      summary: 'Sertakan nama pengarang, judul kitab, bab, jilid, dan halaman.',
       detailedContent:
-          'Sebagai seorang peneliti turats, sikap wara\' dan kehati-hatian (ihtiyath) adalah adab utama. Selalu luangkan waktu untuk membuka dan mengonfirmasi naskah cetak fisik kitab primer sebelum mengutip atau menyebarluaskan hasil telaah ke khalayak luas.',
+          'Saat mengutip, tuliskan nama pengarang, judul kitab, bab, jilid, dan halaman sesuai sumber yang digunakan agar rujukan mudah ditemukan.',
+    ),
+    _AnnouncementSlide(
+      badge: 'TELUSURI RUJUKAN',
+      title: 'Lihat Asal Kutipan',
+      summary: 'Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.',
+      detailedContent:
+          'Buka rujukan yang tersedia untuk menelusuri asal kutipan. Cocokkan teks, jilid, dan halaman dengan edisi kitab yang Anda gunakan.',
     ),
   ];
 
@@ -12000,8 +12919,12 @@ class _DashboardAnnouncementCarouselState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.accent.withValues(alpha: 0.12),
+                  color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                   borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                    color: widget.isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                    width: 0.8,
+                  ),
                 ),
                 child: Text(
                   slide.badge,
@@ -12009,7 +12932,7 @@ class _DashboardAnnouncementCarouselState
                     fontSize: 10.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.4,
-                    color: widget.accent,
+                    color: widget.textSecondary,
                   ),
                 ),
               ),
@@ -12046,7 +12969,7 @@ class _DashboardAnnouncementCarouselState
                     ),
                   ),
                   child: Text(
-                    'Mengerti & Tutup',
+                    'Tutup',
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -12109,16 +13032,20 @@ class _DashboardAnnouncementCarouselState
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
-                                color: widget.accent.withValues(alpha: 0.1),
+                                color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                                 borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                  color: widget.isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                  width: 0.8,
+                                ),
                               ),
                               child: Text(
                                 slide.badge,
                                 style: GoogleFonts.outfit(
-                                  fontSize: 11,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.3,
-                                  color: widget.accent,
+                                  color: widget.textSecondary,
                                 ),
                               ),
                             ),
@@ -13143,6 +14070,8 @@ import 'specialist_list_screen.dart';
 import 'bookmark_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/openturath_brand.dart';
+import '../services/agent_session_manager.dart';
+import '../widgets/agent_multi_tab_room.dart';
 
 class MainShellController extends InheritedWidget {
   final void Function(int index, {String? fieldId, CorpusKind? kind}) switchTab;
@@ -13170,21 +14099,81 @@ class MainShellScreen extends StatefulWidget {
   State<MainShellScreen> createState() => _MainShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _MainShellScreenState extends State<MainShellScreen>
+    with SingleTickerProviderStateMixin {
   late int _currentIndex;
   late final PageController _pageController;
   String? _selectedFieldId;
   CorpusKind? _selectedKind;
+
+  late final AnimationController _roomAnimController;
+  late final Animation<Offset> _roomSlideAnimation;
+  late final Animation<double> _roomScaleAnimation;
+  late final Animation<double> _roomFadeAnimation;
+  late final Animation<double> _bgScaleAnimation;
+  late final Animation<double> _bgDimmerAnimation;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
+
+    _roomAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 380),
+      reverseDuration: const Duration(milliseconds: 300),
+    );
+
+    final CurvedAnimation easeCurve = CurvedAnimation(
+      parent: _roomAnimController,
+      curve: Curves.fastOutSlowIn,
+      reverseCurve: Curves.easeInOutCubic,
+    );
+
+    _roomSlideAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 0.08),
+      end: Offset.zero,
+    ).animate(easeCurve);
+
+    _roomScaleAnimation = Tween<double>(
+      begin: 0.94,
+      end: 1.0,
+    ).animate(easeCurve);
+
+    _roomFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(easeCurve);
+
+    _bgScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.975,
+    ).animate(easeCurve);
+
+    _bgDimmerAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.40,
+    ).animate(easeCurve);
+
+    if (AgentSessionManager.instance.isOpen) {
+      _roomAnimController.value = 1.0;
+    }
+    AgentSessionManager.instance.addListener(_onSessionStateChanged);
+  }
+
+  void _onSessionStateChanged() {
+    if (AgentSessionManager.instance.isOpen) {
+      _roomAnimController.forward();
+    } else {
+      _roomAnimController.reverse();
+    }
   }
 
   @override
   void dispose() {
+    AgentSessionManager.instance.removeListener(_onSessionStateChanged);
+    _roomAnimController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -13235,165 +14224,222 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final isWideScreen = MediaQuery.of(context).size.width >= 768;
     final screens = _buildScreens();
 
-    return MainShellController(
-      switchTab: _onTabSelected,
-      child: PopScope(
-        canPop: _currentIndex == 0,
-        onPopInvokedWithResult: (didPop, result) {
-          if (!didPop && _currentIndex != 0) {
-            _onTabSelected(0);
-          }
-        },
-        child: isWideScreen
-            ? Scaffold(
-                backgroundColor: canvas,
-                body: Row(
-                  children: [
-                    Container(
-                      width: 76,
-                      decoration: BoxDecoration(
-                        color: surface,
-                        border: Border(right: BorderSide(color: border, width: 1)),
-                      ),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          OpenTurathMark(size: 36, color: accent),
-                          const SizedBox(height: 32),
-                          _RailItem(
-                            icon: Icons.home_outlined,
-                            activeIcon: Icons.home_rounded,
-                            label: AppCopy.navHome,
-                            isSelected: _currentIndex == 0,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(0),
-                          ),
-                          const SizedBox(height: 16),
-                          _RailItem(
-                            icon: Icons.auto_awesome_outlined,
-                            activeIcon: Icons.auto_awesome_rounded,
-                            label: AppCopy.navStudies,
-                            isSelected: _currentIndex == 1,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(1),
-                          ),
-                          const SizedBox(height: 16),
-                          _RailItem(
-                            icon: Icons.bookmark_border_rounded,
-                            activeIcon: Icons.bookmark_rounded,
-                            label: AppCopy.navSaved,
-                            isSelected: _currentIndex == 2,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(2),
-                          ),
-                          const SizedBox(height: 16),
-                          _RailItem(
-                            icon: Icons.settings_outlined,
-                            activeIcon: Icons.settings_rounded,
-                            label: AppCopy.navSettings,
-                            isSelected: _currentIndex == 3,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(3),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            tooltip: isDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap',
-                            icon: Icon(
-                              isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                              color: unselected,
-                              size: 20,
-                            ),
-                            onPressed: () {
-                              AppConfig.setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: PageView(
-                        controller: _pageController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: screens,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : Scaffold(
-                backgroundColor: canvas,
-                body: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: screens,
-                ),
-                extendBody: true,
-                bottomNavigationBar: Container(
+    final Widget baseScaffold = isWideScreen
+        ? Scaffold(
+            backgroundColor: canvas,
+            body: Row(
+              children: [
+                Container(
+                  width: 76,
                   decoration: BoxDecoration(
                     color: surface,
-                    border: Border(
-                      top: BorderSide(
-                        color: border,
-                        width: 0.8,
-                      ),
-                    ),
+                    border: Border(right: BorderSide(color: border, width: 1)),
                   ),
-                  child: SafeArea(
-                    top: false,
-                    child: SizedBox(
-                      height: 64,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.home_outlined,
-                              activeIcon: Icons.home_rounded,
-                              label: AppCopy.navHome,
-                              isSelected: _currentIndex == 0,
-                              onTap: () => _onTabSelected(0),
-                            ),
-                          ),
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.auto_awesome_outlined,
-                              activeIcon: Icons.auto_awesome_rounded,
-                              label: AppCopy.navStudies,
-                              isSelected: _currentIndex == 1,
-                              onTap: () => _onTabSelected(1),
-                            ),
-                          ),
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.bookmark_border_rounded,
-                              activeIcon: Icons.bookmark_rounded,
-                              label: AppCopy.navSaved,
-                              isSelected: _currentIndex == 2,
-                              onTap: () => _onTabSelected(2),
-                            ),
-                          ),
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.settings_outlined,
-                              activeIcon: Icons.settings_rounded,
-                              label: AppCopy.navSettings,
-                              isSelected: _currentIndex == 3,
-                              onTap: () => _onTabSelected(3),
-                            ),
-                          ),
-                        ],
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      OpenTurathMark(size: 36, color: accent),
+                      const SizedBox(height: 32),
+                      _RailItem(
+                        icon: Icons.home_outlined,
+                        activeIcon: Icons.home_rounded,
+                        label: AppCopy.navHome,
+                        isSelected: _currentIndex == 0,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(0),
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      _RailItem(
+                        icon: Icons.auto_awesome_outlined,
+                        activeIcon: Icons.auto_awesome_rounded,
+                        label: AppCopy.navStudies,
+                        isSelected: _currentIndex == 1,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(1),
+                      ),
+                      const SizedBox(height: 16),
+                      _RailItem(
+                        icon: Icons.edit_note_rounded,
+                        activeIcon: Icons.edit_note_rounded,
+                        label: AppCopy.navSaved,
+                        isSelected: _currentIndex == 2,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(2),
+                      ),
+                      const SizedBox(height: 16),
+                      _RailItem(
+                        icon: Icons.settings_outlined,
+                        activeIcon: Icons.settings_rounded,
+                        label: AppCopy.navSettings,
+                        isSelected: _currentIndex == 3,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(3),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        tooltip: isDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap',
+                        icon: Icon(
+                          isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                          color: unselected,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          AppConfig.setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: screens,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : Scaffold(
+            backgroundColor: canvas,
+            body: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: screens,
+            ),
+            extendBody: true,
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: surface,
+                border: Border(
+                  top: BorderSide(
+                    color: border,
+                    width: 0.8,
                   ),
                 ),
               ),
+              child: SafeArea(
+                top: false,
+                child: SizedBox(
+                  height: 64,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.home_outlined,
+                          activeIcon: Icons.home_rounded,
+                          label: AppCopy.navHome,
+                          isSelected: _currentIndex == 0,
+                          onTap: () => _onTabSelected(0),
+                        ),
+                      ),
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.auto_awesome_outlined,
+                          activeIcon: Icons.auto_awesome_rounded,
+                          label: AppCopy.navStudies,
+                          isSelected: _currentIndex == 1,
+                          onTap: () => _onTabSelected(1),
+                        ),
+                      ),
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.edit_note_rounded,
+                          activeIcon: Icons.edit_note_rounded,
+                          label: AppCopy.navSaved,
+                          isSelected: _currentIndex == 2,
+                          onTap: () => _onTabSelected(2),
+                        ),
+                      ),
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.settings_outlined,
+                          activeIcon: Icons.settings_rounded,
+                          label: AppCopy.navSettings,
+                          isSelected: _currentIndex == 3,
+                          onTap: () => _onTabSelected(3),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+
+    return MainShellController(
+      switchTab: _onTabSelected,
+      child: AnimatedBuilder(
+        animation: _roomAnimController,
+        builder: (context, child) {
+          final sessionManager = AgentSessionManager.instance;
+          final isRoomVisible = _roomAnimController.value > 0.0 || sessionManager.isOpen;
+
+          return PopScope(
+            canPop: !sessionManager.isOpen && _currentIndex == 0,
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) return;
+              if (sessionManager.isOpen) {
+                sessionManager.closeRoom();
+                return;
+              }
+              if (_currentIndex != 0) {
+                _onTabSelected(0);
+              }
+            },
+            child: Stack(
+              children: [
+                // 1. Dashboard latar belakang dengan redaman depth-scale
+                Transform.scale(
+                  scale: _bgScaleAnimation.value,
+                  alignment: Alignment.center,
+                  child: baseScaffold,
+                ),
+
+                // 2. Backdrop Dimmer lembut
+                if (_roomAnimController.value > 0.0)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      ignoring: _roomAnimController.value == 0.0,
+                      child: Container(
+                        color: Colors.black.withOpacity(_bgDimmerAnimation.value),
+                      ),
+                    ),
+                  ),
+
+                // 3. Ruang AI Multi-Tab ("Fathul Kitab")
+                Positioned.fill(
+                  child: Offstage(
+                    offstage: !isRoomVisible,
+                    child: TickerMode(
+                      enabled: isRoomVisible,
+                      child: FadeTransition(
+                        opacity: _roomFadeAnimation,
+                        child: SlideTransition(
+                          position: _roomSlideAnimation,
+                          child: ScaleTransition(
+                            scale: _roomScaleAnimation,
+                            alignment: Alignment.bottomCenter,
+                            child: child,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        child: const AgentMultiTabRoom(),
       ),
     );
-  }
+}
 }
 
 class _GoogleNavBarItem extends StatelessWidget {
@@ -13559,7 +14605,9 @@ import '../core/design/ot_spacing.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
+import '../core/navigation_guard.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/legal_document_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13704,21 +14752,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _openSubscription() async {
-    final user = await _authService.getCurrentUserModel();
-    if (!mounted) return;
+  bool _isOpeningSubscription = false;
 
-    Navigator.pushNamed(
-      context,
-      AppRoutes.subscription,
-      arguments: {
-        'user': user,
-        'agent': AgentModel.defaultAgents.firstWhere(
-          (a) => a.id == 'fiqh_tahawwulat',
-          orElse: () => AgentModel.defaultAgents.first,
-        ),
-      },
-    );
+  Future<void> _openSubscription() async {
+    if (_isOpeningSubscription) return;
+    _isOpeningSubscription = true;
+    try {
+      final user = await _authService.getCurrentUserModel();
+      if (!mounted) return;
+
+      await NavigationGuard.safePushNamed(
+        context,
+        AppRoutes.subscription,
+        arguments: {
+          'user': user,
+          'agent': AgentModel.defaultAgents.firstWhere(
+            (a) => a.id == 'fiqh_tahawwulat',
+            orElse: () => AgentModel.defaultAgents.first,
+          ),
+        },
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isOpeningSubscription = false);
+      } else {
+        _isOpeningSubscription = false;
+      }
+    }
   }
 
   @override
@@ -13769,12 +14829,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final String subscriptionSubtitle;
 
             if (isSubscribed) {
-              if (plan == 'sultan' || plan == 'all_access' || plan == 'all_ai_1m' || plan == 'all_ai') {
-                subscriptionSubtitle = 'Semua Kajian$expStr';
+              final isAllAccess = plan == 'sultan' ||
+                  plan == 'all_access' ||
+                  plan == 'all_ai_1m' ||
+                  plan == 'all_ai_6m' ||
+                  plan == 'all_ai_1y' ||
+                  plan == 'all_ai' ||
+                  (userModel?.entitlements['all_access']?.isActive ?? false);
+
+              if (isAllAccess) {
+                subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI$expStr';
               } else if (plan == 'field') {
-                subscriptionSubtitle = 'Rumpun Kajian$expStr';
+                subscriptionSubtitle = 'Paket Bidang Kajian$expStr';
               } else if (plan == 'single') {
-                subscriptionSubtitle = 'Kajian Satuan$expStr';
+                subscriptionSubtitle = 'Paket 1 Modul$expStr';
               } else {
                 subscriptionSubtitle = '${AppCopy.activeSubscription}$expStr';
               }
@@ -13984,66 +15052,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // ── Card 4: Legal & About ──
+                // ── Card 4: Tentang OpenTurath ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: border, width: 1.0),
                   ),
-                  child: Column(
-                    children: [
-                      _SettingsTile(
-                        icon: Icons.article_outlined,
-                        title: 'Ketentuan Layanan',
-                        subtitle: 'Syarat dan ketentuan OpenTurath',
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => _showTermsOfService(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.security_outlined,
-                        title: 'Kebijakan Privasi',
-                        subtitle: 'Perlindungan kerahasiaan data pengguna',
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => _showPrivacyPolicy(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.info_outline_rounded,
-                        title: AppCopy.aboutTitle,
-                        subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => _showAboutModal(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                    ],
+                  child: _SettingsTile(
+                    icon: Icons.info_outline_rounded,
+                    title: AppCopy.aboutTitle,
+                    subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
+                    trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                    onTap: () => _showAboutModal(
+                      context,
+                      isDark,
+                      textPrimary,
+                      textSecondary,
+                      surface,
+                      border,
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 16),
 
-                // ── Card 5: Log out ──
+                // ── Card 5: Bantuan dan Kontak ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: _SettingsTile(
+                    icon: Icons.headset_mic_outlined,
+                    title: AppCopy.supportAndContact,
+                    subtitle: 'Saluran resmi dan pengaduan layanan',
+                    trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                    onTap: () => LegalDocumentSheet.showContactSupport(context),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ── Card 6: Log out ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -14131,25 +15183,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
           AppCopy.aboutTitle,
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Versi $_appVersion · ${AppCopy.appTagline}',
-              style: OTTypography.captionMedium(color: textSecondary),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              AppCopy.aboutDescription,
-              style: OTTypography.body(color: textPrimary),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              AppCopy.aboutScholarlyPrinciple,
-              style: OTTypography.caption(color: textSecondary),
-            ),
-          ],
+        content: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Versi $_appVersion · ${AppCopy.appTagline}',
+                style: OTTypography.captionMedium(color: textSecondary),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                AppCopy.aboutDescription,
+                style: OTTypography.body(color: textPrimary),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                AppCopy.aboutScholarlyPrinciple,
+                style: OTTypography.caption(color: textSecondary),
+              ),
+              const SizedBox(height: 16),
+              Divider(height: 1, color: border),
+              const SizedBox(height: 8),
+              _buildAboutDocTile(
+                icon: Icons.article_outlined,
+                title: AppCopy.termsOfService,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showTermsOfService(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.security_outlined,
+                title: AppCopy.privacyPolicy,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showPrivacyPolicy(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.payment_outlined,
+                title: AppCopy.paymentAndRefund,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showRefundPolicy(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.menu_book_outlined,
+                title: AppCopy.aiGuideline,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showAiGuideline(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.headset_mic_outlined,
+                title: AppCopy.supportAndContact,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showContactSupport(context);
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           FilledButton(
@@ -14166,218 +15274,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showTermsOfService(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-    Color surface,
-    Color border,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        height: MediaQuery.of(ctx).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: OTRadius.sheetBorder,
-          border: Border.all(color: border, width: 0.8),
-        ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildAboutDocTile({
+    required IconData icon,
+    required String title,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
           children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: OTRadius.chipBorder,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Ketentuan Layanan',
-                  style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
+            Icon(icon, size: 18, color: textSecondary),
+            const SizedBox(width: 10),
             Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLegalSection(
-                      title: '1. Ruang Lingkup & Tujuan Riset',
-                      content:
-                          'OpenTurath membantu pembaca mencari ibarah, membandingkan matan dan syarah, serta menelusuri rujukan kitab. Hasilnya perlu diperiksa kembali pada naskah asli.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '2. Batasan Tanggung Jawab & Penafian Fatwa',
-                      content:
-                          'Hasil analisis, transkripsi, dan kutipan teks yang disajikan oleh sistem kecerdasan buatan bersifat sebagai referensi riset awal. OpenTurath BUKAN mufti dan tidak berwenang mengeluarkan fatwa syar\'i mandiri. Pengguna diwajibkan untuk mengonfirmasi hasil telaah dengan ulama dan guru yang bersanad (talaqqi) serta merujuk ke naskah fisik kitab primer.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '3. Akun Pengguna & Hak Akses',
-                      content:
-                          'Pengguna bertanggung jawab menjaga keamanan kredensial akun Google yang digunakan. Setiap paket langganan (Akses Penuh maupun Modul Spesialis) bersifat personal dan tidak diperkenankan untuk diperjualbelikan kembali atau dieksploitasi melalui bot otomatis tanpa izin tertulis.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '4. Ketentuan Pembayaran & Berlangganan',
-                      content:
-                          'Seluruh transaksi langganan diproses secara resmi melalui payment gateway terverifikasi (DOKU). Pengguna berhak mengakses ruang riset sesuai paket dan durasi yang dipilih.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                  ],
-                ),
+              child: Text(
+                title,
+                style: OTTypography.captionMedium(color: textPrimary),
               ),
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 46,
-              child: FilledButton(
-                onPressed: () => Navigator.pop(ctx),
-                style: FilledButton.styleFrom(
-                  backgroundColor: textPrimary,
-                  foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-                child: Text('Saya Pahami & Setuju', style: OTTypography.button()),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showPrivacyPolicy(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-    Color surface,
-    Color border,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        height: MediaQuery.of(ctx).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: OTRadius.sheetBorder,
-          border: Border.all(color: border, width: 0.8),
-        ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: OTRadius.chipBorder,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Kebijakan Privasi',
-                  style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLegalSection(
-                      title: '1. Pengumpulan & Penggunaan Data',
-                      content:
-                          'OpenTurath hanya mengumpulkan data profil dasar (nama, alamat email, dan foto profil publik) yang diotorisasi saat Anda masuk menggunakan Akun Google. Data ini digunakan secara eksklusif untuk otentikasi sesi riset dan personalisasi akun.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '2. Kerahasiaan Sesi & Catatan Riset',
-                      content:
-                          'Pertanyaan kajian, kutipan ibarah, dan riwayat bookmark naskah kitab yang Anda telusuri dienkripsi dengan standar keamanan industri. OpenTurath tidak membagikan, mempublikasikan, ataupun memperjualbelikan data riset Anda kepada pihak ketiga manapun.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '3. Keamanan Sesi Google & NotebookLM',
-                      content:
-                          'Koneksi sesi telaah dengan Google NotebookLM berjalan di lingkungan aman melalui enkripsi SSL/TLS. Kredensial kata sandi Anda tidak pernah disimpan di server OpenTurath.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '4. Hak Penghapusan Data Pengguna',
-                      content:
-                          'Anda memiliki hak mutlak untuk menghapus akun Anda beserta seluruh riwayat telaah dan bookmark kapan saja melalui menu Pengaturan > Hapus Akun & Data.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 46,
-              child: FilledButton(
-                onPressed: () => Navigator.pop(ctx),
-                style: FilledButton.styleFrom(
-                  backgroundColor: textPrimary,
-                  foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-                child: Text('Tutup', style: OTTypography.button()),
-              ),
-            ),
+            Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
           ],
         ),
       ),
@@ -14431,28 +15350,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildLegalSection({
-    required String title,
-    required String content,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          content,
-          style: OTTypography.caption(color: textSecondary).copyWith(height: 1.5),
-        ),
-      ],
     );
   }
 
@@ -14579,11 +15476,14 @@ import '../core/design/ot_motion.dart';
 import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
+import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../core/navigation_guard.dart';
 import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final FieldModel? field; // Nullable if opened as general Specialist tab
@@ -14673,40 +15573,44 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     }).toList();
   }
 
-  Future<void> _openAgent(AgentModel agent) async {
+  void _openAgent(AgentModel agent) {
     OTMotion.light();
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        '${agent.title} belum tersedia (Segera Hadir). Modul ini sedang dalam tahap kurasi naskah kitab primer.',
+        '${agent.title} sedang disiapkan.',
       );
       return;
     }
 
-    final user = await _authService.getCurrentUserModel();
-    if (!mounted) return;
-
+    final user = _authService.cachedCurrentUser;
     if (user != null && !user.hasAccessToAgent(agent.id)) {
       _openSubscriptionForAgent(agent);
       return;
     }
 
-    if (!mounted) return;
-    Navigator.pushNamed(
-      context,
-      AppRoutes.agentWebview,
-      arguments: {'agent': agent, 'user': user},
-    );
+    AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
+  bool _isOpeningSubscription = false;
+
   void _openSubscriptionForAgent(AgentModel agent) {
+    if (_isOpeningSubscription) return;
+    _isOpeningSubscription = true;
+
     _authService.getCurrentUserModel().then((user) {
       if (!mounted) return;
-      Navigator.pushNamed(
+      NavigationGuard.safePushNamed(
         context,
         AppRoutes.subscription,
         arguments: {'agent': agent, 'user': user},
       );
+    }).whenComplete(() {
+      if (mounted) {
+        setState(() => _isOpeningSubscription = false);
+      } else {
+        _isOpeningSubscription = false;
+      }
     });
   }
 
@@ -14724,24 +15628,42 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final title = isGeneralTab ? 'Asisten AI' : widget.field!.name;
     final filtered = _computeFilteredAgents();
 
-    return Scaffold(
-      backgroundColor: canvas,
-      appBar: AppBar(
-        title: Text(
-          title,
-          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
-        ),
-        centerTitle: false,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        final shell = MainShellController.of(context);
+        if (shell != null) {
+          shell.switchTab(0);
+        } else if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
         backgroundColor: canvas,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: isGeneralTab
-            ? null
-            : IconButton(
-                icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-                onPressed: () => Navigator.pop(context),
-              ),
-      ),
+        appBar: AppBar(
+          title: Text(
+            title,
+            style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
+          ),
+          centerTitle: false,
+          backgroundColor: canvas,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: isGeneralTab
+              ? null
+              : IconButton(
+                  icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+                  onPressed: () {
+                    final shell = MainShellController.of(context);
+                    if (shell != null) {
+                      shell.switchTab(0);
+                    } else if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+        ),
       body: SafeArea(
         top: false,
         child: Column(
@@ -14769,7 +15691,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             onChanged: _onSearchChanged,
                             style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                             decoration: InputDecoration(
-                              hintText: 'Cari spesialis, kitab, atau bab...',
+                              hintText: 'Cari asisten, kitab, atau bab…',
                               hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
@@ -14868,8 +15790,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 const SizedBox(height: OTSpacing.sm),
                                 Text(
                                   _searchQuery.isNotEmpty
-                                      ? 'Tidak ditemukan rujukan atau spesialis yang sesuai.'
-                                      : 'Belum ada ruang riset untuk bidang ini.',
+                                      ? 'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.'
+                                      : 'Belum ada asisten di kategori ini.',
                                   style: OTTypography.body(color: textSecondary),
                                   textAlign: TextAlign.center,
                                 ),
@@ -14897,7 +15819,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 final agent = sorted[index];
                                 return SpecialistCard(
                                   title: agent.title,
-                                  statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
+                                  statusLabel: agent.isComingSoon ? 'Segera hadir' : null,
                                   onOpen: () => _openAgent(agent),
                                   onOpenLibrary: agent.catalogId != null
                                       ? () => showResearchLibrary(context, agent: agent)
@@ -14911,8 +15833,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _filterChip({
     required String label,
@@ -15088,6 +16011,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/constants.dart';
 import '../core/design/ot_colors.dart';
@@ -15101,6 +16025,7 @@ import '../services/subscription_service.dart';
 import '../widgets/doku_checkout_sheet.dart';
 import '../widgets/redeem_code_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/legal_document_sheet.dart';
 
 /// Halaman Langganan Ruang Riset OpenTurath AI (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
@@ -15187,7 +16112,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             side: BorderSide(color: border, width: 0.8),
           ),
           title: Text(
-            'Nomor WhatsApp Konfirmasi',
+            'Nomor WhatsApp',
             style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
           ),
           content: Column(
@@ -15195,7 +16120,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Masukkan nomor WhatsApp aktif untuk pengiriman bukti aktivasi langganan dan rincian transaksi riset Anda.',
+                'Masukkan nomor WhatsApp aktif untuk konfirmasi pembayaran dan aktivasi langganan.',
                 style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
               ),
               const SizedBox(height: OTSpacing.base),
@@ -15240,7 +16165,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text('Lanjutkan Pembayaran', style: OTTypography.button()),
+              child: Text('Lanjutkan pembayaran', style: OTTypography.button()),
             ),
           ],
         ),
@@ -15348,7 +16273,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         if (!mounted) return;
         AppSnackBar.success(
           context,
-          'Alhamdulillah! Pembayaran berhasil. Akses ruang riset Anda telah aktif!',
+          'Pembayaran berhasil. Akses AI Spesialis Anda telah aktif.',
           duration: const Duration(seconds: 4),
         );
         Navigator.pop(context);
@@ -15377,14 +16302,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final activeList = _activeAgents;
 
-    // Pricing tiers for Akses Penuh
-    const fullAccessTiers = [
-      {'name': 'Bulanan', 'price': 99000, 'label': 'Rp 99.000', 'period': '/ bulan', 'planId': 'all_ai_1m'},
-      {'name': '6 Bulan', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ 6 bulan', 'planId': 'all_ai_6m'},
-      {'name': '1 Tahun · Hemat 33%', 'price': 799000, 'label': 'Rp 799.000', 'period': '/ tahun', 'planId': 'all_ai_1y'},
+    // Pricing tiers untuk AI Spesialis Terpilih
+    final moduleTiers = [
+      {'name': '1 Bulan', 'price': 49000, 'label': 'Rp 49.000', 'period': '/ bulan', 'planId': AppConstants.planTholib1m},
+      {'name': '6 Bulan', 'price': 299000, 'label': 'Rp 299.000', 'period': '/ 6 bulan', 'planId': AppConstants.planTholib6m},
+      {'name': '1 Tahun', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ tahun', 'planId': AppConstants.planBahits1y},
     ];
 
-    final currentTier = fullAccessTiers[_selectedDurationIndex];
+    final currentTier = moduleTiers[_selectedDurationIndex];
     final tierPrice = currentTier['price'] as int;
     final tierLabel = currentTier['label'] as String;
     final tierPeriod = currentTier['period'] as String;
@@ -15424,18 +16349,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 children: [
                   // Editorial Header
                   Text(
-                    'Pilih akses',
-                    style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 24),
+                    'Pilihan langganan',
+                    style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 22),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
-                    'Akses ruang riset turats Islam dengan analisis naskah primer.',
+                    'Pilih paket langganan untuk menelaah ibarah dan rujukan kitab turats.',
                     style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                   ),
 
                   const SizedBox(height: OTSpacing.sm),
 
-                  // Satu pintu masuk redeem kode akses
+                  // Pintu masuk redeem kode akses voucher
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AppleInteractiveWrapper(
@@ -15452,7 +16377,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             Icon(Icons.confirmation_number_outlined, size: 16, color: accent),
                             const SizedBox(width: 6),
                             Text(
-                              'Punya voucher atau kode redeem santri? Klaim di sini',
+                              'Punya kode voucher? Masukkan di sini',
                               style: OTTypography.button(color: accent).copyWith(fontSize: 13.5),
                             ),
                           ],
@@ -15463,7 +16388,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   const SizedBox(height: OTSpacing.sm),
 
-                  // ── Hero Package Card: Akses Penuh Semua AI ──
+                  // ── Unified Module Package Card: Modul Spesialis Terpilih ──
                   Container(
                     decoration: BoxDecoration(
                       color: surface,
@@ -15481,7 +16406,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'AKSES PENUH',
+                              'PAKET AI SPESIALIS',
                               style: OTTypography.sectionHeading(color: accent),
                             ),
                             Container(
@@ -15491,7 +16416,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                'SEMUA 11+ MODUL',
+                                '1 AI SPESIALIS',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
@@ -15499,13 +16424,51 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Paket Seluruh AI Keilmuan',
-                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 21),
+                          'Pilih AI Spesialis',
+                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Fikih 4 mazhab, Tahawwulat, hadits, tafsir, aqidah, ushul, dan sastra bahasa.',
+                          'Telaah mendalam satu disiplin keilmuan Islam berbasis naskah kitab rujukan.',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                        ),
+
+                        const SizedBox(height: OTSpacing.md),
+
+                        DropdownButtonFormField<String>(
+                          initialValue: _agent?.id ?? (activeList.isNotEmpty ? activeList.first.id : 'fiqh_tahawwulat'),
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            filled: true,
+                            fillColor: surfaceSubtle,
+                            border: OutlineInputBorder(
+                              borderRadius: OTRadius.inputBorder,
+                              borderSide: BorderSide(color: border),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: OTRadius.inputBorder,
+                              borderSide: BorderSide(color: border),
+                            ),
+                          ),
+                          dropdownColor: surface,
+                          items: activeList.map((a) {
+                            return DropdownMenuItem<String>(
+                              value: a.id,
+                              child: Text(
+                                a.title,
+                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              setState(() {
+                                _agent = activeList.firstWhere((a) => a.id == val);
+                              });
+                            }
+                          },
                         ),
 
                         const SizedBox(height: OTSpacing.lg),
@@ -15519,8 +16482,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             border: Border.all(color: border, width: 0.8),
                           ),
                           child: Row(
-                            children: List.generate(fullAccessTiers.length, (idx) {
-                              final tier = fullAccessTiers[idx];
+                            children: List.generate(moduleTiers.length, (idx) {
+                              final tier = moduleTiers[idx];
                               final isSelected = _selectedDurationIndex == idx;
                               return Expanded(
                                 child: AppleInteractiveWrapper(
@@ -15577,14 +16540,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Divider(color: border.withValues(alpha: 0.6), height: 1),
                         const SizedBox(height: OTSpacing.base),
 
-                        // Core Benefits
-                        _benefitRow('Akses ke seluruh kajian dan kitab', textPrimary),
+                        // Core Benefits (Quiet Scholar Natural Phrasing, No generic green checkmarks)
+                        _benefitRow(
+                          'Kajian mendalam bersama AI Spesialis ${_agent?.title ?? "terpilih"}',
+                          textPrimary,
+                        ),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Penelusuran mendalam tanpa batas kuota pertanyaan harian', textPrimary),
+                        _benefitRow(
+                          'Telaah teks dan ibarah naskah rujukan ${_agent?.title ?? "keilmuan turats"}',
+                          textPrimary,
+                        ),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Sitasi marja\' kitab asli, nomor halaman & matan lengkap', textPrimary),
+                        _benefitRow(
+                          'Rujukan teks asli, penomoran jilid, dan halaman kitab',
+                          textPrimary,
+                        ),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Prioritas pembaruan naskah dan kurasi kitab primer', textPrimary),
+                        _benefitRow(
+                          'Verifikasi kutipan ibarah dengan naskah kitab cetak dan digital',
+                          textPrimary,
+                        ),
 
                         const SizedBox(height: OTSpacing.lg),
 
@@ -15596,20 +16571,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             onTap: _isProcessing
                                 ? null
                                 : () {
-                                    final allAiAgent = AgentModel(
-                                      id: 'all_ai',
-                                      title: 'Semua Ruang Riset',
-                                      description: 'Akses ke seluruh modul AI OpenTurath',
-                                      emoji: '✨',
-                                      category: 'All Access',
-                                      status: 'active',
-                                      sortOrder: 0,
-                                    );
                                     _handleSubscribe(
                                       plan: tierPlanId,
-                                      planTitle: 'Paket Akses Penuh (${currentTier['name']})',
+                                      planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
                                       price: tierPrice,
-                                      targetAgent: allAiAgent,
+                                      targetAgent: _agent,
                                     );
                                   },
                             pressedScale: 0.97,
@@ -15619,20 +16585,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               onPressed: _isProcessing
                                   ? null
                                   : () {
-                                      final allAiAgent = AgentModel(
-                                        id: 'all_ai',
-                                        title: 'Semua Ruang Riset',
-                                        description: 'Akses ke seluruh modul AI OpenTurath',
-                                        emoji: '✨',
-                                        category: 'All Access',
-                                        status: 'active',
-                                        sortOrder: 0,
-                                      );
                                       _handleSubscribe(
                                         plan: tierPlanId,
-                                        planTitle: 'Paket Akses Penuh (${currentTier['name']})',
+                                        planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
                                         price: tierPrice,
-                                        targetAgent: allAiAgent,
+                                        targetAgent: _agent,
                                       );
                                     },
                               style: FilledButton.styleFrom(
@@ -15642,7 +16599,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 elevation: 0,
                               ),
                               child: Text(
-                                'Pilih Paket Ini ($tierLabel)',
+                                'Berlangganan ${_agent?.title ?? "AI Spesialis"} ($tierLabel)',
                                 style: OTTypography.button(color: canvas),
                               ),
                             ),
@@ -15652,132 +16609,194 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: OTSpacing.xl),
+                  const SizedBox(height: OTSpacing.lg),
 
-                  // ── Add-On / Modul Satuan Terpisah ──
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4, bottom: 6),
-                    child: Text(
-                      'PILIHAN MODUL SATUAN',
-                      style: OTTypography.sectionHeading(color: textSecondary),
+                  // ── Bundling Card: Semua AI (Segera Hadir) ──
+                  Container(
+                    decoration: BoxDecoration(
+                      color: surfaceSubtle,
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(
+                        color: border,
+                        width: 0.8,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(OTSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'PAKET LENGKAP SEMUA AI',
+                                style: OTTypography.sectionHeading(color: textSecondary),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: surface,
+                                borderRadius: OTRadius.chipBorder,
+                                border: Border.all(color: border, width: 0.6),
+                              ),
+                              child: Text(
+                                'SEGERA HADIR',
+                                style: OTTypography.captionMedium(color: textSecondary).copyWith(
+                                  fontSize: 10,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        Text(
+                          'Akses Seluruh AI Spesialis',
+                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Satu paket untuk mengakses seluruh asisten keilmuan turats (Fikih, Hadis, Tafsir, Usul Fikih, Bahasa Arab, dan Tahawwulat).',
+                          style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
+                        ),
+                        const SizedBox(height: OTSpacing.base),
+                        Divider(color: border.withValues(alpha: 0.5), height: 1),
+                        const SizedBox(height: OTSpacing.base),
+                        _benefitRow('Akses ke seluruh bidang keilmuan Islam yang tersedia', textSecondary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Telaah terpadu lintas Fikih, Hadis, Tafsir, Usul Fikih, dan Bahasa Arab', textSecondary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Pembaruan berkala rujukan Khazanah Ulama terverifikasi', textSecondary),
+                        const SizedBox(height: OTSpacing.md),
+                        // Catatan Edukatif
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(OTSpacing.md),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF18181B) : Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: border.withValues(alpha: 0.8),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline_rounded,
+                                size: 16,
+                                color: textSecondary,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Paket lengkap seluruh AI Spesialis sedang dipersiapkan untuk pembaruan berikutnya.',
+                                  style: OTTypography.body(color: textSecondary).copyWith(
+                                    fontSize: 12,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: OTSpacing.lg),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 46,
+                          child: OutlinedButton(
+                            onPressed: null, // Dinonaktifkan sesuai arahan
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: border),
+                              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.lock_outline_rounded, size: 16, color: textSecondary),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Segera Hadir',
+                                  style: OTTypography.button(color: textSecondary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+
+                  const SizedBox(height: OTSpacing.lg),
+
+                  // ── Catatan Transparansi Pembelian (Bab 4 & Bab 10.4) ──
                   Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(OTSpacing.base),
                     decoration: BoxDecoration(
                       color: surface,
                       borderRadius: OTRadius.cardBorder,
                       border: Border.all(color: border, width: 0.8),
                     ),
-                    padding: const EdgeInsets.all(OTSpacing.base),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Icon(Icons.info_outline_rounded, size: 16, color: textSecondary),
+                            const SizedBox(width: 8),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '1 Modul Spesialis Terpilih',
-                                    style: OTTypography.cardTitle(color: textPrimary),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    'Fokus telaah pada satu disiplin keilmuan tertentu',
-                                    style: OTTypography.caption(color: textSecondary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              'Rp50.000 / bulan',
-                              style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-                                fontWeight: FontWeight.w700,
+                              child: Text(
+                                AppCopy.manualRenewalNotice,
+                                style: OTTypography.caption(color: textSecondary).copyWith(
+                                  fontSize: 12,
+                                  height: 1.45,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: OTSpacing.md),
-
-                        DropdownButtonFormField<String>(
-                          initialValue: _agent?.id ?? 'fiqh_tahawwulat',
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                            filled: true,
-                            fillColor: surfaceSubtle,
-                            border: OutlineInputBorder(
-                              borderRadius: OTRadius.inputBorder,
-                              borderSide: BorderSide(color: border),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: OTRadius.inputBorder,
-                              borderSide: BorderSide(color: border),
-                            ),
-                          ),
-                          dropdownColor: surface,
-                          items: activeList.map((a) {
-                            return DropdownMenuItem<String>(
-                              value: a.id,
-                              child: Text(
-                                a.title,
-                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) {
-                              setState(() {
-                                _agent = activeList.firstWhere((a) => a.id == val);
-                              });
-                            }
-                          },
-                        ),
-
-                        const SizedBox(height: OTSpacing.md),
-
-                        SizedBox(
-                          width: double.infinity,
-                          height: 44,
-                          child: AppleInteractiveWrapper(
-                            onTap: _isProcessing
-                                ? null
-                                : () => _handleSubscribe(
-                                      plan: AppConstants.planTholib1m,
-                                      planTitle: '1 Bulan ${_agent?.title ?? "Modul AI"}',
-                                      price: _agent?.price1m ?? AppConstants.priceTholib1m,
-                                    ),
-                            pressedScale: 0.97,
-                            hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(OTRadius.button),
-                            child: OutlinedButton(
-                              onPressed: _isProcessing
-                                  ? null
-                                  : () => _handleSubscribe(
-                                        plan: AppConstants.planTholib1m,
-                                        planTitle: '1 Bulan ${_agent?.title ?? "Modul AI"}',
-                                        price: _agent?.price1m ?? AppConstants.priceTholib1m,
-                                      ),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: textPrimary,
-                                side: BorderSide(color: border, width: 0.8),
-                                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                              ),
-                              child: Builder(
-                                builder: (context) {
-                                  final p = _agent?.price1m ?? AppConstants.priceTholib1m;
-                                  final formatted = 'Rp ${p.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}';
-                                  return Text(
-                                    'Langganan Modul ($formatted)',
-                                    style: OTTypography.button(),
-                                  );
-                                },
+                        const SizedBox(height: OTSpacing.sm),
+                        Divider(height: 1, color: border.withValues(alpha: 0.5)),
+                        const SizedBox(height: OTSpacing.sm),
+                        Wrap(
+                          spacing: 16,
+                          runSpacing: 8,
+                          children: [
+                            InkWell(
+                              onTap: () => LegalDocumentSheet.showRefundPolicy(context),
+                              borderRadius: BorderRadius.circular(4),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Text(
+                                  AppCopy.paymentAndRefund,
+                                  style: OTTypography.captionMedium(color: textPrimary).copyWith(
+                                    fontSize: 12,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            InkWell(
+                              onTap: () => LegalDocumentSheet.showTermsOfService(context),
+                              borderRadius: BorderRadius.circular(4),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Text(
+                                  AppCopy.termsOfService,
+                                  style: OTTypography.captionMedium(color: textPrimary).copyWith(
+                                    fontSize: 12,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -15791,23 +16810,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     );
   }
 
-  Widget _benefitRow(String text, Color textPrimary) {
+  Widget _benefitRow(String text, Color textColor) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 2),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
           child: Icon(
-            Icons.check_circle_rounded,
+            Icons.check_rounded,
             size: 15,
-            color: OTColors.success,
+            color: textColor.withValues(alpha: 0.75),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             text,
-            style: OTTypography.body(color: textPrimary).copyWith(
+            style: OTTypography.body(color: textColor).copyWith(
               fontSize: 12.5,
               height: 1.35,
             ),
@@ -15902,6 +16921,115 @@ class AgentAccessException implements Exception {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/services/agent_session_manager.dart
+```dart
+import 'package:flutter/foundation.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import '../models/agent_model.dart';
+import '../models/user_model.dart';
+
+/// Represents a single active AI specialist tab in memory.
+class AgentSessionTab {
+  final AgentModel agent;
+  String? resolvedUrl;
+  InAppWebViewController? webController;
+  bool isUrlLoading = true;
+  bool isWebLoading = true;
+  String? errorMessage;
+  bool isPaywallRequired = false;
+  double fontScale = 1.0;
+  bool hasAcknowledgedAdab = false;
+
+  AgentSessionTab({
+    required this.agent,
+    this.resolvedUrl,
+  });
+}
+
+/// AgentSessionManager: Singleton state manager for multi-tab AI study sessions.
+/// Keeps up to 7 specialists loaded in background memory like Google Chrome tabs.
+class AgentSessionManager extends ChangeNotifier {
+  static final AgentSessionManager instance = AgentSessionManager._();
+  AgentSessionManager._();
+
+  final List<AgentSessionTab> _tabs = [];
+  int _activeIndex = 0;
+  bool _isOpen = false;
+
+  List<AgentSessionTab> get tabs => List.unmodifiable(_tabs);
+  int get activeIndex => _activeIndex;
+  bool get isOpen => _isOpen;
+  bool get hasSessions => _tabs.isNotEmpty;
+
+  AgentSessionTab? get activeTab {
+    if (_tabs.isEmpty || _activeIndex < 0 || _activeIndex >= _tabs.length) {
+      return null;
+    }
+    return _tabs[_activeIndex];
+  }
+
+  /// Open an agent or switch to its existing active tab with zero reload.
+  void openAgent(AgentModel agent, {UserModel? user}) {
+    final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
+    if (existingIndex != -1) {
+      _activeIndex = existingIndex;
+    } else {
+      _tabs.add(AgentSessionTab(agent: agent));
+      _activeIndex = _tabs.length - 1;
+    }
+    _isOpen = true;
+    notifyListeners();
+  }
+
+  /// Switch active tab (like clicking a Chrome tab).
+  void selectTab(int index) {
+    if (index >= 0 && index < _tabs.length && _activeIndex != index) {
+      _activeIndex = index;
+      notifyListeners();
+    }
+  }
+
+  /// Close a specific tab with the 'x' button.
+  void closeTab(int index) {
+    if (index < 0 || index >= _tabs.length) return;
+
+    try {
+      _tabs[index].webController?.stopLoading();
+    } catch (_) {}
+
+    _tabs.removeAt(index);
+
+    if (_tabs.isEmpty) {
+      _isOpen = false;
+      _activeIndex = 0;
+    } else if (_activeIndex >= _tabs.length) {
+      _activeIndex = _tabs.length - 1;
+    }
+    notifyListeners();
+  }
+
+  /// Hide the AI study room to return to the Dashboard while keeping all WebViews alive.
+  void closeRoom() {
+    _isOpen = false;
+    notifyListeners();
+  }
+
+  /// Reset all sessions (e.g. on user logout).
+  void closeAll() {
+    for (final tab in _tabs) {
+      try {
+        tab.webController?.stopLoading();
+      } catch (_) {}
+    }
+    _tabs.clear();
+    _activeIndex = 0;
+    _isOpen = false;
+    notifyListeners();
+  }
+}
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/services/auth_service.dart
 ```dart
 import 'dart:async';
@@ -15960,6 +17088,20 @@ class AuthService {
   // ── Current Firebase User ──────────────────────────────────────
   User? get currentUser => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  UserModel? get cachedCurrentUser {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+    return _userCache[user.uid] ??
+        UserModel(
+          uid: user.uid,
+          name: user.displayName ?? 'Pengguna',
+          email: user.email ?? '',
+          photoUrl: user.photoURL ?? '',
+          plan: AppConstants.planTrial,
+          questionsUsed: 0,
+        );
+  }
 
   // ── Google Sign In ─────────────────────────────────────────────
   Future<UserModel?> signInWithGoogle() async {
@@ -16287,6 +17429,7 @@ class BookmarkService extends ChangeNotifier {
 ```dart
 import 'package:flutter/services.dart';
 import '../core/arabic_utils.dart';
+import '../models/agent_model.dart';
 import '../models/book_model.dart';
 
 /// Service to load, cache, and search canonical book catalogs with diacritic-tolerant Arabic search.
@@ -16294,30 +17437,87 @@ class CanonicalLibraryService {
   CanonicalLibraryService._();
   static final CanonicalLibraryService instance = CanonicalLibraryService._();
 
+  static const Map<String, String> _assetMapByField = {
+    'fiqh': 'assets/data/01_KATALOG_FIKIH_SYAFII.json',
+    'hadith': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
+    'usul': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
+    'lughah': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
+    'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+  };
+
+  static const Map<String, String> _assetMapByAgentId = {
+    'fiqh_syafii': 'assets/data/01_KATALOG_FIKIH_SYAFII.json',
+    'hadits': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
+    'ushul_fiqh': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
+    'nahwu_sharaf': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
+    'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+  };
+
+  static const Map<String, String> _assetMapByCatalogId = {
+    'canonical_syafii': 'assets/data/01_KATALOG_FIKIH_SYAFII.json',
+    'canonical_hadits': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
+    'canonical_ushul_fikih': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
+    'canonical_bahasa_arab': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'canonical_tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
+    'canonical_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+  };
+
+  final Map<String, List<CanonicalBookPresentation>> _catalogCache = {};
+
   CanonicalImport? _syafiiCatalog;
   List<CanonicalBookPresentation>? _syafiiPresentations;
 
   /// Normalizes Arabic text by stripping diacritics and unifying letter variants.
   static String normalizeArabic(String text) => ArabicUtils.normalize(text);
 
-  /// Loads the canonical Syafi'i catalog from asset bundle.
+  /// Loads catalog for a specific agent or discipline.
+  Future<List<CanonicalBookPresentation>> loadCatalogForAgent(AgentModel agent) async {
+    final assetPath = (agent.catalogId != null ? _assetMapByCatalogId[agent.catalogId!] : null) ??
+        _assetMapByAgentId[agent.id] ??
+        _assetMapByField[agent.fieldId];
+    if (assetPath == null) {
+      if (agent.fieldId == 'fiqh') {
+        return loadCatalogFromAsset('assets/data/01_KATALOG_FIKIH_SYAFII.json');
+      }
+      return [];
+    }
+    return loadCatalogFromAsset(assetPath);
+  }
+
+  /// Loads catalog by discipline field ID (fiqh, hadith, usul, lughah, tafsir, fiqh_tahawwulat).
+  Future<List<CanonicalBookPresentation>> loadCatalogByField(String fieldId) async {
+    final assetPath = _assetMapByField[fieldId];
+    if (assetPath == null) return [];
+    return loadCatalogFromAsset(assetPath);
+  }
+
+  /// Loads catalog from asset bundle with in-memory caching.
+  Future<List<CanonicalBookPresentation>> loadCatalogFromAsset(String assetPath) async {
+    if (_catalogCache.containsKey(assetPath)) {
+      return _catalogCache[assetPath]!;
+    }
+
+    try {
+      final jsonStr = await rootBundle.loadString(assetPath);
+      final books = parseSyamilahCatalog(jsonStr);
+      _catalogCache[assetPath] = books;
+      if (assetPath.contains('01_KATALOG_FIKIH_SYAFII')) {
+        _syafiiPresentations = books;
+      }
+      return books;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Loads the canonical Syafi'i catalog from asset bundle (backwards compatible).
   Future<List<CanonicalBookPresentation>> loadSyafiiCatalog() async {
     if (_syafiiPresentations != null) {
       return _syafiiPresentations!;
     }
-
-    try {
-      final jsonStr = await rootBundle.loadString('assets/data/canonical_syafii.json');
-      final catalog = parseCanonicalCatalog(jsonStr);
-      _syafiiCatalog = catalog;
-      _syafiiPresentations = catalog.entries
-          .map((e) => CanonicalBookPresentation.fromEntry(e))
-          .toList();
-      return _syafiiPresentations!;
-    } catch (e) {
-      // Re-throw so UI can display specific failure state
-      rethrow;
-    }
+    return loadCatalogFromAsset('assets/data/01_KATALOG_FIKIH_SYAFII.json');
   }
 
   /// Get cached presentations or null if not yet loaded.
@@ -16332,6 +17532,8 @@ class CanonicalLibraryService {
     String query, {
     String? eraFilter,
     String? typeFilter,
+    String? sectionFilter,
+    String? centuryFilter,
   }) {
     final cleanQuery = query.trim();
 
@@ -16342,18 +17544,176 @@ class CanonicalLibraryService {
       if (typeFilter != null && typeFilter.isNotEmpty && book.reviewedTypeLabel != typeFilter) {
         return false;
       }
+      if (sectionFilter != null && sectionFilter.isNotEmpty && book.sectionArabic != sectionFilter) {
+        return false;
+      }
+      if (centuryFilter != null && centuryFilter.isNotEmpty) {
+        final year = book.verifiedDeathYearHijri;
+        if (centuryFilter == 'Salaf (≤ 300 H)') {
+          if (year == null || year > 300) return false;
+        } else if (centuryFilter == 'Mutaqaddimin (301-600 H)') {
+          if (year == null || year <= 300 || year > 600) return false;
+        } else if (centuryFilter == 'Muta\'akhkhirin (601-1100 H)') {
+          if (year == null || year <= 600 || year > 1100) return false;
+        } else if (centuryFilter == 'Mu\'ashir (> 1100 H)') {
+          if (year != null && year <= 1100) return false;
+        }
+      }
 
       if (cleanQuery.isEmpty) return true;
 
       final matchTitle = ArabicUtils.matches(book.titleArabic, cleanQuery) ||
+          (book.shortTitleArabic != null && ArabicUtils.matches(book.shortTitleArabic!, cleanQuery)) ||
           (book.titleLatin != null && ArabicUtils.matches(book.titleLatin!, cleanQuery));
       final matchAuthor = ArabicUtils.matches(book.authorArabic, cleanQuery) ||
           (book.authorLatin != null && ArabicUtils.matches(book.authorLatin!, cleanQuery));
       final matchPublisher = book.publisher != null && ArabicUtils.matches(book.publisher!, cleanQuery);
       final matchMuhaqqiq = book.muhaqqiq != null && ArabicUtils.matches(book.muhaqqiq!, cleanQuery);
+      final matchSection = book.sectionArabic != null && ArabicUtils.matches(book.sectionArabic!, cleanQuery);
 
-      return matchTitle || matchAuthor || matchPublisher || matchMuhaqqiq;
+      return matchTitle || matchAuthor || matchPublisher || matchMuhaqqiq || matchSection;
     }).toList();
+  }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/services/device_service.dart
+```dart
+import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:crypto/crypto.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
+
+class DeviceFingerprint {
+  final String deviceId;
+  final String brand;
+  final String model;
+  final bool isPhysicalDevice;
+
+  const DeviceFingerprint({
+    required this.deviceId,
+    required this.brand,
+    required this.model,
+    required this.isPhysicalDevice,
+  });
+
+  Map<String, dynamic> toMap() => {
+        'deviceId': deviceId,
+        'brand': brand,
+        'model': model,
+        'isPhysicalDevice': isPhysicalDevice,
+      };
+
+  @override
+  String toString() =>
+      'DeviceFingerprint(deviceId: ${deviceId.substring(0, 8)}..., model: $model, physical: $isPhysicalDevice)';
+}
+
+class DeviceService {
+  static final DeviceService _instance = DeviceService._internal();
+  factory DeviceService() => _instance;
+  DeviceService._internal();
+
+  final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
+
+  static const String _salt = 'OT_AI_HW_SALT_2026_980031db';
+
+  /// Menghitung hash SHA-256 salted dari identitas hardware perangkat.
+  /// Bersifat deterministik dan aman untuk privasi pengguna.
+  static String computeHash({
+    required String rawId,
+    required String brand,
+    required String model,
+  }) {
+    final cleanId = rawId.trim();
+    final cleanBrand = brand.trim().toLowerCase();
+    final cleanModel = model.trim().toLowerCase();
+    final payload = '$_salt::$cleanId::$cleanBrand::$cleanModel';
+    return sha256.convert(utf8.encode(payload)).toString();
+  }
+
+  /// Mengambil sidik jari perangkat saat ini (Device Fingerprint).
+  Future<DeviceFingerprint> getDeviceFingerprint() async {
+    try {
+      if (kIsWeb) {
+        final webInfo = await _deviceInfo.webBrowserInfo;
+        final rawId = webInfo.userAgent ?? 'web_browser';
+        final brand = webInfo.vendor ?? 'browser';
+        final model = webInfo.browserName.name;
+        final hash = computeHash(rawId: rawId, brand: brand, model: model);
+        return DeviceFingerprint(
+          deviceId: hash,
+          brand: brand,
+          model: model,
+          isPhysicalDevice: true,
+        );
+      }
+
+      if (Platform.isAndroid) {
+        final androidInfo = await _deviceInfo.androidInfo;
+        final rawId = androidInfo.id; // Settings.Secure.ANDROID_ID
+        final brand = androidInfo.brand;
+        final model = androidInfo.model;
+        final isPhysical = androidInfo.isPhysicalDevice;
+        final hash = computeHash(rawId: rawId, brand: brand, model: model);
+
+        return DeviceFingerprint(
+          deviceId: hash,
+          brand: brand,
+          model: model,
+          isPhysicalDevice: isPhysical,
+        );
+      }
+
+      if (Platform.isIOS) {
+        final iosInfo = await _deviceInfo.iosInfo;
+        final rawId = iosInfo.identifierForVendor ?? 'ios_device';
+        final brand = 'apple';
+        final model = iosInfo.utsname.machine;
+        final isPhysical = iosInfo.isPhysicalDevice;
+        final hash = computeHash(rawId: rawId, brand: brand, model: model);
+
+        return DeviceFingerprint(
+          deviceId: hash,
+          brand: brand,
+          model: model,
+          isPhysicalDevice: isPhysical,
+        );
+      }
+
+      if (Platform.isMacOS) {
+        final macInfo = await _deviceInfo.macOsInfo;
+        final rawId = macInfo.systemGUID ?? 'macos_device';
+        final brand = 'apple';
+        final model = macInfo.model;
+        final hash = computeHash(rawId: rawId, brand: brand, model: model);
+
+        return DeviceFingerprint(
+          deviceId: hash,
+          brand: brand,
+          model: model,
+          isPhysicalDevice: true,
+        );
+      }
+    } catch (e) {
+      debugPrint('[DeviceService] Warning failed to inspect device info: $e');
+    }
+
+    // Fallback darurat (misalnya unit test harness lokal tanpa platform channel)
+    const fallbackId = 'ot_fallback_dev_0000000000000000';
+    final fallbackHash = computeHash(
+      rawId: fallbackId,
+      brand: 'generic',
+      model: 'generic_device',
+    );
+    return DeviceFingerprint(
+      deviceId: fallbackHash,
+      brand: 'generic',
+      model: 'generic_device',
+      isPhysicalDevice: true,
+    );
   }
 }
 
@@ -16766,6 +18126,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
 import '../models/user_model.dart';
+import 'device_service.dart';
 import 'doku_service.dart';
 
 class SubscriptionService {
@@ -16777,34 +18138,62 @@ class SubscriptionService {
     return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
   }
 
-  static String redeemErrorMessage(String code) {
-    switch (code.toLowerCase().replaceAll('_', '-')) {
-      case 'not-found': return 'Kode akses tidak ditemukan. Periksa kembali kode yang Anda masukkan.';
-      case 'already-exists': return 'Kode ini sudah pernah Anda gunakan.';
-      case 'deadline-exceeded': return 'Kode sudah kedaluwarsa atau layanan terlalu lama merespons. Coba lagi, atau gunakan kode lain.';
-      case 'failed-precondition': return 'Kode akses ini sudah tidak aktif.';
-      case 'resource-exhausted': return 'Batas penggunaan kode atau percobaan telah tercapai. Coba lagi nanti.';
-      case 'unauthenticated': return 'Silakan masuk ke akun Anda lalu coba kembali.';
-      case 'invalid-argument': return 'Format kode belum sesuai. Periksa kembali kode Anda.';
-      case 'permission-denied': return 'Kode ini tidak dapat digunakan untuk akun Anda.';
-      case 'unavailable': return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
-      default: return 'Kode belum dapat diaktifkan. Silakan coba lagi sebentar.';
+  static String redeemErrorMessage(String code, [String? serverMessage]) {
+    final c = code.toLowerCase().replaceAll('_', '-');
+    if (serverMessage != null && serverMessage.isNotEmpty) {
+      final lowerMsg = serverMessage.toLowerCase();
+      if (lowerMsg.contains('perangkat') || lowerMsg.contains('ponsel')) {
+        return serverMessage;
+      }
     }
+    if (c.contains('not-found')) return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+    if (c.contains('already-exists') || c.contains('already-used')) {
+      return 'Kode ini sudah pernah ditukarkan sebelumnya.';
+    }
+    if (c.contains('deadline-exceeded') || c.contains('expired')) return 'Masa berlaku kode voucher ini telah berakhir.';
+    if (c.contains('failed-precondition')) {
+      if (serverMessage != null && serverMessage.contains('ponsel')) {
+        return serverMessage;
+      }
+      return 'Kode voucher ini sudah tidak aktif.';
+    }
+    if (c.contains('resource-exhausted') || c.contains('quota')) return 'Kuota penukaran untuk kode voucher ini sudah habis.';
+    if (c.contains('unauthenticated')) return 'Silakan masuk ke akun Anda lalu coba kembali.';
+    if (c.contains('invalid-argument')) return 'Format penulisan kode voucher belum sesuai.';
+    if (c.contains('permission-denied')) return 'Kode voucher ini tidak dapat digunakan untuk akun Anda.';
+    if (c.contains('unavailable')) return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
+    return 'Kode voucher belum dapat diaktifkan. Silakan periksa kembali kode Anda.';
   }
 
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
-  Future<Map<String, dynamic>> redeemAccessCode(String code) async {
+  Future<Map<String, dynamic>> redeemAccessCode(
+    String code, {
+    DeviceFingerprint? customFingerprint,
+  }) async {
     try {
       final normalized = normalizeCode(code);
+      final fingerprint = customFingerprint ?? await DeviceService().getDeviceFingerprint();
       final callable = FirebaseFunctions.instance.httpsCallable('redeemCode');
-      final result = await callable.call({'code': normalized});
+      final result = await callable.call({
+        'code': normalized,
+        'deviceId': fingerprint.deviceId,
+        'deviceModel': fingerprint.model,
+        'deviceBrand': fingerprint.brand,
+        'isPhysicalDevice': fingerprint.isPhysicalDevice,
+      });
       final data = result.data;
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }
       return {'success': true, 'message': 'Kode akses sudah aktif.'};
     } on FirebaseFunctionsException catch (e) {
-      return {'success': false, 'message': redeemErrorMessage(e.code)};
+      final serverMsg = e.message;
+      if (serverMsg != null &&
+          serverMsg.isNotEmpty &&
+          (serverMsg.contains('perangkat') || serverMsg.contains('ponsel'))) {
+        return {'success': false, 'message': serverMsg};
+      }
+      return {'success': false, 'message': redeemErrorMessage(e.code, serverMsg)};
     } catch (e) {
       return {'success': false, 'message': 'Koneksi bermasalah. Periksa internet Anda lalu coba lagi.'};
     }
@@ -16894,15 +18283,227 @@ class SubscriptionService {
   String _getTitleForPlan(String plan) {
     switch (plan) {
       case AppConstants.planTholib1m:
-        return 'Paket Tholib (1 Bulan)';
+        return 'Modul AI (1 Bulan)';
       case AppConstants.planTholib6m:
-        return 'Paket Tholib (6 Bulan)';
+        return 'Modul AI (6 Bulan)';
       case AppConstants.planBahits1y:
-        return 'Paket Bahits (1 Tahun)';
-      case 'all_ai_1m':
-        return 'Paket Promo Semua AI (1 Bulan)';
+        return 'Modul AI (1 Tahun)';
       default:
-        return 'Langganan OpenTurath AI';
+        return 'Langganan Modul AI OpenTurath';
+    }
+  }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/services/telemetry_service.dart
+```dart
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+
+/// ─────────────────────────────────────────────────────────────────────────────
+/// TelemetryService: Sistem Pemantauan Crash & Error Senyap (Silent Telemetry)
+/// ─────────────────────────────────────────────────────────────────────────────
+class TelemetryService {
+  TelemetryService._({FirebaseFirestore? firestore, FirebaseAuth? auth})
+      : _firestore = firestore,
+        _auth = auth;
+
+  static final TelemetryService instance = TelemetryService._();
+
+  FirebaseFirestore? _firestore;
+  FirebaseAuth? _auth;
+
+  FirebaseFirestore get _db => _firestore ?? FirebaseFirestore.instance;
+  FirebaseAuth get _firebaseAuth => _auth ?? FirebaseAuth.instance;
+
+  /// Visible for testing to inject mock instances
+  @visibleForTesting
+  void setMockInstances({FirebaseFirestore? firestore, FirebaseAuth? auth}) {
+    _firestore = firestore;
+    _auth = auth;
+  }
+
+  /// Ring buffer untuk breadcrumbs (maksimal 20 peristiwa terakhir)
+  static const int maxBreadcrumbs = 20;
+  final List<Map<String, dynamic>> _breadcrumbs = [];
+
+  /// Deduplikasi error (mencegah log flooding untuk error yang berulang dalam 120 detik)
+  static const Duration _dedupWindow = Duration(seconds: 120);
+  final Map<String, DateTime> _reportedSignatures = {};
+
+  bool _initialized = false;
+
+  /// Inisialisasi global unhandled error handlers
+  void init() {
+    if (_initialized) return;
+    _initialized = true;
+
+    // 1. Flutter Framework Errors (Widget building, layout, etc.)
+    final originalOnError = FlutterError.onError;
+    FlutterError.onError = (FlutterErrorDetails details) {
+      reportError(
+        details.exception,
+        details.stack,
+        context: 'flutter_framework_error',
+        severity: 'error',
+        extra: {
+          'library': details.library,
+          'summary': details.summary.toString(),
+        },
+      );
+      if (originalOnError != null) {
+        originalOnError(details);
+      } else {
+        FlutterError.presentError(details);
+      }
+    };
+
+    // 2. Platform Dispatcher Errors (Async errors, isolates, microtasks)
+    PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+      reportError(
+        error,
+        stack,
+        context: 'unhandled_async_error',
+        severity: 'critical',
+      );
+      return false; // biarkan default handling berjalan
+    };
+
+    leaveBreadcrumb('Aplikasi dimulai (Telemetry aktif)', category: 'lifecycle');
+  }
+
+  /// Rekam jejak interaksi pengguna / sistem ke in-memory ring buffer
+  void leaveBreadcrumb(String message, {String category = 'action'}) {
+    try {
+      final sanitized = sanitizeData(message);
+      _breadcrumbs.add({
+        'message': sanitized,
+        'category': category,
+        'timestamp': DateTime.now().toIso8601String(),
+      });
+      if (_breadcrumbs.length > maxBreadcrumbs) {
+        _breadcrumbs.removeAt(0);
+      }
+    } catch (_) {}
+  }
+
+  /// Masking data sensitif (password, authorization token, voucher, email)
+  String sanitizeData(String input) {
+    if (input.isEmpty) return input;
+    var sanitized = input;
+
+    // 1. Mask Bearer / Token
+    sanitized = sanitized.replaceAll(
+      RegExp(r'bearer\s+[a-zA-Z0-9_\-\.]+', caseSensitive: false),
+      'Bearer [REDACTED_TOKEN]',
+    );
+
+    // 2. Mask password / apikey / secret / auth
+    sanitized = sanitized.replaceAllMapped(
+      RegExp(r'''(password|secret|apiKey|api_key|token|access_token|refreshToken)["':\s=]+[^,\s\n}]+''', caseSensitive: false),
+      (match) => '${match.group(1)}: "[REDACTED]"',
+    );
+
+    // 3. Mask Google SID/HSID/SSID cookies
+    sanitized = sanitized.replaceAllMapped(
+      RegExp(r'(SID|HSID|SSID|APISID|SAPISID)=[^;\s]+', caseSensitive: false),
+      (match) => '${match.group(1)}=[REDACTED_COOKIE]',
+    );
+
+    // 4. Mask voucher codes bila ada
+    sanitized = sanitized.replaceAllMapped(
+      RegExp(r'''(voucher|code)["':\s=]+[a-zA-Z0-9\-_]{5,20}''', caseSensitive: false),
+      (match) => '${match.group(1)}: "[REDACTED_CODE]"',
+    );
+
+    return sanitized;
+  }
+
+  /// Mask email pengguna untuk kepatuhan privasi (cth: a***@domain.com)
+  String maskEmail(String email) {
+    if (email.isEmpty || !email.contains('@')) return '';
+    final parts = email.split('@');
+    final name = parts[0];
+    final domain = parts[1];
+    if (name.length <= 2) {
+      return '*@$domain';
+    }
+    return '${name[0]}***${name[name.length - 1]}@$domain';
+  }
+
+  /// Buat signature unik untuk deduplikasi error
+  String _computeErrorSignature(String errorStr, String? context, String? stackTraceStr) {
+    final firstThreeLines = (stackTraceStr ?? '')
+        .split('\n')
+        .where((l) => l.trim().isNotEmpty)
+        .take(3)
+        .join('|');
+    final raw = '${errorStr.trim()}::$context::$firstThreeLines';
+    return md5.convert(utf8.encode(raw)).toString();
+  }
+
+  /// Kirim error ke Firestore secara senyap (unawaited)
+  Future<void> reportError(
+    dynamic error,
+    dynamic stackTrace, {
+    String? context,
+    String severity = 'error',
+    Map<String, dynamic>? extra,
+  }) async {
+    try {
+      final errorStr = sanitizeData(error?.toString() ?? 'Unknown Error');
+      final stackStr = sanitizeData(stackTrace?.toString() ?? '');
+
+      // Cek deduplikasi
+      final signature = _computeErrorSignature(errorStr, context, stackStr);
+      final now = DateTime.now();
+      final lastReported = _reportedSignatures[signature];
+      if (lastReported != null && now.difference(lastReported) < _dedupWindow) {
+        return; // Lewati karena baru saja dilaporkan dalam kurun dedupWindow
+      }
+      _reportedSignatures[signature] = now;
+
+      // Bersihkan signature lama yang sudah lewat window
+      _reportedSignatures.removeWhere((_, time) => now.difference(time) > _dedupWindow);
+
+      final user = _firebaseAuth.currentUser;
+      final maskedUserEmail = user?.email != null ? maskEmail(user!.email!) : '';
+
+      final sanitizedExtra = <String, dynamic>{};
+      if (extra != null) {
+        for (final entry in extra.entries) {
+          sanitizedExtra[entry.key] = sanitizeData(entry.value?.toString() ?? '');
+        }
+      }
+
+      final payload = {
+        'error': errorStr.length > 2000 ? errorStr.substring(0, 2000) : errorStr,
+        'context': context ?? 'general',
+        'severity': severity,
+        'stackTrace': stackStr.length > 5000 ? stackStr.substring(0, 5000) : stackStr,
+        'breadcrumbs': List<Map<String, dynamic>>.from(_breadcrumbs),
+        'extra': sanitizedExtra,
+        'userId': user?.uid ?? 'unauthenticated',
+        'userEmail': maskedUserEmail,
+        'platform': kIsWeb ? 'web' : Platform.operatingSystem,
+        'deviceTimestamp': now.toIso8601String(),
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+
+      // Tulis secara senyap ke Firestore koleksi client_error_logs
+      unawaited(
+        _db.collection('client_error_logs').add(payload).catchError((_) {
+          return null as dynamic;
+        }),
+      );
+    } catch (_) {
+      // Menjamin TelemetryService tidak pernah melempar exception ke aplikasi
     }
   }
 }
@@ -17266,6 +18867,661 @@ class UpdateService extends ChangeNotifier {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/widgets/agent_multi_tab_room.dart
+```dart
+import 'dart:async';
+import 'dart:collection';
+import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../core/app_copy.dart';
+import '../core/app_snackbar.dart';
+import '../core/notebook_navigation.dart';
+import '../core/notebook_ui_script.dart';
+import '../core/copied_answer.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../models/agent_model.dart';
+import '../services/agent_service.dart';
+import '../services/agent_session_manager.dart';
+import '../services/auth_service.dart';
+import '../services/bookmark_service.dart';
+import '../widgets/app_error_state.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/library_bottom_sheet.dart';
+
+/// AgentMultiTabRoom: Persistent, multi-tab AI Study Room inspired by Google Chrome tabs.
+/// Keeps up to 7 AI specialists running concurrently in memory without reloading.
+class AgentMultiTabRoom extends StatefulWidget {
+  const AgentMultiTabRoom({super.key});
+
+  @override
+  State<AgentMultiTabRoom> createState() => _AgentMultiTabRoomState();
+}
+
+class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
+  final AgentSessionManager _sessionManager = AgentSessionManager.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _sessionManager.addListener(_onSessionsChanged);
+  }
+
+  @override
+  void dispose() {
+    _sessionManager.removeListener(_onSessionsChanged);
+    super.dispose();
+  }
+
+  void _onSessionsChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _openLibrarySheet(BuildContext context, AgentModel agent) {
+    showResearchLibrary(context, agent: agent);
+  }
+
+  void _showFontScaleDialog(BuildContext context, AgentSessionTab session) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final border = OTColors.border(isDark);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              border: Border.all(color: border, width: 0.8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: border,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  AppCopy.studyOptions,
+                  style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Sesuaikan ukuran huruf percakapan agar nyaman dibaca.',
+                  style: OTTypography.caption(color: textSecondary),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Text('A', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: textSecondary)),
+                    Expanded(
+                      child: Slider(
+                        value: session.fontScale,
+                        min: 0.85,
+                        max: 1.6,
+                        divisions: 5,
+                        activeColor: textPrimary,
+                        inactiveColor: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                        onChanged: (val) {
+                          setModalState(() => session.fontScale = val);
+                          setState(() {});
+                          session.webController?.evaluateJavascript(
+                            source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($val); }',
+                          );
+                        },
+                      ),
+                    ),
+                    Text('A', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, color: textPrimary)),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
+    final activeTab = _sessionManager.activeTab;
+    final sessions = _sessionManager.tabs;
+
+    if (activeTab == null || sessions.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Scaffold(
+      backgroundColor: canvas,
+      appBar: AppBar(
+        toolbarHeight: 56,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: canvas,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
+          tooltip: 'Kembali ke Beranda',
+          onPressed: () => _sessionManager.closeRoom(),
+        ),
+        titleSpacing: 0,
+        title: Text(
+          activeTab.agent.title,
+          style: GoogleFonts.outfit(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: textPrimary,
+            letterSpacing: -0.2,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
+            tooltip: AppCopy.studyOptions,
+            onPressed: () => _showFontScaleDialog(context, activeTab),
+          ),
+          IconButton(
+            icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
+            tooltip: AppCopy.referenceBooks,
+            onPressed: () => _openLibrarySheet(context, activeTab.agent),
+          ),
+          const SizedBox(width: 4),
+        ],
+        // Chrome-like Multi-Tab Bar
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(42),
+          child: Container(
+            height: 42,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: surfaceSubtle,
+              border: Border(
+                top: BorderSide(color: border, width: 0.8),
+                bottom: BorderSide(color: border, width: 0.8),
+              ),
+            ),
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              itemCount: sessions.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 6),
+              itemBuilder: (context, index) {
+                final session = sessions[index];
+                final isActive = index == _sessionManager.activeIndex;
+
+                return InkWell(
+                  onTap: () => _sessionManager.selectTab(index),
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isActive ? surface : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: isActive ? border : Colors.transparent,
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          size: 13,
+                          color: isActive ? textPrimary : textSecondary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          session.agent.title.replaceFirst('AI ', ''),
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                            color: isActive ? textPrimary : textSecondary,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        InkWell(
+                          onTap: () => _sessionManager.closeTab(index),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 14,
+                              color: textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+      body: IndexedStack(
+        index: _sessionManager.activeIndex,
+        children: [
+          for (int i = 0; i < sessions.length; i++)
+            _SingleAgentTabWebView(
+              key: ValueKey('agent_tab_${sessions[i].agent.id}'),
+              session: sessions[i],
+              isActive: i == _sessionManager.activeIndex,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Single AI specialist WebView within the multi-tab IndexedStack.
+/// Preserves full state, DOM, and JavaScript execution in memory.
+class _SingleAgentTabWebView extends StatefulWidget {
+  final AgentSessionTab session;
+  final bool isActive;
+
+  const _SingleAgentTabWebView({
+    super.key,
+    required this.session,
+    required this.isActive,
+  });
+
+  @override
+  State<_SingleAgentTabWebView> createState() => _SingleAgentTabWebViewState();
+}
+
+class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
+  final AgentService _agentService = AgentService();
+  final BookmarkService _bookmarkService = BookmarkService();
+  final AuthService _authService = AuthService();
+
+  static const String _turatsMasterScript = r"""
+    (function() {
+      if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
+
+      var styleId = 'ot-hide-controls';
+      var existingStyle = document.getElementById(styleId);
+      if (!existingStyle) {
+        var style = document.createElement('style');
+        style.id = styleId;
+        style.type = 'text/css';
+        style.textContent = `
+          top-bar, .top-bar, header, .header, .app-header, app-header,
+          mat-toolbar, [role="banner"], .header-container, .header-row,
+          .mobile-header, div[class*="mobile-header" i],
+          labs-tailwind-logo, a.logo-link, .logo-container,
+          a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
+          .title-input, input.title-input, .title-container, .notebook-title,
+          .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+          div[class*="title-card" i], div[class*="notebook-header" i],
+          .project-header, div.source-badge-container,
+          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
+          .pro-badge,
+          #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button.mat-tonal-button, a[aria-label*="Google" i],
+          .chat-disclaimer, .disclaimer, .footer-disclaimer, .chat-footer-disclaimer,
+          [class*="disclaimer" i], [id*="disclaimer" i], footer[class*="disclaimer" i],
+          div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
+          app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
+          .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
+          [aria-label*="disclaimer" i], footer, .chat-footer, .conversation-footer,
+          div.chat-input-container + div,
+          div[class*="input-container" i] + div,
+          div[class*="query-container" i] + div,
+          [data-ot-hidden] {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0px !important;
+            max-height: 0px !important;
+            overflow: hidden !important;
+            margin: 0px !important;
+            padding: 0px !important;
+            font-size: 0px !important;
+            line-height: 0px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            border: none !important;
+          }
+          ::-webkit-scrollbar { display: none !important; width: 0px !important; }
+          html, body, * { scrollbar-width: none !important; }
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
+            padding-top: 14px !important;
+            padding-bottom: 24px !important;
+            margin-top: 0px !important;
+          }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+      }
+
+      window.applyTurathFontScale = function(value) {
+        var scale = Number(value);
+        if (!Number.isFinite(scale)) return;
+        scale = Math.max(0.85, Math.min(2, scale));
+        var fontStyle = document.getElementById('ot-font-scale-style');
+        if (!fontStyle) {
+          fontStyle = document.createElement('style');
+          fontStyle.id = 'ot-font-scale-style';
+          (document.head || document.documentElement).appendChild(fontStyle);
+        }
+        fontStyle.textContent = `
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"] {
+            font-size: ${Math.round(scale * 15)}px !important;
+            line-height: 1.65 !important;
+          }
+          .chat-panel-content p, .chat-view p, [role="article"] p,
+          .chat-panel-content span, .chat-view span, [role="article"] span,
+          .chat-panel-content li, .chat-view li, [role="article"] li {
+            font-size: inherit !important;
+            line-height: inherit !important;
+          }
+          [lang="ar"], .arabic {
+            font-size: ${Math.round(scale * 19)}px !important;
+            line-height: 1.8 !important;
+          }
+        `;
+      };
+    })();
+  """;
+
+  static final _cloakScript = UserScript(
+    source: _turatsMasterScript + notebookUiScript,
+    injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+    forMainFrameOnly: true,
+  );
+
+  Timer? _readinessTimer;
+  DateTime? _loadingStarted;
+  int _readySamples = 0;
+  bool _checkingReady = false;
+  bool? _lastIsDark;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.session.resolvedUrl == null) {
+      _fetchUrl();
+    }
+  }
+
+  @override
+  void dispose() {
+    _readinessTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentIsDark = Theme.of(context).brightness == Brightness.dark;
+    if (_lastIsDark != null && _lastIsDark != currentIsDark) {
+      widget.session.webController?.setSettings(
+        settings: InAppWebViewSettings(
+          forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
+          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+          algorithmicDarkeningAllowed: true,
+        ),
+      );
+      _applyThemeCss(currentIsDark);
+    }
+    _lastIsDark = currentIsDark;
+  }
+
+  Future<void> _applyThemeCss(bool isDark) async {
+    final controller = widget.session.webController;
+    if (controller == null) return;
+    try {
+      await controller.evaluateJavascript(
+        source: 'if (window.otNotebook && typeof window.otNotebook.setTheme === "function") { window.otNotebook.setTheme($isDark); } else if (typeof applyOtTheme === "function") { applyOtTheme($isDark); }',
+      );
+    } catch (_) {}
+  }
+
+  void _startReadinessCheck() {
+    _readinessTimer?.cancel();
+    _loadingStarted = DateTime.now();
+    _readySamples = 0;
+    _readinessTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+  }
+
+  Future<void> _checkReady() async {
+    if (_checkingReady || widget.session.webController == null || !mounted) return;
+    _checkingReady = true;
+    try {
+      final controller = widget.session.webController!;
+      final url = await controller.getUrl();
+      final isLogin = url?.host == 'accounts.google.com' ||
+          url?.host == 'accounts.youtube.com' ||
+          url?.host == 'consent.google.com';
+      final result = await controller.evaluateJavascript(
+          source: 'window.otNotebook ? window.otNotebook.ready() : false');
+      _readySamples = result == true ? _readySamples + 1 : 0;
+      if (!mounted) return;
+      final elapsedMs = _loadingStarted != null
+          ? DateTime.now().difference(_loadingStarted!).inMilliseconds
+          : 0;
+      if (isLogin || (_readySamples >= 7 && elapsedMs >= 6500)) {
+        _readinessTimer?.cancel();
+        if (mounted && widget.session.isWebLoading) {
+          setState(() => widget.session.isWebLoading = false);
+        }
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+        _readinessTimer?.cancel();
+        if (mounted) {
+          setState(() {
+            widget.session.isWebLoading = false;
+            widget.session.errorMessage =
+                'AI belum siap merespons. Periksa koneksi lalu coba muat kembali.';
+          });
+        }
+      }
+    } catch (_) {
+    } finally {
+      _checkingReady = false;
+    }
+  }
+
+  Future<void> _fetchUrl() async {
+    final session = widget.session;
+    setState(() {
+      session.isUrlLoading = true;
+      session.errorMessage = null;
+    });
+
+    try {
+      final url = await _agentService.getAgentUrl(session.agent.id);
+      if (!mounted) return;
+      if (url != null && url.isNotEmpty) {
+        setState(() {
+          session.resolvedUrl = url;
+          session.isUrlLoading = false;
+        });
+      } else {
+        setState(() {
+          session.isUrlLoading = false;
+          session.errorMessage = 'Tautan asisten tidak valid.';
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString().toLowerCase();
+      final isPaywall = msg.contains('permission-denied') || msg.contains('berlangganan');
+      setState(() {
+        session.isUrlLoading = false;
+        session.isPaywallRequired = isPaywall;
+        session.errorMessage = isPaywall
+            ? 'Akses asisten ini memerlukan langganan aktif.'
+            : 'Asisten belum bisa dihubungkan. Coba lagi.';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final session = widget.session;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final canvas = OTColors.canvas(isDark);
+
+    if (session.isUrlLoading) {
+      return AppLoader.fullscreen(
+        title: session.agent.title,
+        subtitle: AppCopy.loadingReferences,
+        onCancel: () => AgentSessionManager.instance.closeRoom(),
+      );
+    }
+
+    if (session.errorMessage != null) {
+      return Container(
+        color: canvas,
+        child: AppErrorState(
+          title: session.isPaywallRequired ? 'Akses Terbatas' : 'Asisten Belum Bisa Dibuka',
+          message: session.errorMessage!,
+          icon: session.isPaywallRequired ? Icons.workspace_premium_rounded : Icons.info_outline_rounded,
+          onRetry: _fetchUrl,
+          onBack: () => AgentSessionManager.instance.closeRoom(),
+          backLabel: 'Kembali ke Beranda',
+        ),
+      );
+    }
+
+    final initialUri = WebUri(session.resolvedUrl!);
+
+    return Stack(
+      children: [
+        InAppWebView(
+          initialUrlRequest: URLRequest(url: initialUri),
+          initialUserScripts: UnmodifiableListView([_cloakScript]),
+          initialSettings: InAppWebViewSettings(
+            javaScriptEnabled: true,
+            domStorageEnabled: true,
+            databaseEnabled: true,
+            useWideViewPort: true,
+            loadWithOverviewMode: true,
+            cacheEnabled: true,
+            clearCache: false,
+            transparentBackground: false,
+            allowsInlineMediaPlayback: true,
+            supportZoom: false,
+            displayZoomControls: false,
+            mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+            thirdPartyCookiesEnabled: true,
+            hardwareAcceleration: true,
+            verticalScrollBarEnabled: false,
+            horizontalScrollBarEnabled: false,
+            forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
+            forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+            algorithmicDarkeningAllowed: true,
+            userAgent: 'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
+          ),
+          onWebViewCreated: (controller) {
+            session.webController = controller;
+            final ownerUid = _authService.currentUser?.uid;
+            controller.addJavaScriptHandler(
+              handlerName: 'otCopiedAnswer',
+              callback: (args) async {
+                final url = await controller.getUrl();
+                if (ownerUid == null ||
+                    url?.scheme != 'https' ||
+                    !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) ||
+                    args.isEmpty ||
+                    args.first is! String) {
+                  return false;
+                }
+                try {
+                  final text = (args.first as String).trim();
+                  if (text.isNotEmpty && text.length <= 200000) {
+                    await _bookmarkService.addBookmark(
+                      copiedAnswerBookmark(text, session.agent),
+                      userId: ownerUid,
+                    );
+                    if (context.mounted) {
+                      AppSnackBar.success(context, AppCopy.answerCopied);
+                    }
+                    return true;
+                  }
+                } catch (_) {
+                  if (context.mounted) {
+                    AppSnackBar.error(context, AppCopy.saveFailed);
+                  }
+                }
+                return false;
+              },
+            );
+            _startReadinessCheck();
+          },
+          onLoadStart: (controller, uri) {
+            if (mounted && !session.isWebLoading) {
+              setState(() => session.isWebLoading = true);
+            }
+            _startReadinessCheck();
+          },
+          onLoadStop: (controller, uri) async {
+            await controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+            await _applyThemeCss(isDark);
+            await controller.evaluateJavascript(
+              source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
+            );
+            await _checkReady();
+          },
+          onProgressChanged: (controller, progress) async {
+            if (progress >= 35) {
+              await controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+              await _applyThemeCss(isDark);
+            }
+          },
+          shouldOverrideUrlLoading: (controller, action) async {
+            final uri = action.request.url;
+            if (uri == null) return NavigationActionPolicy.CANCEL;
+            if (NotebookNavigation.allowed(uri.uriValue)) {
+              return NavigationActionPolicy.ALLOW;
+            }
+            return NavigationActionPolicy.CANCEL;
+          },
+        ),
+
+        // Fullscreen pulsing loader until NotebookLM UI is 100% prepared & ready
+        if (session.isWebLoading)
+          Positioned.fill(
+            child: AppLoader.fullscreen(
+              title: session.agent.title,
+              subtitle: AppCopy.loadingReferences,
+              onCancel: () => AgentSessionManager.instance.closeRoom(),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/widgets/app_error_state.dart
 ```dart
 import 'package:flutter/material.dart';
@@ -17296,8 +19552,8 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState.network({
     super.key,
-    this.title = 'Koneksi Terputus',
-    this.message = 'Tidak dapat memuat data naskah saat ini. Periksa koneksi internet lalu coba lagi.',
+    this.title = 'Koneksi terputus',
+    this.message = 'Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -17307,33 +19563,33 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState.unauthorized({
     super.key,
-    this.title = 'Akses Dibatasi',
-    this.message = 'Sesi akun kedaluwarsa atau modul riset membutuhkan peningkatan hak akses.',
+    this.title = 'Akses dibatasi',
+    this.message = 'Sesi akun kedaluwarsa atau modul telaah membutuhkan paket langganan aktif.',
     this.icon = Icons.lock_outline_rounded,
     this.onRetry,
-    this.retryLabel = 'Buka Langganan',
+    this.retryLabel = 'Lihat paket langganan',
     this.onBack,
     this.backLabel = 'Kembali',
   });
 
   const AppErrorState.empty({
     super.key,
-    this.title = 'Naskah Tidak Ditemukan',
-    this.message = 'Tidak ada naskah atau catatan yang sesuai dengan kata kunci atau filter.',
+    this.title = 'Rujukan tidak ditemukan',
+    this.message = 'Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.',
     this.icon = Icons.find_in_page_outlined,
     this.onRetry,
-    this.retryLabel = 'Reset Pencarian',
+    this.retryLabel = 'Atur ulang pencarian',
     this.onBack,
     this.backLabel = 'Kembali',
   });
 
   const AppErrorState.generic({
     super.key,
-    this.title = 'Terjadi Kendala Teknis',
-    this.message = 'Sistem mengalami kendala saat memproses telaah naskah. Silakan coba kembali sesaat lagi.',
+    this.title = 'Terjadi kendala teknis',
+    this.message = 'Sistem mengalami kendala saat memproses telaah. Silakan coba kembali beberapa saat lagi.',
     this.icon = Icons.error_outline_rounded,
     this.onRetry,
-    this.retryLabel = 'Muat Ulang',
+    this.retryLabel = 'Muat ulang',
     this.onBack,
     this.backLabel = 'Kembali',
   });
@@ -17765,14 +20021,15 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
 ### FLUTTER FILE: openturath_ai/lib/widgets/book_row_item.dart
 ```dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/book_model.dart';
 import 'apple_interactive_wrapper.dart';
 
-/// Item baris naskah kanonikal dengan tinggi adaptif, tipografi Amiri berharakat,
-/// isolasi arah baca RTL, dan target sentuh ramah Apple HIG (>= 48px).
+/// Item baris naskah kanonikal dengan desain minimalis terinspirasi dari lembar informasi Google Camera (Pixel EXIF card).
+/// Monokrom murni, tanpa aksen biru, dengan tipografi Arab proporsional dan strip metadata horizontal rapi.
 class BookRowItem extends StatelessWidget {
   const BookRowItem({
     super.key,
@@ -17789,154 +20046,317 @@ class BookRowItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final primaryAccent = OTColors.accent(isDark);
+
+    // Format jilid bersih tanpa duplikasi kata
+    String? formattedVolumes;
+    if (book.volumesDescription != null && book.volumesDescription!.isNotEmpty) {
+      final v = book.volumesDescription!;
+      formattedVolumes = (v.contains('جزء') || v.contains('مجلد') || v.contains('jilid') || v.contains('Jilid'))
+          ? v
+          : '$v jilid';
+    } else if (book.volumesCount != null && book.volumesCount! > 0) {
+      formattedVolumes = '${book.volumesCount} jilid';
+    }
+
+    final hasPages = book.pagesDescription != null &&
+        book.pagesDescription!.isNotEmpty &&
+        book.pagesDescription != '-';
+    final hasTahqiq = book.muhaqqiq != null &&
+        book.muhaqqiq!.isNotEmpty &&
+        book.muhaqqiq != '-';
+    final hasPublisher = book.publisher != null &&
+        book.publisher!.isNotEmpty &&
+        book.publisher != '-';
+    final hasYear = book.printYear != null &&
+        book.printYear!.isNotEmpty &&
+        book.printYear != '-';
 
     return Padding(
       padding: const EdgeInsets.only(bottom: OTSpacing.sm),
       child: AppleInteractiveWrapper(
         onTap: onTap,
-        pressedScale: 0.98,
+        pressedScale: 0.985,
         hapticType: HapticFeedbackType.light,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          constraints: const BoxConstraints(minHeight: 68),
-          padding: const EdgeInsets.symmetric(
-            horizontal: OTSpacing.md,
-            vertical: OTSpacing.sm + 2,
-          ),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: border, width: 0.8),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Leading Icon / Book Badge
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: primaryAccent.withValues(alpha: isDark ? 0.15 : 0.08),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: primaryAccent.withValues(alpha: isDark ? 0.3 : 0.2),
-                    width: 0.8,
-                  ),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.menu_book_rounded,
-                  size: 20,
-                  color: primaryAccent,
-                ),
-              ),
-              const SizedBox(width: OTSpacing.md),
-
-              // Title and Meta Section
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ── Row Atas: Nomor Urut (#id), Kategori (القسم), & Tahun Wafat ──
+                Row(
                   children: [
-                    // Arabic Title with RTL Isolation
-                    Directionality(
-                      textDirection: TextDirection.rtl,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: surfaceSubtle,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: border.withValues(alpha: 0.8), width: 0.6),
+                      ),
                       child: Text(
-                        book.titleArabic,
-                        textAlign: TextAlign.right,
-                        style: OTTypography.arabicReading(
-                          color: textPrimary,
-                        ).copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          height: 1.5,
+                        '#${book.editionId}',
+                        style: GoogleFonts.firaCode(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w600,
+                          color: textSecondary,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 3),
-
-                    // Author & Death Year
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            book.authorArabic,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: OTTypography.caption(color: textSecondary).copyWith(
-                              fontSize: 12.5,
-                            ),
+                    if (book.sectionArabic != null && book.sectionArabic!.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          book.sectionArabic!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: textSecondary,
                           ),
                         ),
-                        if (book.verifiedDeathYearHijri != null) ...[
-                          const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 1.5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.06)
-                                  : Colors.black.withValues(alpha: 0.04),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              'w. ${book.verifiedDeathYearHijri} H',
-                              style: OTTypography.caption(color: textSecondary).copyWith(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+                      ),
+                    ] else
+                      const Spacer(),
+                    if (book.verifiedDeathYearHijri != null && book.verifiedDeathYearHijri! > 0) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: border.withValues(alpha: 0.7), width: 0.5),
+                        ),
+                        child: Text(
+                          'w. ${book.verifiedDeathYearHijri} H',
+                          style: GoogleFonts.outfit(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary,
                           ),
-                        ],
-                      ],
-                    ),
-
-                    // Tags & Labels (Type, Era, Volumes)
-                    if (book.compactLabels.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: book.compactLabels.map((lbl) {
-                          return Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 7,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: primaryAccent.withValues(alpha: isDark ? 0.12 : 0.06),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              lbl,
-                              style: OTTypography.caption(color: primaryAccent).copyWith(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                        ),
                       ),
                     ],
                   ],
                 ),
-              ),
+                const SizedBox(height: 10),
 
-              const SizedBox(width: 8),
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: textSecondary.withValues(alpha: 0.6),
-              ),
-            ],
+                // ── Judul Kitab Bahasa Arab (RTL) ──
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          book.titleArabic,
+                          textAlign: TextAlign.right,
+                          style: OTTypography.arabicReading(
+                            color: textPrimary,
+                          ).copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            height: 1.45,
+                            letterSpacing: 0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: textSecondary.withValues(alpha: 0.4),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+
+                // ── Nama Pengarang (Al-Mu'allif) ──
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.person_outline_rounded,
+                      size: 13,
+                      color: textSecondary.withValues(alpha: 0.7),
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        book.authorArabic,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // ── Metadata Strip Bergaya Informasi Google Camera (EXIF Micro-Pills) ──
+                if (formattedVolumes != null ||
+                    hasPages ||
+                    hasTahqiq ||
+                    hasPublisher ||
+                    hasYear ||
+                    book.reviewedTypeLabel != null ||
+                    book.reviewedEraLabel != null) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: surfaceSubtle,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: border.withValues(alpha: 0.5), width: 0.6),
+                    ),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (formattedVolumes != null)
+                          _buildExifPill(
+                            icon: Icons.layers_outlined,
+                            text: formattedVolumes,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (book.reviewedTypeLabel != null && book.reviewedTypeLabel!.isNotEmpty)
+                          _buildExifPill(
+                            icon: Icons.menu_book_outlined,
+                            text: book.reviewedTypeLabel!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (book.reviewedEraLabel != null && book.reviewedEraLabel!.isNotEmpty)
+                          _buildExifPill(
+                            icon: Icons.history_edu_rounded,
+                            text: book.reviewedEraLabel!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (hasPages)
+                          _buildExifPill(
+                            icon: Icons.article_outlined,
+                            text: '${book.pagesDescription} hlm',
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (hasTahqiq)
+                          _buildExifPill(
+                            icon: Icons.edit_note_rounded,
+                            text: book.muhaqqiq!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                            maxWidth: 160,
+                          ),
+                        if (hasPublisher)
+                          _buildExifPill(
+                            icon: Icons.apartment_rounded,
+                            text: book.publisher!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                            maxWidth: 150,
+                          ),
+                        if (hasYear)
+                          _buildExifPill(
+                            icon: Icons.calendar_today_outlined,
+                            text: book.printYear!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildExifPill({
+    required IconData icon,
+    required String text,
+    required bool isDark,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color border,
+    double? maxWidth,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6.5, vertical: 2),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.04)
+            : Colors.black.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: border.withValues(alpha: 0.4), width: 0.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: textSecondary),
+          const SizedBox(width: 4),
+          if (maxWidth != null)
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: Text(
+                text,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.outfit(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: textPrimary,
+                ),
+              ),
+            )
+          else
+            Text(
+              text,
+              style: GoogleFonts.outfit(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: textPrimary,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -17980,7 +20400,7 @@ class CorpusKindControl extends StatelessWidget {
             ),
             ButtonSegment(
               value: CorpusKind.scholar,
-              label: Text('Karya Ulama'),
+              label: Text('Khazanah Ulama'),
               icon: Icon(Icons.person_outline_rounded, size: 18),
             ),
           ],
@@ -18193,14 +20613,14 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Text(
-            'Tutup Laman Pembayaran?',
+            'Tutup halaman pembayaran?',
             style: GoogleFonts.outfit(
               fontWeight: FontWeight.w600,
               color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
             ),
           ),
           content: Text(
-            'Apakah Anda ingin menutup sesi pembayaran? Transaksi Anda tetap tercatat di sistem.',
+            'Menutup halaman ini tidak otomatis membatalkan transaksi jika pembayaran telah diproses. Transaksi Anda tetap tercatat di sistem.',
             style: GoogleFonts.outfit(
               fontSize: 13,
               color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
@@ -18210,7 +20630,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
-                'Lanjutkan Bayar',
+                'Lanjutkan',
                 style: GoogleFonts.outfit(
                   color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
                   fontWeight: FontWeight.w600,
@@ -18220,7 +20640,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
-                'Ya, Tutup',
+                'Tutup',
                 style: GoogleFonts.outfit(
                   color: AppTheme.appleRed,
                 ),
@@ -18322,7 +20742,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pembayaran Aman DOKU',
+                                    'Pembayaran',
                                     style: GoogleFonts.outfit(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 15,
@@ -18356,7 +20776,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                       child: CircularProgressIndicator(strokeWidth: 2),
                                     )
                                   : Icon(Icons.sync_rounded, size: 20, color: textSecondary),
-                              tooltip: 'Periksa Status Pembayaran & Muat Ulang',
+                              tooltip: 'Muat ulang status',
                             ),
                             // Close Button
                             IconButton(
@@ -18563,7 +20983,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 16),
                             child: Text(
-                              'Alhamdulillah!',
+                              'Alhamdulillah',
                               style: GoogleFonts.outfit(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 26,
@@ -18587,7 +21007,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 14),
                             child: Text(
-                              'Pembayaran Berhasil Diverifikasi',
+                              'Pembayaran berhasil',
                               style: GoogleFonts.outfit(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
@@ -18610,7 +21030,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 12),
                             child: Text(
-                              'Akses ke ruang riset Anda telah aktif secara otomatis. Mengalihkan...',
+                              'Akses modul telah aktif. Mengalihkan…',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(
                                 fontSize: 13,
@@ -18690,13 +21110,13 @@ class EvidenceBottomSheet extends StatelessWidget {
 
   void _copyIbarah(BuildContext context) {
     Clipboard.setData(ClipboardData(text: arabicExcerpt));
-    AppSnackBar.success(context, 'Teks disalin');
+    AppSnackBar.success(context, 'Ibarah tersalin.');
   }
 
   void _shareEvidence(BuildContext context) {
     final buffer = StringBuffer();
     buffer.writeln('📖 *Rujukan Ilmiah: $bookName*');
-    buffer.writeln('Musannif/Pengarang: $author');
+    buffer.writeln('Pengarang: $author');
     buffer.writeln('Disiplin: $category | Halaman: $pageNumber');
     buffer.writeln();
     if (arabicExcerpt.isNotEmpty) {
@@ -18713,7 +21133,7 @@ class EvidenceBottomSheet extends StatelessWidget {
     buffer.writeln('Disimpan melalui *OpenTurath*');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
-    AppSnackBar.success(context, 'Sitasi disalin');
+    AppSnackBar.success(context, 'Sitasi rujukan tersalin.');
   }
 
   Widget _stagger(int index, Widget child) {
@@ -18787,7 +21207,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         Icon(Icons.menu_book_rounded, size: 20, color: accent),
                         const SizedBox(width: 8),
                         Text(
-                          'Sumber $citationNumber',
+                          'Ibarah & rujukan',
                           style: GoogleFonts.outfit(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
@@ -18844,7 +21264,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Penulis', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                Text('Pengarang', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
                                 Flexible(
                                   child: Text(
                                     author,
@@ -18875,7 +21295,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Kategori', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                Text('Disiplin', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
                                 Text(
                                   category,
                                   style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
@@ -18900,7 +21320,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                               Icon(Icons.format_quote_rounded, size: 18, color: accent),
                               const SizedBox(width: 6),
                               Text(
-                                'Kutipan Ibarah Asli (Arab)',
+                                'Naskah ibarah asli',
                                 style: GoogleFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -18931,7 +21351,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: GoogleFonts.amiri(
+                              style: GoogleFonts.scheherazadeNew(
                                 fontSize: 19,
                                 fontWeight: FontWeight.bold,
                                 height: 1.7,
@@ -18952,7 +21372,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Intisari & Analisis Kontekstual',
+                            'Intisari & penjelasan',
                             style: GoogleFonts.outfit(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -18983,7 +21403,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: OutlinedButton.icon(
                               onPressed: () => _copyIbarah(context),
                               icon: const Icon(Icons.copy_rounded, size: 16),
-                              label: const Text('Salin Teks'),
+                              label: const Text('Salin ibarah'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: accent,
                                 side: BorderSide(color: accent.withValues(alpha: 0.6)),
@@ -19003,7 +21423,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: FilledButton.icon(
                               onPressed: () => _launchExternal(context),
                               icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                              label: const Text('Cari di Syamilah'),
+                              label: const Text('Buka di Maktabah Syamilah'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: accent,
                                 foregroundColor: isDark
@@ -19024,7 +21444,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           IconButton.filledTonal(
                             onPressed: () => _shareEvidence(context),
                             icon: const Icon(Icons.share_outlined, size: 18),
-                            tooltip: 'Salin sitasi',
+                            tooltip: 'Salin rujukan ilmiah',
                             style: IconButton.styleFrom(
                               padding: const EdgeInsets.all(13),
                               shape: RoundedRectangleBorder(
@@ -19042,6 +21462,246 @@ class EvidenceBottomSheet extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+```
+
+### FLUTTER FILE: openturath_ai/lib/widgets/legal_document_sheet.dart
+```dart
+library;
+
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../core/legal_copy.dart';
+
+/// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
+/// Mengadopsi prinsip desain "The Quiet Scholar" dengan keterbacaan tinggi,
+/// tipografi terpadu, dan pembagian pasal yang lapang.
+class LegalDocumentSheet extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final List<LegalSection> sections;
+
+  const LegalDocumentSheet({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.sections,
+  });
+
+  /// Buka lembar Ketentuan Layanan
+  static Future<void> showTermsOfService(BuildContext context) {
+    return _show(
+      context,
+      title: LegalCopy.termsTitle,
+      subtitle: 'Versi ${LegalCopy.documentVersion} · Berlaku mulai ${LegalCopy.effectiveDate}',
+      sections: LegalCopy.termsSections,
+    );
+  }
+
+  /// Buka lembar Kebijakan Privasi
+  static Future<void> showPrivacyPolicy(BuildContext context) {
+    return _show(
+      context,
+      title: LegalCopy.privacyTitle,
+      subtitle: 'Versi ${LegalCopy.documentVersion} · Sesuai UU No. 27 Tahun 2022',
+      sections: LegalCopy.privacySections,
+    );
+  }
+
+  /// Buka lembar Pembayaran dan Pengembalian Dana
+  static Future<void> showRefundPolicy(BuildContext context) {
+    return _show(
+      context,
+      title: LegalCopy.refundTitle,
+      subtitle: 'Ketentuan Pembayaran DOKU & Pengembalian Dana',
+      sections: LegalCopy.refundSections,
+    );
+  }
+
+  /// Buka lembar Panduan Penggunaan AI dan Rujukan
+  static Future<void> showAiGuideline(BuildContext context) {
+    return _show(
+      context,
+      title: LegalCopy.aiGuidelineTitle,
+      subtitle: 'Etika Telaah, Pembacaan Konteks, dan Adab Keilmuan',
+      sections: LegalCopy.aiGuidelineSections,
+    );
+  }
+
+  /// Buka lembar Bantuan dan Kontak
+  static Future<void> showContactSupport(BuildContext context) {
+    return _show(
+      context,
+      title: LegalCopy.contactTitle,
+      subtitle: 'Saluran Resmi dan Pengaduan Layanan',
+      sections: LegalCopy.contactSections,
+    );
+  }
+
+  static Future<void> _show(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required List<LegalSection> sections,
+  }) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => LegalDocumentSheet(
+        title: title,
+        subtitle: subtitle,
+        sections: sections,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final canvas = isDark ? const Color(0xFF09090B) : const Color(0xFFFAFAFA);
+    final surface = isDark ? const Color(0xFF141416) : Colors.white;
+    final border = isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7);
+    final textPrimary = isDark ? const Color(0xFFF4F4F5) : const Color(0xFF18181B);
+    final textSecondary = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border.all(color: border, width: 0.8),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Drag Handle
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: textSecondary.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+
+          // Header Row
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.3,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.outfit(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w400,
+                        color: textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                splashRadius: 20,
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+          Divider(height: 1, color: border),
+          const SizedBox(height: 16),
+
+          // Scrollable Sections
+          Expanded(
+            child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              itemCount: sections.length,
+              separatorBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Divider(height: 1, color: border.withValues(alpha: 0.6)),
+              ),
+              itemBuilder: (context, index) {
+                final sec = sections[index];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      sec.title,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.2,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      sec.content,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w400,
+                        height: 1.55,
+                        color: textSecondary,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Close Button
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: FilledButton(
+              onPressed: () => Navigator.pop(context),
+              style: FilledButton.styleFrom(
+                backgroundColor: textPrimary,
+                foregroundColor: canvas,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Tutup',
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: canvas,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -19126,7 +21786,12 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
     });
 
     try {
-      final books = await _service.loadSyafiiCatalog();
+      final List<CanonicalBookPresentation> books;
+      if (widget.agent != null) {
+        books = await _service.loadCatalogForAgent(widget.agent!);
+      } else {
+        books = await _service.loadSyafiiCatalog();
+      }
       if (!mounted) return;
       setState(() {
         _allBooks = books;
@@ -19227,7 +21892,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Cari judul, pengarang, penerbit, atau tahqiq...',
+                    hintText: 'Cari judul, pengarang, penerbit, atau tahkik...',
                     hintStyle: OTTypography.caption(color: textSecondary),
                     prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
@@ -19287,10 +21952,17 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.search_off_rounded, size: 40, color: textSecondary),
+                                      Icon(
+                                        Icons.search_off_rounded,
+                                        size: 40,
+                                        color: textSecondary,
+                                      ),
                                       const SizedBox(height: OTSpacing.sm),
                                       Text(
-                                        'Tidak ada kitab yang cocok dengan pencarian',
+                                        _searchController.text.isNotEmpty
+                                            ? 'Tidak ada kitab yang cocok dengan pencarian'
+                                            : 'Katalog naskah sedang disiapkan.',
+                                        textAlign: TextAlign.center,
                                         style: OTTypography.body(color: textSecondary),
                                       ),
                                     ],
@@ -19449,6 +22121,506 @@ class CanonicalBookTile extends StatelessWidget {
 
 ```
 
+### FLUTTER FILE: openturath_ai/lib/widgets/note_editor_sheet.dart
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/design/ot_spacing.dart';
+import '../core/design/ot_motion.dart';
+import '../models/bookmark_model.dart';
+import '../services/bookmark_service.dart';
+
+class NoteEditorSheet extends StatefulWidget {
+  final BookmarkModel? item;
+  final ValueChanged<BookmarkModel>? onSaved;
+
+  const NoteEditorSheet({
+    super.key,
+    this.item,
+    this.onSaved,
+  });
+
+  static Future<BookmarkModel?> show(
+    BuildContext context, {
+    BookmarkModel? item,
+  }) {
+    return showModalBottomSheet<BookmarkModel>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => NoteEditorSheet(item: item),
+    );
+  }
+
+  @override
+  State<NoteEditorSheet> createState() => _NoteEditorSheetState();
+}
+
+class _NoteEditorSheetState extends State<NoteEditorSheet> {
+  late final TextEditingController _titleController;
+  late final TextEditingController _bodyController;
+  bool _isPreview = false;
+  bool _hasChanges = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.item?.title ?? '');
+    _bodyController = TextEditingController(
+      text: widget.item?.fullAnswer ?? widget.item?.arabicExcerpt ?? '',
+    );
+
+    _titleController.addListener(_markChanged);
+    _bodyController.addListener(_markChanged);
+  }
+
+  void _markChanged() {
+    if (!_hasChanges) {
+      setState(() => _hasChanges = true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _bodyController.dispose();
+    super.dispose();
+  }
+
+  void _applyFormat(String prefix, String suffix, {String defaultText = 'teks'}) {
+    final text = _bodyController.text;
+    final selection = _bodyController.selection;
+    if (selection.start < 0 || selection.end < 0) {
+      final newText = '$text$prefix$defaultText$suffix';
+      _bodyController.text = newText;
+      _bodyController.selection = TextSelection(
+        baseOffset: text.length + prefix.length,
+        extentOffset: text.length + prefix.length + defaultText.length,
+      );
+      return;
+    }
+
+    final selectedText = text.substring(selection.start, selection.end);
+    final insertText = selectedText.isEmpty ? defaultText : selectedText;
+    final replaced = text.replaceRange(
+      selection.start,
+      selection.end,
+      '$prefix$insertText$suffix',
+    );
+
+    _bodyController.text = replaced;
+    _bodyController.selection = TextSelection(
+      baseOffset: selection.start + prefix.length,
+      extentOffset: selection.start + prefix.length + insertText.length,
+    );
+    OTMotion.selection();
+  }
+
+  Future<void> _saveNote() async {
+    final title = _titleController.text.trim();
+    final body = _bodyController.text.trim();
+
+    if (title.isEmpty && body.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Isi judul atau tulis catatan terlebih dahulu.')),
+      );
+      return;
+    }
+
+    final effectiveTitle = title.isNotEmpty
+        ? title
+        : (body.length > 50 ? '${body.substring(0, 50)}...' : body);
+
+    final item = widget.item;
+    final BookmarkModel updated;
+    if (item != null) {
+      updated = item.copyWith(
+        title: effectiveTitle,
+        fullAnswer: body,
+      );
+    } else {
+      updated = BookmarkModel(
+        id: 'note_${DateTime.now().millisecondsSinceEpoch}',
+        title: effectiveTitle,
+        agentId: 'catatan_mandiri',
+        agentTitle: 'Catatan Pribadi',
+        fieldName: 'Catatan Pribadi',
+        fieldId: 'general',
+        arabicExcerpt: '',
+        fullAnswer: body,
+        bookReference: '',
+        pageNumber: '',
+        createdAt: DateTime.now(),
+      );
+    }
+
+    await BookmarkService().addBookmark(updated);
+    widget.onSaved?.call(updated);
+    if (!mounted) return;
+    OTMotion.success();
+    Navigator.pop(context, updated);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
+    final mediaQuery = MediaQuery.of(context);
+
+    return Container(
+      height: mediaQuery.size.height * 0.88,
+      padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border.all(color: border, width: 0.8),
+      ),
+      child: Column(
+        children: [
+          // Drag Handle
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              decoration: BoxDecoration(
+                color: textSecondary.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+
+          // Appbar Row: Mode Toggle, Close, Save
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: 4),
+            child: Row(
+              children: [
+                Text(
+                  widget.item != null ? 'Edit catatan' : 'Catatan baru',
+                  style: OTTypography.screenTitle(color: textPrimary).copyWith(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Spacer(),
+                // Toggle Edit / Preview
+                Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: surfaceSubtle,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: border, width: 0.6),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () => setState(() => _isPreview = false),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: !_isPreview ? textPrimary : Colors.transparent,
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: Text(
+                            'Tulis',
+                            style: OTTypography.captionMedium(
+                              color: !_isPreview
+                                  ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                  : textSecondary,
+                            ).copyWith(fontSize: 11.5),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+                          setState(() => _isPreview = true);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: _isPreview ? textPrimary : Colors.transparent,
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: Text(
+                            'Pratinjau',
+                            style: OTTypography.captionMedium(
+                              color: _isPreview
+                                  ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                  : textSecondary,
+                            ).copyWith(fontSize: 11.5),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                TextButton(
+                  onPressed: _saveNote,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    backgroundColor: textPrimary,
+                    foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: Text(
+                    'Simpan',
+                    style: OTTypography.captionMedium(
+                      color: isDark ? const Color(0xFF18181B) : Colors.white,
+                    ).copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const Divider(height: 1),
+
+          // Formatting Toolbar (Only in Edit mode)
+          if (!_isPreview)
+            Container(
+              height: 42,
+              padding: const EdgeInsets.symmetric(horizontal: OTSpacing.md),
+              decoration: BoxDecoration(
+                color: surfaceSubtle,
+                border: Border(bottom: BorderSide(color: border, width: 0.6)),
+              ),
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _ToolbarBtn(
+                    label: 'B',
+                    tooltip: 'Tebal',
+                    isBold: true,
+                    onTap: () => _applyFormat('**', '**', defaultText: 'teks tebal'),
+                  ),
+                  _ToolbarBtn(
+                    label: 'I',
+                    tooltip: 'Miring',
+                    isItalic: true,
+                    onTap: () => _applyFormat('*', '*', defaultText: 'teks miring'),
+                  ),
+                  _ToolbarBtn(
+                    icon: Icons.format_list_bulleted_rounded,
+                    tooltip: 'Daftar Poin',
+                    onTap: () => _applyFormat('\n- ', '', defaultText: 'poin catatan'),
+                  ),
+                  _ToolbarBtn(
+                    icon: Icons.format_quote_rounded,
+                    tooltip: 'Kutipan',
+                    onTap: () => _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
+                  ),
+                  _ToolbarBtn(
+                    label: '« »',
+                    tooltip: 'Kutipan Arab',
+                    onTap: () => _applyFormat('«', '»', defaultText: 'عبارة'),
+                  ),
+                  _ToolbarBtn(
+                    label: 'H1',
+                    tooltip: 'Judul Bab',
+                    onTap: () => _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
+                  ),
+                  _ToolbarBtn(
+                    label: 'H2',
+                    tooltip: 'Sub-bab',
+                    onTap: () => _applyFormat('\n## ', '\n', defaultText: 'Sub-bab'),
+                  ),
+                ],
+              ),
+            ),
+
+          // Content Area
+          Expanded(
+            child: _isPreview
+                ? SingleChildScrollView(
+                    padding: const EdgeInsets.all(OTSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_titleController.text.trim().isNotEmpty) ...[
+                          Text(
+                            _titleController.text.trim(),
+                            style: GoogleFonts.newsreader(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                              color: textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Divider(color: border.withValues(alpha: 0.6), height: 1),
+                          const SizedBox(height: 16),
+                        ],
+                        _bodyController.text.trim().isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 40),
+                                  child: Text(
+                                    'Belum ada isi catatan.',
+                                    style: OTTypography.body(color: textSecondary),
+                                  ),
+                                ),
+                              )
+                            : MarkdownBody(
+                                data: _bodyController.text,
+                                selectable: true,
+                                styleSheet: MarkdownStyleSheet(
+                                  p: GoogleFonts.outfit(
+                                    fontSize: 14.5,
+                                    height: 1.6,
+                                    color: textPrimary,
+                                  ),
+                                  h1: GoogleFonts.newsreader(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: textPrimary,
+                                  ),
+                                  h2: GoogleFonts.newsreader(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    color: textPrimary,
+                                  ),
+                                  blockquote: GoogleFonts.outfit(
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic,
+                                    color: textSecondary,
+                                  ),
+                                  blockquoteDecoration: BoxDecoration(
+                                    color: surfaceSubtle,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border(
+                                      left: BorderSide(
+                                        color: textPrimary.withValues(alpha: 0.6),
+                                        width: 3.5,
+                                      ),
+                                    ),
+                                  ),
+                                  code: GoogleFonts.sourceCodePro(
+                                    fontSize: 13,
+                                    backgroundColor: surfaceSubtle,
+                                  ),
+                                ),
+                              ),
+                      ],
+                    ),
+                  )
+                : ListView(
+                    padding: const EdgeInsets.all(OTSpacing.lg),
+                    children: [
+                      // Title TextField
+                      TextField(
+                        controller: _titleController,
+                        style: GoogleFonts.newsreader(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: textPrimary,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Judul catatan',
+                          hintStyle: GoogleFonts.newsreader(
+                            fontSize: 20,
+                            color: textSecondary.withValues(alpha: 0.6),
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Divider(color: border.withValues(alpha: 0.5), height: 1),
+                      const SizedBox(height: 14),
+
+                      // Body TextField
+                      TextField(
+                        controller: _bodyController,
+                        maxLines: null,
+                        minLines: 12,
+                        keyboardType: TextInputType.multiline,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14.5,
+                          height: 1.55,
+                          color: textPrimary,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Tulis catatan atau tempel ibarah di sini…',
+                          hintStyle: GoogleFonts.outfit(
+                            fontSize: 14,
+                            color: textSecondary.withValues(alpha: 0.6),
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ToolbarBtn extends StatelessWidget {
+  final String? label;
+  final IconData? icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  final bool isBold;
+  final bool isItalic;
+
+  const _ToolbarBtn({
+    this.label,
+    this.icon,
+    required this.tooltip,
+    required this.onTap,
+    this.isBold = false,
+    this.isItalic = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textSecondary = OTColors.textSecondary(Theme.of(context).brightness == Brightness.dark);
+    final textPrimary = OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark);
+
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          width: 38,
+          height: 32,
+          alignment: Alignment.center,
+          child: icon != null
+              ? Icon(icon, size: 17, color: textSecondary)
+              : Text(
+                  label!,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+                    fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
+                    color: textPrimary,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+```
+
 ### FLUTTER FILE: openturath_ai/lib/widgets/openturath_brand.dart
 ```dart
 import 'package:flutter/material.dart';
@@ -19597,10 +22769,36 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     super.dispose();
   }
 
+  String _humanizeErrorMessage(String raw) {
+    final lower = raw.toLowerCase().replaceAll('_', '-');
+    if (lower.contains('perangkat') || lower.contains('ponsel')) {
+      return raw;
+    }
+    if (lower.contains('not-found')) {
+      return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+    }
+    if (lower.contains('already-exists') || lower.contains('already-used')) {
+      return 'Kode ini sudah pernah ditukarkan sebelumnya.';
+    }
+    if (lower.contains('resource-exhausted') || lower.contains('quota')) {
+      return 'Kuota penukaran untuk kode voucher ini sudah habis.';
+    }
+    if (lower.contains('deadline-exceeded') || lower.contains('expired')) {
+      return 'Masa berlaku kode voucher ini telah berakhir.';
+    }
+    if (lower.contains('failed-precondition')) {
+      return 'Kode voucher ini sudah tidak aktif.';
+    }
+    if (lower.contains('invalid-argument')) {
+      return 'Format penulisan kode voucher belum sesuai.';
+    }
+    return raw;
+  }
+
   Future<void> _handleRedeem() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
-      setState(() => _inlineError = 'Masukkan kode akses');
+      setState(() => _inlineError = 'Masukkan kode voucher');
       return;
     }
 
@@ -19620,13 +22818,13 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     if (success) {
       AppSnackBar.show(
         context,
-        message: 'Akses berhasil diaktifkan',
+        message: 'Voucher berhasil diaktifkan. Akses telaah telah dibuka.',
         type: SnackType.success,
       );
       widget.onSuccess?.call();
       Navigator.of(context).pop();
     } else {
-      setState(() => _inlineError = message);
+      setState(() => _inlineError = _humanizeErrorMessage(message));
     }
   }
 
@@ -19668,7 +22866,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Gunakan kode akses',
+                  'Gunakan voucher',
                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -19679,6 +22877,11 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Masukkan kode voucher yang Anda miliki.',
+              style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
             TextField(
@@ -19698,7 +22901,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 letterSpacing: 1.2,
               ),
               decoration: InputDecoration(
-                hintText: 'Masukkan kode akses',
+                hintText: 'Masukkan kode voucher',
                 hintStyle: OTTypography.body(color: textSecondary).copyWith(
                   letterSpacing: 0,
                   fontSize: 14,
@@ -19738,7 +22941,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 child: _isLoading
                     ? AppLoader(dotSize: 6, color: canvas)
                     : Text(
-                        'Aktifkan',
+                        'Gunakan voucher',
                         style: OTTypography.button(color: canvas),
                       ),
               ),
@@ -19834,17 +23037,17 @@ class SpecialistCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFFEF3C7),
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: isDark ? border : const Color(0xFFFDE68A),
+                            color: isDark ? border : const Color(0xFFE4E4E7),
                             width: 0.8,
                           ),
                         ),
                         child: Text(
                           statusLabel!,
                           style: GoogleFonts.outfit(
-                            color: isDark ? textSecondary : const Color(0xFFB45309),
+                            color: textSecondary,
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                           ),
@@ -19858,32 +23061,35 @@ class SpecialistCard extends StatelessWidget {
               // Action Buttons: Optional Pustaka + Chevron
               if (onOpenLibrary != null) ...[
                 const SizedBox(width: 8),
-                AppleInteractiveWrapper(
-                  onTap: onOpenLibrary,
-                  pressedScale: 0.94,
-                  hapticType: HapticFeedbackType.selection,
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: surfaceSubtle,
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: border, width: 0.8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.menu_book_outlined, size: 13, color: textSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Pustaka',
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: textSecondary,
+                Tooltip(
+                  message: 'Kitab rujukan',
+                  child: AppleInteractiveWrapper(
+                    onTap: onOpenLibrary,
+                    pressedScale: 0.94,
+                    hapticType: HapticFeedbackType.selection,
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: surfaceSubtle,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: border, width: 0.8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.menu_book_outlined, size: 13, color: textSecondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Pustaka',
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: textSecondary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -20140,6 +23346,129 @@ void main() {
 
 ```
 
+### TEST FILE: openturath_ai/test/agent_session_manager_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/services/agent_session_manager.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  final agentSyafii = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
+  final agentHanafi = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_hanafi');
+  final agentMaliki = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_maliki');
+
+  setUp(() {
+    AgentSessionManager.instance.closeAll();
+  });
+
+  tearDown(() {
+    AgentSessionManager.instance.closeAll();
+  });
+
+  group('AgentSessionManager Multi-Tab Keep-Alive Suite', () {
+    test('Starts empty and closed', () {
+      final manager = AgentSessionManager.instance;
+      expect(manager.tabs.isEmpty, isTrue);
+      expect(manager.isOpen, isFalse);
+      expect(manager.activeTab, isNull);
+    });
+
+    test('Opening an agent adds a tab and opens the room', () {
+      final manager = AgentSessionManager.instance;
+      manager.openAgent(agentSyafii);
+
+      expect(manager.tabs.length, 1);
+      expect(manager.isOpen, isTrue);
+      expect(manager.activeIndex, 0);
+      expect(manager.activeTab?.agent.id, 'fiqh_syafii');
+    });
+
+    test('Opening same agent twice switches to existing tab without reload or duplication', () {
+      final manager = AgentSessionManager.instance;
+      manager.openAgent(agentSyafii);
+      manager.openAgent(agentHanafi);
+
+      expect(manager.tabs.length, 2);
+      expect(manager.activeIndex, 1);
+      expect(manager.activeTab?.agent.id, 'fiqh_hanafi');
+
+      // Open syafii again
+      manager.openAgent(agentSyafii);
+
+      // Should switch back to tab 0 without adding a 3rd tab
+      expect(manager.tabs.length, 2);
+      expect(manager.activeIndex, 0);
+      expect(manager.activeTab?.agent.id, 'fiqh_syafii');
+    });
+
+    test('closeRoom() hides the room while preserving active tabs in background', () {
+      final manager = AgentSessionManager.instance;
+      manager.openAgent(agentSyafii);
+      manager.openAgent(agentMaliki);
+
+      expect(manager.isOpen, isTrue);
+      expect(manager.tabs.length, 2);
+
+      // User presses back to return to dashboard
+      manager.closeRoom();
+
+      // Room is hidden, but tabs and WebViews remain completely alive in memory
+      expect(manager.isOpen, isFalse);
+      expect(manager.tabs.length, 2);
+      expect(manager.tabs[0].agent.id, 'fiqh_syafii');
+      expect(manager.tabs[1].agent.id, 'fiqh_maliki');
+
+      // User clicks Maliki again from dashboard: opens instantly with zero loading
+      manager.openAgent(agentMaliki);
+      expect(manager.isOpen, isTrue);
+      expect(manager.activeIndex, 1);
+    });
+
+    test('Closing a tab via closeTab() adjusts activeIndex correctly', () {
+      final manager = AgentSessionManager.instance;
+      manager.openAgent(agentSyafii);
+      manager.openAgent(agentHanafi);
+      manager.openAgent(agentMaliki);
+
+      expect(manager.tabs.length, 3);
+      expect(manager.activeIndex, 2); // on Maliki
+
+      // Close Hanafi (index 1)
+      manager.closeTab(1);
+
+      expect(manager.tabs.length, 2);
+      expect(manager.tabs[0].agent.id, 'fiqh_syafii');
+      expect(manager.tabs[1].agent.id, 'fiqh_maliki');
+      expect(manager.activeIndex, 1);
+
+      // Close remaining tabs
+      manager.closeTab(1);
+      expect(manager.tabs.length, 1);
+      expect(manager.activeIndex, 0);
+
+      manager.closeTab(0);
+      expect(manager.tabs.isEmpty, isTrue);
+      expect(manager.isOpen, isFalse);
+    });
+
+    test('closeAll() completely clears sessions and resets state on sign out', () {
+      final manager = AgentSessionManager.instance;
+      manager.openAgent(agentSyafii);
+      manager.openAgent(agentHanafi);
+
+      manager.closeAll();
+
+      expect(manager.tabs.isEmpty, isTrue);
+      expect(manager.isOpen, isFalse);
+      expect(manager.activeIndex, 0);
+    });
+  });
+}
+
+```
+
 ### TEST FILE: openturath_ai/test/application_states_test.dart
 ```dart
 import 'package:flutter/material.dart';
@@ -20181,7 +23510,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Koneksi Terputus'), findsOneWidget);
+      expect(find.text('Koneksi terputus'), findsOneWidget);
       expect(find.byIcon(Icons.wifi_off_rounded), findsOneWidget);
 
       await tester.tap(find.text('Coba lagi'));
@@ -20197,7 +23526,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Akses Dibatasi'), findsOneWidget);
+      expect(find.text('Akses dibatasi'), findsOneWidget);
       expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
     });
 
@@ -20210,7 +23539,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Naskah Tidak Ditemukan'), findsOneWidget);
+      expect(find.text('Rujukan tidak ditemukan'), findsOneWidget);
       expect(find.byIcon(Icons.find_in_page_outlined), findsOneWidget);
     });
 
@@ -20223,7 +23552,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Terjadi Kendala Teknis'), findsOneWidget);
+      expect(find.text('Terjadi kendala teknis'), findsOneWidget);
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
     });
 
@@ -20590,7 +23919,7 @@ import 'package:openturath_ai/widgets/book_row_item.dart';
 
 void main() {
   group('Milestone 1 — Book Catalog & Navigation Architecture', () {
-    final sampleBook = CanonicalBookPresentation(
+    const sampleBook = CanonicalBookPresentation(
       editionId: 'kitab_al_umm_shafii',
       titleArabic: 'كتاب الأم',
       authorArabic: 'الإمام محمد بن إدريس الشافعي',
@@ -20623,16 +23952,16 @@ void main() {
       expect(find.text('w. 204 H'), findsOneWidget);
       expect(find.text('Asal Mazhab'), findsOneWidget);
       expect(find.text('Mutaqaddimin'), findsOneWidget);
-      expect(find.text('8 Jilid'), findsOneWidget);
+      expect(find.text('8 jilid'), findsOneWidget);
 
       // Tap the item
       await tester.tap(find.byType(BookRowItem));
       expect(tapped, isTrue);
     });
 
-    testWidgets('BookDetailScreen renders 5 scholarly metadata sections', (tester) async {
+    testWidgets('BookDetailScreen renders 5 scholarly metadata sections in Arabic RTL', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: BookDetailScreen(book: sampleBook),
         ),
       );
@@ -20641,25 +23970,26 @@ void main() {
       expect(find.text('كتاب الأم'), findsOneWidget);
       expect(find.text('kitab_al_umm_shafii'), findsOneWidget);
 
-      // Card 2: Muallif
-      expect(find.text('MUALLIF / PENGARANG'), findsOneWidget);
+      // Card 2: Pengarang (المؤلف والوفاة)
+      expect(find.text('المؤلف والوفاة'), findsOneWidget);
       expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
+      expect(find.text('سنة الوفاة: 204 هـ'), findsOneWidget);
 
-      // Card 3: Klasifikasi Ilmiah
-      expect(find.text('KLASIFIKASI ILMIAH'), findsOneWidget);
+      // Card 3: Klasifikasi & Kandungan (التصنيف والمصنف)
+      expect(find.text('التصنيف والمصنف'), findsOneWidget);
       expect(find.text('Asal Mazhab'), findsOneWidget);
-      expect(find.text('Mutaqaddimin'), findsOneWidget);
-      expect(find.text('8 Jilid'), findsOneWidget);
+      expect(find.text('عصر المتقدمين (حتى ٤٠٠ هـ)'), findsOneWidget);
+      expect(find.text('8 أجزاء'), findsOneWidget);
 
-      // Card 4: Data Edisi & Tahqiq
-      expect(find.text('DATA EDISI & TAHQIQ'), findsOneWidget);
+      // Card 4: Penerbitan & Tahkik (بيانات الطبع والتحقيق)
+      expect(find.text('بيانات الطبع والتحقيق'), findsOneWidget);
       expect(find.text('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
       expect(find.text('Dr. Rifa\'at Fauzi Abdul Muthalib'), findsOneWidget);
 
-      // Card 5: Aksi Riset
-      expect(find.text('AKSI & TELAAH RISET'), findsOneWidget);
-      expect(find.text('Buka Ruang Kajian'), findsOneWidget);
-      expect(find.text('Simpan ke Catatan Riset'), findsOneWidget);
+      // Aksi Riset telah dihapus sesuai prinsip The Quiet Scholar
+      expect(find.text('AKSI & TELAAH RISET'), findsNothing);
+      expect(find.text('Buka Ruang Kajian'), findsNothing);
+      expect(find.text('Simpan ke Catatan Riset'), findsNothing);
     });
 
     testWidgets('BookCatalogScreen displays title and search input', (tester) async {
@@ -20669,7 +23999,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Pustaka Kitab Kanonikal'), findsOneWidget);
+      expect(find.text('Kitab rujukan'), findsOneWidget);
       expect(find.text('87 Kitab Mazhab Syafi\'i'), findsOneWidget);
       expect(find.text('Semua Era'), findsOneWidget);
     });
@@ -20718,6 +24048,148 @@ void main() {
       expect(presentation.reviewedEraLabel, equals('Mutaqaddimin'));
       expect(presentation.compactLabels, contains('Asal Mazhab'));
       expect(presentation.compactLabels, contains('8 Jilid'));
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/canonical_multi_discipline_catalog_test.dart
+```dart
+import 'dart:io';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/models/agent_model.dart';
+import 'package:openturath_ai/models/book_model.dart';
+import 'package:openturath_ai/services/canonical_library_service.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('Canonical Multi-Discipline Catalog Integration (2,226 Kitab)', () {
+    test('All 6 JSON catalog asset files exist and parse exactly 2,226 books', () {
+      final baseDir = 'assets/data';
+      final files = {
+        '01_KATALOG_FIKIH_SYAFII.json': 87,
+        '02_KATALOG_HADITS_DAN_SYARAH.json': 1173,
+        '03_KATALOG_USHUL_FIKIH.json': 241,
+        '04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json': 449,
+        '05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json': 218,
+        '06_KATALOG_FIKIH_TAHAWWULAT.json': 58,
+      };
+
+      int totalCount = 0;
+      for (final entry in files.entries) {
+        final file = File('$baseDir/${entry.key}');
+        expect(file.existsSync(), isTrue, reason: '${entry.key} must exist');
+        final content = file.readAsStringSync();
+        final books = parseSyamilahCatalog(content);
+        expect(books.length, equals(entry.value), reason: '${entry.key} count mismatch');
+        totalCount += books.length;
+      }
+
+      expect(totalCount, equals(2226));
+    });
+
+    test('All 6 active specialist agents have catalogId set for Pustaka button', () {
+      final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive).toList();
+      expect(activeAgents.length, greaterThanOrEqualTo(6));
+      for (final agent in activeAgents) {
+        expect(agent.catalogId, isNotNull, reason: 'Agent ${agent.id} must have catalogId');
+        expect(agent.catalogId, startsWith('canonical_'));
+      }
+    });
+
+    test('CanonicalBookPresentation parses Syamilah attributes and pagesDescription accurately', () {
+      const sampleHadithJson = '''
+      [
+        {
+          "tahun_wafat": 256,
+          "القسم": "كتب السنة",
+          "الاسم_المختصر": "صحيح البخاري",
+          "الكتاب": "الجامع المسند الصحيح المختصر من أمور رسول الله صلى الله عليه وسلم وسننه وأيامه",
+          "المؤلف": "محمد بن إسماعيل أبو عبدالله البخاري الجعفي",
+          "المحقق_أو_المعتني": "محمد زهير بن ناصر الناصر",
+          "الناشر": "دار طوق النجاة",
+          "سنة_الطبع": "1422هـ",
+          "عدد_الأجزاء": "9",
+          "عدد_الصفحات": "3882",
+          "id": 101
+        }
+      ]
+      ''';
+
+      final books = parseSyamilahCatalog(sampleHadithJson);
+      expect(books.length, equals(1));
+      final b = books.first;
+      expect(b.editionId, equals('101'));
+      expect(b.verifiedDeathYearHijri, equals(256));
+      expect(b.sectionArabic, equals('كتب السنة'));
+      expect(b.shortTitleArabic, equals('صحيح البخاري'));
+      expect(b.pagesDescription, equals('3882'));
+      expect(b.compactLabels, contains('3882 Hlm'));
+      expect(b.titleArabic, contains('الجامع المسند'));
+      expect(b.authorArabic, contains('البخاري'));
+      expect(b.muhaqqiq, contains('محمد زهير'));
+      expect(b.publisher, equals('دار طوق النجاة'));
+      expect(b.printYear, equals('1422هـ'));
+      expect(b.volumesDescription, equals('9'));
+      expect(b.volumesCount, equals(9));
+    });
+
+    test('CanonicalLibraryService filterBooks filters by century, section, and query with harakat', () {
+      final books = [
+        CanonicalBookPresentation(
+          editionId: '1',
+          titleArabic: 'صَحِيحُ البُخَارِيِّ',
+          shortTitleArabic: 'صحيح البخاري',
+          authorArabic: 'الإمام البخاري',
+          verifiedDeathYearHijri: 256,
+          sectionArabic: 'كتب السنة',
+          muhaqqiq: 'زهير الناصر',
+        ),
+        CanonicalBookPresentation(
+          editionId: '2',
+          titleArabic: 'فَتْحُ البَارِي شَرْحُ صَحِيحِ البُخَارِي',
+          shortTitleArabic: 'فتح الباري',
+          authorArabic: 'ابن حجر العسقلاني',
+          verifiedDeathYearHijri: 852,
+          sectionArabic: 'كتب السنة',
+          muhaqqiq: 'محب الدين الخطيب',
+        ),
+        CanonicalBookPresentation(
+          editionId: '3',
+          titleArabic: 'الكشاف عن حقائق غوامض التنزيل',
+          shortTitleArabic: 'تفسير الزمخشري',
+          authorArabic: 'الزمخشري',
+          verifiedDeathYearHijri: 538,
+          sectionArabic: 'التفسير وعلوم القرآن (Balaghah)',
+        ),
+      ];
+
+      final service = CanonicalLibraryService.instance;
+
+      // 1. Search without diacritics finding diacritic title
+      final r1 = service.filterBooks(books, 'صحيح البخاري');
+      expect(r1.length, equals(2));
+
+      // 2. Search by author with diacritic variation
+      final r2 = service.filterBooks(books, 'البخاري');
+      expect(r2.length, equals(2));
+
+      // 3. Century Filter: Salaf (<= 300 H)
+      final r3 = service.filterBooks(books, '', centuryFilter: 'Salaf (≤ 300 H)');
+      expect(r3.length, equals(1));
+      expect(r3.first.editionId, equals('1'));
+
+      // 4. Century Filter: Muta'akhkhirin (601-1100 H)
+      final r4 = service.filterBooks(books, '', centuryFilter: 'Muta\'akhkhirin (601-1100 H)');
+      expect(r4.length, equals(1));
+      expect(r4.first.editionId, equals('2'));
+
+      // 5. Section filter
+      final r5 = service.filterBooks(books, '', sectionFilter: 'التفسير وعلوم القرآن (Balaghah)');
+      expect(r5.length, equals(1));
+      expect(r5.first.editionId, equals('3'));
     });
   });
 }
@@ -20774,7 +24246,7 @@ void main() {
     test('Canonical navigation labels use concise, quiet terms', () {
       expect(AppCopy.navHome, equals('Beranda'));
       expect(AppCopy.navStudies, equals('Asisten AI'));
-      expect(AppCopy.navSaved, equals('Tersimpan'));
+      expect(AppCopy.navSaved, equals('Catatan'));
       expect(AppCopy.navSettings, equals('Pengaturan'));
     });
 
@@ -21028,7 +24500,7 @@ void main() {
       expect(AppTheme.borderLight, equals(const Color(0xFFE5E7EB)));
       expect(AppTheme.borderDark, equals(const Color(0xFF27272A)));
       expect(AppTheme.accentLight, equals(const Color(0xFF18181B)));
-      expect(AppTheme.accentDark, equals(const Color(0xFF60A5FA)));
+      expect(AppTheme.accentDark, equals(const Color(0xFFFAFAFA)));
       expect(AppTheme.citationBgLight, equals(const Color(0xFFF1F5F9)));
       expect(AppTheme.citationBgDark, equals(const Color(0xFF1E1E22)));
     });
@@ -21166,9 +24638,9 @@ void main() {
       expect(OTColors.textPrimaryDark, const Color(0xFFFAFAFA));
       expect(OTColors.textSecondaryDark, const Color(0xFFA1A1AA));
 
-      // 3. Scholarly sapphire accents
-      expect(OTColors.accentLight, const Color(0xFF2563EB));
-      expect(OTColors.accentDark, const Color(0xFF60A5FA));
+      // 3. Scholarly pure monochrome accents
+      expect(OTColors.accentLight, const Color(0xFF18181B));
+      expect(OTColors.accentDark, const Color(0xFFFAFAFA));
 
       // 4. Adaptive context helpers
       expect(OTColors.canvas(false), OTColors.canvasLight);
@@ -21218,7 +24690,7 @@ void main() {
       expect(button.fontSize, 14);
       expect(button.fontWeight, FontWeight.w600);
 
-      // 3. Arabic Scholarly layer (Amiri)
+      // 3. Arabic Scholarly layer (Scheherazade New)
       final arDisplay = OTTypography.arabicDisplay();
       expect(arDisplay.fontSize, 24);
       expect(arDisplay.fontWeight, FontWeight.w700);
@@ -21286,6 +24758,68 @@ void main() {
       ]) {
         expect(val % 4.0, 0.0);
       }
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/device_service_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/services/device_service.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  group('DeviceService & Fingerprint Hashing', () {
+    test('computeHash produces valid 64-char lowercase hex string', () {
+      final hash = DeviceService.computeHash(
+        rawId: '4a6b8c0d1e2f3a4b',
+        brand: 'Samsung',
+        model: 'SM-S918B',
+      );
+
+      expect(hash.length, equals(64));
+      expect(RegExp(r'^[a-f0-9]{64}$').hasMatch(hash), isTrue);
+    });
+
+    test('computeHash is case-insensitive for brand and model normalization', () {
+      final hash1 = DeviceService.computeHash(
+        rawId: 'android_id_123',
+        brand: 'SAMSUNG',
+        model: 'Galaxy-A54',
+      );
+      final hash2 = DeviceService.computeHash(
+        rawId: 'android_id_123',
+        brand: 'samsung',
+        model: 'galaxy-a54',
+      );
+
+      expect(hash1, equals(hash2));
+    });
+
+    test('Different rawId produces distinct hashes (avalanche effect)', () {
+      final hashA = DeviceService.computeHash(
+        rawId: 'device_alpha',
+        brand: 'xiaomi',
+        model: 'redmi_12',
+      );
+      final hashB = DeviceService.computeHash(
+        rawId: 'device_beta',
+        brand: 'xiaomi',
+        model: 'redmi_12',
+      );
+
+      expect(hashA, isNot(equals(hashB)));
+    });
+
+    test('getDeviceFingerprint returns a non-empty fingerprint safely in test environment', () async {
+      final service = DeviceService();
+      final fp = await service.getDeviceFingerprint();
+
+      expect(fp.deviceId.length, equals(64));
+      expect(fp.model.isNotEmpty, isTrue);
+      expect(fp.brand.isNotEmpty, isTrue);
     });
   });
 }
@@ -21439,7 +24973,7 @@ void main() {
       // Sovereign Tahawwulat agent check
       final tahawwulatAgent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
       expect(tahawwulatAgent.fieldId, 'fiqh_tahawwulat');
-      expect(tahawwulatAgent.price1m, 50000);
+      expect(tahawwulatAgent.price1m, 49000);
       expect(tahawwulatAgent.isActive, isTrue);
     });
 
@@ -21454,12 +24988,12 @@ void main() {
       expect(AppConfig.themeNotifier.value, ThemeMode.system);
     });
 
-    test('AppTheme defines scholarly sapphire accent and parchment reading surface tokens', () {
-      expect(AppTheme.accentDark, const Color(0xFF60A5FA));
+    test('AppTheme defines pure monochrome accent and parchment reading surface tokens', () {
+      expect(AppTheme.accentDark, const Color(0xFFFAFAFA));
       expect(AppTheme.accentLight, const Color(0xFF18181B));
       expect(AppTheme.readingCanvasParchmentLight, const Color(0xFFFBF7EE));
       expect(AppTheme.readingCanvasParchmentDark, const Color(0xFF1C1A17));
-      expect(AppTheme.scholarlyIndigo, const Color(0xFF4F46E5));
+      expect(AppTheme.scholarlyIndigo, const Color(0xFF18181B));
     });
   });
 }
@@ -21485,8 +25019,8 @@ void main() {
       for (final agent in activeAgents) {
         expect(agent.price1m, isNotNull);
         expect(agent.price1m!, greaterThan(0));
-        // All individual monthly plans are unified at 50,000 IDR
-        expect(agent.price1m, equals(50000));
+        // All individual monthly plans are unified at 49,000 IDR
+        expect(agent.price1m, equals(49000));
       }
     });
 
@@ -21575,6 +25109,28 @@ void main() {
       expect(SubscriptionService.normalizeCode(' santri_123 '), equals('SANTRI_123'));
     });
 
+    test('redeemErrorMessage formats neutral copy and preserves device protection messages', () {
+      // 1. Standar kode sudah pernah dipakai (netral 'Kode ini')
+      expect(
+        SubscriptionService.redeemErrorMessage('already-exists'),
+        equals('Kode ini sudah pernah ditukarkan sebelumnya.'),
+      );
+
+      // 2. Pesan proteksi perangkat dari server diteruskan utuh
+      const deviceMsg = 'Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya.';
+      expect(
+        SubscriptionService.redeemErrorMessage('already-exists', deviceMsg),
+        equals(deviceMsg),
+      );
+
+      // 3. Pesan proteksi ponsel fisik / anti emulator diteruskan utuh
+      const emulatorMsg = 'Kode ini hanya dapat diaktifkan melalui ponsel fisik asli.';
+      expect(
+        SubscriptionService.redeemErrorMessage('failed-precondition', emulatorMsg),
+        equals(emulatorMsg),
+      );
+    });
+
     test('addCalendarMonthsClamped correctly handles leap year 29 Feb and non-leap 28 Feb boundary conditions (F-11)', () {
       // 1. Tahun kabisat (2024): 31 Januari + 1 bulan = 29 Februari 2024
       final jan31Leap = DateTime(2024, 1, 31);
@@ -21608,6 +25164,215 @@ void main() {
       final jun30 = HijriDateUtils.addCalendarMonthsClamped(may31, 1);
       expect(jun30.month, equals(6));
       expect(jun30.day, equals(30));
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/legal_policy_test.dart
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/legal_copy.dart';
+import 'package:openturath_ai/widgets/legal_document_sheet.dart';
+
+void main() {
+  group('Audit Integritas Legal & Kebijakan OpenTurath', () {
+    test('Semua placeholder [[...]] wajib telah diselesaikan (bebas dari kurung siku ganda)', () {
+      final placeholderRegex = RegExp(r'\[\[.+?\]\]');
+
+      // 1. Cek Identitas & Bab 1.2
+      expect(placeholderRegex.hasMatch(LegalCopy.aboutAppParagraph1), isFalse);
+      expect(placeholderRegex.hasMatch(LegalCopy.aboutAppParagraph2), isFalse);
+      expect(placeholderRegex.hasMatch(LegalCopy.aboutAppTagline), isFalse);
+
+      // 2. Cek Bab 2: Ketentuan Layanan
+      for (final sec in LegalCopy.termsSections) {
+        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+      }
+
+      // 3. Cek Bab 3: Kebijakan Privasi
+      for (final sec in LegalCopy.privacySections) {
+        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+      }
+
+      // 4. Cek Bab 4: Pembayaran & Refund
+      for (final sec in LegalCopy.refundSections) {
+        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+      }
+
+      // 5. Cek Bab 7: Panduan AI
+      for (final sec in LegalCopy.aiGuidelineSections) {
+        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+      }
+
+      // 6. Cek Bab 9: Bantuan & Kontak
+      for (final sec in LegalCopy.contactSections) {
+        expect(placeholderRegex.hasMatch(sec.title), isFalse, reason: 'Placeholder ditemukan di judul: ${sec.title}');
+        expect(placeholderRegex.hasMatch(sec.content), isFalse, reason: 'Placeholder ditemukan di pasal: ${sec.title}');
+      }
+
+      // 7. Cek Teks Hapus Akun Kanonik
+      expect(placeholderRegex.hasMatch(LegalCopy.deleteAccountConfirmationBody), isFalse);
+    });
+
+    test('Etika The Quiet Scholar: Bebas tanda seru (!) pada seluruh dokumen hukum dan kebijakan', () {
+      // Periksa semua bagian di LegalCopy
+      for (final sec in LegalCopy.termsSections) {
+        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+      }
+
+      for (final sec in LegalCopy.privacySections) {
+        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+      }
+
+      for (final sec in LegalCopy.refundSections) {
+        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+      }
+
+      for (final sec in LegalCopy.aiGuidelineSections) {
+        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+      }
+
+      for (final sec in LegalCopy.contactSections) {
+        expect(sec.title.contains('!'), isFalse, reason: 'Tanda seru di judul: ${sec.title}');
+        expect(sec.content.contains('!'), isFalse, reason: 'Tanda seru di isi: ${sec.title}');
+      }
+
+      expect(LegalCopy.deleteAccountConfirmationBody.contains('!'), isFalse);
+    });
+
+    test('Keutuhan struktur dan pasal-pasal kanonik', () {
+      expect(LegalCopy.termsSections.length, equals(14));
+      expect(LegalCopy.privacySections.length, equals(13));
+      expect(LegalCopy.refundSections.length, equals(7));
+      expect(LegalCopy.aiGuidelineSections.length, equals(5));
+      expect(LegalCopy.contactSections.length, equals(3));
+
+      // Verifikasi saluran email resmi openturath@gmail.com
+      expect(LegalCopy.contactSupportEmail, equals('openturath@gmail.com'));
+      expect(LegalCopy.contactPrivacyEmail, equals('openturath@gmail.com'));
+      expect(LegalCopy.contactCopyrightEmail, equals('openturath@gmail.com'));
+
+      // Verifikasi penegasan manual renewal tanpa auto-debit
+      final manualRenewalText = LegalCopy.refundSections[2].content;
+      expect(manualRenewalText, contains('manual'));
+      expect(manualRenewalText.toLowerCase(), contains('tanpa'));
+    });
+
+    testWidgets('LegalDocumentSheet dapat ditampilkan tanpa crash untuk setiap dokumen', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () => LegalDocumentSheet.showTermsOfService(context),
+                child: const Text('Buka Ketentuan'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Buka Ketentuan'));
+      await tester.pumpAndSettle();
+
+      expect(find.text(LegalCopy.termsTitle), findsOneWidget);
+      expect(find.text('Tutup'), findsOneWidget);
+    });
+  });
+}
+
+```
+
+### TEST FILE: openturath_ai/test/navigation_guard_test.dart
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/navigation_guard.dart';
+
+void main() {
+  setUp(() {
+    NavigationGuard.resetForTesting();
+  });
+
+  group('NavigationGuard Single-Flight Tests', () {
+    testWidgets('safePushNamed ignores concurrent duplicate navigation calls', (tester) async {
+      int pushCallCount = 0;
+
+      final testApp = MaterialApp(
+        onGenerateRoute: (settings) {
+          if (settings.name == '/test_sub') {
+            pushCallCount++;
+            return MaterialPageRoute(
+              builder: (context) => const Scaffold(body: Text('Subscription Page')),
+              settings: settings,
+            );
+          }
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Simulasikan 3 kali tap bersamaan saat lag
+                    NavigationGuard.safePushNamed(context, '/test_sub');
+                    NavigationGuard.safePushNamed(context, '/test_sub');
+                    NavigationGuard.safePushNamed(context, '/test_sub');
+                  },
+                  child: const Text('Upgrade'),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+      await tester.pumpWidget(testApp);
+      await tester.tap(find.text('Upgrade'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Subscription Page'), findsOneWidget);
+      // Tepat 1 kali navigasi diproses, 2 panggilan duplikat lainnya diabaikan!
+      expect(pushCallCount, equals(1));
+    });
+
+    testWidgets('safeNavigate executes only one action during concurrent invocations', (tester) async {
+      int actionCount = 0;
+
+      final testApp = MaterialApp(
+        home: Builder(
+          builder: (context) {
+            return ElevatedButton(
+              onPressed: () {
+                for (int i = 0; i < 5; i++) {
+                  NavigationGuard.safeNavigate(context, () async {
+                    await Future.delayed(const Duration(milliseconds: 50));
+                    actionCount++;
+                    return true;
+                  });
+                }
+              },
+              child: const Text('Concurrent Action'),
+            );
+          },
+        ),
+      );
+
+      await tester.pumpWidget(testApp);
+      await tester.tap(find.text('Concurrent Action'));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
+
+      expect(actionCount, equals(1));
     });
   });
 }
@@ -21818,6 +25583,104 @@ void main() {
 
 ```
 
+### TEST FILE: openturath_ai/test/telemetry_service_test.dart
+```dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/services/telemetry_service.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('TelemetryService Tests', () {
+    final telemetry = TelemetryService.instance;
+
+    test('sanitizeData masks sensitive tokens, passwords, and cookies', () {
+      // 1. Bearer Token
+      final withToken = 'Request header: Bearer ya29.a0AfH6SMD123456';
+      expect(
+        telemetry.sanitizeData(withToken),
+        contains('Bearer [REDACTED_TOKEN]'),
+      );
+
+      // 2. Passwords and secrets
+      final withPassword = '{"user": "admin", "password": "supersecret123"}';
+      expect(
+        telemetry.sanitizeData(withPassword),
+        contains('password: "[REDACTED]"'),
+      );
+
+      // 3. API Key
+      final withApiKey = 'key apiKey="AIzaSyA123456789"';
+      expect(
+        telemetry.sanitizeData(withApiKey),
+        contains('apiKey: "[REDACTED]"'),
+      );
+
+      // 4. Google Cookies (SID / HSID)
+      final withCookie = 'Cookie: SID=abc123xyz; HSID=def456; other=123';
+      expect(
+        telemetry.sanitizeData(withCookie),
+        contains('SID=[REDACTED_COOKIE]'),
+      );
+      expect(
+        telemetry.sanitizeData(withCookie),
+        contains('HSID=[REDACTED_COOKIE]'),
+      );
+
+      // 5. Voucher code
+      final withVoucher = 'Redeem attempt voucher="PERDANA7HARI"';
+      expect(
+        telemetry.sanitizeData(withVoucher),
+        contains('voucher: "[REDACTED_CODE]"'),
+      );
+    });
+
+    test('maskEmail obfuscates email addresses for privacy', () {
+      expect(telemetry.maskEmail('ahmad@example.com'), 'a***d@example.com');
+      expect(telemetry.maskEmail('ab@domain.com'), '*@domain.com');
+      expect(telemetry.maskEmail(''), '');
+      expect(telemetry.maskEmail('invalid-email'), '');
+    });
+
+    test('leaveBreadcrumb adds breadcrumbs and respects ring buffer limit', () {
+      for (int i = 1; i <= 25; i++) {
+        telemetry.leaveBreadcrumb('Langkah navigasi $i', category: 'navigation');
+      }
+
+      // Pastikan reporting tidak melempar exception saat dipanggil tanpa firebase
+      expect(
+        () async => await telemetry.reportError(
+          'Simulated error',
+          StackTrace.current,
+          context: 'unit_test',
+        ),
+        returnsNormally,
+      );
+    });
+
+    test('Deduplication prevents immediate duplicate error reporting', () async {
+      // Panggilan pertama
+      await telemetry.reportError(
+        'Duplicate error message',
+        StackTrace.fromString('line 1\nline 2\nline 3'),
+        context: 'dedup_test',
+      );
+
+      // Panggilan kedua yang identik harus ter-deduplikasi tanpa melempar error
+      expect(
+        () async => await telemetry.reportError(
+          'Duplicate error message',
+          StackTrace.fromString('line 1\nline 2\nline 3'),
+          context: 'dedup_test',
+        ),
+        returnsNormally,
+      );
+    });
+  });
+}
+
+```
+
 ### TEST FILE: openturath_ai/test/ui_copy_regression_test.dart
 ```dart
 import 'package:flutter_test/flutter_test.dart';
@@ -21827,7 +25690,7 @@ import 'package:openturath_ai/core/app_copy.dart';
 
 void main() {
   test('Voucher errors remain natural even for uppercase transport codes', () {
-    expect(SubscriptionService.redeemErrorMessage('NOT_FOUND'), contains('Kode akses tidak ditemukan'));
+    expect(SubscriptionService.redeemErrorMessage('NOT_FOUND'), contains('tidak ditemukan'));
     expect(SubscriptionService.redeemErrorMessage('INTERNAL'), isNot(contains('INTERNAL')));
     expect(SubscriptionService.redeemErrorMessage('already-exists'), contains('sudah pernah'));
     expect(SubscriptionService.redeemErrorMessage('unauthenticated'), contains('masuk'));
@@ -21839,8 +25702,8 @@ void main() {
     }
   });
   test('Conversation loading and menu describe their actions', () {
-    expect(AppCopy.loadingReferences, 'Menyiapkan percakapan AI...');
-    expect(AppCopy.studyOptions, 'Menu percakapan');
+    expect(AppCopy.loadingReferences, 'Menyiapkan asisten…');
+    expect(AppCopy.studyOptions, 'Tampilan bacaan');
   });
 }
 
