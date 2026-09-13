@@ -26,6 +26,15 @@ class CanonicalLibraryService {
     'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
   };
 
+  static const Map<String, String> _assetMapByCatalogId = {
+    'canonical_syafii': 'assets/data/01_KATALOG_FIKIH_SYAFII.json',
+    'canonical_hadits': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
+    'canonical_ushul_fikih': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
+    'canonical_bahasa_arab': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'canonical_tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
+    'canonical_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+  };
+
   final Map<String, List<CanonicalBookPresentation>> _catalogCache = {};
 
   CanonicalImport? _syafiiCatalog;
@@ -36,7 +45,9 @@ class CanonicalLibraryService {
 
   /// Loads catalog for a specific agent or discipline.
   Future<List<CanonicalBookPresentation>> loadCatalogForAgent(AgentModel agent) async {
-    final assetPath = _assetMapByAgentId[agent.id] ?? _assetMapByField[agent.fieldId];
+    final assetPath = (agent.catalogId != null ? _assetMapByCatalogId[agent.catalogId!] : null) ??
+        _assetMapByAgentId[agent.id] ??
+        _assetMapByField[agent.fieldId];
     if (assetPath == null) {
       if (agent.fieldId == 'fiqh') {
         return loadCatalogFromAsset('assets/data/01_KATALOG_FIKIH_SYAFII.json');
