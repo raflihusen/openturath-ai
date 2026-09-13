@@ -3,248 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kebijakan Privasi — OpenTurath AI</title>
-  <meta name="description" content="Kebijakan Privasi layanan SaaS OpenTurath AI.">
+  <title>Kebijakan Privasi — OpenTurath</title>
+  <meta name="description" content="Kebijakan Privasi resmi pemrosesan dan perlindungan data pengguna OpenTurath.">
+  <link rel="canonical" href="https://openturath.web.app/privacy.html">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="is-dark">
+<body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar scrolled dark-mode">
-    <div class="navbar-inner">
-      <div class="nav-links-left">
-        <!-- Empty to keep center alignment for logo -->
-      </div>
-      
-      <a href="index.html" class="logo"><img src="logo_open_ai.png" alt="Logo" class="logo-img"><span>Open<span class="logo-dim">Turath</span></span></a>
-      
-      <div class="nav-links-right">
-        <a href="download.html" class="nav-cta">
-          Download
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-      </div>
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <header class="navbar" id="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <img src="logo_open_ai.png" alt="OpenTurath logo" width="28" height="28">
+        <span>Open<span class="navbar__logo-dim">Turath</span></span>
+      </a>
+      <nav class="navbar__actions" aria-label="Navigasi">
+        <a href="index.html#kelebihan" class="navbar__link">Kelebihan</a>
+        <a href="download.html" class="navbar__link">Unduh App</a>
+        <a href="index.html" class="navbar__cta">Beranda</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <main class="legal-container" style="padding-top:6rem;">
+  <main class="legal-container">
     <h1>Kebijakan Privasi</h1>
-    <p class="legal-date">Terakhir diperbarui: 7 Juni 2026</p>
+    <div class="legal-date">Versi 1.1 — Terakhir diperbarui: 13 September 2026</div>
 
     <div class="legal-content">
-      <p>Selamat datang di OpenTurath AI.</p>
-      <p>Privasi pengguna merupakan salah satu prioritas utama kami. Kebijakan Privasi ini menjelaskan bagaimana OpenTurath AI ("OpenTurath AI", "Kami", "Milik Kami", atau "Layanan") mengumpulkan, menggunakan, menyimpan, melindungi, dan memproses informasi yang berkaitan dengan Anda ketika menggunakan layanan kami.</p>
-      <p>Dengan mengakses, mendaftar, berlangganan, atau menggunakan OpenTurath AI, Anda menyatakan bahwa Anda telah membaca, memahami, dan menyetujui praktik yang dijelaskan dalam Kebijakan Privasi ini.</p>
-      <p>Apabila Anda tidak menyetujui isi Kebijakan Privasi ini, Anda harus menghentikan penggunaan layanan.</p>
+      <h2>1. Pengelola Data dan Ruang Lingkup</h2>
+      <p>Kebijakan ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi, website, sistem pembayaran, dan layanan bantuan OpenTurath. Tim Pengembang OpenTurath (Jakarta, Indonesia) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh layanan OpenTurath. Pertanyaan mengenai privasi dapat disampaikan melalui <strong>openturath@gmail.com</strong>.</p>
 
-      <h2>1. Ruang Lingkup</h2>
-      <p>Kebijakan Privasi ini berlaku untuk seluruh pengguna OpenTurath AI, termasuk:</p>
+      <h2>2. Data yang Diproses</h2>
+      <p>Kami hanya memproses data yang benar-benar diperlukan untuk mengoperasikan layanan telaah kitab:</p>
       <ul>
-        <li>pengunjung situs;</li>
-        <li>pengguna terdaftar;</li>
-        <li>pelanggan berbayar;</li>
-        <li>pengguna masa percobaan (jika tersedia);</li>
-        <li>pengguna internasional yang mengakses layanan dari luar Indonesia.</li>
-      </ul>
-      <p>Kebijakan ini berlaku untuk seluruh layanan yang dioperasikan secara resmi oleh OpenTurath AI.</p>
-
-      <h2>2. Data Yang Kami Kumpulkan</h2>
-      <p>Kami hanya mengumpulkan data yang secara wajar diperlukan untuk menjalankan layanan.</p>
-
-      <h3>2.1 Data Akun</h3>
-      <p>Saat Anda membuat akun, kami dapat mengumpulkan:</p>
-      <ul>
-        <li>nama;</li>
-        <li>alamat email;</li>
-        <li>foto profil (apabila disediakan oleh penyedia login pihak ketiga);</li>
-        <li>identitas akun autentikasi;</li>
-        <li>negara atau wilayah umum.</li>
+        <li><strong>Data Akun:</strong> Alamat email, nama akun, dan identitas autentikasi aman (Google Sign-In / Firebase Auth) untuk mengenali akun Anda dan mengelola masa aktif akses.</li>
+        <li><strong>Data Transaksi:</strong> Nomor faktur, nominal, waktu transaksi, dan status pembayaran yang disampaikan oleh payment gateway resmi (DOKU) untuk keperluan pencatatan dan aktivasi paket. Kami tidak pernah menyimpan nomor kartu debit/kredit, PIN, atau CVV.</li>
+        <li><strong>Pertanyaan &amp; Percakapan:</strong> Pertanyaan telaah kitab yang Anda ajukan dikirimkan ke model AI untuk menemukan rujukan yang relevan. Kami tidak menjual data kueri riset Anda kepada pengiklan pihak ketiga mana pun.</li>
+        <li><strong>Catatan Riset:</strong> Teks kutipan ibarah dan catatan pribadi yang Anda simpan di fitur Catatan tersimpan di dalam basis data aman akun Anda.</li>
+        <li><strong>Data Teknis:</strong> Informasi perangkat dasar (tipe perangkat, versi sistem operasi, log kesalahan teknis) murni untuk pemeliharaan keandalan aplikasi dan pencegahan galat sistem.</li>
       </ul>
 
-      <h3>2.2 Data Langganan</h3>
-      <p>Apabila Anda membeli paket berlangganan, kami dapat menerima informasi seperti:</p>
+      <h2>3. Hak Anda atas Data Pribadi</h2>
+      <p>Sesuai hukum perlindungan data yang berlaku, Anda memiliki hak penuh untuk:</p>
       <ul>
-        <li>status pembayaran;</li>
-        <li>ID transaksi;</li>
-        <li>tanggal transaksi;</li>
-        <li>paket yang dipilih;</li>
-        <li>status langganan.</li>
+        <li>Mengakses informasi dan ringkasan data yang kami simpan tentang Anda.</li>
+        <li>Memperbaiki informasi akun yang keliru atau tidak akurat.</li>
+        <li>Mengajukan permohonan penghapusan akun beserta seluruh riwayat percakapan dan catatan riset.</li>
       </ul>
-      <p>Kami tidak menyimpan nomor kartu kredit, nomor rekening, CVV, PIN, atau kredensial pembayaran sensitif lainnya. Informasi pembayaran diproses oleh penyedia layanan pembayaran pihak ketiga yang independen.</p>
+      <p>Permohonan penghapusan data dapat diajukan langsung melalui menu pengaturan di dalam aplikasi atau melalui email ke <strong>openturath@gmail.com</strong>.</p>
 
-      <h3>2.3 Data Penggunaan</h3>
-      <p>Kami dapat mengumpulkan informasi teknis seperti:</p>
-      <ul>
-        <li>alamat IP;</li>
-        <li>jenis perangkat;</li>
-        <li>sistem operasi;</li>
-        <li>browser;</li>
-        <li>zona waktu;</li>
-        <li>bahasa perangkat;</li>
-        <li>halaman yang diakses;</li>
-        <li>waktu akses;</li>
-        <li>log kesalahan sistem.</li>
-      </ul>
-      <p>Data ini digunakan untuk keamanan dan stabilitas layanan.</p>
+      <h2>4. Keamanan dan Penyimpanan Data</h2>
+      <p>Kami menerapkan standar enkripsi transit (HTTPS / TLS 1.3) dan enkripsi rest pada pangkalan data cloud Firestore bersertifikasi Google Cloud Platform. Akses ke data pelanggan dilindungi oleh kontrol hak akses berbasis peran (RBAC) yang ketat.</p>
 
-      <h3>2.4 Data Pertanyaan (Prompt)</h3>
-      <p>Ketika Anda menggunakan chatbot, sistem menerima:</p>
-      <ul>
-        <li>pertanyaan;</li>
-        <li>instruksi;</li>
-        <li>teks yang Anda masukkan.</li>
-      </ul>
-      <p>Data tersebut diproses semata-mata untuk menghasilkan jawaban yang relevan.</p>
-
-      <h2>3. Komitmen Khusus OpenTurath AI</h2>
-      <p>OpenTurath AI memiliki komitmen yang berbeda dibanding banyak platform AI lainnya.</p>
-      <p style="font-weight: 700; color: var(--gold);">Kami Tidak Menggunakan Prompt Pengguna Untuk Melatih Model AI Pihak Ketiga.</p>
-      <p>Prompt, pertanyaan, maupun aktivitas riset Anda tidak dijual kepada pihak ketiga dan tidak digunakan untuk melatih model AI eksternal demi kepentingan komersial.</p>
-      <p>Kami memahami bahwa banyak pengguna kami merupakan:</p>
-      <ul>
-        <li>peneliti;</li>
-        <li>akademisi;</li>
-        <li>mahasiswa;</li>
-        <li>dosen;</li>
-        <li>asatidz;</li>
-        <li>penulis;</li>
-        <li>pengkaji literatur Islam.</li>
-      </ul>
-      <p>Karena itu, kerahasiaan aktivitas intelektual pengguna merupakan prinsip utama layanan kami.</p>
-
-      <h2>4. Dasar Pemrosesan Data</h2>
-      <p>Kami memproses data berdasarkan satu atau lebih dasar berikut:</p>
-      <ul>
-        <li><strong>Pelaksanaan Kontrak:</strong> Untuk menyediakan layanan yang Anda minta.</li>
-        <li><strong>Kepentingan Yang Sah:</strong> Untuk menjaga keamanan sistem, mencegah penyalahgunaan, memperbaiki bug, dan meningkatkan stabilitas layanan.</li>
-        <li><strong>Kewajiban Hukum:</strong> Untuk memenuhi kewajiban hukum yang berlaku.</li>
-        <li><strong>Persetujuan:</strong> Apabila hukum mensyaratkan persetujuan khusus.</li>
-      </ul>
-
-      <h2>5. Bagaimana Kami Menggunakan Data</h2>
-      <p>Kami menggunakan data untuk:</p>
-      <ul>
-        <li><strong>Operasional Layanan:</strong> membuat akun, mengelola langganan, memproses autentikasi, dan memberikan akses.</li>
-        <li><strong>Keamanan:</strong> mendeteksi penyalahgunaan, mencegah spam, mencegah scraping, dan melindungi infrastruktur.</li>
-        <li><strong>Dukungan Pelanggan:</strong> menjawab pertanyaan, menangani keluhan, dan menyelesaikan masalah teknis.</li>
-        <li><strong>Kepatuhan Hukum:</strong> memenuhi kewajiban hukum dan menanggapi permintaan yang sah dari otoritas.</li>
-      </ul>
-
-      <h2>6. Data Yang Tidak Kami Jual</h2>
-      <p>Kami tidak menjual data akun pengguna, alamat email, aktivitas pencarian, prompt pengguna, atau riwayat penggunaan kepada pihak ketiga untuk tujuan pemasaran atau periklanan.</p>
-
-      <h2>7. Berbagi Informasi Dengan Pihak Ketiga</h2>
-      <p>Kami hanya dapat membagikan data dalam keadaan terbatas:</p>
-      <ul>
-        <li><strong>Penyedia Infrastruktur:</strong> Misalnya hosting, penyimpanan cloud, layanan email, dan sistem keamanan. Mereka hanya menerima data yang diperlukan untuk menjalankan fungsi tersebut.</li>
-        <li><strong>Penyedia Pembayaran:</strong> Untuk memproses transaksi langganan.</li>
-        <li><strong>Kewajiban Hukum:</strong> Jika diwajibkan oleh pengadilan, regulator, aparat penegak hukum, atau proses hukum yang sah.</li>
-      </ul>
-
-      <h2>8. Transfer Data Internasional</h2>
-      <p>Karena layanan internet bersifat global, data dapat diproses atau disimpan pada server yang berada di luar negara tempat tinggal Anda. Dengan menggunakan layanan, Anda memahami bahwa data dapat dipindahkan lintas yurisdiksi sesuai kebutuhan operasional yang sah. Kami akan mengambil langkah yang wajar untuk menjaga keamanan data tersebut.</p>
-
-      <h2>9. Penyimpanan Data</h2>
-      <p>Kami menyimpan data hanya selama diperlukan untuk menyediakan layanan, memenuhi kewajiban hukum, menyelesaikan sengketa, dan melindungi hak dan kepentingan yang sah. Ketika data tidak lagi diperlukan, kami dapat menghapus, menganonimkan, atau mengagregasikannya.</p>
-
-      <h2>10. Keamanan Data</h2>
-      <p>Kami menerapkan langkah-langkah keamanan yang wajar, termasuk kontrol akses, autentikasi, pemantauan sistem, pencatatan aktivitas, dan perlindungan jaringan. Namun tidak ada sistem elektronik yang dapat dijamin 100% aman. Karena itu kami tidak dapat menjamin keamanan absolut.</p>
-
-      <h2>11. Hak Pengguna</h2>
-      <p>Sejauh diizinkan oleh hukum yang berlaku, Anda dapat:</p>
-      <ul>
-        <li><strong>Meminta Akses:</strong> Meminta salinan data tertentu yang kami miliki tentang Anda.</li>
-        <li><strong>Memperbarui Informasi:</strong> Memperbaiki informasi yang tidak akurat.</li>
-        <li><strong>Meminta Penghapusan:</strong> Meminta penghapusan data tertentu.</li>
-        <li><strong>Menarik Persetujuan:</strong> Jika pemrosesan dilakukan berdasarkan persetujuan.</li>
-        <li><strong>Mengajukan Keberatan:</strong> Terhadap pemrosesan tertentu yang diperbolehkan hukum.</li>
-      </ul>
-      <p>Kami dapat meminta verifikasi identitas sebelum memenuhi permintaan tersebut.</p>
-
-      <h2>12. Akun Yang Dihapus</h2>
-      <p>Apabila akun ditutup atau dihentikan, akses ke layanan dapat dihentikan, sebagian data dapat tetap disimpan untuk kepatuhan hukum, dan data tertentu dapat dipertahankan untuk pencegahan penipuan dan penyalahgunaan.</p>
-
-      <h2>13. Privasi Anak</h2>
-      <p>OpenTurath AI tidak ditujukan untuk anak di bawah usia 18 tahun tanpa pengawasan orang tua atau wali yang sah. Apabila kami mengetahui bahwa data diperoleh dari anak yang tidak memenuhi syarat hukum penggunaan layanan, kami dapat mengambil langkah yang dianggap perlu termasuk penghapusan akun.</p>
-
-      <h2>14. Cookie dan Teknologi Serupa</h2>
-      <p>Kami dapat menggunakan cookie, local storage, token autentikasi, dan teknologi serupa untuk menjaga sesi login, mengingat preferensi, meningkatkan keamanan, dan menganalisis performa sistem. Anda dapat mengatur browser untuk menolak sebagian cookie, meskipun hal tersebut dapat memengaruhi fungsi layanan.</p>
-
-      <h2>15. Tautan Ke Situs Pihak Ketiga</h2>
-      <p>Layanan dapat berisi tautan menuju situs atau layanan pihak ketiga. Kami tidak bertanggung jawab atas praktik privasi pihak ketiga tersebut. Kami menyarankan Anda membaca kebijakan privasi masing-masing pihak.</p>
-
-      <h2>16. Perubahan Kebijakan Privasi</h2>
-      <p>Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu. Versi terbaru akan selalu dipublikasikan pada situs resmi OpenTurath AI dengan tanggal pembaruan terbaru. Penggunaan layanan setelah perubahan berlaku dianggap sebagai penerimaan atas perubahan tersebut.</p>
-
-      <h2>17. Hubungi Kami</h2>
-      <p>Apabila Anda memiliki pertanyaan mengenai Kebijakan Privasi ini atau ingin menggunakan hak-hak privasi Anda, silakan menghubungi:</p>
+      <h2>5. Kontak Privasi</h2>
+      <p>Jika Anda memiliki pertanyaan, keberatan, atau ingin melaksanakan hak privasi Anda, silakan hubungi kami:</p>
       <p>
-        <strong>OpenTurath AI</strong><br>
         <strong>Email:</strong> openturath@gmail.com<br>
-        <strong>Pemilik Layanan:</strong> Rafli Husen<br>
-        <strong>Alamat Surat Menyurat:</strong><br>
-        Jl. Amanah No. 94 RT 04/RW 08<br>
-        Kec. Cibinong<br>
-        Bogor, Jawa Barat<br>
-        Indonesia
+        <strong>Lokasi:</strong> Jakarta, Indonesia
       </p>
     </div>
   </main>
 
-  <!-- FOOTER -->
+  <!-- ═══════════════ FOOTER ═══════════════ -->
   <footer class="footer">
-    <div class="footer-inner" style="align-items: flex-start; flex-wrap: wrap; gap: 2.5rem;">
-      <!-- Brand Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px;">
-        <a href="index.html" class="logo" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-          <img src="logo_open_ai.png" alt="Logo" class="logo-img" style="height: 40px; width: auto;">
-          <span style="font-weight: 700; color: #fff; font-size: 1.25rem;">Open<span class="logo-dim" style="color: rgba(255,255,255,0.4);">Turath</span></span>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a href="index.html" class="footer__brand-logo">
+          <img src="logo_open_ai.png" alt="Logo" width="28" height="28">
+          <span>Open<span class="navbar__logo-dim">Turath</span></span>
         </a>
-        <div style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem; font-family: var(--font);">
-          <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
-          Jakarta, Indonesia
-        </div>
+        <p>OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.</p>
+        <p style="font-size: 0.8125rem; color: var(--ink-tertiary);">Jakarta, Indonesia</p>
       </div>
-      
-      <!-- Legalitas Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 180px; font-family: var(--font);">
-        <h4 style="color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;">Legalitas</h4>
-        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-          <a href="terms.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Syarat &amp; Ketentuan</a>
-          <a href="refund.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Refund</a>
-          <a href="privacy.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Privasi</a>
-          <a href="aup.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Penggunaan (AUP)</a>
-          <a href="copyright.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Hak Cipta</a>
-          <a href="ai-policy.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Atribusi AI</a>
-        </div>
+
+      <div class="footer__col">
+        <h4>Ketentuan &amp; Kebijakan</h4>
+        <a href="terms.html">Ketentuan Layanan</a>
+        <a href="privacy.html">Kebijakan Privasi</a>
+        <a href="refund.html">Langganan &amp; Refund</a>
+        <a href="cookie.html">Kebijakan Cookie</a>
+        <a href="ai-policy.html">Panduan Penggunaan AI</a>
+        <a href="copyright.html">Hak Cipta &amp; Pelaporan</a>
       </div>
-      
-      <!-- Kontak Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px; font-family: var(--font);">
-        <h4 style="color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;">Kontak</h4>
-        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-          <a href="mailto:openturath@gmail.com" class="footer-contact-item">
-            <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-            </svg>
-            openturath@gmail.com
-          </a>
-          <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
-            <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-            </svg>
-            openturath.ai
-          </a>
-        </div>
+
+      <div class="footer__col">
+        <h4>Aplikasi</h4>
+        <a href="download.html">Unduh Android APK</a>
+        <a href="download.html#panduan">Panduan Pemasangan</a>
       </div>
-      
-      <!-- Download Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 150px; font-family: var(--font);">
-        <h4 style="color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;">Aplikasi</h4>
-        <a href="download.html" class="nav-cta" style="margin: 0; padding: 0.6rem 1.2rem; text-decoration: none; font-size: 0.8125rem; display: inline-flex;">Download</a>
+
+      <div class="footer__col">
+        <h4>Bantuan</h4>
+        <a href="mailto:openturath@gmail.com">openturath@gmail.com</a>
+        <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer">@openturath.ai</a>
       </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; 2026 OpenTurath. Membaca kitab, menelusuri ibarah.</span>
+      <span>Bukan pengganti bimbingan dan fatwa ulama.</span>
     </div>
   </footer>
 
