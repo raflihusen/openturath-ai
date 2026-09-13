@@ -230,6 +230,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     super.didChangeDependencies();
     final currentIsDark = Theme.of(context).brightness == Brightness.dark;
     if (_lastIsDark != null && _lastIsDark != currentIsDark) {
+      _webController?.setSettings(
+        settings: InAppWebViewSettings(
+          forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
+          forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
+          algorithmicDarkeningAllowed: true,
+        ),
+      );
       _applyThemeCss();
     }
     _lastIsDark = currentIsDark;
@@ -406,7 +413,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
             }
 
-            // 3. Pastikan latar belakang dasar selaras tanpa flash putih
+            // 3. Pastikan latar belakang dasar & elemen internal selaras tanpa flash putih
             var canvasStyleId = 'ot-theme-canvas-style';
             var styleEl = document.getElementById(canvasStyleId);
             if (!styleEl) {
@@ -414,9 +421,27 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               styleEl.id = canvasStyleId;
               (document.head || document.documentElement).appendChild(styleEl);
             }
-            styleEl.textContent = isDark 
-              ? 'html, body { background-color: #0E0E10 !important; color: #E4E4E7 !important; }'
-              : 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+            if (isDark) {
+              styleEl.textContent = `
+                html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
+                .chat-container, .chat-viewport, .to-user-container, .message-content,
+                .rendered-markdown, .query-container, .response-container,
+                table, tr, td, th, mat-card, .mat-mdc-card, app-chat-message, app-chat-response,
+                .chat-message-container, .notebook-content, .scrollable-content,
+                .sources-panel, .studio-panel, div.content-container {
+                  background-color: #0E0E10 !important;
+                  color: #E4E4E7 !important;
+                }
+                table, th, td {
+                  border-color: #27272A !important;
+                }
+                a {
+                  color: #A1A1AA !important;
+                }
+              `;
+            } else {
+              styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+            }
           } catch(e) {}
         })();
       ''';
@@ -649,7 +674,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       mediaPlaybackRequiresUserGesture: false,
                       allowsInlineMediaPlayback: true,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                      forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+                      forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
                       algorithmicDarkeningAllowed: true,
                       transparentBackground: false,
                     ),
