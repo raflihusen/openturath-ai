@@ -1,9 +1,11 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
+import 'ot_interactive.dart';
 
 class EvidenceBottomSheet extends StatelessWidget {
   final int citationNumber;
@@ -105,19 +107,23 @@ class EvidenceBottomSheet extends StatelessWidget {
       minChildSize: 0.45,
       maxChildSize: 0.94,
       builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
-            border: Border.all(color: border, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.4),
-                blurRadius: 30,
-                offset: const Offset(0, -4),
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: surface.withOpacity(isDark ? 0.92 : 0.96),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
+                border: Border.all(color: border, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 30,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
               ),
-            ],
-          ),
           child: Column(
             children: [
               // ── Drag Handle ──
@@ -337,55 +343,68 @@ class EvidenceBottomSheet extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: OutlinedButton.icon(
+                            child: OtInteractiveButton(
                               onPressed: () => _copyIbarah(context),
-                              icon: const Icon(Icons.copy_rounded, size: 16),
-                              label: const Text('Salin ibarah'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: accent,
-                                side: BorderSide(color: accent.withValues(alpha: 0.6)),
-                                padding: const EdgeInsets.symmetric(vertical: 13),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                                ),
-                                textStyle: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                              child: OutlinedButton.icon(
+                                onPressed: () => _copyIbarah(context),
+                                icon: const Icon(Icons.copy_rounded, size: 16),
+                                label: const Text('Salin ibarah'),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: accent,
+                                  side: BorderSide(color: accent.withValues(alpha: 0.6)),
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                                  ),
+                                  textStyle: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: FilledButton.icon(
+                            child: OtInteractiveButton(
                               onPressed: () => _launchExternal(context),
-                              icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                              label: const Text('Buka di Maktabah Syamilah'),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: accent,
-                                foregroundColor: isDark
-                                    ? AppTheme.canvasDark
-                                    : Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 13),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                                ),
-                                textStyle: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                              child: FilledButton.icon(
+                                onPressed: () => _launchExternal(context),
+                                icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                                label: const Text('Buka di Maktabah Syamilah'),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: accent,
+                                  foregroundColor: isDark
+                                      ? AppTheme.canvasDark
+                                      : Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                                  ),
+                                  textStyle: GoogleFonts.outfit(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          IconButton.filledTonal(
-                            onPressed: () => _shareEvidence(context),
-                            icon: const Icon(Icons.share_outlined, size: 18),
-                            tooltip: 'Salin rujukan ilmiah',
-                            style: IconButton.styleFrom(
-                              padding: const EdgeInsets.all(13),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                          OtTactileCard(
+                            onTap: () => _shareEvidence(context),
+                            pressedScale: 0.88,
+                            borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                            child: IconButton.filledTonal(
+                              onPressed: () => _shareEvidence(context),
+                              icon: const Icon(Icons.share_outlined, size: 18),
+                              tooltip: 'Salin rujukan ilmiah',
+                              style: IconButton.styleFrom(
+                                padding: const EdgeInsets.all(13),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                                ),
                               ),
                             ),
                           ),
@@ -396,6 +415,8 @@ class EvidenceBottomSheet extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
           ),
         );
       },
