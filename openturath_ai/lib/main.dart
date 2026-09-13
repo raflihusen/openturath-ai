@@ -179,22 +179,28 @@ class OpenTurathApp extends StatelessWidget {
                       },
                     );
                   case AppRoutes.subscription:
-                    page = const SubscriptionScreen();
-                    break;
+                    return _buildSharedAxisRoute(
+                      settings: settings,
+                      page: const SubscriptionScreen(),
+                    );
                   case AppRoutes.googleSessionAuth:
                     page = const GoogleSessionAuthScreen();
                     break;
                   case AppRoutes.bookCatalog:
-                    page = BookCatalogScreen(
-                      agent: settings.arguments is AgentModel
-                          ? settings.arguments as AgentModel
-                          : null,
+                    return _buildSharedAxisRoute(
+                      settings: settings,
+                      page: BookCatalogScreen(
+                        agent: settings.arguments is AgentModel
+                            ? settings.arguments as AgentModel
+                            : null,
+                      ),
                     );
-                    break;
                   case AppRoutes.bookDetail:
                     final book = settings.arguments as CanonicalBookPresentation;
-                    page = BookDetailScreen(book: book);
-                    break;
+                    return _buildSharedAxisRoute(
+                      settings: settings,
+                      page: BookDetailScreen(book: book),
+                    );
                   default:
                     page = const SplashScreen();
                     break;
@@ -232,4 +238,50 @@ class OpenTurathApp extends StatelessWidget {
     },
   );
 }
+
+  static PageRouteBuilder _buildSharedAxisRoute({
+    required RouteSettings settings,
+    required Widget page,
+  }) {
+    return PageRouteBuilder(
+      settings: settings,
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionDuration: const Duration(milliseconds: 380),
+      reverseTransitionDuration: const Duration(milliseconds: 280),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final enterCurved = CurvedAnimation(
+          parent: animation,
+          curve: const Cubic(0.05, 0.7, 0.1, 1.0),
+          reverseCurve: Curves.easeInCubic,
+        );
+        final exitCurved = CurvedAnimation(
+          parent: secondaryAnimation,
+          curve: const Cubic(0.05, 0.7, 0.1, 1.0),
+          reverseCurve: Curves.easeInCubic,
+        );
+
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: Offset.zero,
+            end: const Offset(-0.06, 0.0),
+          ).animate(exitCurved),
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.18, 0.0),
+              end: Offset.zero,
+            ).animate(enterCurved),
+            child: FadeTransition(
+              opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: animation,
+                  curve: const Interval(0.0, 0.65, curve: Curves.easeOut),
+                ),
+              ),
+              child: child,
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
