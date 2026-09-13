@@ -120,7 +120,7 @@ class BookRowItem extends StatelessWidget {
                           border: Border.all(color: border.withValues(alpha: 0.7), width: 0.5),
                         ),
                         child: Text(
-                          'ت ${book.verifiedDeathYearHijri} هـ',
+                          'w. ${book.verifiedDeathYearHijri} H',
                           style: GoogleFonts.outfit(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
@@ -190,7 +190,13 @@ class BookRowItem extends StatelessWidget {
                 ),
 
                 // ── Metadata Strip Bergaya Informasi Google Camera (EXIF Micro-Pills) ──
-                if (formattedVolumes != null || hasPages || hasTahqiq || hasPublisher || hasYear) ...[
+                if (formattedVolumes != null ||
+                    hasPages ||
+                    hasTahqiq ||
+                    hasPublisher ||
+                    hasYear ||
+                    book.reviewedTypeLabel != null ||
+                    book.reviewedEraLabel != null) ...[
                   const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
@@ -209,6 +215,24 @@ class BookRowItem extends StatelessWidget {
                           _buildExifPill(
                             icon: Icons.layers_outlined,
                             text: formattedVolumes,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (book.reviewedTypeLabel != null && book.reviewedTypeLabel!.isNotEmpty)
+                          _buildExifPill(
+                            icon: Icons.menu_book_outlined,
+                            text: book.reviewedTypeLabel!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (book.reviewedEraLabel != null && book.reviewedEraLabel!.isNotEmpty)
+                          _buildExifPill(
+                            icon: Icons.history_edu_rounded,
+                            text: book.reviewedEraLabel!,
                             isDark: isDark,
                             textPrimary: textPrimary,
                             textSecondary: textSecondary,

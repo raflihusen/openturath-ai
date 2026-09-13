@@ -383,7 +383,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('SPESIFIKASI & KLASIFIKASI NASKAH', textSecondary),
+                    _buildSectionHeader('KLASIFIKASI ILMIAH', textSecondary),
                     const SizedBox(height: 12),
                     if (widget.book.sectionArabic != null && widget.book.sectionArabic!.isNotEmpty) ...[
                       _buildMetaRow(
