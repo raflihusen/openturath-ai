@@ -101,32 +101,35 @@ class SpecialistCard extends StatelessWidget {
               // Action Buttons: Optional Pustaka + Chevron
               if (onOpenLibrary != null) ...[
                 const SizedBox(width: 8),
-                AppleInteractiveWrapper(
-                  onTap: onOpenLibrary,
-                  pressedScale: 0.94,
-                  hapticType: HapticFeedbackType.selection,
-                  borderRadius: BorderRadius.circular(100),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: surfaceSubtle,
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: border, width: 0.8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.menu_book_outlined, size: 13, color: textSecondary),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Pustaka',
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: textSecondary,
+                Tooltip(
+                  message: 'Kitab rujukan',
+                  child: AppleInteractiveWrapper(
+                    onTap: onOpenLibrary,
+                    pressedScale: 0.94,
+                    hapticType: HapticFeedbackType.selection,
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: surfaceSubtle,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: border, width: 0.8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.menu_book_outlined, size: 13, color: textSecondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Pustaka',
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: textSecondary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

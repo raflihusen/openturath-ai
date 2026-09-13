@@ -107,10 +107,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   static const List<({String fieldId, String name, int specialistCount})> _curatedDisciplines = [
     (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
-    (fieldId: 'hadith', name: 'Hadits', specialistCount: 1),
+    (fieldId: 'hadith', name: 'Hadis', specialistCount: 1),
     (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
-    (fieldId: 'aqidah', name: 'Aqidah', specialistCount: 1),
-    (fieldId: 'usul', name: 'Usul Fiqh', specialistCount: 1),
+    (fieldId: 'aqidah', name: 'Akidah', specialistCount: 1),
+    (fieldId: 'usul', name: 'Usul Fikih', specialistCount: 1),
     (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1),
   ];
 
@@ -135,7 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               uid: curFirebaseUser?.uid ?? 'user',
               name: curFirebaseUser?.displayName?.isNotEmpty == true
                   ? curFirebaseUser!.displayName!
-                  : 'Santri Peneliti',
+                  : 'Ahlan',
               email: curFirebaseUser?.email ?? '',
               photoUrl: curFirebaseUser?.photoURL ?? '',
               plan: AppConstants.planTrial,
@@ -199,7 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           // Baris Atas: Sapaan [Nama]
                           Text(
-                            user.name.isNotEmpty ? 'Ahlan, ${user.name}' : 'Ahlan, Peneliti Turats',
+                            user.name.isNotEmpty && user.name != 'Ahlan' ? 'Ahlan, ${user.name}' : 'Ahlan',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
@@ -324,7 +324,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onChanged: (val) => setState(() => _searchQuery = val.trim()),
                               style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari spesialis, bab fikih, atau kitab...',
+                                hintText: 'Cari asisten, kitab, atau bab…',
                                 hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -355,7 +355,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil Penelusuran',
+                        'Hasil Pencarian',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -381,7 +381,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Tidak ditemukan naskah atau spesialis yang sesuai.',
+                                  'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.',
                                   style: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                                 ),
                               ),
@@ -397,7 +397,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
-                                statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
+                                statusLabel: agent.isComingSoon ? 'Segera hadir' : null,
                                 onOpen: () => _openNotebook(agent, user),
                                 onOpenLibrary: agent.catalogId != null
                                     ? () => showResearchLibrary(context, agent: agent)
@@ -503,7 +503,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    '${disc.specialistCount} spesialis',
+                                    '${disc.specialistCount} asisten',
                                     style: GoogleFonts.outfit(
                                       fontSize: 12.5,
                                       color: textSecondary,
@@ -560,38 +560,38 @@ class _DashboardAnnouncementCarouselState
   static const List<_AnnouncementSlide> _slides = [
     _AnnouncementSlide(
       badge: 'TENTANG OPENTURATH',
-      title: 'Mengenal OpenTurath AI',
-      summary: 'Penelaahan ibarat dan rujukan langsung dari naskah primer turats.',
+      title: 'Mengenal OpenTurath',
+      summary: 'Membaca ibarah dan menelusuri rujukan langsung dari kitab.',
       detailedContent:
           'Gunakan OpenTurath untuk mencari rujukan dan membandingkan matan dengan syarah. Periksa hasilnya pada kitab asal, lalu diskusikan dengan guru dan ulama yang berkompeten.',
     ),
     _AnnouncementSlide(
-      badge: 'ADAB TALAQQI',
-      title: 'Wasilah Bantu, Bukan Pengganti Guru',
-      summary: 'Kajian agama hakiki wajib melalui bimbingan guru dan ulama bersanad.',
+      badge: 'ADAB BELAJAR',
+      title: 'Tetap Belajar Bersama Guru',
+      summary: 'Belajarlah dengan bimbingan guru dan ulama yang bersanad.',
       detailedContent:
-          'PENTING DIPAHAMI:\n\nKecerdasan buatan hanyalah perkakas indeksasi dan komparasi literatur ilmiah untuk mempercepat pencarian teks dan matan. Pemahaman fikih dan fatwa tetap membutuhkan bimbingan guru dan ulama yang bersanad.',
+          'AI membantu mencari ibarah dan membandingkan penjelasan dalam kitab. Untuk memahami fikih dan fatwa, tetaplah belajar kepada guru dan ulama yang bersanad.',
     ),
     _AnnouncementSlide(
-      badge: 'IHTIYATH',
-      title: 'Verifikasi Naskah Primer',
-      summary: 'Selalu luangkan waktu memeriksa naskah Maktabah Syamilah atau cetak fisik.',
+      badge: 'PERIKSA SUMBER',
+      title: 'Cocokkan dengan Kitab Asal',
+      summary: 'Periksa kembali kutipan di Maktabah Syamilah atau kitab cetak.',
       detailedContent:
-          'Sikap wara\' dan kehati-hatian (ihtiyath) menuntut peneliti untuk meninjau langsung naskah fisik primer sebelum menyimpulkan dan menyebarluaskan hasil kajian ke khalayak.',
+          'Baca ibarah beserta konteksnya pada kitab cetak yang dirujuk sebelum menarik kesimpulan atau membagikan hasil kajian.',
     ),
     _AnnouncementSlide(
       badge: 'AMANAH ILMIAH',
-      title: 'Ketepatan Sitasi Turats',
-      summary: 'Sertakan nama muallif, kitab, bab, dan nomor halaman dalam menukil ibarah.',
+      title: 'Cantumkan Rujukan Saat Mengutip',
+      summary: 'Sertakan nama pengarang, judul kitab, bab, jilid, dan halaman.',
       detailedContent:
-          'Dalam tradisi keilmuan Islam, amanah ilmiah dijaga dengan menyertakan rujukan yang sahih: judul kitab asli, nama pengarang, bab pembahasan, serta nomor jilid dan halaman.',
+          'Saat mengutip, tuliskan nama pengarang, judul kitab, bab, jilid, dan halaman sesuai sumber yang digunakan agar rujukan mudah ditemukan.',
     ),
     _AnnouncementSlide(
-      badge: 'SANAD & TAKHRIJ',
-      title: 'Penelusuran Rujukan Ilmiah',
-      summary: 'Dilengkapi kutipan ibarat teks asli dan penomoran jilid dari kitab muktamad.',
+      badge: 'TELUSURI RUJUKAN',
+      title: 'Lihat Asal Kutipan',
+      summary: 'Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.',
       detailedContent:
-          'Setiap rujukan yang ditampilkan mengacu langsung ke naskah turats, memudahkan santri dan peneliti meninjau matan dan syarah secara tertib dan presisi.',
+          'Buka rujukan yang tersedia untuk menelusuri asal kutipan. Cocokkan teks, jilid, dan halaman dengan edisi kitab yang Anda gunakan.',
     ),
   ];
 
@@ -705,7 +705,7 @@ class _DashboardAnnouncementCarouselState
                     ),
                   ),
                   child: Text(
-                    'Mengerti & Tutup',
+                    'Tutup',
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

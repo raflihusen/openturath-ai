@@ -113,7 +113,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        '${agent.title} belum tersedia (Segera Hadir). Modul ini sedang dalam tahap kurasi naskah kitab primer.',
+        '${agent.title} sedang disiapkan.',
       );
       return;
     }
@@ -215,7 +215,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             onChanged: _onSearchChanged,
                             style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                             decoration: InputDecoration(
-                              hintText: 'Cari spesialis, kitab, atau bab...',
+                              hintText: 'Cari asisten, kitab, atau bab…',
                               hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
@@ -314,8 +314,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 const SizedBox(height: OTSpacing.sm),
                                 Text(
                                   _searchQuery.isNotEmpty
-                                      ? 'Tidak ditemukan rujukan atau spesialis yang sesuai.'
-                                      : 'Belum ada ruang riset untuk bidang ini.',
+                                      ? 'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.'
+                                      : 'Belum ada asisten di kategori ini.',
                                   style: OTTypography.body(color: textSecondary),
                                   textAlign: TextAlign.center,
                                 ),
@@ -343,7 +343,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 final agent = sorted[index];
                                 return SpecialistCard(
                                   title: agent.title,
-                                  statusLabel: agent.isComingSoon ? 'Segera Hadir' : null,
+                                  statusLabel: agent.isComingSoon ? 'Segera hadir' : null,
                                   onOpen: () => _openAgent(agent),
                                   onOpenLibrary: agent.catalogId != null
                                       ? () => showResearchLibrary(context, agent: agent)
