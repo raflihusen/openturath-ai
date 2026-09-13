@@ -1001,6 +1001,11 @@ export const redeemCode = functions
     }
 
     const uid = context.auth.uid;
+    const rawDeviceId = typeof data?.deviceId === "string" ? data.deviceId.trim().toLowerCase() : "";
+    const isPhysicalDevice = data?.isPhysicalDevice !== false;
+    const deviceModel = typeof data?.deviceModel === "string" ? data.deviceModel.slice(0, 100) : "";
+    const deviceBrand = typeof data?.deviceBrand === "string" ? data.deviceBrand.slice(0, 100) : "";
+
     // F-03 & F-05: Rate limit penukaran voucher per UID (maksimal 8 percobaan per 15 menit)
     await enforceRateLimit(
       `rdm_${uid}`,
@@ -1043,11 +1048,47 @@ export const redeemCode = functions
         throw new functions.https.HttpsError("deadline-exceeded", "Masa berlaku penukaran kode ini telah kedaluwarsa.");
       }
 
+      // F-12: Enforce Single-Device Binding untuk kode keluarga promo / perdana
+      const isSingleDeviceEnforced =
+        codeData.one_per_device === true ||
+        codeData.type === "perdana" ||
+        rawCode.startsWith("PERDANA") ||
+        rawCode.startsWith("TRIAL") ||
+        rawCode.startsWith("WELCOME");
+
+      const promoFamily = (codeData.promo_family as string) || (rawCode.startsWith("PERDANA") ? "perdana" : "trial_default");
+      const deviceRedemptionKey = `dev_${rawDeviceId}_${promoFamily}`;
+      const deviceRedemptionRef = db.collection("device_redemptions").doc(deviceRedemptionKey);
+
+      if (isSingleDeviceEnforced) {
+        if (isPhysicalDevice === false) {
+          throw new functions.https.HttpsError(
+            "failed-precondition",
+            "Kode ini hanya dapat diaktifkan melalui ponsel fisik asli."
+          );
+        }
+
+        if (!rawDeviceId || !/^[a-f0-9]{64}$/.test(rawDeviceId)) {
+          throw new functions.https.HttpsError(
+            "invalid-argument",
+            "Identitas perangkat diperlukan untuk mengaktifkan kode ini."
+          );
+        }
+
+        const deviceRedemptionDoc = await transaction.get(deviceRedemptionRef);
+        if (deviceRedemptionDoc.exists) {
+          throw new functions.https.HttpsError(
+            "already-exists",
+            "Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya."
+          );
+        }
+      }
+
       // Periksa apakah pengguna sudah pernah menukarkan kode ini
       const redemptionRef = codeRef.collection("redemptions").doc(uid);
       const redemptionDoc = await transaction.get(redemptionRef);
       if (redemptionDoc.exists) {
-        throw new functions.https.HttpsError("already-exists", "Anda sudah pernah menukarkan kode ini sebelumnya.");
+        throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.");
       }
 
       const entitlementKey = (codeData.entitlement_key as string) || "fiqh_syafii";
@@ -1074,8 +1115,22 @@ export const redeemCode = functions
       transaction.set(redemptionRef, {
         uid,
         email: userEmail,
+        device_id: rawDeviceId || null,
         redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
       });
+
+      if (isSingleDeviceEnforced && rawDeviceId) {
+        transaction.set(deviceRedemptionRef, {
+          device_id: rawDeviceId,
+          promo_family: promoFamily,
+          code: rawCode,
+          uid,
+          email: userEmail,
+          brand: deviceBrand,
+          model: deviceModel,
+          redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
 
       // 2. Increment pemakaian kode
       transaction.update(codeRef, {

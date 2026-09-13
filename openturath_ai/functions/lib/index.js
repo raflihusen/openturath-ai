@@ -849,6 +849,10 @@ exports.redeemCode = functions
         throw new functions.https.HttpsError("invalid-argument", "Kode redeem tidak boleh kosong.");
     }
     const uid = context.auth.uid;
+    const rawDeviceId = typeof (data === null || data === void 0 ? void 0 : data.deviceId) === "string" ? data.deviceId.trim().toLowerCase() : "";
+    const isPhysicalDevice = (data === null || data === void 0 ? void 0 : data.isPhysicalDevice) !== false;
+    const deviceModel = typeof (data === null || data === void 0 ? void 0 : data.deviceModel) === "string" ? data.deviceModel.slice(0, 100) : "";
+    const deviceBrand = typeof (data === null || data === void 0 ? void 0 : data.deviceBrand) === "string" ? data.deviceBrand.slice(0, 100) : "";
     // F-03 & F-05: Rate limit penukaran voucher per UID (maksimal 8 percobaan per 15 menit)
     await enforceRateLimit(`rdm_${uid}`, 8, 900, "Terlalu banyak percobaan penukaran kode redeem.");
     const userEmail = (context.auth.token.email || "").trim().toLowerCase();
@@ -878,11 +882,32 @@ exports.redeemCode = functions
         if (codeData.expires_at && codeData.expires_at.toDate() < new Date()) {
             throw new functions.https.HttpsError("deadline-exceeded", "Masa berlaku penukaran kode ini telah kedaluwarsa.");
         }
+        // F-12: Enforce Single-Device Binding untuk kode keluarga promo / perdana
+        const isSingleDeviceEnforced = codeData.one_per_device === true ||
+            codeData.type === "perdana" ||
+            rawCode.startsWith("PERDANA") ||
+            rawCode.startsWith("TRIAL") ||
+            rawCode.startsWith("WELCOME");
+        const promoFamily = codeData.promo_family || (rawCode.startsWith("PERDANA") ? "perdana" : "trial_default");
+        const deviceRedemptionKey = `dev_${rawDeviceId}_${promoFamily}`;
+        const deviceRedemptionRef = db.collection("device_redemptions").doc(deviceRedemptionKey);
+        if (isSingleDeviceEnforced) {
+            if (isPhysicalDevice === false) {
+                throw new functions.https.HttpsError("failed-precondition", "Kode ini hanya dapat diaktifkan melalui ponsel fisik asli.");
+            }
+            if (!rawDeviceId || !/^[a-f0-9]{64}$/.test(rawDeviceId)) {
+                throw new functions.https.HttpsError("invalid-argument", "Identitas perangkat diperlukan untuk mengaktifkan kode ini.");
+            }
+            const deviceRedemptionDoc = await transaction.get(deviceRedemptionRef);
+            if (deviceRedemptionDoc.exists) {
+                throw new functions.https.HttpsError("already-exists", "Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya.");
+            }
+        }
         // Periksa apakah pengguna sudah pernah menukarkan kode ini
         const redemptionRef = codeRef.collection("redemptions").doc(uid);
         const redemptionDoc = await transaction.get(redemptionRef);
         if (redemptionDoc.exists) {
-            throw new functions.https.HttpsError("already-exists", "Anda sudah pernah menukarkan kode ini sebelumnya.");
+            throw new functions.https.HttpsError("already-exists", "Kode ini sudah pernah ditukarkan sebelumnya.");
         }
         const entitlementKey = codeData.entitlement_key || "fiqh_syafii";
         const durationDays = codeData.duration_days || 7;
@@ -904,8 +929,21 @@ exports.redeemCode = functions
         transaction.set(redemptionRef, {
             uid,
             email: userEmail,
+            device_id: rawDeviceId || null,
             redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
         });
+        if (isSingleDeviceEnforced && rawDeviceId) {
+            transaction.set(deviceRedemptionRef, {
+                device_id: rawDeviceId,
+                promo_family: promoFamily,
+                code: rawCode,
+                uid,
+                email: userEmail,
+                brand: deviceBrand,
+                model: deviceModel,
+                redeemed_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+        }
         // 2. Increment pemakaian kode
         transaction.update(codeRef, {
             times_used: timesUsed + 1,
@@ -2159,7 +2197,7 @@ function getChatWrapperHTML(agent, agentId, email) {
       
       <div style="flex-grow: 1;"></div>
       
-      <a href="mailto:support@openturath.com" class="btn-help">
+      <a href="mailto:openturath@gmail.com" class="btn-help">
         💬 Bantuan
       </a>
     </aside>
