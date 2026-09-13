@@ -198,7 +198,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             ),
           ),
           content: Text(
-            'Apakah Anda ingin menutup sesi pembayaran? Transaksi Anda tetap tercatat di sistem.',
+            'Menutup halaman ini tidak otomatis membatalkan transaksi jika pembayaran telah diproses. Transaksi Anda tetap tercatat di sistem.',
             style: GoogleFonts.outfit(
               fontSize: 13,
               color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
@@ -561,7 +561,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 16),
                             child: Text(
-                              'Alhamdulillah!',
+                              'Alhamdulillah',
                               style: GoogleFonts.outfit(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 26,
