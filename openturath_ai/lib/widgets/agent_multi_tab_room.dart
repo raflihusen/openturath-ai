@@ -19,7 +19,6 @@ import '../services/bookmark_service.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
-import 'ot_interactive.dart';
 
 /// AgentMultiTabRoom: Persistent, multi-tab AI Study Room inspired by Google Chrome tabs.
 /// Keeps up to 7 AI specialists running concurrently in memory without reloading.
@@ -152,15 +151,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         elevation: 0,
         scrolledUnderElevation: 0,
         backgroundColor: canvas,
-        leading: OtTactileCard(
-          onTap: () => _sessionManager.closeRoom(),
-          pressedScale: 0.88,
-          borderRadius: BorderRadius.circular(20),
-          child: Center(
-            child: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
+          tooltip: 'Kembali ke Beranda',
+          onPressed: () => _sessionManager.closeRoom(),
         ),
-        titleSpacing: 4,
+        titleSpacing: 0,
         title: Text(
           activeTab.agent.title,
           style: GoogleFonts.outfit(
@@ -173,25 +169,17 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
-          OtTactileCard(
-            onTap: () => _showFontScaleDialog(context, activeTab),
-            pressedScale: 0.88,
-            borderRadius: BorderRadius.circular(18),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-            ),
+          IconButton(
+            icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
+            tooltip: AppCopy.studyOptions,
+            onPressed: () => _showFontScaleDialog(context, activeTab),
           ),
-          OtTactileCard(
-            onTap: () => _openLibrarySheet(context, activeTab.agent),
-            pressedScale: 0.88,
-            borderRadius: BorderRadius.circular(18),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
-            ),
+          IconButton(
+            icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
+            tooltip: AppCopy.referenceBooks,
+            onPressed: () => _openLibrarySheet(context, activeTab.agent),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
         ],
         // Chrome-like Multi-Tab Bar
         bottom: PreferredSize(
@@ -215,13 +203,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 final session = sessions[index];
                 final isActive = index == _sessionManager.activeIndex;
 
-                return OtTactileCard(
+                return InkWell(
                   onTap: () => _sessionManager.selectTab(index),
-                  pressedScale: 0.94,
                   borderRadius: BorderRadius.circular(8),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOutCubic,
+                  child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: isActive ? surface : Colors.transparent,
@@ -230,15 +215,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         color: isActive ? border : Colors.transparent,
                         width: 1.0,
                       ),
-                      boxShadow: isActive
-                          ? [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-                                blurRadius: 4,
-                                offset: const Offset(0, 1),
-                              )
-                            ]
-                          : null,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -258,9 +234,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        OtTactileCard(
+                        InkWell(
                           onTap: () => _sessionManager.closeTab(index),
-                          pressedScale: 0.82,
                           borderRadius: BorderRadius.circular(10),
                           child: Padding(
                             padding: const EdgeInsets.all(2),
@@ -416,12 +391,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
   int _readySamples = 0;
   bool _checkingReady = false;
   bool? _lastIsDark;
-  bool _loaderDismissed = false;
 
   @override
   void initState() {
     super.initState();
-    _loaderDismissed = !widget.session.isWebLoading && widget.session.resolvedUrl != null;
     if (widget.session.resolvedUrl == null) {
       _fetchUrl();
     }
@@ -634,10 +607,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
           },
           onLoadStart: (controller, uri) {
             if (mounted && !session.isWebLoading) {
-              setState(() {
-                session.isWebLoading = true;
-                _loaderDismissed = false;
-              });
+              setState(() => session.isWebLoading = true);
             }
             _startReadinessCheck();
           },
@@ -665,26 +635,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
           },
         ),
 
-        // Fullscreen dissolving loader until NotebookLM UI is 100% prepared & ready
-        if (!_loaderDismissed)
+        // Fullscreen pulsing loader until NotebookLM UI is 100% prepared & ready
+        if (session.isWebLoading)
           Positioned.fill(
-            child: IgnorePointer(
-              ignoring: !session.isWebLoading,
-              child: AnimatedOpacity(
-                opacity: session.isWebLoading ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 380),
-                curve: Curves.easeOutCubic,
-                onEnd: () {
-                  if (!session.isWebLoading && mounted) {
-                    setState(() => _loaderDismissed = true);
-                  }
-                },
-                child: AppLoader.fullscreen(
-                  title: session.agent.title,
-                  subtitle: AppCopy.loadingReferences,
-                  onCancel: () => AgentSessionManager.instance.closeRoom(),
-                ),
-              ),
+            child: AppLoader.fullscreen(
+              title: session.agent.title,
+              subtitle: AppCopy.loadingReferences,
+              onCancel: () => AgentSessionManager.instance.closeRoom(),
             ),
           ),
       ],

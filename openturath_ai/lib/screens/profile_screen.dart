@@ -17,7 +17,6 @@ import '../models/agent_model.dart';
 import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/legal_document_sheet.dart';
-import '../widgets/ot_interactive.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -500,29 +499,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: border, width: 1.0),
                   ),
-                  child: OtTactileCard(
-                    onTap: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
-                    pressedScale: 0.965,
+                  child: Material(
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.logout_rounded,
-                            color: Color(0xFFF87171),
-                            size: 20,
-                          ),
-                          const SizedBox(width: 14),
-                          Text(
-                            _isLoggingOut ? 'Sedang keluar...' : AppCopy.logoutButton,
-                            style: GoogleFonts.outfit(
-                              fontSize: 14.5,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFFF87171),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.logout_rounded,
+                              color: Color(0xFFF87171),
+                              size: 20,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 14),
+                            Text(
+                              _isLoggingOut ? 'Sedang keluar...' : AppCopy.logoutButton,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFF87171),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

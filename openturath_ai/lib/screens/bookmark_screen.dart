@@ -16,7 +16,6 @@ import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/canonical_library_service.dart';
 import '../widgets/note_editor_sheet.dart';
-import '../widgets/ot_interactive.dart';
 import 'main_shell_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -557,9 +556,8 @@ class _BookmarkCard extends StatelessWidget {
     final hasValidBookRef = item.bookReference.isNotEmpty &&
         !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
-    return OtTactileCard(
+    return InkWell(
       onTap: onEdit,
-      pressedScale: 0.985,
       borderRadius: OTRadius.cardBorder,
       child: Container(
         padding: const EdgeInsets.all(OTSpacing.base),
@@ -606,20 +604,15 @@ class _BookmarkCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 4),
-                OtTactileCard(
-                  onTap: onDelete,
-                  pressedScale: 0.86,
-                  borderRadius: BorderRadius.circular(100),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.delete_outline_rounded,
-                      size: 20,
-                      color: textSecondary.withValues(alpha: 0.7),
-                    ),
-                    constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                    tooltip: 'Hapus catatan',
-                    onPressed: onDelete,
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 20,
+                    color: textSecondary.withValues(alpha: 0.7),
                   ),
+                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  tooltip: 'Hapus catatan',
+                  onPressed: onDelete,
                 ),
               ],
             ),
@@ -717,78 +710,61 @@ class _BookmarkCard extends StatelessWidget {
             // Action Buttons
             Row(
               children: [
-                OtInteractiveButton(
+                OutlinedButton.icon(
                   onPressed: onEdit,
-                  borderRadius: OTRadius.buttonBorder,
-                  child: OutlinedButton.icon(
-                    onPressed: onEdit,
-                    icon: const Icon(Icons.edit_outlined, size: 14),
-                    label: const Text('Edit'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: textPrimary,
-                      side: BorderSide(color: border, width: 0.8),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      textStyle: OTTypography.captionMedium(),
-                      shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                    ),
+                  icon: const Icon(Icons.edit_outlined, size: 14),
+                  label: const Text('Edit'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: textPrimary,
+                    side: BorderSide(color: border, width: 0.8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    textStyle: OTTypography.captionMedium(),
+                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                   ),
                 ),
                 const SizedBox(width: OTSpacing.xs + 2),
-                OtInteractiveButton(
+                OutlinedButton.icon(
                   onPressed: onCopy,
-                  borderRadius: OTRadius.buttonBorder,
-                  child: OutlinedButton.icon(
-                    onPressed: onCopy,
-                    icon: const Icon(Icons.copy_rounded, size: 14),
-                    label: Text(
-                      item.arabicExcerpt.isNotEmpty
-                          ? AppCopy.copyIbarahAction
-                          : (isBookRef
-                              ? 'Salin rujukan'
-                              : (item.fieldName.contains('Catatan') ? 'Salin catatan' : 'Salin jawaban')),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: textPrimary,
-                      side: BorderSide(color: border, width: 0.8),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      textStyle: OTTypography.captionMedium(),
-                      shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                    ),
+                  icon: const Icon(Icons.copy_rounded, size: 14),
+                  label: Text(
+                    item.arabicExcerpt.isNotEmpty
+                        ? AppCopy.copyIbarahAction
+                        : (isBookRef
+                            ? 'Salin rujukan'
+                            : (item.fieldName.contains('Catatan') ? 'Salin catatan' : 'Salin jawaban')),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: textPrimary,
+                    side: BorderSide(color: border, width: 0.8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    textStyle: OTTypography.captionMedium(),
+                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                   ),
                 ),
                 if (isBookRef) ...[
                   const SizedBox(width: OTSpacing.xs + 2),
-                  OtInteractiveButton(
+                  FilledButton.icon(
                     onPressed: onOpen,
-                    borderRadius: OTRadius.buttonBorder,
-                    child: FilledButton.icon(
-                      onPressed: onOpen,
-                      icon: const Icon(Icons.menu_book, size: 14),
-                      label: const Text('Lihat rujukan'),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: surfaceSubtle,
-                        foregroundColor: textPrimary,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        textStyle: OTTypography.captionMedium(),
-                        shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                      ),
+                    icon: const Icon(Icons.menu_book, size: 14),
+                    label: const Text('Lihat rujukan'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: surfaceSubtle,
+                      foregroundColor: textPrimary,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      textStyle: OTTypography.captionMedium(),
+                      shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                     ),
                   ),
                 ],
                 const Spacer(),
-                OtTactileCard(
-                  onTap: onShare,
-                  pressedScale: 0.88,
-                  borderRadius: BorderRadius.circular(100),
-                  child: IconButton(
-                    onPressed: onShare,
-                    icon: const Icon(Icons.share_outlined, size: 18),
-                    tooltip: AppCopy.shareReferenceTooltip,
-                    color: textSecondary,
-                    padding: const EdgeInsets.all(8),
-                    constraints: const BoxConstraints(),
-                  ),
+                IconButton(
+                  onPressed: onShare,
+                  icon: const Icon(Icons.share_outlined, size: 18),
+                  tooltip: AppCopy.shareReferenceTooltip,
+                  color: textSecondary,
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
