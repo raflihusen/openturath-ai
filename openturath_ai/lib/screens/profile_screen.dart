@@ -16,6 +16,7 @@ import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/legal_document_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -473,7 +474,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // ── Card 5: Log out ──
+                // ── Card 5: Bantuan dan Kontak ──
+                Container(
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: border, width: 1.0),
+                  ),
+                  child: _SettingsTile(
+                    icon: Icons.headset_mic_outlined,
+                    title: AppCopy.supportAndContact,
+                    subtitle: 'Saluran resmi dan pengaduan layanan',
+                    trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                    onTap: () => LegalDocumentSheet.showContactSupport(context),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ── Card 6: Log out ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
@@ -561,74 +580,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
           AppCopy.aboutTitle,
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Versi $_appVersion · ${AppCopy.appTagline}',
-              style: OTTypography.captionMedium(color: textSecondary),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              AppCopy.aboutDescription,
-              style: OTTypography.body(color: textPrimary),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              AppCopy.aboutScholarlyPrinciple,
-              style: OTTypography.caption(color: textSecondary),
-            ),
-            const SizedBox(height: 16),
-            Divider(height: 1, color: border),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: () {
-                Navigator.pop(ctx);
-                _showTermsOfService(context, isDark, textPrimary, textSecondary, surface, border);
-              },
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: Row(
-                  children: [
-                    Icon(Icons.article_outlined, size: 18, color: textSecondary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Ketentuan Layanan',
-                        style: OTTypography.captionMedium(color: textPrimary),
-                      ),
-                    ),
-                    Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
-                  ],
-                ),
+        content: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Versi $_appVersion · ${AppCopy.appTagline}',
+                style: OTTypography.captionMedium(color: textSecondary),
               ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.pop(ctx);
-                _showPrivacyPolicy(context, isDark, textPrimary, textSecondary, surface, border);
-              },
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: Row(
-                  children: [
-                    Icon(Icons.security_outlined, size: 18, color: textSecondary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Kebijakan Privasi',
-                        style: OTTypography.captionMedium(color: textPrimary),
-                      ),
-                    ),
-                    Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
-                  ],
-                ),
+              const SizedBox(height: 12),
+              Text(
+                AppCopy.aboutDescription,
+                style: OTTypography.body(color: textPrimary),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                AppCopy.aboutScholarlyPrinciple,
+                style: OTTypography.caption(color: textSecondary),
+              ),
+              const SizedBox(height: 16),
+              Divider(height: 1, color: border),
+              const SizedBox(height: 8),
+              _buildAboutDocTile(
+                icon: Icons.article_outlined,
+                title: AppCopy.termsOfService,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showTermsOfService(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.security_outlined,
+                title: AppCopy.privacyPolicy,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showPrivacyPolicy(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.payment_outlined,
+                title: AppCopy.paymentAndRefund,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showRefundPolicy(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.menu_book_outlined,
+                title: AppCopy.aiGuideline,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showAiGuideline(context);
+                },
+              ),
+              _buildAboutDocTile(
+                icon: Icons.headset_mic_outlined,
+                title: AppCopy.supportAndContact,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  LegalDocumentSheet.showContactSupport(context);
+                },
+              ),
+            ],
+          ),
         ),
         actions: [
           FilledButton(
@@ -645,218 +671,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showTermsOfService(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-    Color surface,
-    Color border,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        height: MediaQuery.of(ctx).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: OTRadius.sheetBorder,
-          border: Border.all(color: border, width: 0.8),
-        ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildAboutDocTile({
+    required IconData icon,
+    required String title,
+    required Color textPrimary,
+    required Color textSecondary,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: Row(
           children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: OTRadius.chipBorder,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Ketentuan Layanan',
-                  style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
+            Icon(icon, size: 18, color: textSecondary),
+            const SizedBox(width: 10),
             Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLegalSection(
-                      title: '1. Ruang Lingkup & Tujuan Riset',
-                      content:
-                          'OpenTurath membantu pembaca mencari ibarah, membandingkan matan dan syarah, serta menelusuri rujukan kitab. Hasilnya perlu diperiksa kembali pada naskah asli.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '2. Verifikasi Sumber Asli & Batasan Penggunaan',
-                      content:
-                          'Hasil analisis, transkripsi, dan kutipan teks yang disajikan oleh sistem kecerdasan buatan berfungsi sebagai referensi riset awal. Kutipan dan ibarah perlu dicocokkan kembali dengan sumber aslinya pada kitab rujukan cetak atau perpustakaan digital.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '3. Akun Pengguna & Hak Akses',
-                      content:
-                          'Pengguna bertanggung jawab menjaga keamanan kredensial akun Google yang digunakan. Setiap paket langganan (Akses Penuh maupun Modul Spesialis) bersifat personal dan tidak diperkenankan untuk diperjualbelikan kembali atau dieksploitasi melalui bot otomatis tanpa izin tertulis.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '4. Ketentuan Pembayaran & Berlangganan',
-                      content:
-                          'Seluruh transaksi langganan diproses secara resmi melalui payment gateway terverifikasi (DOKU). Pengguna berhak mengakses ruang riset sesuai paket dan durasi yang dipilih.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                  ],
-                ),
+              child: Text(
+                title,
+                style: OTTypography.captionMedium(color: textPrimary),
               ),
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 46,
-              child: FilledButton(
-                onPressed: () => Navigator.pop(ctx),
-                style: FilledButton.styleFrom(
-                  backgroundColor: textPrimary,
-                  foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-                child: Text('Tutup', style: OTTypography.button()),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showPrivacyPolicy(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-    Color surface,
-    Color border,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        height: MediaQuery.of(ctx).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: OTRadius.sheetBorder,
-          border: Border.all(color: border, width: 0.8),
-        ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: OTRadius.chipBorder,
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Kebijakan Privasi',
-                  style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLegalSection(
-                      title: '1. Pengumpulan & Penggunaan Data',
-                      content:
-                          'OpenTurath hanya mengumpulkan data profil dasar (nama, alamat email, dan foto profil publik) yang diotorisasi saat Anda masuk menggunakan Akun Google. Data ini digunakan secara eksklusif untuk otentikasi sesi riset dan personalisasi akun.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '2. Kerahasiaan Sesi & Catatan',
-                      content:
-                          'Pertanyaan telaah, kutipan ibarah, dan riwayat catatan yang Anda simpan dienkripsi dengan standar keamanan industri. OpenTurath tidak membagikan ataupun memperjualbelikan data telaah Anda kepada pihak ketiga manapun.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '3. Keamanan Sesi Google & NotebookLM',
-                      content:
-                          'Koneksi sesi telaah dengan Google NotebookLM berjalan di lingkungan aman melalui enkripsi SSL/TLS. Kredensial kata sandi Anda tidak pernah disimpan di server OpenTurath.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(height: 14),
-                    _buildLegalSection(
-                      title: '4. Hak Penghapusan Data Pengguna',
-                      content:
-                          'Anda memiliki hak mutlak untuk menghapus akun Anda beserta seluruh riwayat telaah dan catatan kapan saja melalui menu Pengaturan > Hapus akun.',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 46,
-              child: FilledButton(
-                onPressed: () => Navigator.pop(ctx),
-                style: FilledButton.styleFrom(
-                  backgroundColor: textPrimary,
-                  foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                ),
-                child: Text('Tutup', style: OTTypography.button()),
-              ),
-            ),
+            Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
           ],
         ),
       ),
@@ -910,28 +747,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildLegalSection({
-    required String title,
-    required String content,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          content,
-          style: OTTypography.caption(color: textSecondary).copyWith(height: 1.5),
-        ),
-      ],
     );
   }
 
