@@ -191,7 +191,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Text(
-            'Tutup Laman Pembayaran?',
+            'Tutup halaman pembayaran?',
             style: GoogleFonts.outfit(
               fontWeight: FontWeight.w600,
               color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
@@ -208,7 +208,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
-                'Lanjutkan Bayar',
+                'Lanjutkan',
                 style: GoogleFonts.outfit(
                   color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
                   fontWeight: FontWeight.w600,
@@ -218,7 +218,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
-                'Ya, Tutup',
+                'Tutup',
                 style: GoogleFonts.outfit(
                   color: AppTheme.appleRed,
                 ),
@@ -320,7 +320,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pembayaran Aman DOKU',
+                                    'Pembayaran',
                                     style: GoogleFonts.outfit(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 15,
@@ -354,7 +354,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                       child: CircularProgressIndicator(strokeWidth: 2),
                                     )
                                   : Icon(Icons.sync_rounded, size: 20, color: textSecondary),
-                              tooltip: 'Periksa Status Pembayaran & Muat Ulang',
+                              tooltip: 'Muat ulang status',
                             ),
                             // Close Button
                             IconButton(
@@ -585,7 +585,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 14),
                             child: Text(
-                              'Pembayaran Berhasil Diverifikasi',
+                              'Pembayaran berhasil',
                               style: GoogleFonts.outfit(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
@@ -608,7 +608,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 12),
                             child: Text(
-                              'Akses ke ruang riset Anda telah aktif secara otomatis. Mengalihkan...',
+                              'Akses modul telah aktif. Mengalihkan…',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(
                                 fontSize: 13,

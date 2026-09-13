@@ -67,7 +67,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
   Future<void> _handleRedeem() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
-      setState(() => _inlineError = 'Masukkan kode akses');
+      setState(() => _inlineError = 'Masukkan kode voucher');
       return;
     }
 
@@ -85,13 +85,9 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
         (success ? 'Akses berhasil diaktifkan' : 'Kode tidak valid atau sudah kedaluwarsa');
 
     if (success) {
-      final isAllAccess = code.toUpperCase() == 'PERDANA' || (result['plan'] == 'all_access');
-      final successMsg = isAllAccess
-          ? 'Alhamdulillah! Kode voucher berhasil diaktifkan. Anda mendapatkan Akses Penuh ke Seluruh Spesialis AI (7 Hari).'
-          : 'Alhamdulillah! Akses riset berhasil diaktifkan.';
       AppSnackBar.show(
         context,
-        message: successMsg,
+        message: 'Voucher berhasil diaktifkan. Akses telaah telah dibuka.',
         type: SnackType.success,
       );
       widget.onSuccess?.call();
@@ -139,7 +135,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Gunakan kode akses',
+                  'Gunakan voucher',
                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -153,7 +149,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Masukkan kode voucher akses atau beasiswa santri yang Anda miliki.',
+              'Masukkan kode voucher yang Anda miliki.',
               style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
@@ -174,7 +170,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 letterSpacing: 1.2,
               ),
               decoration: InputDecoration(
-                hintText: 'Masukkan kode akses',
+                hintText: 'Masukkan kode voucher',
                 hintStyle: OTTypography.body(color: textSecondary).copyWith(
                   letterSpacing: 0,
                   fontSize: 14,
@@ -214,7 +210,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 child: _isLoading
                     ? AppLoader(dotSize: 6, color: canvas)
                     : Text(
-                        'Aktifkan',
+                        'Gunakan voucher',
                         style: OTTypography.button(color: canvas),
                       ),
               ),

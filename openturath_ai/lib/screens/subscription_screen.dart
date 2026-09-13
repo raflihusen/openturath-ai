@@ -101,7 +101,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             side: BorderSide(color: border, width: 0.8),
           ),
           title: Text(
-            'Nomor WhatsApp Konfirmasi',
+            'Nomor WhatsApp',
             style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
           ),
           content: Column(
@@ -109,7 +109,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Masukkan nomor WhatsApp aktif untuk pengiriman bukti aktivasi langganan dan rincian transaksi riset Anda.',
+                'Masukkan nomor WhatsApp aktif untuk konfirmasi pembayaran dan aktivasi langganan.',
                 style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
               ),
               const SizedBox(height: OTSpacing.base),
@@ -154,7 +154,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text('Lanjutkan Pembayaran', style: OTTypography.button()),
+              child: Text('Lanjutkan pembayaran', style: OTTypography.button()),
             ),
           ],
         ),
@@ -262,7 +262,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         if (!mounted) return;
         AppSnackBar.success(
           context,
-          'Alhamdulillah! Pembayaran berhasil. Akses ruang riset Anda telah aktif!',
+          'Pembayaran berhasil. Akses modul telaah Anda telah aktif.',
           duration: const Duration(seconds: 4),
         );
         Navigator.pop(context);
@@ -461,12 +461,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   // Editorial Header
                   Text(
-                    'Pilihan Langganan',
+                    'Pilihan langganan',
                     style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 22),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Pilih langganan modul untuk menelaah ibarat dan naskah kitab turats.',
+                    'Pilih paket langganan untuk menelaah ibarah dan rujukan kitab turats.',
                     style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                   ),
 
@@ -489,7 +489,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             Icon(Icons.confirmation_number_outlined, size: 16, color: accent),
                             const SizedBox(width: 6),
                             Text(
-                              'Punya kode voucher? Klaim di sini',
+                              'Punya kode voucher? Masukkan di sini',
                               style: OTTypography.button(color: accent).copyWith(fontSize: 13.5),
                             ),
                           ],
@@ -518,7 +518,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'MODUL SPESIALIS TERPILIH',
+                              'PAKET MODUL SPESIALIS',
                               style: OTTypography.sectionHeading(color: accent),
                             ),
                             Container(
@@ -528,7 +528,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                '1 MODUL FOKUS',
+                                '1 MODUL',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
@@ -536,12 +536,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Pilih Disiplin Modul AI',
+                          'Pilih Modul AI',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Fokus telaah mendalam pada satu disiplin keilmuan Islam berbasis naskah primer.',
+                          'Telaah mendalam satu disiplin keilmuan Islam berbasis naskah kitab rujukan.',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                         ),
 
@@ -654,12 +654,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         // Core Benefits (Quiet Scholar Natural Phrasing, No generic green checkmarks)
                         _benefitRow(
-                          'Akses musyawarah dan penelaahan kitab tanpa batas kuota harian',
+                          'Akses telaah kitab tanpa batasan pertanyaan harian',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Fokus telaah ibarat dan naskah primer ${_agent?.title ?? "modul keilmuan"}',
+                          'Telaah teks dan ibarah naskah rujukan ${_agent?.title ?? "modul keilmuan"}',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
@@ -669,7 +669,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Verifikasi kutipan teks dengan naskah Maktabah Syamilah dan kitab cetak',
+                          'Verifikasi kutipan ibarah dengan naskah kitab cetak dan digital',
                           textPrimary,
                         ),
 
@@ -742,7 +742,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                'PAKET BUNDLING SEMUA AI',
+                                'PAKET LENGKAP SEMUA AI',
                                 style: OTTypography.sectionHeading(color: textSecondary),
                               ),
                             ),
@@ -766,22 +766,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Akses Seluruh 7 Modul Spesialis AI',
+                          'Akses Seluruh Modul Spesialis AI',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Satu langganan untuk mengakses seluruh modul turats (Fikih Syafi\'i, Hadits, Tafsir, Ushul Fikih, Nahwu, Aqidah, dan Tarikh).',
+                          'Satu paket untuk mengakses seluruh modul keilmuan turats (Fikih, Hadis, Tafsir, Usul Fikih, Nahwu & Sharaf, Akidah, dan Tarikh).',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
                         ),
                         const SizedBox(height: OTSpacing.base),
                         Divider(color: border.withValues(alpha: 0.5), height: 1),
                         const SizedBox(height: OTSpacing.base),
-                        _benefitRow('Akses serentak ke seluruh 7 bidang keilmuan Islam', textSecondary),
+                        _benefitRow('Akses ke seluruh bidang keilmuan Islam yang tersedia', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Kajian terpadu lintas Fikih, Hadits, Tafsir, Ushul, Nahwu, Aqidah, dan Tarikh', textSecondary),
+                        _benefitRow('Telaah terpadu lintas Fikih, Hadis, Tafsir, Usul Fikih, dan Bahasa Arab', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Pembaruan berkala rujukan khazanah ulama terverifikasi', textSecondary),
+                        _benefitRow('Pembaruan berkala rujukan Khazanah Ulama terverifikasi', textSecondary),
                         const SizedBox(height: OTSpacing.md),
                         // Catatan Edukatif
                         Container(
@@ -806,7 +806,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Paket langganan bundling seluruh modul AI sedang disiapkan untuk rilis mendatang.',
+                                  'Paket lengkap seluruh modul AI sedang dipersiapkan untuk pembaruan berikutnya.',
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 12,
                                     height: 1.4,
