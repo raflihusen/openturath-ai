@@ -209,9 +209,9 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       return widget.agent!.title;
     }
     if (_allBooks != null && _allBooks!.isNotEmpty) {
-      return '${_formatNumber(_allBooks!.length)} Kitab Turats';
+      return '${_formatNumber(_allBooks!.length)} Kitab Mazhab Syafi\'i';
     }
-    return 'Katalog Kitab Turats';
+    return '87 Kitab Mazhab Syafi\'i';
   }
 
   @override

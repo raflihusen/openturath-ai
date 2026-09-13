@@ -28,9 +28,9 @@ class OTColors {
   static const Color textSecondaryDark = Color(0xFFA1A1AA); // Zinc 400 (>7.0:1 WCAG AAA)
   static const Color textTertiaryDark = Color(0xFFA1A1AA); // Zinc 500
 
-  // ── 5. Scholarly Accents (Muted Intellectual Sapphire & Emerald) ──
-  static const Color accentLight = Color(0xFF2563EB); // Intellectual sapphire
-  static const Color accentDark = Color(0xFF60A5FA); // Soft scholarly sapphire
+  // ── 5. Scholarly Accents (Pure Monochrome The Quiet Scholar) ──
+  static const Color accentLight = Color(0xFF18181B); // Ink black
+  static const Color accentDark = Color(0xFFFAFAFA); // Clean white
   static const Color sovereignAmber = Color(0xFFD97706); // Amber for Tahawwulat sovereign corpus
   static const Color sovereignAmberBg = Color(0x1AD97706); // 10% amber wash
 

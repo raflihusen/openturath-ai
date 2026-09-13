@@ -26,9 +26,9 @@ void main() {
       expect(OTColors.textPrimaryDark, const Color(0xFFFAFAFA));
       expect(OTColors.textSecondaryDark, const Color(0xFFA1A1AA));
 
-      // 3. Scholarly sapphire accents
-      expect(OTColors.accentLight, const Color(0xFF2563EB));
-      expect(OTColors.accentDark, const Color(0xFF60A5FA));
+      // 3. Scholarly pure monochrome accents
+      expect(OTColors.accentLight, const Color(0xFF18181B));
+      expect(OTColors.accentDark, const Color(0xFFFAFAFA));
 
       // 4. Adaptive context helpers
       expect(OTColors.canvas(false), OTColors.canvasLight);

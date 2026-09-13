@@ -41,16 +41,16 @@ class AppTheme {
   static const Color textPrimaryDark      = Color(0xFFFAFAFA); // Main Title & Body
   static const Color textSecondaryDark    = Color(0xFFA1A1AA); // Muted Subtitles
   static const Color textTertiaryDark     = Color(0xFFA1A1AA); // WCAG AA Compliant (7.3:1) Disclaimers
-  static const Color accentDark           = Color(0xFF60A5FA); // Scholarly Sapphire Blue (Muted Intellectual Dignity)
+  static const Color accentDark           = Color(0xFFFAFAFA); // Monochrome White Action
   static const Color pillActionBgDark     = Color(0xFFFFFFFF); // Solid White Action Pill
   static const Color pillActionTextDark   = Color(0xFF18181B);
   static const Color pillSecondaryBgDark  = Color(0xFF18181B);
   static const Color citationBgDark       = Color(0xFF1E1E22); // Deep Pill
-  static const Color citationTextDark     = Color(0xFF93C5FD); // Soft Scholar Blue Citation Text
+  static const Color citationTextDark     = Color(0xFFFAFAFA); // Monochrome Citation Text
   static const Color queryBoxBgDark       = Color(0xFF18181B); // Stadium Chat Input
   static const Color queryBoxBorderDark   = Color(0xFF27272A);
   static const Color surfaceElevated      = Color(0xFF18181B); // Elevated chip / pill container
-  static const Color scholarlyIndigo      = Color(0xFF4F46E5); // Intellectual Indigo
+  static const Color scholarlyIndigo      = Color(0xFF18181B); // Monochrome Ink
   static const Color readingCanvasParchmentLight = Color(0xFFFBF7EE); // Warm parchment reading surface
   static const Color readingCanvasParchmentDark  = Color(0xFF1C1A17);
 

@@ -164,83 +164,120 @@ class BookRowItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
 
-                // ── Strip EXIF Spesifikasi Naskah (Author · Volumes · Pages · Year) ──
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                  decoration: BoxDecoration(
-                    color: surfaceSubtle,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: border.withValues(alpha: 0.6), width: 0.6),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline_rounded,
-                        size: 13,
-                        color: textSecondary.withValues(alpha: 0.7),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          [
-                            book.authorArabic,
-                            if (formattedVolumes != null) formattedVolumes,
-                            if (hasPages) '${book.pagesDescription} hlm',
-                            if (hasYear) book.printYear!,
-                          ].join('  ·  '),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.outfit(
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w500,
-                            color: textSecondary,
-                            letterSpacing: 0.1,
-                          ),
+                // ── Nama Pengarang (Al-Mu'allif) ──
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.person_outline_rounded,
+                      size: 13,
+                      color: textSecondary.withValues(alpha: 0.7),
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        book.authorArabic,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: textSecondary,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
 
-                // ── Badges Bibliografis (Muhaqqiq, Penerbit, Tipe Naskah) ──
-                if (hasTahqiq || hasPublisher || (book.reviewedTypeLabel != null && book.reviewedTypeLabel!.isNotEmpty)) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 4,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (book.reviewedTypeLabel != null && book.reviewedTypeLabel!.isNotEmpty)
-                        _buildExifPill(
-                          icon: Icons.menu_book_outlined,
-                          text: book.reviewedTypeLabel!,
-                          isDark: isDark,
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                          border: border,
-                        ),
-                      if (hasTahqiq)
-                        _buildExifPill(
-                          icon: Icons.edit_note_rounded,
-                          text: 'Tahqiq: ${book.muhaqqiq!}',
-                          isDark: isDark,
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                          border: border,
-                          maxWidth: 180,
-                        ),
-                      if (hasPublisher)
-                        _buildExifPill(
-                          icon: Icons.apartment_rounded,
-                          text: book.publisher!,
-                          isDark: isDark,
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                          border: border,
-                          maxWidth: 160,
-                        ),
-                    ],
+                // ── Metadata Strip Bergaya Informasi Google Camera (EXIF Micro-Pills) ──
+                if (formattedVolumes != null ||
+                    hasPages ||
+                    hasTahqiq ||
+                    hasPublisher ||
+                    hasYear ||
+                    book.reviewedTypeLabel != null ||
+                    book.reviewedEraLabel != null) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: surfaceSubtle,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: border.withValues(alpha: 0.5), width: 0.6),
+                    ),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (formattedVolumes != null)
+                          _buildExifPill(
+                            icon: Icons.layers_outlined,
+                            text: formattedVolumes,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (book.reviewedTypeLabel != null && book.reviewedTypeLabel!.isNotEmpty)
+                          _buildExifPill(
+                            icon: Icons.menu_book_outlined,
+                            text: book.reviewedTypeLabel!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (book.reviewedEraLabel != null && book.reviewedEraLabel!.isNotEmpty)
+                          _buildExifPill(
+                            icon: Icons.history_edu_rounded,
+                            text: book.reviewedEraLabel!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (hasPages)
+                          _buildExifPill(
+                            icon: Icons.article_outlined,
+                            text: '${book.pagesDescription} hlm',
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                        if (hasTahqiq)
+                          _buildExifPill(
+                            icon: Icons.edit_note_rounded,
+                            text: book.muhaqqiq!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                            maxWidth: 160,
+                          ),
+                        if (hasPublisher)
+                          _buildExifPill(
+                            icon: Icons.apartment_rounded,
+                            text: book.publisher!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                            maxWidth: 150,
+                          ),
+                        if (hasYear)
+                          _buildExifPill(
+                            icon: Icons.calendar_today_outlined,
+                            text: book.printYear!,
+                            isDark: isDark,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
+                            border: border,
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ],
