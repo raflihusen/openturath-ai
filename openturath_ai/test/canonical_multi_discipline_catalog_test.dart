@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/book_model.dart';
@@ -33,7 +32,16 @@ void main() {
       expect(totalCount, equals(2226));
     });
 
-    test('CanonicalBookPresentation parses Syamilah attributes accurately', () {
+    test('All 6 active specialist agents have catalogId set for Pustaka button', () {
+      final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive).toList();
+      expect(activeAgents.length, greaterThanOrEqualTo(6));
+      for (final agent in activeAgents) {
+        expect(agent.catalogId, isNotNull, reason: 'Agent ${agent.id} must have catalogId');
+        expect(agent.catalogId, startsWith('canonical_'));
+      }
+    });
+
+    test('CanonicalBookPresentation parses Syamilah attributes and pagesDescription accurately', () {
       const sampleHadithJson = '''
       [
         {
@@ -46,6 +54,7 @@ void main() {
           "الناشر": "دار طوق النجاة",
           "سنة_الطبع": "1422هـ",
           "عدد_الأجزاء": "9",
+          "عدد_الصفحات": "3882",
           "id": 101
         }
       ]
@@ -58,6 +67,8 @@ void main() {
       expect(b.verifiedDeathYearHijri, equals(256));
       expect(b.sectionArabic, equals('كتب السنة'));
       expect(b.shortTitleArabic, equals('صحيح البخاري'));
+      expect(b.pagesDescription, equals('3882'));
+      expect(b.compactLabels, contains('3882 Hlm'));
       expect(b.titleArabic, contains('الجامع المسند'));
       expect(b.authorArabic, contains('البخاري'));
       expect(b.muhaqqiq, contains('محمد زهير'));
