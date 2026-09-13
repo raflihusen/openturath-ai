@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -13,7 +12,8 @@ import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
 
 /// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
-/// Mengeliminasi pola anti-desain modal bertingkat (sheet-on-sheet) sesuai Apple HIG.
+/// Dirancang sepenuhnya dalam Bahasa Arab Turats dan Tata Letak RTL murni.
+/// Menggunakan font Naskh Scheherazade New tanpa font Amiri sama sekali.
 class BookDetailScreen extends StatefulWidget {
   final CanonicalBookPresentation book;
   final AgentModel? agent;
@@ -63,18 +63,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaved = false;
             _isSaving = false;
           });
-          AppSnackBar.show(context, message: 'Rujukan dihapus dari catatan.');
+          AppSnackBar.show(context, message: 'تمت إزالة الكتاب من الملاحظات');
         }
       } else {
         final agent = _resolveTargetAgent();
         final deathYearStr = widget.book.verifiedDeathYearHijri != null
-            ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
+            ? ' (ت: ${widget.book.verifiedDeathYearHijri} هـ)'
             : '';
         final publisherStr = widget.book.publisher != null
-            ? ', Terbitan ${widget.book.publisher}'
+            ? '، دار النشر: ${widget.book.publisher}'
             : '';
         final muhaqqiqStr = widget.book.muhaqqiq != null
-            ? ', Tahkik: ${widget.book.muhaqqiq}'
+            ? '، تحقيق: ${widget.book.muhaqqiq}'
             : '';
 
         final newNote = ResearchNote(
@@ -83,11 +83,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           agentTitle: agent.title,
           title: widget.book.titleArabic,
           excerpt:
-              'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
+              'كتاب ${widget.book.titleArabic}، للمؤلف ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
           bookTitle: widget.book.titleArabic,
           bookVolume: widget.book.volumesCount?.toString(),
           tags: [
-            'Rujukan Kitab',
+            'بطاقة كتاب',
             if (widget.book.reviewedTypeLabel != null) widget.book.reviewedTypeLabel!,
             if (widget.book.reviewedEraLabel != null) widget.book.reviewedEraLabel!,
           ],
@@ -99,11 +99,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           title: widget.book.titleArabic,
           agentId: agent.id,
           agentTitle: agent.title,
-          fieldName: 'Rujukan Kitab',
+          fieldName: 'بطاقة كتاب',
           fieldId: 'fiqh',
           arabicExcerpt: widget.book.titleArabic,
           fullAnswer:
-              'Kitab ${widget.book.titleArabic}, karya ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
+              'كتاب ${widget.book.titleArabic}، للمؤلف ${widget.book.authorArabic}$deathYearStr$publisherStr$muhaqqiqStr.',
           bookReference: widget.book.titleArabic,
           pageNumber: '',
           author: widget.book.authorArabic,
@@ -118,13 +118,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaving = false;
           });
           HapticFeedback.mediumImpact();
-          AppSnackBar.success(context, 'Kitab disimpan ke catatan.');
+          AppSnackBar.success(context, 'تم حفظ بيانات الكتاب في الملاحظات');
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.error(context, 'Gagal memperbarui catatan.');
+        AppSnackBar.error(context, 'تعذر تحديث الملاحظات');
       }
     }
   }
@@ -143,27 +143,59 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   void _copyScholarlyCitation() {
     final deathYearStr = widget.book.verifiedDeathYearHijri != null
-        ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
+        ? ' (ت: ${widget.book.verifiedDeathYearHijri} هـ)'
         : '';
     final publisherStr = widget.book.publisher != null
-        ? ', ${widget.book.publisher}'
+        ? '، دار النشر: ${widget.book.publisher}'
         : '';
     final muhaqqiqStr = widget.book.muhaqqiq != null
-        ? ', Tahkik: ${widget.book.muhaqqiq}'
+        ? '، تحقيق: ${widget.book.muhaqqiq}'
         : '';
     final volStr = (widget.book.volumesDescription != null && widget.book.volumesDescription!.isNotEmpty)
-        ? ', ${widget.book.volumesDescription} jilid'
-        : (widget.book.volumesCount != null ? ', ${widget.book.volumesCount} jilid' : '');
+        ? '، ${widget.book.volumesDescription}'
+        : (widget.book.volumesCount != null ? '، ${widget.book.volumesCount} أجزاء' : '');
     final printYearStr = (widget.book.printYear != null && widget.book.printYear != '-')
-        ? ', ${widget.book.printYear}'
+        ? '، سنة الطبع: ${widget.book.printYear}'
         : '';
 
     final citation =
-        '${widget.book.authorArabic}$deathYearStr. ${widget.book.titleArabic}$muhaqqiqStr$publisherStr$printYearStr$volStr.';
+        '${widget.book.authorArabic}$deathYearStr، ${widget.book.titleArabic}$muhaqqiqStr$publisherStr$printYearStr$volStr.';
 
     Clipboard.setData(ClipboardData(text: citation));
     HapticFeedback.selectionClick();
-    AppSnackBar.success(context, 'Sitasi rujukan tersalin.');
+    AppSnackBar.success(context, 'تم نسخ بطاقة الكتاب بنجاح');
+  }
+
+  String _translateType(String? type) {
+    if (type == null || type.isEmpty) return 'مصنف علمي';
+    final l = type.toLowerCase();
+    if (l.contains('matn') || l.contains('matan')) return 'متن معتمد';
+    if (l.contains('syarah') || l.contains('sharh')) return 'شرح';
+    if (l.contains('hasyiyah') || l.contains('hashiyah')) return 'حاشية';
+    if (l.contains('mukhtasar') || l.contains('ringkasan')) return 'مختصر';
+    if (l.contains('ensiklopedia') || l.contains('mausuah')) return 'موسوعة فقهية';
+    if (l.contains('manzhumah') || l.contains('nazham')) return 'منظومة علمية';
+    return type;
+  }
+
+  String _translateEra(String? era) {
+    if (era == null || era.isEmpty) return 'التراث الإسلامي';
+    final l = era.toLowerCase();
+    if (l.contains('mutaqaddim') || l.contains('awal')) return 'عصر المتقدمين (حتى ٤٠٠ هـ)';
+    if (l.contains('mutawassith') || l.contains('pertengahan')) return 'عصر المتوسطين (٤٠٠ - ٨٠٠ هـ)';
+    if (l.contains('muta\'akhkhir') || l.contains('mutaakhir') || l.contains('lanjut')) return 'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)';
+    if (l.contains('mu\'ashir') || l.contains('kontemporer') || l.contains('modern')) return 'العصر المعاصر (بعد ١٢٠٠ هـ)';
+    return era;
+  }
+
+  String _formatVolumes() {
+    final vd = widget.book.volumesDescription;
+    if (vd != null && vd.isNotEmpty) {
+      return (vd.contains('جزء') || vd.contains('مجلد')) ? vd : '$vd أجزاء';
+    }
+    final count = widget.book.volumesCount;
+    if (count != null && count > 1) return '$count أجزاء';
+    return 'جزء واحد (مجلد مفرد)';
   }
 
   @override
@@ -176,91 +208,97 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
 
-    return Scaffold(
-      backgroundColor: background,
-      appBar: AppBar(
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
         backgroundColor: background,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-          tooltip: 'Kembali',
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          AppCopy.bookDetails,
-          style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-              color: _isSaved ? (isDark ? Colors.white : Colors.black) : textSecondary,
+        appBar: AppBar(
+          backgroundColor: background,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+            tooltip: 'رجوع',
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            'بطاقة الكتاب',
+            style: OTTypography.arabicReading(color: textPrimary).copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
             ),
-            tooltip: _isSaved ? 'Hapus rujukan' : 'Simpan rujukan',
-            onPressed: _toggleSaveBook,
           ),
-          IconButton(
-            icon: Icon(Icons.share_outlined, color: textSecondary),
-            tooltip: 'Salin sitasi',
-            onPressed: _copyScholarlyCitation,
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(
-            horizontal: OTSpacing.lg,
-            vertical: OTSpacing.md,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── KARTU 1: IDENTITAS KITAB (ARABIC HERO) ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: surfaceSubtle,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: border.withValues(alpha: 0.7), width: 0.6),
-                          ),
-                          child: Text(
-                            widget.book.sectionArabic ?? 'Naskah Kanonikal',
-                            style: OTTypography.caption(color: textSecondary).copyWith(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 11,
+          actions: [
+            IconButton(
+              icon: Icon(
+                _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                color: _isSaved ? (isDark ? Colors.white : Colors.black) : textSecondary,
+              ),
+              tooltip: _isSaved ? 'إزالة من الملاحظات' : 'حفظ في الملاحظات',
+              onPressed: _toggleSaveBook,
+            ),
+            IconButton(
+              icon: Icon(Icons.share_outlined, color: textSecondary),
+              tooltip: 'نسخ بطاقة الكتاب',
+              onPressed: _copyScholarlyCitation,
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(
+              horizontal: OTSpacing.lg,
+              vertical: OTSpacing.md,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── KARTU 1: IDENTITAS KITAB (ARABIC HERO) ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 3.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: surfaceSubtle,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: border.withValues(alpha: 0.7), width: 0.6),
+                            ),
+                            child: Text(
+                              widget.book.sectionArabic ?? 'نص محقق معتمد',
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                              ),
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          widget.book.editionId,
-                          style: OTTypography.caption(color: textSecondary).copyWith(
-                            fontFamily: 'Courier',
-                            fontSize: 11,
+                          const Spacer(),
+                          Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: Text(
+                              widget.book.editionId,
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                fontFamily: 'Courier',
+                                fontSize: 11,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: OTSpacing.md),
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
+                        ],
+                      ),
+                      const SizedBox(height: OTSpacing.md),
+                      Text(
                         widget.book.titleArabic,
                         textAlign: TextAlign.right,
                         style: OTTypography.arabicDisplay(color: textPrimary).copyWith(
@@ -269,240 +307,230 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           height: 1.6,
                         ),
                       ),
-                    ),
-                    if (widget.book.shortTitleArabic != null &&
-                        widget.book.shortTitleArabic!.isNotEmpty &&
-                        widget.book.shortTitleArabic != widget.book.titleArabic) ...[
-                      const SizedBox(height: 6),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Text(
+                      if (widget.book.shortTitleArabic != null &&
+                          widget.book.shortTitleArabic!.isNotEmpty &&
+                          widget.book.shortTitleArabic != widget.book.titleArabic) ...[
+                        const SizedBox(height: 6),
+                        Text(
                           'المختصر: ${widget.book.shortTitleArabic!}',
                           textAlign: TextAlign.right,
-                          style: OTTypography.caption(color: textSecondary).copyWith(
-                            fontFamily: 'Amiri',
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
-                    if (widget.book.titleLatin != null &&
-                        widget.book.titleLatin!.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.book.titleLatin!,
-                        style: OTTypography.body(color: textSecondary).copyWith(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: OTSpacing.md),
-
-              // ── KARTU 2: MUALLIF / PENGARANG ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader('PENGARANG', textSecondary),
-                    const SizedBox(height: 10),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.person_outline_rounded,
-                          size: 20,
-                          color: textSecondary,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.book.authorArabic,
-                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              if (widget.book.authorLatin != null) ...[
-                                const SizedBox(height: 2),
-                                Text(
-                                  widget.book.authorLatin!,
-                                  style: OTTypography.caption(color: textSecondary),
-                                ),
-                              ],
-                              const SizedBox(height: 6),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2.5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.06)
-                                      : Colors.black.withValues(alpha: 0.04),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  widget.book.verifiedDeathYearHijri != null
-                                      ? 'Wafat: ${widget.book.verifiedDeathYearHijri} Hijriyah'
-                                      : 'Wafat: Belum tercatat',
-                                  style: OTTypography.caption(color: textSecondary).copyWith(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          style: OTTypography.arabicReading(color: textSecondary).copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
-                    ),
-                  ],
+                      if (widget.book.titleLatin != null &&
+                          widget.book.titleLatin!.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: Text(
+                            widget.book.titleLatin!,
+                            textAlign: TextAlign.right,
+                            style: OTTypography.body(color: textSecondary).copyWith(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: OTSpacing.md),
+                const SizedBox(height: OTSpacing.md),
 
-              // ── KARTU 3: SPESIFIKASI & KLASIFIKASI NASKAH ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader('KLASIFIKASI & KANDUNGAN', textSecondary),
-                    const SizedBox(height: 12),
-                    if (widget.book.sectionArabic != null && widget.book.sectionArabic!.isNotEmpty) ...[
-                      _buildMetaRow(
-                        icon: Icons.category_outlined,
-                        label: 'Bidang Kajian',
-                        value: widget.book.sectionArabic!,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      const Divider(height: 16, thickness: 0.5),
-                    ],
-                    if (widget.book.reviewedTypeLabel != null && widget.book.reviewedTypeLabel!.isNotEmpty) ...[
-                      _buildMetaRow(
-                        icon: Icons.menu_book_outlined,
-                        label: 'Tipe Naskah',
-                        value: widget.book.reviewedTypeLabel!,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      const Divider(height: 16, thickness: 0.5),
-                    ],
-                    if (widget.book.reviewedEraLabel != null && widget.book.reviewedEraLabel!.isNotEmpty) ...[
-                      _buildMetaRow(
-                        icon: Icons.history_edu_rounded,
-                        label: 'Era Keilmuan',
-                        value: widget.book.reviewedEraLabel!,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      const Divider(height: 16, thickness: 0.5),
-                    ],
-                    _buildMetaRow(
-                      icon: Icons.auto_stories_outlined,
-                      label: 'Jumlah Jilid',
-                      value: () {
-                        final vd = widget.book.volumesDescription;
-                        if (vd != null && vd.isNotEmpty) {
-                          return (vd.contains('جزء') || vd.contains('مجلد') || vd.contains('Jilid'))
-                              ? vd
-                              : '$vd Jilid';
-                        }
-                        return (widget.book.volumesCount != null && widget.book.volumesCount! > 0)
-                            ? '${widget.book.volumesCount} Jilid'
-                            : '1 Jilid / Naskah Tunggal';
-                      }(),
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    if (widget.book.pagesDescription != null &&
-                        widget.book.pagesDescription!.isNotEmpty &&
-                        widget.book.pagesDescription != '-') ...[
-                      const Divider(height: 16, thickness: 0.5),
-                      _buildMetaRow(
-                        icon: Icons.article_outlined,
-                        label: 'Jumlah Halaman',
-                        value: '${widget.book.pagesDescription} Halaman',
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                    ],
-                    if (widget.book.canShowAuthority) ...[
-                      const Divider(height: 16, thickness: 0.5),
-                      _buildMetaRow(
-                        icon: Icons.verified_outlined,
-                        label: 'Derajat Mu\'tabar',
-                        value: widget.book.reviewedAuthorityLabel!,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
+                // ── KARTU 2: MUALLIF / PENGARANG ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('المؤلف والوفاة', textSecondary),
+                      const SizedBox(height: 10),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.person_outline_rounded,
+                            size: 20,
+                            color: textSecondary,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.book.authorArabic,
+                                  style: OTTypography.arabicReading(color: textPrimary).copyWith(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                if (widget.book.authorLatin != null) ...[
+                                  const SizedBox(height: 2),
+                                  Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Text(
+                                      widget.book.authorLatin!,
+                                      style: OTTypography.caption(color: textSecondary),
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? Colors.white.withValues(alpha: 0.06)
+                                        : Colors.black.withValues(alpha: 0.04),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    widget.book.verifiedDeathYearHijri != null
+                                        ? 'سنة الوفاة: ${widget.book.verifiedDeathYearHijri} هـ'
+                                        : 'سنة الوفاة: غير مدونة',
+                                    style: OTTypography.arabicReading(color: textSecondary).copyWith(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: OTSpacing.md),
+                const SizedBox(height: OTSpacing.md),
 
-              // ── KARTU 4: DATA EDISI & TAHQIQ ──
-              _buildCard(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionHeader('PENERBITAN & TAHKIK', textSecondary),
-                    const SizedBox(height: 12),
-                    _buildMetaRow(
-                      icon: Icons.business_outlined,
-                      label: 'Penerbit',
-                      value: widget.book.publisher ?? 'Belum tercatat',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const Divider(height: 16, thickness: 0.5),
-                    _buildMetaRow(
-                      icon: Icons.edit_note_rounded,
-                      label: 'Penahkik',
-                      value: widget.book.muhaqqiq ?? 'Belum tercatat',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    if (widget.book.printYear != null && widget.book.printYear != '-') ...[
-                      const Divider(height: 16, thickness: 0.5),
+                // ── KARTU 3: SPESIFIKASI & KLASIFIKASI NASKAH ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('التصنيف والمصنف', textSecondary),
+                      const SizedBox(height: 12),
+                      if (widget.book.sectionArabic != null && widget.book.sectionArabic!.isNotEmpty) ...[
+                        _buildMetaRow(
+                          icon: Icons.category_outlined,
+                          label: 'القسم العلمي',
+                          value: widget.book.sectionArabic!,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                        const Divider(height: 16, thickness: 0.5),
+                      ],
+                      if (widget.book.reviewedTypeLabel != null && widget.book.reviewedTypeLabel!.isNotEmpty) ...[
+                        _buildMetaRow(
+                          icon: Icons.menu_book_outlined,
+                          label: 'نوع المصنف',
+                          value: _translateType(widget.book.reviewedTypeLabel),
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                        const Divider(height: 16, thickness: 0.5),
+                      ],
+                      if (widget.book.reviewedEraLabel != null && widget.book.reviewedEraLabel!.isNotEmpty) ...[
+                        _buildMetaRow(
+                          icon: Icons.history_edu_rounded,
+                          label: 'عصر المؤلف',
+                          value: _translateEra(widget.book.reviewedEraLabel),
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                        const Divider(height: 16, thickness: 0.5),
+                      ],
                       _buildMetaRow(
-                        icon: Icons.calendar_today_outlined,
-                        label: 'Tahun cetak',
-                        value: widget.book.printYear!,
+                        icon: Icons.auto_stories_outlined,
+                        label: 'عدد الأجزاء',
+                        value: _formatVolumes(),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),
+                      if (widget.book.pagesDescription != null &&
+                          widget.book.pagesDescription!.isNotEmpty &&
+                          widget.book.pagesDescription != '-') ...[
+                        const Divider(height: 16, thickness: 0.5),
+                        _buildMetaRow(
+                          icon: Icons.article_outlined,
+                          label: 'عدد الصفحات',
+                          value: '${widget.book.pagesDescription} صفحة',
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                      ],
+                      if (widget.book.canShowAuthority) ...[
+                        const Divider(height: 16, thickness: 0.5),
+                        _buildMetaRow(
+                          icon: Icons.verified_outlined,
+                          label: 'رتبة الاعتماد',
+                          value: 'معتمد في المذهب والفتوى',
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: OTSpacing.md),
+                const SizedBox(height: OTSpacing.md),
 
+                // ── KARTU 4: DATA EDISI & TAHQIQ ──
+                _buildCard(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionHeader('بيانات الطبع والتحقيق', textSecondary),
+                      const SizedBox(height: 12),
+                      _buildMetaRow(
+                        icon: Icons.business_outlined,
+                        label: 'دار النشر',
+                        value: widget.book.publisher ?? 'غير مدون',
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      const Divider(height: 16, thickness: 0.5),
+                      _buildMetaRow(
+                        icon: Icons.edit_note_rounded,
+                        label: 'المحقق',
+                        value: widget.book.muhaqqiq ?? 'غير مدون',
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      if (widget.book.printYear != null && widget.book.printYear != '-') ...[
+                        const Divider(height: 16, thickness: 0.5),
+                        _buildMetaRow(
+                          icon: Icons.calendar_today_outlined,
+                          label: 'سنة الطبع',
+                          value: widget.book.printYear!,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
 
-
-              const SizedBox(height: OTSpacing.xl),
-            ],
+                const SizedBox(height: OTSpacing.xl),
+              ],
+            ),
           ),
         ),
       ),
@@ -529,7 +557,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget _buildSectionHeader(String title, Color color) {
     return Text(
       title,
-      style: OTTypography.sectionHeading(color: color),
+      style: OTTypography.arabicReading(color: color).copyWith(
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 
@@ -546,15 +577,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         const SizedBox(width: 8),
         Text(
           label,
-          style: OTTypography.caption(color: textSecondary),
+          style: OTTypography.arabicReading(color: textSecondary).copyWith(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const Spacer(),
         Flexible(
           child: Text(
             value,
-            textAlign: TextAlign.right,
-            style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-              fontSize: 13,
+            textAlign: TextAlign.left,
+            style: OTTypography.arabicReading(color: textPrimary).copyWith(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
