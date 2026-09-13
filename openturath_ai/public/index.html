@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenTurath — Asisten Riset Literatur Islam &amp; Pembacaan Kitab</title>
-  <meta name="description" content="OpenTurath membantu Anda menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. Cari kutipan ibarah, pelajari pembahasan, dan temukan rujukan kitab fisik.">
+  <title>OpenTurath — Telusuri Kitab. Pelajari Pembahasannya.</title>
+  <meta name="description" content="OpenTurath membantu santri, asatidz, dan peneliti menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. Rujukan kitab fisik, ibarah verbatim, dan catatan riset terpadu.">
   <link rel="canonical" href="https://openturath.web.app/">
   
-  <!-- Open Graph / Meta Sosial -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://openturath.web.app/">
   <meta property="og:title" content="OpenTurath — Telusuri Kitab. Pelajari Pembahasannya.">
@@ -20,6 +20,20 @@
   <meta name="twitter:description" content="Membaca kitab, menelusuri ibarah. Asisten telaah literatur Islam dengan rujukan kitab fisik.">
   <meta name="twitter:image" content="logo_open_ai.png">
 
+  <!-- Theme initialization script (prevents flash of wrong theme) -->
+  <script>
+    (function() {
+      var saved = localStorage.getItem('openturath_theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,355 +41,598 @@
   <!-- ═══════════════ NAVBAR ═══════════════ -->
   <header class="navbar" id="navbar">
     <div class="navbar__inner">
-      <a href="index.html" class="navbar__logo">
-        <img src="logo_open_ai.png" alt="OpenTurath logo" width="28" height="28">
+      <a href="index.html" class="navbar__logo" aria-label="OpenTurath Beranda">
+        <img src="logo_open_ai.png" alt="OpenTurath" class="navbar__logo-img" width="30" height="30">
         <span>Open<span class="navbar__logo-dim">Turath</span></span>
       </a>
-      <nav class="navbar__actions" aria-label="Navigasi Utama">
-        <a href="#kelebihan" class="navbar__link">Kelebihan</a>
-        <a href="#contoh" class="navbar__link">Contoh Rujukan</a>
-        <a href="#korpus" class="navbar__link">Bidang Kitab</a>
-        <a href="download.html" class="navbar__cta">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+
+      <nav class="navbar__nav" aria-label="Navigasi Khazanah">
+        <a href="#ibarah" class="navbar__link">Ibarah &amp; Rujukan</a>
+        <a href="#khazanah" class="navbar__link">Khazanah Kitab</a>
+        <a href="#bidang-ilmu" class="navbar__link">Bidang Ilmu</a>
+        <a href="#adab" class="navbar__link">Adab Ilmiah</a>
+      </nav>
+
+      <div class="navbar__actions">
+        <button class="theme-toggle interactive-tap" id="theme-toggle" aria-label="Ganti tema warna" title="Ganti mode terang atau gelap">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <a href="download.html" class="btn-pill btn-pill--primary interactive-tap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Unduh Aplikasi
         </a>
-      </nav>
+      </div>
     </div>
   </header>
 
   <main>
 
-    <!-- ═══════════════ SECTION 1: HERO ═══════════════ -->
-    <section class="hero" id="hero">
-      <div class="reveal">
-        <div class="hero__badge">
-          <span class="hero__badge-dot" aria-hidden="true"></span>
-          <span>Membaca kitab, menelusuri ibarah</span>
+    <!-- ═══════════════ 1. EDITORIAL HERO SECTION ═══════════════ -->
+    <section class="editorial-hero">
+      <div class="container container--wide">
+        
+        <div class="editorial-hero__meta">
+          <span class="pill-exif">Khazanah Turats Islam</span>
+          <span class="pill-exif pill-exif--sapphire">Membaca kitab, menelusuri ibarah</span>
         </div>
-      </div>
 
-      <div class="reveal">
-        <h1>
+        <h1 class="editorial-hero__title">
           Telusuri kitab.<br>
-          <span class="dim">Pelajari pembahasannya.</span>
+          <em>Pelajari pembahasannya.</em>
         </h1>
-      </div>
 
-      <div class="reveal">
-        <p class="hero__sub">
+        <p class="editorial-hero__sub">
           OpenTurath membantu santri, asatidz, mahasiswa, dan peneliti mencari kutipan teks Arab,
           membandingkan keterangan ulama dalam kitab-kitab klasik, serta menyimpan rujukan untuk dipelajari kembali.
         </p>
-      </div>
 
-      <div class="reveal">
-        <div class="hero__actions">
-          <a href="download.html" class="btn btn--primary">
+        <div class="editorial-hero__actions">
+          <a href="download.html" class="btn-pill btn-pill--primary interactive-tap">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Unduh Aplikasi Android
+            Unduh Aplikasi Android (v1.0.21)
           </a>
-          <a href="#kelebihan" class="btn btn--secondary">Pelajari Kelebihan</a>
-        </div>
-      </div>
-
-      <div class="reveal">
-        <div class="hero__trust">
-          <span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-            6 Bidang Keilmuan Islam
-          </span>
-          <span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Rujukan Halaman Kitab Fisik
-          </span>
-          <span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Adab Ilmiah Tanpa Halusinasi
-          </span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 2: KELEBIHAN APLIKASI ═══════════════ -->
-    <section class="section section--subtle" id="kelebihan">
-      <div class="container container--wide">
-        <div class="section__head reveal">
-          <span class="section__eyebrow">Kelebihan Aplikasi</span>
-          <h2>Dirancang Khusus untuk Pembaca Literatur Islam</h2>
-          <p>Bukan chatbot generik. OpenTurath dibangun sebagai instrumen bantu yang menghargai ketelitian naskah dan proses belajar beradab.</p>
-        </div>
-
-        <div class="features-grid">
-          <!-- Feature 1 -->
-          <div class="feature-card reveal">
-            <div class="feature-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-            </div>
-            <h3>6 Bidang Keilmuan Terstruktur</h3>
-            <p>Asisten dikelompokkan menurut bidang: Fikih Syafi'i, Hadis &amp; Syarah, Tafsir &amp; Ulumul Qur'an, Ushul Fikih, Bahasa Arab &amp; Balaghah, serta Fikih Tahawwulat.</p>
-          </div>
-
-          <!-- Feature 2 -->
-          <div class="feature-card reveal">
-            <div class="feature-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-            </div>
-            <h3>Kutipan Ibarah Verbatim</h3>
-            <p>Menyajikan teks Arab asli dari naskah primer lengkap dengan penanda jilid dan nomor halaman cetak agar pembaca dapat memeriksa konteksnya langsung di kitab fisik.</p>
-          </div>
-
-          <!-- Feature 3 -->
-          <div class="feature-card reveal">
-            <div class="feature-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-            </div>
-            <h3>Buku Catatan Riset Terpadu</h3>
-            <p>Simpan potongan ibarah dan penjelasan penting langsung ke fitur Catatan di dalam aplikasi untuk bahan mengajar, telaah halaqah, atau penulisan naskah ilmiah.</p>
-          </div>
-
-          <!-- Feature 4 -->
-          <div class="feature-card reveal">
-            <div class="feature-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            </div>
-            <h3>Adab Ilmiah &amp; Anti-Halusinasi</h3>
-            <p>Menegaskan batas teknologi sebagai alat bantu pencarian rujukan, bukan pemberi fatwa atau pengganti talaqqi bersama ulama yang bersanad keilmuan.</p>
-          </div>
-
-          <!-- Feature 5 -->
-          <div class="feature-card reveal">
-            <div class="feature-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-            </div>
-            <h3>Aplikasi Mobile Ringan &amp; Cepat</h3>
-            <p>Dioptimalkan khusus untuk kenyamanan membaca di perangkat Android dengan antarmuka yang bersih, responsif, dan hemat daya baterai.</p>
-          </div>
-
-          <!-- Feature 6 -->
-          <div class="feature-card reveal">
-            <div class="feature-card__icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-            </div>
-            <h3>Ketenangan Membaca Tanpa Iklan</h3>
-            <p>Menghadirkan suasana membaca yang khusyuk tanpa iklan banner yang mengganggu, tanpa popup komersial, dan tanpa animasi yang melelahkan pandangan.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 3: PROOF (CONTOH RUJUKAN) ═══════════════ -->
-    <section class="section" id="contoh">
-      <div class="container">
-        <div class="section__head reveal">
-          <span class="section__eyebrow">Contoh Keluaran</span>
-          <h2>Kutipan Ibarah dengan Rujukan Terbuka</h2>
-          <p>Setiap jawaban menyertakan rujukan nama kitab, bab, dan halaman cetak agar dapat diverifikasi pada naskah asli.</p>
-        </div>
-
-        <div class="proof reveal">
-          <div class="proof__header">
-            <div class="proof__tag">
-              <span>Asisten Fikih Tahawwulat</span>
-              <span class="proof__tag-badge">Al-Muhaqqiq</span>
-            </div>
-            <span style="font-size: 0.8125rem; color: var(--ink-secondary);">Edisi Cetak Terverifikasi</span>
-          </div>
-
-          <div class="proof__label">Pertanyaan Telaah:</div>
-          <div class="proof__question">Apa yang dimaksud fase Al-Ghutsā'iyyah dalam naskah Al-Usus wal-Munthalaqat?</div>
-
-          <div class="proof__label">Ikhtisar Jawaban:</div>
-          <div class="proof__answer">
-            Dalam terminologi Fikih Tahawwulat yang dirumuskan oleh Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur, <strong>Al-Ghutsā'iyyah</strong> (الغثائية) merujuk pada fase sejarah kemunduran umat Islam akhir zaman, yang dianalogikan oleh Rasulullah ﷺ layaknya "buih di atas arus banjir". Fase ini terbagi menjadi lima marhalah berurutan yang berpuncak pada fitnah Ash-Shaylam.
-          </div>
-
-          <hr class="proof__divider">
-
-          <div class="proof__label">Kutipan Teks Kitab (Ibarah):</div>
-
-          <div class="proof__cite">
-            <p class="arabic">«يوشك أن تداعى عليكم الأمم كما تداعى الأكلة على قصعتها، قالوا: أمن قلة نحن يا رسول الله؟ قال: لا أنتم يومئذ كثير ولكنكم غثاء كغثاء السيل»</p>
-            <span class="proof__cite-ref">Rujukan: Al-Usus wal-Munthalaqat, Halaman 206</span>
-          </div>
-
-          <div class="proof__cite">
-            <p class="arabic">«فالمرحلة الغثائية التي عبر عنها صلى الله عليه وآله وسلم بأنها مرحلة التداعي والوهن وحب الدنيا وكراهية الموت... إنما هي المرحلة الحديثة التي بدأت بسقوط قرار الخلافة»</p>
-            <span class="proof__cite-ref">Rujukan: Al-Usus wal-Munthalaqat, Halaman 320</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 4: KORPUS KITAB ═══════════════ -->
-    <section class="section section--subtle" id="korpus">
-      <div class="container container--wide">
-        <div class="section__head reveal">
-          <span class="section__eyebrow">Cakupan Literatur</span>
-          <h2>Koleksi Kitab yang Ditelusuri</h2>
-          <p>Rujukan dihimpun secara berhati-hati dari karya-karya otoritatif para ulama pada masing-masing disiplin ilmu.</p>
-        </div>
-
-        <div class="corpus-grid">
-          <div class="corpus-card reveal">
-            <h3 class="corpus-card__title">
-              <span>📗</span> Fikih Mazhab Syafi'i
-            </h3>
-            <p>Menelaah bab ibadah, muamalah, dan kaidah fatwa dari kitab-kitab mu'tamad karya ulama Syafi'iyyah lintas kurun.</p>
-            <div class="tag-list">
-              <span class="tag">Minhaj at-Thalibin</span>
-              <span class="tag">Fathul Qarib</span>
-              <span class="tag">Kifayatul Akhyar</span>
-              <span class="tag">Al-Majmu' Syarah Muhadzab</span>
-            </div>
-          </div>
-
-          <div class="corpus-card reveal">
-            <h3 class="corpus-card__title">
-              <span>📘</span> Hadis &amp; Syarah
-            </h3>
-            <p>Memeriksa matan hadis, faedah hukum, dan penjelasan para pensyarah hadis induk Ahlussunnah wal Jama'ah.</p>
-            <div class="tag-list">
-              <span class="tag">Shahih Al-Bukhari</span>
-              <span class="tag">Fathul Bari</span>
-              <span class="tag">Syarah Shahih Muslim</span>
-              <span class="tag">Riyadhus Shalihin</span>
-            </div>
-          </div>
-
-          <div class="corpus-card reveal">
-            <h3 class="corpus-card__title">
-              <span>📙</span> Fikih Tahawwulat
-            </h3>
-            <p>Indeks komprehensif naskah primer karya Al-Habib Abu Bakar al-Adni bin Ali al-Masyhur mengenai tanda zaman dan perubahan peradaban.</p>
-            <div class="tag-list">
-              <span class="tag">Al-Usus wal-Munthalaqat</span>
-              <span class="tag">Dawa'ir Al-I'adah</span>
-              <span class="tag">Al-Marshad An-Nabawi</span>
-              <span class="tag">At-Tabsirah</span>
-            </div>
-          </div>
-
-          <div class="corpus-card reveal">
-            <h3 class="corpus-card__title">
-              <span>📕</span> Bahasa Arab &amp; Balaghah
-            </h3>
-            <p>Membantu menelaah kaidah gramatika nahwu, sharaf, dan i'rab teks untuk memahami ketepatan struktur kalimat naskah turath.</p>
-            <div class="tag-list">
-              <span class="tag">Al-Ajurrumiyyah</span>
-              <span class="tag">Alfiyah Ibnu Malik</span>
-              <span class="tag">Syarah Ibnu 'Aqil</span>
-              <span class="tag">Qawa'idul I'lal</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Limits Box -->
-        <div class="limits-box reveal">
-          <h3>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Panduan Pembacaan &amp; Batasan Layanan
-          </h3>
-          <ul>
-            <li>OpenTurath adalah sarana bantu penelusuran rujukan, bukan pengganti guru, mudarris, atau majelis taklim.</li>
-            <li>Hasil penelusuran AI wajib diperiksa kembali pada naskah cetak fisik sebelum digunakan dalam karya tulis, khutbah, atau pengajaran.</li>
-            <li>Nomor halaman merujuk pada cetakan naskah acuan dan dapat berbeda letaknya sesuai edisi penerbit fisik yang Anda gunakan.</li>
-            <li>Penetapan fatwa dan fatwa hukum tetap menjadi otoritas ulama, lembaga fatwa, dan mufti yang berwenang.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 5: CTA BANNER ═══════════════ -->
-    <section class="section" id="unduh">
-      <div class="container">
-        <div class="download-banner reveal">
-          <h2>Mulai Membaca dan Menelusuri Rujukan</h2>
-          <p>Aplikasi mobile OpenTurath AI untuk Android kini siap dipasang langsung di perangkat Anda.</p>
-          <a href="download.html" class="btn btn--primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Buka Halaman Unduh Aplikasi
+          <a href="#khazanah" class="btn-pill btn-pill--secondary interactive-tap">
+            Lihat Kitab Rujukan
           </a>
         </div>
+
+        <p class="editorial-hero__note">
+          Jawaban AI perlu diperiksa pada sumber yang dirujuk.
+        </p>
+
+        <!-- Micro Trust Band -->
+        <div class="scholarly-band">
+          <div class="scholarly-band__item">
+            <svg class="scholarly-band__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            <span>6 Bidang Keilmuan Islam</span>
+          </div>
+          <div class="scholarly-band__item">
+            <svg class="scholarly-band__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Rujukan Jilid &amp; Halaman Kitab Fisik</span>
+          </div>
+          <div class="scholarly-band__item">
+            <svg class="scholarly-band__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Adab Ilmiah &amp; Anti-Halusinasi</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════ 2. FLAGSHIP COMPONENT A: EVIDENCE BOTTOM SHEET (Muthala'ah Workbench) ═══════════════ -->
+    <section class="workbench-preview" id="ibarah">
+      <div class="container container--wide">
+        
+        <div style="text-align: center; max-width: 680px; margin: 0 auto var(--space-8);">
+          <span class="label-eyebrow">Instrumen Telaah Literatur</span>
+          <h2 style="font-size: clamp(24px, 3.5vw, 34px); margin-bottom: var(--space-3);">Ibarah Asli dengan Ketetapan Halaman Fisik</h2>
+          <p style="font-family: var(--font-ui); font-size: 15px; color: var(--text-secondary); line-height: 1.6;">
+            Setiap penelusuran menyajikan teks Arab asli, nama pengarang, bab, jilid, dan nomor halaman cetak agar pembaca dapat memeriksa konteksnya langsung pada naskah fisik.
+          </p>
+        </div>
+
+        <div class="sheet-window">
+          <!-- Top Bar -->
+          <div class="sheet-window__topbar">
+            <div class="sheet-window__title-group">
+              <span class="sheet-window__heading">'Ibarah &amp; rujukan</span>
+              <span class="pill-exif">Mazhab Syafi'i</span>
+            </div>
+            <span class="pill-exif pill-exif--sapphire">Terverifikasi</span>
+          </div>
+
+          <!-- Sheet Body -->
+          <div class="sheet-window__content">
+            
+            <!-- Inset Vessel for Arabic Matan -->
+            <div class="ibarah-vessel">
+              <p class="ibarah-vessel__text">
+                «(وَشَرْطُ الْعَاقِدِ) بَائِعًا أَوْ مُشْتَرِيًا (رُشْدٌ) فَلَا يَصِحُّ عَقْدُ صَبِيٍّ وَمَجْنُونٍ وَمَحْجُورٍ عَلَيْهِ بِسَفَهٍ (وَإِطْلَاقُ تَصَرُّفٍ) فَلَا يَصِحُّ عَقْدُ عَبْدٍ بِغَيْرِ إِذْنِ سَيِّدِهِ وَلَا مُكَاتَبٍ بِغَيْرِ مَصْلَحَةِ الْكِتَابَةِ»
+              </p>
+              
+              <div class="ibarah-vessel__citation">
+                <span class="pill-exif">📖 Kitab: Fathul Wahhab bi Syarhi Manhajit Thullab</span>
+                <span class="pill-exif">≡ Jilid 1</span>
+                <span class="pill-exif">📄 Hal. 248</span>
+                <span class="pill-exif">Bab: Kitab Al-Buyu'</span>
+                <span class="pill-exif">Mualif: Syaikhul Islam Zakariyya Al-Anshari (w. 926 H)</span>
+                <span class="pill-exif">Tahkik: Darul Fikr</span>
+              </div>
+            </div>
+
+            <!-- Commentary & Analysis -->
+            <div class="commentary-block">
+              <div class="commentary-block__label">Intisari &amp; Penjelasan Kontekstual</div>
+              <p class="commentary-block__body">
+                Syarat sah pihak yang melakukan transaksi jual beli dalam Mazhab Syafi'i adalah <em>rushd</em> (cakap mengelola harta) dan memiliki wewenang penuh dalam bertransaksi (<em>ithlaqu at-tasharruf</em>). Berdasarkan ibarah di atas, transaksi yang dilakukan oleh anak kecil, orang yang hilang akal, maupun orang yang berada di bawah pengampuan akibat pemborosan dipandang tidak sah dalam tinjauan fikih muamalah.
+              </p>
+            </div>
+
+            <!-- Scholarly Actions -->
+            <div class="sheet-window__actions">
+              <button class="btn-pill btn-pill--secondary interactive-tap" id="btn-copy-ibarah" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span id="text-copy-ibarah">Salin ibarah</span>
+              </button>
+              <button class="btn-pill btn-pill--ghost interactive-tap" id="btn-copy-citation" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                <span id="text-copy-citation">Salin rujukan ilmiah</span>
+              </button>
+              <a href="https://shamela.ws" target="_blank" rel="noopener noreferrer" class="btn-pill btn-pill--secondary interactive-tap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Buka di Maktabah Syamilah
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════ 3. FLAGSHIP COMPONENT B: KHAZANAH ULAMA & EXIF BOOK CARDS ═══════════════ -->
+    <section class="exif-catalog" id="khazanah">
+      <div class="container container--wide">
+        
+        <div style="text-align: center; max-width: 680px; margin: 0 auto var(--space-8);">
+          <span class="label-eyebrow">Khazanah Ulama</span>
+          <h2 style="font-size: clamp(24px, 3.5vw, 34px); margin-bottom: var(--space-3);">Kitab Rujukan Otoritatif Lintas Disiplin</h2>
+          <p style="font-family: var(--font-ui); font-size: 15px; color: var(--text-secondary); line-height: 1.6;">
+            Diindeks langsung dari naskah primer edisi tahkik mu'tamad dengan nomor jilid dan halaman yang dapat dicocokkan pada edisi cetak fisik.
+          </p>
+        </div>
+
+        <div class="exif-grid">
+
+          <!-- Book 1: Kitab Al-Umm -->
+          <article class="book-card interactive-tap">
+            <div>
+              <div class="book-card__top">
+                <span class="book-card__id">#1402</span>
+                <span class="book-card__discipline">الفقه الشافعي</span>
+                <span class="book-card__death">w. 204 H</span>
+              </div>
+              <h3 class="book-card__title-ar">كتاب الأم</h3>
+              <div class="book-card__title-latin">Kitab Al-Umm</div>
+              <div class="book-card__author">
+                <svg class="book-card__author-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Imam Muhammad bin Idris Asy-Syafi'i</span>
+              </div>
+            </div>
+            <div class="book-card__exif-strip">
+              <span class="pill-exif">≡ 8 jilid</span>
+              <span class="pill-exif">📄 4.200 hlm</span>
+              <span class="pill-exif">Tahkik: Dr. Rifa'at Fauzi</span>
+              <span class="pill-exif">Darul Kutub Ilmiyyah</span>
+            </div>
+          </article>
+
+          <!-- Book 2: Raudhatuth Thalibin -->
+          <article class="book-card interactive-tap">
+            <div>
+              <div class="book-card__top">
+                <span class="book-card__id">#1405</span>
+                <span class="book-card__discipline">الفقه الشافعي</span>
+                <span class="book-card__death">w. 676 H</span>
+              </div>
+              <h3 class="book-card__title-ar">روضة الطالبين وعمدة المفتين</h3>
+              <div class="book-card__title-latin">Raudhatuth Thalibin wa 'Umdatul Muftin</div>
+              <div class="book-card__author">
+                <svg class="book-card__author-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Imam Abu Zakariyya Muhyiddin An-Nawawi</span>
+              </div>
+            </div>
+            <div class="book-card__exif-strip">
+              <span class="pill-exif">≡ 12 jilid</span>
+              <span class="pill-exif">📄 5.800 hlm</span>
+              <span class="pill-exif">Tahkik: Syaikh Adil Ahmad</span>
+              <span class="pill-exif">Darul Kutub Ilmiyyah</span>
+            </div>
+          </article>
+
+          <!-- Book 3: Al-Minhaj Syarah Shahih Muslim -->
+          <article class="book-card interactive-tap">
+            <div>
+              <div class="book-card__top">
+                <span class="book-card__id">#2104</span>
+                <span class="book-card__discipline">الحديث والشروح</span>
+                <span class="book-card__death">w. 676 H</span>
+              </div>
+              <h3 class="book-card__title-ar">المنهاج شرح صحيح مسلم</h3>
+              <div class="book-card__title-latin">Al-Minhaj Syarah Shahih Muslim</div>
+              <div class="book-card__author">
+                <svg class="book-card__author-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Imam Abu Zakariyya Muhyiddin An-Nawawi</span>
+              </div>
+            </div>
+            <div class="book-card__exif-strip">
+              <span class="pill-exif">≡ 18 jilid</span>
+              <span class="pill-exif">📄 4.150 hlm</span>
+              <span class="pill-exif">Tahkik: Khalil Ma'mun Syiha</span>
+              <span class="pill-exif">Darul Ma'rifah</span>
+            </div>
+          </article>
+
+          <!-- Book 4: Al-Waraqat -->
+          <article class="book-card interactive-tap">
+            <div>
+              <div class="book-card__top">
+                <span class="book-card__id">#3301</span>
+                <span class="book-card__discipline">أصول الفقه</span>
+                <span class="book-card__death">w. 478 H</span>
+              </div>
+              <h3 class="book-card__title-ar">الورقات في أصول الفقه</h3>
+              <div class="book-card__title-latin">Al-Waraqat fi Usulil Fiqh</div>
+              <div class="book-card__author">
+                <svg class="book-card__author-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Imamul Haramain Al-Juwaini</span>
+              </div>
+            </div>
+            <div class="book-card__exif-strip">
+              <span class="pill-exif">≡ 1 jilid</span>
+              <span class="pill-exif">📄 180 hlm</span>
+              <span class="pill-exif">Tahkik: Dr. Abdul Lathif</span>
+              <span class="pill-exif">Darul Minhaj</span>
+            </div>
+          </article>
+
+          <!-- Book 5: Syuzuruz Zahab -->
+          <article class="book-card interactive-tap">
+            <div>
+              <div class="book-card__top">
+                <span class="book-card__id">#4202</span>
+                <span class="book-card__discipline">النحو والصرف</span>
+                <span class="book-card__death">w. 761 H</span>
+              </div>
+              <h3 class="book-card__title-ar">شذور الذهب في معرفة كلام العرب</h3>
+              <div class="book-card__title-latin">Syuzuruz Zahab fi Ma'rifati Kalami Al-'Arab</div>
+              <div class="book-card__author">
+                <svg class="book-card__author-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Ibnu Hisyam Al-Anshari</span>
+              </div>
+            </div>
+            <div class="book-card__exif-strip">
+              <span class="pill-exif">≡ 1 jilid</span>
+              <span class="pill-exif">📄 490 hlm</span>
+              <span class="pill-exif">Tahkik: M. Muhyiddin</span>
+              <span class="pill-exif">Al-Maktabah Al-Ashriyyah</span>
+            </div>
+          </article>
+
+          <!-- Book 6: Siyahatul Fikr (Sovereign Amber) -->
+          <article class="book-card interactive-tap">
+            <div>
+              <div class="book-card__top">
+                <span class="book-card__id">#5101</span>
+                <span class="book-card__discipline">فقه التحولات</span>
+                <span class="book-card__death">w. 1443 H</span>
+              </div>
+              <h3 class="book-card__title-ar">سياحة الفكر في فقه التحولات</h3>
+              <div class="book-card__title-latin">Siyāhatul Fikr fi Fiqhit Tahawwulāt</div>
+              <div class="book-card__author">
+                <svg class="book-card__author-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur</span>
+              </div>
+            </div>
+            <div class="book-card__exif-strip">
+              <span class="pill-exif pill-exif--amber">Korpus Mandiri</span>
+              <span class="pill-exif">≡ 1 jilid</span>
+              <span class="pill-exif">📄 480 hlm</span>
+              <span class="pill-exif">Markaz Al-Ibda'</span>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════ 4. 6 BIDANG ILMU TERSTRUKTUR ═══════════════ -->
+    <section class="disciplines-section" id="bidang-ilmu">
+      <div class="container container--wide">
+        
+        <div style="text-align: center; max-width: 680px; margin: 0 auto var(--space-8);">
+          <span class="label-eyebrow">Struktur Keilmuan</span>
+          <h2 style="font-size: clamp(24px, 3.5vw, 34px); margin-bottom: var(--space-3);">6 Bidang Ilmu untuk Pendalaman Terarah</h2>
+          <p style="font-family: var(--font-ui); font-size: 15px; color: var(--text-secondary); line-height: 1.6;">
+            Asisten ditata secara disipliner untuk menjaga ketepatan metodologi dan istilah teknis masing-masing cabang keilmuan Islam.
+          </p>
+        </div>
+
+        <div class="disciplines-grid">
+
+          <!-- 1. Fikih Mazhab Syafi'i -->
+          <div class="discipline-card">
+            <div class="discipline-card__header">
+              <span class="discipline-card__number">01</span>
+              <span class="pill-exif">الفقه</span>
+            </div>
+            <h3 class="discipline-card__title">Fikih Mazhab Syafi'i</h3>
+            <p class="discipline-card__desc">
+              Menelaah bab ibadah, muamalah, munakahat, dan jinayat berdasarkan pendapat mu'tamad ashabusy Syafi'i lintas generasi.
+            </p>
+            <div class="discipline-card__examples">
+              Rujukan: Kitab Al-Umm, Raudhatuth Thalibin, Fathul Wahhab, Tuhfatul Muhtaj, Nihayatul Muhtaj.
+            </div>
+          </div>
+
+          <!-- 2. Hadis & Syarah -->
+          <div class="discipline-card">
+            <div class="discipline-card__header">
+              <span class="discipline-card__number">02</span>
+              <span class="pill-exif">الحديث</span>
+            </div>
+            <h3 class="discipline-card__title">Hadis &amp; Syarah</h3>
+            <p class="discipline-card__desc">
+              Memeriksa teks matan hadis, faedah hukum, dan penjelasan pensyarah hadis induk Ahlussunnah wal Jama'ah.
+            </p>
+            <div class="discipline-card__examples">
+              Rujukan: Shahih Al-Bukhari, Shahih Muslim, Fathul Bari, Syarah An-Nawawi 'ala Muslim, Sunan Abi Dawud.
+            </div>
+          </div>
+
+          <!-- 3. Tafsir & Ulumul Qur'an -->
+          <div class="discipline-card">
+            <div class="discipline-card__header">
+              <span class="discipline-card__number">03</span>
+              <span class="pill-exif">التفسير</span>
+            </div>
+            <h3 class="discipline-card__title">Tafsir &amp; Ulumul Qur'an</h3>
+            <p class="discipline-card__desc">
+              Menelusuri asbabun nuzul, i'rab kalimat, dan perbandingan tafsir bi al-ma'tsur serta bi ar-ra'yi yang muktabar.
+            </p>
+            <div class="discipline-card__examples">
+              Rujukan: Jami'ul Bayan Ath-Thabari, Al-Jami' li Ahkamil Qur'an Al-Qurthubi, Tafsir Ibnu Katsir, Al-Itqan.
+            </div>
+          </div>
+
+          <!-- 4. Usul Fikih & Qawaid -->
+          <div class="discipline-card">
+            <div class="discipline-card__header">
+              <span class="discipline-card__number">04</span>
+              <span class="pill-exif">أصول الفقه</span>
+            </div>
+            <h3 class="discipline-card__title">Usul Fikih</h3>
+            <p class="discipline-card__desc">
+              Mempelajari dalil-dalil syar'i, kaidah istinbath hukum, qiyas, serta kaidah-kaidah fikih aplikatif (qawaid fiqhiyyah).
+            </p>
+            <div class="discipline-card__examples">
+              Rujukan: Al-Waraqat, Jam'ul Jawami', Al-Mustashfa Al-Ghazali, Al-Asybah wan Nazha'ir As-Suyuthi.
+            </div>
+          </div>
+
+          <!-- 5. Nahwu, Sharaf, dan Balaghah -->
+          <div class="discipline-card">
+            <div class="discipline-card__header">
+              <span class="discipline-card__number">05</span>
+              <span class="pill-exif">اللغة العربية</span>
+            </div>
+            <h3 class="discipline-card__title">Nahwu, Sharaf, dan Balaghah</h3>
+            <p class="discipline-card__desc">
+              Membantu penelaahan i'rab kalimat, shighat kata kerja, dan keindahan retorika bahasa Arab untuk memahami teks turats.
+            </p>
+            <div class="discipline-card__examples">
+              Rujukan: Al-Ajurrumiyyah, Syarah Ibnu 'Aqil 'ala Alfiyyah, Qathrun Nada, Syuzuruz Zahab.
+            </div>
+          </div>
+
+          <!-- 6. Fikih Tahawwulat -->
+          <div class="discipline-card">
+            <div class="discipline-card__header">
+              <span class="discipline-card__number">06</span>
+              <span class="pill-exif pill-exif--amber">فقه التحولات</span>
+            </div>
+            <h3 class="discipline-card__title">Fikih Tahawwulat</h3>
+            <p class="discipline-card__desc">
+              Indeks komprehensif naskah primer karya Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur mengenai tanda zaman dan adab dakwah.
+            </p>
+            <div class="discipline-card__examples">
+              Rujukan: Al-Usus wal Munthalaqat, Siyahatul Fikr, Al-Mukhtashar Al-Habik, Al-Arba'un Al-Adaniyyah.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════ 5. ADAB ILMIAH & BATASAN LAYANAN ═══════════════ -->
+    <section class="adab-section" id="adab">
+      <div class="container">
+        
+        <div class="adab-box">
+          <span class="label-eyebrow">Adab &amp; Kehati-hatian Ilmiah</span>
+          <h2 class="adab-box__title">Kembali Kepada Sumber Naskah</h2>
+          <p class="adab-box__intro">
+            OpenTurath dibangun sebagai instrumen bantu yang menghargai ketelitian naskah dan proses belajar beradab. Terdapat batasan mendasar yang wajib dipahami oleh setiap pengguna:
+          </p>
+
+          <div class="adab-points">
+            <div class="adab-point">
+              <span class="adab-point__label">Bukan Pengganti Guru</span>
+              <p class="adab-point__desc">
+                Teknologi membantu pencarian ibarah, namun pemahaman agama yang benar dan utuh tetap memerlukan bimbingan guru dan ulama yang bersanad keilmuan.
+              </p>
+            </div>
+
+            <div class="adab-point">
+              <span class="adab-point__label">Kewajiban Memeriksa Sumber</span>
+              <p class="adab-point__desc">
+                Setiap hasil penelusuran wajib dicocokkan kembali pada kitab cetak fisik sebelum dijadikan rujukan mengajar, khutbah, atau penulisan ilmiah.
+              </p>
+            </div>
+
+            <div class="adab-point">
+              <span class="adab-point__label">Variasi Cetakan &amp; Halaman</span>
+              <p class="adab-point__desc">
+                Nomor halaman merujuk pada edisi cetak acuan dan dapat berbeda letaknya sesuai penerbit fisik yang Anda gunakan (Darul Kutub, Darul Minhaj, dll).
+              </p>
+            </div>
+
+            <div class="adab-point">
+              <span class="adab-point__label">Bukan Lembaga Fatwa</span>
+              <p class="adab-point__desc">
+                OpenTurath tidak mengeluarkan fatwa hukum independen. Penetapan fatwa tetap menjadi kewenangan ulama dan mufti yang berwenang.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════ 6. UNDUHAN RESMI APLIKASI (CTA) ═══════════════ -->
+    <section class="download-section" id="unduh">
+      <div class="container">
+        
+        <div class="download-box">
+          <span class="label-eyebrow">Aplikasi Mobile Resmi</span>
+          <h2 class="download-box__heading">Mulai Menelusuri Bersama OpenTurath</h2>
+          <p class="download-box__sub">
+            Pasang aplikasi OpenTurath pada perangkat Android Anda untuk pengalaman muthala'ah yang hening, cepat, dan terbebas dari iklan komersial.
+          </p>
+
+          <div>
+            <a href="download.html" class="btn-pill btn-pill--primary interactive-tap" style="height: 48px; padding: 0 28px; font-size: 15px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Unduh Berkas APK Resmi (v1.0.21)
+            </a>
+          </div>
+
+          <div class="download-box__specs">
+            <span class="pill-exif">Android 7.0 (API 24+) ke atas</span>
+            <span class="pill-exif">Ukuran: 58 MB</span>
+            <span class="pill-exif">ARM64 &amp; x86_64</span>
+            <span class="pill-exif">Bebas Iklan</span>
+          </div>
+        </div>
+
       </div>
     </section>
 
   </main>
 
-  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <!-- ═══════════════ 7. FOOTER KANONIK ═══════════════ -->
   <footer class="footer">
     <div class="footer__inner">
-      <!-- Brand Column -->
+      
       <div class="footer__brand">
         <a href="index.html" class="footer__brand-logo">
-          <img src="logo_open_ai.png" alt="Logo" width="28" height="28">
+          <img src="logo_open_ai.png" alt="Logo" class="navbar__logo-img" width="26" height="26">
           <span>Open<span class="navbar__logo-dim">Turath</span></span>
         </a>
-        <p>
+        <div class="footer__tagline">Membaca kitab, menelusuri ibarah.</div>
+        <p class="footer__desc">
           OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.
         </p>
-        <p style="font-size: 0.8125rem; color: var(--ink-tertiary);">
+        <p style="font-size: 12px; color: var(--text-tertiary);">
           Jakarta, Indonesia
         </p>
       </div>
 
-      <!-- Legalitas -->
       <div class="footer__col">
         <h4>Ketentuan &amp; Kebijakan</h4>
         <a href="terms.html">Ketentuan Layanan</a>
         <a href="privacy.html">Kebijakan Privasi</a>
-        <a href="refund.html">Langganan &amp; Refund</a>
+        <a href="refund.html">Langganan &amp; Pengembalian Dana</a>
         <a href="cookie.html">Kebijakan Cookie</a>
         <a href="ai-policy.html">Panduan Penggunaan AI</a>
         <a href="copyright.html">Hak Cipta &amp; Pelaporan</a>
+        <a href="aup.html">Kebijakan Penggunaan</a>
       </div>
 
-      <!-- Aplikasi -->
       <div class="footer__col">
         <h4>Aplikasi</h4>
         <a href="download.html">Unduh Android APK</a>
         <a href="download.html#panduan">Panduan Pemasangan</a>
       </div>
 
-      <!-- Kontak -->
       <div class="footer__col">
         <h4>Bantuan</h4>
         <a href="mailto:openturath@gmail.com">openturath@gmail.com</a>
         <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer">@openturath.ai</a>
       </div>
+
     </div>
 
     <div class="footer__bottom">
-      <span>&copy; 2026 OpenTurath. Membaca kitab, menelusuri ibarah.</span>
-      <span>Bukan pengganti bimbingan dan fatwa ulama.</span>
+      <span>&copy; 2026 OpenTurath. Seluruh hak cipta dilindungi undang-undang.</span>
+      <span>Instrumen bantu penelusuran rujukan, bukan pengganti bimbingan dan fatwa ulama.</span>
     </div>
   </footer>
 
-  <!-- ═══════════════ MINIMAL SCRIPTS (No Firebase / No Payment) ═══════════════ -->
+  <!-- ═══════════════ INTERACTIVE BEHAVIORS ═══════════════ -->
   <script>
-    // Reveal animation (IntersectionObserver)
-    document.addEventListener('DOMContentLoaded', () => {
-      const reveals = document.querySelectorAll('.reveal');
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+    // 1. Dark/Light Mode Switcher
+    var themeToggle = document.getElementById('theme-toggle');
+    function updateThemeIcon() {
+      var current = document.documentElement.getAttribute('data-theme') || 'light';
+      if (current === 'dark') {
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+      } else {
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      }
+    }
+    updateThemeIcon();
 
-      reveals.forEach(el => observer.observe(el));
-
-      // Navbar scroll elevation
-      const navbar = document.getElementById('navbar');
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 15) {
-          navbar.classList.add('scrolled');
-        } else {
-          navbar.classList.remove('scrolled');
-        }
-      }, { passive: true });
+    themeToggle.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') || 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('openturath_theme', next);
+      updateThemeIcon();
     });
+
+    // 2. Tactile Clipboard Copy Buttons (Scholarly Adab: Quiet feedback, zero exclamation mark)
+    var btnCopyIbarah = document.getElementById('btn-copy-ibarah');
+    var textCopyIbarah = document.getElementById('text-copy-ibarah');
+    var ibarahSample = "«(وَشَرْطُ الْعَاقِدِ) بَائِعًا أَوْ مُشْتَرِيًا (رُشْدٌ) فَلَا يَصِحُّ عَقْدُ صَبِيٍّ وَمَجْنُونٍ وَمَحْجُورٍ عَلَيْهِ بِسَفَهٍ (وَإِطْلَاقُ تَصَرُّفٍ) فَلَا يَصِحُّ عَقْدُ عَبْدٍ بِغَيْرِ إِذْنِ سَيِّدِهِ وَلَا مُكَاتَبٍ بِغَيْرِ مَصْلَحَةِ الْكِتَابَةِ»";
+
+    if (btnCopyIbarah) {
+      btnCopyIbarah.addEventListener('click', function() {
+        navigator.clipboard.writeText(ibarahSample).then(function() {
+          textCopyIbarah.textContent = "Ibarah tersalin.";
+          setTimeout(function() {
+            textCopyIbarah.textContent = "Salin ibarah";
+          }, 2200);
+        });
+      });
+    }
+
+    var btnCopyCitation = document.getElementById('btn-copy-citation');
+    var textCopyCitation = document.getElementById('text-copy-citation');
+    var citationSample = "Zakariyya Al-Anshari, Fathul Wahhab bi Syarhi Manhajit Thullab (Beirut: Darul Fikr), Jilid 1, Halaman 248, Kitab Al-Buyu'.";
+
+    if (btnCopyCitation) {
+      btnCopyCitation.addEventListener('click', function() {
+        navigator.clipboard.writeText(citationSample).then(function() {
+          textCopyCitation.textContent = "Rujukan tersalin.";
+          setTimeout(function() {
+            textCopyCitation.textContent = "Salin rujukan ilmiah";
+          }, 2200);
+        });
+      });
+    }
   </script>
 
 </body>
