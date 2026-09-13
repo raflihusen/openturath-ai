@@ -148,17 +148,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ? ' (w. ${widget.book.verifiedDeathYearHijri} H)'
         : '';
     final publisherStr = widget.book.publisher != null
-        ? ', ${widget.book.publisher}'
+        ? ', Penerbit: ${widget.book.publisher}'
         : '';
     final muhaqqiqStr = widget.book.muhaqqiq != null
-        ? ', Tahqiq: ${widget.book.muhaqqiq}'
+        ? ', ${widget.book.muhaqqiq}'
         : '';
-    final volStr = widget.book.volumesCount != null
-        ? ', ${widget.book.volumesCount} Jilid'
+    final volStr = (widget.book.volumesDescription != null && widget.book.volumesDescription!.isNotEmpty)
+        ? ', ${widget.book.volumesDescription} Jilid'
+        : (widget.book.volumesCount != null ? ', ${widget.book.volumesCount} Jilid' : '');
+    final printYearStr = (widget.book.printYear != null && widget.book.printYear != '-')
+        ? ', Th. ${widget.book.printYear}'
         : '';
 
     final citation =
-        '${widget.book.authorArabic}$deathYearStr. ${widget.book.titleArabic}$volStr$publisherStr$muhaqqiqStr. OpenTurath AI Canonical Corpus.';
+        '${widget.book.authorArabic}$deathYearStr. ${widget.book.titleArabic}$volStr$muhaqqiqStr$publisherStr$printYearStr. OpenTurath AI Canonical Corpus.';
 
     Clipboard.setData(ClipboardData(text: citation));
     HapticFeedback.selectionClick();
@@ -238,7 +241,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'Naskah Kanonikal · Syafi\'i',
+                            widget.book.sectionArabic ?? 'Naskah Kanonikal · Syafi\'i',
                             style: OTTypography.caption(color: primaryAccent).copyWith(
                               fontWeight: FontWeight.w600,
                               fontSize: 11,
@@ -268,6 +271,22 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         ),
                       ),
                     ),
+                    if (widget.book.shortTitleArabic != null &&
+                        widget.book.shortTitleArabic!.isNotEmpty &&
+                        widget.book.shortTitleArabic != widget.book.titleArabic) ...[
+                      const SizedBox(height: 6),
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          'المختصر: ${widget.book.shortTitleArabic!}',
+                          textAlign: TextAlign.right,
+                          style: OTTypography.caption(color: textSecondary).copyWith(
+                            fontFamily: 'Amiri',
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
                     if (widget.book.titleLatin != null &&
                         widget.book.titleLatin!.isNotEmpty) ...[
                       const SizedBox(height: 8),
@@ -384,9 +403,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     _buildMetaRow(
                       icon: Icons.auto_stories_outlined,
                       label: 'Jumlah Jilid',
-                      value: widget.book.volumesCount != null
-                          ? '${widget.book.volumesCount} Jilid'
-                          : '1 Jilid / Naskah Tunggal',
+                      value: (widget.book.volumesDescription != null && widget.book.volumesDescription!.isNotEmpty)
+                          ? (widget.book.volumesDescription!.contains('جزء') || widget.book.volumesDescription!.contains('Jilid')
+                              ? widget.book.volumesDescription!
+                              : '${widget.book.volumesDescription} Jilid')
+                          : (widget.book.volumesCount != null
+                              ? '${widget.book.volumesCount} Jilid'
+                              : '1 Jilid / Naskah Tunggal'),
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
@@ -431,6 +454,16 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
+                    if (widget.book.printYear != null && widget.book.printYear != '-') ...[
+                      const Divider(height: 16, thickness: 0.5),
+                      _buildMetaRow(
+                        icon: Icons.calendar_today_outlined,
+                        label: 'Tahun / Edisi Cetak',
+                        value: widget.book.printYear!,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                    ],
                   ],
                 ),
               ),

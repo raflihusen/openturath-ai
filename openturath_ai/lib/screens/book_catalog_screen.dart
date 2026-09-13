@@ -14,8 +14,8 @@ import '../widgets/book_row_item.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
 /// Halaman Katalog Naskah Penuh (Full-Screen Route).
-/// Menggantikan modal bottom sheet sempit agar pengguna memiliki ruang baca yang lapang,
-/// tenang, dan mudah ditelusuri sesuai standar Apple HIG.
+/// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
+/// filter hierarki disiplin (القسم), abad keilmuan, dan kartu naskah minimalis bergaya turath.
 class BookCatalogScreen extends StatefulWidget {
   final AgentModel? agent;
   final String? initialQuery;
@@ -40,9 +40,15 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   bool _isLoading = true;
   String? _errorMessage;
 
+  String? _selectedSection;
   String? _selectedEra;
   String? _selectedType;
+  String? _selectedCentury;
   String _searchQuery = '';
+
+  List<String> _availableSections = [];
+  bool _hasEras = false;
+  bool _hasTypes = false;
 
   final List<String> _eras = [
     'Mutaqaddimin',
@@ -55,6 +61,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     'Matan',
     'Syarah',
     'Hasyiyah',
+  ];
+
+  final List<String> _centuries = [
+    'Salaf (≤ 300 H)',
+    'Mutaqaddimin (301-600 H)',
+    'Muta\'akhkhirin (601-1100 H)',
+    'Mu\'ashir (> 1100 H)',
   ];
 
   @override
@@ -80,21 +93,36 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       _errorMessage = null;
     });
 
-    if (widget.agent != null && widget.agent!.id != 'fiqh_syafii') {
-      if (!mounted) return;
-      setState(() {
-        _allBooks = [];
-        _filteredBooks = [];
-        _isLoading = false;
-      });
-      return;
-    }
-
     try {
-      final books = await _service.loadSyafiiCatalog();
+      final List<CanonicalBookPresentation> books;
+      if (widget.agent != null) {
+        books = await _service.loadCatalogForAgent(widget.agent!);
+      } else {
+        books = await _service.loadSyafiiCatalog();
+      }
+
+      final Set<String> rawSections = {};
+      bool hasEras = false;
+      bool hasTypes = false;
+
+      for (final b in books) {
+        if (b.sectionArabic != null && b.sectionArabic!.trim().isNotEmpty) {
+          rawSections.add(b.sectionArabic!.trim());
+        }
+        if (b.reviewedEraLabel != null && b.reviewedEraLabel!.isNotEmpty) {
+          hasEras = true;
+        }
+        if (b.reviewedTypeLabel != null && b.reviewedTypeLabel!.isNotEmpty) {
+          hasTypes = true;
+        }
+      }
+
       if (!mounted) return;
       setState(() {
         _allBooks = books;
+        _availableSections = rawSections.toList()..sort();
+        _hasEras = hasEras;
+        _hasTypes = hasTypes;
         _isLoading = false;
         _applyFilters();
       });
@@ -109,7 +137,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
   void _onSearchChanged(String val) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 200), () {
+    _debounce = Timer(const Duration(milliseconds: 180), () {
       if (mounted) {
         setState(() {
           _searchQuery = val.trim();
@@ -124,8 +152,10 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     _filteredBooks = _service.filterBooks(
       _allBooks!,
       _searchQuery,
+      sectionFilter: _selectedSection,
       eraFilter: _selectedEra,
       typeFilter: _selectedType,
+      centuryFilter: _selectedCentury,
     );
   }
 
@@ -133,11 +163,20 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     _searchCtrl.clear();
     setState(() {
       _searchQuery = '';
+      _selectedSection = null;
       _selectedEra = null;
       _selectedType = null;
+      _selectedCentury = null;
       _applyFilters();
     });
   }
+
+  bool get _hasActiveFilters =>
+      _searchQuery.isNotEmpty ||
+      _selectedSection != null ||
+      _selectedEra != null ||
+      _selectedType != null ||
+      _selectedCentury != null;
 
   void _openBookDetail(CanonicalBookPresentation book) {
     Navigator.pushNamed(
@@ -145,6 +184,34 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       AppRoutes.bookDetail,
       arguments: book,
     );
+  }
+
+  String _formatNumber(int number) {
+    return number.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    );
+  }
+
+  String _cleanSectionLabel(String full) {
+    final match = RegExp(r'\((.*?)\)').firstMatch(full);
+    if (match != null && match.group(1) != null) {
+      return match.group(1)!.trim();
+    }
+    return full;
+  }
+
+  String _resolveSubtitle() {
+    if (widget.agent != null) {
+      if (_allBooks != null && _allBooks!.isNotEmpty) {
+        return '${_formatNumber(_allBooks!.length)} Kitab ${widget.agent!.title}';
+      }
+      return widget.agent!.title;
+    }
+    if (_allBooks != null && _allBooks!.isNotEmpty) {
+      return '${_formatNumber(_allBooks!.length)} Kitab Mazhab Syafi\'i';
+    }
+    return '87 Kitab Mazhab Syafi\'i';
   }
 
   @override
@@ -156,8 +223,6 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final primaryAccent = OTColors.accent(isDark);
-
-    final isNonSyafii = widget.agent != null && widget.agent!.id != 'fiqh_syafii';
 
     return Scaffold(
       backgroundColor: background,
@@ -178,13 +243,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             Text(
-              isNonSyafii ? widget.agent!.title : '87 Kitab Mazhab Syafi\'i',
+              _resolveSubtitle(),
               style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
             ),
           ],
         ),
         actions: [
-          if (!isNonSyafii && (_selectedEra != null || _selectedType != null || _searchQuery.isNotEmpty))
+          if (_hasActiveFilters)
             TextButton(
               onPressed: _clearFilters,
               child: Text(
@@ -197,43 +262,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: isNonSyafii
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(OTSpacing.xl),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.menu_book_outlined, size: 48, color: textSecondary),
-                      const SizedBox(height: 14),
-                      Text(
-                        'Sedang Disusun',
-                        style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Daftar kitab rujukan untuk ${widget.agent?.title ?? "modul ini"} sedang disusun.',
-                        textAlign: TextAlign.center,
-                        style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
-                      ),
-                      const SizedBox(height: 20),
-                      OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: textPrimary,
-                          side: BorderSide(color: border),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                        child: const Text('Kembali'),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            : Column(
+        child: Column(
           children: [
             // ── SEARCH CONTAINER ──
             Padding(
@@ -292,74 +321,20 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               ),
             ),
 
-            // ── HORIZONTAL ERA & TYPE FILTER CHIPS ──
-            SizedBox(
-              height: 38,
-              child: ListView(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-                children: [
-                  _filterChip(
-                    label: 'Semua Era',
-                    isSelected: _selectedEra == null,
-                    onTap: () {
-                      setState(() {
-                        _selectedEra = null;
-                        _applyFilters();
-                      });
-                    },
-                    isDark: isDark,
-                    border: border,
-                    surface: surface,
-                    textPrimary: textPrimary,
-                    textSecondary: textSecondary,
-                  ),
-                  for (final era in _eras)
-                    _filterChip(
-                      label: era,
-                      isSelected: _selectedEra == era,
-                      onTap: () {
-                        setState(() {
-                          _selectedEra = _selectedEra == era ? null : era;
-                          _applyFilters();
-                        });
-                      },
-                      isDark: isDark,
-                      border: border,
-                      surface: surface,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                    width: 1,
-                    color: border,
-                  ),
-                  for (final type in _types)
-                    _filterChip(
-                      label: type,
-                      isSelected: _selectedType == type,
-                      onTap: () {
-                        setState(() {
-                          _selectedType = _selectedType == type ? null : type;
-                          _applyFilters();
-                        });
-                      },
-                      isDark: isDark,
-                      border: border,
-                      surface: surface,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                ],
-              ),
+            // ── DYNAMIC HORIZONTAL FILTER CHIPS ──
+            _buildFilterChipsBar(
+              isDark: isDark,
+              surface: surface,
+              border: border,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+              primaryAccent: primaryAccent,
             ),
 
             const SizedBox(height: OTSpacing.sm),
 
             // ── RESULTS COUNT HEADER ──
-            if (!_isLoading && _filteredBooks != null)
+            if (!_isLoading && _filteredBooks != null && _allBooks != null)
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: OTSpacing.lg,
@@ -368,14 +343,17 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 child: Row(
                   children: [
                     Text(
-                      'Menampilkan ${_filteredBooks!.length} naskah rujukan',
+                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} naskah',
                       style: OTTypography.caption(color: textSecondary).copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const Spacer(),
-                    if (_selectedEra != null || _selectedType != null)
+                    if (_selectedSection != null ||
+                        _selectedEra != null ||
+                        _selectedType != null ||
+                        _selectedCentury != null)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
@@ -384,8 +362,10 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         ),
                         child: Text(
                           [
+                            if (_selectedSection != null) _cleanSectionLabel(_selectedSection!),
                             if (_selectedEra != null) _selectedEra!,
                             if (_selectedType != null) _selectedType!,
+                            if (_selectedCentury != null) _selectedCentury!,
                           ].join(' · '),
                           style: OTTypography.caption(color: primaryAccent).copyWith(
                             fontSize: 11,
@@ -394,30 +374,6 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         ),
                       ),
                   ],
-                ),
-              ),
-            if (widget.agent != null && widget.agent!.id != 'fiqh_syafii' && widget.agent!.catalogId != 'canonical_syafii')
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: 4),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: border, width: 0.8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.info_outline_rounded, size: 18, color: primaryAccent),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          'Naskah rujukan induk untuk ${widget.agent!.title} sedang dalam tahap kurasi ilmiah. Menampilkan katalog komparasi naskah primer.',
-                          style: OTTypography.caption(color: textSecondary).copyWith(height: 1.35),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
 
@@ -434,6 +390,171 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChipsBar({
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color primaryAccent,
+  }) {
+    // Mode 1: Multipel Sub-Bagian (seperti Tafsir & Sastra Arab)
+    if (_availableSections.length > 1) {
+      return SizedBox(
+        height: 38,
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+          children: [
+            _filterChip(
+              label: 'Semua Bagian',
+              isSelected: _selectedSection == null,
+              onTap: () {
+                setState(() {
+                  _selectedSection = null;
+                  _applyFilters();
+                });
+              },
+              isDark: isDark,
+              border: border,
+              surface: surface,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+            for (final section in _availableSections)
+              _filterChip(
+                label: _cleanSectionLabel(section),
+                isSelected: _selectedSection == section,
+                onTap: () {
+                  setState(() {
+                    _selectedSection = _selectedSection == section ? null : section;
+                    _applyFilters();
+                  });
+                },
+                isDark: isDark,
+                border: border,
+                surface: surface,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+          ],
+        ),
+      );
+    }
+
+    // Mode 2: Mazhab Syafi'i (Era & Tipe Matan/Syarah)
+    if (_hasEras || _hasTypes) {
+      return SizedBox(
+        height: 38,
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+          children: [
+            _filterChip(
+              label: 'Semua Era',
+              isSelected: _selectedEra == null,
+              onTap: () {
+                setState(() {
+                  _selectedEra = null;
+                  _applyFilters();
+                });
+              },
+              isDark: isDark,
+              border: border,
+              surface: surface,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+            for (final era in _eras)
+              _filterChip(
+                label: era,
+                isSelected: _selectedEra == era,
+                onTap: () {
+                  setState(() {
+                    _selectedEra = _selectedEra == era ? null : era;
+                    _applyFilters();
+                  });
+                },
+                isDark: isDark,
+                border: border,
+                surface: surface,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+            if (_types.isNotEmpty) ...[
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                width: 1,
+                color: border,
+              ),
+              for (final type in _types)
+                _filterChip(
+                  label: type,
+                  isSelected: _selectedType == type,
+                  onTap: () {
+                    setState(() {
+                      _selectedType = _selectedType == type ? null : type;
+                      _applyFilters();
+                    });
+                  },
+                  isDark: isDark,
+                  border: border,
+                  surface: surface,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                ),
+            ],
+          ],
+        ),
+      );
+    }
+
+    // Mode 3: Hadits, Ushul Fikih, & Tahawwulat (Abad Kronologis Turath)
+    return SizedBox(
+      height: 38,
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+        children: [
+          _filterChip(
+            label: 'Semua Era',
+            isSelected: _selectedCentury == null,
+            onTap: () {
+              setState(() {
+                _selectedCentury = null;
+                _applyFilters();
+              });
+            },
+            isDark: isDark,
+            border: border,
+            surface: surface,
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+          ),
+          for (final century in _centuries)
+            _filterChip(
+              label: century,
+              isSelected: _selectedCentury == century,
+              onTap: () {
+                setState(() {
+                  _selectedCentury = _selectedCentury == century ? null : century;
+                  _applyFilters();
+                });
+              },
+              isDark: isDark,
+              border: border,
+              surface: surface,
+              textPrimary: textPrimary,
+              textSecondary: textSecondary,
+            ),
+        ],
       ),
     );
   }
@@ -506,25 +627,27 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Coba gunakan kata kunci Arab, nama pengarang, atau hapus filter era.',
+                'Coba gunakan kata kunci judul Arab, nama pengarang, atau muhaqqiq.',
                 textAlign: TextAlign.center,
                 style: OTTypography.caption(color: textSecondary),
               ),
-              const SizedBox(height: 16),
-              AppleInteractiveWrapper(
-                onTap: _clearFilters,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: border),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    'Hapus Semua Filter',
-                    style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
+              if (_hasActiveFilters) ...[
+                const SizedBox(height: 16),
+                AppleInteractiveWrapper(
+                  onTap: _clearFilters,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: border),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Hapus Semua Filter',
+                      style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
