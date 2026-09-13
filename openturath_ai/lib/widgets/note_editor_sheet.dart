@@ -100,7 +100,9 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     final body = _bodyController.text.trim();
 
     if (title.isEmpty && body.isEmpty) {
-      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Isi judul atau tulis catatan terlebih dahulu.')),
+      );
       return;
     }
 
@@ -120,8 +122,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
         id: 'note_${DateTime.now().millisecondsSinceEpoch}',
         title: effectiveTitle,
         agentId: 'catatan_mandiri',
-        agentTitle: 'Catatan Peneliti',
-        fieldName: 'Catatan Riset',
+        agentTitle: 'Catatan Pribadi',
+        fieldName: 'Catatan Pribadi',
         fieldId: 'general',
         arabicExcerpt: '',
         fullAnswer: body,
@@ -178,7 +180,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
             child: Row(
               children: [
                 Text(
-                  widget.item != null ? 'Edit Catatan' : 'Catatan Baru',
+                  widget.item != null ? 'Edit catatan' : 'Catatan baru',
                   style: OTTypography.screenTitle(color: textPrimary).copyWith(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
@@ -292,7 +294,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   _ToolbarBtn(
                     icon: Icons.format_quote_rounded,
                     tooltip: 'Kutipan',
-                    onTap: () => _applyFormat('\n> ', '', defaultText: 'kutipan ibarat'),
+                    onTap: () => _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
                   ),
                   _ToolbarBtn(
                     label: '« »',
@@ -399,7 +401,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           color: textPrimary,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Judul Catatan...',
+                          hintText: 'Judul catatan',
                           hintStyle: GoogleFonts.newsreader(
                             fontSize: 20,
                             color: textSecondary.withValues(alpha: 0.6),
@@ -425,7 +427,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           color: textPrimary,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Tulis atau edit telaah, ibarat naskah, dan catatan riset...',
+                          hintText: 'Tulis catatan atau tempel ibarah di sini…',
                           hintStyle: GoogleFonts.outfit(
                             fontSize: 14,
                             color: textSecondary.withValues(alpha: 0.6),

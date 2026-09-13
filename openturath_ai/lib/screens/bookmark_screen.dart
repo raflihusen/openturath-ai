@@ -37,8 +37,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   static const List<String> _categories = [
     'Semua',
-    'Catatan Riset',
-    'Kutipan Ibarah',
+    'Catatan',
+    'Ibarah Kitab',
     'Rujukan Kitab',
     'Fikih',
     'Hadis',
@@ -47,7 +47,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     'Usul Fikih',
     'Bahasa Arab',
     'Sejarah',
-    'Tasawuf',
+    'Tasawuf & Akhlak',
   ];
 
   @override
@@ -92,15 +92,20 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         matchesCategory = true;
       } else if (_selectedCategory == 'Rujukan Kitab') {
         matchesCategory = isBookRef;
-      } else if (_selectedCategory == 'Kutipan Ibarah') {
-        matchesCategory = !isBookRef;
+      } else if (_selectedCategory == 'Ibarah Kitab') {
+        matchesCategory = !isBookRef && !fieldLower.contains('catatan');
+      } else if (_selectedCategory == 'Catatan') {
+        matchesCategory = fieldLower.contains('catatan');
       } else {
         matchesCategory = fieldLower.contains(_selectedCategory.toLowerCase()) ||
             (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
             (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
             (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
             (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
-            (_selectedCategory == 'Tasawuf' && fieldLower.contains('tasawwuf'));
+            (_selectedCategory == 'Tasawuf & Akhlak' &&
+                (fieldLower.contains('tasawuf') ||
+                    fieldLower.contains('tasawwuf') ||
+                    fieldLower.contains('akhlak')));
       }
 
       if (!matchesCategory) return false;
@@ -126,11 +131,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus Catatan?',
+            'Hapus catatan?',
             style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
           ),
           content: Text(
-            'Catatan ini akan dihapus dari daftar catatan Anda.',
+            'Catatan ini akan dihapus permanen.',
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
@@ -162,7 +167,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       if (mounted) {
         AppSnackBar.show(
           context,
-          message: 'Catatan telah dihapus.',
+          message: 'Catatan dihapus.',
           action: SnackBarAction(
             label: 'Urungkan',
             textColor: OTColors.accent(isDark),
@@ -203,7 +208,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Sitasi standar ilmiah tersalin ke papan klip.',
+      'Sitasi rujukan tersalin.',
     );
   }
 
@@ -272,7 +277,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.add_rounded, color: textPrimary),
-            tooltip: 'Tambah Catatan Baru',
+            tooltip: 'Tambah catatan',
             onPressed: () => _openNoteEditor(),
           ),
           IconButton(
@@ -462,7 +467,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                     shell?.switchTab(1);
                                   },
                                   icon: const Icon(Icons.menu_book_outlined, size: 16),
-                                  label: const Text('Buka kajian'),
+                                  label: const Text('Mulai telaah'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: textPrimary,
                                     side: BorderSide(color: border, width: 1.0),
@@ -578,7 +583,9 @@ class _BookmarkCard extends StatelessWidget {
                           borderRadius: OTRadius.chipBorder,
                         ),
                         child: Text(
-                          isBookRef ? 'Rujukan Kitab' : item.fieldName,
+                          isBookRef
+                              ? 'Rujukan Kitab'
+                              : (item.fieldName.contains('Catatan') ? 'Catatan' : item.fieldName),
                           style: OTTypography.captionMedium(color: accent).copyWith(
                             fontSize: 11,
                           ),
@@ -604,7 +611,7 @@ class _BookmarkCard extends StatelessWidget {
                     color: textSecondary.withValues(alpha: 0.7),
                   ),
                   constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                  tooltip: 'Hapus Catatan',
+                  tooltip: 'Hapus catatan',
                   onPressed: onDelete,
                 ),
               ],
@@ -719,7 +726,13 @@ class _BookmarkCard extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: onCopy,
                   icon: const Icon(Icons.copy_rounded, size: 14),
-                  label: const Text(AppCopy.copyIbarahAction),
+                  label: Text(
+                    item.arabicExcerpt.isNotEmpty
+                        ? AppCopy.copyIbarahAction
+                        : (isBookRef
+                            ? 'Salin rujukan'
+                            : (item.fieldName.contains('Catatan') ? 'Salin catatan' : 'Salin jawaban')),
+                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: textPrimary,
                     side: BorderSide(color: border, width: 0.8),
@@ -733,7 +746,7 @@ class _BookmarkCard extends StatelessWidget {
                   FilledButton.icon(
                     onPressed: onOpen,
                     icon: const Icon(Icons.menu_book, size: 14),
-                    label: const Text('Kitab'),
+                    label: const Text('Lihat rujukan'),
                     style: FilledButton.styleFrom(
                       backgroundColor: surfaceSubtle,
                       foregroundColor: textPrimary,
