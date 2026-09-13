@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
 import '../widgets/app_loader.dart';
+import '../widgets/openturath_brand.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,22 +20,30 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  late final DateTime _startTime;
 
   @override
   void initState() {
     super.initState();
+    _startTime = DateTime.now();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 450),
+      duration: const Duration(milliseconds: 900),
       vsync: this,
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
+      ),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
+    _scaleAnimation = Tween<double>(begin: 0.90, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Cubic(0.05, 0.7, 0.1, 1.0),
+      ),
     );
 
     _controller.forward();
@@ -65,9 +74,21 @@ class _SplashScreenState extends State<SplashScreen>
         targetRoute = AppRoutes.login;
       }
 
+      // Elegant breathing threshold: Ensure minimum 950ms display for graceful cold start
+      final elapsed = DateTime.now().difference(_startTime);
+      const minDisplayDuration = Duration(milliseconds: 950);
+      if (elapsed < minDisplayDuration) {
+        await Future.delayed(minDisplayDuration - elapsed);
+      }
+
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, targetRoute);
     } catch (_) {
+      final elapsed = DateTime.now().difference(_startTime);
+      const minDisplayDuration = Duration(milliseconds: 950);
+      if (elapsed < minDisplayDuration) {
+        await Future.delayed(minDisplayDuration - elapsed);
+      }
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, AppRoutes.login);
     }
@@ -96,17 +117,29 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const OpenTurathMark(size: 44),
+                  const SizedBox(height: 18),
                   Text(
                     'OpenTurath',
                     style: GoogleFonts.newsreader(
-                      fontSize: 32,
+                      fontSize: 34,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.6,
                       color: textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 28),
-                  const AppLoader(color: accent, dotSize: 7, spacing: 3.5),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Maktabah AI',
+                    style: GoogleFonts.outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 2.0,
+                      color: accent,
+                    ),
+                  ),
+                  const SizedBox(height: 36),
+                  const AppLoader(color: accent, dotSize: 7, spacing: 4.0),
                 ],
               ),
             ),
