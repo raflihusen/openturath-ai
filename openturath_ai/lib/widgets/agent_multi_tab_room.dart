@@ -87,12 +87,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 ),
                 const SizedBox(height: 18),
                 Text(
-                  'Ukuran Teks Telaah',
+                  AppCopy.studyOptions,
                   style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Sesuaikan ukuran huruf naskah dan ibarah agar nyaman dibaca.',
+                  'Sesuaikan ukuran huruf percakapan agar nyaman dibaca.',
                   style: OTTypography.caption(color: textSecondary),
                 ),
                 const SizedBox(height: 20),
@@ -184,7 +184,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  'Ruang Kajian Aktif',
+                  'Percakapan aktif',
                   style: GoogleFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
@@ -198,12 +198,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         actions: [
           IconButton(
             icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-            tooltip: 'Ukuran Teks',
+            tooltip: AppCopy.studyOptions,
             onPressed: () => _showFontScaleDialog(context, activeTab),
           ),
           IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
-            tooltip: 'Pustaka Kitab',
+            tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
           ),
           const SizedBox(width: 4),
@@ -439,7 +439,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
       } else {
         setState(() {
           session.isUrlLoading = false;
-          session.errorMessage = 'Tautan ruang kajian tidak valid.';
+          session.errorMessage = 'Tautan asisten tidak valid.';
         });
       }
     } catch (e) {
@@ -450,8 +450,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
         session.isUrlLoading = false;
         session.isPaywallRequired = isPaywall;
         session.errorMessage = isPaywall
-            ? 'Akses modul ini memerlukan langganan aktif.'
-            : 'Gagal menghubungkan ke server kajian.';
+            ? 'Akses asisten ini memerlukan langganan aktif.'
+            : 'Asisten belum bisa dihubungkan. Coba lagi.';
       });
     }
   }
@@ -474,7 +474,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
       return Container(
         color: canvas,
         child: AppErrorState(
-          title: session.isPaywallRequired ? 'Akses Terbatas' : 'Gagal Membuka Kajian',
+          title: session.isPaywallRequired ? 'Akses Terbatas' : 'Asisten Belum Bisa Dibuka',
           message: session.errorMessage!,
           icon: session.isPaywallRequired ? Icons.workspace_premium_rounded : Icons.info_outline_rounded,
           onRetry: _fetchUrl,
@@ -538,7 +538,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
                   }
                 } catch (_) {
                   if (context.mounted) {
-                    AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
+                    AppSnackBar.error(context, AppCopy.saveFailed);
                   }
                 }
                 return false;

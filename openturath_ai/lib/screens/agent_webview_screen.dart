@@ -474,10 +474,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       await _saveCopiedAnswer(text, uid);
       if (mounted) {
         setState(() => _hasCopied = true);
-        AppSnackBar.success(context, 'Jawaban disalin dan ditambahkan ke Tersimpan.');
+        AppSnackBar.success(context, AppCopy.answerCopied);
       }
     } catch (_) {
-      if (mounted) AppSnackBar.error(context, 'Jawaban belum berhasil disalin dan disimpan. Coba lagi.');
+      if (mounted) AppSnackBar.error(context, AppCopy.copyFailed);
     } finally {
       if (mounted) setState(() => _isCopying = false);
     }
@@ -689,7 +689,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       if (context.mounted) AppSnackBar.success(context, AppCopy.answerCopied);
                       return true;
                     } catch (_) {
-                      if (context.mounted) AppSnackBar.error(context, 'Jawaban belum tersimpan. Coba salin lagi.');
+                      if (context.mounted) AppSnackBar.error(context, AppCopy.saveFailed);
                       return false;
                     }
                   });
@@ -1028,7 +1028,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
-              title: Text('Salin jawaban (simpan otomatis)', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Salin jawaban ke Catatan', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
@@ -1052,6 +1052,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (ctx) {
         return Container(
           decoration: BoxDecoration(
@@ -1078,20 +1079,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Ukuran teks',
+                    AppCopy.studyOptions,
                     style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 17),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Sesuaikan ukuran teks untuk kenyamanan membaca',
+                    'Sesuaikan ukuran huruf percakapan agar nyaman dibaca.',
                     style: OTTypography.caption(color: textSecondary),
                   ),
                   const SizedBox(height: 14),
-                  _buildScaleOption(ctx, label: 'Ringkas (85%)', scale: 0.85, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Normal (100%)', scale: 1.0, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Kecil (85%)', scale: 0.85, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Standar (100%)', scale: 1.0, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Sedang (120%)', scale: 1.20, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Besar (140%)', scale: 1.40, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Ekstra Besar (165%)', scale: 1.65, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Sangat besar (165%)', scale: 1.65, isDark: isDark),
                   _buildScaleOption(ctx, label: 'Maksimal (200%)', scale: 2.00, isDark: isDark),
                   const SizedBox(height: 8),
                 ],
