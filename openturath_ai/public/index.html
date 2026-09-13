@@ -3,28 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenTurath AI — Asisten Riset Fikih Tahawwulat</title>
-  <meta name="description" content="Membaca kitab Fikih Tahawwulat dan menelusuri rujukan kajian Al-Habib Abu Bakar al-Adni.">
+  <title>OpenTurath — Asisten Riset Literatur Islam &amp; Pembacaan Kitab</title>
+  <meta name="description" content="OpenTurath membantu Anda menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. Cari kutipan ibarah, pelajari pembahasan, dan temukan rujukan kitab fisik.">
+  <link rel="canonical" href="https://openturath.web.app/">
+  
+  <!-- Open Graph / Meta Sosial -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://openturath.web.app/">
+  <meta property="og:title" content="OpenTurath — Telusuri Kitab. Pelajari Pembahasannya.">
+  <meta property="og:description" content="Membaca kitab, menelusuri ibarah. Asisten telaah literatur Islam dengan rujukan kitab fisik dan catatan riset terpadu.">
+  <meta property="og:image" content="logo_open_ai.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OpenTurath — Telusuri Kitab. Pelajari Pembahasannya.">
+  <meta name="twitter:description" content="Membaca kitab, menelusuri ibarah. Asisten telaah literatur Islam dengan rujukan kitab fisik.">
+  <meta name="twitter:image" content="logo_open_ai.png">
+
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
 </head>
 <body>
 
   <!-- ═══════════════ NAVBAR ═══════════════ -->
-  <nav class="navbar" id="navbar">
+  <header class="navbar" id="navbar">
     <div class="navbar__inner">
       <a href="index.html" class="navbar__logo">
-        <img src="logo_open_ai.png" alt="OpenTurath logo">
+        <img src="logo_open_ai.png" alt="OpenTurath logo" width="28" height="28">
         <span>Open<span class="navbar__logo-dim">Turath</span></span>
       </a>
-      <div class="navbar__actions">
-        <a href="#pricing" class="navbar__link">Harga</a>
-        <a href="download.html" class="navbar__cta">Download</a>
-      </div>
+      <nav class="navbar__actions" aria-label="Navigasi Utama">
+        <a href="#kelebihan" class="navbar__link">Kelebihan</a>
+        <a href="#contoh" class="navbar__link">Contoh Rujukan</a>
+        <a href="#korpus" class="navbar__link">Bidang Kitab</a>
+        <a href="download.html" class="navbar__cta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Unduh Aplikasi
+        </a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
   <main>
 
@@ -32,566 +49,311 @@
     <section class="hero" id="hero">
       <div class="reveal">
         <div class="hero__badge">
-          <span class="hero__badge-dot"></span>
-          <span>Asisten Riset Fikih Tahawwulat</span>
+          <span class="hero__badge-dot" aria-hidden="true"></span>
+          <span>Membaca kitab, menelusuri ibarah</span>
         </div>
       </div>
 
       <div class="reveal">
         <h1>
-          Tanya ke Kitab.<br>
-          <span class="dim">Dapat Jawaban Bersumber.</span>
+          Telusuri kitab.<br>
+          <span class="dim">Pelajari pembahasannya.</span>
         </h1>
       </div>
 
       <div class="reveal">
         <p class="hero__sub">
-          Ajukan pertanyaan tentang Fikih Tahawwulat — AI menjawab berdasarkan
-          6.000+ halaman kitab dan 1.000+ transkrip video Al-Habib Abu Bakar al-Adni,
-          lengkap dengan kutipan teks Arab dan nomor halaman.
+          OpenTurath membantu santri, asatidz, mahasiswa, dan peneliti mencari kutipan teks Arab,
+          membandingkan keterangan ulama dalam kitab-kitab klasik, serta menyimpan rujukan untuk dipelajari kembali.
         </p>
       </div>
 
       <div class="reveal">
         <div class="hero__actions">
-          <a href="#pricing" class="btn btn--primary">
-            Lihat Harga
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></svg>
+          <a href="download.html" class="btn btn--primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Aplikasi Android
           </a>
-          <a href="#proof" class="btn btn--outline">Lihat Contoh Jawaban</a>
+          <a href="#kelebihan" class="btn btn--secondary">Pelajari Kelebihan</a>
         </div>
       </div>
 
       <div class="reveal">
         <div class="hero__trust">
           <span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-            6.000+ halaman kitab terindeks
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            6 Bidang Keilmuan Islam
           </span>
           <span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-            1.000+ transkrip video
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Rujukan Halaman Kitab Fisik
           </span>
           <span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Nomor halaman di setiap jawaban
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Adab Ilmiah Tanpa Halusinasi
           </span>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════ SECTION 2: PROOF (Demo Jawaban) ═══════════════ -->
-    <section class="section" id="proof">
-      <div class="section__head reveal">
-        <span class="section__eyebrow">Bukti, Bukan Janji</span>
-        <h2>Seperti Ini Jawaban yang Anda Dapat</h2>
-        <p>Ini bukan mockup. Ini output nyata dari Al-Muhaqqiq ketika ditanya "Apa itu Ghutsaiyyah?"</p>
-      </div>
-
-      <div class="proof reveal">
-        <!-- Window Header -->
-        <div class="proof__header">
-          <span class="proof__dot proof__dot--r"></span>
-          <span class="proof__dot proof__dot--y"></span>
-          <span class="proof__dot proof__dot--g"></span>
-          <span class="proof__title">Al-Muhaqqiq</span>
-        </div>
-
-        <!-- User Question -->
-        <p class="proof__label">Pertanyaan:</p>
-        <p class="proof__text"><strong>Apa itu Ghutsaiyyah?</strong></p>
-
-        <hr class="proof__divider">
-
-        <!-- AI Answer -->
-        <p class="proof__label">[A] Jawaban Langsung:</p>
-        <p class="proof__text">
-          Dalam terminologi <strong>Fiqh Tahawwulat</strong> yang dirumuskan oleh Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur (رحمه الله), <strong>Al-Ghutsa'iyyah</strong> (الغثائية) adalah fase sejarah akhir zaman yang menandai kemunduran total umat Islam secara global. Istilah ini diambil dari sabda Nabi Muhammad ﷺ yang menggambarkan umat Islam layaknya "buih di atas arus banjir" — sangat banyak secara kuantitas, namun tidak memiliki bobot maupun arah.
-        </p>
-        <p class="proof__text">
-          Berdasarkan analisis Fiqh Tahawwulat, fase <em>Ghutsa'iyyah</em> ini <strong>terbagi menjadi LIMA (5) tahapan (Marhalah)</strong> yang berurutan, bermula sejak runtuhnya Khilafah Utsmaniyyah dan berpuncak pada <strong>Ash-Shaylam</strong> (الصيلم).
-        </p>
-
-        <hr class="proof__divider">
-
-        <!-- Citations -->
-        <p class="proof__label">[B] Sumber dari Kitab:</p>
-
-        <div class="proof__cite">
-          <p class="arabic">«يوشك أن تداعى عليكم الأمم كما تداعى الأكلة على قصعتها، قالوا: أمن قلة نحن يا رسول الله؟ قال: لا أنتم يومئذ كثير ولكنكم غثاء كغثاء السيل»</p>
-          <span class="proof__cite-ref">(الأسس والمنطلقات، ص ٢٠٦)</span>
-        </div>
-
-        <div class="proof__cite">
-          <p class="arabic">«فالمرحلة الغثائية التي عبر عنها صلى الله عليه وآله وسلم بأنها مرحلة التداعي والوهن وحب الدنيا وكراهية الموت... إنما هي المرحلة الحديثة التي بدأت بسقوط قرار الخلافة»</p>
-          <span class="proof__cite-ref">(الأسس والمنطلقات، ص ٣٢٠)</span>
-        </div>
-
-        <div class="proof__cite">
-          <p class="arabic">«فكما قسم فقه التحولات مسيرة العصر الغثائي إلى خمسة أقسام: مرحلة الأحلاس، مرحلة السراء، مرحلة الدهيماء، مرحلة الفتنة الرابعة، مرحلة الصيلمة»</p>
-          <span class="proof__cite-ref">(دوائر الإعادة، ص ٧٩-٨٠)</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 3: KORPUS ═══════════════ -->
-    <section class="section section--warm" id="corpus">
-      <div class="section__inner">
+    <!-- ═══════════════ SECTION 2: KELEBIHAN APLIKASI ═══════════════ -->
+    <section class="section section--subtle" id="kelebihan">
+      <div class="container container--wide">
         <div class="section__head reveal">
-          <span class="section__eyebrow">Sumber Data</span>
-          <h2>Apa yang Dibaca oleh AI Ini</h2>
-          <p>Bukan data internet acak. AI ini hanya membaca dari sumber-sumber berikut:</p>
+          <span class="section__eyebrow">Kelebihan Aplikasi</span>
+          <h2>Dirancang Khusus untuk Pembaca Literatur Islam</h2>
+          <p>Bukan chatbot generik. OpenTurath dibangun sebagai instrumen bantu yang menghargai ketelitian naskah dan proses belajar beradab.</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card reveal">
+            <div class="feature-card__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            </div>
+            <h3>6 Bidang Keilmuan Terstruktur</h3>
+            <p>Asisten dikelompokkan menurut bidang: Fikih Syafi'i, Hadis &amp; Syarah, Tafsir &amp; Ulumul Qur'an, Ushul Fikih, Bahasa Arab &amp; Balaghah, serta Fikih Tahawwulat.</p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card reveal">
+            <div class="feature-card__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <h3>Kutipan Ibarah Verbatim</h3>
+            <p>Menyajikan teks Arab asli dari naskah primer lengkap dengan penanda jilid dan nomor halaman cetak agar pembaca dapat memeriksa konteksnya langsung di kitab fisik.</p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card reveal">
+            <div class="feature-card__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+            </div>
+            <h3>Buku Catatan Riset Terpadu</h3>
+            <p>Simpan potongan ibarah dan penjelasan penting langsung ke fitur Catatan di dalam aplikasi untuk bahan mengajar, telaah halaqah, atau penulisan naskah ilmiah.</p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card reveal">
+            <div class="feature-card__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3>Adab Ilmiah &amp; Anti-Halusinasi</h3>
+            <p>Menegaskan batas teknologi sebagai alat bantu pencarian rujukan, bukan pemberi fatwa atau pengganti talaqqi bersama ulama yang bersanad keilmuan.</p>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="feature-card reveal">
+            <div class="feature-card__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            </div>
+            <h3>Aplikasi Mobile Ringan &amp; Cepat</h3>
+            <p>Dioptimalkan khusus untuk kenyamanan membaca di perangkat Android dengan antarmuka yang bersih, responsif, dan hemat daya baterai.</p>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="feature-card reveal">
+            <div class="feature-card__icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            </div>
+            <h3>Ketenangan Membaca Tanpa Iklan</h3>
+            <p>Menghadirkan suasana membaca yang khusyuk tanpa iklan banner yang mengganggu, tanpa popup komersial, dan tanpa animasi yang melelahkan pandangan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ SECTION 3: PROOF (CONTOH RUJUKAN) ═══════════════ -->
+    <section class="section" id="contoh">
+      <div class="container">
+        <div class="section__head reveal">
+          <span class="section__eyebrow">Contoh Keluaran</span>
+          <h2>Kutipan Ibarah dengan Rujukan Terbuka</h2>
+          <p>Setiap jawaban menyertakan rujukan nama kitab, bab, dan halaman cetak agar dapat diverifikasi pada naskah asli.</p>
+        </div>
+
+        <div class="proof reveal">
+          <div class="proof__header">
+            <div class="proof__tag">
+              <span>Asisten Fikih Tahawwulat</span>
+              <span class="proof__tag-badge">Al-Muhaqqiq</span>
+            </div>
+            <span style="font-size: 0.8125rem; color: var(--ink-secondary);">Edisi Cetak Terverifikasi</span>
+          </div>
+
+          <div class="proof__label">Pertanyaan Telaah:</div>
+          <div class="proof__question">Apa yang dimaksud fase Al-Ghutsā'iyyah dalam naskah Al-Usus wal-Munthalaqat?</div>
+
+          <div class="proof__label">Ikhtisar Jawaban:</div>
+          <div class="proof__answer">
+            Dalam terminologi Fikih Tahawwulat yang dirumuskan oleh Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur, <strong>Al-Ghutsā'iyyah</strong> (الغثائية) merujuk pada fase sejarah kemunduran umat Islam akhir zaman, yang dianalogikan oleh Rasulullah ﷺ layaknya "buih di atas arus banjir". Fase ini terbagi menjadi lima marhalah berurutan yang berpuncak pada fitnah Ash-Shaylam.
+          </div>
+
+          <hr class="proof__divider">
+
+          <div class="proof__label">Kutipan Teks Kitab (Ibarah):</div>
+
+          <div class="proof__cite">
+            <p class="arabic">«يوشك أن تداعى عليكم الأمم كما تداعى الأكلة على قصعتها، قالوا: أمن قلة نحن يا رسول الله؟ قال: لا أنتم يومئذ كثير ولكنكم غثاء كغثاء السيل»</p>
+            <span class="proof__cite-ref">Rujukan: Al-Usus wal-Munthalaqat, Halaman 206</span>
+          </div>
+
+          <div class="proof__cite">
+            <p class="arabic">«فالمرحلة الغثائية التي عبر عنها صلى الله عليه وآله وسلم بأنها مرحلة التداعي والوهن وحب الدنيا وكراهية الموت... إنما هي المرحلة الحديثة التي بدأت بسقوط قرار الخلافة»</p>
+            <span class="proof__cite-ref">Rujukan: Al-Usus wal-Munthalaqat, Halaman 320</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ SECTION 4: KORPUS KITAB ═══════════════ -->
+    <section class="section section--subtle" id="korpus">
+      <div class="container container--wide">
+        <div class="section__head reveal">
+          <span class="section__eyebrow">Cakupan Literatur</span>
+          <h2>Koleksi Kitab yang Ditelusuri</h2>
+          <p>Rujukan dihimpun secara berhati-hati dari karya-karya otoritatif para ulama pada masing-masing disiplin ilmu.</p>
         </div>
 
         <div class="corpus-grid">
           <div class="corpus-card reveal">
-            <div class="corpus-card__metric">6.000+</div>
-            <div class="corpus-card__label">Halaman Kitab Turath</div>
-            <p class="corpus-card__desc">
-              Diindeks secara verbatim dari 50+ judul kitab primer karya Al-Habib Abu Bakar al-Adni bin Ali al-Masyhur. Setiap kutipan terhubung ke nomor halaman edisi cetak fisik.
-            </p>
+            <h3 class="corpus-card__title">
+              <span>📗</span> Fikih Mazhab Syafi'i
+            </h3>
+            <p>Menelaah bab ibadah, muamalah, dan kaidah fatwa dari kitab-kitab mu'tamad karya ulama Syafi'iyyah lintas kurun.</p>
             <div class="tag-list">
-              <span class="tag">Al-Usus wal-Munthalaqat</span>
-              <span class="tag">Dawa'ir Al-I'adah</span>
-              <span class="tag">Al-Marshad An-Nabawi</span>
-              <span class="tag">Miftah al-Ma'iyyah</span>
-              <span class="tag">At-Tabsirah</span>
-              <span class="tag">+44 kitab lainnya</span>
+              <span class="tag">Minhaj at-Thalibin</span>
+              <span class="tag">Fathul Qarib</span>
+              <span class="tag">Kifayatul Akhyar</span>
+              <span class="tag">Al-Majmu' Syarah Muhadzab</span>
             </div>
           </div>
 
           <div class="corpus-card reveal">
-            <div class="corpus-card__metric">1.000+</div>
-            <div class="corpus-card__label">Transkrip Video Muhadharah</div>
-            <p class="corpus-card__desc">
-              Seluruh rekaman ceramah dan kajian audio-visual dari kanal YouTube resmi, ditranskripsi dan diindeks ke dalam sistem pencarian.
-            </p>
+            <h3 class="corpus-card__title">
+              <span>📘</span> Hadis &amp; Syarah
+            </h3>
+            <p>Memeriksa matan hadis, faedah hukum, dan penjelasan para pensyarah hadis induk Ahlussunnah wal Jama'ah.</p>
             <div class="tag-list">
-              <span class="tag">Analisis Geopolitik</span>
-              <span class="tag">Fiqh Al-Mawaqif</span>
-              <span class="tag">Alamat As-Sa'ah</span>
-              <span class="tag">Risalah Ramadhan</span>
-              <span class="tag">Manhaj Tarbiyah</span>
+              <span class="tag">Shahih Al-Bukhari</span>
+              <span class="tag">Fathul Bari</span>
+              <span class="tag">Syarah Shahih Muslim</span>
+              <span class="tag">Riyadhus Shalihin</span>
             </div>
           </div>
+
+          <div class="corpus-card reveal">
+            <h3 class="corpus-card__title">
+              <span>📙</span> Fikih Tahawwulat
+            </h3>
+            <p>Indeks komprehensif naskah primer karya Al-Habib Abu Bakar al-Adni bin Ali al-Masyhur mengenai tanda zaman dan perubahan peradaban.</p>
+            <div class="tag-list">
+              <span class="tag">Al-Usus wal-Munthalaqat</span>
+              <span class="tag">Dawa'ir Al-I'adah</span>
+              <span class="tag">Al-Marshad An-Nabawi</span>
+              <span class="tag">At-Tabsirah</span>
+            </div>
+          </div>
+
+          <div class="corpus-card reveal">
+            <h3 class="corpus-card__title">
+              <span>📕</span> Bahasa Arab &amp; Balaghah
+            </h3>
+            <p>Membantu menelaah kaidah gramatika nahwu, sharaf, dan i'rab teks untuk memahami ketepatan struktur kalimat naskah turath.</p>
+            <div class="tag-list">
+              <span class="tag">Al-Ajurrumiyyah</span>
+              <span class="tag">Alfiyah Ibnu Malik</span>
+              <span class="tag">Syarah Ibnu 'Aqil</span>
+              <span class="tag">Qawa'idul I'lal</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Limits Box -->
+        <div class="limits-box reveal">
+          <h3>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Panduan Pembacaan &amp; Batasan Layanan
+          </h3>
+          <ul>
+            <li>OpenTurath adalah sarana bantu penelusuran rujukan, bukan pengganti guru, mudarris, atau majelis taklim.</li>
+            <li>Hasil penelusuran AI wajib diperiksa kembali pada naskah cetak fisik sebelum digunakan dalam karya tulis, khutbah, atau pengajaran.</li>
+            <li>Nomor halaman merujuk pada cetakan naskah acuan dan dapat berbeda letaknya sesuai edisi penerbit fisik yang Anda gunakan.</li>
+            <li>Penetapan fatwa dan fatwa hukum tetap menjadi otoritas ulama, lembaga fatwa, dan mufti yang berwenang.</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════ SECTION 4: TRUST & LIMITS ═══════════════ -->
-    <section class="section" id="trust">
-      <div class="section__head reveal">
-        <span class="section__eyebrow">Cara Kerja</span>
-        <h2>Apa yang Anda Dapat — dan Apa yang Tidak</h2>
-      </div>
-
-      <div class="trust-grid">
-        <div class="trust-card reveal">
-          <div class="trust-card__icon trust-card__icon--gold">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-          </div>
-          <h3>Kutipan Verbatim</h3>
-          <p>Teks Arab persis seperti edisi cetak, bukan parafrase atau terjemahan ulang oleh AI.</p>
-        </div>
-
-        <div class="trust-card reveal">
-          <div class="trust-card__icon trust-card__icon--gold">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h10"/><path d="M6 10h10"/><path d="M6 14h4"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
-          </div>
-          <h3>Nomor Halaman</h3>
-          <p>Setiap jawaban menyertakan referensi halaman dari kitab fisik agar bisa diverifikasi langsung.</p>
-        </div>
-
-        <div class="trust-card reveal">
-          <div class="trust-card__icon trust-card__icon--green">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-          </div>
-          <h3>Sumber Video</h3>
-          <p>Jawaban juga menyertakan cuplikan transkrip dan link langsung ke video YouTube terkait.</p>
-        </div>
-
-        <div class="trust-card reveal">
-          <div class="trust-card__icon trust-card__icon--gold">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          </div>
-          <h3>Dua Mode Asisten</h3>
-          <p><strong>Al-Muhaqqiq</strong> untuk riset akademis. <strong>Al-Bayan</strong> untuk penjelasan sederhana dan bahan dakwah.</p>
-        </div>
-      </div>
-
-      <!-- Limits Box -->
-      <div class="limits-box reveal">
-        <h3>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-          Batasan yang Perlu Anda Tahu
-        </h3>
-        <ul>
-          <li>Kajian ini dibatasi pada rujukan Fikih Tahawwulat. Periksa jawaban kembali pada sumbernya.</li>
-          <li>Jawaban dihasilkan oleh Google NotebookLM. Akurasi tergantung pada kualitas mesin Google saat ini.</li>
-          <li>Kutipan verbatim bisa saja terpotong pada ujung-ujung halaman. Selalu periksa kitab fisik untuk verifikasi akhir.</li>
-          <li>Membutuhkan akun Google untuk akses. Anda akan diundang sebagai viewer ke notebook terkunci.</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 5: LANGKAH AKSES ═══════════════ -->
-    <section class="section section--warm" id="steps">
-      <div class="section__inner">
-        <div class="section__head reveal">
-          <span class="section__eyebrow">Mulai</span>
-          <h2>Cara Mendapat Akses</h2>
-        </div>
-
-        <div class="steps reveal">
-          <div class="step">
-            <div class="step__num">1</div>
-            <div class="step__content">
-              <h3>Pilih paket dan bayar</h3>
-              <p>Pilih durasi langganan (1 bulan / 6 bulan / 1 tahun). Pembayaran melalui Akal — mendukung QRIS, e-wallet, dan transfer bank.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step__num">2</div>
-            <div class="step__content">
-              <h3>Terima undangan di email</h3>
-              <p>Setelah pembayaran dikonfirmasi, akun Google Anda otomatis ditambahkan sebagai viewer ke notebook yang terkunci.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step__num">3</div>
-            <div class="step__content">
-              <h3>Mulai bertanya</h3>
-              <p>Buka aplikasi atau web, login dengan akun Google yang sama, dan langsung ajukan pertanyaan tentang Fikih Tahawwulat.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 6: PRICING ═══════════════ -->
-    <section class="section" id="pricing">
-      <div class="section__head reveal">
-        <span class="section__eyebrow">Harga</span>
-        <h2>Pilih Durasi Akses</h2>
-        <p>Semua paket pada halaman ini mencakup kitab dan transkrip video Fikih Tahawwulat.</p>
-      </div>
-
-      <div class="pricing-grid">
-        <!-- 1 Bulan -->
-        <div class="price-card reveal">
-          <div class="price-card__name">1 Bulan</div>
-          <div class="price-card__was">Rp 250.000</div>
-          <div class="price-card__now">
-            <span class="price-card__amount">Rp 99<span class="small">.000</span></span>
-            <span class="price-card__per">/bulan</span>
-          </div>
-          <div class="price-card__save">Promo Ramadhan</div>
-          <button class="btn btn--outline" onclick="selectPlan('1 Bulan', 99000)">Pilih Paket</button>
-        </div>
-
-        <!-- 1 Tahun (Featured) -->
-        <div class="price-card price-card--featured reveal">
-          <div class="price-card__crown">Paling Hemat</div>
-          <div class="price-card__name">1 Tahun</div>
-          <div class="price-card__was">Rp 1.500.000</div>
-          <div class="price-card__now">
-            <span class="price-card__amount">Rp 799<span class="small">.000</span></span>
-            <span class="price-card__per">/tahun</span>
-          </div>
-          <div class="price-card__save">Hemat 47%</div>
-          <div class="price-card__bonus">🎁 <strong>Bonus:</strong> Akses penuh seluruh 8 bidang keilmuan turats + update riset prioritas</div>
-          <button class="btn btn--gold" onclick="selectPlan('1 Tahun', 799000)">Pilih Paket Ini</button>
-        </div>
-
-        <!-- 6 Bulan -->
-        <div class="price-card reveal">
-          <div class="price-card__name">6 Bulan</div>
-          <div class="price-card__was">Rp 750.000</div>
-          <div class="price-card__now">
-            <span class="price-card__amount">Rp 499<span class="small">.000</span></span>
-            <span class="price-card__per">/6 bulan</span>
-          </div>
-          <div class="price-card__save">Hemat 33%</div>
-          <button class="btn btn--outline" onclick="selectPlan('6 Bulan', 499000)">Pilih Paket</button>
-        </div>
-      </div>
-
-      <div class="pricing-note reveal">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        Pembayaran aman via Akal · Refund tersedia dalam 7 hari
-      </div>
-    </section>
-
-    <!-- ═══════════════ SECTION 7: FAQ ═══════════════ -->
-    <section class="section section--warm" id="faq">
-      <div class="section__inner">
-        <div class="section__head reveal">
-          <span class="section__eyebrow">FAQ</span>
-          <h2>Pertanyaan Umum</h2>
-        </div>
-
-        <div class="faq-list reveal">
-          <details class="faq-item">
-            <summary>Apa itu Fikih Tahawwulat?</summary>
-            <div class="faq-answer">
-              Fikih Tahawwulat (فقه التحولات) adalah cabang ilmu yang dikembangkan oleh Al-Habib Abu Bakar al-Adni bin Ali al-Masyhur, yang membahas cara umat Islam membaca dan merespons perubahan zaman berdasarkan kerangka kenabian (Nubuwwah).
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary>AI apa yang dipakai di balik ini?</summary>
-            <div class="faq-answer">
-              Kajian ini menggunakan Google NotebookLM untuk menelusuri kitab dan transkrip yang disediakan. Periksa kutipan dan nomor halaman pada dokumen asal.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary>Apakah ini bisa menggantikan belajar langsung dari ulama?</summary>
-            <div class="faq-answer">
-              Tidak. Ini adalah alat bantu riset, bukan pengganti pembelajaran langsung. AI ini membantu Anda menemukan rujukan lebih cepat, tapi pemahaman mendalam tetap membutuhkan bimbingan ulama.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary>Bagaimana cara pembayaran?</summary>
-            <div class="faq-answer">
-              Pembayaran diproses melalui Akal, yang mendukung QRIS, e-wallet (GoPay, OVO, DANA, dll), dan transfer bank. Setelah pembayaran terkonfirmasi, akses diberikan otomatis ke email Google yang Anda daftarkan.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary>Apakah ada kebijakan refund?</summary>
-            <div class="faq-answer">
-              Ya. Anda bisa mengajukan refund penuh dalam 7 hari setelah pembayaran jika merasa layanan tidak sesuai ekspektasi. Lihat <a href="refund.html" style="color: var(--gold); text-decoration: underline;">Kebijakan Refund</a> untuk detail.
-            </div>
-          </details>
-
-          <details class="faq-item">
-            <summary>Apakah saya perlu akun Google?</summary>
-            <div class="faq-answer">
-              Ya. Akses diberikan dengan menambahkan akun Google Anda sebagai viewer ke notebook Google NotebookLM yang terkunci. Pastikan mendaftar dengan akun Google yang aktif.
-            </div>
-          </details>
+    <!-- ═══════════════ SECTION 5: CTA BANNER ═══════════════ -->
+    <section class="section" id="unduh">
+      <div class="container">
+        <div class="download-banner reveal">
+          <h2>Mulai Membaca dan Menelusuri Rujukan</h2>
+          <p>Aplikasi mobile OpenTurath AI untuk Android kini siap dipasang langsung di perangkat Anda.</p>
+          <a href="download.html" class="btn btn--primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Buka Halaman Unduh Aplikasi
+          </a>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- ═══════════════ CHECKOUT OVERLAY ═══════════════ -->
-  <div class="checkout-overlay" id="checkoutOverlay">
-    <div class="checkout-section">
-      <div class="checkout-header">
-        <h2>Pembayaran</h2>
-        <button class="close-checkout" onclick="closeCheckout()">✕</button>
-      </div>
-
-      <form id="checkoutForm" onsubmit="processPayment(event)">
-        <div class="checkout-grid">
-          <div>
-            <div class="form-group">
-              <label for="fullName">Nama Lengkap</label>
-              <input type="text" id="fullName" class="form-control" placeholder="Masukkan nama lengkap" required>
-            </div>
-            <div class="form-group">
-              <label for="email">Alamat Email (Google)</label>
-              <input type="email" id="email" class="form-control" placeholder="nama@gmail.com" required>
-            </div>
-            <div class="form-group">
-              <label for="phoneNumber">No. WhatsApp / HP</label>
-              <input type="tel" id="phoneNumber" class="form-control" placeholder="08xxxxxxxxxx" required>
-            </div>
-          </div>
-
-          <div>
-            <div class="form-group">
-              <label>Metode Pembayaran</label>
-              <div class="payment-methods">
-                <div class="payment-method-card active" onclick="setPaymentMethod(this, 'qris')">
-                  <span>📱</span>
-                  <span class="payment-method-name">QRIS / E-Wallet</span>
-                </div>
-                <div class="payment-method-card" onclick="setPaymentMethod(this, 'bank')">
-                  <span>🏦</span>
-                  <span class="payment-method-name">Transfer Bank</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="order-summary">
-              <div class="summary-row">
-                <span id="summaryPlanName">—</span>
-                <span id="summaryPlanPrice">—</span>
-              </div>
-              <div class="summary-row">
-                <span>Biaya layanan</span>
-                <span>Rp 0</span>
-              </div>
-              <div class="summary-row total">
-                <span>Total</span>
-                <span id="summaryTotal">—</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center mt-3">
-          <button type="submit" class="btn-checkout">Proses Pembayaran</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- ═══════════════ FOOTER ═══════════════ -->
   <footer class="footer">
     <div class="footer__inner">
-      <!-- Brand -->
+      <!-- Brand Column -->
       <div class="footer__brand">
         <a href="index.html" class="footer__brand-logo">
-          <img src="logo_open_ai.png" alt="Logo">
+          <img src="logo_open_ai.png" alt="Logo" width="28" height="28">
           <span>Open<span class="navbar__logo-dim">Turath</span></span>
         </a>
-        <div class="footer__brand-loc">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        <p>
+          OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.
+        </p>
+        <p style="font-size: 0.8125rem; color: var(--ink-tertiary);">
           Jakarta, Indonesia
-        </div>
+        </p>
       </div>
 
-      <!-- Legal -->
+      <!-- Legalitas -->
       <div class="footer__col">
-        <h4>Legal</h4>
-        <a href="terms.html">Syarat &amp; Ketentuan</a>
-        <a href="refund.html">Kebijakan Refund</a>
+        <h4>Ketentuan &amp; Kebijakan</h4>
+        <a href="terms.html">Ketentuan Layanan</a>
         <a href="privacy.html">Kebijakan Privasi</a>
-        <a href="aup.html">Kebijakan Penggunaan</a>
-        <a href="copyright.html">Hak Cipta</a>
-        <a href="ai-policy.html">Atribusi AI</a>
+        <a href="refund.html">Langganan &amp; Refund</a>
+        <a href="cookie.html">Kebijakan Cookie</a>
+        <a href="ai-policy.html">Panduan Penggunaan AI</a>
+        <a href="copyright.html">Hak Cipta &amp; Pelaporan</a>
       </div>
 
-      <!-- Contact -->
-      <div class="footer__col">
-        <h4>Kontak</h4>
-        <a href="mailto:openturath@gmail.com" class="footer__contact-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          openturath@gmail.com
-        </a>
-        <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer" class="footer__contact-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-          @openturath.ai
-        </a>
-      </div>
-
-      <!-- App -->
+      <!-- Aplikasi -->
       <div class="footer__col">
         <h4>Aplikasi</h4>
-        <a href="download.html">Download App</a>
+        <a href="download.html">Unduh Android APK</a>
+        <a href="download.html#panduan">Panduan Pemasangan</a>
+      </div>
+
+      <!-- Kontak -->
+      <div class="footer__col">
+        <h4>Bantuan</h4>
+        <a href="mailto:openturath@gmail.com">openturath@gmail.com</a>
+        <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer">@openturath.ai</a>
       </div>
     </div>
 
     <div class="footer__bottom">
-      © 2026 OpenTurath AI. Bukan pengganti bimbingan ulama.
+      <span>&copy; 2026 OpenTurath. Membaca kitab, menelusuri ibarah.</span>
+      <span>Bukan pengganti bimbingan dan fatwa ulama.</span>
     </div>
   </footer>
 
-  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <!-- ═══════════════ MINIMAL SCRIPTS (No Firebase / No Payment) ═══════════════ -->
   <script>
-    // ── Firebase Init ──
-    const firebaseConfig = {
-      apiKey: "AIzaSyDwf-EF1CkCrYdFNJ_8GJBtLfluNQRDHnI",
-      authDomain: "open-turath.firebaseapp.com",
-      projectId: "open-turath",
-      storageBucket: "open-turath.appspot.com",
-      messagingSenderId: "255541559800",
-      appId: "1:255541559800:android:dbc2844e0ea68e02d2960d"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const functions = firebase.functions();
-
-    // Plan catalog
-    const PLANS = {
-      '1 Bulan':  { id: 'tholib_1m',  amount: 299000,  months: 1  },
-      '6 Bulan':  { id: 'tholib_6m',  amount: 1499000, months: 6  },
-      '1 Tahun':  { id: 'bahits_1y',  amount: 1999000, months: 12 },
-    };
-
-    let currentPlan = null;
-
-    // ── PLAN SELECTION ──
-    function selectPlan(name, price) {
-      currentPlan = name;
-      document.getElementById('summaryPlanName').textContent = 'Paket ' + name;
-      document.getElementById('summaryPlanPrice').textContent = 'Rp ' + price.toLocaleString('id-ID');
-      document.getElementById('summaryTotal').textContent = 'Rp ' + price.toLocaleString('id-ID');
-      document.getElementById('checkoutOverlay').classList.add('open');
-    }
-
-    function closeCheckout() {
-      document.getElementById('checkoutOverlay').classList.remove('open');
-    }
-
-    function setPaymentMethod(card, method) {
-      document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-    }
-
-    // ── PAYMENT PROCESSING ──
-    async function processPayment(e) {
-      e.preventDefault();
-      const name  = document.getElementById('fullName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phoneNumber').value.trim();
-      if (!name || !email || !phone || !currentPlan) return;
-
-      const plan = PLANS[currentPlan];
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Memproses...';
-
-      try {
-        const createCheckoutFn = functions.httpsCallable('createCheckout');
-        const result = await createCheckoutFn({
-          plan: plan.id,
-          name,
-          email,
-          phone,
-          amount: plan.amount,
-          durationMonths: plan.months,
-        });
-
-        const { redirectUrl, paymentUrl } = result.data;
-        const targetUrl = redirectUrl || paymentUrl;
-
-        if (targetUrl) {
-          closeCheckout();
-          window.location.href = targetUrl;
-          return;
-        } else {
-          alert('Terjadi kesalahan sistem pembayaran. Silakan hubungi admin.');
-        }
-      } catch (err) {
-        console.error('Payment error:', err);
-        alert('Terjadi kesalahan: ' + (err.message || 'Coba lagi sebentar.'));
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Proses Pembayaran';
-      }
-    }
-
-    // ═══════════════ SCROLL BEHAVIOR ═══════════════
-
-    // 1. Navbar scroll effect
-    const navbar = document.getElementById('navbar');
-
-    function handleScroll() {
-      if (window.scrollY > 20) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    }
-
-    // 2. Reveal animations (IntersectionObserver)
-    function initRevealAnimations() {
+    // Reveal animation (IntersectionObserver)
+    document.addEventListener('DOMContentLoaded', () => {
       const reveals = document.querySelectorAll('.reveal');
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -600,18 +362,21 @@
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
 
       reveals.forEach(el => observer.observe(el));
-    }
 
-    // ── Init ──
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      initRevealAnimations();
-      handleScroll();
+      // Navbar scroll elevation
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 15) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+      }, { passive: true });
     });
   </script>
+
 </body>
 </html>
