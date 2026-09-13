@@ -1,142 +1,127 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   OpenTurath Design System & Philosophy Manual
-   The Quiet Scholar (Al-'Alim Al-Khamus / العالم الخامل الذكر)
+   OpenTurath — Minimalist Bold Design System
+   The Quiet Scholar (Al-'Alim Al-Khamus)
    
-   Philosophy: "Konten adalah tokoh utama. Antarmuka mundur satu langkah."
-   Visual Standard: Warm Stone & Deep Obsidian · Hairline Precision · Anti-Gold
-   Typography: 3-Layer Architecture (Newsreader · Outfit · Amiri)
+   Aesthetic: High-contrast typography · Zero icons · Border-divided structure
+   Typography: Newsreader (Editorial) · Outfit (Interface & Data) · Amiri (Naskh)
+   Palettes: Warm Stone & Deep Obsidian · Pure Ink Monochromatic Hierarchy
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* ---------- 1. GOOGLE FONTS IMPORT (3-LAYER STRICT) ---------- */
-@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Outfit:wght@400;500;600;700;800&display=swap');
 
-/* ---------- 2. DESIGN TOKENS ---------- */
 :root {
-  /* Layer 1: Brand & Editorial */
-  --font-brand:     'Newsreader', Georgia, 'Times New Roman', serif;
-  /* Layer 2: Interface & EXIF */
-  --font-ui:        'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  /* Layer 3: Arabic Scholarly */
-  --font-arabic:    'Amiri', 'Traditional Arabic', serif;
-
-  /* Base-4 Rhythm */
-  --space-1:   4px;
-  --space-2:   8px;
-  --space-3:   12px;
-  --space-4:   16px;
-  --space-5:   20px;
-  --space-6:   24px;
-  --space-8:   32px;
-  --space-10:  40px;
-  --space-12:  48px;
-  --space-16:  64px;
-  --space-20:  80px;
-
-  /* Disciplined Curvature */
-  --radius-pill:    999px; /* Buttons, micro-badge EXIF, filter chips */
-  --radius-card:    16px;  /* BookRowItem, SpecialistCard, NoteCard */
-  --radius-modal:   24px;  /* EvidenceBottomSheet */
-  --radius-dialog:  20px;  /* Confirmation modal */
-  --radius-input:   14px;  /* Input fields */
-  --radius-micro:   6px;   /* Micro badges inside EXIF */
-
-  /* Light Palette (Warm Stone / Kertas Kitab Tua) */
-  --canvas:             #FAFAF9; /* Warm Stone Off-White */
-  --surface:            #FFFFFF; /* Pure Paper White */
-  --surface-subtle:     #F4F4F5; /* Zinc 100 substrate */
-  --surface-inset:      #EFEFED; /* Warm paper inset */
-  --border:             #E4E4E7; /* 0.8px hairline neutral */
-  --border-subtle:      #F1F5F9; /* Micro divider */
-  --border-strong:      #D4D4D8;
-  
-  --text-primary:       #18181B; /* Ink Black */
-  --text-secondary:     #52525B; /* Zinc 600 (>6.0:1 contrast) */
-  --text-tertiary:      #71717A; /* Zinc 500 */
-  --text-muted:         #A1A1AA; /* Zinc 400 */
-  
-  --accent:             #2563EB; /* Intellectual Sapphire */
-  --accent-hover:       #1D4ED8;
-  --accent-subtle:      rgba(37, 99, 235, 0.08);
-  --accent-border:      rgba(37, 99, 235, 0.22);
-  
-  --sovereign-amber:    #D97706; /* Independent corpus (Tahawwulat) */
-  --sovereign-amber-bg: rgba(217, 119, 6, 0.08);
-  --sovereign-amber-bd: rgba(217, 119, 6, 0.22);
-  
-  --success:            #10B981;
-  --destructive:        #DC2626;
-
-  /* Shadows: subtle ink dispersion */
-  --shadow-sm:   0 1px 2px rgba(24, 24, 27, 0.03);
-  --shadow-card: 0 2px 8px rgba(24, 24, 27, 0.04), 0 1px 2px rgba(24, 24, 27, 0.02);
-  --shadow-elevated: 0 12px 32px rgba(24, 24, 27, 0.06);
+  /* Fonts */
+  --font-serif:   'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-sans:    'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-arabic:  'Amiri', serif;
 
   /* Layout */
-  --max-w-prose: 720px;
-  --max-w-main:  980px;
-  --max-w-wide:  1160px;
+  --max-w:        1140px;
+  --max-w-prose:  740px;
+
+  /* Spacing */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* Light Theme (Warm Stone Canvas) */
+  --canvas:             #FAFAF9;
+  --surface:            #FFFFFF;
+  --surface-subtle:     #F4F4F5;
+  --border:             #E4E4E7;
+  --border-strong:      #18181B;
+  
+  --ink:                #111111;
+  --ink-secondary:      #4A4A50;
+  --ink-tertiary:       #71717A;
+  --ink-muted:          #A1A1AA;
+
+  --btn-primary-bg:     #111111;
+  --btn-primary-text:   #FFFFFF;
+  --btn-primary-border: #111111;
+
+  --btn-secondary-bg:   #FFFFFF;
+  --btn-secondary-text: #111111;
+  --btn-secondary-border: #E4E4E7;
+
+  --tag-bg:             #F4F4F5;
+  --tag-border:         #E4E4E7;
+  --tag-text:           #52525B;
+
+  --amber-tag-bg:       #FEF3C7;
+  --amber-tag-border:   #FDE68A;
+  --amber-tag-text:     #92400E;
 }
 
-/* ---------- DARK THEME (Deep Obsidian Canvas) ---------- */
 [data-theme="dark"] {
-  --canvas:             #0E0E10; /* Deep Obsidian */
-  --surface:            #18181B; /* Zinc 900 */
-  --surface-subtle:     #27272A; /* Zinc 800 */
-  --surface-inset:      #131316; /* Inset obsidian */
-  --border:             #27272A; /* 0.8px hairline border */
-  --border-subtle:      #1E1E22;
-  --border-strong:      #3F3F46;
+  --canvas:             #0A0A0C;
+  --surface:            #121215;
+  --surface-subtle:     #1C1C20;
+  --border:             #26262B;
+  --border-strong:      #FAFAFA;
 
-  --text-primary:       #FAFAFA; /* Zinc 50, crisp contrast */
-  --text-secondary:     #A1A1AA; /* Zinc 400 */
-  --text-tertiary:      #71717A; /* Zinc 500 */
-  --text-muted:         #52525B; /* Zinc 600 */
+  --ink:                #FAFAFA;
+  --ink-secondary:      #A1A1AA;
+  --ink-tertiary:       #71717A;
+  --ink-muted:          #52525B;
 
-  --accent:             #60A5FA; /* Gentle intellectual sapphire */
-  --accent-hover:       #93C5FD;
-  --accent-subtle:      rgba(96, 165, 250, 0.12);
-  --accent-border:      rgba(96, 165, 250, 0.28);
+  --btn-primary-bg:     #FAFAFA;
+  --btn-primary-text:   #0A0A0C;
+  --btn-primary-border: #FAFAFA;
 
-  --sovereign-amber:    #FBBF24;
-  --sovereign-amber-bg: rgba(251, 191, 36, 0.10);
-  --sovereign-amber-bd: rgba(251, 191, 36, 0.25);
+  --btn-secondary-bg:   #121215;
+  --btn-secondary-text: #FAFAFA;
+  --btn-secondary-border: #26262B;
 
-  --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.35);
-  --shadow-elevated: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --tag-bg:             #1C1C20;
+  --tag-border:         #26262B;
+  --tag-text:           #A1A1AA;
+
+  --amber-tag-bg:       #271F0C;
+  --amber-tag-border:   #453512;
+  --amber-tag-text:     #FCD34D;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --canvas:             #0E0E10;
-    --surface:            #18181B;
-    --surface-subtle:     #27272A;
-    --surface-inset:      #131316;
-    --border:             #27272A;
-    --border-subtle:      #1E1E22;
-    --border-strong:      #3F3F46;
+    --canvas:             #0A0A0C;
+    --surface:            #121215;
+    --surface-subtle:     #1C1C20;
+    --border:             #26262B;
+    --border-strong:      #FAFAFA;
 
-    --text-primary:       #FAFAFA;
-    --text-secondary:     #A1A1AA;
-    --text-tertiary:      #71717A;
-    --text-muted:         #52525B;
+    --ink:                #FAFAFA;
+    --ink-secondary:      #A1A1AA;
+    --ink-tertiary:       #71717A;
+    --ink-muted:          #52525B;
 
-    --accent:             #60A5FA;
-    --accent-hover:       #93C5FD;
-    --accent-subtle:      rgba(96, 165, 250, 0.12);
-    --accent-border:      rgba(96, 165, 250, 0.28);
+    --btn-primary-bg:     #FAFAFA;
+    --btn-primary-text:   #0A0A0C;
+    --btn-primary-border: #FAFAFA;
 
-    --sovereign-amber:    #FBBF24;
-    --sovereign-amber-bg: rgba(251, 191, 36, 0.10);
-    --sovereign-amber-bd: rgba(251, 191, 36, 0.25);
+    --btn-secondary-bg:   #121215;
+    --btn-secondary-text: #FAFAFA;
+    --btn-secondary-border: #26262B;
 
-    --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.35);
-    --shadow-elevated: 0 16px 40px rgba(0, 0, 0, 0.5);
+    --tag-bg:             #1C1C20;
+    --tag-border:         #26262B;
+    --tag-text:           #A1A1AA;
+
+    --amber-tag-bg:       #271F0C;
+    --amber-tag-border:   #453512;
+    --amber-tag-text:     #FCD34D;
   }
 }
 
-/* ---------- 3. CSS RESET & EDITORIAL BASE ---------- */
+/* ---------- BASE RESET ---------- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -149,36 +134,30 @@ html {
 }
 
 body {
-  font-family: var(--font-ui);
+  font-family: var(--font-sans);
   background-color: var(--canvas);
-  color: var(--text-primary);
+  color: var(--ink);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   overflow-x: hidden;
 }
 
 ::selection {
-  background-color: var(--accent-subtle);
-  color: var(--accent);
+  background-color: var(--ink);
+  color: var(--canvas);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-  transition: color 0.15s ease, opacity 0.15s ease;
+  transition: opacity 0.15s ease, color 0.15s ease;
 }
 
 button {
@@ -188,135 +167,106 @@ button {
   cursor: pointer;
 }
 
-/* Typography Hierarchy */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-brand);
+/* ---------- TYPOGRAPHY ---------- */
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-serif);
   font-weight: 600;
-  line-height: 1.25;
-  color: var(--text-primary);
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.025em;
 }
 
-/* Arabic Scholarly Text Class */
-.arabic-scholarly {
+.arabic-text {
   font-family: var(--font-arabic);
   direction: rtl;
   text-align: right;
-  line-height: 1.8;
-  font-feature-settings: "cv01" on, "calt" on;
+  line-height: 1.9;
   letter-spacing: 0;
 }
 
-/* ---------- 4. APPLE INTERACTIVE & BUTTONS ---------- */
-.interactive-tap {
-  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.interactive-tap:active {
-  transform: scale(0.985);
-}
-
-.btn-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  height: 42px;
-  padding: 0 var(--space-5);
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.1px;
-  border-radius: var(--radius-pill);
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
-}
-
-.btn-pill:active {
-  transform: scale(0.985);
-}
-
-.btn-pill--primary {
-  background-color: var(--accent);
-  color: #FFFFFF;
-  border: 1px solid transparent;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.btn-pill--primary:hover {
-  background-color: var(--accent-hover);
-  color: #FFFFFF;
-}
-
-.btn-pill--secondary {
-  background-color: var(--surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-}
-
-.btn-pill--secondary:hover {
-  background-color: var(--surface-subtle);
-  border-color: var(--border-strong);
-}
-
-.btn-pill--ghost {
-  background-color: transparent;
-  color: var(--text-secondary);
-  border: 1px solid transparent;
-}
-
-.btn-pill--ghost:hover {
-  background-color: var(--surface-subtle);
-  color: var(--text-primary);
-}
-
-/* Micro-pill EXIF */
-.pill-exif {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  font-family: var(--font-ui);
+/* Eyebrow Label */
+.eyebrow {
+  font-family: var(--font-sans);
   font-size: 11px;
-  font-weight: 500;
-  line-height: 1.2;
-  color: var(--text-secondary);
-  background-color: var(--surface-subtle);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  letter-spacing: 0.1px;
-}
-
-.pill-exif--amber {
-  color: var(--sovereign-amber);
-  background-color: var(--sovereign-amber-bg);
-  border-color: var(--sovereign-amber-bd);
-}
-
-.pill-exif--sapphire {
-  color: var(--accent);
-  background-color: var(--accent-subtle);
-  border-color: var(--accent-border);
-}
-
-/* Micro Tag / Upper Section Label */
-.label-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-tertiary);
+  letter-spacing: 0.12em;
+  color: var(--ink-tertiary);
+  display: inline-block;
   margin-bottom: var(--space-3);
 }
 
-/* ---------- 5. NAVBAR ---------- */
-.navbar {
+/* ---------- BUTTONS (BOLD MINIMALIST, ZERO ICONS) ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-6);
+  height: 46px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: 999px;
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), background-color 160ms ease, border-color 160ms ease;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: scale(0.985);
+}
+
+.btn--primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 1px solid var(--btn-primary-border);
+}
+
+.btn--primary:hover {
+  opacity: 0.92;
+}
+
+.btn--secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: 1px solid var(--btn-secondary-border);
+}
+
+.btn--secondary:hover {
+  border-color: var(--border-strong);
+  background-color: var(--surface-subtle);
+}
+
+.btn--small {
+  height: 36px;
+  padding: 0 var(--space-4);
+  font-size: 13px;
+}
+
+/* Tags / Badges (Pure Text, No Icons) */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background-color: var(--tag-bg);
+  border: 1px solid var(--tag-border);
+  color: var(--tag-text);
+  border-radius: 4px;
+}
+
+.tag--amber {
+  background-color: var(--amber-tag-bg);
+  border-color: var(--amber-tag-border);
+  color: var(--amber-tag-text);
+}
+
+/* ---------- NAVBAR ---------- */
+.site-nav {
   position: sticky;
   top: 0;
   z-index: 100;
@@ -325,8 +275,8 @@ h1, h2, h3, h4, h5, h6 {
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.navbar__inner {
-  max-width: var(--max-w-wide);
+.site-nav__inner {
+  max-width: var(--max-w);
   margin: 0 auto;
   padding: 0 var(--space-6);
   height: 64px;
@@ -335,615 +285,533 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
 }
 
-.navbar__logo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-brand);
-  font-size: 21px;
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  color: var(--text-primary);
+.site-nav__brand {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
 }
 
-.navbar__logo-img {
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-micro);
-}
-
-.navbar__logo-dim {
-  color: var(--text-secondary);
+.site-nav__brand span {
   font-weight: 400;
+  color: var(--ink-secondary);
 }
 
-.navbar__nav {
+.site-nav__links {
   display: flex;
   align-items: center;
   gap: var(--space-6);
 }
 
-.navbar__link {
-  font-family: var(--font-ui);
+.site-nav__link {
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-secondary);
-  transition: color 0.15s ease;
+  color: var(--ink-secondary);
 }
 
-.navbar__link:hover {
-  color: var(--text-primary);
+.site-nav__link:hover {
+  color: var(--ink);
 }
 
-.navbar__actions {
+.site-nav__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
-/* Theme Switcher Button */
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-pill);
+.theme-btn {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-secondary);
+  padding: 6px 12px;
   border: 1px solid var(--border);
-  background-color: var(--surface);
-  color: var(--text-secondary);
+  border-radius: 999px;
   transition: all 0.15s ease;
 }
 
-.theme-toggle:hover {
-  color: var(--text-primary);
-  background-color: var(--surface-subtle);
+.theme-btn:hover {
+  color: var(--ink);
   border-color: var(--border-strong);
 }
 
-/* ---------- 6. LAYOUT CONTAINERS ---------- */
-.container {
-  width: 100%;
-  max-width: var(--max-w-main);
+/* ---------- CONTAINERS ---------- */
+.page-wrap {
+  max-width: var(--max-w);
   margin: 0 auto;
   padding: 0 var(--space-6);
 }
 
-.container--prose {
+.page-wrap--prose {
   max-width: var(--max-w-prose);
 }
 
-.container--wide {
-  max-width: var(--max-w-wide);
+/* Section Shell */
+.editorial-section {
+  padding: var(--space-16) 0;
+  border-bottom: 1px solid var(--border);
 }
 
-.section-divider {
-  border: 0;
-  height: 1px;
-  background-color: var(--border);
-  margin: 0;
+.editorial-section__head {
+  margin-bottom: var(--space-8);
 }
 
-/* ---------- 7. HERO SECTION (EDITORIAL & CODICOLOGICAL) ---------- */
-.editorial-hero {
-  padding: var(--space-16) 0 var(--space-12);
-  text-align: center;
+.editorial-section__head h2 {
+  font-size: clamp(28px, 4vw, 40px);
+  margin-bottom: var(--space-3);
 }
 
-.editorial-hero__meta {
+.editorial-section__head p {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--ink-secondary);
+  max-width: 620px;
+  line-height: 1.6;
+}
+
+/* ---------- HERO (MINIMALIST BOLD) ---------- */
+.hero {
+  padding: var(--space-20) 0 var(--space-16);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero__eyebrow-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   margin-bottom: var(--space-6);
-  flex-wrap: wrap;
 }
 
-.editorial-hero__title {
-  font-family: var(--font-brand);
-  font-size: clamp(32px, 5.5vw, 54px);
-  font-weight: 600;
-  line-height: 1.18;
-  letter-spacing: -0.5px;
-  max-width: 820px;
-  margin: 0 auto var(--space-5);
-  color: var(--text-primary);
+.hero__title {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 6.5vw, 68px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  max-width: 920px;
+  margin-bottom: var(--space-6);
 }
 
-.editorial-hero__title em {
+.hero__title em {
   font-style: italic;
   font-weight: 400;
-  color: var(--text-secondary);
+  color: var(--ink-secondary);
 }
 
-.editorial-hero__sub {
-  font-family: var(--font-ui);
-  font-size: clamp(15px, 2vw, 17px);
-  line-height: 1.6;
-  color: var(--text-secondary);
-  max-width: 640px;
-  margin: 0 auto var(--space-8);
-  font-weight: 400;
-}
-
-.editorial-hero__actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
-  flex-wrap: wrap;
-}
-
-.editorial-hero__note {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: var(--text-tertiary);
-  margin: 0 auto;
-  max-width: 500px;
-}
-
-/* Micro Trust Band */
-.scholarly-band {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-8);
-  padding: var(--space-6) 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  margin-top: var(--space-10);
-  flex-wrap: wrap;
-}
-
-.scholarly-band__item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.scholarly-band__icon {
-  width: 16px;
-  height: 16px;
-  color: var(--text-tertiary);
-}
-
-/* ---------- 8. FLAGSHIP COMPONENT A: EVIDENCE BOTTOM SHEET (MUTHALLA'AH WORKBENCH) ---------- */
-.workbench-preview {
-  margin: var(--space-12) 0 var(--space-16);
-}
-
-.sheet-window {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-modal);
-  box-shadow: var(--shadow-elevated);
-  overflow: hidden;
-  max-width: 860px;
-  margin: 0 auto;
-}
-
-.sheet-window__topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-6);
-  border-bottom: 1px solid var(--border);
-  background-color: var(--surface);
-}
-
-.sheet-window__title-group {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.sheet-window__heading {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: -0.1px;
-}
-
-.sheet-window__content {
-  padding: var(--space-6);
-}
-
-/* Arabic Ibarah Vessel */
-.ibarah-vessel {
-  background-color: var(--surface-inset);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-6);
-  margin-bottom: var(--space-5);
-  position: relative;
-}
-
-.ibarah-vessel__text {
-  font-family: var(--font-arabic);
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.85;
-  color: var(--text-primary);
-  direction: rtl;
-  text-align: right;
-  margin-bottom: var(--space-4);
-}
-
-.ibarah-vessel__citation {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border-subtle);
-}
-
-/* Explanation & Commentary Block */
-.commentary-block {
-  margin-bottom: var(--space-6);
-}
-
-.commentary-block__label {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-tertiary);
-  margin-bottom: var(--space-2);
-}
-
-.commentary-block__body {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-secondary);
-}
-
-/* Sheet Action Bar */
-.sheet-window__actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border);
-  flex-wrap: wrap;
-}
-
-/* ---------- 9. FLAGSHIP COMPONENT B: GOOGLE CAMERA EXIF BOOK CARDS (BookRowItem) ---------- */
-.exif-catalog {
-  padding: var(--space-16) 0;
-}
-
-.exif-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-5);
-  margin-top: var(--space-8);
-}
-
-.book-card {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.book-card:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-card);
-}
-
-.book-card__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.book-card__id {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-tertiary);
-  letter-spacing: 0.5px;
-}
-
-.book-card__discipline {
-  font-family: var(--font-arabic);
-  font-size: 14px;
-  color: var(--text-secondary);
-  direction: rtl;
-}
-
-.book-card__death {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-tertiary);
-  padding: 1px 6px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-micro);
-}
-
-.book-card__title-ar {
-  font-family: var(--font-arabic);
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1.6;
-  direction: rtl;
-  text-align: right;
-  color: var(--text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.book-card__title-latin {
-  font-family: var(--font-brand);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-2);
-}
-
-.book-card__author {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-5);
-}
-
-.book-card__author-icon {
-  width: 14px;
-  height: 14px;
-  color: var(--text-tertiary);
-}
-
-/* EXIF Strip */
-.book-card__exif-strip {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  flex-wrap: wrap;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border-subtle);
-  background-color: var(--surface-subtle);
-  border-radius: var(--radius-micro);
-  padding: var(--space-2) var(--space-3);
-}
-
-/* ---------- 10. SECTION: 6 DISIPLIN ILMU (Khazanah Keilmuan) ---------- */
-.disciplines-section {
-  padding: var(--space-16) 0;
-  background-color: var(--canvas);
-}
-
-.disciplines-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-4);
-  margin-top: var(--space-8);
-}
-
-.discipline-card {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-sm);
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.discipline-card:hover {
-  border-color: var(--border-strong);
-}
-
-.discipline-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--space-3);
-}
-
-.discipline-card__number {
-  font-family: var(--font-ui);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-tertiary);
-  letter-spacing: 0.5px;
-}
-
-.discipline-card__title {
-  font-family: var(--font-brand);
-  font-size: 19px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.discipline-card__desc {
-  font-family: var(--font-ui);
-  font-size: 13px;
+.hero__lead {
+  font-family: var(--font-sans);
+  font-size: clamp(17px, 2.2vw, 21px);
   line-height: 1.55;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-4);
+  color: var(--ink-secondary);
+  max-width: 700px;
+  margin-bottom: var(--space-8);
 }
 
-.discipline-card__examples {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  color: var(--text-tertiary);
-  line-height: 1.4;
-  border-top: 1px solid var(--border-subtle);
-  padding-top: var(--space-3);
-}
-
-/* ---------- 11. SECTION: ADAB ILMIAH & BATASAN LAYANAN ---------- */
-.adab-section {
-  padding: var(--space-16) 0;
-  border-top: 1px solid var(--border);
-}
-
-.adab-box {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  padding: var(--space-8);
-  box-shadow: var(--shadow-sm);
-}
-
-.adab-box__title {
-  font-family: var(--font-brand);
-  font-size: 24px;
-  margin-bottom: var(--space-3);
-  color: var(--text-primary);
-}
-
-.adab-box__intro {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  color: var(--text-secondary);
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
   margin-bottom: var(--space-6);
-  line-height: 1.6;
 }
 
-.adab-points {
+.hero__subnote {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-tertiary);
+}
+
+/* Editorial Trust Row */
+.trust-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space-5);
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-12);
 }
 
-.adab-point {
+.trust-item {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
 }
 
-.adab-point__label {
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
+.trust-item__num {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
 }
 
-.adab-point__desc {
-  font-family: var(--font-ui);
+.trust-item__title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.trust-item__desc {
+  font-family: var(--font-sans);
   font-size: 13px;
-  color: var(--text-secondary);
+  color: var(--ink-secondary);
   line-height: 1.5;
 }
 
-/* ---------- 12. SECTION: UNDUHAN RESMI (DOWNLOAD CTA) ---------- */
-.download-section {
-  padding: var(--space-16) 0 var(--space-20);
-  text-align: center;
-}
-
-.download-box {
+/* ---------- EDITORIAL IBARAH WORKBENCH ---------- */
+.ibarah-block {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-modal);
-  padding: var(--space-10) var(--space-8);
-  box-shadow: var(--shadow-elevated);
-  max-width: 780px;
-  margin: 0 auto;
+  border-radius: 12px;
+  padding: var(--space-8);
+  margin-top: var(--space-8);
 }
 
-.download-box__heading {
-  font-family: var(--font-brand);
-  font-size: clamp(26px, 4vw, 36px);
-  margin-bottom: var(--space-3);
-  color: var(--text-primary);
-}
-
-.download-box__sub {
-  font-family: var(--font-ui);
-  font-size: 15px;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-6);
-  max-width: 540px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.55;
-}
-
-.download-box__specs {
+.ibarah-block__header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+}
+
+.ibarah-block__title {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.ibarah-quote {
+  font-family: var(--font-arabic);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.95;
+  direction: rtl;
+  text-align: right;
+  color: var(--ink);
+  padding: var(--space-6);
+  background-color: var(--canvas);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: var(--space-5);
+}
+
+.citation-line {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.citation-line strong {
+  color: var(--ink);
+}
+
+.ibarah-explanation {
+  margin-bottom: var(--space-8);
+}
+
+.ibarah-explanation h4 {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.ibarah-explanation p {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-secondary);
+}
+
+.ibarah-actions {
+  display: flex;
+  align-items: center;
   gap: var(--space-3);
-  margin-top: var(--space-5);
   flex-wrap: wrap;
 }
 
-/* ---------- 13. LEGAL ARTICLE LAYOUT (TERMS, PRIVACY, REFUND, ETC.) ---------- */
+/* ---------- RAZOR-SHARP EDITORIAL TABLE (KHAZANAH KITAB) ---------- */
+.data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--surface);
+}
+
+.editorial-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.editorial-table th {
+  padding: var(--space-4) var(--space-5);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-tertiary);
+  background-color: var(--canvas);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.editorial-table td {
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--ink-secondary);
+}
+
+.editorial-table tr:last-child td {
+  border-bottom: none;
+}
+
+.editorial-table tr:hover td {
+  background-color: var(--canvas);
+}
+
+.td-book-title {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-1);
+}
+
+.td-book-ar {
+  font-family: var(--font-arabic);
+  font-size: 16px;
+  direction: rtl;
+  color: var(--ink-secondary);
+}
+
+.td-author {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.td-num {
+  font-weight: 700;
+  color: var(--ink-tertiary);
+}
+
+/* ---------- 6 BIDANG ILMU INDEX GRID ---------- */
+.disciplines-index {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background-color: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: var(--space-8);
+}
+
+.discipline-item {
+  background-color: var(--surface);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.discipline-item__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.discipline-item__num {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-tertiary);
+}
+
+.discipline-item__title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--space-2);
+}
+
+.discipline-item__desc {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+}
+
+.discipline-item__refs {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--ink-tertiary);
+  line-height: 1.5;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- ADAB ILMIAH & PRINCIPLES ---------- */
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-8);
+  margin-top: var(--space-8);
+}
+
+.principle-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 2px solid var(--ink);
+}
+
+.principle-entry__num {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+.principle-entry__heading {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.principle-entry__body {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: var(--ink-secondary);
+  line-height: 1.65;
+}
+
+/* ---------- DOWNLOAD SECTION ---------- */
+.download-hero {
+  padding: var(--space-20) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.download-panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--space-12) var(--space-10);
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.download-panel__title {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 4.5vw, 44px);
+  margin-bottom: var(--space-3);
+  color: var(--ink);
+}
+
+.download-panel__lead {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--ink-secondary);
+  max-width: 580px;
+  margin: 0 auto var(--space-8);
+  line-height: 1.6;
+}
+
+.specs-line {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-tertiary);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- LEGAL ARTICLES (TERMS, PRIVACY, REFUND, ETC.) ---------- */
 .legal-page {
   padding: var(--space-12) 0 var(--space-20);
 }
 
 .legal-header {
   margin-bottom: var(--space-10);
-  border-bottom: 1px solid var(--border);
   padding-bottom: var(--space-6);
+  border-bottom: 2px solid var(--ink);
 }
 
 .legal-title {
-  font-family: var(--font-brand);
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--space-2);
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-3);
+  color: var(--ink);
 }
 
 .legal-meta {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  font-family: var(--font-ui);
+  gap: var(--space-3);
+  font-family: var(--font-sans);
   font-size: 13px;
-  color: var(--text-tertiary);
+  color: var(--ink-tertiary);
+  font-weight: 500;
   flex-wrap: wrap;
 }
 
 .legal-body {
-  font-family: var(--font-ui);
-  font-size: 14.5px;
-  line-height: 1.7;
-  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--ink-secondary);
 }
 
 .legal-body h2 {
-  font-family: var(--font-brand);
-  font-size: 22px;
+  font-family: var(--font-serif);
+  font-size: 24px;
   font-weight: 600;
-  color: var(--text-primary);
-  margin: var(--space-8) 0 var(--space-3);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--border-subtle);
+  color: var(--ink);
+  margin: var(--space-10) 0 var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
 }
 
 .legal-body h3 {
-  font-family: var(--font-brand);
-  font-size: 17px;
+  font-family: var(--font-serif);
+  font-size: 18px;
   font-weight: 600;
-  color: var(--text-primary);
-  margin: var(--space-5) 0 var(--space-2);
+  color: var(--ink);
+  margin: var(--space-6) 0 var(--space-3);
 }
 
 .legal-body p {
@@ -959,132 +827,111 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .legal-body strong {
-  color: var(--text-primary);
+  color: var(--ink);
   font-weight: 600;
 }
 
-/* ---------- 14. FOOTER ---------- */
-.footer {
+/* ---------- FOOTER ---------- */
+.site-footer {
   background-color: var(--canvas);
+  padding: var(--space-16) 0 var(--space-10);
   border-top: 1px solid var(--border);
-  padding: var(--space-12) 0 var(--space-8);
-  font-family: var(--font-ui);
+  font-family: var(--font-sans);
 }
 
-.footer__inner {
-  max-width: var(--max-w-wide);
-  margin: 0 auto;
-  padding: 0 var(--space-6);
+.site-footer__grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: var(--space-8);
-  margin-bottom: var(--space-10);
+  gap: var(--space-10);
+  margin-bottom: var(--space-12);
 }
 
-.footer__brand {
+.site-footer__brand-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: var(--space-2);
+}
+
+.site-footer__tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.site-footer__desc {
+  font-size: 13.5px;
+  color: var(--ink-tertiary);
+  line-height: 1.6;
   max-width: 320px;
 }
 
-.footer__brand-logo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-brand);
-  font-size: 19px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: var(--space-3);
-}
-
-.footer__tagline {
-  font-family: var(--font-brand);
-  font-style: italic;
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-2);
-}
-
-.footer__desc {
-  font-size: 13px;
-  color: var(--text-tertiary);
-  line-height: 1.5;
-  margin-bottom: var(--space-3);
-}
-
-.footer__col h4 {
-  font-family: var(--font-ui);
+.site-footer__col h4 {
+  font-family: var(--font-sans);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  color: var(--ink-tertiary);
   margin-bottom: var(--space-4);
 }
 
-.footer__col a {
+.site-footer__col a {
   display: block;
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-size: 13.5px;
+  color: var(--ink-secondary);
   margin-bottom: var(--space-2);
-  transition: color 0.15s ease;
 }
 
-.footer__col a:hover {
-  color: var(--text-primary);
+.site-footer__col a:hover {
+  color: var(--ink);
 }
 
-.footer__bottom {
-  max-width: var(--max-w-wide);
-  margin: 0 auto;
-  padding: var(--space-6) var(--space-6) 0;
+.site-footer__bottom {
+  padding-top: var(--space-8);
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-tertiary);
+  font-size: 12.5px;
+  color: var(--ink-tertiary);
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
-/* ---------- 15. RESPONSIVE MEDIA QUERIES ---------- */
-@media (max-width: 900px) {
-  .footer__inner {
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 920px) {
+  .site-footer__grid {
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
-}
-
-@media (max-width: 640px) {
-  .navbar__nav {
-    display: none; /* Keep mobile clean with primary CTA */
+  .disciplines-index {
+    grid-template-columns: 1fr;
   }
-
-  .editorial-hero__title {
-    font-size: 32px;
-  }
-
-  .scholarly-band {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .footer__inner {
+  .principles-grid {
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
-
-  .footer__bottom {
-    flex-direction: column;
-    align-items: flex-start;
+  .trust-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
   }
+}
 
-  .sheet-window__actions {
-    justify-content: stretch;
+@media (max-width: 680px) {
+  .site-nav__links {
+    display: none;
   }
-
-  .sheet-window__actions .btn-pill {
-    width: 100%;
+  .hero__title {
+    font-size: 36px;
+  }
+  .site-footer__grid {
+    grid-template-columns: 1fr;
+  }
+  .download-panel {
+    padding: var(--space-8) var(--space-5);
   }
 }
