@@ -42,21 +42,81 @@ class MainShellScreen extends StatefulWidget {
   State<MainShellScreen> createState() => _MainShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _MainShellScreenState extends State<MainShellScreen>
+    with SingleTickerProviderStateMixin {
   late int _currentIndex;
   late final PageController _pageController;
   String? _selectedFieldId;
   CorpusKind? _selectedKind;
+
+  late final AnimationController _roomAnimController;
+  late final Animation<Offset> _roomSlideAnimation;
+  late final Animation<double> _roomScaleAnimation;
+  late final Animation<double> _roomFadeAnimation;
+  late final Animation<double> _bgScaleAnimation;
+  late final Animation<double> _bgDimmerAnimation;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
+
+    _roomAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 380),
+      reverseDuration: const Duration(milliseconds: 300),
+    );
+
+    final CurvedAnimation easeCurve = CurvedAnimation(
+      parent: _roomAnimController,
+      curve: Curves.fastOutSlowIn,
+      reverseCurve: Curves.easeInOutCubic,
+    );
+
+    _roomSlideAnimation = Tween<Offset>(
+      begin: const Offset(0.0, 0.08),
+      end: Offset.zero,
+    ).animate(easeCurve);
+
+    _roomScaleAnimation = Tween<double>(
+      begin: 0.94,
+      end: 1.0,
+    ).animate(easeCurve);
+
+    _roomFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(easeCurve);
+
+    _bgScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.975,
+    ).animate(easeCurve);
+
+    _bgDimmerAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.40,
+    ).animate(easeCurve);
+
+    if (AgentSessionManager.instance.isOpen) {
+      _roomAnimController.value = 1.0;
+    }
+    AgentSessionManager.instance.addListener(_onSessionStateChanged);
+  }
+
+  void _onSessionStateChanged() {
+    if (AgentSessionManager.instance.isOpen) {
+      _roomAnimController.forward();
+    } else {
+      _roomAnimController.reverse();
+    }
   }
 
   @override
   void dispose() {
+    AgentSessionManager.instance.removeListener(_onSessionStateChanged);
+    _roomAnimController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -107,13 +167,163 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final isWideScreen = MediaQuery.of(context).size.width >= 768;
     final screens = _buildScreens();
 
-    return ListenableBuilder(
-      listenable: AgentSessionManager.instance,
-      builder: (context, _) {
-        final sessionManager = AgentSessionManager.instance;
-        return MainShellController(
-          switchTab: _onTabSelected,
-          child: PopScope(
+    final Widget baseScaffold = isWideScreen
+        ? Scaffold(
+            backgroundColor: canvas,
+            body: Row(
+              children: [
+                Container(
+                  width: 76,
+                  decoration: BoxDecoration(
+                    color: surface,
+                    border: Border(right: BorderSide(color: border, width: 1)),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      OpenTurathMark(size: 36, color: accent),
+                      const SizedBox(height: 32),
+                      _RailItem(
+                        icon: Icons.home_outlined,
+                        activeIcon: Icons.home_rounded,
+                        label: AppCopy.navHome,
+                        isSelected: _currentIndex == 0,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(0),
+                      ),
+                      const SizedBox(height: 16),
+                      _RailItem(
+                        icon: Icons.auto_awesome_outlined,
+                        activeIcon: Icons.auto_awesome_rounded,
+                        label: AppCopy.navStudies,
+                        isSelected: _currentIndex == 1,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(1),
+                      ),
+                      const SizedBox(height: 16),
+                      _RailItem(
+                        icon: Icons.edit_note_rounded,
+                        activeIcon: Icons.edit_note_rounded,
+                        label: AppCopy.navSaved,
+                        isSelected: _currentIndex == 2,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(2),
+                      ),
+                      const SizedBox(height: 16),
+                      _RailItem(
+                        icon: Icons.settings_outlined,
+                        activeIcon: Icons.settings_rounded,
+                        label: AppCopy.navSettings,
+                        isSelected: _currentIndex == 3,
+                        accent: accent,
+                        unselected: unselected,
+                        onTap: () => _onTabSelected(3),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        tooltip: isDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap',
+                        icon: Icon(
+                          isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                          color: unselected,
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          AppConfig.setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: screens,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : Scaffold(
+            backgroundColor: canvas,
+            body: PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: screens,
+            ),
+            extendBody: true,
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: surface,
+                border: Border(
+                  top: BorderSide(
+                    color: border,
+                    width: 0.8,
+                  ),
+                ),
+              ),
+              child: SafeArea(
+                top: false,
+                child: SizedBox(
+                  height: 64,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.home_outlined,
+                          activeIcon: Icons.home_rounded,
+                          label: AppCopy.navHome,
+                          isSelected: _currentIndex == 0,
+                          onTap: () => _onTabSelected(0),
+                        ),
+                      ),
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.auto_awesome_outlined,
+                          activeIcon: Icons.auto_awesome_rounded,
+                          label: AppCopy.navStudies,
+                          isSelected: _currentIndex == 1,
+                          onTap: () => _onTabSelected(1),
+                        ),
+                      ),
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.edit_note_rounded,
+                          activeIcon: Icons.edit_note_rounded,
+                          label: AppCopy.navSaved,
+                          isSelected: _currentIndex == 2,
+                          onTap: () => _onTabSelected(2),
+                        ),
+                      ),
+                      Expanded(
+                        child: _GoogleNavBarItem(
+                          icon: Icons.settings_outlined,
+                          activeIcon: Icons.settings_rounded,
+                          label: AppCopy.navSettings,
+                          isSelected: _currentIndex == 3,
+                          onTap: () => _onTabSelected(3),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+
+    return MainShellController(
+      switchTab: _onTabSelected,
+      child: AnimatedBuilder(
+        animation: _roomAnimController,
+        builder: (context, child) {
+          final sessionManager = AgentSessionManager.instance;
+          final isRoomVisible = _roomAnimController.value > 0.0 || sessionManager.isOpen;
+
+          return PopScope(
             canPop: !sessionManager.isOpen && _currentIndex == 0,
             onPopInvokedWithResult: (didPop, result) {
               if (didPop) return;
@@ -127,165 +337,51 @@ class _MainShellScreenState extends State<MainShellScreen> {
             },
             child: Stack(
               children: [
-                isWideScreen
-                    ? Scaffold(
-                backgroundColor: canvas,
-                body: Row(
-                  children: [
-                    Container(
-                      width: 76,
-                      decoration: BoxDecoration(
-                        color: surface,
-                        border: Border(right: BorderSide(color: border, width: 1)),
-                      ),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          OpenTurathMark(size: 36, color: accent),
-                          const SizedBox(height: 32),
-                          _RailItem(
-                            icon: Icons.home_outlined,
-                            activeIcon: Icons.home_rounded,
-                            label: AppCopy.navHome,
-                            isSelected: _currentIndex == 0,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(0),
-                          ),
-                          const SizedBox(height: 16),
-                          _RailItem(
-                            icon: Icons.auto_awesome_outlined,
-                            activeIcon: Icons.auto_awesome_rounded,
-                            label: AppCopy.navStudies,
-                            isSelected: _currentIndex == 1,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(1),
-                          ),
-                          const SizedBox(height: 16),
-                          _RailItem(
-                            icon: Icons.edit_note_rounded,
-                            activeIcon: Icons.edit_note_rounded,
-                            label: AppCopy.navSaved,
-                            isSelected: _currentIndex == 2,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(2),
-                          ),
-                          const SizedBox(height: 16),
-                          _RailItem(
-                            icon: Icons.settings_outlined,
-                            activeIcon: Icons.settings_rounded,
-                            label: AppCopy.navSettings,
-                            isSelected: _currentIndex == 3,
-                            accent: accent,
-                            unselected: unselected,
-                            onTap: () => _onTabSelected(3),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            tooltip: isDark ? 'Beralih ke Tema Terang' : 'Beralih ke Tema Gelap',
-                            icon: Icon(
-                              isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                              color: unselected,
-                              size: 20,
-                            ),
-                            onPressed: () {
-                              AppConfig.setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: PageView(
-                        controller: _pageController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: screens,
-                      ),
-                    ),
-                  ],
+                // 1. Dashboard latar belakang dengan redaman depth-scale
+                Transform.scale(
+                  scale: _bgScaleAnimation.value,
+                  alignment: Alignment.center,
+                  child: baseScaffold,
                 ),
-              )
-            : Scaffold(
-                backgroundColor: canvas,
-                body: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: screens,
-                ),
-                extendBody: true,
-                bottomNavigationBar: Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    border: Border(
-                      top: BorderSide(
-                        color: border,
-                        width: 0.8,
+
+                // 2. Backdrop Dimmer lembut
+                if (_roomAnimController.value > 0.0)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      ignoring: _roomAnimController.value == 0.0,
+                      child: Container(
+                        color: Colors.black.withOpacity(_bgDimmerAnimation.value),
                       ),
                     ),
                   ),
-                  child: SafeArea(
-                    top: false,
-                    child: SizedBox(
-                      height: 64,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.home_outlined,
-                              activeIcon: Icons.home_rounded,
-                              label: AppCopy.navHome,
-                              isSelected: _currentIndex == 0,
-                              onTap: () => _onTabSelected(0),
-                            ),
+
+                // 3. Ruang AI Multi-Tab ("Fathul Kitab")
+                Positioned.fill(
+                  child: Offstage(
+                    offstage: !isRoomVisible,
+                    child: TickerMode(
+                      enabled: isRoomVisible,
+                      child: FadeTransition(
+                        opacity: _roomFadeAnimation,
+                        child: SlideTransition(
+                          position: _roomSlideAnimation,
+                          child: ScaleTransition(
+                            scale: _roomScaleAnimation,
+                            alignment: Alignment.bottomCenter,
+                            child: child,
                           ),
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.auto_awesome_outlined,
-                              activeIcon: Icons.auto_awesome_rounded,
-                              label: AppCopy.navStudies,
-                              isSelected: _currentIndex == 1,
-                              onTap: () => _onTabSelected(1),
-                            ),
-                          ),
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.edit_note_rounded,
-                              activeIcon: Icons.edit_note_rounded,
-                              label: AppCopy.navSaved,
-                              isSelected: _currentIndex == 2,
-                              onTap: () => _onTabSelected(2),
-                            ),
-                          ),
-                          Expanded(
-                            child: _GoogleNavBarItem(
-                              icon: Icons.settings_outlined,
-                              activeIcon: Icons.settings_rounded,
-                              label: AppCopy.navSettings,
-                              isSelected: _currentIndex == 3,
-                              onTap: () => _onTabSelected(3),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Positioned.fill(
-                child: Offstage(
-                  offstage: !sessionManager.isOpen,
-                  child: const AgentMultiTabRoom(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
+              ],
+            ),
+          );
+        },
+        child: const AgentMultiTabRoom(),
+      ),
+    );
 }
 }
 
