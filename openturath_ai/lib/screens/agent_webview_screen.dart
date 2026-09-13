@@ -23,6 +23,7 @@ import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/auth_service.dart';
+import '../widgets/legal_document_sheet.dart';
 import '../services/bookmark_service.dart';
 import '../services/telemetry_service.dart';
 import '../widgets/app_error_state.dart';
@@ -875,6 +876,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
                   ),
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  'OpenTurath membantu mencari kutipan dan mempelajari penjelasan dalam kitab. Periksa hasilnya pada sumber yang dirujuk. Untuk memahami agama dan menetapkan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    height: 1.45,
+                    color: textSecondary,
+                  ),
+                ),
                 const SizedBox(height: 14),
                 Divider(height: 1, color: border),
                 const SizedBox(height: 14),
@@ -923,6 +933,23 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogCtx);
+                      LegalDocumentSheet.showAiGuideline(context);
+                    },
+                    child: Text(
+                      'Baca panduan rujukan selengkapnya',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        color: textSecondary,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
