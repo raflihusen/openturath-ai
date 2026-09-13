@@ -25,38 +25,33 @@
 <body>
 
   <!-- ═══════════════ NAVBAR ═══════════════ -->
-  <header class="navbar" id="navbar">
-    <div class="navbar__inner">
-      <a href="index.html" class="navbar__logo" aria-label="OpenTurath Beranda">
-        <img src="logo_open_ai.png" alt="OpenTurath" class="navbar__logo-img" width="30" height="30">
-        <span>Open<span class="navbar__logo-dim">Turath</span></span>
+  <header class="site-nav">
+    <div class="site-nav__inner">
+      <a href="index.html" class="site-nav__brand">
+        OpenTurath <span>AI</span>
       </a>
 
-      <nav class="navbar__nav" aria-label="Navigasi">
-        <a href="index.html#ibarah" class="navbar__link">Ibarah &amp; Rujukan</a>
-        <a href="index.html#khazanah" class="navbar__link">Khazanah Kitab</a>
-        <a href="index.html#bidang-ilmu" class="navbar__link">Bidang Ilmu</a>
-        <a href="index.html" class="navbar__link">Beranda</a>
+      <nav class="site-nav__links" aria-label="Navigasi Khazanah">
+        <a href="index.html#ibarah" class="site-nav__link">Ibarah &amp; Rujukan</a>
+        <a href="index.html#khazanah" class="site-nav__link">Khazanah Kitab</a>
+        <a href="index.html#bidang-ilmu" class="site-nav__link">Bidang Ilmu</a>
+        <a href="index.html" class="site-nav__link">Beranda</a>
       </nav>
 
-      <div class="navbar__actions">
-        <button class="theme-toggle interactive-tap" id="theme-toggle" aria-label="Ganti tema warna" title="Ganti mode terang atau gelap">
-          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </button>
-        <a href="index.html" class="btn-pill btn-pill--secondary interactive-tap">
-          Kembali ke Beranda
-        </a>
+      <div class="site-nav__actions">
+        <button class="theme-btn" id="theme-btn" type="button">Mode</button>
+        <a href="index.html" class="btn btn--secondary btn--small">Kembali ke Beranda</a>
       </div>
     </div>
   </header>
 
-  <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
-  <main class="container container--prose legal-page">
+  <!-- ═══════════════ LEGAL CONTENT ═══════════════ -->
+  <main class="page-wrap page-wrap--prose legal-page">
     <div class="legal-header">
-      <span class="label-eyebrow">Dokumen Kebijakan Resmi</span>
+      <span class="eyebrow">Dokumen Kebijakan Resmi</span>
       <h1 class="legal-title">Ketentuan Layanan</h1>
       <div class="legal-meta">
-        <span class="pill-exif">Versi 1.1</span>
+        <span class="tag">Versi 1.1</span>
         <span>Berlaku Efektif: 13 September 2026</span>
         <span>·</span>
         <span>Jakarta, Indonesia</span>
@@ -108,72 +103,67 @@
   </main>
 
   <!-- ═══════════════ FOOTER ═══════════════ -->
-  <footer class="footer">
-    <div class="footer__inner">
+  <footer class="site-footer">
+    <div class="page-wrap">
       
-      <div class="footer__brand">
-        <a href="index.html" class="footer__brand-logo">
-          <img src="logo_open_ai.png" alt="Logo" class="navbar__logo-img" width="26" height="26">
-          <span>Open<span class="navbar__logo-dim">Turath</span></span>
-        </a>
-        <div class="footer__tagline">Membaca kitab, menelusuri ibarah.</div>
-        <p class="footer__desc">
-          OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.
-        </p>
-        <p style="font-size: 12px; color: var(--text-tertiary);">
-          Jakarta, Indonesia
-        </p>
+      <div class="site-footer__grid">
+        <div>
+          <div class="site-footer__brand-title">OpenTurath</div>
+          <div class="site-footer__tagline">Membaca kitab, menelusuri ibarah.</div>
+          <p class="site-footer__desc">
+            OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.
+          </p>
+          <div style="font-size: 12px; color: var(--ink-tertiary); margin-top: var(--space-3);">
+            Jakarta, Indonesia
+          </div>
+        </div>
+
+        <div class="site-footer__col">
+          <h4>Ketentuan &amp; Kebijakan</h4>
+          <a href="terms.html">Ketentuan Layanan</a>
+          <a href="privacy.html">Kebijakan Privasi</a>
+          <a href="refund.html">Langganan &amp; Refund</a>
+          <a href="cookie.html">Kebijakan Cookie</a>
+          <a href="ai-policy.html">Panduan Penggunaan AI</a>
+          <a href="copyright.html">Hak Cipta &amp; Pelaporan</a>
+          <a href="aup.html">Kebijakan Penggunaan</a>
+        </div>
+
+        <div class="site-footer__col">
+          <h4>Aplikasi</h4>
+          <a href="download.html">Unduh Android APK</a>
+          <a href="download.html#panduan">Panduan Pemasangan</a>
+        </div>
+
+        <div class="site-footer__col">
+          <h4>Bantuan</h4>
+          <a href="mailto:openturath@gmail.com">openturath@gmail.com</a>
+          <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer">@openturath.ai</a>
+        </div>
       </div>
 
-      <div class="footer__col">
-        <h4>Ketentuan &amp; Kebijakan</h4>
-        <a href="terms.html">Ketentuan Layanan</a>
-        <a href="privacy.html">Kebijakan Privasi</a>
-        <a href="refund.html">Langganan &amp; Pengembalian Dana</a>
-        <a href="cookie.html">Kebijakan Cookie</a>
-        <a href="ai-policy.html">Panduan Penggunaan AI</a>
-        <a href="copyright.html">Hak Cipta &amp; Pelaporan</a>
-        <a href="aup.html">Kebijakan Penggunaan</a>
+      <div class="site-footer__bottom">
+        <div>&copy; 2026 OpenTurath. Seluruh hak cipta dilindungi undang-undang.</div>
+        <div>Instrumen bantu penelusuran rujukan, bukan pengganti bimbingan dan fatwa ulama.</div>
       </div>
 
-      <div class="footer__col">
-        <h4>Aplikasi</h4>
-        <a href="download.html">Unduh Android APK</a>
-        <a href="download.html#panduan">Panduan Pemasangan</a>
-      </div>
-
-      <div class="footer__col">
-        <h4>Bantuan</h4>
-        <a href="mailto:openturath@gmail.com">openturath@gmail.com</a>
-        <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer">@openturath.ai</a>
-      </div>
-
-    </div>
-
-    <div class="footer__bottom">
-      <span>&copy; 2026 OpenTurath. Seluruh hak cipta dilindungi undang-undang.</span>
-      <span>Instrumen bantu penelusuran rujukan, bukan pengganti bimbingan dan fatwa ulama.</span>
     </div>
   </footer>
 
   <script>
-    var themeToggle = document.getElementById('theme-toggle');
-    function updateThemeIcon() {
+    var themeBtn = document.getElementById('theme-btn');
+    function updateThemeBtn() {
       var current = document.documentElement.getAttribute('data-theme') || 'light';
-      if (current === 'dark') {
-        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-      } else {
-        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-      }
+      themeBtn.textContent = current === 'dark' ? 'Mode: Gelap' : 'Mode: Terang';
     }
-    updateThemeIcon();
+    updateThemeBtn();
 
-    themeToggle.addEventListener('click', function() {
+    themeBtn.addEventListener('click', function() {
       var current = document.documentElement.getAttribute('data-theme') || 'light';
       var next = current === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('openturath_theme', next);
-      updateThemeIcon();
+      updateThemeBtn();
     });
   </script>
 
