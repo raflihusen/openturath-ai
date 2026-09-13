@@ -386,11 +386,94 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
     forMainFrameOnly: true,
   );
 
+  Timer? _readinessTimer;
+  DateTime? _loadingStarted;
+  int _readySamples = 0;
+  bool _checkingReady = false;
+  bool? _lastIsDark;
+
   @override
   void initState() {
     super.initState();
     if (widget.session.resolvedUrl == null) {
       _fetchUrl();
+    }
+  }
+
+  @override
+  void dispose() {
+    _readinessTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentIsDark = Theme.of(context).brightness == Brightness.dark;
+    if (_lastIsDark != null && _lastIsDark != currentIsDark) {
+      widget.session.webController?.setSettings(
+        settings: InAppWebViewSettings(
+          forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
+          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+          algorithmicDarkeningAllowed: true,
+        ),
+      );
+      _applyThemeCss(currentIsDark);
+    }
+    _lastIsDark = currentIsDark;
+  }
+
+  Future<void> _applyThemeCss(bool isDark) async {
+    final controller = widget.session.webController;
+    if (controller == null) return;
+    try {
+      await controller.evaluateJavascript(
+        source: 'if (window.otNotebook && typeof window.otNotebook.setTheme === "function") { window.otNotebook.setTheme($isDark); } else if (typeof applyOtTheme === "function") { applyOtTheme($isDark); }',
+      );
+    } catch (_) {}
+  }
+
+  void _startReadinessCheck() {
+    _readinessTimer?.cancel();
+    _loadingStarted = DateTime.now();
+    _readySamples = 0;
+    _readinessTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+  }
+
+  Future<void> _checkReady() async {
+    if (_checkingReady || widget.session.webController == null || !mounted) return;
+    _checkingReady = true;
+    try {
+      final controller = widget.session.webController!;
+      final url = await controller.getUrl();
+      final isLogin = url?.host == 'accounts.google.com' ||
+          url?.host == 'accounts.youtube.com' ||
+          url?.host == 'consent.google.com';
+      final result = await controller.evaluateJavascript(
+          source: 'window.otNotebook ? window.otNotebook.ready() : false');
+      _readySamples = result == true ? _readySamples + 1 : 0;
+      if (!mounted) return;
+      final elapsedMs = _loadingStarted != null
+          ? DateTime.now().difference(_loadingStarted!).inMilliseconds
+          : 0;
+      if (isLogin || (_readySamples >= 7 && elapsedMs >= 6500)) {
+        _readinessTimer?.cancel();
+        if (mounted && widget.session.isWebLoading) {
+          setState(() => widget.session.isWebLoading = false);
+        }
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+        _readinessTimer?.cancel();
+        if (mounted) {
+          setState(() {
+            widget.session.isWebLoading = false;
+            widget.session.errorMessage =
+                'AI belum siap merespons. Periksa koneksi lalu coba muat kembali.';
+          });
+        }
+      }
+    } catch (_) {
+    } finally {
+      _checkingReady = false;
     }
   }
 
@@ -481,6 +564,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
             hardwareAcceleration: true,
             verticalScrollBarEnabled: false,
             horizontalScrollBarEnabled: false,
+            forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
+            forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+            algorithmicDarkeningAllowed: true,
             userAgent: 'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
           ),
           onWebViewCreated: (controller) {
@@ -517,14 +603,26 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
                 return false;
               },
             );
+            _startReadinessCheck();
+          },
+          onLoadStart: (controller, uri) {
+            if (mounted && !session.isWebLoading) {
+              setState(() => session.isWebLoading = true);
+            }
+            _startReadinessCheck();
           },
           onLoadStop: (controller, uri) async {
-            if (mounted) {
-              setState(() => session.isWebLoading = false);
-              controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
-              controller.evaluateJavascript(
-                source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
-              );
+            await controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+            await _applyThemeCss(isDark);
+            await controller.evaluateJavascript(
+              source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
+            );
+            await _checkReady();
+          },
+          onProgressChanged: (controller, progress) async {
+            if (progress >= 35) {
+              await controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+              await _applyThemeCss(isDark);
             }
           },
           shouldOverrideUrlLoading: (controller, action) async {
@@ -537,7 +635,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
           },
         ),
 
-        // Minimal pulsing loader when initial webview page is connecting
+        // Fullscreen pulsing loader until NotebookLM UI is 100% prepared & ready
         if (session.isWebLoading)
           Positioned.fill(
             child: AppLoader.fullscreen(

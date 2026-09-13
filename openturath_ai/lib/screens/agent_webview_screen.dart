@@ -242,7 +242,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       _webController?.setSettings(
         settings: InAppWebViewSettings(
           forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
-          forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
+          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
           algorithmicDarkeningAllowed: true,
         ),
       );
@@ -509,7 +509,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
       final elapsedMs = _loadingStarted != null ? DateTime.now().difference(_loadingStarted!).inMilliseconds : 0;
-      if (isLogin || (_readySamples >= 5 && elapsedMs >= 4800)) {
+      if (isLogin || (_readySamples >= 7 && elapsedMs >= 6500)) {
         _readinessTimer?.cancel();
         setState(() => _isWebViewLoading = false);
       } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
@@ -683,7 +683,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       mediaPlaybackRequiresUserGesture: false,
                       allowsInlineMediaPlayback: true,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                      forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
+                      forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
                       algorithmicDarkeningAllowed: true,
                       transparentBackground: false,
                     ),

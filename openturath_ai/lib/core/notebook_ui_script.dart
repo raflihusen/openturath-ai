@@ -41,9 +41,116 @@ const notebookUiScript = r'''
   document.addEventListener('copy', event => {
     if (Date.now() < copyUntil && selectedAnswer) sendCopy(selectedAnswer);
   });
+  function applyOtTheme(isDark) {
+    if (typeof isDark !== 'boolean') {
+      isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    try {
+      var meta = document.querySelector('meta[name="color-scheme"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'color-scheme';
+        (document.head || document.documentElement).appendChild(meta);
+      }
+      meta.content = isDark ? 'dark' : 'light';
+
+      if (document.documentElement) {
+        document.documentElement.classList.toggle('dark-theme', isDark);
+        document.documentElement.classList.toggle('dark', isDark);
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+      }
+      if (document.body) {
+        document.body.classList.toggle('dark-theme', isDark);
+        document.body.classList.toggle('dark', isDark);
+        document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      }
+
+      var styleEl = document.getElementById('ot-native-dark-mode');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'ot-native-dark-mode';
+        (document.head || document.documentElement).appendChild(styleEl);
+      }
+      if (isDark) {
+        styleEl.textContent = `
+          :root {
+            color-scheme: dark !important;
+            --mdc-theme-background: #0E0E10 !important;
+            --mdc-theme-surface: #18181B !important;
+            --mdc-theme-on-surface: #FAFAFA !important;
+            --mat-sys-color-surface: #0E0E10 !important;
+            --mat-sys-color-on-surface: #FAFAFA !important;
+            --mat-sys-color-surface-container: #18181B !important;
+            --mat-sys-color-surface-container-high: #202024 !important;
+            --mat-sys-color-surface-container-highest: #27272A !important;
+            --mat-sys-color-outline: #3F3F46 !important;
+            --mat-sys-color-outline-variant: #27272A !important;
+          }
+          html, body {
+            background-color: #0E0E10 !important;
+            color: #FAFAFA !important;
+            color-scheme: dark !important;
+          }
+          main, [role="main"], .chat-view, .chat-viewport, .conversation-container,
+          .chat-panel-content, .message-list, mat-sidenav-content, mat-sidenav-container,
+          .notebook-content, .scrollable-content, div.content-container,
+          app-chat-window, app-chat-message, app-chat-response {
+            background-color: #0E0E10 !important;
+            color: #FAFAFA !important;
+          }
+          .to-user-container, [data-message-author-role="user"], .user-query-container,
+          div[class*="user-query" i], div[class*="to-user" i], .chat-message[data-sender="user"] {
+            background-color: #27272A !important;
+            color: #FFFFFF !important;
+            border-radius: 16px !important;
+            border: 1px solid #3F3F46 !important;
+          }
+          .to-user-container *, [data-message-author-role="user"] * {
+            color: #FFFFFF !important;
+          }
+          .chat-message[data-sender="model"], .model-message, .response-message,
+          [data-message-author-role="assistant"], .rendered-markdown,
+          div[class*="response-container" i] {
+            background-color: transparent !important;
+            color: #E4E4E7 !important;
+          }
+          .rendered-markdown p, .rendered-markdown span, .rendered-markdown div,
+          .rendered-markdown li, .rendered-markdown blockquote {
+            color: #E4E4E7 !important;
+          }
+          .rendered-markdown strong, .rendered-markdown b {
+            color: #FFFFFF !important;
+          }
+          .chat-input-container, div[class*="chat-input" i], div[class*="input-container" i],
+          .bottom-bar, div[class*="bottom-bar" i] {
+            background-color: #18181B !important;
+            border-top: 1px solid #27272A !important;
+          }
+          textarea, [contenteditable="true"], [role="textbox"], input[type="text"] {
+            background-color: #18181B !important;
+            color: #FAFAFA !important;
+            border: 1px solid #27272A !important;
+          }
+          textarea::placeholder, input::placeholder, [class*="placeholder"] {
+            color: #71717A !important;
+          }
+          button.send-button, button[aria-label*="Send" i], button[aria-label*="Kirim" i],
+          button.mat-mdc-icon-button {
+            color: #A1A1AA !important;
+          }
+        `;
+      } else {
+        styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+      }
+    } catch(e) {}
+  }
+  window.otSetTheme = applyOtTheme;
+
   function hide(el) { if (el && !el.hasAttribute('data-ot-hidden')) el.setAttribute('data-ot-hidden', ''); }
   function clean() {
     if (!document.documentElement) return;
+    applyOtTheme();
     if (!document.getElementById('ot-conversation-ui')) {
       const style = document.createElement('style'); style.id = 'ot-conversation-ui';
       style.textContent = `
@@ -177,7 +284,7 @@ const notebookUiScript = r'''
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
     return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
   }
-  window.otNotebook = {clean, ready, latest};
+  window.otNotebook = {clean, ready, latest, setTheme: applyOtTheme};
   let scheduled = false;
   const observer = new MutationObserver(() => {
     if (scheduled) return;
