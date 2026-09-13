@@ -289,8 +289,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: '3. Perpanjangan Manual (Tanpa Auto-Debit)',
       content:
-          'Seluruh paket langganan OpenTurath diperpanjang secara manual. '
-          'Kami tidak melakukan penagihan berulang otomatis (recurring auto-debit). '
+          'Seluruh paket langganan OpenTurath diperpanjang secara manual tanpa penagihan berulang otomatis (tanpa auto-debit). '
           'Setelah masa aktif berakhir, akses berbayar akan berhenti dengan sendirinya kecuali Anda memilih untuk memperpanjang secara sadar.',
     ),
     LegalSection(
