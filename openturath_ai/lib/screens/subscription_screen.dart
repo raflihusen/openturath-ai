@@ -264,7 +264,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         if (!mounted) return;
         AppSnackBar.success(
           context,
-          'Pembayaran berhasil. Akses modul telaah Anda telah aktif.',
+          'Pembayaran berhasil. Akses AI Spesialis Anda telah aktif.',
           duration: const Duration(seconds: 4),
         );
         Navigator.pop(context);
@@ -293,7 +293,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final activeList = _activeAgents;
 
-    // Pricing tiers untuk Modul Satuan Terpilih
+    // Pricing tiers untuk AI Spesialis Terpilih
     final moduleTiers = [
       {'name': '1 Bulan', 'price': 49000, 'label': 'Rp 49.000', 'period': '/ bulan', 'planId': AppConstants.planTholib1m},
       {'name': '6 Bulan', 'price': 299000, 'label': 'Rp 299.000', 'period': '/ 6 bulan', 'planId': AppConstants.planTholib6m},
@@ -305,27 +305,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final tierLabel = currentTier['label'] as String;
     final tierPeriod = currentTier['period'] as String;
     final tierPlanId = currentTier['planId'] as String;
-
-    final isAllAccess = _user != null &&
-        (_user!.plan == 'all_access' ||
-            _user!.plan == 'sultan' ||
-            _user!.plan.startsWith('all_ai') ||
-            (_user!.entitlements['all_access']?.isActive ?? false));
-
-    final List<String> activeSubscribedModules = [];
-    if (_user != null) {
-      if (isAllAccess) {
-        activeSubscribedModules.add('Semua Modul AI (Akses Penuh)');
-      } else {
-        for (final ag in activeList) {
-          if (_user!.isAgentSubscriptionActive(ag.id)) {
-            activeSubscribedModules.add(ag.title);
-          }
-        }
-      }
-    }
-    final bool isUserActiveSubscribed =
-        activeSubscribedModules.isNotEmpty || (_user?.isSubscriptionActive ?? false);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -359,108 +338,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
                 children: [
-                  // ── Info Card Akun & Status Langganan Pengguna ──
-                  if (_user != null) ...[
-                    Container(
-                      padding: const EdgeInsets.all(OTSpacing.md),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: OTRadius.cardBorder,
-                        border: Border.all(color: border, width: 0.8),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 18,
-                                backgroundColor: surfaceSubtle,
-                                child: Text(
-                                  _user!.name.isNotEmpty ? _user!.name[0].toUpperCase() : 'S',
-                                  style: OTTypography.captionMedium(color: textPrimary).copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _user!.name.isNotEmpty ? _user!.name : 'Santri Peneliti',
-                                      style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    if (_user!.email.isNotEmpty)
-                                      Text(
-                                        _user!.email,
-                                        style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 12),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: surfaceSubtle,
-                                  borderRadius: OTRadius.chipBorder,
-                                  border: Border.all(color: border, width: 0.6),
-                                ),
-                                child: Text(
-                                  isUserActiveSubscribed ? 'Aktif' : 'Belum Berlangganan',
-                                  style: OTTypography.captionMedium(
-                                    color: isUserActiveSubscribed ? textPrimary : textSecondary,
-                                  ).copyWith(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (activeSubscribedModules.isNotEmpty) ...[
-                            const SizedBox(height: OTSpacing.sm),
-                            Divider(color: border.withValues(alpha: 0.6), height: 1),
-                            const SizedBox(height: OTSpacing.sm),
-                            Text(
-                              'Modul Aktif:',
-                              style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
-                            ),
-                            const SizedBox(height: 6),
-                            Wrap(
-                              spacing: 6,
-                              runSpacing: 6,
-                              children: activeSubscribedModules.map((agTitle) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                  decoration: BoxDecoration(
-                                    color: surfaceSubtle,
-                                    borderRadius: OTRadius.chipBorder,
-                                    border: Border.all(color: border, width: 0.6),
-                                  ),
-                                  child: Text(
-                                    agTitle,
-                                    style: OTTypography.captionMedium(color: textPrimary).copyWith(fontSize: 11),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: OTSpacing.md),
-                  ],
-
                   // Editorial Header
                   Text(
                     'Pilihan langganan',
@@ -520,7 +397,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'PAKET MODUL SPESIALIS',
+                              'PAKET AI SPESIALIS',
                               style: OTTypography.sectionHeading(color: accent),
                             ),
                             Container(
@@ -530,7 +407,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                '1 MODUL',
+                                '1 AI SPESIALIS',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
@@ -538,7 +415,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Pilih Modul AI',
+                          'Pilih AI Spesialis',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                         ),
                         const SizedBox(height: 4),
@@ -656,12 +533,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         // Core Benefits (Quiet Scholar Natural Phrasing, No generic green checkmarks)
                         _benefitRow(
-                          'Akses telaah kitab tanpa batasan pertanyaan harian',
+                          'Kajian mendalam bersama AI Spesialis ${_agent?.title ?? "terpilih"}',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Telaah teks dan ibarah naskah rujukan ${_agent?.title ?? "modul keilmuan"}',
+                          'Telaah teks dan ibarah naskah rujukan ${_agent?.title ?? "keilmuan turats"}',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
@@ -687,7 +564,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 : () {
                                     _handleSubscribe(
                                       plan: tierPlanId,
-                                      planTitle: '${currentTier['name']} ${_agent?.title ?? "Modul AI"}',
+                                      planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
                                       price: tierPrice,
                                       targetAgent: _agent,
                                     );
@@ -701,7 +578,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   : () {
                                       _handleSubscribe(
                                         plan: tierPlanId,
-                                        planTitle: '${currentTier['name']} ${_agent?.title ?? "Modul AI"}',
+                                        planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
                                         price: tierPrice,
                                         targetAgent: _agent,
                                       );
@@ -713,7 +590,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 elevation: 0,
                               ),
                               child: Text(
-                                'Berlangganan ${_agent?.title ?? "Modul"} ($tierLabel)',
+                                'Berlangganan ${_agent?.title ?? "AI Spesialis"} ($tierLabel)',
                                 style: OTTypography.button(color: canvas),
                               ),
                             ),
@@ -768,12 +645,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Akses Seluruh Modul Spesialis AI',
+                          'Akses Seluruh AI Spesialis',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Satu paket untuk mengakses seluruh modul keilmuan turats (Fikih, Hadis, Tafsir, Usul Fikih, Nahwu & Sharaf, Akidah, dan Tarikh).',
+                          'Satu paket untuk mengakses seluruh asisten keilmuan turats (Fikih, Hadis, Tafsir, Usul Fikih, Bahasa Arab, dan Tahawwulat).',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
                         ),
                         const SizedBox(height: OTSpacing.base),
@@ -808,7 +685,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Paket lengkap seluruh modul AI sedang dipersiapkan untuk pembaruan berikutnya.',
+                                  'Paket lengkap seluruh AI Spesialis sedang dipersiapkan untuk pembaruan berikutnya.',
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 12,
                                     height: 1.4,
