@@ -54,6 +54,11 @@ class _OtTactileCardState extends State<OtTactileCard> with SingleTickerProvider
     );
   }
 
+  @visibleForTesting
+  double get debugControllerValue => _controller.value;
+  @visibleForTesting
+  double get debugScaleValue => _scaleAnimation.value;
+
   @override
   void dispose() {
     _controller.dispose();

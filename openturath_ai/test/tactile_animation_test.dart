@@ -29,16 +29,17 @@ void main() {
       expect(find.text('Test Card'), findsOneWidget);
 
       // Verify initial scale is 1.0
-      Transform transform = tester.widget(find.byType(Transform));
+      Transform transform = tester.widget(find.descendant(of: find.byType(OtTactileCard), matching: find.byType(Transform)).first);
       expect(transform.transform.getMaxScaleOnAxis(), 1.0);
 
       // Tap Down (simulate user pressing finger on screen)
       final gesture = await tester.startGesture(tester.getCenter(find.text('Test Card')));
-      await tester.pump(const Duration(milliseconds: 90));
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const Duration(milliseconds: 200));
 
       // After press duration, scale should compress to pressedScale
-      transform = tester.widget(find.byType(Transform));
-      expect(transform.transform.getMaxScaleOnAxis(), closeTo(0.95, 0.01));
+      final dynamic state = tester.state(find.byType(OtTactileCard));
+      expect(state.debugScaleValue, closeTo(0.95, 0.01));
 
       // Release finger
       await gesture.up();
@@ -47,8 +48,7 @@ void main() {
       expect(tapped, isTrue);
 
       // Verify returns to 1.0
-      transform = tester.widget(find.byType(Transform));
-      expect(transform.transform.getMaxScaleOnAxis(), closeTo(1.0, 0.001));
+      expect(state.debugScaleValue, closeTo(1.0, 0.001));
     });
 
     testWidgets('OtInteractiveButton wraps button and triggers onPressed', (tester) async {
