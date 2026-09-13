@@ -209,9 +209,9 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       return widget.agent!.title;
     }
     if (_allBooks != null && _allBooks!.isNotEmpty) {
-      return '${_formatNumber(_allBooks!.length)} Kitab Mazhab Syafi\'i';
+      return '${_formatNumber(_allBooks!.length)} Kitab Turats';
     }
-    return '87 Kitab Mazhab Syafi\'i';
+    return 'Katalog Kitab Turats';
   }
 
   @override
@@ -448,7 +448,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     }
 
     // Mode 2: Mazhab Syafi'i (Era & Tipe Matan/Syarah)
-    if (_hasEras || _hasTypes) {
+    final isSyafii = widget.agent == null ||
+        widget.agent!.id == 'fiqh_syafii' ||
+        widget.agent!.catalogId == 'canonical_syafii' ||
+        widget.agent!.fieldId == 'fiqh';
+    if (isSyafii && (_hasEras || _hasTypes)) {
       return SizedBox(
         height: 38,
         child: ListView(
