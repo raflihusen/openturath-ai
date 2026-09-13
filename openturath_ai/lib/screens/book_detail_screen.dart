@@ -176,7 +176,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final primaryAccent = OTColors.accent(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
 
     return Scaffold(
       backgroundColor: background,
@@ -197,7 +197,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           IconButton(
             icon: Icon(
               _isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-              color: _isSaved ? primaryAccent : textSecondary,
+              color: _isSaved ? (isDark ? Colors.white : Colors.black) : textSecondary,
             ),
             tooltip: _isSaved ? 'Hapus Rujukan' : 'Simpan Rujukan',
             onPressed: _toggleSaveBook,
@@ -237,12 +237,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: primaryAccent.withValues(alpha: isDark ? 0.15 : 0.08),
+                            color: surfaceSubtle,
                             borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: border.withValues(alpha: 0.7), width: 0.6),
                           ),
                           child: Text(
-                            widget.book.sectionArabic ?? 'Naskah Kanonikal · Syafi\'i',
-                            style: OTTypography.caption(color: primaryAccent).copyWith(
+                            widget.book.sectionArabic ?? 'Naskah Kanonikal',
+                            style: OTTypography.caption(color: textSecondary).copyWith(
                               fontWeight: FontWeight.w600,
                               fontSize: 11,
                             ),
@@ -320,7 +321,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         Icon(
                           Icons.person_outline_rounded,
                           size: 20,
-                          color: primaryAccent,
+                          color: textSecondary,
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -374,7 +375,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
               const SizedBox(height: OTSpacing.md),
 
-              // ── KARTU 3: KLASIFIKASI ILMIAH & THABAQAT ──
+              // ── KARTU 3: SPESIFIKASI & KLASIFIKASI NASKAH ──
               _buildCard(
                 isDark: isDark,
                 surface: surface,
@@ -382,37 +383,67 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionHeader('KLASIFIKASI ILMIAH', textSecondary),
+                    _buildSectionHeader('SPESIFIKASI & KLASIFIKASI NASKAH', textSecondary),
                     const SizedBox(height: 12),
-                    _buildMetaRow(
-                      icon: Icons.category_outlined,
-                      label: 'Tipe Naskah',
-                      value: widget.book.reviewedTypeLabel ?? 'Kitab Referensi Mazhab',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const Divider(height: 16, thickness: 0.5),
-                    _buildMetaRow(
-                      icon: Icons.history_edu_rounded,
-                      label: 'Era Keilmuan',
-                      value: widget.book.reviewedEraLabel ?? 'Ulama Mazhab Syafi\'i',
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const Divider(height: 16, thickness: 0.5),
+                    if (widget.book.sectionArabic != null && widget.book.sectionArabic!.isNotEmpty) ...[
+                      _buildMetaRow(
+                        icon: Icons.category_outlined,
+                        label: 'Bidang Kajian',
+                        value: widget.book.sectionArabic!,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      const Divider(height: 16, thickness: 0.5),
+                    ],
+                    if (widget.book.reviewedTypeLabel != null && widget.book.reviewedTypeLabel!.isNotEmpty) ...[
+                      _buildMetaRow(
+                        icon: Icons.menu_book_outlined,
+                        label: 'Tipe Naskah',
+                        value: widget.book.reviewedTypeLabel!,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      const Divider(height: 16, thickness: 0.5),
+                    ],
+                    if (widget.book.reviewedEraLabel != null && widget.book.reviewedEraLabel!.isNotEmpty) ...[
+                      _buildMetaRow(
+                        icon: Icons.history_edu_rounded,
+                        label: 'Era Keilmuan',
+                        value: widget.book.reviewedEraLabel!,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      const Divider(height: 16, thickness: 0.5),
+                    ],
                     _buildMetaRow(
                       icon: Icons.auto_stories_outlined,
                       label: 'Jumlah Jilid',
-                      value: (widget.book.volumesDescription != null && widget.book.volumesDescription!.isNotEmpty)
-                          ? (widget.book.volumesDescription!.contains('جزء') || widget.book.volumesDescription!.contains('Jilid')
-                              ? widget.book.volumesDescription!
-                              : '${widget.book.volumesDescription} Jilid')
-                          : (widget.book.volumesCount != null
-                              ? '${widget.book.volumesCount} Jilid'
-                              : '1 Jilid / Naskah Tunggal'),
+                      value: () {
+                        final vd = widget.book.volumesDescription;
+                        if (vd != null && vd.isNotEmpty) {
+                          return (vd.contains('جزء') || vd.contains('مجلد') || vd.contains('Jilid'))
+                              ? vd
+                              : '$vd Jilid';
+                        }
+                        return (widget.book.volumesCount != null && widget.book.volumesCount! > 0)
+                            ? '${widget.book.volumesCount} Jilid'
+                            : '1 Jilid / Naskah Tunggal';
+                      }(),
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
+                    if (widget.book.pagesDescription != null &&
+                        widget.book.pagesDescription!.isNotEmpty &&
+                        widget.book.pagesDescription != '-') ...[
+                      const Divider(height: 16, thickness: 0.5),
+                      _buildMetaRow(
+                        icon: Icons.article_outlined,
+                        label: 'Jumlah Halaman',
+                        value: '${widget.book.pagesDescription} Halaman',
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                    ],
                     if (widget.book.canShowAuthority) ...[
                       const Divider(height: 16, thickness: 0.5),
                       _buildMetaRow(
