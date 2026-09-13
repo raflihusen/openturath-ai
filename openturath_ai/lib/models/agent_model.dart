@@ -93,7 +93,7 @@ class AgentModel {
           title: 'AI Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
-              'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan muhadharah Habib Abu Bakar al-Masyhur.',
+              'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan ceramah Habib Abu Bakar Al-Masyhur.',
           emoji: '📜',
           category: 'Fikih Tahawwulat',
           kind: CorpusKind.discipline,
@@ -156,9 +156,9 @@ class AgentModel {
           title: 'AI Fikih Syafi\'i',
           titleArabic: 'الفقه الشافعي',
           description:
-              'Bantuan untuk mencari keterangan dalam kitab-kitab mazhab Syafi\'i.',
+              'Cari penjelasan dan rujukan dalam kitab-kitab mazhab Syafi\'i.',
           emoji: '📜',
-          category: 'Fiqih',
+          category: 'Fikih',
           kind: CorpusKind.discipline,
           disciplineIds: const ['fiqh'],
           catalogId: 'canonical_syafii',
@@ -207,9 +207,9 @@ class AgentModel {
           title: 'AI Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
-              'Fikih Mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
+              'Pelajari fikih mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Zhahir Ar-Riwayah · Syuruh & Fatawa',
           suggestedPrompts: [
@@ -253,9 +253,9 @@ class AgentModel {
           title: 'AI Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
-              'Fikih Mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
+              'Pelajari fikih mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Al-Mudawwanah · Mukhtashar Khalil & Syarah',
           suggestedPrompts: [
@@ -299,9 +299,9 @@ class AgentModel {
           title: 'AI Fikih Hanbali',
           titleArabic: 'الفقه الحنبلي',
           description:
-              'Khazanah Fikih Mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
+              'Pelajari fikih mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Al-Mughni · Zad Al-Mustaqni\' & Syuruh',
           suggestedPrompts: [
@@ -345,9 +345,9 @@ class AgentModel {
           title: 'AI Perbandingan Mazhab',
           titleArabic: 'الفقه المقارن',
           description:
-              'Komparasi hukum lintas mazhab empat (Arba\'ah), analisis wajh al-dilalah, dan tarjih dalil mu\'tabar.',
+              'Bandingkan dalil dan pandangan mazhab Hanafi, Maliki, Syafi\'i, dan Hanbali.',
           emoji: '⚖️',
-          category: 'Fiqih',
+          category: 'Fikih',
           fieldId: 'fiqh',
           subtitleAcademic: 'Perbandingan Mazhab Empat & Tarjih Dalil',
           suggestedPrompts: [
@@ -390,12 +390,12 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'AI Hadits & Syarah Sunnah',
+          title: 'AI Hadis & Syarah',
           titleArabic: 'الحديث الشريف',
           description:
-              'Kajian matan hadits, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah & syuruhnya).',
+              'Kajian matan hadis, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah dan syarahnya).',
           emoji: '📖',
-          category: 'Hadits',
+          category: 'Hadis',
           fieldId: 'hadith',
           subtitleAcademic: 'Kutubus Sittah · Takhrij & Rijal',
           suggestedPrompts: [
@@ -412,10 +412,10 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'hadits_muhaqqiq',
-              name: 'Al-Muhaqqiq (Takhrij Hadits)',
+              name: 'Al-Muhaqqiq (Takhrij Hadis)',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis takhrij hadits, telaah rijalul hadits, dan derajat kesahihan sanad.',
+                  'Membantu takhrij hadis, telaah rijalul hadis, dan derajat kesahihan sanad.',
               descriptionArabic: 'تخريج الحديث ودراسة الأسانيد والرجال',
               emoji: '🔍',
               badge: 'Takhrij & Rijal',
@@ -443,7 +443,7 @@ class AgentModel {
           title: 'AI Tafsir Al-Qur\'an',
           titleArabic: 'تفسير القرآن',
           description:
-              'Penelusuran makna ayat, asbabun nuzul, dan istinbath hukum dari kitab-kitab tafsir mu\'tabarah.',
+              'Penelusuran makna ayat, asbabun nuzul, dan penjelasan ulama dari kitab-kitab tafsir mu\'tabar.',
           emoji: '🌟',
           category: 'Tafsir',
           fieldId: 'tafsir',
@@ -490,12 +490,12 @@ class AgentModel {
         // ── 4. USUL FIQH ──────────────────────────────────────
         AgentModel(
           id: 'ushul_fiqh',
-          title: 'AI Ushul Fiqih',
+          title: 'AI Usul Fikih',
           titleArabic: 'أصول الفقه',
           description:
-              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan yang diakui.',
+              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan.',
           emoji: '📐',
-          category: 'Ushul Fiqih',
+          category: 'Usul Fikih',
           fieldId: 'usul',
           subtitleAcademic: 'Kaidah Istinbath & Maqashid Syariah',
           suggestedPrompts: [
@@ -512,13 +512,13 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'ushul_muhaqqiq',
-              name: 'Al-Muhaqqiq (Kaidah Ushul)',
+              name: 'Al-Muhaqqiq (Kaidah Usul)',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis penelusuran kaidah ushuliyyah dan metode istinbath dalil.',
+                  'Membantu penelusuran kaidah usuliyyah dan metode istinbath dalil.',
               descriptionArabic: 'تحقيق القواعد الأصولية والاستنباط',
               emoji: '📐',
-              badge: 'Kaidah Ushul',
+              badge: 'Kaidah Usul',
             ),
           ],
           referenceBooks: [
@@ -543,7 +543,7 @@ class AgentModel {
           title: 'AI Bahasa Arab & Balaghah',
           titleArabic: 'النحو والصرف',
           description:
-              'Nahwu, sharaf, balaghah, dan mu\'jam dengan rujukan kitab bahasa Arab.',
+              'Pelajari nahwu, sharaf, balaghah, dan makna kata dalam kitab berbahasa Arab.',
           emoji: '🔤',
           category: 'Bahasa Arab',
           fieldId: 'lughah',
@@ -602,12 +602,12 @@ class AgentModel {
         // ── 6. AQIDAH ─────────────────────────────────────────
         AgentModel(
           id: 'aqidah',
-          title: 'AI Aqidah & Ilmu Kalam',
+          title: 'AI Akidah Islamiyah',
           titleArabic: 'العقيدة والتوحيد',
           description:
               'Pembahasan ushuluddin, tauhid sifat dua puluh, dan manhaj Ahlussunnah wal Jama\'ah.',
           emoji: '🛡️',
-          category: 'Aqidah',
+          category: 'Akidah',
           fieldId: 'aqidah',
           subtitleAcademic: 'Asy\'ariyyah · Maturidiyyah · Dalil Aqli',
           suggestedPrompts: [
@@ -628,9 +628,9 @@ class AgentModel {
           title: 'AI Sejarah & Sirah',
           titleArabic: 'السيرة والتاريخ',
           description:
-              'Rekam jejak Sirah Nabawiyyah, Khulafaur Rasyidin, dan thabaqat ulama salaf.',
+              'Telusuri perjalanan hidup Nabi, Khulafaur Rasyidin, dan biografi ulama salaf.',
           emoji: '📜',
-          category: 'Sejarah',
+          category: 'Sejarah & Sirah',
           fieldId: 'tarikh',
           subtitleAcademic: 'Sirah Ibnu Hisyam & Tarikh Thabari',
           suggestedPrompts: [
@@ -651,9 +651,9 @@ class AgentModel {
           title: 'AI Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
-              'Kitab dan rekaman muhadharah Habib Umar bin Hafizh dengan rujukan terpercaya.',
+              'Telusuri fatwa, khutbah, tulisan, dan nasihat dakwah Habib Umar bin Hafizh.',
           emoji: '🕌',
-          category: 'Kajian Ulama',
+          category: 'Khazanah Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['habib_umar'],
           disciplineIds: const ['tasawwuf'],
@@ -672,9 +672,9 @@ class AgentModel {
           title: 'AI Hujjatul Islam Al-Ghazali',
           titleArabic: 'حجة الإسلام الغزالي',
           description:
-              'Kajian kitab Ihya Ulumuddin, Al-Mustashfa, Tahafut al-Falasifah, dan karya-karya Imam Al-Ghazali.',
+              'Pelajari tasawuf, akhlak, dan usul fikih dalam karya-karya Imam Al-Ghazali, termasuk Ihya Ulumiddin.',
           emoji: '🕯️',
-          category: 'Kajian Ulama',
+          category: 'Khazanah Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['imam_ghazali'],
           disciplineIds: const ['tasawwuf', 'usul', 'aqidah'],

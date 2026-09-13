@@ -45,7 +45,7 @@ class FieldModel {
     ),
     FieldModel(
       id: 'hadith',
-      name: 'Hadits',
+      name: 'Hadis',
       description: 'Takhrij sanad, dirayah perawi, dan syarah Kutubus Sittah.',
       icon: Icons.auto_stories_rounded,
       specialistCount: 1,
@@ -65,8 +65,8 @@ class FieldModel {
     ),
     FieldModel(
       id: 'aqidah',
-      name: 'Aqidah',
-      description: 'Kalam Asy\'ariyyah, Maturidiyyah, pembelaan ushuludin, dan dalil aqli-naqli.',
+      name: 'Akidah',
+      description: 'Kalam Asy\'ariyyah, Maturidiyyah, pembahasan ushuluddin, dan dalil aqli-naqli.',
       icon: Icons.shield_outlined,
       specialistCount: 1,
       agentIds: [
@@ -75,7 +75,7 @@ class FieldModel {
     ),
     FieldModel(
       id: 'usul',
-      name: 'Usul Fiqh',
+      name: 'Usul Fikih',
       description: 'Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah.',
       icon: Icons.architecture_rounded,
       specialistCount: 1,
@@ -105,7 +105,7 @@ class FieldModel {
     ),
     FieldModel(
       id: 'tasawwuf',
-      name: 'Tasawuf & Akhlaq',
+      name: 'Tasawuf & Akhlak',
       description: 'Penyucian jiwa (tazkiyatun nafs), adab suluk, dan hikmah ulama salafush shalih.',
       icon: Icons.spa_rounded,
       specialistCount: 2,
@@ -128,7 +128,7 @@ class FieldModel {
         const FieldModel(
           id: 'umum',
           name: 'Umum & Turats',
-          description: 'Beragam kajian dari kitab-kitab Islam.',
+          description: 'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.',
           icon: Icons.menu_book_rounded,
           specialistCount: 0,
           agentIds: [],
