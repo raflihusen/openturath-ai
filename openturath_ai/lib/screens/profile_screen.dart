@@ -232,22 +232,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   plan == 'all_ai_1y' ||
                   plan == 'all_ai' ||
                   (userModel?.entitlements['all_access']?.isActive ?? false);
-              final isPerdanaOrTrial = plan == 'all_access' ||
-                  plan.startsWith('redeem') ||
-                  plan.startsWith('voucher') ||
-                  (userModel?.entitlements['all_access']?.plan.contains('voucher') ?? false) ||
-                  (userModel?.entitlements['all_access']?.plan.contains('perdana') ?? false);
 
               if (isAllAccess) {
-                if (isPerdanaOrTrial) {
-                  subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI (7 Hari)$expStr';
-                } else {
-                  subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI$expStr';
-                }
+                subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI$expStr';
               } else if (plan == 'field') {
-                subscriptionSubtitle = 'Rumpun Kajian$expStr';
+                subscriptionSubtitle = 'Paket Bidang Kajian$expStr';
               } else if (plan == 'single') {
-                subscriptionSubtitle = 'Kajian Satuan$expStr';
+                subscriptionSubtitle = 'Paket 1 Modul$expStr';
               } else {
                 subscriptionSubtitle = '${AppCopy.activeSubscription}$expStr';
               }
@@ -719,7 +710,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildLegalSection(
                       title: '2. Verifikasi Sumber Asli & Batasan Penggunaan',
                       content:
-                          'Hasil analisis, transkripsi, dan kutipan teks yang disajikan oleh sistem kecerdasan buatan berfungsi sebagai referensi riset awal. Kutipan dan ibarah perlu dicocokkan kembali dengan sumber aslinya di Maktabah Syamilah atau naskah cetak fisik.',
+                          'Hasil analisis, transkripsi, dan kutipan teks yang disajikan oleh sistem kecerdasan buatan berfungsi sebagai referensi riset awal. Kutipan dan ibarah perlu dicocokkan kembali dengan sumber aslinya pada kitab rujukan cetak atau perpustakaan digital.',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
@@ -754,7 +745,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
                 ),
-                child: Text('Saya Pahami & Setuju', style: OTTypography.button()),
+                child: Text('Tutup', style: OTTypography.button()),
               ),
             ),
           ],
@@ -826,9 +817,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 14),
                     _buildLegalSection(
-                      title: '2. Kerahasiaan Sesi & Catatan Riset',
+                      title: '2. Kerahasiaan Sesi & Catatan',
                       content:
-                          'Pertanyaan kajian, kutipan ibarah, dan riwayat bookmark naskah kitab yang Anda telusuri dienkripsi dengan standar keamanan industri. OpenTurath tidak membagikan, mempublikasikan, ataupun memperjualbelikan data riset Anda kepada pihak ketiga manapun.',
+                          'Pertanyaan telaah, kutipan ibarah, dan riwayat catatan yang Anda simpan dienkripsi dengan standar keamanan industri. OpenTurath tidak membagikan ataupun memperjualbelikan data telaah Anda kepada pihak ketiga manapun.',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
@@ -844,7 +835,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildLegalSection(
                       title: '4. Hak Penghapusan Data Pengguna',
                       content:
-                          'Anda memiliki hak mutlak untuk menghapus akun Anda beserta seluruh riwayat telaah dan bookmark kapan saja melalui menu Pengaturan > Hapus Akun & Data.',
+                          'Anda memiliki hak mutlak untuk menghapus akun Anda beserta seluruh riwayat telaah dan catatan kapan saja melalui menu Pengaturan > Hapus akun.',
                       textPrimary: textPrimary,
                       textSecondary: textSecondary,
                     ),
