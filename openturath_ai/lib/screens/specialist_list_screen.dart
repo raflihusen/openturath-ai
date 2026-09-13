@@ -14,6 +14,7 @@ import '../models/agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../core/navigation_guard.dart';
 import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -127,14 +128,25 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
+  bool _isOpeningSubscription = false;
+
   void _openSubscriptionForAgent(AgentModel agent) {
+    if (_isOpeningSubscription) return;
+    _isOpeningSubscription = true;
+
     _authService.getCurrentUserModel().then((user) {
       if (!mounted) return;
-      Navigator.pushNamed(
+      NavigationGuard.safePushNamed(
         context,
         AppRoutes.subscription,
         arguments: {'agent': agent, 'user': user},
       );
+    }).whenComplete(() {
+      if (mounted) {
+        setState(() => _isOpeningSubscription = false);
+      } else {
+        _isOpeningSubscription = false;
+      }
     });
   }
 

@@ -13,6 +13,7 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
+import '../core/navigation_guard.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -542,25 +543,37 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     }
   }
 
+  bool _isNavigatingToSubscription = false;
+
   Future<void> _navigateToSubscription() async {
-    final currentUser = _user ?? await AuthService().getCurrentUserModel();
-    if (!mounted) return;
-    await Navigator.pushNamed(
-      context,
-      AppRoutes.subscription,
-      arguments: {
-        'agent': _agent,
-        'user': currentUser,
-      },
-    );
-    if (!mounted) return;
-    final refreshedUser = await AuthService().getCurrentUserModel();
-    if (mounted && refreshedUser != null) {
-      setState(() {
-        _user = refreshedUser;
-      });
-      if (_isPaywallRequired && refreshedUser.hasAccessToAgent(_agent?.id ?? '')) {
-        _fetchAgentUrl();
+    if (_isNavigatingToSubscription) return;
+    _isNavigatingToSubscription = true;
+    try {
+      final currentUser = _user ?? await AuthService().getCurrentUserModel();
+      if (!mounted) return;
+      await NavigationGuard.safePushNamed(
+        context,
+        AppRoutes.subscription,
+        arguments: {
+          'agent': _agent,
+          'user': currentUser,
+        },
+      );
+      if (!mounted) return;
+      final refreshedUser = await AuthService().getCurrentUserModel();
+      if (mounted && refreshedUser != null) {
+        setState(() {
+          _user = refreshedUser;
+        });
+        if (_isPaywallRequired && refreshedUser.hasAccessToAgent(_agent?.id ?? '')) {
+          _fetchAgentUrl();
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isNavigatingToSubscription = false);
+      } else {
+        _isNavigatingToSubscription = false;
       }
     }
   }

@@ -15,6 +15,7 @@ import '../core/design/ot_spacing.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
+import '../core/navigation_guard.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/legal_document_sheet.dart';
 
@@ -161,21 +162,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _openSubscription() async {
-    final user = await _authService.getCurrentUserModel();
-    if (!mounted) return;
+  bool _isOpeningSubscription = false;
 
-    Navigator.pushNamed(
-      context,
-      AppRoutes.subscription,
-      arguments: {
-        'user': user,
-        'agent': AgentModel.defaultAgents.firstWhere(
-          (a) => a.id == 'fiqh_tahawwulat',
-          orElse: () => AgentModel.defaultAgents.first,
-        ),
-      },
-    );
+  Future<void> _openSubscription() async {
+    if (_isOpeningSubscription) return;
+    _isOpeningSubscription = true;
+    try {
+      final user = await _authService.getCurrentUserModel();
+      if (!mounted) return;
+
+      await NavigationGuard.safePushNamed(
+        context,
+        AppRoutes.subscription,
+        arguments: {
+          'user': user,
+          'agent': AgentModel.defaultAgents.firstWhere(
+            (a) => a.id == 'fiqh_tahawwulat',
+            orElse: () => AgentModel.defaultAgents.first,
+          ),
+        },
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isOpeningSubscription = false);
+      } else {
+        _isOpeningSubscription = false;
+      }
+    }
   }
 
   @override

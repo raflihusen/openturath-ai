@@ -14,6 +14,7 @@ import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../services/update_service.dart';
+import '../core/navigation_guard.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -93,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     // Cek akses pengguna ke agent (paywall)
     if (user == null || !user.hasAccessToAgent(agent.id)) {
-      Navigator.pushNamed(
+      NavigationGuard.safePushNamed(
         context,
         AppRoutes.subscription,
         arguments: {'user': user, 'agent': agent},
