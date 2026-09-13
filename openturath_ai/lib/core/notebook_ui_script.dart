@@ -50,6 +50,11 @@ const notebookUiScript = r'''
         [data-ot-hidden],
         .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab"], div[class*="tab-bar"],
         [role="tablist"], mat-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
+        mat-progress-spinner, mat-spinner, .mdc-circular-progress, [role="progressbar"],
+        svg.spinner, div[class*="spinner" i], div[class*="skeleton" i], div[class*="shimmer" i],
+        div[class*="placeholder-bar" i],
+        button[aria-label*="More" i], button[aria-label*="Opsi" i],
+        button[aria-label*="options" i], button[aria-label*="Notebook options" i],
         .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer" i], footer[class*="disclaimer" i],
         div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
         app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
@@ -163,7 +168,10 @@ const notebookUiScript = r'''
     if (/loading notebook|memuat notebook|\b0 sources\b/i.test(bodyText)) {
       return false;
     }
-    const hasSpinner = [...document.querySelectorAll('[role="progressbar"], mat-spinner, .loading-spinner, .mdc-circular-progress, svg.spinner')].some(visible);
+    const hasSpinner = [...document.querySelectorAll('[role="progressbar"], mat-progress-spinner, mat-spinner, .loading-spinner, .mdc-circular-progress, svg.spinner, div[class*="spinner" i], div[class*="skeleton" i], div[class*="shimmer" i]')].some(el => {
+      if (!el) return false;
+      return el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0;
+    });
     if (hasSpinner) return false;
 
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);

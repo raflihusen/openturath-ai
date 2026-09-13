@@ -150,7 +150,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           /* Google Account Bar, App Launcher & Setelan */
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button[aria-label*="More" i], button[aria-label*="Opsi" i],
+          button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+          button[aria-label*="Option" i],
           button.mat-tonal-button, a[aria-label*="Google" i],
+          /* Spinner, Circular Progress & Skeleton Placeholder */
+          mat-progress-spinner, mat-spinner, .mdc-circular-progress,
+          [role="progressbar"], svg.spinner, div[class*="spinner" i],
+          div[class*="skeleton" i], div[class*="shimmer" i],
+          div[class*="placeholder-bar" i],
           /* Disclaimer Google NotebookLM & Gemini */
           .chat-disclaimer, .disclaimer, .footer-disclaimer, .chat-footer-disclaimer,
           [class*="disclaimer" i], [id*="disclaimer" i], footer[class*="disclaimer" i],
@@ -501,7 +509,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
       final elapsedMs = _loadingStarted != null ? DateTime.now().difference(_loadingStarted!).inMilliseconds : 0;
-      if (isLogin || (_readySamples >= 3 && elapsedMs >= 2000)) {
+      if (isLogin || (_readySamples >= 5 && elapsedMs >= 4800)) {
         _readinessTimer?.cancel();
         setState(() => _isWebViewLoading = false);
       } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
