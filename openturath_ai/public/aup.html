@@ -3,208 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kebijakan Penggunaan (AUP) — OpenTurath AI</title>
-  <meta name="description" content="Kebijakan Penggunaan yang Diperbolehkan (Acceptable Use Policy) OpenTurath AI.">
+  <title>Kebijakan Penggunaan (AUP) — OpenTurath</title>
+  <meta name="description" content="Kebijakan Penggunaan yang Diperbolehkan (Acceptable Use Policy) OpenTurath.">
+  <link rel="canonical" href="https://openturath.web.app/aup.html">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="is-dark">
+<body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar scrolled dark-mode">
-    <div class="navbar-inner">
-      <div class="nav-links-left">
-        <!-- Empty to keep center alignment for logo -->
-      </div>
-      
-      <a href="index.html" class="logo"><img src="logo_open_ai.png" alt="Logo" class="logo-img"><span>Open<span class="logo-dim">Turath</span></span></a>
-      
-      <div class="nav-links-right">
-        <a href="download.html" class="nav-cta">
-          Download
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-      </div>
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <header class="navbar" id="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <img src="logo_open_ai.png" alt="OpenTurath logo" width="28" height="28">
+        <span>Open<span class="navbar__logo-dim">Turath</span></span>
+      </a>
+      <nav class="navbar__actions" aria-label="Navigasi">
+        <a href="index.html#kelebihan" class="navbar__link">Kelebihan</a>
+        <a href="download.html" class="navbar__link">Unduh App</a>
+        <a href="index.html" class="navbar__cta">Beranda</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <main class="legal-container" style="padding-top:6rem;">
+  <main class="legal-container">
     <h1>Kebijakan Penggunaan (Acceptable Use Policy)</h1>
-    <p class="legal-date">Terakhir diperbarui: 7 Juni 2026</p>
+    <div class="legal-date">Versi 1.1 — Terakhir diperbarui: 13 September 2026</div>
 
     <div class="legal-content">
-      <p>Kebijakan Penggunaan yang Diperbolehkan (Acceptable Use Policy atau "AUP") ini merupakan bagian yang tidak terpisahkan dari Terms of Service OpenTurath AI.</p>
-      <p>Dokumen ini menjelaskan penggunaan yang diperbolehkan dan yang dilarang saat mengakses atau menggunakan OpenTurath AI.</p>
-      <p>Dengan menggunakan OpenTurath AI, Anda setuju untuk mematuhi seluruh ketentuan dalam kebijakan ini.</p>
-      <p>Pelanggaran terhadap kebijakan ini dapat mengakibatkan:</p>
+      <p>Kebijakan Penggunaan yang Diperbolehkan (*Acceptable Use Policy*) ini merupakan bagian tidak terpisahkan dari <a href="terms.html" style="color: var(--accent); text-decoration: underline;">Ketentuan Layanan OpenTurath</a>. Kebijakan ini menegaskan etika, adab, dan batasan dalam berinteraksi dengan layanan kami.</p>
+
+      <h2>1. Penggunaan yang Diizinkan</h2>
+      <p>OpenTurath dirancang murni untuk:</p>
       <ul>
-        <li>peringatan;</li>
-        <li>pembatasan fitur;</li>
-        <li>penangguhan akun;</li>
-        <li>penghentian akun permanen;</li>
-        <li>tindakan hukum apabila diperlukan.</li>
+        <li>Riset akademis, telaah kitab klasik, dan penulisan skripsi/tesis/disertasi.</li>
+        <li>Persiapan bahan mengajar bagi asatidz, mudarris, dan guru madrasah/pesantren.</li>
+        <li>Pembelajaran pribadi santri dan mahasiswa untuk memahami ibarah dan struktur naskah.</li>
+        <li>Penelusuran sanad rujukan hadis dan pencarian fatwa mu'tamad fikih Islam.</li>
       </ul>
 
-      <h2>1. Tujuan Penggunaan yang Diizinkan</h2>
-      <p>OpenTurath AI dirancang untuk:</p>
+      <h2>2. Larangan Penyalahgunaan</h2>
+      <p>Pengguna dilarang keras untuk:</p>
       <ul>
-        <li>penelitian;</li>
-        <li>pembelajaran;</li>
-        <li>pendidikan;</li>
-        <li>pengkajian literatur Islam;</li>
-        <li>dakwah;</li>
-        <li>penulisan akademik;</li>
-        <li>analisis referensi;</li>
-        <li>penyusunan materi pembelajaran;</li>
-        <li>eksplorasi pengetahuan.</li>
-      </ul>
-      <p>Penggunaan harus dilakukan secara sah, etis, dan sesuai hukum yang berlaku.</p>
-
-      <h2>2. Prinsip Umum Penggunaan</h2>
-      <p>Anda setuju untuk:</p>
-      <ul>
-        <li>Menggunakan layanan secara bertanggung jawab.</li>
-        <li>Menghormati hak pihak lain.</li>
-        <li>Tidak merusak integritas sistem.</li>
-        <li>Tidak membahayakan pengguna lain.</li>
-        <li>Tidak mencoba memperoleh akses yang tidak sah.</li>
+        <li><strong>Pemalsuan Otoritas:</strong> Menghasilkan kutipan palsu atau klaim sepihak yang diatasnamakan kepada ulama, pengarang kitab, atau mufti tertentu.</li>
+        <li><strong>Eksploitasi Otomatis (Scraping):</strong> Menggunakan bot, scraper, atau skrip komputasi otomatis tanpa izin tertulis untuk mengunduh pangkalan data kitab massal.</li>
+        <li><strong>Gangguan Infrastruktur:</strong> Mengirimkan kueri berbahaya (*malicious prompt*), serangan DDoS, atau upaya pembobolan sistem autentikasi.</li>
+        <li><strong>Penyalahgunaan Akun:</strong> Memperjualbelikan atau membagikan kredensial akun pribadi kepada pihak luar di luar ketentuan lisensi.</li>
       </ul>
 
-      <h2>3. Larangan Berbagi Akun</h2>
-      <p>OpenTurath AI menerapkan prinsip:</p>
-      <h3 style="font-weight: 700; color: var(--gold); margin: 1rem 0;">1 Akun = 1 Pengguna</h3>
-      <p>Anda tidak boleh membagikan akun, meminjamkan akun, menyewakan akun, menjual akun, atau mengalihkan akun kepada pihak lain.</p>
-
-      <h3>3.1 Deteksi Penyalahgunaan</h3>
-      <p>OpenTurath AI dapat menggunakan indikator teknis seperti pola login, perangkat, lokasi akses, pola penggunaan, fingerprint browser, dan anomali aktivitas untuk mendeteksi dugaan pembagian akun.</p>
-
-      <h3>3.2 Konsekuensi</h3>
-      <p>Apabila ditemukan indikasi kuat account sharing, kami dapat meminta verifikasi, membatasi akses, menangguhkan akun, atau menghentikan langganan tanpa kewajiban pengembalian dana.</p>
-
-      <h2>4. Larangan Scraping dan Ekstraksi Data</h2>
-      <p>Perlindungan terhadap basis pengetahuan OpenTurath AI merupakan prioritas utama. Anda dilarang:</p>
-      <ul>
-        <li><strong>Scraping:</strong> Menggunakan scraper, crawler, spider, bot, automation tools, atau skrip untuk mengekstraksi data.</li>
-        <li><strong>Data Harvesting:</strong> Mengumpulkan secara sistematis kutipan, metadata, indeks, referensi, atau hasil pencarian dalam jumlah besar.</li>
-        <li><strong>Pembuatan Dataset:</strong> Membangun dataset AI, dataset pelatihan model, atau knowledge base pesaing menggunakan Output OpenTurath AI.</li>
-        <li><strong>Circumvention:</strong> Menghindari limit kuota, pembatasan sistem, atau kontrol keamanan.</li>
-      </ul>
-
-      <h2>5. Larangan Membangun Produk Kompetitor</h2>
-      <p>Anda tidak boleh menggunakan OpenTurath AI untuk mereplikasi layanan, meniru basis pengetahuan, membuat chatbot pesaing, membangun sistem RAG pesaing, atau mengembangkan produk komersial yang secara substansial menyalin OpenTurath AI.</p>
-
-      <h2>6. Larangan Penyalahgunaan Infrastruktur</h2>
-      <p>Anda tidak boleh:</p>
-      <ul>
-        <li><strong>Menyerang sistem:</strong> Termasuk DDoS, brute force, credential stuffing, probing, atau vulnerability scanning tanpa izin.</li>
-        <li><strong>Mengganggu layanan:</strong> Melalui spam request, traffic buatan, atau abuse kuota.</li>
-        <li><strong>Mengganggu pengguna lain:</strong> Dengan cara apa pun.</li>
-      </ul>
-
-      <h2>7. Larangan Malware</h2>
-      <p>Anda tidak boleh menggunakan layanan untuk virus, trojan, ransomware, spyware, malware, payload berbahaya, atau eksploit keamanan.</p>
-
-      <h2>8. Larangan Penipuan</h2>
-      <p>Anda tidak boleh menggunakan layanan untuk phishing, impersonasi, scam, manipulasi, penipuan finansial, atau penipuan identitas.</p>
-
-      <h2>9. Larangan Pelanggaran Hak Kekayaan Intelektual</h2>
-      <p>Anda tidak boleh melanggar hak cipta, merek dagang, rahasia dagang, hak database, atau lisensi pihak ketiga.</p>
-
-      <h2>10. Larangan Konten Ilegal</h2>
-      <p>Anda tidak boleh menggunakan OpenTurath AI untuk aktivitas kriminal, pencucian uang, pendanaan terlarang, eksploitasi seksual anak, perdagangan manusia, pemerasan, penipuan, atau aktivitas lain yang melanggar hukum.</p>
-
-      <h2>11. Larangan Ujaran Kebencian dan Pelecehan</h2>
-      <p>Anda tidak boleh menggunakan layanan untuk mengancam, mengintimidasi, melecehkan, melakukan perundungan, atau mendorong kekerasan terhadap individu atau kelompok.</p>
-
-      <h2>12. Penggunaan AI Secara Bertanggung Jawab</h2>
-      <p>Karena OpenTurath AI menggunakan kecerdasan buatan, pengguna wajib memahami bahwa output dapat mengandung kesalahan, tidak lengkap, atau memerlukan verifikasi. Pengguna tidak boleh mengklaim output sebagai fatwa resmi, pendapat hukum yang mengikat, atau memanipulasi output untuk menyesatkan publik.</p>
-
-      <h2>13. Monitoring dan Penegakan</h2>
-      <p>Untuk menjaga keamanan layanan, OpenTurath AI dapat memonitor log teknis, mendeteksi anomali, melakukan investigasi internal, dan menerapkan pembatasan otomatis. Kami tidak berkewajiban memberikan rincian teknis mengenai metode deteksi penyalahgunaan.</p>
-
-      <h2>14. Tindakan Penegakan</h2>
-      <p>Jika terjadi pelanggaran, kami dapat menetapkan tindakan yang proporsional berdasarkan tingkat pelanggaran:</p>
-      <ul>
-        <li><strong>Tingkat 1:</strong> Peringatan.</li>
-        <li><strong>Tingkat 2:</strong> Pembatasan fitur.</li>
-        <li><strong>Tingkat 3:</strong> Penangguhan sementara.</li>
-        <li><strong>Tingkat 4:</strong> Pemutus permanen.</li>
-        <li><strong>Tingkat 5:</strong> Tindakan hukum.</li>
-      </ul>
-
-      <h2>15. Pelaporan Penyalahgunaan</h2>
-      <p>Jika Anda menemukan eksploit keamanan, scraping, account sharing, atau penyalahgunaan layanan lainnya, Anda dapat melaporkannya melalui email: <strong>openturath@gmail.com</strong>.</p>
-
-      <h2>16. Perubahan Kebijakan</h2>
-      <p>Kami dapat memperbarui AUP ini dari waktu ke waktu. Versi terbaru akan dipublikasikan melalui situs resmi OpenTurath AI. Penggunaan layanan setelah perubahan berlaku dianggap sebagai penerimaan atas versi terbaru.</p>
-
-      <h2>17. Hubungi Kami</h2>
-      <p>
-        <strong>OpenTurath AI</strong><br>
-        <strong>Pemilik Layanan:</strong> Rafli Husen<br>
-        <strong>Email:</strong> openturath@gmail.com<br>
-        <strong>Alamat Surat Menyurat:</strong><br>
-        Jl. Amanah No. 94 RT 04/RW 08<br>
-        Kec. Cibinong<br>
-        Bogor, Jawa Barat<br>
-        Indonesia
-      </p>
+      <h2>3. Tindakan atas Pelanggaran</h2>
+      <p>Pelanggaran terhadap kebijakan ini dapat mengakibatkan peringatan akun, pembatasan kuota penelusuran, hingga penutupan akun secara permanen demi menjaga keamanan ekosistem riset santri.</p>
     </div>
   </main>
 
-  <!-- FOOTER -->
+  <!-- ═══════════════ FOOTER ═══════════════ -->
   <footer class="footer">
-    <div class="footer-inner" style="align-items: flex-start; flex-wrap: wrap; gap: 2.5rem;">
-      <!-- Brand Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px;">
-        <a href="index.html" class="logo" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-          <img src="logo_open_ai.png" alt="Logo" class="logo-img" style="height: 40px; width: auto;">
-          <span style="font-weight: 700; color: #fff; font-size: 1.25rem;">Open<span class="logo-dim" style="color: rgba(255,255,255,0.4);">Turath</span></span>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a href="index.html" class="footer__brand-logo">
+          <img src="logo_open_ai.png" alt="Logo" width="28" height="28">
+          <span>Open<span class="navbar__logo-dim">Turath</span></span>
         </a>
-        <div style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.25rem; font-family: var(--font);">
-          <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
-          Jakarta, Indonesia
-        </div>
+        <p>OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.</p>
+        <p style="font-size: 0.8125rem; color: var(--ink-tertiary);">Jakarta, Indonesia</p>
       </div>
-      
-      <!-- Legalitas Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 180px; font-family: var(--font);">
-        <h4 style="color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;">Legalitas</h4>
-        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-          <a href="terms.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Syarat &amp; Ketentuan</a>
-          <a href="refund.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Refund</a>
-          <a href="privacy.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Privasi</a>
-          <a href="aup.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Penggunaan (AUP)</a>
-          <a href="copyright.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Hak Cipta</a>
-          <a href="ai-policy.html" style="color: var(--text-secondary); font-size: 0.8125rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Kebijakan Atribusi AI</a>
-        </div>
+
+      <div class="footer__col">
+        <h4>Ketentuan &amp; Kebijakan</h4>
+        <a href="terms.html">Ketentuan Layanan</a>
+        <a href="privacy.html">Kebijakan Privasi</a>
+        <a href="refund.html">Langganan &amp; Refund</a>
+        <a href="cookie.html">Kebijakan Cookie</a>
+        <a href="ai-policy.html">Panduan Penggunaan AI</a>
+        <a href="copyright.html">Hak Cipta &amp; Pelaporan</a>
       </div>
-      
-      <!-- Kontak Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px; font-family: var(--font);">
-        <h4 style="color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;">Kontak</h4>
-        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-          <a href="mailto:openturath@gmail.com" class="footer-contact-item">
-            <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-            </svg>
-            openturath@gmail.com
-          </a>
-          <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
-            <svg class="footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-            </svg>
-            openturath.ai
-          </a>
-        </div>
+
+      <div class="footer__col">
+        <h4>Aplikasi</h4>
+        <a href="download.html">Unduh Android APK</a>
+        <a href="download.html#panduan">Panduan Pemasangan</a>
       </div>
-      
-      <!-- Download Column -->
-      <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 150px; font-family: var(--font);">
-        <h4 style="color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;">Aplikasi</h4>
-        <a href="download.html" class="nav-cta" style="margin: 0; padding: 0.6rem 1.2rem; text-decoration: none; font-size: 0.8125rem; display: inline-flex;">Download</a>
+
+      <div class="footer__col">
+        <h4>Bantuan</h4>
+        <a href="mailto:openturath@gmail.com">openturath@gmail.com</a>
+        <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer">@openturath.ai</a>
       </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; 2026 OpenTurath. Membaca kitab, menelusuri ibarah.</span>
+      <span>Bukan pengganti bimbingan dan fatwa ulama.</span>
     </div>
   </footer>
 
