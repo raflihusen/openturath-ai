@@ -48,7 +48,7 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('BookDetailScreen renders 5 scholarly metadata sections', (tester) async {
+    testWidgets('BookDetailScreen renders 5 scholarly metadata sections in Arabic RTL', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: BookDetailScreen(book: sampleBook),
@@ -59,22 +59,23 @@ void main() {
       expect(find.text('كتاب الأم'), findsOneWidget);
       expect(find.text('kitab_al_umm_shafii'), findsOneWidget);
 
-      // Card 2: Pengarang
-      expect(find.text('PENGARANG'), findsOneWidget);
+      // Card 2: Pengarang (المؤلف والوفاة)
+      expect(find.text('المؤلف والوفاة'), findsOneWidget);
       expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
+      expect(find.text('سنة الوفاة: 204 هـ'), findsOneWidget);
 
-      // Card 3: Klasifikasi & Kandungan
-      expect(find.text('KLASIFIKASI & KANDUNGAN'), findsOneWidget);
+      // Card 3: Klasifikasi & Kandungan (التصنيف والمصنف)
+      expect(find.text('التصنيف والمصنف'), findsOneWidget);
       expect(find.text('Asal Mazhab'), findsOneWidget);
-      expect(find.text('Mutaqaddimin'), findsOneWidget);
-      expect(find.text('8 Jilid'), findsOneWidget);
+      expect(find.text('عصر المتقدمين (حتى ٤٠٠ هـ)'), findsOneWidget);
+      expect(find.text('8 أجزاء'), findsOneWidget);
 
-      // Card 4: Penerbitan & Tahkik
-      expect(find.text('PENERBITAN & TAHKIK'), findsOneWidget);
+      // Card 4: Penerbitan & Tahkik (بيانات الطبع والتحقيق)
+      expect(find.text('بيانات الطبع والتحقيق'), findsOneWidget);
       expect(find.text('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
       expect(find.text('Dr. Rifa\'at Fauzi Abdul Muthalib'), findsOneWidget);
 
-      // Card 5: Aksi Riset telah dihapus sesuai instruksi
+      // Aksi Riset telah dihapus sesuai prinsip The Quiet Scholar
       expect(find.text('AKSI & TELAAH RISET'), findsNothing);
       expect(find.text('Buka Ruang Kajian'), findsNothing);
       expect(find.text('Simpan ke Catatan Riset'), findsNothing);

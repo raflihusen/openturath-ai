@@ -84,10 +84,10 @@ void main() {
       expect(LegalCopy.aiGuidelineSections.length, equals(5));
       expect(LegalCopy.contactSections.length, equals(3));
 
-      // Verifikasi saluran email resmi menggunakan domain openturath.ai
-      expect(LegalCopy.contactSupportEmail, contains('@openturath.ai'));
-      expect(LegalCopy.contactPrivacyEmail, contains('@openturath.ai'));
-      expect(LegalCopy.contactCopyrightEmail, contains('@openturath.ai'));
+      // Verifikasi saluran email resmi openturath@gmail.com
+      expect(LegalCopy.contactSupportEmail, equals('openturath@gmail.com'));
+      expect(LegalCopy.contactPrivacyEmail, equals('openturath@gmail.com'));
+      expect(LegalCopy.contactCopyrightEmail, equals('openturath@gmail.com'));
 
       // Verifikasi penegasan manual renewal tanpa auto-debit
       final manualRenewalText = LegalCopy.refundSections[2].content;
