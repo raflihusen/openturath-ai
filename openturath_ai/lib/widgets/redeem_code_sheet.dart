@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
@@ -7,6 +8,7 @@ import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
+import 'ot_interactive.dart';
 
 class RedeemCodeSheet extends StatefulWidget {
   final VoidCallback? onSuccess;
@@ -21,6 +23,7 @@ class RedeemCodeSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.45),
       builder: (ctx) => RedeemCodeSheet(onSuccess: onSuccess),
     );
   }
@@ -112,17 +115,21 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
 
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgSurface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          border: Border.all(color: borderColor, width: 0.8),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: bgSurface.withOpacity(isDark ? 0.92 : 0.95),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              border: Border.all(color: borderColor, width: 0.8),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
             Center(
               child: Container(
                 width: 36,
@@ -200,26 +207,32 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             const SizedBox(height: OTSpacing.lg),
             SizedBox(
               height: 48,
-              child: FilledButton(
+              child: OtInteractiveButton(
                 onPressed: _isLoading ? null : _handleRedeem,
-                style: FilledButton.styleFrom(
-                  backgroundColor: textPrimary,
-                  foregroundColor: canvas,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: OTRadius.buttonBorder,
+                borderRadius: OTRadius.buttonBorder,
+                child: FilledButton(
+                  onPressed: _isLoading ? null : _handleRedeem,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: textPrimary,
+                    foregroundColor: canvas,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: OTRadius.buttonBorder,
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
+                  child: _isLoading
+                      ? AppLoader(dotSize: 6, color: canvas)
+                      : Text(
+                          'Gunakan voucher',
+                          style: OTTypography.button(color: canvas),
+                        ),
                 ),
-                child: _isLoading
-                    ? AppLoader(dotSize: 6, color: canvas)
-                    : Text(
-                        'Gunakan voucher',
-                        style: OTTypography.button(color: canvas),
-                      ),
               ),
             ),
             const SizedBox(height: OTSpacing.sm),
           ],
+        ),
+      ),
         ),
       ),
     );
