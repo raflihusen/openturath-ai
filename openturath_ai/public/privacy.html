@@ -4,8 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kebijakan Privasi — OpenTurath</title>
-  <meta name="description" content="Kebijakan Privasi resmi pemrosesan dan perlindungan data pengguna OpenTurath.">
+  <meta name="description" content="Kebijakan Privasi resmi OpenTurath AI.">
   <link rel="canonical" href="https://openturath.web.app/privacy.html">
+  
+  <script>
+    (function() {
+      var saved = localStorage.getItem('openturath_theme');
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,24 +27,44 @@
   <!-- ═══════════════ NAVBAR ═══════════════ -->
   <header class="navbar" id="navbar">
     <div class="navbar__inner">
-      <a href="index.html" class="navbar__logo">
-        <img src="logo_open_ai.png" alt="OpenTurath logo" width="28" height="28">
+      <a href="index.html" class="navbar__logo" aria-label="OpenTurath Beranda">
+        <img src="logo_open_ai.png" alt="OpenTurath" class="navbar__logo-img" width="30" height="30">
         <span>Open<span class="navbar__logo-dim">Turath</span></span>
       </a>
-      <nav class="navbar__actions" aria-label="Navigasi">
-        <a href="index.html#kelebihan" class="navbar__link">Kelebihan</a>
-        <a href="download.html" class="navbar__link">Unduh App</a>
-        <a href="index.html" class="navbar__cta">Beranda</a>
+
+      <nav class="navbar__nav" aria-label="Navigasi">
+        <a href="index.html#ibarah" class="navbar__link">Ibarah &amp; Rujukan</a>
+        <a href="index.html#khazanah" class="navbar__link">Khazanah Kitab</a>
+        <a href="index.html#bidang-ilmu" class="navbar__link">Bidang Ilmu</a>
+        <a href="index.html" class="navbar__link">Beranda</a>
       </nav>
+
+      <div class="navbar__actions">
+        <button class="theme-toggle interactive-tap" id="theme-toggle" aria-label="Ganti tema warna" title="Ganti mode terang atau gelap">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <a href="index.html" class="btn-pill btn-pill--secondary interactive-tap">
+          Kembali ke Beranda
+        </a>
+      </div>
     </div>
   </header>
 
-  <main class="legal-container">
-    <h1>Kebijakan Privasi</h1>
-    <div class="legal-date">Versi 1.1 — Terakhir diperbarui: 13 September 2026</div>
+  <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+  <main class="container container--prose legal-page">
+    <div class="legal-header">
+      <span class="label-eyebrow">Dokumen Kebijakan Resmi</span>
+      <h1 class="legal-title">Kebijakan Privasi</h1>
+      <div class="legal-meta">
+        <span class="pill-exif">Versi 1.1</span>
+        <span>Berlaku Efektif: 13 September 2026</span>
+        <span>·</span>
+        <span>Jakarta, Indonesia</span>
+      </div>
+    </div>
 
-    <div class="legal-content">
-      <h2>1. Pengelola Data dan Ruang Lingkup</h2>
+    <article class="legal-body">
+<h2>1. Pengelola Data dan Ruang Lingkup</h2>
       <p>Kebijakan ini menjelaskan pemrosesan data pribadi saat Anda menggunakan aplikasi, website, sistem pembayaran, dan layanan bantuan OpenTurath. Tim Pengembang OpenTurath (Jakarta, Indonesia) bertanggung jawab atas pemrosesan data yang tujuan dan caranya ditentukan oleh layanan OpenTurath. Pertanyaan mengenai privasi dapat disampaikan melalui <strong>openturath@gmail.com</strong>.</p>
 
       <h2>2. Data yang Diproses</h2>
@@ -61,29 +95,36 @@
         <strong>Email:</strong> openturath@gmail.com<br>
         <strong>Lokasi:</strong> Jakarta, Indonesia
       </p>
-    </div>
+    </article>
   </main>
 
   <!-- ═══════════════ FOOTER ═══════════════ -->
   <footer class="footer">
     <div class="footer__inner">
+      
       <div class="footer__brand">
         <a href="index.html" class="footer__brand-logo">
-          <img src="logo_open_ai.png" alt="Logo" width="28" height="28">
+          <img src="logo_open_ai.png" alt="Logo" class="navbar__logo-img" width="26" height="26">
           <span>Open<span class="navbar__logo-dim">Turath</span></span>
         </a>
-        <p>OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.</p>
-        <p style="font-size: 0.8125rem; color: var(--ink-tertiary);">Jakarta, Indonesia</p>
+        <div class="footer__tagline">Membaca kitab, menelusuri ibarah.</div>
+        <p class="footer__desc">
+          OpenTurath membantu pembaca menelusuri kitab dan mempelajari rujukan keilmuan Islam dengan bantuan AI.
+        </p>
+        <p style="font-size: 12px; color: var(--text-tertiary);">
+          Jakarta, Indonesia
+        </p>
       </div>
 
       <div class="footer__col">
         <h4>Ketentuan &amp; Kebijakan</h4>
         <a href="terms.html">Ketentuan Layanan</a>
         <a href="privacy.html">Kebijakan Privasi</a>
-        <a href="refund.html">Langganan &amp; Refund</a>
+        <a href="refund.html">Langganan &amp; Pengembalian Dana</a>
         <a href="cookie.html">Kebijakan Cookie</a>
         <a href="ai-policy.html">Panduan Penggunaan AI</a>
         <a href="copyright.html">Hak Cipta &amp; Pelaporan</a>
+        <a href="aup.html">Kebijakan Penggunaan</a>
       </div>
 
       <div class="footer__col">
@@ -97,13 +138,35 @@
         <a href="mailto:openturath@gmail.com">openturath@gmail.com</a>
         <a href="https://instagram.com/openturath.ai" target="_blank" rel="noopener noreferrer">@openturath.ai</a>
       </div>
+
     </div>
 
     <div class="footer__bottom">
-      <span>&copy; 2026 OpenTurath. Membaca kitab, menelusuri ibarah.</span>
-      <span>Bukan pengganti bimbingan dan fatwa ulama.</span>
+      <span>&copy; 2026 OpenTurath. Seluruh hak cipta dilindungi undang-undang.</span>
+      <span>Instrumen bantu penelusuran rujukan, bukan pengganti bimbingan dan fatwa ulama.</span>
     </div>
   </footer>
+
+  <script>
+    var themeToggle = document.getElementById('theme-toggle');
+    function updateThemeIcon() {
+      var current = document.documentElement.getAttribute('data-theme') || 'light';
+      if (current === 'dark') {
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+      } else {
+        themeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      }
+    }
+    updateThemeIcon();
+
+    themeToggle.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme') || 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('openturath_theme', next);
+      updateThemeIcon();
+    });
+  </script>
 
 </body>
 </html>
