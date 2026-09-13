@@ -104,6 +104,28 @@ void main() {
       expect(SubscriptionService.normalizeCode(' santri_123 '), equals('SANTRI_123'));
     });
 
+    test('redeemErrorMessage formats neutral copy and preserves device protection messages', () {
+      // 1. Standar kode sudah pernah dipakai (netral 'Kode ini')
+      expect(
+        SubscriptionService.redeemErrorMessage('already-exists'),
+        equals('Kode ini sudah pernah ditukarkan sebelumnya.'),
+      );
+
+      // 2. Pesan proteksi perangkat dari server diteruskan utuh
+      const deviceMsg = 'Kode ini hanya dapat diklaim 1 kali per perangkat. Perangkat ini sudah pernah mengaktifkannya sebelumnya.';
+      expect(
+        SubscriptionService.redeemErrorMessage('already-exists', deviceMsg),
+        equals(deviceMsg),
+      );
+
+      // 3. Pesan proteksi ponsel fisik / anti emulator diteruskan utuh
+      const emulatorMsg = 'Kode ini hanya dapat diaktifkan melalui ponsel fisik asli.';
+      expect(
+        SubscriptionService.redeemErrorMessage('failed-precondition', emulatorMsg),
+        equals(emulatorMsg),
+      );
+    });
+
     test('addCalendarMonthsClamped correctly handles leap year 29 Feb and non-leap 28 Feb boundary conditions (F-11)', () {
       // 1. Tahun kabisat (2024): 31 Januari + 1 bulan = 29 Februari 2024
       final jan31Leap = DateTime(2024, 1, 31);
