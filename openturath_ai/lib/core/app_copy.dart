@@ -1,16 +1,16 @@
+import 'legal_copy.dart';
+
 /// AppCopy: Sumber teks kanonik terpusat untuk OpenTurath.
 /// Menjaga nada bahasa tetap tenang, ringkas, jelas, dan wajar untuk kajian keislaman.
 abstract final class AppCopy {
   // ── Identitas & Merek ──────────────────────────────────────────
   static const appName = 'OpenTurath';
-  static const appTagline = 'Membaca kitab, menelusuri ibarah.';
+  static const appTagline = LegalCopy.aboutAppTagline;
   static const defaultFieldDesc =
       'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.';
-  static const aboutTitle = 'Tentang OpenTurath';
-  static const aboutDescription =
-      'OpenTurath membantu Anda mencari rujukan, membaca ibarah, dan membandingkan penjelasan dalam kitab.';
-  static const aboutScholarlyPrinciple =
-      'Gunakan jawaban AI untuk membantu menelusuri rujukan. Periksa kutipan pada kitab asal. Untuk memahami agama dan menetapkan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.';
+  static const aboutTitle = LegalCopy.aboutAppTitle;
+  static const aboutDescription = LegalCopy.aboutAppParagraph1;
+  static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
@@ -104,13 +104,22 @@ abstract final class AppCopy {
   static const logoutButton = 'Keluar';
 
   static const deleteAccountTitle = 'Hapus akun';
-  static const deleteAccountBody =
-      'Akun Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.';
-  static const deleteAccountButton = 'Hapus akun';
+  static const deleteAccountBody = LegalCopy.deleteAccountConfirmationBody;
+  static const deleteAccountButton = LegalCopy.deleteAccountConfirmationConfirm;
+  static const deleteAccountCancel = LegalCopy.deleteAccountConfirmationCancel;
   static const deleteAccountSuccess = 'Akun berhasil dihapus.';
   static const recentLoginRequired =
       'Masuk kembali untuk melanjutkan penghapusan akun.';
   static const networkError = 'Periksa koneksi internet, lalu coba lagi.';
+
+  // ── Kebijakan, Hukum & Bantuan ─────────────────────────────────
+  static const termsOfService = LegalCopy.termsTitle;
+  static const privacyPolicy = LegalCopy.privacyTitle;
+  static const paymentAndRefund = LegalCopy.refundTitle;
+  static const aiGuideline = LegalCopy.aiGuidelineTitle;
+  static const supportAndContact = LegalCopy.contactTitle;
+  static const manualRenewalNotice =
+      'Langganan diperpanjang secara manual tanpa penagihan berulang otomatis. Masa akses dihitung sejak pembayaran berhasil.';
 
   // ── Helper Interpolasi Dinamis ─────────────────────────────────
   static String preparingModule(String module) => '$module sedang disiapkan.';
