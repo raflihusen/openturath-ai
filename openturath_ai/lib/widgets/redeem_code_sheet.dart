@@ -43,11 +43,14 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
 
   String _humanizeErrorMessage(String raw) {
     final lower = raw.toLowerCase().replaceAll('_', '-');
+    if (lower.contains('perangkat') || lower.contains('ponsel')) {
+      return raw;
+    }
     if (lower.contains('not-found')) {
       return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
     }
     if (lower.contains('already-exists') || lower.contains('already-used')) {
-      return 'Anda sudah pernah menukarkan kode voucher ini.';
+      return 'Kode ini sudah pernah ditukarkan sebelumnya.';
     }
     if (lower.contains('resource-exhausted') || lower.contains('quota')) {
       return 'Kuota penukaran untuk kode voucher ini sudah habis.';

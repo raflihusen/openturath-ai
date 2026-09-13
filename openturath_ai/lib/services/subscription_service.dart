@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
 import '../models/user_model.dart';
+import 'device_service.dart';
 import 'doku_service.dart';
 
 class SubscriptionService {
@@ -13,12 +14,25 @@ class SubscriptionService {
     return input.trim().toUpperCase().replaceAll(RegExp(r'[\s-]'), '');
   }
 
-  static String redeemErrorMessage(String code) {
+  static String redeemErrorMessage(String code, [String? serverMessage]) {
     final c = code.toLowerCase().replaceAll('_', '-');
+    if (serverMessage != null && serverMessage.isNotEmpty) {
+      final lowerMsg = serverMessage.toLowerCase();
+      if (lowerMsg.contains('perangkat') || lowerMsg.contains('ponsel')) {
+        return serverMessage;
+      }
+    }
     if (c.contains('not-found')) return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
-    if (c.contains('already-exists') || c.contains('already-used')) return 'Anda sudah pernah menukarkan kode voucher ini.';
+    if (c.contains('already-exists') || c.contains('already-used')) {
+      return 'Kode ini sudah pernah ditukarkan sebelumnya.';
+    }
     if (c.contains('deadline-exceeded') || c.contains('expired')) return 'Masa berlaku kode voucher ini telah berakhir.';
-    if (c.contains('failed-precondition')) return 'Kode voucher ini sudah tidak aktif.';
+    if (c.contains('failed-precondition')) {
+      if (serverMessage != null && serverMessage.contains('ponsel')) {
+        return serverMessage;
+      }
+      return 'Kode voucher ini sudah tidak aktif.';
+    }
     if (c.contains('resource-exhausted') || c.contains('quota')) return 'Kuota penukaran untuk kode voucher ini sudah habis.';
     if (c.contains('unauthenticated')) return 'Silakan masuk ke akun Anda lalu coba kembali.';
     if (c.contains('invalid-argument')) return 'Format penulisan kode voucher belum sesuai.';
@@ -28,18 +42,34 @@ class SubscriptionService {
   }
 
   // ── Klaim Kode Redeem Santri (Voucher Akses 7 Hari, dsb) ─────
-  Future<Map<String, dynamic>> redeemAccessCode(String code) async {
+  Future<Map<String, dynamic>> redeemAccessCode(
+    String code, {
+    DeviceFingerprint? customFingerprint,
+  }) async {
     try {
       final normalized = normalizeCode(code);
+      final fingerprint = customFingerprint ?? await DeviceService().getDeviceFingerprint();
       final callable = FirebaseFunctions.instance.httpsCallable('redeemCode');
-      final result = await callable.call({'code': normalized});
+      final result = await callable.call({
+        'code': normalized,
+        'deviceId': fingerprint.deviceId,
+        'deviceModel': fingerprint.model,
+        'deviceBrand': fingerprint.brand,
+        'isPhysicalDevice': fingerprint.isPhysicalDevice,
+      });
       final data = result.data;
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }
       return {'success': true, 'message': 'Kode akses sudah aktif.'};
     } on FirebaseFunctionsException catch (e) {
-      return {'success': false, 'message': redeemErrorMessage(e.code)};
+      final serverMsg = e.message;
+      if (serverMsg != null &&
+          serverMsg.isNotEmpty &&
+          (serverMsg.contains('perangkat') || serverMsg.contains('ponsel'))) {
+        return {'success': false, 'message': serverMsg};
+      }
+      return {'success': false, 'message': redeemErrorMessage(e.code, serverMsg)};
     } catch (e) {
       return {'success': false, 'message': 'Koneksi bermasalah. Periksa internet Anda lalu coba lagi.'};
     }
