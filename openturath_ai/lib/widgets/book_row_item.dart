@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/catalog_card_content.dart';
 import '../models/book_model.dart';
 import 'apple_interactive_wrapper.dart';
 
@@ -40,18 +41,12 @@ class BookRowItem extends StatelessWidget {
       formattedVolumes = '${book.volumesCount} jilid';
     }
 
-    final hasPages = book.pagesDescription != null &&
-        book.pagesDescription!.isNotEmpty &&
-        book.pagesDescription != '-';
-    final hasTahqiq = book.muhaqqiq != null &&
-        book.muhaqqiq!.isNotEmpty &&
-        book.muhaqqiq != '-';
-    final hasPublisher = book.publisher != null &&
-        book.publisher!.isNotEmpty &&
-        book.publisher != '-';
-    final hasYear = book.printYear != null &&
-        book.printYear!.isNotEmpty &&
-        book.printYear != '-';
+    final facts = catalogCardFacts(
+      volumes: formattedVolumes,
+      publisher: book.publisher,
+      printYear: book.printYear,
+      muhaqqiq: book.muhaqqiq,
+    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: OTSpacing.sm),
@@ -189,95 +184,22 @@ class BookRowItem extends StatelessWidget {
                   ],
                 ),
 
-                // ── Metadata Strip Bergaya Informasi Google Camera (EXIF Micro-Pills) ──
-                if (formattedVolumes != null ||
-                    hasPages ||
-                    hasTahqiq ||
-                    hasPublisher ||
-                    hasYear ||
-                    book.reviewedTypeLabel != null ||
-                    book.reviewedEraLabel != null) ...[
+                // ── Fakta edisi: satu batas visual, tanpa panel bertumpuk. ──
+                if (facts.isNotEmpty) ...[
                   const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: surfaceSubtle,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: border.withValues(alpha: 0.5), width: 0.6),
-                    ),
-                    child: Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        if (formattedVolumes != null)
-                          _buildExifPill(
-                            icon: Icons.layers_outlined,
-                            text: formattedVolumes,
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            border: border,
-                          ),
-                        if (book.reviewedTypeLabel != null && book.reviewedTypeLabel!.isNotEmpty)
-                          _buildExifPill(
-                            icon: Icons.menu_book_outlined,
-                            text: book.reviewedTypeLabel!,
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            border: border,
-                          ),
-                        if (book.reviewedEraLabel != null && book.reviewedEraLabel!.isNotEmpty)
-                          _buildExifPill(
-                            icon: Icons.history_edu_rounded,
-                            text: book.reviewedEraLabel!,
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            border: border,
-                          ),
-                        if (hasPages)
-                          _buildExifPill(
-                            icon: Icons.article_outlined,
-                            text: '${book.pagesDescription} hlm',
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            border: border,
-                          ),
-                        if (hasTahqiq)
-                          _buildExifPill(
-                            icon: Icons.edit_note_rounded,
-                            text: book.muhaqqiq!,
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            border: border,
-                            maxWidth: 160,
-                          ),
-                        if (hasPublisher)
-                          _buildExifPill(
-                            icon: Icons.apartment_rounded,
-                            text: book.publisher!,
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            border: border,
-                            maxWidth: 150,
-                          ),
-                        if (hasYear)
-                          _buildExifPill(
-                            icon: Icons.calendar_today_outlined,
-                            text: book.printYear!,
-                            isDark: isDark,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                            border: border,
-                          ),
-                      ],
-                    ),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 5,
+                    children: facts.map((fact) => Text(
+                      fact,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w500,
+                        color: textSecondary,
+                      ),
+                    )).toList(),
                   ),
                 ],
               ],
@@ -288,54 +210,4 @@ class BookRowItem extends StatelessWidget {
     );
   }
 
-  Widget _buildExifPill({
-    required IconData icon,
-    required String text,
-    required bool isDark,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color border,
-    double? maxWidth,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6.5, vertical: 2),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.04)
-            : Colors.black.withValues(alpha: 0.03),
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: border.withValues(alpha: 0.4), width: 0.5),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 11, color: textSecondary),
-          const SizedBox(width: 4),
-          if (maxWidth != null)
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Text(
-                text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: textPrimary,
-                ),
-              ),
-            )
-          else
-            Text(
-              text,
-              style: GoogleFonts.outfit(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: textPrimary,
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
