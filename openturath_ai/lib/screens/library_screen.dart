@@ -107,7 +107,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Rincian Edisi Naskah',
+                        'Detail edisi',
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
                       IconButton(
@@ -143,16 +143,16 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   if (book.verifiedDeathYearHijri != null)
                     _detailRow('Tahun Wafat', '${book.verifiedDeathYearHijri} H', textPrimary, textSecondary),
                   if (book.reviewedTypeLabel != null)
-                    _detailRow('Kategori Teks', book.reviewedTypeLabel!, textPrimary, textSecondary),
+                    _detailRow('Jenis kitab', book.reviewedTypeLabel!, textPrimary, textSecondary),
                   if (book.reviewedEraLabel != null)
-                    _detailRow('Masa Penulisan', book.reviewedEraLabel!, textPrimary, textSecondary),
+                    _detailRow('Periode', book.reviewedEraLabel!, textPrimary, textSecondary),
                   if (book.volumesCount != null)
                     _detailRow('Jumlah Jilid', '${book.volumesCount} Jilid', textPrimary, textSecondary),
                   if (book.publisher != null && book.publisher!.isNotEmpty)
                     _detailRow('Penerbit', book.publisher!, textPrimary, textSecondary),
                   if (book.muhaqqiq != null && book.muhaqqiq!.isNotEmpty)
                     _detailRow('Tahqiq / Editor', book.muhaqqiq!, textPrimary, textSecondary),
-                  _detailRow('Pengidentifikasi Edisi', book.editionId, textPrimary, textSecondary),
+                  _detailRow('ID edisi', book.editionId, textPrimary, textSecondary),
                   const SizedBox(height: OTSpacing.base),
                 ],
               ),
@@ -220,7 +220,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
             ),
             if (_allBooks != null)
               Text(
-                '${_filteredBooks?.length ?? 0} naskah primer terkatalogisasi',
+                '${_filteredBooks?.length ?? 0} kitab',
                 style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
               ),
           ],
@@ -268,14 +268,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             const SizedBox(height: OTSpacing.md),
                             Text(_errorMessage!, style: OTTypography.body(color: textSecondary)),
                             const SizedBox(height: OTSpacing.base),
-                            OutlinedButton(onPressed: _loadData, child: const Text('Coba Lagi')),
+                            OutlinedButton(onPressed: _loadData, child: const Text('Coba lagi')),
                           ],
                         ),
                       )
                     : _filteredBooks == null || _filteredBooks!.isEmpty
                         ? Center(
                             child: Text(
-                              'Tidak ada naskah yang cocok dengan pencarian',
+                              'Tidak ada kitab yang cocok dengan pencarian',
                               style: OTTypography.body(color: textSecondary),
                             ),
                           )

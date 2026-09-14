@@ -13,9 +13,9 @@ import '../services/canonical_library_service.dart';
 import '../widgets/book_row_item.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
-/// Halaman Katalog Naskah Penuh (Full-Screen Route).
+/// Halaman Katalog Kitab (Full-Screen Route).
 /// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
-/// filter hierarki disiplin (القسم), abad keilmuan, dan kartu naskah minimalis bergaya turath.
+/// filter hierarki disiplin (القسم), abad keilmuan, dan kartu kitab minimalis bergaya turath.
 class BookCatalogScreen extends StatefulWidget {
   final AgentModel? agent;
   final String? initialQuery;
@@ -343,7 +343,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 child: Row(
                   children: [
                     Text(
-                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} naskah',
+                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
                       style: OTTypography.caption(color: textSecondary).copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
