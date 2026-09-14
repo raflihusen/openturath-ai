@@ -235,7 +235,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 userModel?.isSubscriptionActive ?? (userModel?.isPremium ?? false);
 
             final exp = userModel?.subscriptionExpiry;
-            final expStr = exp != null ? ' · Aktif sampai ${exp.day}/${exp.month}/${exp.year}' : '';
+            const months = [
+              '',
+              'Januari',
+              'Februari',
+              'Maret',
+              'April',
+              'Mei',
+              'Juni',
+              'Juli',
+              'Agustus',
+              'September',
+              'Oktober',
+              'November',
+              'Desember'
+            ];
+            final expStr = exp != null
+                ? ' · Aktif hingga ${exp.day} ${months[exp.month]} ${exp.year}'
+                : '';
             final String subscriptionSubtitle;
 
             if (isSubscribed) {
@@ -248,11 +265,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   (userModel?.entitlements['all_access']?.isActive ?? false);
 
               if (isAllAccess) {
-                subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI$expStr';
+                subscriptionSubtitle = 'Akses semua bidang$expStr';
               } else if (plan == 'field') {
-                subscriptionSubtitle = 'Paket Bidang Kajian$expStr';
+                subscriptionSubtitle = 'Paket per bidang$expStr';
               } else if (plan == 'single') {
-                subscriptionSubtitle = 'Paket 1 Modul$expStr';
+                subscriptionSubtitle = 'Akses satu bidang$expStr';
               } else {
                 subscriptionSubtitle = '${AppCopy.activeSubscription}$expStr';
               }
@@ -327,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               child: Text(
-                                isSubscribed ? 'Aktif' : 'Gratis',
+                                isSubscribed ? 'Aktif' : 'Belum berlangganan',
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
@@ -730,7 +747,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           side: BorderSide(color: border, width: 0.8),
         ),
         title: Text(
-          'Bahasa Aplikasi',
+          'Bahasa',
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
         content: Column(
@@ -738,12 +755,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Menu tersedia dalam bahasa Indonesia. Teks Arab dapat dibaca dengan atau tanpa harakat.',
+              'Antarmuka saat ini tersedia dalam Bahasa Indonesia.',
               style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 10),
             Text(
-              'Dukungan antarmuka penuh Bahasa Arab (العربية) dan Inggris (English) sedang dalam proses finalisasi kurasi kebahasaan.',
+              'Bahasa Arab dan Inggris sedang disiapkan.',
               style: OTTypography.caption(color: textSecondary),
             ),
           ],
