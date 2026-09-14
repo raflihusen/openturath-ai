@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// OpenTurath Design System v2 — Typography (3-Layer Strict Architecture)
 /// 1. Brand Layer: Editorial Serif (hanya untuk Brand, Editorial Hero, dan Judul Korpus)
 /// 2. Interface Layer: Clean Sans (untuk tombol, navigasi, pengaturan, formulir, metadata, harga)
-/// 3. Arabic Scholarly Layer: Tajawal
+/// 3. Arabic Scholarly Layer: Scheherazade New (Naskh klasik, tanpa Amiri)
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
