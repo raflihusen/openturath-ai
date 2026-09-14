@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
+import '../core/arabic_utils.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
@@ -117,11 +118,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
       if (!matchesCategory) return false;
       if (q.isEmpty) return true;
-      return b.title.toLowerCase().contains(q) ||
-          b.agentTitle.toLowerCase().contains(q) ||
-          b.bookReference.toLowerCase().contains(q) ||
-          b.arabicExcerpt.contains(q) ||
-          b.fullAnswer.toLowerCase().contains(q);
+      return ArabicUtils.matches(b.title, q) ||
+          ArabicUtils.matches(b.agentTitle, q) ||
+          ArabicUtils.matches(b.bookReference, q) ||
+          ArabicUtils.matches(b.arabicExcerpt, q) ||
+          ArabicUtils.matches(b.fullAnswer, q);
     }).toList();
   }
 
@@ -523,6 +524,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             final item = _filteredBookmarks[index];
                             return _BookmarkCard(
                               item: item,
+                              searchQuery: _searchQuery,
                               surface: surface,
                               surfaceSubtle: surfaceSubtle,
                               border: border,
@@ -548,6 +550,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
 class _BookmarkCard extends StatefulWidget {
   final BookmarkModel item;
+  final String searchQuery;
   final Color surface;
   final Color surfaceSubtle;
   final Color border;
@@ -562,6 +565,7 @@ class _BookmarkCard extends StatefulWidget {
 
   const _BookmarkCard({
     required this.item,
+    required this.searchQuery,
     required this.surface,
     required this.surfaceSubtle,
     required this.border,
@@ -600,6 +604,116 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     return lines.first.replaceAll(RegExp(r'[#*>`_~]'), '').trim();
   }
 
+  String _getSnippet(String fullAnswer, String query) {
+    final cleanQ = query.trim().toLowerCase();
+    if (cleanQ.isEmpty) return _cleanSingleLine(fullAnswer);
+
+    final lines = fullAnswer.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty);
+    for (final line in lines) {
+      if (line.toLowerCase().contains(cleanQ) || ArabicUtils.matches(line, cleanQ)) {
+        return line.replaceAll(RegExp(r'[#*>`_~]'), '').trim();
+      }
+    }
+    return _cleanSingleLine(fullAnswer);
+  }
+
+  String _buildSearchPattern(String query) {
+    final clean = RegExp.escape(query.trim());
+    const harakat = r'[\u064B-\u065F\u0670\u06D6-\u06ED\u0640]*';
+    final buffer = StringBuffer();
+    for (int i = 0; i < clean.length; i++) {
+      buffer.write(clean[i]);
+      if (i < clean.length - 1) {
+        buffer.write(harakat);
+      }
+    }
+    return buffer.toString();
+  }
+
+  Widget _buildHighlightedText({
+    required String text,
+    required String query,
+    required TextStyle baseStyle,
+    required bool isDark,
+    bool isRtl = false,
+    int? maxLines,
+    TextOverflow? overflow,
+  }) {
+    final cleanQ = query.trim();
+    if (cleanQ.isEmpty || text.isEmpty) {
+      return Text(
+        text,
+        style: baseStyle,
+        textDirection: isRtl ? TextDirection.rtl : null,
+        maxLines: maxLines,
+        overflow: overflow,
+      );
+    }
+
+    final pattern = _buildSearchPattern(cleanQ);
+    final regex = RegExp(pattern, caseSensitive: false);
+    final matches = regex.allMatches(text).toList();
+
+    if (matches.isEmpty) {
+      return Text(
+        text,
+        style: baseStyle,
+        textDirection: isRtl ? TextDirection.rtl : null,
+        maxLines: maxLines,
+        overflow: overflow,
+      );
+    }
+
+    final spans = <InlineSpan>[];
+    int lastIndex = 0;
+
+    for (final m in matches) {
+      if (m.start > lastIndex) {
+        spans.add(TextSpan(
+          text: text.substring(lastIndex, m.start),
+          style: baseStyle,
+        ));
+      }
+      final matchedPart = text.substring(m.start, m.end);
+      spans.add(
+        WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 1.5),
+            padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 1),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white : const Color(0xFF18181B),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              matchedPart,
+              textDirection: isRtl ? TextDirection.rtl : null,
+              style: baseStyle.copyWith(
+                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+      );
+      lastIndex = m.end;
+    }
+
+    if (lastIndex < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastIndex),
+        style: baseStyle,
+      ));
+    }
+
+    return Text.rich(
+      TextSpan(children: spans),
+      textDirection: isRtl ? TextDirection.rtl : null,
+      maxLines: maxLines,
+      overflow: overflow,
+    );
+  }
+
   String _cleanExcerpt(String text, int maxLength) {
     final trimmed = text.trim();
     if (trimmed.length <= maxLength) return trimmed;
@@ -614,9 +728,14 @@ class _BookmarkCardState extends State<_BookmarkCard> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isBookRef = item.id.startsWith('book_') || item.fieldName == 'Rujukan Kitab';
     final hasValidBookRef = item.bookReference.isNotEmpty &&
         !item.bookReference.toLowerCase().contains('belum diidentifikasi');
+
+    final pillLabel = item.agentTitle.isNotEmpty
+        ? item.agentTitle
+        : (isBookRef ? 'Rujukan Kitab' : (item.fieldName.isNotEmpty ? item.fieldName : 'Catatan'));
 
     return AnimatedContainer(
       duration: OTMotion.normal,
@@ -640,35 +759,28 @@ class _BookmarkCardState extends State<_BookmarkCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Bar: Pill + Agent Title + Time + Chevron
+              // Top Bar: Rounded Pill (e.g. Fikih Tahawwulat) + Spacer + Time + Chevron
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                    decoration: BoxDecoration(
-                      color: widget.accent.withValues(alpha: 0.12),
-                      borderRadius: OTRadius.chipBorder,
-                    ),
-                    child: Text(
-                      isBookRef
-                          ? 'Rujukan Kitab'
-                          : (item.fieldName.contains('Catatan') ? 'Catatan' : item.fieldName),
-                      style: OTTypography.captionMedium(color: widget.accent).copyWith(
-                        fontSize: 10.5,
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: widget.accent.withValues(alpha: 0.12),
+                        borderRadius: OTRadius.chipBorder,
+                      ),
+                      child: Text(
+                        pillLabel,
+                        style: OTTypography.captionMedium(color: widget.accent).copyWith(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      item.agentTitle,
-                      style: OTTypography.caption(color: widget.textSecondary).copyWith(
-                        fontSize: 11,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+                  const Spacer(),
                   Text(
                     _formatRelativeTime(item.effectiveTime),
                     style: OTTypography.caption(
@@ -688,25 +800,29 @@ class _BookmarkCardState extends State<_BookmarkCard> {
 
               const SizedBox(height: 8),
 
-              // Title
-              Text(
-                item.title,
-                style: OTTypography.cardTitle(color: widget.textPrimary).copyWith(
+              // Title (dengan highlight pencarian)
+              _buildHighlightedText(
+                text: item.title,
+                query: widget.searchQuery,
+                baseStyle: OTTypography.cardTitle(color: widget.textPrimary).copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
+                isDark: isDark,
                 maxLines: _isExpanded ? null : 1,
                 overflow: _isExpanded ? null : TextOverflow.ellipsis,
               ),
 
-              // Compact Preview (when collapsed)
+              // Compact Preview (when collapsed, menampilkan cuplikan yang cocok dengan highlight)
               if (!_isExpanded && item.fullAnswer.trim().isNotEmpty) ...[
                 const SizedBox(height: 4),
-                Text(
-                  _cleanSingleLine(item.fullAnswer),
-                  style: OTTypography.caption(color: widget.textSecondary).copyWith(
+                _buildHighlightedText(
+                  text: _getSnippet(item.fullAnswer, widget.searchQuery),
+                  query: widget.searchQuery,
+                  baseStyle: OTTypography.caption(color: widget.textSecondary).copyWith(
                     fontSize: 12,
                   ),
+                  isDark: isDark,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -726,9 +842,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         width: 0.8,
                       ),
                     ),
-                    child: Text(
-                      '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
-                      style: OTTypography.captionMedium(color: widget.textPrimary),
+                    child: _buildHighlightedText(
+                      text: '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
+                      query: widget.searchQuery,
+                      baseStyle: OTTypography.captionMedium(color: widget.textPrimary),
+                      isDark: isDark,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -747,43 +865,59 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         width: 0.8,
                       ),
                     ),
-                    child: Text(
-                      item.arabicExcerpt,
-                      textDirection: TextDirection.rtl,
-                      style: GoogleFonts.tajawal(
+                    child: _buildHighlightedText(
+                      text: item.arabicExcerpt,
+                      query: widget.searchQuery,
+                      isRtl: true,
+                      baseStyle: GoogleFonts.tajawal(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         height: 1.6,
                         color: widget.textPrimary,
                       ),
+                      isDark: isDark,
                     ),
                   ),
                 ],
 
                 if (item.fullAnswer.trim().isNotEmpty) ...[
                   const SizedBox(height: OTSpacing.sm),
-                  MarkdownBody(
-                    data: item.fullAnswer.length > 300
-                        ? _cleanExcerpt(item.fullAnswer, 300)
-                        : item.fullAnswer.trim(),
-                    styleSheet: MarkdownStyleSheet(
-                      p: GoogleFonts.outfit(
+                  if (widget.searchQuery.trim().isNotEmpty)
+                    _buildHighlightedText(
+                      text: item.fullAnswer.length > 600
+                          ? _cleanExcerpt(item.fullAnswer, 600)
+                          : item.fullAnswer.trim(),
+                      query: widget.searchQuery,
+                      baseStyle: GoogleFonts.outfit(
                         fontSize: 13,
                         height: 1.5,
                         color: widget.textSecondary,
                       ),
-                      strong: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: widget.textPrimary,
-                      ),
-                      blockquote: GoogleFonts.outfit(
-                        fontSize: 12.5,
-                        fontStyle: FontStyle.italic,
-                        color: widget.textSecondary,
+                      isDark: isDark,
+                    )
+                  else
+                    MarkdownBody(
+                      data: item.fullAnswer.length > 300
+                          ? _cleanExcerpt(item.fullAnswer, 300)
+                          : item.fullAnswer.trim(),
+                      styleSheet: MarkdownStyleSheet(
+                        p: GoogleFonts.outfit(
+                          fontSize: 13,
+                          height: 1.5,
+                          color: widget.textSecondary,
+                        ),
+                        strong: GoogleFonts.outfit(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: widget.textPrimary,
+                        ),
+                        blockquote: GoogleFonts.outfit(
+                          fontSize: 12.5,
+                          fontStyle: FontStyle.italic,
+                          color: widget.textSecondary,
+                        ),
                       ),
                     ),
-                  ),
                 ],
 
                 const SizedBox(height: OTSpacing.md),

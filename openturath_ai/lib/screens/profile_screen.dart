@@ -329,18 +329,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: textPrimary,
                                       ),
                                     ),
-                                    const Spacer(),
-                                    Text(
-                                      currentMode == ThemeMode.system
-                                          ? AppCopy.modeSystem
-                                          : currentMode == ThemeMode.dark
-                                              ? AppCopy.modeDark
-                                              : AppCopy.modeLight,
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 12.5,
-                                        color: textSecondary,
-                                      ),
-                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 12),
@@ -762,6 +750,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title,
                 style: GoogleFonts.outfit(
                   fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? activeFg : inactiveFg,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
 /// dipakai tanpa menyamarkan halaman pengaturan sebagai layar perbankan.
 class _MembershipPass extends StatelessWidget {
@@ -1063,18 +1063,6 @@ class _PassMeta extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? activeFg : inactiveFg,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
