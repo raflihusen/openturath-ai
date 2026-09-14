@@ -189,9 +189,9 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
   String _formatNumber(int number) {
     return number.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]}.',
+        );
   }
 
   String _cleanSectionLabel(String full) {
@@ -241,11 +241,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           children: [
             Text(
               AppCopy.referenceBooks,
-              style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
+              style: OTTypography.screenTitle(color: textPrimary)
+                  .copyWith(fontSize: 18),
             ),
             Text(
               _resolveSubtitle(),
-              style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
+              style: OTTypography.caption(color: textSecondary)
+                  .copyWith(fontSize: 11),
             ),
           ],
         ),
@@ -255,7 +257,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               onPressed: _clearFilters,
               child: Text(
                 'Hapus filter',
-                style: OTTypography.button(color: primaryAccent).copyWith(fontSize: 13),
+                style: OTTypography.button(color: primaryAccent)
+                    .copyWith(fontSize: 13),
               ),
             ),
           const SizedBox(width: 8),
@@ -287,7 +290,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       child: TextField(
                         controller: _searchCtrl,
                         onChanged: _onSearchChanged,
-                        style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
+                        style: GoogleFonts.outfit(
+                            fontSize: 13.5, color: textPrimary),
                         decoration: InputDecoration(
                           hintText: 'Cari kitab, pengarang, atau penahkik…',
                           hintStyle: GoogleFonts.outfit(
@@ -315,7 +319,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                             _applyFilters();
                           });
                         },
-                        child: Icon(Icons.close_rounded, size: 18, color: textSecondary),
+                        child: Icon(Icons.close_rounded,
+                            size: 18, color: textSecondary),
                       ),
                   ],
                 ),
@@ -345,7 +350,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   children: [
                     Text(
                       'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
-                      style: OTTypography.caption(color: textSecondary).copyWith(
+                      style:
+                          OTTypography.caption(color: textSecondary).copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -356,19 +362,23 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         _selectedType != null ||
                         _selectedCentury != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: primaryAccent.withValues(alpha: isDark ? 0.12 : 0.06),
+                          color: primaryAccent.withValues(
+                              alpha: isDark ? 0.12 : 0.06),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           [
-                            if (_selectedSection != null) _cleanSectionLabel(_selectedSection!),
+                            if (_selectedSection != null)
+                              _cleanSectionLabel(_selectedSection!),
                             if (_selectedEra != null) _selectedEra!,
                             if (_selectedType != null) _selectedType!,
                             if (_selectedCentury != null) _selectedCentury!,
                           ].join(' · '),
-                          style: OTTypography.caption(color: primaryAccent).copyWith(
+                          style: OTTypography.caption(color: primaryAccent)
+                              .copyWith(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -396,6 +406,140 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   }
 
   Widget _buildFilterChipsBar({
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required Color primaryAccent,
+  }) {
+    final hasFilters = _hasActiveFilters;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+      child: Row(
+        children: [
+          _filterChip(
+            label: hasFilters ? 'Filter aktif' : 'Semua kitab',
+            isSelected: !hasFilters,
+            onTap: hasFilters ? _clearFilters : () {},
+            isDark: isDark,
+            border: border,
+            surface: surface,
+            textPrimary: textPrimary,
+            textSecondary: textSecondary,
+          ),
+          const Spacer(),
+          OutlinedButton.icon(
+            onPressed: () => _showFilterSheet(
+                isDark, surface, border, textPrimary, textSecondary),
+            icon: const Icon(Icons.tune_rounded, size: 16),
+            label: const Text('Filter'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: textPrimary,
+              side: BorderSide(color: border),
+              visualDensity: VisualDensity.compact,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showFilterSheet(bool isDark, Color surface, Color border,
+      Color textPrimary, Color textSecondary) {
+    return showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: surface,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: StatefulBuilder(
+          builder: (_, setSheetState) => Padding(
+            padding: const EdgeInsets.fromLTRB(
+                OTSpacing.lg, 0, OTSpacing.lg, OTSpacing.lg),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Text('Saring koleksi',
+                    style: OTTypography.screenTitle(color: textPrimary)),
+                const SizedBox(height: 16),
+                if (_availableSections.length > 1) ...[
+                  Text('Bidang',
+                      style: OTTypography.captionMedium(color: textSecondary)),
+                  Wrap(
+                      spacing: 8,
+                      children: _availableSections
+                          .map((section) => ChoiceChip(
+                              label: Text(_cleanSectionLabel(section)),
+                              selected: _selectedSection == section,
+                              onSelected: (_) {
+                                setState(() {
+                                  _selectedSection = _selectedSection == section
+                                      ? null
+                                      : section;
+                                  _applyFilters();
+                                });
+                                setSheetState(() {});
+                              }))
+                          .toList()),
+                  const SizedBox(height: 16),
+                ],
+                Text('Era',
+                    style: OTTypography.captionMedium(color: textSecondary)),
+                Wrap(
+                    spacing: 8,
+                    children: _centuries
+                        .map((era) => ChoiceChip(
+                            label: Text(era),
+                            selected:
+                                _selectedCentury == era || _selectedEra == era,
+                            onSelected: (_) {
+                              setState(() {
+                                _selectedCentury =
+                                    _selectedCentury == era ? null : era;
+                                _selectedEra = _selectedEra == era ? null : era;
+                                _applyFilters();
+                              });
+                              setSheetState(() {});
+                            }))
+                        .toList()),
+                if (_hasTypes) ...[
+                  const SizedBox(height: 16),
+                  Text('Jenis kitab',
+                      style: OTTypography.captionMedium(color: textSecondary)),
+                  Wrap(
+                      spacing: 8,
+                      children: _types
+                          .map((type) => ChoiceChip(
+                              label: Text(type),
+                              selected: _selectedType == type,
+                              onSelected: (_) {
+                                setState(() {
+                                  _selectedType =
+                                      _selectedType == type ? null : type;
+                                  _applyFilters();
+                                });
+                                setSheetState(() {});
+                              }))
+                          .toList()),
+                ],
+                const SizedBox(height: 20),
+                TextButton(
+                    onPressed: () {
+                      _clearFilters();
+                      Navigator.pop(sheetContext);
+                    },
+                    child: const Text('Hapus semua filter')),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Retained as a fallback while the compact filter sheet is rolled out.
+  // ignore: unused_element
+  Widget _buildLegacyFilterChipsBar({
     required bool isDark,
     required Color surface,
     required Color border,
@@ -433,7 +577,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 isSelected: _selectedSection == section,
                 onTap: () {
                   setState(() {
-                    _selectedSection = _selectedSection == section ? null : section;
+                    _selectedSection =
+                        _selectedSection == section ? null : section;
                     _applyFilters();
                   });
                 },
@@ -549,7 +694,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               isSelected: _selectedCentury == century,
               onTap: () {
                 setState(() {
-                  _selectedCentury = _selectedCentury == century ? null : century;
+                  _selectedCentury =
+                      _selectedCentury == century ? null : century;
                   _applyFilters();
                 });
               },
@@ -598,7 +744,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               AppleInteractiveWrapper(
                 onTap: _loadCatalog,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
                     color: primaryAccent,
                     borderRadius: BorderRadius.circular(10),
@@ -641,14 +788,16 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 AppleInteractiveWrapper(
                   onTap: _clearFilters,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: border),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Hapus filter',
-                      style: OTTypography.button(color: textPrimary).copyWith(fontSize: 13),
+                      style: OTTypography.button(color: textPrimary)
+                          .copyWith(fontSize: 13),
                     ),
                   ),
                 ),
@@ -663,7 +812,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       onRefresh: _loadCatalog,
       color: primaryAccent,
       child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics()),
         padding: const EdgeInsets.symmetric(
           horizontal: OTSpacing.lg,
           vertical: OTSpacing.sm,
@@ -728,7 +878,9 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: OTTypography.caption(color: isSelected ? activeFg : textSecondary).copyWith(
+            style: OTTypography.caption(
+                    color: isSelected ? activeFg : textSecondary)
+                .copyWith(
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               fontSize: 12,
             ),

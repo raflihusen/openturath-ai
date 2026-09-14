@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
@@ -180,25 +179,34 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     if (l.contains('syarah') || l.contains('sharh')) return 'شرح';
     if (l.contains('hasyiyah') || l.contains('hashiyah')) return 'حاشية';
     if (l.contains('mukhtasar') || l.contains('ringkasan')) return 'مختصر';
-    if (l.contains('ensiklopedia') || l.contains('mausuah'))
+    if (l.contains('ensiklopedia') || l.contains('mausuah')) {
       return 'موسوعة فقهية';
-    if (l.contains('manzhumah') || l.contains('nazham')) return 'منظومة علمية';
+    }
+    if (l.contains('manzhumah') || l.contains('nazham')) {
+      return 'منظومة علمية';
+    }
     return type;
   }
 
   String _translateEra(String? era) {
     if (era == null || era.isEmpty) return 'التراث الإسلامي';
     final l = era.toLowerCase();
-    if (l.contains('mutaqaddim') || l.contains('awal'))
+    if (l.contains('mutaqaddim') || l.contains('awal')) {
       return 'عصر المتقدمين (حتى ٤٠٠ هـ)';
-    if (l.contains('mutawassith') || l.contains('pertengahan'))
+    }
+    if (l.contains('mutawassith') || l.contains('pertengahan')) {
       return 'عصر المتوسطين (٤٠٠ - ٨٠٠ هـ)';
+    }
     if (l.contains('muta\'akhkhir') ||
         l.contains('mutaakhir') ||
-        l.contains('lanjut')) return 'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)';
+        l.contains('lanjut')) {
+      return 'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)';
+    }
     if (l.contains('mu\'ashir') ||
         l.contains('kontemporer') ||
-        l.contains('modern')) return 'العصر المعاصر (بعد ١٢٠٠ هـ)';
+        l.contains('modern')) {
+      return 'العصر المعاصر (بعد ١٢٠٠ هـ)';
+    }
     return era;
   }
 
@@ -581,11 +589,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     required Widget child,
   }) {
     return Container(
-      padding: const EdgeInsets.all(OTSpacing.lg),
+      padding: const EdgeInsets.symmetric(
+          vertical: OTSpacing.md, horizontal: OTSpacing.xs),
       decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(OTRadius.card),
-        border: Border.all(color: border, width: 0.8),
+        border: Border(
+            bottom:
+                BorderSide(color: border.withValues(alpha: .75), width: .8)),
       ),
       child: child,
     );
