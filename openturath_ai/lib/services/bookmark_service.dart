@@ -142,9 +142,6 @@ class BookmarkService extends ChangeNotifier {
     final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
     if (effectiveUid == null || effectiveUid.isEmpty) return;
 
-    final db = _db;
-    if (db == null) return;
-
     if (_isSyncing) return;
     _isSyncing = true;
 
@@ -163,6 +160,12 @@ class BookmarkService extends ChangeNotifier {
         }
         await _store.replace(userKey, mergedLocal.values.toList());
         await _store.replace(_legacyKey, <BookmarkModel>[]);
+        notifyListeners();
+      }
+
+      final db = _db;
+      if (db == null) {
+        return;
       }
 
       // Step 2: Read current local items
