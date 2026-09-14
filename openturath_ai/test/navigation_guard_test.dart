@@ -76,5 +76,63 @@ void main() {
 
       expect(actionCount, equals(1));
     });
+
+    testWidgets('safePushNamed allows opening a child route while parent route is active on stack', (tester) async {
+      int subPageOpened = 0;
+      int termsPageOpened = 0;
+
+      final testApp = MaterialApp(
+        onGenerateRoute: (settings) {
+          if (settings.name == '/subscription') {
+            subPageOpened++;
+            return MaterialPageRoute(
+              builder: (context) => Scaffold(
+                body: ElevatedButton(
+                  onPressed: () {
+                    // Buka child route terms dari dalam subscription
+                    NavigationGuard.safePushNamed(context, '/terms');
+                  },
+                  child: const Text('Open Terms'),
+                ),
+              ),
+              settings: settings,
+            );
+          } else if (settings.name == '/terms') {
+            termsPageOpened++;
+            return MaterialPageRoute(
+              builder: (context) => const Scaffold(body: Text('Terms Page')),
+              settings: settings,
+            );
+          }
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: ElevatedButton(
+                onPressed: () {
+                  NavigationGuard.safePushNamed(context, '/subscription');
+                },
+                child: const Text('Go To Subscription'),
+              ),
+            ),
+          );
+        },
+      );
+
+      await tester.pumpWidget(testApp);
+      await tester.tap(find.text('Go To Subscription'));
+      await tester.pumpAndSettle();
+
+      expect(subPageOpened, equals(1));
+      expect(find.text('Open Terms'), findsOneWidget);
+
+      // Jeda transisi 450ms berlalu
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Pengguna menekan Open Terms dari dalam halaman subscription
+      await tester.tap(find.text('Open Terms'));
+      await tester.pumpAndSettle();
+
+      expect(termsPageOpened, equals(1));
+      expect(find.text('Terms Page'), findsOneWidget);
+    });
   });
 }

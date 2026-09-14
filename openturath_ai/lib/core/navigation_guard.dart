@@ -1,47 +1,53 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// [NavigationGuard] mencegah masalah navigasi bertumpuk (*stacked pages*)
 /// yang timbul ketika pengguna mengetuk tombol navigasi secara berulang-ulang
 /// dalam jeda waktu singkat saat perangkat sedang sibuk atau mengalami lag.
+///
+/// Mekanisme penguncian bekerja secara *per-route in-flight window* (450ms),
+/// sehingga double tap pada rute yang sama ditolak, namun navigasi anak (child routes)
+/// dari dalam halaman yang sedang aktif tetap dapat dibuka secara normal.
 class NavigationGuard {
   NavigationGuard._();
 
-  static bool _isNavigating = false;
-  static String? _activeRoute;
+  static final Set<String> _inFlightRoutes = <String>{};
+  static bool _isCustomNavigating = false;
 
-  /// Mengetahui apakah saat ini ada operasi navigasi yang sedang berlangsung (*in-flight*).
-  static bool get isNavigating => _isNavigating;
+  /// Mengetahui apakah ada rute tertentu yang sedang dalam proses transisi push.
+  static bool isRouteInFlight(String routeName) => _inFlightRoutes.contains(routeName);
 
-  /// Rute yang saat ini sedang aktif dibuka.
-  static String? get activeRoute => _activeRoute;
-
-  /// Mengeksekusi [Navigator.pushNamed] dengan perlindungan *Single-Flight Guard*.
+  /// Mengeksekusi [Navigator.pushNamed] dengan perlindungan *Single-Flight Guard* per-route.
   ///
-  /// Jika ada navigasi lain yang sedang berjalan atau rute yang sama sedang
-  /// dalam proses dibuka, pemanggilan berikutnya akan langsung diabaikan secara aman.
+  /// Kunci dilepaskan otomatis setelah jendela animasi/transisi 450 milidetik selesai,
+  /// sehingga rute tidak terkunci selamanya saat halaman masih terbuka di layar.
   static Future<T?> safePushNamed<T>(
     BuildContext context,
     String routeName, {
     Object? arguments,
   }) async {
-    if (_isNavigating) {
-      debugPrint('[NavigationGuard] Menolak push duplikat untuk "$routeName" (operasi navigasi sedang aktif)');
+    if (!context.mounted) return null;
+
+    if (!_inFlightRoutes.add(routeName)) {
+      debugPrint('[NavigationGuard] Menolak push duplikat untuk "$routeName" (rute sedang in-flight)');
       return null;
     }
 
-    _isNavigating = true;
-    _activeRoute = routeName;
+    // Jadwalkan pelepasan kunci rute setelah jendela debounce 450ms
+    unawaited(
+      Future<void>.delayed(const Duration(milliseconds: 450))
+          .whenComplete(() => _inFlightRoutes.remove(routeName)),
+    );
 
     try {
-      if (!context.mounted) return null;
       return await Navigator.pushNamed<T>(
         context,
         routeName,
         arguments: arguments,
       );
-    } finally {
-      _isNavigating = false;
-      _activeRoute = null;
+    } catch (_) {
+      _inFlightRoutes.remove(routeName);
+      rethrow;
     }
   }
 
@@ -50,25 +56,30 @@ class NavigationGuard {
     BuildContext context,
     Future<T?> Function() navigationAction,
   ) async {
-    if (_isNavigating) {
+    if (_isCustomNavigating) {
       debugPrint('[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)');
       return null;
     }
 
-    _isNavigating = true;
+    _isCustomNavigating = true;
+    unawaited(
+      Future<void>.delayed(const Duration(milliseconds: 450))
+          .whenComplete(() => _isCustomNavigating = false),
+    );
+
     try {
       if (!context.mounted) return null;
       return await navigationAction();
-    } finally {
-      _isNavigating = false;
-      _activeRoute = null;
+    } catch (_) {
+      _isCustomNavigating = false;
+      rethrow;
     }
   }
 
   /// Reset internal state untuk keperluan unit test.
   @visibleForTesting
   static void resetForTesting() {
-    _isNavigating = false;
-    _activeRoute = null;
+    _inFlightRoutes.clear();
+    _isCustomNavigating = false;
   }
 }
