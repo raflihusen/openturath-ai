@@ -48,8 +48,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   bool _draftRestored = false;
   Timer? _autoSaveDebounce;
 
-  String get _draftKey =>
-      'openturath_draft_note_${widget.item?.id ?? 'new'}';
+  String get _draftKey => 'openturath_draft_note_${widget.item?.id ?? 'new'}';
 
   @override
   void initState() {
@@ -138,7 +137,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     super.dispose();
   }
 
-  void _applyFormat(String prefix, String suffix, {String defaultText = 'teks'}) {
+  void _applyFormat(String prefix, String suffix,
+      {String defaultText = 'teks'}) {
     final text = _bodyController.text;
     final selection = _bodyController.selection;
 
@@ -188,7 +188,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
     if (title.isEmpty && body.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Isi judul atau tulis catatan terlebih dahulu.')),
+        const SnackBar(
+            content: Text('Isi judul atau tulis catatan terlebih dahulu.')),
       );
       return;
     }
@@ -220,6 +221,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
         pageNumber: '',
         createdAt: now,
         updatedAt: now,
+        documentKind: BookmarkDocumentKind.personalNote,
+        verificationStatus: BookmarkVerificationStatus.notApplicable,
       );
     }
 
@@ -273,7 +276,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
           // Appbar Row: Mode Toggle, Close, Save
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: 4),
+            padding: const EdgeInsets.symmetric(
+                horizontal: OTSpacing.lg, vertical: 4),
             child: Row(
               children: [
                 Column(
@@ -282,7 +286,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   children: [
                     Text(
                       widget.item != null ? 'Edit catatan' : 'Catatan baru',
-                      style: OTTypography.screenTitle(color: textPrimary).copyWith(
+                      style:
+                          OTTypography.screenTitle(color: textPrimary).copyWith(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
                       ),
@@ -291,8 +296,11 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                       Text(
                         _isSavingDraft
                             ? 'Menyimpan draf...'
-                            : (_draftRestored ? 'Draf dipulihkan' : 'Draf tersimpan'),
-                        style: OTTypography.caption(color: textSecondary).copyWith(
+                            : (_draftRestored
+                                ? 'Draf dipulihkan'
+                                : 'Draf tersimpan'),
+                        style:
+                            OTTypography.caption(color: textSecondary).copyWith(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w400,
                         ),
@@ -314,16 +322,20 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                       GestureDetector(
                         onTap: () => setState(() => _isPreview = false),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: !_isPreview ? textPrimary : Colors.transparent,
+                            color:
+                                !_isPreview ? textPrimary : Colors.transparent,
                             borderRadius: BorderRadius.circular(7),
                           ),
                           child: Text(
                             'Tulis',
                             style: OTTypography.captionMedium(
                               color: !_isPreview
-                                  ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                  ? (isDark
+                                      ? const Color(0xFF18181B)
+                                      : Colors.white)
                                   : textSecondary,
                             ).copyWith(fontSize: 11.5),
                           ),
@@ -335,16 +347,20 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           setState(() => _isPreview = true);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: _isPreview ? textPrimary : Colors.transparent,
+                            color:
+                                _isPreview ? textPrimary : Colors.transparent,
                             borderRadius: BorderRadius.circular(7),
                           ),
                           child: Text(
                             'Pratinjau',
                             style: OTTypography.captionMedium(
                               color: _isPreview
-                                  ? (isDark ? const Color(0xFF18181B) : Colors.white)
+                                  ? (isDark
+                                      ? const Color(0xFF18181B)
+                                      : Colors.white)
                                   : textSecondary,
                             ).copyWith(fontSize: 11.5),
                           ),
@@ -357,10 +373,13 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                 TextButton(
                   onPressed: _saveNote,
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     backgroundColor: textPrimary,
-                    foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    foregroundColor:
+                        isDark ? const Color(0xFF18181B) : Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                   child: Text(
                     'Simpan',
@@ -391,23 +410,27 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                     label: 'B',
                     tooltip: 'Tebal',
                     isBold: true,
-                    onTap: () => _applyFormat('**', '**', defaultText: 'teks tebal'),
+                    onTap: () =>
+                        _applyFormat('**', '**', defaultText: 'teks tebal'),
                   ),
                   _ToolbarBtn(
                     label: 'I',
                     tooltip: 'Miring',
                     isItalic: true,
-                    onTap: () => _applyFormat('*', '*', defaultText: 'teks miring'),
+                    onTap: () =>
+                        _applyFormat('*', '*', defaultText: 'teks miring'),
                   ),
                   _ToolbarBtn(
                     icon: Icons.format_list_bulleted_rounded,
                     tooltip: 'Daftar Poin',
-                    onTap: () => _applyFormat('\n- ', '', defaultText: 'poin catatan'),
+                    onTap: () =>
+                        _applyFormat('\n- ', '', defaultText: 'poin catatan'),
                   ),
                   _ToolbarBtn(
                     icon: Icons.format_quote_rounded,
                     tooltip: 'Kutipan',
-                    onTap: () => _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
+                    onTap: () =>
+                        _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
                   ),
                   _ToolbarBtn(
                     label: '« »',
@@ -417,12 +440,14 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   _ToolbarBtn(
                     label: 'H1',
                     tooltip: 'Judul Bab',
-                    onTap: () => _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
+                    onTap: () =>
+                        _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
                   ),
                   _ToolbarBtn(
                     label: 'H2',
                     tooltip: 'Sub-bab',
-                    onTap: () => _applyFormat('\n## ', '\n', defaultText: 'Sub-bab'),
+                    onTap: () =>
+                        _applyFormat('\n## ', '\n', defaultText: 'Sub-bab'),
                   ),
                 ],
               ),
@@ -446,7 +471,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          Divider(color: border.withValues(alpha: 0.6), height: 1),
+                          Divider(
+                              color: border.withValues(alpha: 0.6), height: 1),
                           const SizedBox(height: 16),
                         ],
                         _bodyController.text.trim().isEmpty
@@ -455,7 +481,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                   padding: const EdgeInsets.only(top: 40),
                                   child: Text(
                                     'Belum ada isi catatan.',
-                                    style: OTTypography.body(color: textSecondary),
+                                    style:
+                                        OTTypography.body(color: textSecondary),
                                   ),
                                 ),
                               )
@@ -488,7 +515,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                     borderRadius: BorderRadius.circular(6),
                                     border: Border(
                                       left: BorderSide(
-                                        color: textPrimary.withValues(alpha: 0.6),
+                                        color:
+                                            textPrimary.withValues(alpha: 0.6),
                                         width: 3.5,
                                       ),
                                     ),
@@ -578,8 +606,10 @@ class _ToolbarBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textSecondary = OTColors.textSecondary(Theme.of(context).brightness == Brightness.dark);
-    final textPrimary = OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark);
+    final textSecondary =
+        OTColors.textSecondary(Theme.of(context).brightness == Brightness.dark);
+    final textPrimary =
+        OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark);
 
     return Tooltip(
       message: tooltip,

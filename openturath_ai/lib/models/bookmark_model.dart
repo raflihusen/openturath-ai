@@ -1,3 +1,12 @@
+enum BookmarkDocumentKind { personalNote, aiAnswer, bookReference }
+
+enum BookmarkVerificationStatus {
+  notApplicable,
+  unverified,
+  needsReview,
+  verified
+}
+
 class BookmarkModel {
   final String id;
   final String title;
@@ -12,6 +21,8 @@ class BookmarkModel {
   final String? author;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final BookmarkDocumentKind documentKind;
+  final BookmarkVerificationStatus verificationStatus;
 
   BookmarkModel({
     required this.id,
@@ -27,6 +38,8 @@ class BookmarkModel {
     this.author,
     required this.createdAt,
     this.updatedAt,
+    this.documentKind = BookmarkDocumentKind.aiAnswer,
+    this.verificationStatus = BookmarkVerificationStatus.unverified,
   });
 
   DateTime get effectiveTime => updatedAt ?? createdAt;
@@ -46,16 +59,27 @@ class BookmarkModel {
       'author': author,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': (updatedAt ?? createdAt).toIso8601String(),
+      'documentKind': documentKind.name,
+      'verificationStatus': verificationStatus.name,
     };
   }
 
   factory BookmarkModel.fromJson(Map<String, dynamic> json) {
+    final id = json['id'] as String? ?? '';
+    final agentId = json['agentId'] as String? ?? '';
+    final fieldName = json['fieldName'] as String? ?? '';
+    final kind = _documentKindFromJson(
+      json['documentKind'] as String?,
+      id: id,
+      agentId: agentId,
+      fieldName: fieldName,
+    );
     return BookmarkModel(
-      id: json['id'] as String? ?? '',
+      id: id,
       title: json['title'] as String? ?? '',
-      agentId: json['agentId'] as String? ?? '',
+      agentId: agentId,
       agentTitle: json['agentTitle'] as String? ?? '',
-      fieldName: json['fieldName'] as String? ?? '',
+      fieldName: fieldName,
       fieldId: json['fieldId'] as String? ?? 'fiqh',
       arabicExcerpt: json['arabicExcerpt'] as String? ?? '',
       fullAnswer: json['fullAnswer'] as String? ?? '',
@@ -68,6 +92,11 @@ class BookmarkModel {
       updatedAt: json['updatedAt'] != null
           ? DateTime.tryParse(json['updatedAt'] as String)
           : null,
+      documentKind: kind,
+      verificationStatus: _verificationStatusFromJson(
+        json['verificationStatus'] as String?,
+        kind,
+      ),
     );
   }
 
@@ -85,6 +114,8 @@ class BookmarkModel {
     String? author,
     DateTime? createdAt,
     DateTime? updatedAt,
+    BookmarkDocumentKind? documentKind,
+    BookmarkVerificationStatus? verificationStatus,
   }) {
     return BookmarkModel(
       id: id ?? this.id,
@@ -100,6 +131,44 @@ class BookmarkModel {
       author: author ?? this.author,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      documentKind: documentKind ?? this.documentKind,
+      verificationStatus: verificationStatus ?? this.verificationStatus,
+    );
+  }
+
+  static BookmarkDocumentKind _documentKindFromJson(
+    String? value, {
+    required String id,
+    required String agentId,
+    required String fieldName,
+  }) {
+    return BookmarkDocumentKind.values.firstWhere(
+      (kind) => kind.name == value,
+      orElse: () {
+        if (id.startsWith('book_') ||
+            fieldName.toLowerCase().contains('rujukan kitab')) {
+          return BookmarkDocumentKind.bookReference;
+        }
+        if (agentId == 'catatan_mandiri' ||
+            fieldName.toLowerCase().contains('catatan pribadi')) {
+          return BookmarkDocumentKind.personalNote;
+        }
+        return BookmarkDocumentKind.aiAnswer;
+      },
+    );
+  }
+
+  static BookmarkVerificationStatus _verificationStatusFromJson(
+    String? value,
+    BookmarkDocumentKind kind,
+  ) {
+    return BookmarkVerificationStatus.values.firstWhere(
+      (status) => status.name == value,
+      orElse: () => kind == BookmarkDocumentKind.personalNote
+          ? BookmarkVerificationStatus.notApplicable
+          : kind == BookmarkDocumentKind.bookReference
+              ? BookmarkVerificationStatus.needsReview
+              : BookmarkVerificationStatus.unverified,
     );
   }
 }
