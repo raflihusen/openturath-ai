@@ -51,9 +51,7 @@ class _MainShellScreenState extends State<MainShellScreen>
 
   late final AnimationController _roomAnimController;
   late final Animation<Offset> _roomSlideAnimation;
-  late final Animation<double> _roomScaleAnimation;
   late final Animation<double> _roomFadeAnimation;
-  late final Animation<double> _bgScaleAnimation;
   late final Animation<double> _bgDimmerAnimation;
 
   @override
@@ -62,26 +60,22 @@ class _MainShellScreenState extends State<MainShellScreen>
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
 
+    // Animasi geser vertikal murni nan ringan (240ms) tanpa scale/GPU lag
     _roomAnimController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 380),
-      reverseDuration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 240),
+      reverseDuration: const Duration(milliseconds: 200),
     );
 
     final CurvedAnimation easeCurve = CurvedAnimation(
       parent: _roomAnimController,
-      curve: Curves.fastOutSlowIn,
-      reverseCurve: Curves.easeInOutCubic,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
     );
 
     _roomSlideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.08),
+      begin: const Offset(0.0, 0.12),
       end: Offset.zero,
-    ).animate(easeCurve);
-
-    _roomScaleAnimation = Tween<double>(
-      begin: 0.94,
-      end: 1.0,
     ).animate(easeCurve);
 
     _roomFadeAnimation = Tween<double>(
@@ -89,14 +83,9 @@ class _MainShellScreenState extends State<MainShellScreen>
       end: 1.0,
     ).animate(easeCurve);
 
-    _bgScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.975,
-    ).animate(easeCurve);
-
     _bgDimmerAnimation = Tween<double>(
       begin: 0.0,
-      end: 0.40,
+      end: 0.35,
     ).animate(easeCurve);
 
     if (AgentSessionManager.instance.isOpen) {
@@ -106,10 +95,19 @@ class _MainShellScreenState extends State<MainShellScreen>
   }
 
   void _onSessionStateChanged() {
+    final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     if (AgentSessionManager.instance.isOpen) {
-      _roomAnimController.forward();
+      if (disableAnimations) {
+        _roomAnimController.value = 1.0;
+      } else {
+        _roomAnimController.forward();
+      }
     } else {
-      _roomAnimController.reverse();
+      if (disableAnimations) {
+        _roomAnimController.value = 0.0;
+      } else {
+        _roomAnimController.reverse();
+      }
     }
   }
 
@@ -324,10 +322,12 @@ class _MainShellScreenState extends State<MainShellScreen>
           final isRoomVisible = _roomAnimController.value > 0.0 || sessionManager.isOpen;
 
           return PopScope(
-            canPop: !sessionManager.isOpen && _currentIndex == 0,
+            // OT-F007: canPop hanya diizinkan jika ruang tertutup DAN animasi selesai di-dismiss
+            canPop: !sessionManager.isOpen && _roomAnimController.isDismissed && _currentIndex == 0,
             onPopInvokedWithResult: (didPop, result) {
               if (didPop) return;
-              if (sessionManager.isOpen) {
+              // Cegah double-back race saat animasi mundur sedang berjalan
+              if (sessionManager.isOpen || !_roomAnimController.isDismissed) {
                 sessionManager.closeRoom();
                 return;
               }
@@ -337,12 +337,8 @@ class _MainShellScreenState extends State<MainShellScreen>
             },
             child: Stack(
               children: [
-                // 1. Dashboard latar belakang dengan redaman depth-scale
-                Transform.scale(
-                  scale: _bgScaleAnimation.value,
-                  alignment: Alignment.center,
-                  child: baseScaffold,
-                ),
+                // 1. Dashboard latar belakang (Stationary - bebas GPU overhead rasterisasi)
+                baseScaffold,
 
                 // 2. Backdrop Dimmer lembut
                 if (_roomAnimController.value > 0.0)
@@ -355,7 +351,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                     ),
                   ),
 
-                // 3. Ruang AI Multi-Tab ("Fathul Kitab")
+                // 3. Ruang AI Multi-Tab ("Fathul Kitab" - Pure Vertical Slide & Fade)
                 Positioned.fill(
                   child: Offstage(
                     offstage: !isRoomVisible,
@@ -365,11 +361,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                         opacity: _roomFadeAnimation,
                         child: SlideTransition(
                           position: _roomSlideAnimation,
-                          child: ScaleTransition(
-                            scale: _roomScaleAnimation,
-                            alignment: Alignment.bottomCenter,
-                            child: child,
-                          ),
+                          child: child,
                         ),
                       ),
                     ),
