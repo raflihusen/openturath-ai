@@ -27,7 +27,7 @@ class AgentSessionManager extends ChangeNotifier {
   static final AgentSessionManager instance = AgentSessionManager._();
   AgentSessionManager._();
 
-  static const int maxTabs = 7;
+  static const int maxTabs = 3;
 
   final List<AgentSessionTab> _tabs = [];
   int _activeIndex = 0;

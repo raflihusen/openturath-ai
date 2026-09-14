@@ -378,10 +378,14 @@ class _SingleAgentTabWebView extends StatefulWidget {
   State<_SingleAgentTabWebView> createState() => _SingleAgentTabWebViewState();
 }
 
-class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
+class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
+    with AutomaticKeepAliveClientMixin {
   final AgentService _agentService = AgentService();
   final BookmarkService _bookmarkService = BookmarkService();
   final AuthService _authService = AuthService();
+
+  @override
+  bool get wantKeepAlive => true;
 
   static const String _turatsMasterScript = r"""
     (function() {
@@ -607,6 +611,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final session = widget.session;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
@@ -699,7 +704,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
             _startReadinessCheck();
           },
           onLoadStart: (controller, uri) {
-            if (mounted && !session.isWebLoading) {
+            // Hanya aktifkan full loader jika belum pernah siap (inisialisasi awal)
+            if (mounted && !session.hasAcknowledgedAdab && !session.isWebLoading) {
               setState(() => session.isWebLoading = true);
             }
             _startReadinessCheck();
