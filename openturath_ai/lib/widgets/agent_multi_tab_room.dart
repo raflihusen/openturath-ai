@@ -477,11 +477,60 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     })();
   """;
 
-  static final _cloakScript = UserScript(
-    source: _turatsMasterScript + notebookUiScript,
-    injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
-    forMainFrameOnly: true,
-  );
+  static UserScript _buildCloakScript(bool isDark) {
+    final darkCss = isDark
+        ? '''
+          html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
+          .chat-container, .chat-viewport, .to-user-container, .message-content,
+          .rendered-markdown, .query-container, .response-container,
+          table, tr, td, th, mat-card, .mat-mdc-card, app-chat-message, app-chat-response,
+          .chat-message-container, .notebook-content, .scrollable-content,
+          .sources-panel, .studio-panel, div.content-container, main {
+            background-color: #0E0E10 !important;
+            color: #E4E4E7 !important;
+          }
+          table, th, td { border-color: #27272A !important; }
+          a { color: #A1A1AA !important; }
+        '''
+        : 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+
+    final themeInitScript = '''
+      (function() {
+        try {
+          var meta = document.querySelector('meta[name="color-scheme"]');
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.name = 'color-scheme';
+            (document.head || document.documentElement).appendChild(meta);
+          }
+          meta.content = ${isDark ? "'dark'" : "'light'"};
+
+          var style = document.createElement('style');
+          style.id = 'ot-initial-theme-style';
+          style.type = 'text/css';
+          style.textContent = `$darkCss`;
+          (document.head || document.documentElement).appendChild(style);
+
+          if (document.documentElement) {
+            document.documentElement.classList.toggle('dark', $isDark);
+            document.documentElement.classList.toggle('dark-theme', $isDark);
+            document.documentElement.style.colorScheme = ${isDark ? "'dark'" : "'light'"};
+          }
+          if (document.body) {
+            document.body.classList.toggle('dark', $isDark);
+            document.body.classList.toggle('dark-theme', $isDark);
+            document.body.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
+          }
+        } catch(e) {}
+      })();
+    ''';
+
+    return UserScript(
+      source: _turatsMasterScript + notebookUiScript + themeInitScript,
+      injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+      forMainFrameOnly: true,
+    );
+  }
 
   Timer? _readinessTimer;
   DateTime? _loadingStarted;
@@ -695,11 +744,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
     final initialUri = WebUri(session.resolvedUrl!);
 
-    return Stack(
-      children: [
-        InAppWebView(
-          initialUrlRequest: URLRequest(url: initialUri),
-          initialUserScripts: UnmodifiableListView([_cloakScript]),
+    return Container(
+      color: canvas,
+      child: Stack(
+        children: [
+          InAppWebView(
+            keepAlive: session.keepAlive,
+            initialUrlRequest: URLRequest(url: initialUri),
+            initialUserScripts: UnmodifiableListView([_buildCloakScript(isDark)]),
           initialSettings: InAppWebViewSettings(
             javaScriptEnabled: true,
             domStorageEnabled: true,
@@ -805,6 +857,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             ),
           ),
       ],
+    ),
     );
   }
 }
