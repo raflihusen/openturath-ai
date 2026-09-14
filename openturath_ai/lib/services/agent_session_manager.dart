@@ -10,6 +10,7 @@ class AgentSessionTab {
   InAppWebViewController? webController;
   bool isUrlLoading = true;
   bool isWebLoading = true;
+  bool isSessionReady = false;
   String? errorMessage;
   bool isPaywallRequired = false;
   double fontScale = 1.0;
