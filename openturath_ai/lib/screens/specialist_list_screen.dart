@@ -163,14 +163,18 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final isGeneralTab = widget.field == null;
     final title = isGeneralTab ? 'Asisten AI' : widget.field!.name;
     final filtered = _computeFilteredAgents();
+    final shell = MainShellController.of(context);
 
     return PopScope(
-      canPop: false,
+      canPop: isGeneralTab && (shell == null || !Navigator.canPop(context)),
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        final shell = MainShellController.of(context);
-        if (shell != null) {
-          shell.switchTab(0);
+        if (!isGeneralTab) {
+          if (shell != null) {
+            shell.switchTab(0);
+          } else if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
         } else if (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
