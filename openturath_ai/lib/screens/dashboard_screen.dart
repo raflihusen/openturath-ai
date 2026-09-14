@@ -429,7 +429,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               if (shell != null) {
                                 shell.switchTab(1);
                               } else {
-                                Navigator.pushNamed(context, AppRoutes.specialistList);
+                                NavigationGuard.safePushNamed(context, AppRoutes.specialistList);
                               }
                             },
                             child: Row(
@@ -472,7 +472,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               if (shell != null) {
                                 shell.switchTab(1, fieldId: disc.fieldId);
                               } else {
-                                Navigator.pushNamed(
+                                NavigationGuard.safePushNamed(
                                   context,
                                   AppRoutes.specialistList,
                                   arguments: {'fieldId': disc.fieldId},

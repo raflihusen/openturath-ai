@@ -10,6 +10,7 @@ import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../models/bookmark_model.dart';
 import '../models/book_model.dart';
@@ -243,7 +244,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       );
 
       if (matchedBook != null && mounted) {
-        Navigator.pushNamed(
+        NavigationGuard.safePushNamed(
           context,
           AppRoutes.bookDetail,
           arguments: matchedBook,

@@ -4,6 +4,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
@@ -16,7 +17,7 @@ Future<void> showResearchLibrary(
   BuildContext context, {
   AgentModel? agent,
 }) {
-  return Navigator.pushNamed(
+  return NavigationGuard.safePushNamed(
     context,
     AppRoutes.bookCatalog,
     arguments: agent,
@@ -96,7 +97,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
   }
 
   void _showEditionDetails(CanonicalBookPresentation book) {
-    Navigator.pushNamed(
+    NavigationGuard.safePushNamed(
       context,
       AppRoutes.bookDetail,
       arguments: book,

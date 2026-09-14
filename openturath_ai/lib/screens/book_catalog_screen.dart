@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
+import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -179,7 +180,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       _selectedCentury != null;
 
   void _openBookDetail(CanonicalBookPresentation book) {
-    Navigator.pushNamed(
+    NavigationGuard.safePushNamed(
       context,
       AppRoutes.bookDetail,
       arguments: book,
