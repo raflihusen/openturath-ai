@@ -7,24 +7,27 @@ abstract final class AppCopy {
   static const appName = 'OpenTurath';
   static const appTagline = LegalCopy.aboutAppTagline;
   static const defaultFieldDesc =
-      'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.';
+      'Pilih bidang untuk mulai menelusuri kitab.';
   static const aboutTitle = LegalCopy.aboutAppTitle;
   static const aboutDescription = LegalCopy.aboutAppParagraph1;
   static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
+  static const scholarlyPrinciple = LegalCopy.aboutAppParagraph2;
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
-  static const navStudies = 'Asisten AI';
+  static const navStudies = 'Asisten';
   static const navSaved = 'Catatan';
   static const navSettings = 'Pengaturan';
 
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
   static const studySpace = 'Percakapan';
   static const openStudy = 'Membuka asisten…';
-  static const studyOptions = 'Tampilan bacaan';
+  static const studyOptions = 'Opsi percakapan';
   static const referenceBooks = 'Kitab rujukan';
   static const savedCollection = 'Catatan';
-  static const bookDetails = 'Tentang kitab';
+  static const bookDetails = 'Detail edisi';
+  static const chooseField = 'Pilih bidang';
+  static const searchResults = 'Hasil pencarian';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
   static const loadingReferences = 'Menyiapkan asisten…';
@@ -36,10 +39,16 @@ abstract final class AppCopy {
   static const studyNotLoadedYet =
       'Percakapan belum bisa dimuat. Coba lagi sebentar.';
   static const subscriptionRequiredTitle = 'Berlangganan untuk melanjutkan';
+  static const subscriptionRequiredShort = 'Langganan diperlukan';
   static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
+  static const catalogPreparing = 'Katalog kitab sedang disiapkan.';
   static const inputQuestionHint = 'Tulis pertanyaan seputar kitab ini…';
   static const viewSubscription = 'Lihat langganan';
   static const tryAgain = 'Coba lagi';
+  static const sessionExpiredOrNoAccess =
+      'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.';
+  static const agentLoadFailed =
+      'Asisten belum dapat dimuat. Coba lagi sebentar.';
 
   // Platform & Inisialisasi
   static const deviceNotSupportedTitle = 'Perangkat belum didukung';
@@ -67,12 +76,13 @@ abstract final class AppCopy {
 
   // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
   static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
-  static const answerCopied = 'Jawaban disalin dan disimpan ke Catatan.';
+  static const answerCopied = 'Jawaban disalin.';
   static const copyFailed = 'Jawaban belum bisa disalin. Coba lagi.';
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
   static const savedSuccess = 'Tersimpan ke Catatan.';
   static const saveFailed = 'Jawaban belum tersimpan. Coba lagi.';
   static const emptyAnswerCannotSave = 'Belum ada jawaban untuk disimpan.';
+  static const referenceCopied = 'Rujukan disalin.';
 
   // ── Catatan ───────────────────────────────────────────────────
   static const searchSavedHint = 'Cari catatan atau ibarah…';
@@ -83,20 +93,37 @@ abstract final class AppCopy {
   static const copyIbarahAction = 'Salin ibarah';
   static const viewReferenceAction = 'Lihat rujukan';
   static const shareReferenceTooltip = 'Bagikan catatan';
+  static const copyAnswerAction = 'Salin jawaban';
   static const saveAnswerMenu = 'Simpan ke Catatan';
+
+  // ── Sesi Akun Google & NotebookLM ──────────────────────────────
+  static const googleSessionConnectTitle = 'Hubungkan akun Google';
+  static const googleSessionConnectSubtitle =
+      'Gunakan akun Google untuk membuka NotebookLM';
+  static const googleSessionConnectDesc =
+      'Hubungkan akun Google agar NotebookLM dapat dibuka tanpa perlu masuk ulang.';
+  static const googleSessionSignInHint =
+      'Masuk dengan akun Google yang memiliki akses ke kitab ini.';
+  static const googleSessionConnected = 'Akun Google terhubung';
+  static const googleSessionPreparing = 'Menyiapkan percakapan…';
+  static const cancelSignIn = 'Batalkan proses masuk';
 
   // ── Akun & Pengaturan ──────────────────────────────────────────
   static const profile = 'Profil';
   static const subscription = 'Langganan';
   static const activeSubscription = 'Langganan aktif';
   static const inactiveSubscription =
-      'Pilih paket atau gunakan voucher untuk mulai berlangganan.';
+      'Pilih paket atau gunakan voucher untuk mendapatkan akses.';
   static const appearance = 'Tampilan';
   static const modeDark = 'Gelap';
   static const modeLight = 'Terang';
   static const modeSystem = 'Ikuti perangkat';
   static const language = 'Bahasa';
   static const languageIndonesian = 'Bahasa Indonesia';
+  static const languageDialogNotice =
+      'Bahasa Arab dan Inggris sedang disiapkan.';
+  static const languageDialogCurrent =
+      'Antarmuka saat ini tersedia dalam Bahasa Indonesia.';
 
   static const logoutDialogTitle = 'Keluar dari akun';
   static const logoutDialogBody =
@@ -112,6 +139,19 @@ abstract final class AppCopy {
       'Masuk kembali untuk melanjutkan penghapusan akun.';
   static const networkError = 'Periksa koneksi internet, lalu coba lagi.';
 
+  // ── Pembayaran & Status Langganan ─────────────────────────────
+  static const paymentSuccessTitle = 'Pembayaran berhasil';
+  static const paymentSuccessRedirect =
+      'Akses sudah aktif. Membuka OpenTurath…';
+  static const packagePerField = 'Paket per bidang';
+  static const packageAllFields = 'Paket semua bidang';
+  static const packageAllFieldsPreparing =
+      'Paket semua bidang sedang disiapkan.';
+  static const chooseFieldPlan = 'Pilih bidang';
+  static const accessAllFields = 'Akses semua bidang';
+  static const accessSingleField = 'Akses satu bidang';
+  static const notSubscribed = 'Belum berlangganan';
+
   // ── Kebijakan, Hukum & Bantuan ─────────────────────────────────
   static const termsOfService = LegalCopy.termsTitle;
   static const privacyPolicy = LegalCopy.privacyTitle;
@@ -119,7 +159,7 @@ abstract final class AppCopy {
   static const aiGuideline = LegalCopy.aiGuidelineTitle;
   static const supportAndContact = LegalCopy.contactTitle;
   static const manualRenewalNotice =
-      'Langganan diperpanjang secara manual tanpa penagihan berulang otomatis. Masa akses dihitung sejak pembayaran berhasil.';
+      'Langganan tidak diperpanjang otomatis. Anda dapat memperpanjangnya saat masa akses berakhir.';
 
   // ── Helper Interpolasi Dinamis ─────────────────────────────────
   static String preparingModule(String module) => '$module sedang disiapkan.';
@@ -128,7 +168,7 @@ abstract final class AppCopy {
       'Berlangganan untuk membuka $module.';
 
   static String accessUnavailableFor(String module) =>
-      'Akun ini belum mendapat akses ke $module. Aktifkan langganan untuk melanjutkan.';
+      'Akses ke $module belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.';
 
   static String planWithAgent(String agentTitle, String duration) =>
       '$agentTitle — $duration';
