@@ -912,8 +912,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'التعلم بالتلقي عن الأشياخ هو الأصل',
-                  style: GoogleFonts.scheherazadeNew(
-                    fontSize: 16,
+                  style: GoogleFonts.tajawal(
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
                   ),

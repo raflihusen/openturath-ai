@@ -665,10 +665,10 @@ class _BookmarkCard extends StatelessWidget {
                 child: Text(
                   item.arabicExcerpt,
                   textDirection: TextDirection.rtl,
-                  style: GoogleFonts.scheherazadeNew(
-                    fontSize: 17,
+                  style: GoogleFonts.tajawal(
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    height: 1.7,
+                    height: 1.6,
                     color: textPrimary,
                   ),
                   maxLines: 3,

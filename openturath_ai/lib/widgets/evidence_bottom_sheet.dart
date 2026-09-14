@@ -286,10 +286,10 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: GoogleFonts.scheherazadeNew(
-                                fontSize: 19,
+                              style: GoogleFonts.tajawal(
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                height: 1.7,
+                                height: 1.6,
                                 color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
                               ),
                             ),

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// OpenTurath Design System v2 — Typography (3-Layer Strict Architecture)
 /// 1. Brand Layer: Editorial Serif (hanya untuk Brand, Editorial Hero, dan Judul Korpus)
 /// 2. Interface Layer: Clean Sans (untuk tombol, navigasi, pengaturan, formulir, metadata, harga)
-/// 3. Arabic Scholarly Layer: Scheherazade New (Naskh klasik, tanpa Amiri)
+/// 3. Arabic Scholarly Layer: Tajawal
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
@@ -62,7 +62,7 @@ class OTTypography {
     );
   }
 
-  static TextStyle _scheherazade({
+  static TextStyle _tajawal({
     required double fontSize,
     FontWeight? fontWeight,
     double? letterSpacing,
@@ -71,7 +71,7 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: 'Scheherazade New',
+        fontFamily: 'Tajawal',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
@@ -79,7 +79,7 @@ class OTTypography {
         color: color,
       );
     }
-    return GoogleFonts.scheherazadeNew(
+    return GoogleFonts.tajawal(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -174,25 +174,25 @@ class OTTypography {
         color: color,
       );
 
-  // ── 3. Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color}) => _scheherazade(
+  // ── 3. Arabic Scholarly Layer (Tajawal) ──
+  static TextStyle arabicDisplay({Color? color}) => _tajawal(
         fontSize: 24,
         fontWeight: FontWeight.w700,
+        height: 1.5,
+        color: color,
+      );
+
+  static TextStyle arabicReading({Color? color}) => _tajawal(
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
         height: 1.6,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color}) => _scheherazade(
-        fontSize: 19,
-        fontWeight: FontWeight.w500,
-        height: 1.75,
-        color: color,
-      );
-
-  static TextStyle arabicQuote({Color? color}) => _scheherazade(
-        fontSize: 16,
+  static TextStyle arabicQuote({Color? color}) => _tajawal(
+        fontSize: 15,
         fontWeight: FontWeight.w400,
-        height: 1.8,
+        height: 1.65,
         color: color,
       );
 }
