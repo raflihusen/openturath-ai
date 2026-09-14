@@ -55,6 +55,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     super.initState();
     _loadBookmarks();
     _bookmarkService.addListener(_onBookmarksChanged);
+    _bookmarkService.syncWithCloud();
+  }
+
+  Future<void> _syncBookmarks() async {
+    await _bookmarkService.syncWithCloud();
+    await _loadBookmarks();
   }
 
   void _onBookmarksChanged() {
@@ -420,79 +426,97 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         color: accent,
                       ),
                     )
-                  : _filteredBookmarks.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.xl),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 68,
-                                  height: 68,
-                                  decoration: BoxDecoration(
-                                    color: surfaceSubtle,
-                                    borderRadius: OTRadius.cardBorder,
-                                    border: Border.all(color: border, width: 1.0),
+                  : RefreshIndicator(
+                      onRefresh: _syncBookmarks,
+                      color: accent,
+                      backgroundColor: surface,
+                      child: _filteredBookmarks.isEmpty
+                          ? LayoutBuilder(
+                              builder: (context, constraints) => SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(
+                                  parent: BouncingScrollPhysics(),
+                                ),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: constraints.maxHeight,
                                   ),
                                   child: Center(
-                                    child: Icon(
-                                      Icons.collections_bookmark_outlined,
-                                      size: 30,
-                                      color: textSecondary,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: OTSpacing.xl),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 68,
+                                            height: 68,
+                                            decoration: BoxDecoration(
+                                              color: surfaceSubtle,
+                                              borderRadius: OTRadius.cardBorder,
+                                              border: Border.all(color: border, width: 1.0),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.collections_bookmark_outlined,
+                                                size: 30,
+                                                color: textSecondary,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: OTSpacing.lg),
+                                          Text(
+                                            AppCopy.noSavedTitle,
+                                            style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(height: OTSpacing.xs + 2),
+                                          Text(
+                                            AppCopy.noSavedDescription,
+                                            textAlign: TextAlign.center,
+                                            style: OTTypography.body(color: textSecondary).copyWith(
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                          const SizedBox(height: OTSpacing.xl),
+                                          OutlinedButton.icon(
+                                            onPressed: () {
+                                              OTMotion.light();
+                                              final shell = MainShellController.of(context);
+                                              shell?.switchTab(1);
+                                            },
+                                            icon: const Icon(Icons.menu_book_outlined, size: 16),
+                                            label: const Text('Mulai telaah'),
+                                            style: OutlinedButton.styleFrom(
+                                              foregroundColor: textPrimary,
+                                              side: BorderSide(color: border, width: 1.0),
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: OTSpacing.lg,
+                                                vertical: OTSpacing.md,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: OTRadius.buttonBorder,
+                                              ),
+                                              textStyle: OTTypography.button(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: OTSpacing.lg),
-                                Text(
-                                  AppCopy.noSavedTitle,
-                                  style: OTTypography.cardTitle(color: textPrimary).copyWith(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: OTSpacing.xs + 2),
-                                Text(
-                                  AppCopy.noSavedDescription,
-                                  textAlign: TextAlign.center,
-                                  style: OTTypography.body(color: textSecondary).copyWith(
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: OTSpacing.xl),
-                                OutlinedButton.icon(
-                                  onPressed: () {
-                                    OTMotion.light();
-                                    final shell = MainShellController.of(context);
-                                    shell?.switchTab(1);
-                                  },
-                                  icon: const Icon(Icons.menu_book_outlined, size: 16),
-                                  label: const Text('Mulai telaah'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: textPrimary,
-                                    side: BorderSide(color: border, width: 1.0),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: OTSpacing.lg,
-                                      vertical: OTSpacing.md,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: OTRadius.buttonBorder,
-                                    ),
-                                    textStyle: OTTypography.button(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : ListView.separated(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(
-                            OTSpacing.lg,
-                            OTSpacing.sm,
-                            OTSpacing.lg,
-                            108,
-                          ),
-                          itemCount: _filteredBookmarks.length,
+                              ),
+                            )
+                          : ListView.separated(
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              padding: const EdgeInsets.fromLTRB(
+                                OTSpacing.lg,
+                                OTSpacing.sm,
+                                OTSpacing.lg,
+                                108,
+                              ),
+                              itemCount: _filteredBookmarks.length,
                           separatorBuilder: (_, __) => const SizedBox(height: OTSpacing.md),
                           itemBuilder: (context, index) {
                             final item = _filteredBookmarks[index];
@@ -512,6 +536,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             );
                           },
                         ),
+                    ),
             ),
           ],
         ),
