@@ -245,7 +245,7 @@ Jika pengguna membuka chat baru dan meminta:
 name: openturath_ai
 description: "OpenTurath AI - الذكاء الاصطناعي للعلوم الإسلامية"
 publish_to: 'none'
-version: 1.0.27+28
+version: 1.0.28+29
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -5357,7 +5357,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// OpenTurath Design System v2 — Typography (3-Layer Strict Architecture)
 /// 1. Brand Layer: Editorial Serif (hanya untuk Brand, Editorial Hero, dan Judul Korpus)
 /// 2. Interface Layer: Clean Sans (untuk tombol, navigasi, pengaturan, formulir, metadata, harga)
-/// 3. Arabic Scholarly Layer: Tajawal
+/// 3. Arabic Scholarly Layer: Scheherazade New (Naskh klasik, tanpa Amiri)
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
@@ -6524,6 +6524,10 @@ const notebookUiScript = r'''
         div[class*="placeholder-bar" i],
         button[aria-label*="More" i], button[aria-label*="Opsi" i],
         button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+        /* Anti-flicker zero-latency disclaimer suppression (OT-A003) */
+        [aria-label*="Gemini" i],
+        [aria-label*="disclaimer" i],
+        div[role="region"][aria-label*="disclaimer" i],
         .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer" i], footer[class*="disclaimer" i],
         div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
         app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
@@ -10295,6 +10299,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
+import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -10471,7 +10476,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       _selectedCentury != null;
 
   void _openBookDetail(CanonicalBookPresentation book) {
-    Navigator.pushNamed(
+    NavigationGuard.safePushNamed(
       context,
       AppRoutes.bookDetail,
       arguments: book,
@@ -11650,6 +11655,7 @@ import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../models/bookmark_model.dart';
 import '../models/book_model.dart';
@@ -11883,7 +11889,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       );
 
       if (matchedBook != null && mounted) {
-        Navigator.pushNamed(
+        NavigationGuard.safePushNamed(
           context,
           AppRoutes.bookDetail,
           arguments: matchedBook,
@@ -12874,7 +12880,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               if (shell != null) {
                                 shell.switchTab(1);
                               } else {
-                                Navigator.pushNamed(context, AppRoutes.specialistList);
+                                NavigationGuard.safePushNamed(context, AppRoutes.specialistList);
                               }
                             },
                             child: Row(
@@ -12917,7 +12923,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               if (shell != null) {
                                 shell.switchTab(1, fieldId: disc.fieldId);
                               } else {
-                                Navigator.pushNamed(
+                                NavigationGuard.safePushNamed(
                                   context,
                                   AppRoutes.specialistList,
                                   arguments: {'fieldId': disc.fieldId},
@@ -18120,7 +18126,10 @@ class DokuService {
     required String phone,
   }) async {
     try {
-      final callable = _functions.httpsCallable(AppConstants.fnCreatePayment);
+      final callable = _functions.httpsCallable(
+        AppConstants.fnCreatePayment,
+        options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+      );
       final result = await callable.call({
         'uid': uid,
         'agentId': agentId,
@@ -18151,7 +18160,10 @@ class DokuService {
     required String invoiceNumber,
   }) async {
     try {
-      final callable = _functions.httpsCallable(AppConstants.fnCheckPaymentStatus);
+      final callable = _functions.httpsCallable(
+        AppConstants.fnCheckPaymentStatus,
+        options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+      );
       final result = await callable.call({'invoiceNumber': invoiceNumber});
       return Map<String, dynamic>.from(result.data as Map);
     } catch (e) {
@@ -19440,7 +19452,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         inactiveColor: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
                         onChanged: (val) {
                           setModalState(() => session.fontScale = val);
-                          setState(() {});
                           session.webController?.evaluateJavascript(
                             source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($val); }',
                           );
@@ -22243,6 +22254,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
@@ -22255,7 +22267,7 @@ Future<void> showResearchLibrary(
   BuildContext context, {
   AgentModel? agent,
 }) {
-  return Navigator.pushNamed(
+  return NavigationGuard.safePushNamed(
     context,
     AppRoutes.bookCatalog,
     arguments: agent,
@@ -22335,7 +22347,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
   }
 
   void _showEditionDetails(CanonicalBookPresentation book) {
-    Navigator.pushNamed(
+    NavigationGuard.safePushNamed(
       context,
       AppRoutes.bookDetail,
       arguments: book,
