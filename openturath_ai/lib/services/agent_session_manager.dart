@@ -8,6 +8,7 @@ class AgentSessionTab {
   final AgentModel agent;
   String? resolvedUrl;
   InAppWebViewController? webController;
+  final InAppWebViewKeepAlive keepAlive = InAppWebViewKeepAlive();
   bool isUrlLoading = true;
   bool isWebLoading = true;
   bool isSessionReady = false;
