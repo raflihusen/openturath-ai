@@ -490,25 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // ── Card 5: Bantuan dan Kontak ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: _SettingsTile(
-                    icon: Icons.headset_mic_outlined,
-                    title: AppCopy.supportAndContact,
-                    subtitle: 'Saluran resmi dan pengaduan layanan',
-                    trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                    onTap: () => LegalDocumentSheet.showContactSupport(context),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 6: Log out ──
+                // ── Card 5: Log out ──
                 Container(
                   decoration: BoxDecoration(
                     color: surface,

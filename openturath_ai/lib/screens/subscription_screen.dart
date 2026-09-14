@@ -16,7 +16,6 @@ import '../services/subscription_service.dart';
 import '../widgets/doku_checkout_sheet.dart';
 import '../widgets/redeem_code_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
-import '../widgets/legal_document_sheet.dart';
 
 /// Halaman Langganan OpenTurath (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
@@ -733,61 +732,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       borderRadius: OTRadius.cardBorder,
                       border: Border.all(color: border, width: 0.8),
                     ),
-                    child: Column(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(Icons.info_outline_rounded, size: 16, color: textSecondary),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                AppCopy.manualRenewalNotice,
-                                style: OTTypography.caption(color: textSecondary).copyWith(
-                                  fontSize: 12,
-                                  height: 1.45,
-                                ),
-                              ),
+                        Icon(Icons.info_outline_rounded, size: 16, color: textSecondary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            AppCopy.manualRenewalNotice,
+                            style: OTTypography.caption(color: textSecondary).copyWith(
+                              fontSize: 12,
+                              height: 1.45,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: OTSpacing.sm),
-                        Divider(height: 1, color: border.withValues(alpha: 0.5)),
-                        const SizedBox(height: OTSpacing.sm),
-                        Wrap(
-                          spacing: 16,
-                          runSpacing: 8,
-                          children: [
-                            InkWell(
-                              onTap: () => LegalDocumentSheet.showRefundPolicy(context),
-                              borderRadius: BorderRadius.circular(4),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
-                                child: Text(
-                                  AppCopy.paymentAndRefund,
-                                  style: OTTypography.captionMedium(color: textPrimary).copyWith(
-                                    fontSize: 12,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => LegalDocumentSheet.showTermsOfService(context),
-                              borderRadius: BorderRadius.circular(4),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
-                                child: Text(
-                                  AppCopy.termsOfService,
-                                  style: OTTypography.captionMedium(color: textPrimary).copyWith(
-                                    fontSize: 12,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
