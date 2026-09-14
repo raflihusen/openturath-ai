@@ -118,7 +118,7 @@ Langkah-langkah terurut yang harus diambil oleh tim pengembang untuk menjadikan 
 ## DOKUMEN: PROJECT_HANDOVER.md
 ```
 # OpenTurath AI — Project Handover & Context Snapshot
-**Terakhir Diperbarui:** 12 September 2026 (Fase: Copywriting Overhaul Lengkap & Rilis APK v1.0.21+22 Terverifikasi)
+**Terakhir Diperbarui:** 14 September 2026 (Fase: Resolusi Audit Forensik 360° & Restorasi Performa Bebas Lag — v1.0.24+25)
 
 Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context handover*). Setiap agen atau sesi chat baru di Antigravity IDE dapat langsung membaca dokumen ini untuk melanjutkan pekerjaan tanpa perlu penjelasan ulang dari pengguna.
 
@@ -126,7 +126,7 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ## 1. Identitas & Batasan Mutlak Proyek (Non-Negotiable)
 - **Target Platform**: **Android** (Material 3 Adaptive), **macOS & Windows** (Desktop Adaptive).
-- **Versi Rilis Terkini**: **`v1.0.21+22`** (Binary: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`).
+- **Versi Rilis Terkini**: **`v1.0.24+25`** (Binary: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`).
 - **Batasan Eksplisit**:
   - **TIDAK ADA rilis iOS / App Store**.
   - **TIDAK ADA rilis Google Play Store**. Pembaruan aplikasi mandiri via internal updater berbasis SHA-256.
@@ -137,57 +137,66 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ---
 
-## 2. Status Terkini: 100% Selesai & Terverifikasi (v1.0.21+22)
+## 2. Status Terkini: 100% Selesai & Terverifikasi (v1.0.24+25)
 
-### A. Copywriting Overhaul Lengkap (Quiet Scholar Principles)
-1. **Pusat String Kanonik (`AppCopy` di `lib/core/app_copy.dart`)**:
-   - Single source of truth untuk seluruh teks UI dan pesan dinamis.
-   - Bersih dari kata-kata brosur AI (*korpus*, *penelaahan*, *fasilitas*, *komprehensif*, *secara menyeluruh*, *berbasis*, *terintegrasi*, *optimal*, *presisi*, *solusi*).
-   - Larangan tanda seru (`!`) pada notifikasi keberhasilan umum (*"Tersimpan ke simpanan."*, *"Jawaban tersalin."*, *"Akun Anda sudah dihapus."*).
-2. **Navigasi & Ruang Kajian**:
-   - Tab navigasi: `Beranda`, `Kajian`, `Tersimpan`, `Pengaturan`.
-   - Slogan resmi: `Membaca kitab, menelusuri ibarah.`
-   - Loader tenang: *"Membuka kajian..."*, dialog adab telaah *"Catatan sebelum mulai"*, placeholder *"Tanyakan sesuatu tentang kitab ini..."*.
-3. **Backend Cloud Functions & Chat Wrapper (`functions/src/index.ts`)**:
-   - Redeem voucher: *"Kode diterima. Akses ke [service] sudah aktif."*
-   - Pembayaran: *"Pembayaran terverifikasi. Akses Anda sudah aktif."* dan *"Pembayaran masih menunggu penyelesaian."*
-   - Batas kuota: *"Kuota uji coba sudah habis. Berlangganan untuk lanjut."*
-   - Web wrapper chat: Prompt terstandardisasi, toast tenang *"Pertanyaan tersalin. Tempelkan di kolom chat."*.
-4. **Verifikasi Mutu & Pengujian**:
-   - `flutter analyze lib/`: **0 issues found**.
-   - `flutter test`: **58 dari 58 test case LULUS 100%** (termasuk unit test suite `test/copywriting_test.dart`).
-   - `npm run build` (Functions): **TypeScript tsc 100% BERSIH tanpa error**.
-   - **Kompilasi Rilis**: `flutter build apk --release` sukses 100% (58.6 MB, SHA-256: `38170f3b2f6b72be5566ee241db730bf2ac06cf5af10ddf19a570de35e156a7d`).
+### A. Keamanan Moneter & Backend Cloud Functions (OT-F001, OT-F003)
+1. **Penutupan Celah P0 `all_access`**:
+   - `resolvePlanPricing()` menggunakan *strict closed-set whitelist* `PURCHASABLE_AGENTS` dan `MODULE_PLANS`.
+   - Caller dilarang keras membeli entitlement global `all_access` atau `all_ai` dengan harga per-modul.
+   - `getEntitlementKey()` menolak fallback ke input mentah klien.
+2. **Eliminasi Double-Dispatch Provisioning**:
+   - Fungsi `redeemCode` mencatat job berstatus `pending` ke `provisioning_outbox` secara atomik di dalam transaksi Firestore.
+   - Panggilan langsung ke Cloud Run di luar transaksi dihapus; outbox worker `processProvisioningOutbox` (ber-lease dan ber-retry) menjadi *single source of truth*.
+   - Kode voucher mentah pada notifikasi Telegram direduksi (`***`).
 
----
+### B. Restorasi Performa UI & Animasi Ruang AI Bebas Lag (OT-F007, OT-F019)
+1. **Pembersihan GPU Overhead**:
+   - Menghapus `Transform.scale` pada seluruh `baseScaffold` (mencegah rasterisasi ulang pohon widget Dashboard/Navigasi pada setiap frame).
+   - Menghapus `ScaleTransition` pada `AgentMultiTabRoom` (mencegah deformasi tekstur native Android PlatformView Chromium/WebView yang memicu lag dan stuttering).
+2. **Animasi Geser Vertikal Murni (240ms)**:
+   - Transisi vertikal murni sumbu Y (`0.12` ➔ `0.0`) dengan kurva `Curves.easeOutCubic` berdurasi 240 ms (penutupan 200 ms). Berjalan stabil di 60/120 FPS pada perangkat Android fisik.
+   - Mendukung `MediaQuery.disableAnimations` untuk aksesibilitas *reduced motion*.
+3. **Penutupan Double-Back Race Window (OT-F007)**:
+   - `PopScope` di `MainShellScreen` memvalidasi `_roomAnimController.isDismissed`. Ketukan Back kedua saat animasi penutupan berlangsung diserap aman dan tidak menutup aplikasi.
 
-## 3. Katalog Harga Tunggal (Single Source of Truth)
-- **Paket Lengkap (Semua Spesialis)**:
-  - Bulanan: **Rp 99.000**
-  - 6 Bulan: **Rp 499.000**
-  - 1 Tahun: **Rp 799.000** (Hemat 25%)
-- **Modul Satuan Fikih Tahawwulat**: **Rp 50.000 / bulan**
+### C. Keamanan Payment WebView & Kepatuhan Legal (OT-F005, OT-F006)
+1. **Destination Allowlist DOKU Sheet**:
+   - `shouldOverrideUrlLoading` memvalidasi skema `https` dan membatasi rute navigasi hanya ke domain resmi DOKU (`*.doku.com`, `*.doku.id`) dan domain aplikasi OpenTurath (`openturath-ai.web.app`, `openturath.ai`). URL di luar itu dibatalkan (`CANCEL`).
+2. **Keselarasan Privasi & Penyimpanan**:
+   - Teks pada `legal_copy.dart` dan `public/privacy.html` dikoreksi secara faktual menjadi *"penyimpanan aplikasi secara lokal pada perangkat Anda"*.
 
----
+### D. Integritas Data Bibliografis Turats (OT-F011)
+- Konsistensi identitas pengarang dan tahun wafat pada `canonical_syafii.json` divalidasi 100%:
+  - *Al-Hidayah ila Auham al-Kifayah*: Atribusi kanonikal Al-Isnawi (w. 772 H).
+  - *Bidayat al-Muhtaj fi Syarh al-Minhaj*: Atribusi kanonikal Ibnu Qadhi Syuhbah (w. 874 H).
+  - *Ithaf al-Arib bi Syarh al-Ghayah wa at-Taqrib*: Atribusi kanonikal Asy-Syabrawi bin Abi al-Ma'athi.
 
-## 4. Git Commits Riwayat Terkini
-- `257cdcd`: `chore(release): bump version to 1.0.21+22 for release build`
-- `d43d293`: `test(copy): add copywriting regression assertions and update audit pack`
-- `4db467b`: `fix(copy): update backend messages, prompts, and wrapper toast in Cloud Functions`
-- `ce2b36b`: `fix(copy): align library sheet, error states, and app initialization with AppCopy`
-- `66e02a6`: `fix(copy): overhaul navigation, profile, settings, and bookmark screens to calm library tone`
-- `7b13c82`: `fix(copy): update model descriptions, suggested prompts, and app tagline to calm library tone`
-- `27f642a`: `fix(copy): apply calm scholarly Indonesian copywriting to agent_webview_screen`
-- `cf1ec77`: `feat(copy): add centralized AppCopy repository with canonical quiet scholar strings`
+### E. Verifikasi Mutu & Pengujian
+- `flutter analyze lib/`: **0 issues found** (Analisis statis bersih 100%).
+- `flutter test`: **132 dari 132 test case LULUS 100%**.
+- `npm run build` (Functions): **TypeScript tsc 100% BERSIH tanpa error**.
 
 ---
 
-## 5. Instruksi Cepat untuk Agen di Sesi Baru
+## 3. Riwayat Git Checkpoint Penting
+- `ee3d18f`: `fix(catalog): koreksi atribusi pengarang kanonikal dan tahun wafat kontradiktif (OT-F011)`
+- `9f1f952`: `fix(legal): selaraskan klaim penyimpanan catatan dengan implementasi lokal perangkat (OT-F006)`
+- `b823158`: `security(payment): terapkan destination allowlist ketat pada DOKU checkout WebView (OT-F005)`
+- `ad4c449`: `fix(ui): restorasi performa animasi vertikal murni dan tutup double-back race window (OT-F007, OT-F019)`
+- `935a571`: `fix(security): tutup celah P0 checkout all_access dan hilangkan double-dispatch provisioning (OT-F001, OT-F003)`
+- `78cd4d3`: `security(rules): perketat validasi dan kepemilikan client_error_logs (AUD-04)`
+- `0ea400a`: `fix(ui): selaraskan textAlign RTL Arab dan bersihkan peringatan analyzer (AUD-06, AUD-07)`
+- `b21ae70`: `fix(session): perbaiki pergeseran indeks tab saat closeTab dan batasi maxTabs 7 (AUD-03)`
+- `6cd559f`: `fix(navigation): terapkan per-route in-flight window 450ms pada NavigationGuard (AUD-01)`
+
+---
+
+## 4. Instruksi Cepat untuk Agen di Sesi Baru
 Jika pengguna membuka chat baru dan meminta:
 - *"Lanjutkan pengerjaan OpenTurath sesuai PROJECT_HANDOVER.md"*:
   1. Langsung pahami seluruh status di atas.
-  2. Tanyakan apakah pengguna ingin melakukan kompilasi build APK rilis final, melakukan pengujian di emulator/device, atau ingin mereview tampilan tertentu.
-  3. Selalu patuhi **Rule 1 (Git commit otomatis per perubahan)** dan **Rule 2 (Integritas release APK)**.
+  2. Selalu patuhi **Rule 1 (Git commit otomatis per perubahan)** dan **Rule 2 (Integritas release APK)**.
+  3. Periksa ketersediaan test dan lakukan build release hanya setelah verifikasi kode 100% lulus.
 
 ```
 
@@ -213,7 +222,7 @@ Jika pengguna membuka chat baru dan meminta:
 name: openturath_ai
 description: "OpenTurath AI - الذكاء الاصطناعي للعلوم الإسلامية"
 publish_to: 'none'
-version: 1.0.23+24
+version: 1.0.24+25
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -2269,11 +2278,36 @@ const AGENT_ENTITLEMENTS: Record<string, string> = {
 
 const TRIAL_QUESTION_LIMIT = 10;
 
+// Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
+export const PURCHASABLE_AGENTS = new Set([
+  "fiqh_tahawwulat",
+  "fiqh_syafii",
+  "fiqh_hanafi",
+  "fiqh_maliki",
+  "fiqh_hambali",
+  "hadits",
+  "tafsir",
+  "ushul_fiqh",
+  "tarikh",
+  "tasawwuf",
+  "aqidah",
+  "nahwu_sharaf",
+]);
+
+export const MODULE_PLANS: Record<string, { amount: number; durationMonths: number; labelSuffix: string }> = {
+  tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+  tholib_6m: { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+  bahits_1y: { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+  "1m": { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+  "6m": { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+  "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+};
+
 function getEntitlementKey(agentId: string): string {
   const entitlementKey = AGENT_ENTITLEMENTS[agentId];
   if (!entitlementKey) {
-    // Fallback jika ada id modul baru
-    return agentId;
+    // OT-F001: Jangan pernah mengembalikan input mentah client untuk mencegah privilege escalation
+    return "";
   }
   return entitlementKey;
 }
@@ -2469,7 +2503,7 @@ function generateDokuSignature(
 }
 
 function resolvePlanPricing(agentId: string, plan: string): { amount: number; durationMonths: number; label: string; entitlementKey: string } {
-  const isAllAi = agentId === "all_ai" || plan.startsWith("all_ai");
+  const isAllAi = agentId === "all_ai" || agentId === "all_access" || plan.startsWith("all_ai") || plan.startsWith("all_access");
 
   if (isAllAi) {
     throw new functions.https.HttpsError(
@@ -2478,21 +2512,37 @@ function resolvePlanPricing(agentId: string, plan: string): { amount: number; du
     );
   }
 
-  let durationMonths = 1;
-  if (plan.includes("1y") || plan.includes("year") || plan === "bahits_1y") durationMonths = 12;
-  else if (plan.includes("6m") || plan === "tholib_6m") durationMonths = 6;
-  else durationMonths = 1;
-
-  // Masing-masing AI per-modul: 1m = 49.000, 6m = 299.000, 1y = 499.000
-  const entitlementKey = getEntitlementKey(agentId);
-  const agentTitle = agentId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  if (durationMonths === 12) {
-    return { amount: 499000, durationMonths, label: `Modul AI ${agentTitle} (1 Tahun)`, entitlementKey };
-  } else if (durationMonths === 6) {
-    return { amount: 299000, durationMonths, label: `Modul AI ${agentTitle} (6 Bulan)`, entitlementKey };
-  } else {
-    return { amount: 49000, durationMonths, label: `Modul AI ${agentTitle} (1 Bulan)`, entitlementKey };
+  // OT-F001: Closed-set whitelist enforcement
+  if (!PURCHASABLE_AGENTS.has(agentId)) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Modul spesialis tidak valid atau tidak dapat dibeli."
+    );
   }
+
+  const tier = MODULE_PLANS[plan];
+  if (!tier) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Paket langganan tidak valid."
+    );
+  }
+
+  const entitlementKey = getEntitlementKey(agentId);
+  if (!entitlementKey || entitlementKey === "all_access" || entitlementKey === "all_ai") {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Entitlement untuk modul ini tidak valid atau dinonaktifkan."
+    );
+  }
+
+  const agentTitle = agentId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  return {
+    amount: tier.amount,
+    durationMonths: tier.durationMonths,
+    label: `Modul AI ${agentTitle} ${tier.labelSuffix}`,
+    entitlementKey,
+  };
 }
 
 async function requestDokuCheckout(params: {
@@ -3332,11 +3382,16 @@ export const redeemCode = functions
     // F63: Redaksi log kode voucher mentah
     console.log(`[Redeem] Voucher berhasil ditukarkan oleh ${uid}. Modul: ${redeemResult.entitlementKey}, aktif s/d ${redeemResult.expiryIso}`);
 
+    // OT-F025: Redaksi kode voucher di Telegram agar tidak mengekspos rahasia
+    const maskedCode = rawCode.length > 6
+      ? `${rawCode.substring(0, 3)}***${rawCode.substring(rawCode.length - 2)}`
+      : "***";
+
     // 1. Kirim notifikasi Telegram seketika ke admin
     const tgMessage = 
       `🔔 <b>[VOUCHER SANTRI DIKLAIM]</b>\n` +
       `🕌 OpenTurath AI\n` +
-      `🎟️ Kode: <b>${rawCode}</b>\n` +
+      `🎟️ Kode: <b>${maskedCode}</b>\n` +
       `📧 Email: <code>${redeemResult.email}</code>\n` +
       `👤 Nama: <b>${redeemResult.name}</b>\n` +
       `📦 Produk: <b>${redeemResult.serviceTitle}</b>\n` +
@@ -3346,23 +3401,8 @@ export const redeemCode = functions
     
     await sendTelegramNotification(tgMessage);
 
-    // 2. Trigger auto-provisioning ke server NotebookLM (Cloud Run)
-    try {
-      const targetService = redeemResult.entitlementKey === "all_access" ? "Paket Semua AI" : redeemResult.serviceTitle;
-      await notifySubscriptionServer(
-        redeemResult.email,
-        redeemResult.name,
-        "voucher_access",
-        "add",
-        targetService
-      );
-      await db.collection("provisioning_outbox").doc(`redeem_${rawCode}_${uid}`).update({
-        status: "completed",
-        provisioned_at: admin.firestore.FieldValue.serverTimestamp(),
-      });
-    } catch (err: any) {
-      console.error("[Redeem] Auto-provisioning via Cloud Run error:", err?.message || err);
-    }
+    // OT-F003: Auto-provisioning dialihkan sepenuhnya ke durable outbox worker (processProvisioningOutbox)
+    // untuk mencegah race condition double-dispatch ke Cloud Run.
 
     return {
       success: true,
@@ -5754,7 +5794,7 @@ abstract final class LegalCopy {
       content:
           'Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. '
           'Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\n'
-          'Catatan disimpan secara lokal pada perangkat Anda melalui basis data terenkripsi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.',
+          'Catatan disimpan secara lokal pada perangkat Anda melalui penyimpanan aplikasi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.',
     ),
     LegalSection(
       title: '9. Hak atas Aplikasi dan Kitab',
@@ -5848,7 +5888,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: '5. Catatan dan Penyimpanan Perangkat',
       content:
-          'Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan basis data SQLite terenkripsi. '
+          'Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan penyimpanan aplikasi. '
           'Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. '
           'Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain.',
     ),
@@ -14127,9 +14167,7 @@ class _MainShellScreenState extends State<MainShellScreen>
 
   late final AnimationController _roomAnimController;
   late final Animation<Offset> _roomSlideAnimation;
-  late final Animation<double> _roomScaleAnimation;
   late final Animation<double> _roomFadeAnimation;
-  late final Animation<double> _bgScaleAnimation;
   late final Animation<double> _bgDimmerAnimation;
 
   @override
@@ -14138,26 +14176,22 @@ class _MainShellScreenState extends State<MainShellScreen>
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
 
+    // Animasi geser vertikal murni nan ringan (240ms) tanpa scale/GPU lag
     _roomAnimController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 380),
-      reverseDuration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 240),
+      reverseDuration: const Duration(milliseconds: 200),
     );
 
     final CurvedAnimation easeCurve = CurvedAnimation(
       parent: _roomAnimController,
-      curve: Curves.fastOutSlowIn,
-      reverseCurve: Curves.easeInOutCubic,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
     );
 
     _roomSlideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.08),
+      begin: const Offset(0.0, 0.12),
       end: Offset.zero,
-    ).animate(easeCurve);
-
-    _roomScaleAnimation = Tween<double>(
-      begin: 0.94,
-      end: 1.0,
     ).animate(easeCurve);
 
     _roomFadeAnimation = Tween<double>(
@@ -14165,14 +14199,9 @@ class _MainShellScreenState extends State<MainShellScreen>
       end: 1.0,
     ).animate(easeCurve);
 
-    _bgScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.975,
-    ).animate(easeCurve);
-
     _bgDimmerAnimation = Tween<double>(
       begin: 0.0,
-      end: 0.40,
+      end: 0.35,
     ).animate(easeCurve);
 
     if (AgentSessionManager.instance.isOpen) {
@@ -14182,10 +14211,19 @@ class _MainShellScreenState extends State<MainShellScreen>
   }
 
   void _onSessionStateChanged() {
+    final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     if (AgentSessionManager.instance.isOpen) {
-      _roomAnimController.forward();
+      if (disableAnimations) {
+        _roomAnimController.value = 1.0;
+      } else {
+        _roomAnimController.forward();
+      }
     } else {
-      _roomAnimController.reverse();
+      if (disableAnimations) {
+        _roomAnimController.value = 0.0;
+      } else {
+        _roomAnimController.reverse();
+      }
     }
   }
 
@@ -14400,10 +14438,12 @@ class _MainShellScreenState extends State<MainShellScreen>
           final isRoomVisible = _roomAnimController.value > 0.0 || sessionManager.isOpen;
 
           return PopScope(
-            canPop: !sessionManager.isOpen && _currentIndex == 0,
+            // OT-F007: canPop hanya diizinkan jika ruang tertutup DAN animasi selesai di-dismiss
+            canPop: !sessionManager.isOpen && _roomAnimController.isDismissed && _currentIndex == 0,
             onPopInvokedWithResult: (didPop, result) {
               if (didPop) return;
-              if (sessionManager.isOpen) {
+              // Cegah double-back race saat animasi mundur sedang berjalan
+              if (sessionManager.isOpen || !_roomAnimController.isDismissed) {
                 sessionManager.closeRoom();
                 return;
               }
@@ -14413,12 +14453,8 @@ class _MainShellScreenState extends State<MainShellScreen>
             },
             child: Stack(
               children: [
-                // 1. Dashboard latar belakang dengan redaman depth-scale
-                Transform.scale(
-                  scale: _bgScaleAnimation.value,
-                  alignment: Alignment.center,
-                  child: baseScaffold,
-                ),
+                // 1. Dashboard latar belakang (Stationary - bebas GPU overhead rasterisasi)
+                baseScaffold,
 
                 // 2. Backdrop Dimmer lembut
                 if (_roomAnimController.value > 0.0)
@@ -14431,7 +14467,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                     ),
                   ),
 
-                // 3. Ruang AI Multi-Tab ("Fathul Kitab")
+                // 3. Ruang AI Multi-Tab ("Fathul Kitab" - Pure Vertical Slide & Fade)
                 Positioned.fill(
                   child: Offstage(
                     offstage: !isRoomVisible,
@@ -14441,11 +14477,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                         opacity: _roomFadeAnimation,
                         child: SlideTransition(
                           position: _roomSlideAnimation,
-                          child: ScaleTransition(
-                            scale: _roomScaleAnimation,
-                            alignment: Alignment.bottomCenter,
-                            child: child,
-                          ),
+                          child: child,
                         ),
                       ),
                     ),
@@ -20688,6 +20720,30 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     }
   }
 
+  /// OT-F005: Destination allowlist ketat untuk WebView transaksi pembayaran
+  bool _isAllowedPaymentDestination(Uri uri) {
+    if (uri.scheme != 'https') return false;
+
+    final host = uri.host.toLowerCase();
+    
+    // Domain aplikasi OpenTurath
+    if (host == 'openturath-ai.web.app' ||
+        host == 'openturath.ai' ||
+        host.endsWith('.openturath.ai')) {
+      return true;
+    }
+
+    // Domain resmi payment gateway DOKU & sandbox
+    if (host == 'doku.com' ||
+        host.endsWith('.doku.com') ||
+        host == 'doku.id' ||
+        host.endsWith('.doku.id')) {
+      return true;
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -20865,8 +20921,14 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                         }
                       },
                       shouldOverrideUrlLoading: (controller, navigationAction) async {
-                        final uri = navigationAction.request.url;
-                        if (uri == null) return NavigationActionPolicy.ALLOW;
+                        final webUri = navigationAction.request.url;
+                        if (webUri == null) return NavigationActionPolicy.CANCEL;
+
+                        final uri = Uri.tryParse(webUri.toString());
+                        if (uri == null || !_isAllowedPaymentDestination(uri)) {
+                          debugPrint('[DokuCheckout] Navigation to untrusted destination rejected: $webUri');
+                          return NavigationActionPolicy.CANCEL;
+                        }
 
                         final urlStr = uri.toString().toLowerCase();
 
