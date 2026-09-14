@@ -42,4 +42,13 @@ void main() {
     expect(summary.state, MembershipPassState.locked);
     expect(summary.ctaLabel, 'Aktifkan Pro');
   });
+
+  test('keeps a legacy account-level Pro subscription open during migration', () {
+    final legacy = UserModel(
+      uid: 'legacy', name: 'Udin', email: 'u@example.com', photoUrl: '',
+      plan: 'tholib_1m', questionsUsed: 0,
+      subscriptionExpiry: DateTime.now().add(const Duration(days: 10)),
+    );
+    expect(resolveMembershipPass(legacy).state, MembershipPassState.activePro);
+  });
 }
