@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
+import '../core/bookmark_content.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
@@ -40,16 +41,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   static const List<String> _categories = [
     'Semua',
     'Catatan',
-    'Ibarah Kitab',
-    'Rujukan Kitab',
-    'Fikih',
-    'Hadis',
-    'Tafsir',
-    'Akidah',
-    'Usul Fikih',
-    'Bahasa Arab',
-    'Sejarah',
-    'Tasawuf & Akhlak',
+    'Jawaban AI',
+    'Rujukan',
   ];
 
   @override
@@ -92,28 +85,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _filter() {
     final q = _searchQuery.toLowerCase().trim();
     _filteredBookmarks = _allBookmarks.where((b) {
-      final fieldLower = b.fieldName.toLowerCase();
-      final isBookRef = b.id.startsWith('book_') || fieldLower.contains('rujukan kitab');
-
       bool matchesCategory;
       if (_selectedCategory == 'Semua') {
         matchesCategory = true;
-      } else if (_selectedCategory == 'Rujukan Kitab') {
-        matchesCategory = isBookRef;
-      } else if (_selectedCategory == 'Ibarah Kitab') {
-        matchesCategory = !isBookRef && !fieldLower.contains('catatan');
       } else if (_selectedCategory == 'Catatan') {
-        matchesCategory = fieldLower.contains('catatan');
+        matchesCategory = b.documentKind == BookmarkDocumentKind.personalNote;
+      } else if (_selectedCategory == 'Jawaban AI') {
+        matchesCategory = b.documentKind == BookmarkDocumentKind.aiAnswer;
       } else {
-        matchesCategory = fieldLower.contains(_selectedCategory.toLowerCase()) ||
-            (_selectedCategory == 'Hadis' && fieldLower.contains('hadits')) ||
-            (_selectedCategory == 'Sejarah' && fieldLower.contains('tarikh')) ||
-            (_selectedCategory == 'Akidah' && fieldLower.contains('aqidah')) ||
-            (_selectedCategory == 'Usul Fikih' && fieldLower.contains('ushul')) ||
-            (_selectedCategory == 'Tasawuf & Akhlak' &&
-                (fieldLower.contains('tasawuf') ||
-                    fieldLower.contains('tasawwuf') ||
-                    fieldLower.contains('akhlak')));
+        matchesCategory = b.documentKind == BookmarkDocumentKind.bookReference;
       }
 
       if (!matchesCategory) return false;
@@ -140,7 +120,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
             'Hapus catatan?',
-            style: OTTypography.screenTitle(color: textPrimary).copyWith(fontSize: 18),
+            style: OTTypography.screenTitle(color: textPrimary)
+                .copyWith(fontSize: 18),
           ),
           content: Text(
             'Catatan ini akan dihapus permanen.',
@@ -158,7 +139,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
                 backgroundColor: OTColors.destructive,
-                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                shape:
+                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(
                 'Hapus',
@@ -292,7 +274,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               _showSearch ? Icons.close_rounded : Icons.search_rounded,
               color: textPrimary,
             ),
-            tooltip: _showSearch ? 'Tutup pencarian' : AppCopy.searchSavedTooltip,
+            tooltip:
+                _showSearch ? 'Tutup pencarian' : AppCopy.searchSavedTooltip,
             onPressed: () {
               OTMotion.selection();
               setState(() {
@@ -366,6 +349,22 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 ),
               ),
 
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 0),
+              child: Row(
+                children: [
+                  Text(
+                    '${_filteredBookmarks.length} arsip kajian',
+                    style: OTTypography.captionMedium(color: textSecondary),
+                  ),
+                  const Spacer(),
+                  Icon(Icons.inventory_2_outlined,
+                      size: 15, color: textSecondary),
+                ],
+              ),
+            ),
+
             // ── Horizontal Filter Pills ──
             Container(
               height: 38,
@@ -374,7 +373,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
                 itemCount: _categories.length,
-                separatorBuilder: (_, __) => const SizedBox(width: OTSpacing.sm),
+                separatorBuilder: (_, __) =>
+                    const SizedBox(width: OTSpacing.sm),
                 itemBuilder: (context, index) {
                   final cat = _categories[index];
                   final isSelected = _selectedCategory == cat;
@@ -398,7 +398,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         color: isSelected ? textPrimary : surface,
                         borderRadius: OTRadius.chipBorder,
                         border: Border.all(
-                          color: isSelected ? textPrimary : border.withValues(alpha: 0.7),
+                          color: isSelected
+                              ? textPrimary
+                              : border.withValues(alpha: 0.7),
                           width: 0.8,
                         ),
                       ),
@@ -409,7 +411,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             color: isSelected ? canvas : textSecondary,
                           ).copyWith(
                             fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w400,
                           ),
                         ),
                       ),
@@ -434,7 +437,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       backgroundColor: surface,
                       child: _filteredBookmarks.isEmpty
                           ? LayoutBuilder(
-                              builder: (context, constraints) => SingleChildScrollView(
+                              builder: (context, constraints) =>
+                                  SingleChildScrollView(
                                 physics: const AlwaysScrollableScrollPhysics(
                                   parent: BouncingScrollPhysics(),
                                 ),
@@ -444,9 +448,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   ),
                                   child: Center(
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: OTSpacing.xl),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: OTSpacing.xl),
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Container(
                                             width: 68,
@@ -454,11 +460,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                             decoration: BoxDecoration(
                                               color: surfaceSubtle,
                                               borderRadius: OTRadius.cardBorder,
-                                              border: Border.all(color: border, width: 1.0),
+                                              border: Border.all(
+                                                  color: border, width: 1.0),
                                             ),
                                             child: Center(
                                               child: Icon(
-                                                Icons.collections_bookmark_outlined,
+                                                Icons
+                                                    .collections_bookmark_outlined,
                                                 size: 30,
                                                 color: textSecondary,
                                               ),
@@ -467,15 +475,20 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           const SizedBox(height: OTSpacing.lg),
                                           Text(
                                             AppCopy.noSavedTitle,
-                                            style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                                            style: OTTypography.cardTitle(
+                                                    color: textPrimary)
+                                                .copyWith(
                                               fontSize: 16,
                                             ),
                                           ),
-                                          const SizedBox(height: OTSpacing.xs + 2),
+                                          const SizedBox(
+                                              height: OTSpacing.xs + 2),
                                           Text(
                                             AppCopy.noSavedDescription,
                                             textAlign: TextAlign.center,
-                                            style: OTTypography.body(color: textSecondary).copyWith(
+                                            style: OTTypography.body(
+                                                    color: textSecondary)
+                                                .copyWith(
                                               fontSize: 13,
                                             ),
                                           ),
@@ -483,20 +496,27 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           OutlinedButton.icon(
                                             onPressed: () {
                                               OTMotion.light();
-                                              final shell = MainShellController.of(context);
+                                              final shell =
+                                                  MainShellController.of(
+                                                      context);
                                               shell?.switchTab(1);
                                             },
-                                            icon: const Icon(Icons.menu_book_outlined, size: 16),
+                                            icon: const Icon(
+                                                Icons.menu_book_outlined,
+                                                size: 16),
                                             label: const Text('Mulai telaah'),
                                             style: OutlinedButton.styleFrom(
                                               foregroundColor: textPrimary,
-                                              side: BorderSide(color: border, width: 1.0),
-                                              padding: const EdgeInsets.symmetric(
+                                              side: BorderSide(
+                                                  color: border, width: 1.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: OTSpacing.lg,
                                                 vertical: OTSpacing.md,
                                               ),
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: OTRadius.buttonBorder,
+                                                borderRadius:
+                                                    OTRadius.buttonBorder,
                                               ),
                                               textStyle: OTTypography.button(),
                                             ),
@@ -519,26 +539,30 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                 108,
                               ),
                               itemCount: _filteredBookmarks.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: OTSpacing.md),
-                          itemBuilder: (context, index) {
-                            final item = _filteredBookmarks[index];
-                            return _BookmarkCard(
-                              item: item,
-                              searchQuery: _searchQuery,
-                              surface: surface,
-                              surfaceSubtle: surfaceSubtle,
-                              border: border,
-                              textPrimary: textPrimary,
-                              textSecondary: textSecondary,
-                              accent: accent,
-                              onEdit: () => _openNoteEditor(item),
-                              onCopy: () => _copyIbarah(item.arabicExcerpt.isNotEmpty ? item.arabicExcerpt : item.fullAnswer),
-                              onOpen: () => _openBookmarkItem(item),
-                              onShare: () => _shareBookmark(item),
-                              onDelete: () => _deleteBookmark(item),
-                            );
-                          },
-                        ),
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: OTSpacing.md),
+                              itemBuilder: (context, index) {
+                                final item = _filteredBookmarks[index];
+                                return _BookmarkCard(
+                                  item: item,
+                                  searchQuery: _searchQuery,
+                                  surface: surface,
+                                  surfaceSubtle: surfaceSubtle,
+                                  border: border,
+                                  textPrimary: textPrimary,
+                                  textSecondary: textSecondary,
+                                  accent: accent,
+                                  onEdit: () => _openNoteEditor(item),
+                                  onCopy: () => _copyIbarah(
+                                      item.arabicExcerpt.isNotEmpty
+                                          ? item.arabicExcerpt
+                                          : item.fullAnswer),
+                                  onOpen: () => _openBookmarkItem(item),
+                                  onShare: () => _shareBookmark(item),
+                                  onDelete: () => _deleteBookmark(item),
+                                );
+                              },
+                            ),
                     ),
             ),
           ],
@@ -584,7 +608,9 @@ class _BookmarkCard extends StatefulWidget {
 }
 
 class _BookmarkCardState extends State<_BookmarkCard> {
-  bool _isExpanded = false;
+  // Daftar arsip tidak pernah membuka isi panjang di tempat; detail dibuka
+  // lewat ketukan kartu agar satu tangan tetap nyaman dipakai pada ponsel.
+  final bool _isExpanded = false;
 
   String _formatRelativeTime(DateTime dt) {
     final now = DateTime.now();
@@ -594,12 +620,26 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     if (diff.inHours < 24) return '${diff.inHours}j lalu';
     if (diff.inDays == 1) return 'Kemarin';
     if (diff.inDays < 7) return '${diff.inDays}h lalu';
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des'
+    ];
     return '${dt.day} ${months[dt.month - 1]}';
   }
 
   String _cleanSingleLine(String text) {
-    final lines = text.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty);
+    final lines =
+        text.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty);
     if (lines.isEmpty) return '';
     return lines.first.replaceAll(RegExp(r'[#*>`_~]'), '').trim();
   }
@@ -608,9 +648,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     final cleanQ = query.trim().toLowerCase();
     if (cleanQ.isEmpty) return _cleanSingleLine(fullAnswer);
 
-    final lines = fullAnswer.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty);
+    final lines =
+        fullAnswer.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty);
     for (final line in lines) {
-      if (line.toLowerCase().contains(cleanQ) || ArabicUtils.matches(line, cleanQ)) {
+      if (line.toLowerCase().contains(cleanQ) ||
+          ArabicUtils.matches(line, cleanQ)) {
         return line.replaceAll(RegExp(r'[#*>`_~]'), '').trim();
       }
     }
@@ -729,30 +771,32 @@ class _BookmarkCardState extends State<_BookmarkCard> {
   Widget build(BuildContext context) {
     final item = widget.item;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isBookRef = item.id.startsWith('book_') || item.fieldName == 'Rujukan Kitab';
+    final isBookRef = item.documentKind == BookmarkDocumentKind.bookReference;
     final hasValidBookRef = item.bookReference.isNotEmpty &&
         !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
-    final pillLabel = item.agentTitle.isNotEmpty
-        ? item.agentTitle
-        : (isBookRef ? 'Rujukan Kitab' : (item.fieldName.isNotEmpty ? item.fieldName : 'Catatan'));
+    final pillLabel = switch (item.documentKind) {
+      BookmarkDocumentKind.personalNote => 'CATATAN PRIBADI',
+      BookmarkDocumentKind.aiAnswer => 'JAWABAN AI',
+      BookmarkDocumentKind.bookReference => 'RUJUKAN KITAB',
+    };
 
     return AnimatedContainer(
       duration: OTMotion.normal,
       curve: OTMotion.curve,
       child: InkWell(
-        onTap: () {
-          OTMotion.selection();
-          setState(() => _isExpanded = !_isExpanded);
-        },
+        onTap: widget.onOpen,
         borderRadius: OTRadius.cardBorder,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.md + 2, vertical: 12),
+          padding: const EdgeInsets.symmetric(
+              horizontal: OTSpacing.md + 2, vertical: 12),
           decoration: BoxDecoration(
             color: widget.surface,
             borderRadius: OTRadius.cardBorder,
             border: Border.all(
-              color: _isExpanded ? widget.accent.withValues(alpha: 0.4) : widget.border,
+              color: _isExpanded
+                  ? widget.accent.withValues(alpha: 0.4)
+                  : widget.border,
               width: _isExpanded ? 1.0 : 0.8,
             ),
           ),
@@ -764,14 +808,16 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                 children: [
                   Flexible(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2.5),
                       decoration: BoxDecoration(
                         color: widget.accent.withValues(alpha: 0.12),
                         borderRadius: OTRadius.chipBorder,
                       ),
                       child: Text(
                         pillLabel,
-                        style: OTTypography.captionMedium(color: widget.accent).copyWith(
+                        style: OTTypography.captionMedium(color: widget.accent)
+                            .copyWith(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                         ),
@@ -789,10 +835,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                   ),
                   const SizedBox(width: 4),
                   Icon(
-                    _isExpanded
-                        ? Icons.keyboard_arrow_up_rounded
-                        : Icons.keyboard_arrow_down_rounded,
-                    size: 18,
+                    Icons.chevron_right_rounded,
+                    size: 20,
                     color: widget.textSecondary,
                   ),
                 ],
@@ -804,7 +848,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
               _buildHighlightedText(
                 text: item.title,
                 query: widget.searchQuery,
-                baseStyle: OTTypography.cardTitle(color: widget.textPrimary).copyWith(
+                baseStyle:
+                    OTTypography.cardTitle(color: widget.textPrimary).copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -817,9 +862,13 @@ class _BookmarkCardState extends State<_BookmarkCard> {
               if (!_isExpanded && item.fullAnswer.trim().isNotEmpty) ...[
                 const SizedBox(height: 4),
                 _buildHighlightedText(
-                  text: _getSnippet(item.fullAnswer, widget.searchQuery),
+                  text: item.documentKind == BookmarkDocumentKind.aiAnswer &&
+                          widget.searchQuery.trim().isEmpty
+                      ? parseAiAnswerContent(item.fullAnswer).preview
+                      : _getSnippet(item.fullAnswer, widget.searchQuery),
                   query: widget.searchQuery,
-                  baseStyle: OTTypography.caption(color: widget.textSecondary).copyWith(
+                  baseStyle: OTTypography.caption(color: widget.textSecondary)
+                      .copyWith(
                     fontSize: 12,
                   ),
                   isDark: isDark,
@@ -833,7 +882,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                 if (hasValidBookRef) ...[
                   const SizedBox(height: OTSpacing.sm),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: widget.surfaceSubtle,
                       borderRadius: OTRadius.chipBorder,
@@ -843,9 +893,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       ),
                     ),
                     child: _buildHighlightedText(
-                      text: '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
+                      text:
+                          '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
                       query: widget.searchQuery,
-                      baseStyle: OTTypography.captionMedium(color: widget.textPrimary),
+                      baseStyle:
+                          OTTypography.captionMedium(color: widget.textPrimary),
                       isDark: isDark,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -856,7 +908,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                   const SizedBox(height: OTSpacing.md),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 12),
                     decoration: BoxDecoration(
                       color: widget.surfaceSubtle,
                       borderRadius: BorderRadius.circular(OTRadius.input),
@@ -932,9 +985,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: widget.textPrimary,
                         side: BorderSide(color: widget.border, width: 0.8),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         textStyle: OTTypography.captionMedium(),
-                        shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: OTRadius.buttonBorder),
                       ),
                     ),
                     const SizedBox(width: OTSpacing.xs + 2),
@@ -953,9 +1008,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: widget.textPrimary,
                         side: BorderSide(color: widget.border, width: 0.8),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         textStyle: OTTypography.captionMedium(),
-                        shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: OTRadius.buttonBorder),
                       ),
                     ),
                     if (isBookRef) ...[
@@ -968,9 +1025,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           backgroundColor: widget.surfaceSubtle,
                           foregroundColor: widget.textPrimary,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           textStyle: OTTypography.captionMedium(),
-                          shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: OTRadius.buttonBorder),
                         ),
                       ),
                     ],
