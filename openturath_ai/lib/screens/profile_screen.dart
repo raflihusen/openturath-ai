@@ -61,7 +61,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
             AppCopy.logoutDialogTitle,
-            style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 18),
+            style: OTTypography.cardTitle(color: textPrimary)
+                .copyWith(fontSize: 18),
           ),
           content: Text(
             AppCopy.logoutDialogBody,
@@ -70,15 +71,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Batal', style: OTTypography.button(color: textSecondary)),
+              child: Text('Batal',
+                  style: OTTypography.button(color: textSecondary)),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
                 backgroundColor: OTColors.destructive,
-                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                shape:
+                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text(AppCopy.logoutButton, style: OTTypography.button(color: Colors.white)),
+              child: Text(AppCopy.logoutButton,
+                  style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -91,7 +95,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await _authService.signOut();
       if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, AppRoutes.login, (r) => false);
       }
     } catch (_) {
       if (mounted) setState(() => _isLoggingOut = false);
@@ -110,12 +115,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: OTColors.destructive, size: 24),
+              const Icon(Icons.warning_amber_rounded,
+                  color: OTColors.destructive, size: 24),
               const SizedBox(width: OTSpacing.sm),
               Expanded(
                 child: Text(
                   AppCopy.deleteAccountTitle,
-                  style: OTTypography.cardTitle(color: OTColors.destructive).copyWith(fontSize: 18),
+                  style: OTTypography.cardTitle(color: OTColors.destructive)
+                      .copyWith(fontSize: 18),
                 ),
               ),
             ],
@@ -127,15 +134,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Batal', style: OTTypography.button(color: OTColors.textSecondary(isDark))),
+              child: Text('Batal',
+                  style: OTTypography.button(
+                      color: OTColors.textSecondary(isDark))),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
                 backgroundColor: OTColors.destructive,
-                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                shape:
+                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text(AppCopy.deleteAccountButton, style: OTTypography.button(color: Colors.white)),
+              child: Text(AppCopy.deleteAccountButton,
+                  style: OTTypography.button(color: Colors.white)),
             ),
           ],
         );
@@ -149,7 +160,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await _authService.deleteAccount();
       if (mounted) {
         AppSnackBar.success(context, AppCopy.deleteAccountSuccess);
-        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (r) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, AppRoutes.login, (r) => false);
       }
     } catch (e) {
       if (mounted) {
@@ -175,6 +187,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       },
     );
+  }
+
+  List<ModuleEntitlement> _activeEntitlements(UserModel? user) {
+    if (user == null) return const [];
+    return user.entitlements.values
+        .where((entitlement) => entitlement.isActive && entitlement.isPremium)
+        .toList();
+  }
+
+  bool _hasActiveSubscription(UserModel? user) {
+    return (user?.isSubscriptionActive ?? false) ||
+        _activeEntitlements(user).isNotEmpty;
+  }
+
+  String _accessLabel(UserModel? user) {
+    if (user == null || !_hasActiveSubscription(user)) {
+      return 'Belum ada akses AI aktif';
+    }
+
+    final hasAllAccess = user.isSubscriptionActive &&
+        user.plan != 'single' &&
+        !(user.entitlements['all_access']?.status == 'revoked');
+    final allEntitlement =
+        user.entitlements['all_access'] ?? user.entitlements['all_ai'];
+    if (hasAllAccess || (allEntitlement?.isActive ?? false)) {
+      return 'Seluruh asisten OpenTurath';
+    }
+
+    final entitledKeys = user.entitlements.entries
+        .where((entry) => entry.value.isActive && entry.value.isPremium)
+        .map((entry) => entry.key)
+        .toSet();
+    final titles = AgentModel.defaultAgents
+        .where((agent) => entitledKeys.contains(agent.id))
+        .map((agent) => agent.title)
+        .toList();
+
+    if (titles.isEmpty) return 'Asisten pilihan Anda';
+    if (titles.length == 1) return titles.first;
+    if (titles.length == 2) return '${titles.first} & ${titles.last}';
+    return '${titles.first} +${titles.length - 1} asisten';
+  }
+
+  DateTime? _accessExpiry(UserModel? user) {
+    if (user?.subscriptionExpiry != null) return user!.subscriptionExpiry;
+    final expiries = _activeEntitlements(user)
+        .map((entitlement) => entitlement.expiry)
+        .whereType<DateTime>()
+        .toList()
+      ..sort();
+    return expiries.isEmpty ? null : expiries.first;
   }
 
   @override
@@ -216,143 +279,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
                 : (fbUser?.email ?? 'pengguna@openturath.id');
-            final plan = userModel?.plan ?? 'trial';
-            final isSubscribed =
-                userModel?.isSubscriptionActive ?? (userModel?.isPremium ?? false);
-
-            final exp = userModel?.subscriptionExpiry;
-            const months = [
-              '',
-              'Januari',
-              'Februari',
-              'Maret',
-              'April',
-              'Mei',
-              'Juni',
-              'Juli',
-              'Agustus',
-              'September',
-              'Oktober',
-              'November',
-              'Desember'
-            ];
-            final expStr = exp != null
-                ? ' · Aktif hingga ${exp.day} ${months[exp.month]} ${exp.year}'
-                : '';
-            final String subscriptionSubtitle;
-
-            if (isSubscribed) {
-              final isAllAccess = plan == 'sultan' ||
-                  plan == 'all_access' ||
-                  plan == 'all_ai_1m' ||
-                  plan == 'all_ai_6m' ||
-                  plan == 'all_ai_1y' ||
-                  plan == 'all_ai' ||
-                  (userModel?.entitlements['all_access']?.isActive ?? false);
-
-              if (isAllAccess) {
-                subscriptionSubtitle = 'Akses semua bidang$expStr';
-              } else if (plan == 'field') {
-                subscriptionSubtitle = 'Paket per bidang$expStr';
-              } else if (plan == 'single') {
-                subscriptionSubtitle = 'Akses satu bidang$expStr';
-              } else {
-                subscriptionSubtitle = '${AppCopy.activeSubscription}$expStr';
-              }
-            } else {
-              subscriptionSubtitle = AppCopy.inactiveSubscription;
-            }
+            final isSubscribed = _hasActiveSubscription(userModel);
+            final accessExpiry = _accessExpiry(userModel);
+            final accessLabel = _accessLabel(userModel);
 
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
               physics: const BouncingScrollPhysics(),
               children: [
-                // ── Card 1: Akun & Status Hak Akses ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.08)
-                                    : Colors.black.withValues(alpha: 0.05),
-                                shape: BoxShape.circle,
-                              ),
-                              alignment: Alignment.center,
-                              child: Icon(Icons.person_outline_rounded, size: 22, color: textPrimary),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    displayName,
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.2,
-                                      color: textPrimary,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    email,
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 13,
-                                      color: textSecondary,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: isSubscribed
-                                    ? (isDark ? Colors.white : const Color(0xFF18181B))
-                                    : (isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5)),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Text(
-                                isSubscribed ? 'Aktif' : 'Belum berlangganan',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: isSubscribed
-                                      ? (isDark ? const Color(0xFF18181B) : Colors.white)
-                                      : textSecondary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.credit_card_outlined,
-                        title: AppCopy.subscription,
-                        subtitle: subscriptionSubtitle,
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: () => _openSubscription(userModel),
-                      ),
-                    ],
-                  ),
+                _MembershipPass(
+                  holderName: displayName,
+                  email: email,
+                  accessLabel: accessLabel,
+                  expiresAt: accessExpiry,
+                  isActive: isSubscribed,
+                  isDark: isDark,
+                  onManage: () => _openSubscription(userModel),
                 ),
 
                 const SizedBox(height: 16),
@@ -376,7 +318,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.palette_outlined, size: 20, color: textSecondary),
+                                    Icon(Icons.palette_outlined,
+                                        size: 20, color: textSecondary),
                                     const SizedBox(width: 10),
                                     Text(
                                       AppCopy.appearance,
@@ -404,7 +347,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                    color: isDark
+                                        ? const Color(0xFF27272A)
+                                        : const Color(0xFFF4F4F5),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(
@@ -412,29 +357,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       _buildThemeOption(
                                         title: 'Ikuti Sistem',
                                         icon: Icons.brightness_auto_rounded,
-                                        isSelected: currentMode == ThemeMode.system,
+                                        isSelected:
+                                            currentMode == ThemeMode.system,
                                         isDark: isDark,
                                         textPrimary: textPrimary,
                                         textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(ThemeMode.system),
+                                        onTap: () => AppConfig.setThemeMode(
+                                            ThemeMode.system),
                                       ),
                                       _buildThemeOption(
                                         title: 'Terang',
                                         icon: Icons.light_mode_rounded,
-                                        isSelected: currentMode == ThemeMode.light,
+                                        isSelected:
+                                            currentMode == ThemeMode.light,
                                         isDark: isDark,
                                         textPrimary: textPrimary,
                                         textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(ThemeMode.light),
+                                        onTap: () => AppConfig.setThemeMode(
+                                            ThemeMode.light),
                                       ),
                                       _buildThemeOption(
                                         title: 'Gelap',
                                         icon: Icons.dark_mode_rounded,
-                                        isSelected: currentMode == ThemeMode.dark,
+                                        isSelected:
+                                            currentMode == ThemeMode.dark,
                                         isDark: isDark,
                                         textPrimary: textPrimary,
                                         textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(ThemeMode.dark),
+                                        onTap: () => AppConfig.setThemeMode(
+                                            ThemeMode.dark),
                                       ),
                                     ],
                                   ),
@@ -449,7 +400,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icons.translate_rounded,
                         title: AppCopy.language,
                         subtitle: AppCopy.languageIndonesian,
-                        trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                        trailing: Icon(Icons.chevron_right_rounded,
+                            color: textSecondary, size: 20),
                         onTap: () => _showLanguageModal(
                           context,
                           isDark,
@@ -476,7 +428,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.info_outline_rounded,
                     title: AppCopy.aboutTitle,
                     subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
-                    trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
+                    trailing: Icon(Icons.chevron_right_rounded,
+                        color: textSecondary, size: 20),
                     onTap: () => _showAboutModal(
                       context,
                       isDark,
@@ -502,9 +455,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(16),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
-                      onTap: (_isLoggingOut || _isDeletingAccount) ? null : _logout,
+                      onTap: (_isLoggingOut || _isDeletingAccount)
+                          ? null
+                          : _logout,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 18, vertical: 15),
                         child: Row(
                           children: [
                             const Icon(
@@ -514,7 +470,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(width: 14),
                             Text(
-                              _isLoggingOut ? 'Sedang keluar...' : AppCopy.logoutButton,
+                              _isLoggingOut
+                                  ? 'Sedang keluar...'
+                                  : AppCopy.logoutButton,
                               style: GoogleFonts.outfit(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
@@ -533,19 +491,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // ── Quiet Google Play Compliance: Delete Account ──
                 Center(
                   child: TextButton(
-                    onPressed: (_isLoggingOut || _isDeletingAccount) ? null : _deleteAccount,
+                    onPressed: (_isLoggingOut || _isDeletingAccount)
+                        ? null
+                        : _deleteAccount,
                     child: _isDeletingAccount
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: OTColors.destructive),
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: OTColors.destructive),
                           )
                         : Text(
                             AppCopy.deleteAccountButton,
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
-                              color: isDark ? const Color(0xFFF87171) : const Color(0xFFDC2626),
+                              color: isDark
+                                  ? const Color(0xFFF87171)
+                                  : const Color(0xFFDC2626),
                             ),
                           ),
                   ),
@@ -576,7 +539,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         title: Text(
           AppCopy.aboutTitle,
-          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
+          style: OTTypography.corpusTitle(color: textPrimary)
+              .copyWith(fontSize: 20),
         ),
         content: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -660,7 +624,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: textPrimary,
               foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+              shape:
+                  RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
             child: Text('Tutup', style: OTTypography.button()),
           ),
@@ -716,7 +681,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         title: Text(
           'Bahasa',
-          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
+          style: OTTypography.corpusTitle(color: textPrimary)
+              .copyWith(fontSize: 20),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -739,7 +705,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: textPrimary,
               foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+              shape:
+                  RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
             child: Text('Tutup', style: OTTypography.button()),
           ),
@@ -778,7 +745,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),
@@ -794,6 +762,311 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title,
                 style: GoogleFonts.outfit(
                   fontSize: 12,
+/// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
+/// dipakai tanpa menyamarkan halaman pengaturan sebagai layar perbankan.
+class _MembershipPass extends StatelessWidget {
+  final String holderName;
+  final String email;
+  final String accessLabel;
+  final DateTime? expiresAt;
+  final bool isActive;
+  final bool isDark;
+  final VoidCallback onManage;
+
+  const _MembershipPass({
+    required this.holderName,
+    required this.email,
+    required this.accessLabel,
+    required this.expiresAt,
+    required this.isActive,
+    required this.isDark,
+    required this.onManage,
+  });
+
+  String _expiryLabel() {
+    if (expiresAt == null) return '—';
+    const shortMonths = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MEI',
+      'JUN',
+      'JUL',
+      'AGU',
+      'SEP',
+      'OKT',
+      'NOV',
+      'DES',
+    ];
+    return '${expiresAt!.day.toString().padLeft(2, '0')} ${shortMonths[expiresAt!.month - 1]} ${expiresAt!.year}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardStart =
+        isDark ? const Color(0xFF303036) : const Color(0xFF25252A);
+    final cardEnd = isDark ? const Color(0xFF17171A) : const Color(0xFF111114);
+    const foreground = Color(0xFFF8F8F8);
+    const muted = Color(0xFFC7C7CC);
+    final statusLabel = isActive ? 'AKSES AKTIF' : 'BELUM AKTIF';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          button: true,
+          label: 'Kartu akses OpenTurath. $statusLabel. $accessLabel',
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(24),
+            child: InkWell(
+              onTap: onManage,
+              borderRadius: BorderRadius.circular(24),
+              child: Ink(
+                height: 206,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [cardStart, cardEnd],
+                  ),
+                  border:
+                      Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.26 : 0.18),
+                      blurRadius: 22,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(23),
+                  child: Stack(
+                    children: [
+                      // Ornamen geometris halus: memberi karakter tanpa
+                      // menyamai visual kartu bank atau mengganggu teks.
+                      Positioned(
+                        right: -52,
+                        top: -76,
+                        child: Container(
+                          width: 190,
+                          height: 190,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.12),
+                              width: 1.2,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 20,
+                        top: 30,
+                        child: Container(
+                          width: 74,
+                          height: 74,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.08),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: -36,
+                        bottom: -56,
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.035),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'OPEN',
+                                  style: GoogleFonts.newsreader(
+                                    color: foreground,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 19,
+                                    letterSpacing: -0.35,
+                                  ),
+                                ),
+                                Text(
+                                  'TURATH',
+                                  style: GoogleFonts.outfit(
+                                    color: foreground,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 9, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: isActive
+                                        ? Colors.white.withValues(alpha: 0.16)
+                                        : Colors.white.withValues(alpha: 0.08),
+                                    borderRadius: BorderRadius.circular(100),
+                                    border: Border.all(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.14)),
+                                  ),
+                                  child: Text(
+                                    statusLabel,
+                                    style: GoogleFonts.outfit(
+                                      color: foreground,
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Text(
+                              'PEMEGANG AKSES',
+                              style: GoogleFonts.outfit(
+                                color: muted,
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.1,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              holderName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(
+                                color: foreground,
+                                fontSize: 19,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                            const SizedBox(height: 1),
+                            Text(
+                              email,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(
+                                  color: muted, fontSize: 11.5),
+                            ),
+                            const SizedBox(height: 14),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: _PassMeta(
+                                    label: 'AI YANG DIAKSES',
+                                    value: accessLabel,
+                                    valueColor: foreground,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  flex: 2,
+                                  child: _PassMeta(
+                                    label: 'BERLAKU HINGGA',
+                                    value: _expiryLabel(),
+                                    valueColor: foreground,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          onPressed: onManage,
+          style: FilledButton.styleFrom(
+            backgroundColor: OTColors.accent(isDark),
+            foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+            minimumSize: const Size.fromHeight(48),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          ),
+          icon: const Icon(Icons.tune_rounded, size: 18),
+          label: Text(
+            isActive ? 'Kelola langganan' : 'Lihat pilihan langganan',
+            style: OTTypography.button(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PassMeta extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color valueColor;
+
+  const _PassMeta({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.outfit(
+            color: const Color(0xFFC7C7CC),
+            fontSize: 8.5,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.65,
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.outfit(
+            color: valueColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.1,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected ? activeFg : inactiveFg,
                 ),
@@ -834,7 +1107,8 @@ class _SettingsTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: ListTile(
         onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: OTSpacing.base, vertical: 2),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: OTSpacing.base, vertical: 2),
         leading: Icon(
           icon,
           size: 21,
