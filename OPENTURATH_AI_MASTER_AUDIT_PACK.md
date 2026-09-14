@@ -245,7 +245,7 @@ Jika pengguna membuka chat baru dan meminta:
 name: openturath_ai
 description: "OpenTurath AI - الذكاء الاصطناعي للعلوم الإسلامية"
 publish_to: 'none'
-version: 1.0.26+27
+version: 1.0.27+28
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -2090,6 +2090,11 @@ service cloud.firestore {
         match /messages/{msgId} {
           allow read, write: if request.auth != null && request.auth.uid == userId;
         }
+      }
+
+      // Sub-koleksi bookmarks / catatan riset milik user
+      match /bookmarks/{bookmarkId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
       }
     }
 
@@ -5352,7 +5357,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// OpenTurath Design System v2 — Typography (3-Layer Strict Architecture)
 /// 1. Brand Layer: Editorial Serif (hanya untuk Brand, Editorial Hero, dan Judul Korpus)
 /// 2. Interface Layer: Clean Sans (untuk tombol, navigasi, pengaturan, formulir, metadata, harga)
-/// 3. Arabic Scholarly Layer: Scheherazade New (Naskh klasik, tanpa Amiri)
+/// 3. Arabic Scholarly Layer: Tajawal
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
@@ -5410,7 +5415,7 @@ class OTTypography {
     );
   }
 
-  static TextStyle _scheherazade({
+  static TextStyle _tajawal({
     required double fontSize,
     FontWeight? fontWeight,
     double? letterSpacing,
@@ -5419,7 +5424,7 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: 'Scheherazade New',
+        fontFamily: 'Tajawal',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
@@ -5427,7 +5432,7 @@ class OTTypography {
         color: color,
       );
     }
-    return GoogleFonts.scheherazadeNew(
+    return GoogleFonts.tajawal(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -5522,25 +5527,25 @@ class OTTypography {
         color: color,
       );
 
-  // ── 3. Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color}) => _scheherazade(
+  // ── 3. Arabic Scholarly Layer (Tajawal) ──
+  static TextStyle arabicDisplay({Color? color}) => _tajawal(
         fontSize: 24,
         fontWeight: FontWeight.w700,
+        height: 1.5,
+        color: color,
+      );
+
+  static TextStyle arabicReading({Color? color}) => _tajawal(
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
         height: 1.6,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color}) => _scheherazade(
-        fontSize: 19,
-        fontWeight: FontWeight.w500,
-        height: 1.75,
-        color: color,
-      );
-
-  static TextStyle arabicQuote({Color? color}) => _scheherazade(
-        fontSize: 16,
+  static TextStyle arabicQuote({Color? color}) => _tajawal(
+        fontSize: 15,
         fontWeight: FontWeight.w400,
-        height: 1.8,
+        height: 1.65,
         color: color,
       );
 }
@@ -9972,8 +9977,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'التعلم بالتلقي عن الأشياخ هو الأصل',
-                  style: GoogleFonts.scheherazadeNew(
-                    fontSize: 16,
+                  style: GoogleFonts.tajawal(
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
                   ),
@@ -11690,6 +11695,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     super.initState();
     _loadBookmarks();
     _bookmarkService.addListener(_onBookmarksChanged);
+    _bookmarkService.syncWithCloud();
+  }
+
+  Future<void> _syncBookmarks() async {
+    await _bookmarkService.syncWithCloud();
+    await _loadBookmarks();
   }
 
   void _onBookmarksChanged() {
@@ -12055,79 +12066,97 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         color: accent,
                       ),
                     )
-                  : _filteredBookmarks.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.xl),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 68,
-                                  height: 68,
-                                  decoration: BoxDecoration(
-                                    color: surfaceSubtle,
-                                    borderRadius: OTRadius.cardBorder,
-                                    border: Border.all(color: border, width: 1.0),
+                  : RefreshIndicator(
+                      onRefresh: _syncBookmarks,
+                      color: accent,
+                      backgroundColor: surface,
+                      child: _filteredBookmarks.isEmpty
+                          ? LayoutBuilder(
+                              builder: (context, constraints) => SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(
+                                  parent: BouncingScrollPhysics(),
+                                ),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    minHeight: constraints.maxHeight,
                                   ),
                                   child: Center(
-                                    child: Icon(
-                                      Icons.collections_bookmark_outlined,
-                                      size: 30,
-                                      color: textSecondary,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: OTSpacing.xl),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 68,
+                                            height: 68,
+                                            decoration: BoxDecoration(
+                                              color: surfaceSubtle,
+                                              borderRadius: OTRadius.cardBorder,
+                                              border: Border.all(color: border, width: 1.0),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.collections_bookmark_outlined,
+                                                size: 30,
+                                                color: textSecondary,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: OTSpacing.lg),
+                                          Text(
+                                            AppCopy.noSavedTitle,
+                                            style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(height: OTSpacing.xs + 2),
+                                          Text(
+                                            AppCopy.noSavedDescription,
+                                            textAlign: TextAlign.center,
+                                            style: OTTypography.body(color: textSecondary).copyWith(
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                          const SizedBox(height: OTSpacing.xl),
+                                          OutlinedButton.icon(
+                                            onPressed: () {
+                                              OTMotion.light();
+                                              final shell = MainShellController.of(context);
+                                              shell?.switchTab(1);
+                                            },
+                                            icon: const Icon(Icons.menu_book_outlined, size: 16),
+                                            label: const Text('Mulai telaah'),
+                                            style: OutlinedButton.styleFrom(
+                                              foregroundColor: textPrimary,
+                                              side: BorderSide(color: border, width: 1.0),
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: OTSpacing.lg,
+                                                vertical: OTSpacing.md,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: OTRadius.buttonBorder,
+                                              ),
+                                              textStyle: OTTypography.button(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: OTSpacing.lg),
-                                Text(
-                                  AppCopy.noSavedTitle,
-                                  style: OTTypography.cardTitle(color: textPrimary).copyWith(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: OTSpacing.xs + 2),
-                                Text(
-                                  AppCopy.noSavedDescription,
-                                  textAlign: TextAlign.center,
-                                  style: OTTypography.body(color: textSecondary).copyWith(
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: OTSpacing.xl),
-                                OutlinedButton.icon(
-                                  onPressed: () {
-                                    OTMotion.light();
-                                    final shell = MainShellController.of(context);
-                                    shell?.switchTab(1);
-                                  },
-                                  icon: const Icon(Icons.menu_book_outlined, size: 16),
-                                  label: const Text('Mulai telaah'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: textPrimary,
-                                    side: BorderSide(color: border, width: 1.0),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: OTSpacing.lg,
-                                      vertical: OTSpacing.md,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: OTRadius.buttonBorder,
-                                    ),
-                                    textStyle: OTTypography.button(),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : ListView.separated(
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(
-                            OTSpacing.lg,
-                            OTSpacing.sm,
-                            OTSpacing.lg,
-                            108,
-                          ),
-                          itemCount: _filteredBookmarks.length,
+                              ),
+                            )
+                          : ListView.separated(
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              padding: const EdgeInsets.fromLTRB(
+                                OTSpacing.lg,
+                                OTSpacing.sm,
+                                OTSpacing.lg,
+                                108,
+                              ),
+                              itemCount: _filteredBookmarks.length,
                           separatorBuilder: (_, __) => const SizedBox(height: OTSpacing.md),
                           itemBuilder: (context, index) {
                             final item = _filteredBookmarks[index];
@@ -12147,6 +12176,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                             );
                           },
                         ),
+                    ),
             ),
           ],
         ),
@@ -12300,10 +12330,10 @@ class _BookmarkCard extends StatelessWidget {
                 child: Text(
                   item.arabicExcerpt,
                   textDirection: TextDirection.rtl,
-                  style: GoogleFonts.scheherazadeNew(
-                    fontSize: 17,
+                  style: GoogleFonts.tajawal(
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    height: 1.7,
+                    height: 1.6,
                     color: textPrimary,
                   ),
                   maxLines: 3,
@@ -17545,6 +17575,8 @@ class AuthService {
 
 ### FLUTTER FILE: openturath_ai/lib/services/bookmark_service.dart
 ```dart
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import '../models/bookmark_model.dart';
@@ -17552,17 +17584,59 @@ import 'scoped_json_store.dart';
 
 class BookmarkService extends ChangeNotifier {
   static final BookmarkService _instance = BookmarkService._internal();
-  factory BookmarkService() => _instance;
-  BookmarkService._internal();
+  factory BookmarkService({FirebaseFirestore? firestore, FirebaseAuth? auth}) {
+    if (firestore != null) _instance._firestore = firestore;
+    if (auth != null) _instance._auth = auth;
+    return _instance;
+  }
+  BookmarkService._internal() {
+    _initAuthListener();
+  }
+
+  FirebaseFirestore? _firestore;
+  FirebaseAuth? _auth;
+  bool _isSyncing = false;
+  bool get isSyncing => _isSyncing;
+
+  FirebaseAuth? get _activeAuth {
+    if (_auth != null) return _auth;
+    try {
+      return FirebaseAuth.instance;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  FirebaseFirestore? get _db {
+    if (_firestore != null) return _firestore;
+    try {
+      return FirebaseFirestore.instance;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void _initAuthListener() {
+    try {
+      _activeAuth?.authStateChanges().listen((user) {
+        if (user != null && user.uid.isNotEmpty) {
+          syncWithCloud(userId: user.uid);
+        }
+      });
+    } catch (_) {}
+  }
 
   final _store = ScopedJsonListStore<BookmarkModel>(
-    storage: PreferencesStringStore(), decode: BookmarkModel.fromJson,
+    storage: PreferencesStringStore(),
+    decode: BookmarkModel.fromJson,
     encode: (bookmark) => bookmark.toJson(),
   );
 
+  static const String _legacyKey = 'openturath_saved_bookmarks';
+
   String _key(String? userId) {
-    final uid = userId ?? FirebaseAuth.instance.currentUser?.uid;
-    return uid == null || uid.isEmpty ? 'openturath_saved_bookmarks' : 'openturath_${uid}_saved_bookmarks';
+    final uid = userId ?? _activeAuth?.currentUser?.uid;
+    return uid == null || uid.isEmpty ? _legacyKey : 'openturath_${uid}_saved_bookmarks';
   }
 
   Future<List<BookmarkModel>> getBookmarks({String? userId}) => _store.read(_key(userId));
@@ -17574,23 +17648,156 @@ class BookmarkService extends ChangeNotifier {
   }
 
   Future<void> addBookmark(BookmarkModel bookmark, {String? userId}) async {
-    final key = _key(userId);
+    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    final key = _key(effectiveUid);
+
+    // 1. Instant local offline-first update
     await _store.update(key, (items) {
       items.removeWhere((item) => item.id == bookmark.id);
       items.insert(0, bookmark);
       return items;
     });
     notifyListeners();
+
+    // 2. Asynchronous cloud push if logged in
+    if (effectiveUid != null && effectiveUid.isNotEmpty) {
+      unawaited(_pushToCloud(bookmark, effectiveUid));
+    }
   }
 
   Future<void> deleteBookmark(String id, {String? userId}) async {
-    final key = _key(userId);
+    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    final key = _key(effectiveUid);
+
+    // 1. Instant local update
     await _store.update(key, (items) => items..removeWhere((item) => item.id == id));
     notifyListeners();
+
+    // 2. Asynchronous cloud deletion
+    if (effectiveUid != null && effectiveUid.isNotEmpty) {
+      unawaited(_deleteFromCloud(id, effectiveUid));
+    }
   }
 
   Future<bool> isBookmarked(String id, {String? userId}) async =>
-    (await getBookmarks(userId: userId)).any((item) => item.id == id);
+      (await getBookmarks(userId: userId)).any((item) => item.id == id);
+
+  Future<void> _pushToCloud(BookmarkModel bookmark, String uid) async {
+    final db = _db;
+    if (db == null) return;
+    try {
+      await db
+          .collection('users')
+          .doc(uid)
+          .collection('bookmarks')
+          .doc(bookmark.id)
+          .set(bookmark.toJson(), SetOptions(merge: true));
+    } catch (e) {
+      // Offline or network glitch; will be reconciled during next sync
+      debugPrint('[BookmarkService] Cloud push skipped/failed: $e');
+    }
+  }
+
+  Future<void> _deleteFromCloud(String id, String uid) async {
+    final db = _db;
+    if (db == null) return;
+    try {
+      await db
+          .collection('users')
+          .doc(uid)
+          .collection('bookmarks')
+          .doc(id)
+          .delete();
+    } catch (e) {
+      debugPrint('[BookmarkService] Cloud delete skipped/failed: $e');
+    }
+  }
+
+  /// Bidirectional smart synchronization between local storage and Firestore.
+  /// Reconciles differences, migrates legacy offline notes, and ensures zero data loss.
+  Future<void> syncWithCloud({String? userId}) async {
+    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
+    if (effectiveUid == null || effectiveUid.isEmpty) return;
+
+    if (_isSyncing) return;
+    _isSyncing = true;
+
+    try {
+      final userKey = _key(effectiveUid);
+
+      // Step 1: Migrate legacy anonymous notes if any exist
+      final legacyNotes = await _store.read(_legacyKey);
+      if (legacyNotes.isNotEmpty) {
+        final current = await _store.read(userKey);
+        final mergedLocal = <String, BookmarkModel>{
+          for (final b in current) b.id: b,
+        };
+        for (final b in legacyNotes) {
+          mergedLocal.putIfAbsent(b.id, () => b);
+        }
+        await _store.replace(userKey, mergedLocal.values.toList());
+        await _store.replace(_legacyKey, <BookmarkModel>[]);
+        notifyListeners();
+      }
+
+      final db = _db;
+      if (db == null) {
+        return;
+      }
+
+      // Step 2: Read current local items
+      final localItems = await _store.read(userKey);
+      final localMap = <String, BookmarkModel>{
+        for (final b in localItems) b.id: b,
+      };
+
+      // Step 3: Fetch cloud bookmarks
+      final snapshot = await db
+          .collection('users')
+          .doc(effectiveUid)
+          .collection('bookmarks')
+          .get();
+
+      final cloudMap = <String, BookmarkModel>{};
+      for (final doc in snapshot.docs) {
+        try {
+          final data = doc.data();
+          if (!data.containsKey('id') || (data['id'] as String).isEmpty) {
+            data['id'] = doc.id;
+          }
+          final model = BookmarkModel.fromJson(data);
+          cloudMap[model.id] = model;
+        } catch (_) {}
+      }
+
+      // Step 4: Two-way reconciliation
+      // - Push any local notes not yet on cloud
+      for (final entry in localMap.entries) {
+        if (!cloudMap.containsKey(entry.key)) {
+          unawaited(_pushToCloud(entry.value, effectiveUid));
+        }
+      }
+
+      // - Merge cloud into local
+      final merged = <String, BookmarkModel>{...localMap};
+      for (final entry in cloudMap.entries) {
+        final existing = merged[entry.key];
+        if (existing == null || entry.value.createdAt.isAfter(existing.createdAt)) {
+          merged[entry.key] = entry.value;
+        }
+      }
+
+      final finalList = merged.values.toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      await _store.replace(userKey, finalList);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('[BookmarkService] syncWithCloud failed: $e');
+    } finally {
+      _isSyncing = false;
+    }
+  }
 }
 
 ```
@@ -18146,9 +18353,37 @@ abstract class StringStore {
 
 class PreferencesStringStore implements StringStore {
   @override
-  Future<String?> read(String key) async => (await SharedPreferences.getInstance()).getString(key);
+  Future<String?> read(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = prefs.get(key);
+    if (value is String) return value;
+    if (value is List) {
+      // Backward compatibility for legacy SharedPreferences stored as List<String>
+      final items = <dynamic>[];
+      for (final item in value) {
+        if (item is String) {
+          try {
+            items.add(jsonDecode(item));
+          } catch (_) {
+            items.add(item);
+          }
+        } else {
+          items.add(item);
+        }
+      }
+      return jsonEncode(items);
+    }
+    return null;
+  }
+
   @override
-  Future<bool> write(String key, String value) async => (await SharedPreferences.getInstance()).setString(key, value);
+  Future<bool> write(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(key) && prefs.get(key) is! String) {
+      await prefs.remove(key);
+    }
+    return prefs.setString(key, value);
+  }
 }
 
 class ScopedJsonListStore<T> {
@@ -19042,6 +19277,7 @@ class UpdateService extends ChangeNotifier {
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19051,6 +19287,7 @@ import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
@@ -19072,6 +19309,59 @@ class AgentMultiTabRoom extends StatefulWidget {
 
 class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final AgentSessionManager _sessionManager = AgentSessionManager.instance;
+  final BookmarkService _bookmarkService = BookmarkService();
+  final AuthService _authService = AuthService();
+  bool _isSavingAnswer = false;
+
+  Future<void> _saveActiveTabAnswer(AgentSessionTab session) async {
+    if (_isSavingAnswer) return;
+    final controller = session.webController;
+    if (controller == null) return;
+    setState(() => _isSavingAnswer = true);
+    try {
+      final result = await controller.evaluateJavascript(
+        source: 'window.otNotebook ? window.otNotebook.latest() : ""',
+      );
+      final text = result is String ? result.trim() : '';
+      if (text.isEmpty) {
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToSave);
+        return;
+      }
+      final ownerUid = _authService.currentUser?.uid;
+      final bookmark = copiedAnswerBookmark(text, session.agent);
+      await _bookmarkService.addBookmark(bookmark, userId: ownerUid);
+      if (mounted) {
+        OTMotion.success();
+        AppSnackBar.success(context, AppCopy.savedSuccess);
+      }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, AppCopy.saveFailed);
+    } finally {
+      if (mounted) setState(() => _isSavingAnswer = false);
+    }
+  }
+
+  Future<void> _copyActiveTabAnswer(AgentSessionTab session) async {
+    final controller = session.webController;
+    if (controller == null) return;
+    try {
+      final result = await controller.evaluateJavascript(
+        source: 'window.otNotebook ? window.otNotebook.latest() : ""',
+      );
+      final text = result is String ? result.trim() : '';
+      if (text.isEmpty) {
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
+        return;
+      }
+      await Clipboard.setData(ClipboardData(text: text));
+      if (mounted) {
+        OTMotion.light();
+        AppSnackBar.success(context, AppCopy.answerCopied);
+      }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, AppCopy.copyFailed);
+    }
+  }
 
   @override
   void initState() {
@@ -19211,14 +19501,52 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-            tooltip: AppCopy.studyOptions,
-            onPressed: () => _showFontScaleDialog(context, activeTab),
+            icon: Icon(Icons.bookmark_add_outlined, color: textPrimary, size: 21),
+            tooltip: AppCopy.saveAnswerMenu,
+            onPressed: () => _saveActiveTabAnswer(activeTab),
           ),
           IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
+          ),
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert_rounded, color: textPrimary, size: 20),
+            tooltip: AppCopy.studyOptions,
+            color: surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: border, width: 0.8),
+            ),
+            onSelected: (val) {
+              if (val == 'copy') {
+                _copyActiveTabAnswer(activeTab);
+              } else if (val == 'font') {
+                _showFontScaleDialog(context, activeTab);
+              }
+            },
+            itemBuilder: (ctx) => [
+              PopupMenuItem(
+                value: 'copy',
+                child: Row(
+                  children: [
+                    Icon(Icons.content_copy_rounded, color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text(AppCopy.copyAnswerAction, style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'font',
+                child: Row(
+                  children: [
+                    Icon(Icons.format_size_rounded, color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text('Ukuran huruf', style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
+            ],
           ),
           const SizedBox(width: 4),
         ],
@@ -19412,7 +19740,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView> {
             font-size: inherit !important;
             line-height: inherit !important;
           }
-          [lang="ar"], .arabic {
+          [lang="ar"], .arabic, [dir="rtl"] {
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif !important;
             font-size: ${Math.round(scale * 19)}px !important;
             line-height: 1.8 !important;
           }
@@ -21549,10 +21878,10 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: GoogleFonts.scheherazadeNew(
-                                fontSize: 19,
+                              style: GoogleFonts.tajawal(
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                height: 1.7,
+                                height: 1.6,
                                 color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
                               ),
                             ),
@@ -24254,6 +24583,133 @@ void main() {
 
 ```
 
+### TEST FILE: openturath_ai/test/bookmark_sync_test.dart
+```dart
+import 'dart:convert';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:openturath_ai/models/bookmark_model.dart';
+import 'package:openturath_ai/services/bookmark_service.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
+  BookmarkModel createSampleBookmark({
+    required String id,
+    required String title,
+    String fieldName = 'Fiqih',
+    String arabicExcerpt = '',
+    String fullAnswer = 'Isi catatan',
+  }) {
+    return BookmarkModel(
+      id: id,
+      title: title,
+      agentId: 'fiqh',
+      agentTitle: 'Fikih & Ushul',
+      fieldName: fieldName,
+      fieldId: 'fiqh',
+      arabicExcerpt: arabicExcerpt,
+      fullAnswer: fullAnswer,
+      bookReference: 'Fath al-Qarib',
+      pageNumber: '12',
+      createdAt: DateTime.now(),
+    );
+  }
+
+  group('BookmarkService Offline-First & Cloud Sync Tests', () {
+    test('addBookmark stores item locally and notifies listeners', () async {
+      final service = BookmarkService();
+      var notificationCount = 0;
+      service.addListener(() => notificationCount++);
+
+      final bookmark = createSampleBookmark(
+        id: 'note_1',
+        title: 'Catatan Fiqh',
+        arabicExcerpt: 'كتاب الصلاة',
+        fullAnswer: 'Penjelasan rukun shalat.',
+      );
+
+      await service.addBookmark(bookmark, userId: 'user_a');
+      final list = await service.getBookmarks(userId: 'user_a');
+
+      expect(list.length, 1);
+      expect(list.first.title, 'Catatan Fiqh');
+      expect(list.first.arabicExcerpt, 'كتاب الصلاة');
+      expect(notificationCount, greaterThan(0));
+    });
+
+    test('deleteBookmark removes item locally and notifies listeners', () async {
+      final service = BookmarkService();
+      var notificationCount = 0;
+      service.addListener(() => notificationCount++);
+
+      final bookmark = createSampleBookmark(
+        id: 'note_to_delete',
+        title: 'Catatan Hapus',
+        fieldName: 'Tafsir',
+        fullAnswer: 'Uraian ayat.',
+      );
+
+      await service.addBookmark(bookmark, userId: 'user_a');
+      expect((await service.getBookmarks(userId: 'user_a')).length, 1);
+
+      await service.deleteBookmark('note_to_delete', userId: 'user_a');
+      expect((await service.getBookmarks(userId: 'user_a')).length, 0);
+      expect(notificationCount, greaterThanOrEqualTo(2));
+    });
+
+    test('syncWithCloud seamlessly migrates legacy anonymous bookmarks to logged-in user', () async {
+      final legacyBookmark = createSampleBookmark(
+        id: 'legacy_1',
+        title: 'Catatan Warisan Versi Lama',
+        fieldName: 'Hadis',
+        arabicExcerpt: 'إنما الأعمال بالنيات',
+        fullAnswer: 'Hadis pertama Bukhari tentang niat.',
+      );
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList(
+        'openturath_saved_bookmarks',
+        [jsonEncode(legacyBookmark.toJson())],
+      );
+
+      final service = BookmarkService();
+      // Initially, user_logged_in has no bookmarks
+      final initialUserList = await service.getBookmarks(userId: 'user_logged_in');
+      expect(initialUserList, isEmpty);
+
+      // Trigger cloud sync for user_logged_in
+      await service.syncWithCloud(userId: 'user_logged_in');
+
+      // Now user_logged_in should have the migrated bookmark
+      final updatedUserList = await service.getBookmarks(userId: 'user_logged_in');
+      expect(updatedUserList.length, 1);
+      expect(updatedUserList.first.id, 'legacy_1');
+      expect(updatedUserList.first.title, 'Catatan Warisan Versi Lama');
+      expect(updatedUserList.first.arabicExcerpt, 'إنما الأعمال بالنيات');
+    });
+
+    test('isBookmarked accurately checks existence per user', () async {
+      final service = BookmarkService();
+      final bookmark = createSampleBookmark(
+        id: 'item_check',
+        title: 'Cek Ada',
+      );
+
+      expect(await service.isBookmarked('item_check', userId: 'user_x'), isFalse);
+      await service.addBookmark(bookmark, userId: 'user_x');
+      expect(await service.isBookmarked('item_check', userId: 'user_x'), isTrue);
+      expect(await service.isBookmarked('item_check', userId: 'user_y'), isFalse);
+    });
+  });
+}
+
+```
+
 ### TEST FILE: openturath_ai/test/canonical_catalog_test.dart
 ```dart
 import 'dart:io';
@@ -24990,20 +25446,20 @@ void main() {
       expect(button.fontSize, 14);
       expect(button.fontWeight, FontWeight.w600);
 
-      // 3. Arabic Scholarly layer (Scheherazade New)
+      // 3. Arabic Scholarly layer (Tajawal)
       final arDisplay = OTTypography.arabicDisplay();
       expect(arDisplay.fontSize, 24);
       expect(arDisplay.fontWeight, FontWeight.w700);
-      expect(arDisplay.height, 1.6);
+      expect(arDisplay.height, 1.5);
 
       final arReading = OTTypography.arabicReading();
-      expect(arReading.fontSize, 19);
+      expect(arReading.fontSize, 18);
       expect(arReading.fontWeight, FontWeight.w500);
-      expect(arReading.height, 1.75);
+      expect(arReading.height, 1.6);
 
       final arQuote = OTTypography.arabicQuote();
-      expect(arQuote.fontSize, 16);
-      expect(arQuote.height, 1.8);
+      expect(arQuote.fontSize, 15);
+      expect(arQuote.height, 1.65);
     });
 
     test('OTRadius enforces disciplined curvature without bubble-boxing', () {
