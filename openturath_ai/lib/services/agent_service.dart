@@ -20,15 +20,15 @@ class AgentService {
       if (url != null && url.isNotEmpty) {
         return url;
       }
-      throw const AgentAccessException('empty-url', 'URL ruang riset belum tersedia untuk modul ini.');
+      throw const AgentAccessException('empty-url', 'URL asisten belum tersedia untuk bidang ini.');
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'permission-denied') {
         throw AgentAccessException(
           'permission-denied',
-          e.message ?? 'Langganan aktif diperlukan untuk mengakses modul riset ini.',
+          e.message ?? 'Langganan diperlukan untuk membuka asisten ini.',
         );
       }
-      throw AgentAccessException(e.code, e.message ?? 'Gagal menghubungi server riset.');
+      throw AgentAccessException(e.code, e.message ?? 'Tidak dapat terhubung ke server.');
     } catch (e) {
       if (e is AgentAccessException) rethrow;
       throw AgentAccessException('unknown-error', e.toString());

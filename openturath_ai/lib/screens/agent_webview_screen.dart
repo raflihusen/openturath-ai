@@ -513,7 +513,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     }
   }
 
-  Future<void> _copyLatestResponse() => _copyAnswerToClipboard();
 
   void _startReadinessCheck() {
     _readinessTimer?.cancel();

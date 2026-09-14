@@ -37,11 +37,11 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState.unauthorized({
     super.key,
-    this.title = 'Akses dibatasi',
-    this.message = 'Sesi akun kedaluwarsa atau modul telaah membutuhkan paket langganan aktif.',
+    this.title = 'Langganan diperlukan',
+    this.message = 'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.',
     this.icon = Icons.lock_outline_rounded,
     this.onRetry,
-    this.retryLabel = 'Lihat paket langganan',
+    this.retryLabel = 'Lihat langganan',
     this.onBack,
     this.backLabel = 'Kembali',
   });
@@ -60,7 +60,7 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.generic({
     super.key,
     this.title = 'Terjadi kendala teknis',
-    this.message = 'Sistem mengalami kendala saat memproses telaah. Silakan coba kembali beberapa saat lagi.',
+    this.message = 'Asisten belum dapat dimuat. Coba lagi sebentar.',
     this.icon = Icons.error_outline_rounded,
     this.onRetry,
     this.retryLabel = 'Muat ulang',
