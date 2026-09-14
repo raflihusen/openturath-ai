@@ -795,6 +795,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Expanded(
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           HapticFeedback.selectionClick();
           onTap();
