@@ -18,7 +18,7 @@ import '../widgets/redeem_code_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/legal_document_sheet.dart';
 
-/// Halaman Langganan Ruang Riset OpenTurath AI (Quiet Scholar Adaptive)
+/// Halaman Langganan OpenTurath (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
 
@@ -264,7 +264,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         if (!mounted) return;
         AppSnackBar.success(
           context,
-          'Pembayaran berhasil. Akses AI Spesialis Anda telah aktif.',
+          'Pembayaran berhasil. Akses sudah aktif.',
           duration: const Duration(seconds: 4),
         );
         Navigator.pop(context);
@@ -397,7 +397,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'PAKET AI SPESIALIS',
+                              'Paket per bidang',
                               style: OTTypography.sectionHeading(color: accent),
                             ),
                             Container(
@@ -407,7 +407,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                '1 AI SPESIALIS',
+                                '1 bidang',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
@@ -415,12 +415,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Pilih AI Spesialis',
+                          'Pilih bidang',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Telaah mendalam satu disiplin keilmuan Islam berbasis naskah kitab rujukan.',
+                          'Akses satu bidang beserta kitab rujukannya.',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                         ),
 
@@ -531,24 +531,24 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Divider(color: border.withValues(alpha: 0.6), height: 1),
                         const SizedBox(height: OTSpacing.base),
 
-                        // Core Benefits (Quiet Scholar Natural Phrasing, No generic green checkmarks)
+                        // Core Benefits (Quiet Scholar Natural Phrasing)
                         _benefitRow(
-                          'Kajian mendalam bersama AI Spesialis ${_agent?.title ?? "terpilih"}',
+                          'Akses Asisten ${_agent?.title ?? "terpilih"}',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Telaah teks dan ibarah naskah rujukan ${_agent?.title ?? "keilmuan turats"}',
+                          'Telusuri ibarah dan penjelasan dari kitab rujukan',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Rujukan teks asli, penomoran jilid, dan halaman kitab',
+                          'Lihat kitab, jilid, dan halaman yang dirujuk',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Verifikasi kutipan ibarah dengan naskah kitab cetak dan digital',
+                          'Cocokkan ibarah dengan kitab cetak atau digital',
                           textPrimary,
                         ),
 
@@ -564,7 +564,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 : () {
                                     _handleSubscribe(
                                       plan: tierPlanId,
-                                      planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
+                                      planTitle: '${currentTier['name']} ${_agent?.title ?? ""}'.trim(),
                                       price: tierPrice,
                                       targetAgent: _agent,
                                     );
@@ -578,7 +578,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   : () {
                                       _handleSubscribe(
                                         plan: tierPlanId,
-                                        planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
+                                        planTitle: '${currentTier['name']} ${_agent?.title ?? ""}'.trim(),
                                         price: tierPrice,
                                         targetAgent: _agent,
                                       );
@@ -590,7 +590,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 elevation: 0,
                               ),
                               child: Text(
-                                'Berlangganan ${_agent?.title ?? "AI Spesialis"} ($tierLabel)',
+                                'Pilih paket ${_agent?.title ?? ""} ($tierLabel)',
                                 style: OTTypography.button(color: canvas),
                               ),
                             ),
@@ -602,7 +602,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   const SizedBox(height: OTSpacing.lg),
 
-                  // ── Bundling Card: Semua AI (Segera Hadir) ──
+                  // ── Bundling Card: Semua Bidang (Segera Hadir) ──
                   Container(
                     decoration: BoxDecoration(
                       color: surfaceSubtle,
@@ -621,7 +621,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                'PAKET LENGKAP SEMUA AI',
+                                'Paket semua bidang',
                                 style: OTTypography.sectionHeading(color: textSecondary),
                               ),
                             ),
@@ -634,7 +634,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 border: Border.all(color: border, width: 0.6),
                               ),
                               child: Text(
-                                'SEGERA HADIR',
+                                'Segera hadir',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(
                                   fontSize: 10,
                                   letterSpacing: 0.8,
@@ -645,22 +645,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Akses Seluruh AI Spesialis',
+                          'Akses semua bidang',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Satu paket untuk mengakses seluruh asisten keilmuan turats (Fikih, Hadis, Tafsir, Usul Fikih, Bahasa Arab, dan Tahawwulat).',
+                          'Satu paket untuk mengakses seluruh bidang yang tersedia beserta kitab rujukannya.',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
                         ),
                         const SizedBox(height: OTSpacing.base),
                         Divider(color: border.withValues(alpha: 0.5), height: 1),
                         const SizedBox(height: OTSpacing.base),
-                        _benefitRow('Akses ke seluruh bidang keilmuan Islam yang tersedia', textSecondary),
+                        _benefitRow('Akses ke seluruh bidang yang tersedia', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Telaah terpadu lintas Fikih, Hadis, Tafsir, Usul Fikih, dan Bahasa Arab', textSecondary),
+                        _benefitRow('Akses lintas bidang dalam satu langganan', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Pembaruan berkala rujukan Khazanah Ulama terverifikasi', textSecondary),
+                        _benefitRow('Pembaruan berkala seluruh kitab rujukan', textSecondary),
                         const SizedBox(height: OTSpacing.md),
                         // Catatan Edukatif
                         Container(
@@ -685,7 +685,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Paket lengkap seluruh AI Spesialis sedang dipersiapkan untuk pembaruan berikutnya.',
+                                  'Paket semua bidang sedang disiapkan.',
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 12,
                                     height: 1.4,
