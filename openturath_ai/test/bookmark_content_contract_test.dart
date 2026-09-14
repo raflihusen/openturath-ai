@@ -4,7 +4,8 @@ import 'package:openturath_ai/models/bookmark_model.dart';
 
 void main() {
   group('AI answer bookmark content contract', () {
-    test('uses the first markdown heading as title and omits it from preview', () {
+    test('uses the first markdown heading as title and omits it from preview',
+        () {
       final parsed = parseAiAnswerContent(
         '# Syarat sah salat berjamaah\n\nPenjelasan singkat tentang syarat-syaratnya.',
       );
@@ -15,14 +16,16 @@ void main() {
     });
 
     test('falls back to the first meaningful line when no heading exists', () {
-      final parsed = parseAiAnswerContent('\n\nPenjelasan tanpa heading\n\nIsi lanjutan.');
+      final parsed =
+          parseAiAnswerContent('\n\nPenjelasan tanpa heading\n\nIsi lanjutan.');
 
       expect(parsed.title, 'Penjelasan tanpa heading');
       expect(parsed.hasFallbackTitle, isTrue);
     });
 
     test('removes technical response labels from display titles', () {
-      final parsed = parseAiAnswerContent('# [i] JAWABAN LANGSUNG: Hukum jual beli\n\nIsi jawaban.');
+      final parsed = parseAiAnswerContent(
+          '# [i] JAWABAN LANGSUNG: Hukum jual beli\n\nIsi jawaban.');
 
       expect(parsed.title, 'Hukum jual beli');
     });
@@ -40,7 +43,8 @@ void main() {
       expect(item.verificationStatus, BookmarkVerificationStatus.unverified);
     });
 
-    test('manual notes retain their private-note identity after serialization', () {
+    test('manual notes retain their private-note identity after serialization',
+        () {
       final item = BookmarkModel(
         id: 'note_1',
         title: 'Catatan saya',
@@ -59,7 +63,8 @@ void main() {
 
       final restored = BookmarkModel.fromJson(item.toJson());
       expect(restored.documentKind, BookmarkDocumentKind.personalNote);
-      expect(restored.verificationStatus, BookmarkVerificationStatus.notApplicable);
+      expect(restored.verificationStatus,
+          BookmarkVerificationStatus.notApplicable);
     });
   });
 }
