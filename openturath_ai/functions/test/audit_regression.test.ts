@@ -17,6 +17,17 @@ test('A02 revoked all access cannot be restored by legacy plan', () => {
   const {api}=loadBackend(root);
   assert.equal(api.getEntitlementAccess({plan:'all_ai_1m',subscription_expiry:future(),entitlements:{all_access:{...active(),status:'revoked'}}},'hadits').active,false);
 });
+test('PERDANA voucher grants time bound Pro trial using its server duration', async () => {
+  const {api,db}=loadBackend(root);
+  db.seed('users/u',{email:'u@example.test',plan:'trial',entitlements:{}});
+  db.seed('redeem_codes/PERDANA7',{type:'perdana',entitlement_key:'all_access',duration_days:7,max_uses:1,times_used:0});
+  await api.redeemCode({code:'PERDANA7',deviceId:'a'.repeat(64),isPhysicalDevice:true},{auth:{uid:'u',token:{email:'u@example.test'}}});
+  const trial=db.docs.get('users/u').entitlements.all_access;
+  assert.equal(trial.plan,'trial');
+  assert.equal(trial.status,'active');
+  assert.equal(trial.trial_duration_days,7);
+  assert.ok(trial.expiry.toMillis()>Date.now());
+});
 test('A02 web access cannot restore revoked module from paid billing history', async () => {
   const {api,db}=loadBackend(root);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:{...active(),status:'revoked'}}});

@@ -130,7 +130,6 @@ const AGENT_ENTITLEMENTS: Record<string, string> = {
   all_ai: "all_access",
 };
 
-const TRIAL_QUESTION_LIMIT = 10;
 
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
 export const PURCHASABLE_AGENTS = new Set([
@@ -184,7 +183,7 @@ function getEntitlementAccess(userData: FirebaseFirestore.DocumentData, entitlem
   const active = (ent: any): boolean => {
     if (!ent || typeof ent.plan !== "string") return false;
     if (ent.status === "revoked" || ent.status === "expired") return false;
-    const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
+    const allowed = /^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
     const expiry = ent.expiry?.toDate ? ent.expiry.toDate() : (ent.expiry?._seconds ? new Date(ent.expiry._seconds * 1000) : new Date(ent.expiry ?? ""));
     return allowed && Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
   };
@@ -272,7 +271,7 @@ export const getAgentUrl = functions
 
 // ================================================================
 // FUNCTION 1b: recordQuestion
-// Kuota trial hanya dapat berubah melalui transaksi server-side.
+// Trial sekarang berbasis masa berlaku voucher, bukan kuota pertanyaan.
 // ================================================================
 export const recordQuestion = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
@@ -304,20 +303,10 @@ export const recordQuestion = functions
         );
       }
 
-      const questionsUsed = Number.isInteger(userData.questions_used) ? userData.questions_used : 0;
-      if (questionsUsed >= TRIAL_QUESTION_LIMIT) {
-        throw new functions.https.HttpsError(
-          "permission-denied",
-          "Kuota uji coba sudah habis. Berlangganan untuk lanjut."
-        );
-      }
-      const updatedQuestionsUsed = questionsUsed + 1;
-      transaction.update(userRef, { questions_used: updatedQuestionsUsed });
-      return {
-        isPremium: false,
-        questionsUsed: updatedQuestionsUsed,
-        questionsRemaining: TRIAL_QUESTION_LIMIT - updatedQuestionsUsed,
-      };
+      throw new functions.https.HttpsError(
+        "permission-denied",
+        "Akses Pro untuk kajian ini belum aktif. Tukarkan voucher atau berlangganan untuk melanjutkan."
+      );
     });
   });
 
@@ -1134,6 +1123,12 @@ export const redeemCode = functions
 
       const entitlementKey = (codeData.entitlement_key as string) || "fiqh_syafii";
       const durationDays = (codeData.duration_days as number) || 7;
+      const isTrialVoucher = codeData.is_trial === true ||
+        codeData.type === "trial" ||
+        codeData.type === "perdana" ||
+        rawCode.startsWith("PERDANA") ||
+        rawCode.startsWith("TRIAL") ||
+        rawCode.startsWith("WELCOME");
 
       // Ambil user saat ini
       const userRef = db.collection("users").doc(uid);
@@ -1182,11 +1177,14 @@ export const redeemCode = functions
       const updatedEntitlements = {
         ...entitlements,
         [entitlementKey]: {
-          plan: "voucher_access",
+          plan: isTrialVoucher ? "trial" : "voucher_access",
           status: "active",
           source: "redeem_code",
           code_id: rawCode.slice(0, 4) + "****", // Redaksi di entitlement
           expiry: admin.firestore.Timestamp.fromDate(newExpiry),
+          started_at: admin.firestore.Timestamp.fromDate(baseDate),
+          trial_duration_days: isTrialVoucher ? durationDays : null,
+          payment_status: "none",
           updated_at: admin.firestore.FieldValue.serverTimestamp(),
         }
       };
@@ -1198,7 +1196,7 @@ export const redeemCode = functions
 
       // Hanya set plan global jika voucher adalah all_access
       if (entitlementKey === "all_access") {
-        userUpdate.plan = "voucher_access";
+        userUpdate.plan = isTrialVoucher ? "trial" : "voucher_access";
         userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(newExpiry);
       }
 
@@ -2534,4 +2532,3 @@ export const onClientErrorLogged = functions.firestore
       await sendTelegramNotification(msg);
     }
   });
-

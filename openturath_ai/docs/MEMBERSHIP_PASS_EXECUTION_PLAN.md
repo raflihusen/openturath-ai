@@ -10,7 +10,7 @@ Produk diberi nama **Pro**. Trial adalah cara mencoba Pro, bukan tier yang lebih
 
 1. Badge utama selalu `PRO` saat akses trial atau berbayar sedang aktif.
 2. Trial ditandai dengan penanda sekunder `MASA COBA · N HARI`, bukan badge `TRIAL` yang menggantikan Pro.
-3. Trial berdurasi 1, 3, atau 7 hari dan mulai pada pembukaan AI pertama, bukan pada saat akun dibuat.
+3. Trial berdurasi sesuai `duration_days` pada voucher yang berhasil ditukarkan, misalnya 1, 3, 5, atau 7 hari. Masa trial dimulai saat voucher ditukarkan.
 4. Akses trial dapat memiliki batas penggunaan tambahan hanya bila aturan produk menetapkannya secara eksplisit. Jika batas pertanyaan tetap dipakai, kartu harus menampilkan kedua batas dengan jelas; jika tidak, hapus batas itu agar tidak membingungkan.
 5. Status akses adalah keputusan server. Aplikasi hanya merender state yang sudah divalidasi.
 6. Pada beberapa AI dengan tanggal berakhir berbeda, kartu menampilkan tanggal akses yang paling dekat berakhir; rincian per AI berada di Kelola Langganan.
@@ -104,7 +104,7 @@ Tidak memakai konfeti, getaran berat, atau animasi berulang.
 ### Fase 0  Kontrak dan aturan bisnis
 
 - [ ] Tetapkan apakah trial juga memakai batas pertanyaan atau hanya batas hari.
-- [ ] Tetapkan durasi trial yang tersedia dan apakah setiap akun hanya menerima satu trial.
+- [x] Durasi trial ditentukan oleh `duration_days` setiap voucher; tidak ada durasi trial global.
 - [ ] Tetapkan aturan voucher, hadiah, refund, pembatalan, dan akses permanen.
 - [ ] Tetapkan ambang `expiringSoon` tiga hari.
 - [ ] Tambahkan definisi state dan prioritasnya pada backend serta dokumentasi.
