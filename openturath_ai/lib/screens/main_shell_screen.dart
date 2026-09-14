@@ -51,7 +51,6 @@ class _MainShellScreenState extends State<MainShellScreen>
 
   late final AnimationController _roomAnimController;
   late final Animation<Offset> _roomSlideAnimation;
-  late final Animation<double> _roomFadeAnimation;
   late final Animation<double> _bgDimmerAnimation;
 
   @override
@@ -74,13 +73,8 @@ class _MainShellScreenState extends State<MainShellScreen>
     );
 
     _roomSlideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.12),
+      begin: const Offset(0.0, 1.0),
       end: Offset.zero,
-    ).animate(easeCurve);
-
-    _roomFadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
     ).animate(easeCurve);
 
     _bgDimmerAnimation = Tween<double>(
@@ -322,11 +316,12 @@ class _MainShellScreenState extends State<MainShellScreen>
           final isRoomVisible = _roomAnimController.value > 0.0 || sessionManager.isOpen;
 
           return PopScope(
-            // OT-F007: canPop hanya diizinkan jika ruang tertutup DAN animasi selesai di-dismiss
+            // canPop hanya diizinkan jika ruang tertutup DAN animasi selesai di-dismiss DAN sedang di tab 0
             canPop: !sessionManager.isOpen && _roomAnimController.isDismissed && _currentIndex == 0,
             onPopInvokedWithResult: (didPop, result) {
               if (didPop) return;
-              // Cegah double-back race saat animasi mundur sedang berjalan
+              // Jika ruang AI sedang terbuka atau animasi mundur sedang berjalan:
+              // HANYA tutup ruang AI, pertahankan tab pengguna di mana dia berada!
               if (sessionManager.isOpen || !_roomAnimController.isDismissed) {
                 sessionManager.closeRoom();
                 return;
@@ -340,7 +335,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                 // 1. Dashboard latar belakang (Stationary - bebas GPU overhead rasterisasi)
                 baseScaffold,
 
-                // 2. Backdrop Dimmer lembut
+                // 2. Backdrop Dimmer lembut (hanya dimmer yang menggunakan animasi fade)
                 if (_roomAnimController.value > 0.0)
                   Positioned.fill(
                     child: IgnorePointer(
@@ -351,18 +346,15 @@ class _MainShellScreenState extends State<MainShellScreen>
                     ),
                   ),
 
-                // 3. Ruang AI Multi-Tab ("Fathul Kitab" - Pure Vertical Slide & Fade)
+                // 3. Ruang AI Multi-Tab (Pure Vertical Slide tanpa FadeTransition pada PlatformView)
                 Positioned.fill(
                   child: Offstage(
                     offstage: !isRoomVisible,
                     child: TickerMode(
                       enabled: isRoomVisible,
-                      child: FadeTransition(
-                        opacity: _roomFadeAnimation,
-                        child: SlideTransition(
-                          position: _roomSlideAnimation,
-                          child: child,
-                        ),
+                      child: SlideTransition(
+                        position: _roomSlideAnimation,
+                        child: child,
                       ),
                     ),
                   ),
