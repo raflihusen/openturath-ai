@@ -88,7 +88,7 @@ class DeviceService {
       if (Platform.isIOS) {
         final iosInfo = await _deviceInfo.iosInfo;
         final rawId = iosInfo.identifierForVendor ?? 'ios_device';
-        final brand = 'apple';
+        const brand = 'apple';
         final model = iosInfo.utsname.machine;
         final isPhysical = iosInfo.isPhysicalDevice;
         final hash = computeHash(rawId: rawId, brand: brand, model: model);
@@ -104,7 +104,7 @@ class DeviceService {
       if (Platform.isMacOS) {
         final macInfo = await _deviceInfo.macOsInfo;
         final rawId = macInfo.systemGUID ?? 'macos_device';
-        final brand = 'apple';
+        const brand = 'apple';
         final model = macInfo.model;
         final hash = computeHash(rawId: rawId, brand: brand, model: model);
 

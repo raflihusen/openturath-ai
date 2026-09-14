@@ -350,7 +350,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                     child: IgnorePointer(
                       ignoring: _roomAnimController.value == 0.0,
                       child: Container(
-                        color: Colors.black.withOpacity(_bgDimmerAnimation.value),
+                        color: Colors.black.withValues(alpha: _bgDimmerAnimation.value),
                       ),
                     ),
                   ),

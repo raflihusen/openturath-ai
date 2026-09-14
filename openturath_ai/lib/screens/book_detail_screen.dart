@@ -586,7 +586,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         Flexible(
           child: Text(
             value,
-            textAlign: TextAlign.left,
+            textAlign: TextAlign.start,
             style: OTTypography.arabicReading(color: textPrimary).copyWith(
               fontSize: 13.5,
               fontWeight: FontWeight.w600,
