@@ -164,7 +164,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         inactiveColor: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
                         onChanged: (val) {
                           setModalState(() => session.fontScale = val);
-                          setState(() {});
                           session.webController?.evaluateJavascript(
                             source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($val); }',
                           );
