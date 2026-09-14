@@ -31,14 +31,18 @@ class AppPreferencesState {
   }
 }
 
+const String defaultEngineEnv = String.fromEnvironment('DEFAULT_ENGINE', defaultValue: 'openturath');
+
 class AppPreferencesNotifier extends StateNotifier<AppPreferencesState> {
   static const _kEngineKey = 'app_engine_variant';
   static const _kLangKey = 'app_language_code';
   static const _kThemeKey = 'app_theme_mode';
 
   AppPreferencesNotifier()
-      : super(const AppPreferencesState(
-          engineVariant: AppEngineVariant.openTurath,
+      : super(AppPreferencesState(
+          engineVariant: defaultEngineEnv == 'classic'
+              ? AppEngineVariant.classic
+              : AppEngineVariant.openTurath,
           languageCode: 'id',
           themeMode: ThemeMode.system,
         )) {
@@ -51,8 +55,11 @@ class AppPreferencesNotifier extends StateNotifier<AppPreferencesState> {
     final langStr = prefs.getString(_kLangKey);
     final themeStr = prefs.getString(_kThemeKey);
 
-    var engine = AppEngineVariant.openTurath;
+    var engine = defaultEngineEnv == 'classic'
+        ? AppEngineVariant.classic
+        : AppEngineVariant.openTurath;
     if (engineStr == 'classic') engine = AppEngineVariant.classic;
+    if (engineStr == 'openturath') engine = AppEngineVariant.openTurath;
 
     var lang = langStr ?? 'id';
     var theme = ThemeMode.system;

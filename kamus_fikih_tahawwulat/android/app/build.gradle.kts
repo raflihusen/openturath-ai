@@ -20,10 +20,11 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.openturath.tahawwulat.kamus_fikih_tahawwulat"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        val customAppId = if (project.hasProperty("APP_ID")) project.property("APP_ID") as String else "com.openturath.tahawwulat.kamus_fikih_tahawwulat"
+        val customAppName = if (project.hasProperty("APP_NAME")) project.property("APP_NAME") as String else "Kamus Fikih Tahawwulat"
+
+        applicationId = customAppId
+        manifestPlaceholders["applicationLabel"] = customAppName
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
