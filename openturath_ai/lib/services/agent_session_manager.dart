@@ -27,6 +27,8 @@ class AgentSessionManager extends ChangeNotifier {
   static final AgentSessionManager instance = AgentSessionManager._();
   AgentSessionManager._();
 
+  static const int maxTabs = 7;
+
   final List<AgentSessionTab> _tabs = [];
   int _activeIndex = 0;
   bool _isOpen = false;
@@ -49,6 +51,11 @@ class AgentSessionManager extends ChangeNotifier {
     if (existingIndex != -1) {
       _activeIndex = existingIndex;
     } else {
+      if (_tabs.length >= maxTabs) {
+        // Tab limit reached: close oldest non-active tab to preserve WebView memory
+        final evictIndex = _activeIndex == 0 ? 1 : 0;
+        closeTab(evictIndex);
+      }
       _tabs.add(AgentSessionTab(agent: agent));
       _activeIndex = _tabs.length - 1;
     }
@@ -77,6 +84,8 @@ class AgentSessionManager extends ChangeNotifier {
     if (_tabs.isEmpty) {
       _isOpen = false;
       _activeIndex = 0;
+    } else if (index < _activeIndex) {
+      _activeIndex--;
     } else if (_activeIndex >= _tabs.length) {
       _activeIndex = _tabs.length - 1;
     }

@@ -114,5 +114,48 @@ void main() {
       expect(manager.isOpen, isFalse);
       expect(manager.activeIndex, 0);
     });
+
+    test('Closing a tab to the left of activeIndex preserves the current active tab', () {
+      final manager = AgentSessionManager.instance;
+      // Urutan tab: [0: Syafii, 1: Hanafi, 2: Maliki]
+      manager.openAgent(agentSyafii);
+      manager.openAgent(agentHanafi);
+      manager.openAgent(agentMaliki);
+
+      // Aktifkan tab Maliki (index 2)
+      expect(manager.activeIndex, 2);
+      expect(manager.activeTab?.agent.id, 'fiqh_maliki');
+
+      // Tutup tab Syafii (index 0 < activeIndex 2)
+      manager.closeTab(0);
+
+      // Tab tersisa: [0: Hanafi, 1: Maliki]
+      expect(manager.tabs.length, 2);
+      expect(manager.activeIndex, 1);
+      expect(manager.activeTab?.agent.id, 'fiqh_maliki');
+    });
+
+    test('Enforces maxTabs = 7 limit and evicts oldest non-active tab', () {
+      final manager = AgentSessionManager.instance;
+      final agents = AgentModel.defaultAgents;
+      expect(agents.length, greaterThanOrEqualTo(8));
+
+      // Buka 7 agen pertama
+      for (int i = 0; i < AgentSessionManager.maxTabs; i++) {
+        manager.openAgent(agents[i]);
+      }
+      expect(manager.tabs.length, AgentSessionManager.maxTabs);
+      expect(manager.activeIndex, AgentSessionManager.maxTabs - 1);
+
+      // Buka agen ke-8 (melebihi batas maxTabs 7)
+      manager.openAgent(agents[7]);
+
+      // Total tab tetap 7
+      expect(manager.tabs.length, AgentSessionManager.maxTabs);
+      // Tab aktif adalah agen ke-8 yang baru dibuka
+      expect(manager.activeTab?.agent.id, agents[7].id);
+      // Agen tertua pertama (agents[0]) telah di-evict
+      expect(manager.tabs.any((t) => t.agent.id == agents[0].id), isFalse);
+    });
   });
 }
