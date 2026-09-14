@@ -865,14 +865,27 @@ class _MembershipPass extends StatelessWidget {
                                         color: Colors.white
                                             .withValues(alpha: 0.14)),
                                   ),
-                                  child: Text(
-                                    summary.badge,
-                                    style: GoogleFonts.outfit(
-                                      color: foreground,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.0,
-                                    ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isOpen
+                                            ? Icons.sentiment_satisfied_alt_rounded
+                                            : Icons.lock_outline_rounded,
+                                        color: foreground,
+                                        size: 13,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        summary.badge,
+                                        style: GoogleFonts.outfit(
+                                          color: foreground,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 1.0,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -922,9 +935,12 @@ class _MembershipPass extends StatelessWidget {
                                 Expanded(
                                   flex: 2,
                                   child: _PassMeta(
-                                    label: summary.expiryLabel.isEmpty
-                                        ? 'STATUS AKSES'
-                                        : summary.expiryLabel,
+                                    label: summary.state ==
+                                            MembershipPassState.trialPro
+                                        ? summary.supportingLabel
+                                        : summary.expiryLabel.isEmpty
+                                            ? 'STATUS AKSES'
+                                            : summary.expiryLabel,
                                     value: summary.expiresAt == null
                                         ? summary.supportingLabel
                                         : _expiryLabel(),
