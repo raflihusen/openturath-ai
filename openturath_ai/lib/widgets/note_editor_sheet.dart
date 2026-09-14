@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -40,6 +43,13 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   late final TextEditingController _bodyController;
   bool _isPreview = false;
   bool _hasChanges = false;
+  bool _isSavingDraft = false;
+  bool _draftSaved = false;
+  bool _draftRestored = false;
+  Timer? _autoSaveDebounce;
+
+  String get _draftKey =>
+      'openturath_draft_note_${widget.item?.id ?? 'new'}';
 
   @override
   void initState() {
@@ -49,18 +59,80 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
       text: widget.item?.fullAnswer ?? widget.item?.arabicExcerpt ?? '',
     );
 
-    _titleController.addListener(_markChanged);
-    _bodyController.addListener(_markChanged);
+    _titleController.addListener(_scheduleAutoSave);
+    _bodyController.addListener(_scheduleAutoSave);
+
+    _loadDraft();
   }
 
-  void _markChanged() {
+  Future<void> _loadDraft() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_draftKey);
+      if (raw == null || raw.isEmpty) return;
+      final map = jsonDecode(raw);
+      if (map is! Map<String, dynamic>) return;
+
+      final draftTitle = map['title'] as String? ?? '';
+      final draftBody = map['body'] as String? ?? '';
+
+      final initialTitle = widget.item?.title ?? '';
+      final initialBody =
+          widget.item?.fullAnswer ?? widget.item?.arabicExcerpt ?? '';
+
+      // Only restore if draft has different/more recent content
+      if ((draftTitle != initialTitle || draftBody != initialBody) &&
+          (draftTitle.isNotEmpty || draftBody.isNotEmpty)) {
+        if (mounted) {
+          setState(() {
+            _titleController.text = draftTitle;
+            _bodyController.text = draftBody;
+            _draftRestored = true;
+            _hasChanges = true;
+          });
+        }
+      }
+    } catch (_) {}
+  }
+
+  void _scheduleAutoSave() {
     if (!_hasChanges) {
       setState(() => _hasChanges = true);
+    }
+    _autoSaveDebounce?.cancel();
+    _autoSaveDebounce = Timer(const Duration(milliseconds: 1500), _saveDraft);
+  }
+
+  Future<void> _saveDraft() async {
+    final title = _titleController.text.trim();
+    final body = _bodyController.text.trim();
+    if (title.isEmpty && body.isEmpty) return;
+
+    if (mounted) setState(() => _isSavingDraft = true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _draftKey,
+        jsonEncode({
+          'title': title,
+          'body': body,
+          'savedAt': DateTime.now().toIso8601String(),
+        }),
+      );
+      if (mounted) {
+        setState(() {
+          _isSavingDraft = false;
+          _draftSaved = true;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _isSavingDraft = false);
     }
   }
 
   @override
   void dispose() {
+    _autoSaveDebounce?.cancel();
     _titleController.dispose();
     _bodyController.dispose();
     super.dispose();
@@ -69,6 +141,18 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   void _applyFormat(String prefix, String suffix, {String defaultText = 'teks'}) {
     final text = _bodyController.text;
     final selection = _bodyController.selection;
+
+    if (text.isEmpty) {
+      _bodyController.text = '$prefix$defaultText$suffix';
+      _bodyController.selection = TextSelection(
+        baseOffset: prefix.length,
+        extentOffset: prefix.length + defaultText.length,
+      );
+      OTMotion.selection();
+      _scheduleAutoSave();
+      return;
+    }
+
     if (selection.start < 0 || selection.end < 0) {
       final newText = '$text$prefix$defaultText$suffix';
       _bodyController.text = newText;
@@ -76,6 +160,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
         baseOffset: text.length + prefix.length,
         extentOffset: text.length + prefix.length + defaultText.length,
       );
+      OTMotion.selection();
+      _scheduleAutoSave();
       return;
     }
 
@@ -93,6 +179,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
       extentOffset: selection.start + prefix.length + insertText.length,
     );
     OTMotion.selection();
+    _scheduleAutoSave();
   }
 
   Future<void> _saveNote() async {
@@ -112,14 +199,16 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
     final item = widget.item;
     final BookmarkModel updated;
+    final now = DateTime.now();
     if (item != null) {
       updated = item.copyWith(
         title: effectiveTitle,
         fullAnswer: body,
+        updatedAt: now,
       );
     } else {
       updated = BookmarkModel(
-        id: 'note_${DateTime.now().millisecondsSinceEpoch}',
+        id: 'note_${now.millisecondsSinceEpoch}',
         title: effectiveTitle,
         agentId: 'catatan_mandiri',
         agentTitle: 'Catatan Pribadi',
@@ -129,11 +218,19 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
         fullAnswer: body,
         bookReference: '',
         pageNumber: '',
-        createdAt: DateTime.now(),
+        createdAt: now,
+        updatedAt: now,
       );
     }
 
     await BookmarkService().addBookmark(updated);
+
+    // Clear draft after successful persistent save
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_draftKey);
+    } catch (_) {}
+
     widget.onSaved?.call(updated);
     if (!mounted) return;
     OTMotion.success();
@@ -179,12 +276,28 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
             padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: 4),
             child: Row(
               children: [
-                Text(
-                  widget.item != null ? 'Edit catatan' : 'Catatan baru',
-                  style: OTTypography.screenTitle(color: textPrimary).copyWith(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.item != null ? 'Edit catatan' : 'Catatan baru',
+                      style: OTTypography.screenTitle(color: textPrimary).copyWith(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (_isSavingDraft || _draftSaved || _draftRestored)
+                      Text(
+                        _isSavingDraft
+                            ? 'Menyimpan draf...'
+                            : (_draftRestored ? 'Draf dipulihkan' : 'Draf tersimpan'),
+                        style: OTTypography.caption(color: textSecondary).copyWith(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                  ],
                 ),
                 const Spacer(),
                 // Toggle Edit / Preview
