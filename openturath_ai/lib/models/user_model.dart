@@ -9,6 +9,9 @@ class ModuleEntitlement {
   final String status; // 'active', 'expired', 'trial'
   final String? sourceTransactionId;
   final DateTime? updatedAt;
+  final DateTime? startedAt;
+  final int? trialDurationDays;
+  final String paymentStatus;
 
   const ModuleEntitlement({
     required this.plan,
@@ -16,9 +19,14 @@ class ModuleEntitlement {
     this.status = 'active',
     this.sourceTransactionId,
     this.updatedAt,
+    this.startedAt,
+    this.trialDurationDays,
+    this.paymentStatus = 'none',
   });
 
-  bool get isPremium => RegExp(r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$').hasMatch(plan);
+  bool get isPremium => RegExp(
+          r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
+      .hasMatch(plan);
 
   bool get isActive =>
       status != 'revoked' &&
@@ -41,6 +49,13 @@ class ModuleEntitlement {
               ? (map['updated_at'] as Timestamp).toDate()
               : DateTime.tryParse(map['updated_at'].toString()))
           : null,
+      startedAt: map['started_at'] != null
+          ? (map['started_at'] is Timestamp
+              ? (map['started_at'] as Timestamp).toDate()
+              : DateTime.tryParse(map['started_at'].toString()))
+          : null,
+      trialDurationDays: map['trial_duration_days'] as int?,
+      paymentStatus: map['payment_status'] ?? 'none',
     );
   }
 
@@ -50,6 +65,9 @@ class ModuleEntitlement {
         'status': status,
         'source_transaction_id': sourceTransactionId,
         'updated_at': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
+        'started_at': startedAt != null ? Timestamp.fromDate(startedAt!) : null,
+        'trial_duration_days': trialDurationDays,
+        'payment_status': paymentStatus,
       };
 
   Map<String, dynamic> toJsonMap() => {
@@ -58,6 +76,9 @@ class ModuleEntitlement {
         'status': status,
         'source_transaction_id': sourceTransactionId,
         'updated_at': updatedAt?.toIso8601String(),
+        'started_at': startedAt?.toIso8601String(),
+        'trial_duration_days': trialDurationDays,
+        'payment_status': paymentStatus,
       };
 }
 
@@ -106,7 +127,8 @@ class UserModel {
           plan.startsWith('redeem') ||
           plan.startsWith('voucher') ||
           plan == 'custom' ||
-          (subscriptionExpiry != null && subscriptionExpiry!.isAfter(DateTime.now())));
+          (subscriptionExpiry != null &&
+              subscriptionExpiry!.isAfter(DateTime.now())));
 
   bool get isSubscriptionActive {
     if (isPremium && subscriptionExpiry != null) {
@@ -130,7 +152,8 @@ class UserModel {
       isTrial && questionsUsed >= AppConstants.trialQuestionLimit;
 
   // ── Modular Entitlement Helpers ──
-  ModuleEntitlement? getEntitlement(String agentId) => entitlements[entitlementKeys[agentId] ?? agentId];
+  ModuleEntitlement? getEntitlement(String agentId) =>
+      entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
     // 1. Explicit all_access entitlement
@@ -139,7 +162,9 @@ class UserModel {
 
     // 2. Specific module entitlement
     final specific = getEntitlement(agentId);
-    if (specific != null && specific.isActive && specific.isPremium) return true;
+    if (specific != null && specific.isActive && specific.isPremium) {
+      return true;
+    }
 
     // If an explicit all_access was REVOKED, deny fallback
     if (all != null && all.status == 'revoked') {
