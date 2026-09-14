@@ -19,6 +19,31 @@ const notebookUiScript = r'''
     }
     return answers.length ? answerText(answers[answers.length - 1]) : '';
   }
+  function conversation() {
+    const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
+    const nodes = [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
+    const entries = [];
+    const seen = new Set();
+    nodes.forEach(node => {
+      const value = answerText(node);
+      if (!value || seen.has(value)) return;
+      const isQuestion = node.matches(questionSelector) || !!node.closest(questionSelector);
+      const role = isQuestion ? 'PERTANYAAN' : 'JAWABAN';
+      if (entries.some(entry => entry.role === role && entry.value.includes(value))) return;
+      entries.push({role, value});
+      seen.add(value);
+    });
+    if (!entries.some(entry => entry.role === 'JAWABAN')) {
+      const answer = latest();
+      if (answer) entries.push({role: 'JAWABAN', value: answer});
+    }
+    if (!entries.length) return '';
+    const counters = {PERTANYAAN: 0, JAWABAN: 0};
+    return entries.map(entry => {
+      counters[entry.role] += 1;
+      return `${entry.role} ${counters[entry.role]}\n${entry.value}`;
+    }).join('\n\n────────────────────\n\n');
+  }
   let lastCopy = '';
   let lastCopyAt = 0;
   function sendCopy(value) {
@@ -238,7 +263,7 @@ const notebookUiScript = r'''
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
     return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
   }
-  window.otNotebook = {clean, ready, latest, setTheme: syncTheme};
+  window.otNotebook = {clean, ready, latest, conversation, setTheme: syncTheme};
   let scheduled = false;
   const observer = new MutationObserver(() => {
     if (scheduled) return;

@@ -6,8 +6,7 @@ abstract final class AppCopy {
   // ── Identitas & Merek ──────────────────────────────────────────
   static const appName = 'OpenTurath';
   static const appTagline = LegalCopy.aboutAppTagline;
-  static const defaultFieldDesc =
-      'Pilih bidang untuk mulai menelusuri kitab.';
+  static const defaultFieldDesc = 'Pilih bidang untuk mulai menelusuri kitab.';
   static const aboutTitle = LegalCopy.aboutAppTitle;
   static const aboutDescription = LegalCopy.aboutAppParagraph1;
   static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
@@ -76,7 +75,10 @@ abstract final class AppCopy {
 
   // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
   static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
+  static const noConversationToCopy = 'Belum ada percakapan untuk disalin.';
   static const answerCopied = 'Jawaban disalin.';
+  static const conversationCopied =
+      'Percakapan disalin dan tersimpan ke Catatan.';
   static const copyFailed = 'Jawaban belum bisa disalin. Coba lagi.';
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
   static const savedSuccess = 'Tersimpan ke Catatan.';
@@ -94,6 +96,7 @@ abstract final class AppCopy {
   static const viewReferenceAction = 'Lihat rujukan';
   static const shareReferenceTooltip = 'Bagikan catatan';
   static const copyAnswerAction = 'Salin jawaban';
+  static const copyConversationAction = 'Salin percakapan';
   static const saveAnswerMenu = 'Simpan ke Catatan';
 
   // ── Sesi Akun Google & NotebookLM ──────────────────────────────

@@ -36,29 +36,30 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final BookmarkService _bookmarkService = BookmarkService();
   final AuthService _authService = AuthService();
 
-  Future<void> _copyActiveTabAnswer(AgentSessionTab session) async {
+  Future<void> _copyActiveConversation(AgentSessionTab session) async {
     final controller = session.webController;
     if (controller == null) return;
     try {
       final result = await controller.evaluateJavascript(
-        source: 'window.otNotebook ? window.otNotebook.latest() : ""',
+        source: 'window.otNotebook ? window.otNotebook.conversation() : ""',
       );
       final text = result is String ? result.trim() : '';
       if (text.isEmpty) {
-        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
+        if (mounted) AppSnackBar.warning(context, AppCopy.noConversationToCopy);
         return;
       }
+      final formatted = '# Percakapan ${session.agent.title}\n\n$text';
       // 1. Simpan langsung ke Catatan (Bookmarks)
       final uid = _authService.currentUser?.uid;
-      final bookmark = copiedAnswerBookmark(text, session.agent);
+      final bookmark = copiedAnswerBookmark(formatted, session.agent);
       await _bookmarkService.addBookmark(bookmark, userId: uid);
 
       // 2. Salin ke clipboard perangkat
-      await Clipboard.setData(ClipboardData(text: text));
+      await Clipboard.setData(ClipboardData(text: formatted));
 
       if (mounted) {
         OTMotion.success();
-        AppSnackBar.success(context, AppCopy.answerCopied);
+        AppSnackBar.success(context, AppCopy.conversationCopied);
       }
     } catch (_) {
       if (mounted) AppSnackBar.error(context, AppCopy.copyFailed);
@@ -101,7 +102,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
             decoration: BoxDecoration(
               color: surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
               border: Border.all(color: border, width: 0.8),
             ),
             child: Column(
@@ -121,7 +123,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 const SizedBox(height: 18),
                 Text(
                   AppCopy.studyOptions,
-                  style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
+                  style: OTTypography.cardTitle(color: textPrimary)
+                      .copyWith(fontSize: 17),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -131,7 +134,11 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    Text('A', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: textSecondary)),
+                    Text('A',
+                        style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: textSecondary)),
                     Expanded(
                       child: Slider(
                         value: session.fontScale,
@@ -139,16 +146,23 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         max: 1.6,
                         divisions: 5,
                         activeColor: textPrimary,
-                        inactiveColor: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                        inactiveColor: isDark
+                            ? const Color(0xFF3F3F46)
+                            : const Color(0xFFE4E4E7),
                         onChanged: (val) {
                           setModalState(() => session.fontScale = val);
                           session.webController?.evaluateJavascript(
-                            source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($val); }',
+                            source:
+                                'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($val); }',
                           );
                         },
                       ),
                     ),
-                    Text('A', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, color: textPrimary)),
+                    Text('A',
+                        style: GoogleFonts.outfit(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: textPrimary)),
                   ],
                 ),
               ],
@@ -215,20 +229,22 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               side: BorderSide(color: border, width: 0.8),
             ),
             onSelected: (val) {
-              if (val == 'copy') {
-                _copyActiveTabAnswer(activeTab);
+              if (val == 'conversation') {
+                _copyActiveConversation(activeTab);
               } else if (val == 'font') {
                 _showFontScaleDialog(context, activeTab);
               }
             },
             itemBuilder: (ctx) => [
               PopupMenuItem(
-                value: 'copy',
+                value: 'conversation',
                 child: Row(
                   children: [
-                    Icon(Icons.content_copy_rounded, color: textPrimary, size: 18),
+                    Icon(Icons.content_copy_rounded,
+                        color: textPrimary, size: 18),
                     const SizedBox(width: 12),
-                    Text(AppCopy.copyAnswerAction, style: OTTypography.body(color: textPrimary)),
+                    Text(AppCopy.copyConversationAction,
+                        style: OTTypography.body(color: textPrimary)),
                   ],
                 ),
               ),
@@ -236,9 +252,11 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 value: 'font',
                 child: Row(
                   children: [
-                    Icon(Icons.format_size_rounded, color: textPrimary, size: 18),
+                    Icon(Icons.format_size_rounded,
+                        color: textPrimary, size: 18),
                     const SizedBox(width: 12),
-                    Text('Ukuran huruf', style: OTTypography.body(color: textPrimary)),
+                    Text('Ukuran huruf',
+                        style: OTTypography.body(color: textPrimary)),
                   ],
                 ),
               ),
@@ -262,7 +280,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   ),
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     itemCount: sessions.length,
                     separatorBuilder: (_, __) => const SizedBox(width: 6),
                     itemBuilder: (context, index) {
@@ -273,7 +292,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         onTap: () => _sessionManager.selectTab(index),
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: isActive ? surface : Colors.transparent,
                             borderRadius: BorderRadius.circular(8),
@@ -295,7 +315,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                 session.agent.title.replaceFirst('AI ', ''),
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
-                                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                                  fontWeight: isActive
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
                                   color: isActive ? textPrimary : textSecondary,
                                 ),
                               ),
@@ -498,7 +520,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     ''';
 
     return UserScript(
-      source: 'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript$themeInitScript',
+      source:
+          'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript$themeInitScript',
       injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
       forMainFrameOnly: true,
     );
@@ -532,7 +555,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       widget.session.webController?.setSettings(
         settings: InAppWebViewSettings(
           forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
-          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+          forceDarkStrategy:
+              ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
           algorithmicDarkeningAllowed: true,
         ),
       );
@@ -596,11 +620,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     _readinessTimer?.cancel();
     _loadingStarted = DateTime.now();
     _readySamples = 0;
-    _readinessTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+    _readinessTimer =
+        Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
   }
 
   Future<void> _checkReady() async {
-    if (_checkingReady || widget.session.webController == null || !mounted) return;
+    if (_checkingReady || widget.session.webController == null || !mounted) {
+      return;
+    }
     _checkingReady = true;
     try {
       final controller = widget.session.webController!;
@@ -664,7 +691,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     } catch (e) {
       if (!mounted) return;
       final msg = e.toString().toLowerCase();
-      final isPaywall = msg.contains('permission-denied') || msg.contains('berlangganan');
+      final isPaywall =
+          msg.contains('permission-denied') || msg.contains('berlangganan');
       setState(() {
         session.isUrlLoading = false;
         session.isPaywallRequired = isPaywall;
@@ -694,9 +722,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       return Container(
         color: canvas,
         child: AppErrorState(
-          title: session.isPaywallRequired ? 'Akses Terbatas' : 'Asisten Belum Bisa Dibuka',
+          title: session.isPaywallRequired
+              ? 'Akses Terbatas'
+              : 'Asisten Belum Bisa Dibuka',
           message: session.errorMessage!,
-          icon: session.isPaywallRequired ? Icons.workspace_premium_rounded : Icons.info_outline_rounded,
+          icon: session.isPaywallRequired
+              ? Icons.workspace_premium_rounded
+              : Icons.info_outline_rounded,
           onRetry: _fetchUrl,
           onBack: () => AgentSessionManager.instance.closeRoom(),
           backLabel: 'Kembali ke Beranda',
@@ -713,114 +745,123 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           InAppWebView(
             keepAlive: session.keepAlive,
             initialUrlRequest: URLRequest(url: initialUri),
-            initialUserScripts: UnmodifiableListView([_buildCloakScript(isDark)]),
-          initialSettings: InAppWebViewSettings(
-            javaScriptEnabled: true,
-            domStorageEnabled: true,
-            databaseEnabled: true,
-            useWideViewPort: true,
-            loadWithOverviewMode: true,
-            cacheEnabled: true,
-            clearCache: false,
-            transparentBackground: false,
-            allowsInlineMediaPlayback: true,
-            supportZoom: false,
-            displayZoomControls: false,
-            mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-            thirdPartyCookiesEnabled: true,
-            hardwareAcceleration: true,
-            verticalScrollBarEnabled: false,
-            horizontalScrollBarEnabled: false,
-            forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-            forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
-            algorithmicDarkeningAllowed: true,
-            userAgent: 'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
-          ),
-          onWebViewCreated: (controller) {
-            session.webController = controller;
-            controller.addJavaScriptHandler(
-              handlerName: 'otCopiedAnswer',
-              callback: (args) async {
-                final url = await controller.getUrl();
-                if (url?.scheme != 'https' ||
-                    !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) ||
-                    args.isEmpty ||
-                    args.first is! String) {
-                  return false;
-                }
-                try {
-                  final text = (args.first as String).trim();
-                  if (text.isNotEmpty && text.length <= 200000) {
-                    final uid = _authService.currentUser?.uid;
-                    await _bookmarkService.addBookmark(
-                      copiedAnswerBookmark(text, session.agent),
-                      userId: uid,
-                    );
-                    await Clipboard.setData(ClipboardData(text: text));
-                    if (context.mounted) {
-                      OTMotion.light();
-                      AppSnackBar.success(context, AppCopy.answerCopied);
-                    }
-                    return true;
-                  }
-                } catch (_) {
-                  if (context.mounted) {
-                    AppSnackBar.error(context, AppCopy.saveFailed);
-                  }
-                }
-                return false;
-              },
-            );
-            if (!session.isSessionReady) {
-              _startReadinessCheck();
-            }
-          },
-          onLoadStart: (controller, uri) {
-            // Hanya aktifkan full loader jika sesi BELUM pernah siap sama sekali
-            if (mounted && !session.isSessionReady && !session.isWebLoading) {
-              setState(() => session.isWebLoading = true);
-            }
-            if (!session.isSessionReady) {
-              _startReadinessCheck();
-            }
-          },
-          onLoadStop: (controller, uri) async {
-            await controller.evaluateJavascript(source: 'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
-            await _applyThemeCss(isDark);
-            await controller.evaluateJavascript(
-              source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
-            );
-            if (!session.isSessionReady) {
-              await _checkReady();
-            }
-          },
-          onProgressChanged: (controller, progress) async {
-            if (progress >= 35) {
-              await controller.evaluateJavascript(source: 'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
-              await _applyThemeCss(isDark);
-            }
-          },
-          shouldOverrideUrlLoading: (controller, action) async {
-            final uri = action.request.url;
-            if (uri == null) return NavigationActionPolicy.CANCEL;
-            if (NotebookNavigation.allowed(uri.uriValue)) {
-              return NavigationActionPolicy.ALLOW;
-            }
-            return NavigationActionPolicy.CANCEL;
-          },
-        ),
-
-        // Fullscreen pulsing loader hanya saat inisialisasi awal
-        if (!session.isSessionReady && session.isWebLoading)
-          Positioned.fill(
-            child: AppLoader.fullscreen(
-              title: session.agent.title,
-              subtitle: AppCopy.loadingReferences,
-              onCancel: () => AgentSessionManager.instance.closeRoom(),
+            initialUserScripts:
+                UnmodifiableListView([_buildCloakScript(isDark)]),
+            initialSettings: InAppWebViewSettings(
+              javaScriptEnabled: true,
+              domStorageEnabled: true,
+              databaseEnabled: true,
+              useWideViewPort: true,
+              loadWithOverviewMode: true,
+              cacheEnabled: true,
+              clearCache: false,
+              transparentBackground: false,
+              allowsInlineMediaPlayback: true,
+              supportZoom: false,
+              displayZoomControls: false,
+              mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+              thirdPartyCookiesEnabled: true,
+              hardwareAcceleration: true,
+              verticalScrollBarEnabled: false,
+              horizontalScrollBarEnabled: false,
+              forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
+              forceDarkStrategy:
+                  ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+              algorithmicDarkeningAllowed: true,
+              userAgent:
+                  'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
             ),
+            onWebViewCreated: (controller) {
+              session.webController = controller;
+              controller.addJavaScriptHandler(
+                handlerName: 'otCopiedAnswer',
+                callback: (args) async {
+                  final url = await controller.getUrl();
+                  if (url?.scheme != 'https' ||
+                      !['notebooklm.google.com', 'notebook.google.com']
+                          .contains(url?.host) ||
+                      args.isEmpty ||
+                      args.first is! String) {
+                    return false;
+                  }
+                  try {
+                    final text = (args.first as String).trim();
+                    if (text.isNotEmpty && text.length <= 200000) {
+                      final uid = _authService.currentUser?.uid;
+                      await _bookmarkService.addBookmark(
+                        copiedAnswerBookmark(text, session.agent),
+                        userId: uid,
+                      );
+                      await Clipboard.setData(ClipboardData(text: text));
+                      if (context.mounted) {
+                        OTMotion.light();
+                        AppSnackBar.success(context, AppCopy.answerCopied);
+                      }
+                      return true;
+                    }
+                  } catch (_) {
+                    if (context.mounted) {
+                      AppSnackBar.error(context, AppCopy.saveFailed);
+                    }
+                  }
+                  return false;
+                },
+              );
+              if (!session.isSessionReady) {
+                _startReadinessCheck();
+              }
+            },
+            onLoadStart: (controller, uri) {
+              // Hanya aktifkan full loader jika sesi BELUM pernah siap sama sekali
+              if (mounted && !session.isSessionReady && !session.isWebLoading) {
+                setState(() => session.isWebLoading = true);
+              }
+              if (!session.isSessionReady) {
+                _startReadinessCheck();
+              }
+            },
+            onLoadStop: (controller, uri) async {
+              await controller.evaluateJavascript(
+                  source:
+                      'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
+              await _applyThemeCss(isDark);
+              await controller.evaluateJavascript(
+                source:
+                    'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
+              );
+              if (!session.isSessionReady) {
+                await _checkReady();
+              }
+            },
+            onProgressChanged: (controller, progress) async {
+              if (progress >= 35) {
+                await controller.evaluateJavascript(
+                    source:
+                        'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
+                await _applyThemeCss(isDark);
+              }
+            },
+            shouldOverrideUrlLoading: (controller, action) async {
+              final uri = action.request.url;
+              if (uri == null) return NavigationActionPolicy.CANCEL;
+              if (NotebookNavigation.allowed(uri.uriValue)) {
+                return NavigationActionPolicy.ALLOW;
+              }
+              return NavigationActionPolicy.CANCEL;
+            },
           ),
-      ],
-    ),
+
+          // Fullscreen pulsing loader hanya saat inisialisasi awal
+          if (!session.isSessionReady && session.isWebLoading)
+            Positioned.fill(
+              child: AppLoader.fullscreen(
+                title: session.agent.title,
+                subtitle: AppCopy.loadingReferences,
+                onCancel: () => AgentSessionManager.instance.closeRoom(),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
