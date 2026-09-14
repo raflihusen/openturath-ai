@@ -238,6 +238,30 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     }
   }
 
+  /// OT-F005: Destination allowlist ketat untuk WebView transaksi pembayaran
+  bool _isAllowedPaymentDestination(Uri uri) {
+    if (uri.scheme != 'https') return false;
+
+    final host = uri.host.toLowerCase();
+    
+    // Domain aplikasi OpenTurath
+    if (host == 'openturath-ai.web.app' ||
+        host == 'openturath.ai' ||
+        host.endsWith('.openturath.ai')) {
+      return true;
+    }
+
+    // Domain resmi payment gateway DOKU & sandbox
+    if (host == 'doku.com' ||
+        host.endsWith('.doku.com') ||
+        host == 'doku.id' ||
+        host.endsWith('.doku.id')) {
+      return true;
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -415,8 +439,14 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                         }
                       },
                       shouldOverrideUrlLoading: (controller, navigationAction) async {
-                        final uri = navigationAction.request.url;
-                        if (uri == null) return NavigationActionPolicy.ALLOW;
+                        final webUri = navigationAction.request.url;
+                        if (webUri == null) return NavigationActionPolicy.CANCEL;
+
+                        final uri = Uri.tryParse(webUri.toString());
+                        if (uri == null || !_isAllowedPaymentDestination(uri)) {
+                          debugPrint('[DokuCheckout] Navigation to untrusted destination rejected: $webUri');
+                          return NavigationActionPolicy.CANCEL;
+                        }
 
                         final urlStr = uri.toString().toLowerCase();
 
