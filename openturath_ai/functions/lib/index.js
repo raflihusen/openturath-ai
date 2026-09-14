@@ -112,7 +112,6 @@ const AGENT_ENTITLEMENTS = {
     tasawwuf_adab: "tasawwuf",
     all_ai: "all_access",
 };
-const TRIAL_QUESTION_LIMIT = 10;
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
 exports.PURCHASABLE_AGENTS = new Set([
     "fiqh_tahawwulat",
@@ -166,7 +165,7 @@ function getEntitlementAccess(userData, entitlementKey) {
             return false;
         if (ent.status === "revoked" || ent.status === "expired")
             return false;
-        const allowed = /^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
+        const allowed = /^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$/.test(ent.plan);
         const expiry = ((_a = ent.expiry) === null || _a === void 0 ? void 0 : _a.toDate) ? ent.expiry.toDate() : (((_b = ent.expiry) === null || _b === void 0 ? void 0 : _b._seconds) ? new Date(ent.expiry._seconds * 1000) : new Date((_c = ent.expiry) !== null && _c !== void 0 ? _c : ""));
         return allowed && Number.isFinite(expiry.getTime()) && expiry.getTime() > now;
     };
@@ -229,7 +228,7 @@ exports.getAgentUrl = functions
 });
 // ================================================================
 // FUNCTION 1b: recordQuestion
-// Kuota trial hanya dapat berubah melalui transaksi server-side.
+// Trial sekarang berbasis masa berlaku voucher, bukan kuota pertanyaan.
 // ================================================================
 exports.recordQuestion = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
@@ -256,17 +255,7 @@ exports.recordQuestion = functions
         if (entitlementAccess.premiumPlan) {
             throw new functions.https.HttpsError("permission-denied", "Langganan Anda untuk kajian ini telah berakhir.");
         }
-        const questionsUsed = Number.isInteger(userData.questions_used) ? userData.questions_used : 0;
-        if (questionsUsed >= TRIAL_QUESTION_LIMIT) {
-            throw new functions.https.HttpsError("permission-denied", "Kuota uji coba sudah habis. Berlangganan untuk lanjut.");
-        }
-        const updatedQuestionsUsed = questionsUsed + 1;
-        transaction.update(userRef, { questions_used: updatedQuestionsUsed });
-        return {
-            isPremium: false,
-            questionsUsed: updatedQuestionsUsed,
-            questionsRemaining: TRIAL_QUESTION_LIMIT - updatedQuestionsUsed,
-        };
+        throw new functions.https.HttpsError("permission-denied", "Akses Pro untuk kajian ini belum aktif. Tukarkan voucher atau berlangganan untuk melanjutkan.");
     });
 });
 // ================================================================
@@ -934,6 +923,12 @@ exports.redeemCode = functions
         }
         const entitlementKey = codeData.entitlement_key || "fiqh_syafii";
         const durationDays = codeData.duration_days || 7;
+        const isTrialVoucher = codeData.is_trial === true ||
+            codeData.type === "trial" ||
+            codeData.type === "perdana" ||
+            rawCode.startsWith("PERDANA") ||
+            rawCode.startsWith("TRIAL") ||
+            rawCode.startsWith("WELCOME");
         // Ambil user saat ini
         const userRef = db.collection("users").doc(uid);
         const userDoc = await transaction.get(userRef);
@@ -973,11 +968,14 @@ exports.redeemCode = functions
         });
         // 3. Update profil dan entitlement pengguna (F01: isolasi per modul)
         const updatedEntitlements = Object.assign(Object.assign({}, entitlements), { [entitlementKey]: {
-                plan: "voucher_access",
+                plan: isTrialVoucher ? "trial" : "voucher_access",
                 status: "active",
                 source: "redeem_code",
                 code_id: rawCode.slice(0, 4) + "****", // Redaksi di entitlement
                 expiry: admin.firestore.Timestamp.fromDate(newExpiry),
+                started_at: admin.firestore.Timestamp.fromDate(baseDate),
+                trial_duration_days: isTrialVoucher ? durationDays : null,
+                payment_status: "none",
                 updated_at: admin.firestore.FieldValue.serverTimestamp(),
             } });
         const userUpdate = {
@@ -986,7 +984,7 @@ exports.redeemCode = functions
         };
         // Hanya set plan global jika voucher adalah all_access
         if (entitlementKey === "all_access") {
-            userUpdate.plan = "voucher_access";
+            userUpdate.plan = isTrialVoucher ? "trial" : "voucher_access";
             userUpdate.subscription_expiry = admin.firestore.Timestamp.fromDate(newExpiry);
         }
         if (!userData.email && userEmail) {
