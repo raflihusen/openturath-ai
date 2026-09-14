@@ -42,73 +42,21 @@ class MainShellScreen extends StatefulWidget {
   State<MainShellScreen> createState() => _MainShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen>
-    with SingleTickerProviderStateMixin {
+class _MainShellScreenState extends State<MainShellScreen> {
   late int _currentIndex;
   late final PageController _pageController;
   String? _selectedFieldId;
   CorpusKind? _selectedKind;
-
-  late final AnimationController _roomAnimController;
-  late final Animation<Offset> _roomSlideAnimation;
-  late final Animation<double> _bgDimmerAnimation;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
-
-    // Animasi geser vertikal murni nan ringan (240ms) tanpa scale/GPU lag
-    _roomAnimController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 240),
-      reverseDuration: const Duration(milliseconds: 200),
-    );
-
-    final CurvedAnimation easeCurve = CurvedAnimation(
-      parent: _roomAnimController,
-      curve: Curves.easeOutCubic,
-      reverseCurve: Curves.easeInCubic,
-    );
-
-    _roomSlideAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 1.0),
-      end: Offset.zero,
-    ).animate(easeCurve);
-
-    _bgDimmerAnimation = Tween<double>(
-      begin: 0.0,
-      end: 0.35,
-    ).animate(easeCurve);
-
-    if (AgentSessionManager.instance.isOpen) {
-      _roomAnimController.value = 1.0;
-    }
-    AgentSessionManager.instance.addListener(_onSessionStateChanged);
-  }
-
-  void _onSessionStateChanged() {
-    final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (AgentSessionManager.instance.isOpen) {
-      if (disableAnimations) {
-        _roomAnimController.value = 1.0;
-      } else {
-        _roomAnimController.forward();
-      }
-    } else {
-      if (disableAnimations) {
-        _roomAnimController.value = 0.0;
-      } else {
-        _roomAnimController.reverse();
-      }
-    }
   }
 
   @override
   void dispose() {
-    AgentSessionManager.instance.removeListener(_onSessionStateChanged);
-    _roomAnimController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -309,15 +257,14 @@ class _MainShellScreenState extends State<MainShellScreen>
 
     return MainShellController(
       switchTab: _onTabSelected,
-      child: AnimatedBuilder(
-        animation: _roomAnimController,
+      child: ListenableBuilder(
+        listenable: AgentSessionManager.instance,
         builder: (context, child) {
           final sessionManager = AgentSessionManager.instance;
-          final isRoomVisible = _roomAnimController.value > 0.0 || sessionManager.isOpen;
 
           return PopScope(
-            // canPop hanya diizinkan jika ruang tertutup DAN animasi selesai di-dismiss DAN sedang di tab 0
-            canPop: !sessionManager.isOpen && _roomAnimController.isDismissed && _currentIndex == 0,
+            // canPop hanya diizinkan jika ruang tertutup DAN sedang di tab 0
+            canPop: !sessionManager.isOpen && _currentIndex == 0,
             onPopInvokedWithResult: (didPop, result) async {
               if (didPop) return;
               if (sessionManager.isOpen) {
@@ -329,38 +276,23 @@ class _MainShellScreenState extends State<MainShellScreen>
                 sessionManager.closeRoom();
                 return;
               }
-              if (!_roomAnimController.isDismissed) {
-                sessionManager.closeRoom();
-                return;
-              }
               if (_currentIndex != 0) {
                 _onTabSelected(0);
               }
             },
             child: Stack(
               children: [
-                // 1. Dashboard latar belakang (Stationary - bebas GPU overhead rasterisasi)
+                // 1. Dashboard latar belakang (Stationary - bebas GPU overhead)
                 baseScaffold,
 
-                // 2. Backdrop Dimmer lembut (hanya dimmer yang menggunakan animasi fade)
-                if (_roomAnimController.value > 0.0)
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      ignoring: _roomAnimController.value == 0.0,
-                      child: Container(
-                        color: Colors.black.withValues(alpha: _bgDimmerAnimation.value),
-                      ),
-                    ),
-                  ),
-
-                // 3. Ruang AI Multi-Tab (Slide vertikal murni tanpa Offstage agar WebView tidak di-detach oleh OS)
+                // 2. Ruang AI Multi-Tab (Instant zero-glitch display dengan retensi memori penuh)
                 Positioned.fill(
-                  child: IgnorePointer(
-                    ignoring: !isRoomVisible,
-                    child: SlideTransition(
-                      position: _roomSlideAnimation,
-                      child: child,
-                    ),
+                  child: Visibility(
+                    visible: sessionManager.isOpen,
+                    maintainState: true,
+                    maintainAnimation: true,
+                    maintainSize: true,
+                    child: child!,
                   ),
                 ),
               ],
