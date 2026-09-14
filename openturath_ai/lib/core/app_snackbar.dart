@@ -14,29 +14,30 @@ class AppSnackBar {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    Color backgroundColor;
-    Color foregroundColor;
+    // Sesuai DESIGN.md (The Quiet Scholar):
+    // Gunakan elevated surface gelap monokromatis yang berwibawa di kedua tema,
+    // teks putih tajam, dan aksen warna HANYA pada ikon 20dp & border hairline 0.8dp.
+    final backgroundColor = isDark ? const Color(0xFF1E1E22) : const Color(0xFF18181B);
+    const textColor = Colors.white;
+
+    Color accentColor;
     IconData icon;
 
     switch (type) {
       case SnackType.success:
-        backgroundColor = isDark ? const Color(0xFF0F392B) : const Color(0xFFE6F4EA);
-        foregroundColor = isDark ? const Color(0xFF81C995) : const Color(0xFF137333);
+        accentColor = const Color(0xFF34D399); // Emerald lembut
         icon = Icons.check_circle_rounded;
         break;
       case SnackType.warning:
-        backgroundColor = isDark ? const Color(0xFF3B2F0F) : const Color(0xFFFEF7E0);
-        foregroundColor = isDark ? const Color(0xFFFDD663) : const Color(0xFFB06000);
-        icon = Icons.warning_amber_rounded;
+        accentColor = const Color(0xFFFBBF24); // Amber tenang
+        icon = Icons.info_outline_rounded;
         break;
       case SnackType.error:
-        backgroundColor = isDark ? const Color(0xFF3C1B1B) : const Color(0xFFFCE8E6);
-        foregroundColor = isDark ? const Color(0xFFF28B82) : const Color(0xFFC5221F);
+        accentColor = const Color(0xFFF87171); // Rose lembut
         icon = Icons.error_outline_rounded;
         break;
       case SnackType.info:
-        backgroundColor = isDark ? const Color(0xFF1F2937) : const Color(0xFFE8F0FE);
-        foregroundColor = isDark ? const Color(0xFF93C5FD) : const Color(0xFF1A73E8);
+        accentColor = const Color(0xFF94A3B8); // Slate monokrom
         icon = Icons.info_outline_rounded;
         break;
     }
@@ -53,16 +54,16 @@ class AppSnackBar {
       SnackBar(
         content: Row(
           children: [
-            Icon(icon, color: foregroundColor, size: 20),
+            Icon(icon, color: accentColor, size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 message,
-                style: TextStyle(
-                  color: foregroundColor,
+                style: const TextStyle(
+                  color: textColor,
                   fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  height: 1.3,
+                  fontWeight: FontWeight.w500,
+                  height: 1.35,
                 ),
               ),
             ),
@@ -75,8 +76,8 @@ class AppSnackBar {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           side: BorderSide(
-            color: foregroundColor.withValues(alpha: 0.25),
-            width: 1,
+            color: accentColor.withValues(alpha: 0.35),
+            width: 0.8,
           ),
         ),
         duration: effectiveDuration,
