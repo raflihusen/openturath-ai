@@ -9,10 +9,12 @@ import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
+import '../models/bookmark_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
+import '../services/bookmark_service.dart';
 import '../services/update_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/update_ready_banner.dart';
@@ -39,18 +41,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
   UserModel? _initialUser;
   List<AgentModel> _agents = AgentModel.defaultAgents;
   String _searchQuery = '';
+  String? _lastOpenedAgentId;
+  List<BookmarkModel> _recentBookmarks = [];
 
   @override
   void initState() {
     super.initState();
     _loadData();
     UpdateService().checkForUpdatesSilently();
+    AgentSessionManager.instance.addListener(_onSessionManagerChanged);
+    BookmarkService().addListener(_onBookmarksChanged);
+  }
+
+  void _onSessionManagerChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _onBookmarksChanged() {
+    _loadRecentBookmarks();
   }
 
   @override
   void dispose() {
+    AgentSessionManager.instance.removeListener(_onSessionManagerChanged);
+    BookmarkService().removeListener(_onBookmarksChanged);
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadRecentBookmarks() async {
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    try {
+      final items = await BookmarkService().getBookmarks(userId: uid);
+      if (mounted) {
+        setState(() {
+          _recentBookmarks = items;
+        });
+      }
+    } catch (_) {}
   }
 
   Future<void> _loadData() async {
@@ -60,6 +89,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         Navigator.pushReplacementNamed(context, AppRoutes.login);
         return;
       }
+
+      _loadRecentBookmarks();
+      SharedPreferences.getInstance().then((prefs) {
+        if (mounted) {
+          setState(() {
+            _lastOpenedAgentId = prefs.getString('last_opened_notebook_id');
+          });
+        }
+      }).catchError((_) {});
 
       final results = await Future.wait([
         _authService.getCurrentUserModel(),
@@ -80,9 +118,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _openNotebook(AgentModel agent, UserModel? user) {
     if (agent.isComingSoon) {
-      AppSnackBar.warning(
+      AppSnackBar.info(
         context,
-        'Koleksi kitab untuk ${agent.title} masih disiapkan.',
+        '${agent.title} sedang disiapkan.',
       );
       return;
     }
@@ -90,6 +128,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // Rekam riwayat pembukaan terakhir secara asynchronous di background
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString('last_opened_notebook_id', agent.id);
+      if (mounted) {
+        setState(() => _lastOpenedAgentId = agent.id);
+      }
     }).catchError((_) {});
 
     // Cek akses pengguna ke agent (paywall)
@@ -295,17 +336,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 16),
 
-                    // ── 3. Announcement & Adab Carousel (Tepat di bawah greeting card) ──
-                    _DashboardAnnouncementCarousel(
-                      isDark: isDark,
-                      surface: surface,
-                      border: border,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-
-                    const SizedBox(height: 18),
-
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
                       height: 48,
@@ -409,6 +439,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
+                      // ── Kapsul Lanjutkan Telaah / Sesi Aktif ──
+                      _buildResumeOrActiveSessionCard(
+                        context: context,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        user: user,
+                      ),
+
                       // ── Section: Pilih Bidang ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -517,6 +558,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           );
                         },
                       ),
+
+                      const SizedBox(height: 28),
+
+                      // ── Catatan Telaah Terkini ──
+                      _buildRecentNotesSection(
+                        context: context,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      // ── Wasiat Adab & Pedoman Telaah (Carousel di bagian bawah) ──
+                      _DashboardAnnouncementCarousel(
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+
+                      const SizedBox(height: 16),
                     ],
                   ],
                 ),
@@ -528,8 +594,249 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _buildResumeOrActiveSessionCard({
+    required BuildContext context,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required UserModel? user,
+  }) {
+    final sessionManager = AgentSessionManager.instance;
+    final hasActiveSession = sessionManager.hasSessions;
+    final activeTab = sessionManager.activeTab ?? (hasActiveSession ? sessionManager.tabs.first : null);
 
+    AgentModel? targetAgent;
+    String titleText;
+    String subtitleText;
+    IconData leadingIcon;
 
+    if (hasActiveSession && activeTab != null) {
+      targetAgent = activeTab.agent;
+      titleText = 'Sesi ${targetAgent.title.replaceFirst('AI ', '')} aktif';
+      subtitleText = 'Terbuka di latar belakang · Lanjutkan telaah';
+      leadingIcon = Icons.chat_bubble_outline_rounded;
+    } else if (_lastOpenedAgentId != null) {
+      targetAgent = _agents.firstWhere(
+        (a) => a.id == _lastOpenedAgentId,
+        orElse: () => _agents.first,
+      );
+      titleText = 'Lanjutkan telaah: ${targetAgent.title.replaceFirst('AI ', '')}';
+      subtitleText = 'Buka kembali asisten kajian sebelumnya';
+      leadingIcon = Icons.history_rounded;
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    final accent = OTColors.accent(isDark);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: AppleInteractiveWrapper(
+        onTap: () => _openNotebook(targetAgent!, user),
+        pressedScale: 0.98,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: hasActiveSession ? accent.withValues(alpha: 0.4) : border,
+              width: hasActiveSession ? 1.2 : 0.8,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(leadingIcon, size: 18, color: textPrimary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      titleText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitleText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(
+                        fontSize: 11.5,
+                        color: textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.arrow_forward_rounded, size: 16, color: textSecondary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentNotesSection({
+    required BuildContext context,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    final shell = MainShellController.of(context);
+    final count = _recentBookmarks.length;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'Catatan telaah terkini',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.2,
+                color: textPrimary,
+              ),
+            ),
+            if (count > 0)
+              GestureDetector(
+                onTap: () => shell?.switchTab(2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Lihat semua ($count)',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
+                  ],
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        if (count > 0)
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: count > 2 ? 2 : count,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, idx) {
+              final note = _recentBookmarks[idx];
+              final previewText = note.fullAnswer.replaceAll('\n', ' ').trim();
+              return AppleInteractiveWrapper(
+                onTap: () => shell?.switchTab(2),
+                pressedScale: 0.98,
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                  decoration: BoxDecoration(
+                    color: surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: border, width: 0.8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit_note_rounded, size: 20, color: textSecondary),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              note.title.isNotEmpty ? note.title : 'Catatan tanpa judul',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: textPrimary,
+                              ),
+                            ),
+                            if (previewText.isNotEmpty) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                previewText,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11.5,
+                                  color: textSecondary,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
+                    ],
+                  ),
+                ),
+              );
+            },
+          )
+        else
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: border, width: 0.8),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.bookmark_border_rounded, size: 20, color: textSecondary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Ikatlah ilmu dengan tulisan. Simpan kutipan ibarah dari asisten untuk memantapkan kajian.',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      height: 1.4,
+                      color: textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
