@@ -11,6 +11,7 @@ import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
 import '../models/field_model.dart';
 import '../models/agent_model.dart';
+import '../models/user_model.dart';
 import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
@@ -128,26 +129,13 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
-  bool _isOpeningSubscription = false;
-
-  void _openSubscriptionForAgent(AgentModel agent) {
-    if (_isOpeningSubscription) return;
-    _isOpeningSubscription = true;
-
-    _authService.getCurrentUserModel().then((user) {
-      if (!mounted) return;
-      NavigationGuard.safePushNamed(
-        context,
-        AppRoutes.subscription,
-        arguments: {'agent': agent, 'user': user},
-      );
-    }).whenComplete(() {
-      if (mounted) {
-        setState(() => _isOpeningSubscription = false);
-      } else {
-        _isOpeningSubscription = false;
-      }
-    });
+  void _openSubscriptionForAgent(AgentModel agent, {UserModel? user}) {
+    final targetUser = user ?? _authService.cachedCurrentUser;
+    NavigationGuard.safePushNamed(
+      context,
+      AppRoutes.subscription,
+      arguments: {'agent': agent, 'user': targetUser},
+    );
   }
 
   @override

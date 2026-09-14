@@ -570,7 +570,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (_isNavigatingToSubscription) return;
     _isNavigatingToSubscription = true;
     try {
-      final currentUser = _user ?? await AuthService().getCurrentUserModel();
+      final currentUser = _user ?? AuthService().cachedCurrentUser;
       if (!mounted) return;
       await NavigationGuard.safePushNamed(
         context,

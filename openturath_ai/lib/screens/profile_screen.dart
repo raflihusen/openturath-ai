@@ -162,33 +162,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  bool _isOpeningSubscription = false;
-
-  Future<void> _openSubscription() async {
-    if (_isOpeningSubscription) return;
-    _isOpeningSubscription = true;
-    try {
-      final user = await _authService.getCurrentUserModel();
-      if (!mounted) return;
-
-      await NavigationGuard.safePushNamed(
-        context,
-        AppRoutes.subscription,
-        arguments: {
-          'user': user,
-          'agent': AgentModel.defaultAgents.firstWhere(
-            (a) => a.id == 'fiqh_tahawwulat',
-            orElse: () => AgentModel.defaultAgents.first,
-          ),
-        },
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _isOpeningSubscription = false);
-      } else {
-        _isOpeningSubscription = false;
-      }
-    }
+  void _openSubscription([UserModel? userModel]) {
+    final user = userModel ?? _authService.cachedCurrentUser;
+    NavigationGuard.safePushNamed(
+      context,
+      AppRoutes.subscription,
+      arguments: {
+        'user': user,
+        'agent': AgentModel.defaultAgents.firstWhere(
+          (a) => a.id == 'fiqh_tahawwulat',
+          orElse: () => AgentModel.defaultAgents.first,
+        ),
+      },
+    );
   }
 
   @override
@@ -363,7 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         title: AppCopy.subscription,
                         subtitle: subscriptionSubtitle,
                         trailing: Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-                        onTap: _openSubscription,
+                        onTap: () => _openSubscription(userModel),
                       ),
                     ],
                   ),
