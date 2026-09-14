@@ -20,7 +20,10 @@ class DokuService {
     required String phone,
   }) async {
     try {
-      final callable = _functions.httpsCallable(AppConstants.fnCreatePayment);
+      final callable = _functions.httpsCallable(
+        AppConstants.fnCreatePayment,
+        options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+      );
       final result = await callable.call({
         'uid': uid,
         'agentId': agentId,
@@ -51,7 +54,10 @@ class DokuService {
     required String invoiceNumber,
   }) async {
     try {
-      final callable = _functions.httpsCallable(AppConstants.fnCheckPaymentStatus);
+      final callable = _functions.httpsCallable(
+        AppConstants.fnCheckPaymentStatus,
+        options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+      );
       final result = await callable.call({'invoiceNumber': invoiceNumber});
       return Map<String, dynamic>.from(result.data as Map);
     } catch (e) {
