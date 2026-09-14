@@ -2068,7 +2068,15 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasOnly([
         'error', 'context', 'severity', 'stackTrace', 'breadcrumbs',
         'extra', 'userId', 'userEmail', 'platform', 'deviceTimestamp', 'createdAt'
-      ]) && request.resource.data.error is string && request.resource.data.error.size() <= 2500;
+      ])
+      && request.resource.data.error is string
+      && request.resource.data.error.size() <= 2500
+      && request.resource.data.severity in ['info', 'warning', 'error', 'critical']
+      && (
+        (request.auth != null && request.resource.data.userId == request.auth.uid) ||
+        (request.auth == null && request.resource.data.userId == 'unauthenticated')
+      )
+      && request.resource.data.createdAt == request.time;
       allow read, update, delete: if false;
     }
 
@@ -6139,50 +6147,56 @@ class Loc {
 
 ### FLUTTER FILE: openturath_ai/lib/core/navigation_guard.dart
 ```dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 /// [NavigationGuard] mencegah masalah navigasi bertumpuk (*stacked pages*)
 /// yang timbul ketika pengguna mengetuk tombol navigasi secara berulang-ulang
 /// dalam jeda waktu singkat saat perangkat sedang sibuk atau mengalami lag.
+///
+/// Mekanisme penguncian bekerja secara *per-route in-flight window* (450ms),
+/// sehingga double tap pada rute yang sama ditolak, namun navigasi anak (child routes)
+/// dari dalam halaman yang sedang aktif tetap dapat dibuka secara normal.
 class NavigationGuard {
   NavigationGuard._();
 
-  static bool _isNavigating = false;
-  static String? _activeRoute;
+  static final Set<String> _inFlightRoutes = <String>{};
+  static bool _isCustomNavigating = false;
 
-  /// Mengetahui apakah saat ini ada operasi navigasi yang sedang berlangsung (*in-flight*).
-  static bool get isNavigating => _isNavigating;
+  /// Mengetahui apakah ada rute tertentu yang sedang dalam proses transisi push.
+  static bool isRouteInFlight(String routeName) => _inFlightRoutes.contains(routeName);
 
-  /// Rute yang saat ini sedang aktif dibuka.
-  static String? get activeRoute => _activeRoute;
-
-  /// Mengeksekusi [Navigator.pushNamed] dengan perlindungan *Single-Flight Guard*.
+  /// Mengeksekusi [Navigator.pushNamed] dengan perlindungan *Single-Flight Guard* per-route.
   ///
-  /// Jika ada navigasi lain yang sedang berjalan atau rute yang sama sedang
-  /// dalam proses dibuka, pemanggilan berikutnya akan langsung diabaikan secara aman.
+  /// Kunci dilepaskan otomatis setelah jendela animasi/transisi 450 milidetik selesai,
+  /// sehingga rute tidak terkunci selamanya saat halaman masih terbuka di layar.
   static Future<T?> safePushNamed<T>(
     BuildContext context,
     String routeName, {
     Object? arguments,
   }) async {
-    if (_isNavigating) {
-      debugPrint('[NavigationGuard] Menolak push duplikat untuk "$routeName" (operasi navigasi sedang aktif)');
+    if (!context.mounted) return null;
+
+    if (!_inFlightRoutes.add(routeName)) {
+      debugPrint('[NavigationGuard] Menolak push duplikat untuk "$routeName" (rute sedang in-flight)');
       return null;
     }
 
-    _isNavigating = true;
-    _activeRoute = routeName;
+    // Jadwalkan pelepasan kunci rute setelah jendela debounce 450ms
+    unawaited(
+      Future<void>.delayed(const Duration(milliseconds: 450))
+          .whenComplete(() => _inFlightRoutes.remove(routeName)),
+    );
 
     try {
-      if (!context.mounted) return null;
       return await Navigator.pushNamed<T>(
         context,
         routeName,
         arguments: arguments,
       );
-    } finally {
-      _isNavigating = false;
-      _activeRoute = null;
+    } catch (_) {
+      _inFlightRoutes.remove(routeName);
+      rethrow;
     }
   }
 
@@ -6191,26 +6205,31 @@ class NavigationGuard {
     BuildContext context,
     Future<T?> Function() navigationAction,
   ) async {
-    if (_isNavigating) {
+    if (_isCustomNavigating) {
       debugPrint('[NavigationGuard] Menolak navigasi duplikat (operasi navigasi sedang aktif)');
       return null;
     }
 
-    _isNavigating = true;
+    _isCustomNavigating = true;
+    unawaited(
+      Future<void>.delayed(const Duration(milliseconds: 450))
+          .whenComplete(() => _isCustomNavigating = false),
+    );
+
     try {
       if (!context.mounted) return null;
       return await navigationAction();
-    } finally {
-      _isNavigating = false;
-      _activeRoute = null;
+    } catch (_) {
+      _isCustomNavigating = false;
+      rethrow;
     }
   }
 
   /// Reset internal state untuk keperluan unit test.
   @visibleForTesting
   static void resetForTesting() {
-    _isNavigating = false;
-    _activeRoute = null;
+    _inFlightRoutes.clear();
+    _isCustomNavigating = false;
   }
 }
 
@@ -11464,7 +11483,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         Flexible(
           child: Text(
             value,
-            textAlign: TextAlign.left,
+            textAlign: TextAlign.start,
             style: OTTypography.arabicReading(color: textPrimary).copyWith(
               fontSize: 13.5,
               fontWeight: FontWeight.w600,
@@ -14407,7 +14426,7 @@ class _MainShellScreenState extends State<MainShellScreen>
                     child: IgnorePointer(
                       ignoring: _roomAnimController.value == 0.0,
                       child: Container(
-                        color: Colors.black.withOpacity(_bgDimmerAnimation.value),
+                        color: Colors.black.withValues(alpha: _bgDimmerAnimation.value),
                       ),
                     ),
                   ),
@@ -16952,6 +16971,8 @@ class AgentSessionManager extends ChangeNotifier {
   static final AgentSessionManager instance = AgentSessionManager._();
   AgentSessionManager._();
 
+  static const int maxTabs = 7;
+
   final List<AgentSessionTab> _tabs = [];
   int _activeIndex = 0;
   bool _isOpen = false;
@@ -16974,6 +16995,11 @@ class AgentSessionManager extends ChangeNotifier {
     if (existingIndex != -1) {
       _activeIndex = existingIndex;
     } else {
+      if (_tabs.length >= maxTabs) {
+        // Tab limit reached: close oldest non-active tab to preserve WebView memory
+        final evictIndex = _activeIndex == 0 ? 1 : 0;
+        closeTab(evictIndex);
+      }
       _tabs.add(AgentSessionTab(agent: agent));
       _activeIndex = _tabs.length - 1;
     }
@@ -17002,6 +17028,8 @@ class AgentSessionManager extends ChangeNotifier {
     if (_tabs.isEmpty) {
       _isOpen = false;
       _activeIndex = 0;
+    } else if (index < _activeIndex) {
+      _activeIndex--;
     } else if (_activeIndex >= _tabs.length) {
       _activeIndex = _tabs.length - 1;
     }
@@ -17670,7 +17698,7 @@ class DeviceService {
       if (Platform.isIOS) {
         final iosInfo = await _deviceInfo.iosInfo;
         final rawId = iosInfo.identifierForVendor ?? 'ios_device';
-        final brand = 'apple';
+        const brand = 'apple';
         final model = iosInfo.utsname.machine;
         final isPhysical = iosInfo.isPhysicalDevice;
         final hash = computeHash(rawId: rawId, brand: brand, model: model);
@@ -17686,7 +17714,7 @@ class DeviceService {
       if (Platform.isMacOS) {
         final macInfo = await _deviceInfo.macOsInfo;
         final rawId = macInfo.systemGUID ?? 'macos_device';
-        final brand = 'apple';
+        const brand = 'apple';
         final model = macInfo.model;
         final hash = computeHash(rawId: rawId, brand: brand, model: model);
 
@@ -23464,6 +23492,49 @@ void main() {
       expect(manager.isOpen, isFalse);
       expect(manager.activeIndex, 0);
     });
+
+    test('Closing a tab to the left of activeIndex preserves the current active tab', () {
+      final manager = AgentSessionManager.instance;
+      // Urutan tab: [0: Syafii, 1: Hanafi, 2: Maliki]
+      manager.openAgent(agentSyafii);
+      manager.openAgent(agentHanafi);
+      manager.openAgent(agentMaliki);
+
+      // Aktifkan tab Maliki (index 2)
+      expect(manager.activeIndex, 2);
+      expect(manager.activeTab?.agent.id, 'fiqh_maliki');
+
+      // Tutup tab Syafii (index 0 < activeIndex 2)
+      manager.closeTab(0);
+
+      // Tab tersisa: [0: Hanafi, 1: Maliki]
+      expect(manager.tabs.length, 2);
+      expect(manager.activeIndex, 1);
+      expect(manager.activeTab?.agent.id, 'fiqh_maliki');
+    });
+
+    test('Enforces maxTabs = 7 limit and evicts oldest non-active tab', () {
+      final manager = AgentSessionManager.instance;
+      final agents = AgentModel.defaultAgents;
+      expect(agents.length, greaterThanOrEqualTo(8));
+
+      // Buka 7 agen pertama
+      for (int i = 0; i < AgentSessionManager.maxTabs; i++) {
+        manager.openAgent(agents[i]);
+      }
+      expect(manager.tabs.length, AgentSessionManager.maxTabs);
+      expect(manager.activeIndex, AgentSessionManager.maxTabs - 1);
+
+      // Buka agen ke-8 (melebihi batas maxTabs 7)
+      manager.openAgent(agents[7]);
+
+      // Total tab tetap 7
+      expect(manager.tabs.length, AgentSessionManager.maxTabs);
+      // Tab aktif adalah agen ke-8 yang baru dibuka
+      expect(manager.activeTab?.agent.id, agents[7].id);
+      // Agen tertua pertama (agents[0]) telah di-evict
+      expect(manager.tabs.any((t) => t.agent.id == agents[0].id), isFalse);
+    });
   });
 }
 
@@ -25373,6 +25444,64 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(actionCount, equals(1));
+    });
+
+    testWidgets('safePushNamed allows opening a child route while parent route is active on stack', (tester) async {
+      int subPageOpened = 0;
+      int termsPageOpened = 0;
+
+      final testApp = MaterialApp(
+        onGenerateRoute: (settings) {
+          if (settings.name == '/subscription') {
+            subPageOpened++;
+            return MaterialPageRoute(
+              builder: (context) => Scaffold(
+                body: ElevatedButton(
+                  onPressed: () {
+                    // Buka child route terms dari dalam subscription
+                    NavigationGuard.safePushNamed(context, '/terms');
+                  },
+                  child: const Text('Open Terms'),
+                ),
+              ),
+              settings: settings,
+            );
+          } else if (settings.name == '/terms') {
+            termsPageOpened++;
+            return MaterialPageRoute(
+              builder: (context) => const Scaffold(body: Text('Terms Page')),
+              settings: settings,
+            );
+          }
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: ElevatedButton(
+                onPressed: () {
+                  NavigationGuard.safePushNamed(context, '/subscription');
+                },
+                child: const Text('Go To Subscription'),
+              ),
+            ),
+          );
+        },
+      );
+
+      await tester.pumpWidget(testApp);
+      await tester.tap(find.text('Go To Subscription'));
+      await tester.pumpAndSettle();
+
+      expect(subPageOpened, equals(1));
+      expect(find.text('Open Terms'), findsOneWidget);
+
+      // Jeda transisi 450ms berlalu
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Pengguna menekan Open Terms dari dalam halaman subscription
+      await tester.tap(find.text('Open Terms'));
+      await tester.pumpAndSettle();
+
+      expect(termsPageOpened, equals(1));
+      expect(find.text('Terms Page'), findsOneWidget);
     });
   });
 }
