@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,6 +11,7 @@ import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
@@ -31,6 +33,59 @@ class AgentMultiTabRoom extends StatefulWidget {
 
 class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final AgentSessionManager _sessionManager = AgentSessionManager.instance;
+  final BookmarkService _bookmarkService = BookmarkService();
+  final AuthService _authService = AuthService();
+  bool _isSavingAnswer = false;
+
+  Future<void> _saveActiveTabAnswer(AgentSessionTab session) async {
+    if (_isSavingAnswer) return;
+    final controller = session.webController;
+    if (controller == null) return;
+    setState(() => _isSavingAnswer = true);
+    try {
+      final result = await controller.evaluateJavascript(
+        source: 'window.otNotebook ? window.otNotebook.latest() : ""',
+      );
+      final text = result is String ? result.trim() : '';
+      if (text.isEmpty) {
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToSave);
+        return;
+      }
+      final ownerUid = _authService.currentUser?.uid;
+      final bookmark = copiedAnswerBookmark(text, session.agent);
+      await _bookmarkService.addBookmark(bookmark, userId: ownerUid);
+      if (mounted) {
+        OTMotion.success();
+        AppSnackBar.success(context, AppCopy.savedSuccess);
+      }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, AppCopy.saveFailed);
+    } finally {
+      if (mounted) setState(() => _isSavingAnswer = false);
+    }
+  }
+
+  Future<void> _copyActiveTabAnswer(AgentSessionTab session) async {
+    final controller = session.webController;
+    if (controller == null) return;
+    try {
+      final result = await controller.evaluateJavascript(
+        source: 'window.otNotebook ? window.otNotebook.latest() : ""',
+      );
+      final text = result is String ? result.trim() : '';
+      if (text.isEmpty) {
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
+        return;
+      }
+      await Clipboard.setData(ClipboardData(text: text));
+      if (mounted) {
+        OTMotion.light();
+        AppSnackBar.success(context, AppCopy.answerCopied);
+      }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, AppCopy.copyFailed);
+    }
+  }
 
   @override
   void initState() {
@@ -170,14 +225,52 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-            tooltip: AppCopy.studyOptions,
-            onPressed: () => _showFontScaleDialog(context, activeTab),
+            icon: Icon(Icons.bookmark_add_outlined, color: textPrimary, size: 21),
+            tooltip: AppCopy.saveAnswerMenu,
+            onPressed: () => _saveActiveTabAnswer(activeTab),
           ),
           IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
+          ),
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert_rounded, color: textPrimary, size: 20),
+            tooltip: AppCopy.studyOptions,
+            color: surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: border, width: 0.8),
+            ),
+            onSelected: (val) {
+              if (val == 'copy') {
+                _copyActiveTabAnswer(activeTab);
+              } else if (val == 'font') {
+                _showFontScaleDialog(context, activeTab);
+              }
+            },
+            itemBuilder: (ctx) => [
+              PopupMenuItem(
+                value: 'copy',
+                child: Row(
+                  children: [
+                    Icon(Icons.content_copy_rounded, color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text(AppCopy.copyAnswerAction, style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'font',
+                child: Row(
+                  children: [
+                    Icon(Icons.format_size_rounded, color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text('Ukuran huruf', style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
+            ],
           ),
           const SizedBox(width: 4),
         ],
