@@ -10,9 +10,37 @@ abstract class StringStore {
 
 class PreferencesStringStore implements StringStore {
   @override
-  Future<String?> read(String key) async => (await SharedPreferences.getInstance()).getString(key);
+  Future<String?> read(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = prefs.get(key);
+    if (value is String) return value;
+    if (value is List) {
+      // Backward compatibility for legacy SharedPreferences stored as List<String>
+      final items = <dynamic>[];
+      for (final item in value) {
+        if (item is String) {
+          try {
+            items.add(jsonDecode(item));
+          } catch (_) {
+            items.add(item);
+          }
+        } else {
+          items.add(item);
+        }
+      }
+      return jsonEncode(items);
+    }
+    return null;
+  }
+
   @override
-  Future<bool> write(String key, String value) async => (await SharedPreferences.getInstance()).setString(key, value);
+  Future<bool> write(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(key) && prefs.get(key) is! String) {
+      await prefs.remove(key);
+    }
+    return prefs.setString(key, value);
+  }
 }
 
 class ScopedJsonListStore<T> {
