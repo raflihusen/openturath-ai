@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = void 0;
+exports.onClientErrorLogged = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -113,11 +113,34 @@ const AGENT_ENTITLEMENTS = {
     all_ai: "all_access",
 };
 const TRIAL_QUESTION_LIMIT = 10;
+// Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
+exports.PURCHASABLE_AGENTS = new Set([
+    "fiqh_tahawwulat",
+    "fiqh_syafii",
+    "fiqh_hanafi",
+    "fiqh_maliki",
+    "fiqh_hambali",
+    "hadits",
+    "tafsir",
+    "ushul_fiqh",
+    "tarikh",
+    "tasawwuf",
+    "aqidah",
+    "nahwu_sharaf",
+]);
+exports.MODULE_PLANS = {
+    tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+    tholib_6m: { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+    bahits_1y: { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+    "1m": { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+    "6m": { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+    "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+};
 function getEntitlementKey(agentId) {
     const entitlementKey = AGENT_ENTITLEMENTS[agentId];
     if (!entitlementKey) {
-        // Fallback jika ada id modul baru
-        return agentId;
+        // OT-F001: Jangan pernah mengembalikan input mentah client untuk mencegah privilege escalation
+        return "";
     }
     return entitlementKey;
 }
@@ -271,29 +294,29 @@ function generateDokuSignature(clientId, requestId, timestamp, targetPath, rawBo
     return `HMACSHA256=${hmac}`;
 }
 function resolvePlanPricing(agentId, plan) {
-    const isAllAi = agentId === "all_ai" || plan.startsWith("all_ai");
+    const isAllAi = agentId === "all_ai" || agentId === "all_access" || plan.startsWith("all_ai") || plan.startsWith("all_access");
     if (isAllAi) {
         throw new functions.https.HttpsError("failed-precondition", "Paket Semua AI sementara dinonaktifkan. Silakan pilih paket per modul spesialis.");
     }
-    let durationMonths = 1;
-    if (plan.includes("1y") || plan.includes("year") || plan === "bahits_1y")
-        durationMonths = 12;
-    else if (plan.includes("6m") || plan === "tholib_6m")
-        durationMonths = 6;
-    else
-        durationMonths = 1;
-    // Masing-masing AI per-modul: 1m = 49.000, 6m = 299.000, 1y = 499.000
+    // OT-F001: Closed-set whitelist enforcement
+    if (!exports.PURCHASABLE_AGENTS.has(agentId)) {
+        throw new functions.https.HttpsError("invalid-argument", "Modul spesialis tidak valid atau tidak dapat dibeli.");
+    }
+    const tier = exports.MODULE_PLANS[plan];
+    if (!tier) {
+        throw new functions.https.HttpsError("invalid-argument", "Paket langganan tidak valid.");
+    }
     const entitlementKey = getEntitlementKey(agentId);
+    if (!entitlementKey || entitlementKey === "all_access" || entitlementKey === "all_ai") {
+        throw new functions.https.HttpsError("failed-precondition", "Entitlement untuk modul ini tidak valid atau dinonaktifkan.");
+    }
     const agentTitle = agentId.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-    if (durationMonths === 12) {
-        return { amount: 499000, durationMonths, label: `Modul AI ${agentTitle} (1 Tahun)`, entitlementKey };
-    }
-    else if (durationMonths === 6) {
-        return { amount: 299000, durationMonths, label: `Modul AI ${agentTitle} (6 Bulan)`, entitlementKey };
-    }
-    else {
-        return { amount: 49000, durationMonths, label: `Modul AI ${agentTitle} (1 Bulan)`, entitlementKey };
-    }
+    return {
+        amount: tier.amount,
+        durationMonths: tier.durationMonths,
+        label: `Modul AI ${agentTitle} ${tier.labelSuffix}`,
+        entitlementKey,
+    };
 }
 async function requestDokuCheckout(params) {
     var _a, _b, _c, _d, _e;
@@ -995,10 +1018,14 @@ exports.redeemCode = functions
     });
     // F63: Redaksi log kode voucher mentah
     console.log(`[Redeem] Voucher berhasil ditukarkan oleh ${uid}. Modul: ${redeemResult.entitlementKey}, aktif s/d ${redeemResult.expiryIso}`);
+    // OT-F025: Redaksi kode voucher di Telegram agar tidak mengekspos rahasia
+    const maskedCode = rawCode.length > 6
+        ? `${rawCode.substring(0, 3)}***${rawCode.substring(rawCode.length - 2)}`
+        : "***";
     // 1. Kirim notifikasi Telegram seketika ke admin
     const tgMessage = `🔔 <b>[VOUCHER SANTRI DIKLAIM]</b>\n` +
         `🕌 OpenTurath AI\n` +
-        `🎟️ Kode: <b>${rawCode}</b>\n` +
+        `🎟️ Kode: <b>${maskedCode}</b>\n` +
         `📧 Email: <code>${redeemResult.email}</code>\n` +
         `👤 Nama: <b>${redeemResult.name}</b>\n` +
         `📦 Produk: <b>${redeemResult.serviceTitle}</b>\n` +
@@ -1006,18 +1033,8 @@ exports.redeemCode = functions
         `⏳ Berlaku s/d: <code>${redeemResult.expiryIso}</code>\n` +
         `✅ Status: Sukses terdaftar & hak akses aktif.`;
     await sendTelegramNotification(tgMessage);
-    // 2. Trigger auto-provisioning ke server NotebookLM (Cloud Run)
-    try {
-        const targetService = redeemResult.entitlementKey === "all_access" ? "Paket Semua AI" : redeemResult.serviceTitle;
-        await notifySubscriptionServer(redeemResult.email, redeemResult.name, "voucher_access", "add", targetService);
-        await db.collection("provisioning_outbox").doc(`redeem_${rawCode}_${uid}`).update({
-            status: "completed",
-            provisioned_at: admin.firestore.FieldValue.serverTimestamp(),
-        });
-    }
-    catch (err) {
-        console.error("[Redeem] Auto-provisioning via Cloud Run error:", (err === null || err === void 0 ? void 0 : err.message) || err);
-    }
+    // OT-F003: Auto-provisioning dialihkan sepenuhnya ke durable outbox worker (processProvisioningOutbox)
+    // untuk mencegah race condition double-dispatch ke Cloud Run.
     return {
         success: true,
         entitlementKey: redeemResult.entitlementKey,
