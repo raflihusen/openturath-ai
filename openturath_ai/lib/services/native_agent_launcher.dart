@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// NativeAgentLauncher: Menangani pembukaan ruang riset langsung ke aplikasi resmi
+/// NativeAgentLauncher: Menangani pembukaan asisten langsung ke aplikasi resmi
 /// Google Gemini Notebook (com.google.android.apps.labs.language.tailwind) secara instan (0.1 detik)
 /// tanpa overhead browser atau webview jika aplikasi terinstal.
 class NativeAgentLauncher {

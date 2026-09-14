@@ -11,7 +11,7 @@ import '../widgets/app_loader.dart';
 
 /// Gerbang Sesi Google (Pre-Auth Gate)
 /// Memastikan kuki autentikasi Google aktif di WebView sehingga pengguna
-/// langsung dapat menggunakan korpus riset AI tanpa kendala login berulang.
+/// langsung dapat membuka NotebookLM tanpa kendala masuk berulang.
 class GoogleSessionAuthScreen extends StatefulWidget {
   const GoogleSessionAuthScreen({super.key});
 
@@ -60,14 +60,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
         title: Text(
-          'Batal Hubungkan Google?',
+          'Batalkan proses masuk?',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w600,
             color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
           ),
         ),
         content: Text(
-          'Akun Google diperlukan agar ruang riset manuskrip AI dapat langsung digunakan tanpa meminta login berulang kali.',
+          'Hubungkan akun Google agar NotebookLM dapat dibuka tanpa perlu masuk ulang.',
           style: GoogleFonts.outfit(
             fontSize: 13,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
@@ -91,7 +91,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text(
-              'Keluar Akun',
+              'Keluar',
               style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
             ),
           ),
@@ -153,7 +153,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hubungkan Akun Google',
+                'Hubungkan akun Google',
                 style: GoogleFonts.newsreader(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
@@ -162,7 +162,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 ),
               ),
               Text(
-                'Autentikasi sesi riset naskah turats',
+                'Gunakan akun Google untuk membuka NotebookLM',
                 style: GoogleFonts.outfit(
                   fontSize: 12,
                   color: textSecondary,
@@ -172,7 +172,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
           actions: [
             IconButton(
-              tooltip: 'Keluar Akun',
+              tooltip: 'Keluar',
               icon: Icon(Icons.logout_rounded, size: 20, color: textSecondary),
               onPressed: _confirmCancelAndSignOut,
             ),
@@ -212,7 +212,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Masuk ke akun Google Anda agar ruang riset AI langsung aktif tanpa meminta login berulang.',
+                        'Masuk dengan akun Google yang memiliki akses ke kitab ini.',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           height: 1.35,
