@@ -39,12 +39,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   UserModel? _initialUser;
   List<AgentModel> _agents = AgentModel.defaultAgents;
   String _searchQuery = '';
+  String? _lastOpenedAgentId;
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _loadLastOpenedAgent();
     UpdateService().checkForUpdatesSilently();
+  }
+
+  Future<void> _loadLastOpenedAgent() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (mounted) {
+        setState(() =>
+            _lastOpenedAgentId = prefs.getString('last_opened_notebook_id'));
+      }
+    } catch (_) {}
   }
 
   @override
@@ -74,8 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _initialUser = results[0] as UserModel?;
         _agents = results[1] as List<AgentModel>;
       });
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
   void _openNotebook(AgentModel agent, UserModel? user) {
@@ -90,6 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // Rekam riwayat pembukaan terakhir secara asynchronous di background
     SharedPreferences.getInstance().then((prefs) {
       prefs.setString('last_opened_notebook_id', agent.id);
+      if (mounted) setState(() => _lastOpenedAgentId = agent.id);
     }).catchError((_) {});
 
     // Cek akses pengguna ke agent (paywall)
@@ -106,7 +118,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
-  static const List<({String fieldId, String name, int specialistCount})> _curatedDisciplines = [
+  static const List<({String fieldId, String name, int specialistCount})>
+      _curatedDisciplines = [
     (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
     (fieldId: 'hadith', name: 'Hadis', specialistCount: 1),
     (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
@@ -151,7 +164,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onRefresh: _loadData,
               color: accent,
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 96),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,134 +188,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
 
-                    // ── 2. Minimalist Monochrome Greeting Card (Black/White/Grey Palette) ──
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF141416) : Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB),
-                          width: 1.0,
-                        ),
-                        boxShadow: isDark
+                    // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
+                    // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
+                    ListenableBuilder(
+                      listenable: AgentSessionManager.instance,
+                      builder: (context, _) {
+                        final activeAgent =
+                            AgentSessionManager.instance.activeTab?.agent;
+                        final lastAgent = _lastOpenedAgentId == null
                             ? null
-                            : [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Baris Atas: Sapaan [Nama]
-                          Text(
-                            user.name.isNotEmpty && user.name != 'Ahlan' ? 'Ahlan, ${user.name}' : 'Ahlan',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.outfit(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.3,
-                              color: isDark ? Colors.white : const Color(0xFF18181B),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          // Baris Bawah: Dua Pill Tanggal Monokrom (Masehi & Hijriah)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                                  decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
-                                      width: 0.8,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today_outlined,
-                                        size: 13,
-                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Flexible(
-                                        child: Text(
-                                          HijriDateUtils.formatMasehiOnly(),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 11.5,
-                                            fontWeight: FontWeight.w500,
-                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                                  decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
-                                      width: 0.8,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.nightlight_outlined,
-                                        size: 13,
-                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Flexible(
-                                        child: Text(
-                                          HijriDateUtils.formatHijriOnly(),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 11.5,
-                                            fontWeight: FontWeight.w500,
-                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                            : _agents.cast<AgentModel?>().firstWhere(
+                                  (agent) => agent?.id == _lastOpenedAgentId,
+                                  orElse: () => null,
+                                );
+                        final target = activeAgent ?? lastAgent;
+                        final hasLiveSession = activeAgent != null;
 
-                    const SizedBox(height: 16),
-
-                    // ── 3. Announcement & Adab Carousel (Tepat di bawah greeting card) ──
-                    _DashboardAnnouncementCarousel(
-                      isDark: isDark,
-                      surface: surface,
-                      border: border,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
+                        return _StudyEntryCard(
+                          name: user.name,
+                          masehiDate: HijriDateUtils.formatMasehiOnly(),
+                          hijriDate: HijriDateUtils.formatHijriOnly(),
+                          agent: target,
+                          hasLiveSession: hasLiveSession,
+                          isDark: isDark,
+                          onPrimary: () {
+                            if (target != null) {
+                              _openNotebook(target, user);
+                              return;
+                            }
+                            final shell = MainShellController.of(context);
+                            if (shell != null) {
+                              shell.switchTab(1);
+                            } else {
+                              NavigationGuard.safePushNamed(
+                                  context, AppRoutes.specialistList);
+                            }
+                          },
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 18),
@@ -317,16 +241,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.search_rounded, size: 20, color: textSecondary),
+                          Icon(Icons.search_rounded,
+                              size: 20, color: textSecondary),
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextField(
                               controller: _searchController,
-                              onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                              style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
+                              onChanged: (val) =>
+                                  setState(() => _searchQuery = val.trim()),
+                              style: GoogleFonts.outfit(
+                                  fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari asisten, kitab, atau bab…',
-                                hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
+                                hintText: 'Cari asisten atau topik kajian…',
+                                hintStyle: GoogleFonts.outfit(
+                                    fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -345,7 +273,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 _searchController.clear();
                                 setState(() => _searchQuery = '');
                               },
-                              child: Icon(Icons.close_rounded, size: 18, color: textSecondary),
+                              child: Icon(Icons.close_rounded,
+                                  size: 18, color: textSecondary),
                             ),
                         ],
                       ),
@@ -373,8 +302,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             final arabic = a.titleArabic;
                             final subtitle = a.subtitleAcademic.toLowerCase();
                             final category = a.category.toLowerCase();
-                            final books = a.referenceBooks?.any((b) => b.title.toLowerCase().contains(q)) ?? false;
-                            return title.contains(q) || arabic.contains(q) || subtitle.contains(q) || category.contains(q) || books;
+                            final books = a.referenceBooks?.any(
+                                    (b) => b.title.toLowerCase().contains(q)) ??
+                                false;
+                            return title.contains(q) ||
+                                arabic.contains(q) ||
+                                subtitle.contains(q) ||
+                                category.contains(q) ||
+                                books;
                           }).toList();
 
                           if (matches.isEmpty) {
@@ -383,7 +318,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Center(
                                 child: Text(
                                   'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.',
-                                  style: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
+                                  style: GoogleFonts.outfit(
+                                      fontSize: 13.5, color: textSecondary),
                                 ),
                               ),
                             );
@@ -393,15 +329,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: matches.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 10),
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 10),
                             itemBuilder: (context, idx) {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
-                                statusLabel: agent.isComingSoon ? 'Segera hadir' : null,
+                                statusLabel:
+                                    agent.isComingSoon ? 'Segera hadir' : null,
                                 onOpen: () => _openNotebook(agent, user),
                                 onOpenLibrary: agent.catalogId != null
-                                    ? () => showResearchLibrary(context, agent: agent)
+                                    ? () => showResearchLibrary(context,
+                                        agent: agent)
                                     : null,
                               );
                             },
@@ -409,13 +348,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── Section: Pilih Bidang ──
+                      // ── Indeks Korpus: pintu masuk utama ke studi ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Pilih bidang',
+                            'Indeks korpus',
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -429,7 +368,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               if (shell != null) {
                                 shell.switchTab(1);
                               } else {
-                                NavigationGuard.safePushNamed(context, AppRoutes.specialistList);
+                                NavigationGuard.safePushNamed(
+                                    context, AppRoutes.specialistList);
                               }
                             },
                             child: Row(
@@ -444,7 +384,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 2),
-                                Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
+                                Icon(Icons.chevron_right_rounded,
+                                    size: 16, color: textPrimary),
                               ],
                             ),
                           ),
@@ -453,15 +394,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 14),
 
-                      // 2-Column Minimalist Purism Grid (6 Cards, Aspect Ratio 1.45)
+                      // Setiap bidang tampil sebagai indeks katalog, bukan kartu kosong.
                       GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: 1.45,
+                          childAspectRatio: 1.28,
                         ),
                         itemCount: _curatedDisciplines.length,
                         itemBuilder: (context, index) {
@@ -488,30 +430,65 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 borderRadius: BorderRadius.circular(18),
                                 border: Border.all(color: border, width: 1.0),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    disc.name,
-                                    style: GoogleFonts.newsreader(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.2,
-                                      color: textPrimary,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          (index + 1).toString().padLeft(2, '0'),
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 1.1,
+                                            color: textSecondary,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.north_east_rounded,
+                                          size: 17,
+                                          color: textSecondary.withValues(
+                                              alpha: 0.72),
+                                        ),
+                                      ],
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    '${disc.specialistCount} asisten',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12.5,
-                                      color: textSecondary,
+                                    const Spacer(),
+                                    Text(
+                                      disc.name,
+                                      style: GoogleFonts.newsreader(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.25,
+                                        color: textPrimary,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      '${disc.specialistCount} asisten tersedia',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 11.5,
+                                        color: textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      height: 2,
+                                      width: 32 + (index % 3) * 12,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            textPrimary.withValues(alpha: 0.72),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -527,9 +504,236 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
     );
   }
+}
 
+class _StudyEntryCard extends StatelessWidget {
+  final String name;
+  final String masehiDate;
+  final String hijriDate;
+  final AgentModel? agent;
+  final bool hasLiveSession;
+  final bool isDark;
+  final VoidCallback onPrimary;
 
+  const _StudyEntryCard({
+    required this.name,
+    required this.masehiDate,
+    required this.hijriDate,
+    required this.agent,
+    required this.hasLiveSession,
+    required this.isDark,
+    required this.onPrimary,
+  });
 
+  @override
+  Widget build(BuildContext context) {
+    final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
+    final hasHistory = agent != null;
+    final eyebrow = hasLiveSession
+        ? 'SESI KAJIAN TERSIMPAN'
+        : hasHistory
+            ? 'KAJIAN TERAKHIR'
+            : 'RUANG KAJIAN';
+    final title = hasLiveSession
+        ? 'Lanjutkan ${agent!.title}'
+        : hasHistory
+            ? 'Buka kembali ${agent!.title}'
+            : 'Mulai dari satu pertanyaan';
+    final subtitle = hasLiveSession
+        ? 'Ruang AI masih siap tanpa memuat ulang.'
+        : hasHistory
+            ? 'Kembali ke asisten yang terakhir Anda buka.'
+            : 'Pilih bidang, lalu telusuri ibarah dan rujukan.';
+    final primaryLabel = hasLiveSession
+        ? 'Lanjutkan kajian'
+        : hasHistory
+            ? 'Buka kembali'
+            : 'Pilih bidang';
+
+    return Semantics(
+      button: true,
+      label: '$title. $subtitle',
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
+        child: InkWell(
+          onTap: onPrimary,
+          borderRadius: BorderRadius.circular(24),
+          child: Ink(
+            height: 214,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? const [Color(0xFF303036), Color(0xFF17171A)]
+                    : const [Color(0xFF29292E), Color(0xFF151518)],
+              ),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.16),
+                  blurRadius: 22,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(23),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -54,
+                    top: -82,
+                    child: Container(
+                      width: 202,
+                      height: 202,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          width: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 34,
+                    bottom: -22,
+                    child: Transform.rotate(
+                      angle: 0.35,
+                      child: Container(
+                        width: 106,
+                        height: 106,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.07)),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 18, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                displayName == null
+                                    ? 'Ahlan'
+                                    : 'Ahlan, $displayName',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.outfit(
+                                  color: const Color(0xFFF8F8F8),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: -0.2,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            SizedBox(
+                              width: 92,
+                              child: Text(
+                                masehiDate,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.end,
+                                style: GoogleFonts.outfit(
+                                  color: const Color(0xFFC7C7CC),
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Text(
+                          eyebrow,
+                          style: GoogleFonts.outfit(
+                            color: const Color(0xFFC7C7CC),
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.05,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.newsreader(
+                            color: const Color(0xFFF8F8F8),
+                            fontSize: 23,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(
+                            color: const Color(0xFFC7C7CC),
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.14),
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                    color:
+                                        Colors.white.withValues(alpha: 0.12)),
+                              ),
+                              child: Text(
+                                primaryLabel,
+                                style: GoogleFonts.outfit(
+                                  color: const Color(0xFFF8F8F8),
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 7),
+                            const Icon(Icons.arrow_forward_rounded,
+                                size: 16, color: Color(0xFFF8F8F8)),
+                            const Spacer(),
+                            Text(
+                              hijriDate,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.outfit(
+                                color: const Color(0xFFC7C7CC),
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
@@ -590,7 +794,8 @@ class _DashboardAnnouncementCarouselState
     _AnnouncementSlide(
       badge: 'TELUSURI RUJUKAN',
       title: 'Lihat Asal Kutipan',
-      summary: 'Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.',
+      summary:
+          'Gunakan informasi kitab, jilid, dan halaman untuk memeriksa naskah.',
       detailedContent:
           'Buka rujukan yang tersedia untuk menelusuri asal kutipan. Cocokkan teks, jilid, dan halaman dengan edisi kitab yang Anda gunakan.',
     ),
@@ -654,12 +859,17 @@ class _DashboardAnnouncementCarouselState
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                  color: widget.isDark
+                      ? const Color(0xFF27272A)
+                      : const Color(0xFFF4F4F5),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
-                    color: widget.isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                    color: widget.isDark
+                        ? const Color(0xFF3F3F46)
+                        : const Color(0xFFE4E4E7),
                     width: 0.8,
                   ),
                 ),
@@ -699,8 +909,10 @@ class _DashboardAnnouncementCarouselState
                 child: FilledButton(
                   onPressed: () => Navigator.pop(ctx),
                   style: FilledButton.styleFrom(
-                    backgroundColor: widget.isDark ? Colors.white : const Color(0xFF18181B),
-                    foregroundColor: widget.isDark ? const Color(0xFF18181B) : Colors.white,
+                    backgroundColor:
+                        widget.isDark ? Colors.white : const Color(0xFF18181B),
+                    foregroundColor:
+                        widget.isDark ? const Color(0xFF18181B) : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
                     ),
@@ -767,12 +979,17 @@ class _DashboardAnnouncementCarouselState
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
-                                color: widget.isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                                color: widget.isDark
+                                    ? const Color(0xFF27272A)
+                                    : const Color(0xFFF4F4F5),
                                 borderRadius: BorderRadius.circular(100),
                                 border: Border.all(
-                                  color: widget.isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                                  color: widget.isDark
+                                      ? const Color(0xFF3F3F46)
+                                      : const Color(0xFFE4E4E7),
                                   width: 0.8,
                                 ),
                               ),
