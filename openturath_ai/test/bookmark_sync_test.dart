@@ -118,5 +118,86 @@ void main() {
       expect(await service.isBookmarked('item_check', userId: 'user_x'), isTrue);
       expect(await service.isBookmarked('item_check', userId: 'user_y'), isFalse);
     });
+
+    test('BookmarkModel serialization supports updatedAt and effectiveTime correctly', () {
+      final t1 = DateTime(2026, 9, 10, 10, 0);
+      final t2 = DateTime(2026, 9, 14, 12, 30);
+
+      final modelWithoutUpdate = BookmarkModel(
+        id: 'm1',
+        title: 'Title 1',
+        agentId: 'fiqh',
+        agentTitle: 'Fikih',
+        fieldName: 'Fiqih',
+        fieldId: 'fiqh',
+        arabicExcerpt: 'نص',
+        fullAnswer: 'Isi',
+        bookReference: 'Kitab',
+        pageNumber: '1',
+        createdAt: t1,
+      );
+
+      expect(modelWithoutUpdate.effectiveTime, t1);
+
+      final modelWithUpdate = modelWithoutUpdate.copyWith(
+        fullAnswer: 'Catatan tambahan yang diperbarui',
+        updatedAt: t2,
+      );
+
+      expect(modelWithUpdate.effectiveTime, t2);
+      expect(modelWithUpdate.fullAnswer, 'Catatan tambahan yang diperbarui');
+
+      final json = modelWithUpdate.toJson();
+      expect(json['updatedAt'], t2.toIso8601String());
+
+      final restored = BookmarkModel.fromJson(json);
+      expect(restored.updatedAt, t2);
+      expect(restored.effectiveTime, t2);
+      expect(restored.fullAnswer, 'Catatan tambahan yang diperbarui');
+    });
+
+    test('BookmarkService sorts items by effectiveTime descending', () async {
+      final service = BookmarkService();
+      final tOld = DateTime(2026, 9, 1, 10, 0);
+      final tMid = DateTime(2026, 9, 5, 10, 0);
+      final tNew = DateTime(2026, 9, 14, 10, 0);
+
+      final oldNote = BookmarkModel(
+        id: 'note_old',
+        title: 'Catatan Lama',
+        agentId: 'fiqh',
+        agentTitle: 'Fikih',
+        fieldName: 'Fiqih',
+        fieldId: 'fiqh',
+        arabicExcerpt: '',
+        fullAnswer: 'Lama',
+        bookReference: 'Kitab',
+        pageNumber: '1',
+        createdAt: tOld,
+      );
+
+      final newNote = BookmarkModel(
+        id: 'note_new',
+        title: 'Catatan Baru',
+        agentId: 'fiqh',
+        agentTitle: 'Fikih',
+        fieldName: 'Fiqih',
+        fieldId: 'fiqh',
+        arabicExcerpt: '',
+        fullAnswer: 'Baru',
+        bookReference: 'Kitab',
+        pageNumber: '2',
+        createdAt: tMid,
+        updatedAt: tNew, // effectiveTime paling baru
+      );
+
+      await service.addBookmark(oldNote, userId: 'user_sort');
+      await service.addBookmark(newNote, userId: 'user_sort');
+
+      final results = await service.getBookmarks(userId: 'user_sort');
+      expect(results.length, 2);
+      expect(results[0].id, 'note_new'); // Paling baru harus di atas
+      expect(results[1].id, 'note_old');
+    });
   });
 }
