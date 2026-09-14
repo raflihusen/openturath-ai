@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -478,22 +479,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   """;
 
   static UserScript _buildCloakScript(bool isDark) {
-    final darkCss = isDark
-        ? '''
-          html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
-          .chat-container, .chat-viewport, .to-user-container, .message-content,
-          .rendered-markdown, .query-container, .response-container,
-          table, tr, td, th, mat-card, .mat-mdc-card, app-chat-message, app-chat-response,
-          .chat-message-container, .notebook-content, .scrollable-content,
-          .sources-panel, .studio-panel, div.content-container, main {
-            background-color: #0E0E10 !important;
-            color: #E4E4E7 !important;
-          }
-          table, th, td { border-color: #27272A !important; }
-          a { color: #A1A1AA !important; }
-        '''
-        : 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
-
+    final cssSource = jsonEncode(isDark ? otDarkThemeCss : otLightThemeCss);
     final themeInitScript = '''
       (function() {
         try {
@@ -505,11 +491,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           }
           meta.content = ${isDark ? "'dark'" : "'light'"};
 
-          var style = document.createElement('style');
-          style.id = 'ot-initial-theme-style';
-          style.type = 'text/css';
-          style.textContent = `$darkCss`;
-          (document.head || document.documentElement).appendChild(style);
+          var style = document.getElementById('ot-native-dark-mode');
+          if (!style) {
+            style = document.createElement('style');
+            style.id = 'ot-native-dark-mode';
+            style.type = 'text/css';
+            (document.head || document.documentElement).appendChild(style);
+          }
+          style.textContent = $cssSource;
 
           if (document.documentElement) {
             document.documentElement.classList.toggle('dark', $isDark);
@@ -560,7 +549,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       widget.session.webController?.setSettings(
         settings: InAppWebViewSettings(
           forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
-          forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
+          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
           algorithmicDarkeningAllowed: true,
         ),
       );
@@ -573,6 +562,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     final controller = widget.session.webController;
     if (controller == null) return;
     try {
+      final cssSource = jsonEncode(isDark ? otDarkThemeCss : otLightThemeCss);
       final js = '''
         (function() {
           try {
@@ -595,30 +585,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               document.body.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
             }
 
-            var styleId = 'ot-theme-canvas-style';
+            var styleId = 'ot-native-dark-mode';
             var styleEl = document.getElementById(styleId);
             if (!styleEl) {
               styleEl = document.createElement('style');
               styleEl.id = styleId;
               (document.head || document.documentElement).appendChild(styleEl);
             }
-            if ($isDark) {
-              styleEl.textContent = `
-                html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
-                .chat-container, .chat-viewport, .to-user-container, .message-content,
-                .rendered-markdown, .query-container, .response-container,
-                table, tr, td, th, mat-card, .mat-mdc-card, app-chat-message, app-chat-response,
-                .chat-message-container, .notebook-content, .scrollable-content,
-                .sources-panel, .studio-panel, div.content-container, main {
-                  background-color: #0E0E10 !important;
-                  color: #E4E4E7 !important;
-                }
-                table, th, td { border-color: #27272A !important; }
-                a { color: #A1A1AA !important; }
-              `;
-            } else {
-              styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
-            }
+            styleEl.textContent = $cssSource;
 
             if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
               window.otNotebook.setTheme($isDark);
@@ -770,7 +744,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             verticalScrollBarEnabled: false,
             horizontalScrollBarEnabled: false,
             forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-            forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
+            forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
             algorithmicDarkeningAllowed: true,
             userAgent: 'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
           ),

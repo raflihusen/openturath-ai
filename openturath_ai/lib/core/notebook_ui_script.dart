@@ -74,7 +74,7 @@ const notebookUiScript = r'''
       }
       if (isDark) {
         styleEl.textContent = `
-          :root {
+          :root, :host, html, body {
             color-scheme: dark !important;
             --mdc-theme-background: #0E0E10 !important;
             --mdc-theme-surface: #18181B !important;
@@ -82,26 +82,32 @@ const notebookUiScript = r'''
             --mat-sys-color-surface: #0E0E10 !important;
             --mat-sys-color-on-surface: #FAFAFA !important;
             --mat-sys-color-surface-container: #18181B !important;
+            --mat-sys-color-surface-container-low: #141416 !important;
+            --mat-sys-color-surface-container-lowest: #0E0E10 !important;
             --mat-sys-color-surface-container-high: #202024 !important;
             --mat-sys-color-surface-container-highest: #27272A !important;
+            --mat-sys-color-on-surface-variant: #A1A1AA !important;
             --mat-sys-color-outline: #3F3F46 !important;
             --mat-sys-color-outline-variant: #27272A !important;
+            --mat-sys-color-background: #0E0E10 !important;
+            --mat-sys-color-on-background: #FAFAFA !important;
+            --mat-sys-color-primary: #FAFAFA !important;
+            --mat-sys-color-on-primary: #18181B !important;
           }
-          html, body {
+          html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
+          .chat-container, .chat-view, .chat-viewport, .conversation-container,
+          .chat-panel-content, .message-list, .notebook-content, .scrollable-content,
+          div.content-container, app-chat-window, app-chat-message, app-chat-response,
+          .chat-message-container, .sources-panel, .studio-panel, main,
+          div[class*="chat-panel" i], div[class*="conversation" i], div[class*="chat-view" i] {
             background-color: #0E0E10 !important;
-            color: #FAFAFA !important;
-            color-scheme: dark !important;
-          }
-          main, [role="main"], .chat-view, .chat-viewport, .conversation-container,
-          .chat-panel-content, .message-list, mat-sidenav-content, mat-sidenav-container,
-          .notebook-content, .scrollable-content, div.content-container,
-          app-chat-window, app-chat-message, app-chat-response {
-            background-color: #0E0E10 !important;
+            background: #0E0E10 !important;
             color: #FAFAFA !important;
           }
           .to-user-container, [data-message-author-role="user"], .user-query-container,
           div[class*="user-query" i], div[class*="to-user" i], .chat-message[data-sender="user"] {
             background-color: #27272A !important;
+            background: #27272A !important;
             color: #FFFFFF !important;
             border-radius: 16px !important;
             border: 1px solid #3F3F46 !important;
@@ -111,34 +117,65 @@ const notebookUiScript = r'''
           }
           .chat-message[data-sender="model"], .model-message, .response-message,
           [data-message-author-role="assistant"], .rendered-markdown,
-          div[class*="response-container" i] {
+          div[class*="response-container" i], .message-content, app-chat-response {
             background-color: transparent !important;
-            color: #E4E4E7 !important;
+            background: transparent !important;
+            color: #FAFAFA !important;
           }
           .rendered-markdown p, .rendered-markdown span, .rendered-markdown div,
-          .rendered-markdown li, .rendered-markdown blockquote {
-            color: #E4E4E7 !important;
+          .rendered-markdown li, .rendered-markdown blockquote,
+          .rendered-markdown em, .rendered-markdown i,
+          .chat-message[data-sender="model"] p, .model-message p, .response-message p,
+          .chat-message[data-sender="model"] span, .model-message span, .response-message span {
+            color: #FAFAFA !important;
           }
-          .rendered-markdown strong, .rendered-markdown b {
+          .rendered-markdown strong, .rendered-markdown b,
+          .rendered-markdown h1, .rendered-markdown h2, .rendered-markdown h3, .rendered-markdown h4 {
             color: #FFFFFF !important;
+            font-weight: 700 !important;
           }
           .chat-input-container, div[class*="chat-input" i], div[class*="input-container" i],
-          .bottom-bar, div[class*="bottom-bar" i] {
-            background-color: #18181B !important;
-            border-top: 1px solid #27272A !important;
+          .bottom-bar, div[class*="bottom-bar" i], div[class*="bottom-container" i],
+          div[class*="dock" i], div[class*="footer" i], div[class*="query-container" i],
+          app-chat-input, chat-input, form, .input-area, .query-area,
+          .query-box, .input-box, .bottom-sheet-content, footer,
+          div[class*="action-bar" i], div[class*="input-row" i],
+          .chat-footer, .conversation-footer {
+            background-color: #0E0E10 !important;
+            background: #0E0E10 !important;
+            border-color: #27272A !important;
           }
+          div[class*="input-box" i], div[class*="query-input" i], div[class*="search-box" i],
+          div[class*="input-wrapper" i], div[class*="query-field" i], div[class*="text-field" i],
+          div[class*="composer" i], .chat-composer,
+          mat-form-field, .mat-mdc-form-field, .mdc-text-field,
+          .mat-mdc-text-field-wrapper, .mat-mdc-form-field-flex,
           textarea, [contenteditable="true"], [role="textbox"], input[type="text"] {
             background-color: #18181B !important;
+            background: #18181B !important;
             color: #FAFAFA !important;
             border: 1px solid #27272A !important;
           }
-          textarea::placeholder, input::placeholder, [class*="placeholder"] {
-            color: #71717A !important;
+          textarea::placeholder, input::placeholder, [class*="placeholder"],
+          .query-placeholder, [data-placeholder] {
+            color: #A1A1AA !important;
+            -webkit-text-fill-color: #A1A1AA !important;
           }
           button.send-button, button[aria-label*="Send" i], button[aria-label*="Kirim" i],
-          button.mat-mdc-icon-button {
-            color: #A1A1AA !important;
+          button[type="submit"], button.mat-mdc-icon-button,
+          button[class*="send" i], button[class*="submit" i] {
+            background-color: #27272A !important;
+            background: #27272A !important;
+            color: #FAFAFA !important;
+            border: 1px solid #3F3F46 !important;
           }
+          button.send-button *, button[type="submit"] *, button.mat-mdc-icon-button *,
+          button[class*="send" i] * {
+            color: #FAFAFA !important;
+            fill: #FAFAFA !important;
+          }
+          table, th, td { border-color: #27272A !important; }
+          a { color: #93C5FD !important; }
         `;
       } else {
         styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
@@ -298,4 +335,118 @@ const notebookUiScript = r'''
   observer.observe(document, {subtree:true, childList:true, characterData:true});
   clean();
 })();
+''';
+
+/// Unified master dark stylesheet for NotebookLM AI workspace.
+const otDarkThemeCss = r'''
+:root, :host, html, body {
+  color-scheme: dark !important;
+  --mdc-theme-background: #0E0E10 !important;
+  --mdc-theme-surface: #18181B !important;
+  --mdc-theme-on-surface: #FAFAFA !important;
+  --mat-sys-color-surface: #0E0E10 !important;
+  --mat-sys-color-on-surface: #FAFAFA !important;
+  --mat-sys-color-surface-container: #18181B !important;
+  --mat-sys-color-surface-container-low: #141416 !important;
+  --mat-sys-color-surface-container-lowest: #0E0E10 !important;
+  --mat-sys-color-surface-container-high: #202024 !important;
+  --mat-sys-color-surface-container-highest: #27272A !important;
+  --mat-sys-color-on-surface-variant: #A1A1AA !important;
+  --mat-sys-color-outline: #3F3F46 !important;
+  --mat-sys-color-outline-variant: #27272A !important;
+  --mat-sys-color-background: #0E0E10 !important;
+  --mat-sys-color-on-background: #FAFAFA !important;
+  --mat-sys-color-primary: #FAFAFA !important;
+  --mat-sys-color-on-primary: #18181B !important;
+}
+html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
+.chat-container, .chat-view, .chat-viewport, .conversation-container,
+.chat-panel-content, .message-list, .notebook-content, .scrollable-content,
+div.content-container, app-chat-window, app-chat-message, app-chat-response,
+.chat-message-container, .sources-panel, .studio-panel, main,
+div[class*="chat-panel" i], div[class*="conversation" i], div[class*="chat-view" i] {
+  background-color: #0E0E10 !important;
+  background: #0E0E10 !important;
+  color: #FAFAFA !important;
+}
+.to-user-container, [data-message-author-role="user"], .user-query-container,
+div[class*="user-query" i], div[class*="to-user" i], .chat-message[data-sender="user"] {
+  background-color: #27272A !important;
+  background: #27272A !important;
+  color: #FFFFFF !important;
+  border-radius: 16px !important;
+  border: 1px solid #3F3F46 !important;
+}
+.to-user-container *, [data-message-author-role="user"] * {
+  color: #FFFFFF !important;
+}
+.chat-message[data-sender="model"], .model-message, .response-message,
+[data-message-author-role="assistant"], .rendered-markdown,
+div[class*="response-container" i], .message-content, app-chat-response {
+  background-color: transparent !important;
+  background: transparent !important;
+  color: #FAFAFA !important;
+}
+.rendered-markdown p, .rendered-markdown span, .rendered-markdown div,
+.rendered-markdown li, .rendered-markdown blockquote,
+.rendered-markdown em, .rendered-markdown i,
+.chat-message[data-sender="model"] p, .model-message p, .response-message p,
+.chat-message[data-sender="model"] span, .model-message span, .response-message span {
+  color: #FAFAFA !important;
+}
+.rendered-markdown strong, .rendered-markdown b,
+.rendered-markdown h1, .rendered-markdown h2, .rendered-markdown h3, .rendered-markdown h4 {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+.chat-input-container, div[class*="chat-input" i], div[class*="input-container" i],
+.bottom-bar, div[class*="bottom-bar" i], div[class*="bottom-container" i],
+div[class*="dock" i], div[class*="footer" i], div[class*="query-container" i],
+app-chat-input, chat-input, form, .input-area, .query-area,
+.query-box, .input-box, .bottom-sheet-content, footer,
+div[class*="action-bar" i], div[class*="input-row" i],
+.chat-footer, .conversation-footer {
+  background-color: #0E0E10 !important;
+  background: #0E0E10 !important;
+  border-color: #27272A !important;
+}
+div[class*="input-box" i], div[class*="query-input" i], div[class*="search-box" i],
+div[class*="input-wrapper" i], div[class*="query-field" i], div[class*="text-field" i],
+div[class*="composer" i], .chat-composer,
+mat-form-field, .mat-mdc-form-field, .mdc-text-field,
+.mat-mdc-text-field-wrapper, .mat-mdc-form-field-flex,
+textarea, [contenteditable="true"], [role="textbox"], input[type="text"] {
+  background-color: #18181B !important;
+  background: #18181B !important;
+  color: #FAFAFA !important;
+  border: 1px solid #27272A !important;
+}
+textarea::placeholder, input::placeholder, [class*="placeholder"],
+.query-placeholder, [data-placeholder] {
+  color: #A1A1AA !important;
+  -webkit-text-fill-color: #A1A1AA !important;
+}
+button.send-button, button[aria-label*="Send" i], button[aria-label*="Kirim" i],
+button[type="submit"], button.mat-mdc-icon-button,
+button[class*="send" i], button[class*="submit" i] {
+  background-color: #27272A !important;
+  background: #27272A !important;
+  color: #FAFAFA !important;
+  border: 1px solid #3F3F46 !important;
+}
+button.send-button *, button[type="submit"] *, button.mat-mdc-icon-button *,
+button[class*="send" i] * {
+  color: #FAFAFA !important;
+  fill: #FAFAFA !important;
+}
+table, th, td { border-color: #27272A !important; }
+a { color: #93C5FD !important; }
+''';
+
+/// Unified master light stylesheet.
+const otLightThemeCss = r'''
+html, body {
+  background-color: #FFFFFF !important;
+  color: #18181B !important;
+}
 ''';
