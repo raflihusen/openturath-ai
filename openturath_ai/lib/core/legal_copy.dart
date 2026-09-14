@@ -110,7 +110,7 @@ abstract final class LegalCopy {
       content:
           'Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. '
           'Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\n'
-          'Catatan disimpan secara lokal pada perangkat Anda melalui basis data terenkripsi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.',
+          'Catatan disimpan secara lokal pada perangkat Anda melalui penyimpanan aplikasi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.',
     ),
     LegalSection(
       title: '9. Hak atas Aplikasi dan Kitab',
@@ -204,7 +204,7 @@ abstract final class LegalCopy {
     LegalSection(
       title: '5. Catatan dan Penyimpanan Perangkat',
       content:
-          'Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan basis data SQLite terenkripsi. '
+          'Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan penyimpanan aplikasi. '
           'Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. '
           'Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain.',
     ),
