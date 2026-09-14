@@ -28,6 +28,18 @@ test('PERDANA voucher grants time bound Pro trial using its server duration', as
   assert.equal(trial.trial_duration_days,7);
   assert.ok(trial.expiry.toMillis()>Date.now());
 });
+test('a trial voucher starts at redemption and cannot silently stack', async () => {
+  const {api,db}=loadBackend(root);
+  const existingExpiry=Stamp.fromMillis(Date.now()+86400000 * 4);
+  db.seed('users/u',{email:'u@example.test',entitlements:{all_access:{plan:'trial',status:'active',expiry:existingExpiry}}});
+  db.seed('redeem_codes/TRIAL1',{type:'trial',entitlement_key:'all_access',duration_days:1,max_uses:1,times_used:0});
+  await assert.rejects(
+    api.redeemCode({code:'TRIAL1',deviceId:'b'.repeat(64),isPhysicalDevice:true},{auth:{uid:'u',token:{email:'u@example.test'}}}),
+    (error: any)=>error.code==='failed-precondition'
+  );
+  assert.equal(db.docs.get('redeem_codes/TRIAL1').times_used,0);
+  assert.equal(db.docs.get('users/u').entitlements.all_access.expiry.toMillis(),existingExpiry.toMillis());
+});
 test('A02 web access cannot restore revoked module from paid billing history', async () => {
   const {api,db}=loadBackend(root);
   db.seed('users/u',{email:'u@example.test',entitlements:{hadits:{...active(),status:'revoked'}}});

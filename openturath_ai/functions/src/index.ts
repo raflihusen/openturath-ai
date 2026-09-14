@@ -232,6 +232,12 @@ export const getAgentUrl = functions
     }
 
     const uid = context.auth.uid;
+    await enforceRateLimit(
+      `agent_url_${uid}`,
+      60,
+      60,
+      "Terlalu banyak permintaan membuka asisten. Silakan coba kembali sebentar lagi."
+    );
     const agentId = data.agentId as string;
 
     if (!agentId) {
@@ -1122,7 +1128,12 @@ export const redeemCode = functions
       }
 
       const entitlementKey = (codeData.entitlement_key as string) || "fiqh_syafii";
-      const durationDays = (codeData.duration_days as number) || 7;
+      const requestedDuration = codeData.duration_days;
+      const durationDays = typeof requestedDuration === "number" &&
+          Number.isInteger(requestedDuration) &&
+          requestedDuration >= 1 && requestedDuration <= 31
+        ? requestedDuration
+        : 7;
       const isTrialVoucher = codeData.is_trial === true ||
         codeData.type === "trial" ||
         codeData.type === "perdana" ||
@@ -1137,8 +1148,25 @@ export const redeemCode = functions
       const entitlements = (userData.entitlements || {}) as Record<string, any>;
       const currentEnt = entitlements[entitlementKey];
 
-      let baseDate = new Date();
-      if (currentEnt && currentEnt.expiry && currentEnt.status === "active") {
+      const redeemedAt = new Date();
+      if (isTrialVoucher && currentEnt?.plan === "trial" &&
+          currentEnt.status === "active" && currentEnt.expiry) {
+        const currentTrialExpiry = currentEnt.expiry.toDate
+          ? currentEnt.expiry.toDate()
+          : new Date(currentEnt.expiry);
+        if (currentTrialExpiry > redeemedAt && codeData.allow_trial_extension !== true) {
+          throw new functions.https.HttpsError(
+            "failed-precondition",
+            "Masa coba untuk akses ini masih aktif. Kode trial baru dapat digunakan setelah berakhir."
+          );
+        }
+      }
+
+      // Trial selalu dihitung dari saat voucher diklaim. Perpanjangan hanya
+      // berlaku pada akses berbayar atau voucher yang diberi izin eksplisit.
+      let baseDate = redeemedAt;
+      if ((!isTrialVoucher || codeData.allow_trial_extension === true) &&
+          currentEnt && currentEnt.expiry && currentEnt.status === "active") {
         const curExp = currentEnt.expiry.toDate ? currentEnt.expiry.toDate() : new Date(currentEnt.expiry);
         if (curExp > baseDate) {
           baseDate = curExp;
@@ -1182,7 +1210,7 @@ export const redeemCode = functions
           source: "redeem_code",
           code_id: rawCode.slice(0, 4) + "****", // Redaksi di entitlement
           expiry: admin.firestore.Timestamp.fromDate(newExpiry),
-          started_at: admin.firestore.Timestamp.fromDate(baseDate),
+          started_at: admin.firestore.Timestamp.fromDate(redeemedAt),
           trial_duration_days: isTrialVoucher ? durationDays : null,
           payment_status: "none",
           updated_at: admin.firestore.FieldValue.serverTimestamp(),
@@ -1214,7 +1242,7 @@ export const redeemCode = functions
         email: userEmail || userData.email || "",
         name: userData.name || "Peneliti",
         entitlement_key: entitlementKey,
-        plan: "voucher_access",
+        plan: isTrialVoucher ? "trial" : "voucher_access",
         action: "add",
         status: "pending",
         attempts: 0,
