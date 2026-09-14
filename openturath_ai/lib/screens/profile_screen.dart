@@ -809,7 +809,7 @@ class _MembershipPass extends StatelessWidget {
     final cardEnd = isDark ? const Color(0xFF17171A) : const Color(0xFF111114);
     const foreground = Color(0xFFF8F8F8);
     const muted = Color(0xFFC7C7CC);
-    final statusLabel = isActive ? 'AKSES AKTIF' : 'BELUM AKTIF';
+    final statusLabel = isActive ? 'PRO' : 'TRIAL';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -898,27 +898,18 @@ class _MembershipPass extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  'OPEN',
+                                  'OpenTurath',
                                   style: GoogleFonts.newsreader(
                                     color: foreground,
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 19,
-                                    letterSpacing: -0.35,
-                                  ),
-                                ),
-                                Text(
-                                  'TURATH',
-                                  style: GoogleFonts.outfit(
-                                    color: foreground,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                    letterSpacing: 1.2,
+                                    fontSize: 21,
+                                    letterSpacing: -0.4,
                                   ),
                                 ),
                                 const Spacer(),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 9, vertical: 5),
+                                      horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
                                     color: isActive
                                         ? Colors.white.withValues(alpha: 0.16)
@@ -932,9 +923,9 @@ class _MembershipPass extends StatelessWidget {
                                     statusLabel,
                                     style: GoogleFonts.outfit(
                                       color: foreground,
-                                      fontSize: 9.5,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.8,
+                                      letterSpacing: 1.0,
                                     ),
                                   ),
                                 ),
