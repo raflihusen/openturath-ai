@@ -318,11 +318,18 @@ class _MainShellScreenState extends State<MainShellScreen>
           return PopScope(
             // canPop hanya diizinkan jika ruang tertutup DAN animasi selesai di-dismiss DAN sedang di tab 0
             canPop: !sessionManager.isOpen && _roomAnimController.isDismissed && _currentIndex == 0,
-            onPopInvokedWithResult: (didPop, result) {
+            onPopInvokedWithResult: (didPop, result) async {
               if (didPop) return;
-              // Jika ruang AI sedang terbuka atau animasi mundur sedang berjalan:
-              // HANYA tutup ruang AI, pertahankan tab pengguna di mana dia berada!
-              if (sessionManager.isOpen || !_roomAnimController.isDismissed) {
+              if (sessionManager.isOpen) {
+                final activeController = sessionManager.activeTab?.webController;
+                if (activeController != null && await activeController.canGoBack()) {
+                  await activeController.goBack();
+                  return;
+                }
+                sessionManager.closeRoom();
+                return;
+              }
+              if (!_roomAnimController.isDismissed) {
                 sessionManager.closeRoom();
                 return;
               }
@@ -346,16 +353,13 @@ class _MainShellScreenState extends State<MainShellScreen>
                     ),
                   ),
 
-                // 3. Ruang AI Multi-Tab (Pure Vertical Slide tanpa FadeTransition pada PlatformView)
+                // 3. Ruang AI Multi-Tab (Slide vertikal murni tanpa Offstage agar WebView tidak di-detach oleh OS)
                 Positioned.fill(
-                  child: Offstage(
-                    offstage: !isRoomVisible,
-                    child: TickerMode(
-                      enabled: isRoomVisible,
-                      child: SlideTransition(
-                        position: _roomSlideAnimation,
-                        child: child,
-                      ),
+                  child: IgnorePointer(
+                    ignoring: !isRoomVisible,
+                    child: SlideTransition(
+                      position: _roomSlideAnimation,
+                      child: child,
                     ),
                   ),
                 ),
