@@ -511,7 +511,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       widget.session.webController?.setSettings(
         settings: InAppWebViewSettings(
           forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
-          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+          forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
           algorithmicDarkeningAllowed: true,
         ),
       );
@@ -524,9 +524,60 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     final controller = widget.session.webController;
     if (controller == null) return;
     try {
-      await controller.evaluateJavascript(
-        source: 'if (window.otNotebook && typeof window.otNotebook.setTheme === "function") { window.otNotebook.setTheme($isDark); } else if (typeof applyOtTheme === "function") { applyOtTheme($isDark); }',
-      );
+      final js = '''
+        (function() {
+          try {
+            var meta = document.querySelector('meta[name="color-scheme"]');
+            if (!meta) {
+              meta = document.createElement('meta');
+              meta.name = 'color-scheme';
+              (document.head || document.documentElement).appendChild(meta);
+            }
+            meta.content = ${isDark ? "'dark'" : "'light'"};
+
+            if (document.documentElement) {
+              document.documentElement.classList.toggle('dark', $isDark);
+              document.documentElement.classList.toggle('dark-theme', $isDark);
+              document.documentElement.style.colorScheme = ${isDark ? "'dark'" : "'light'"};
+            }
+            if (document.body) {
+              document.body.classList.toggle('dark', $isDark);
+              document.body.classList.toggle('dark-theme', $isDark);
+              document.body.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
+            }
+
+            var styleId = 'ot-theme-canvas-style';
+            var styleEl = document.getElementById(styleId);
+            if (!styleEl) {
+              styleEl = document.createElement('style');
+              styleEl.id = styleId;
+              (document.head || document.documentElement).appendChild(styleEl);
+            }
+            if ($isDark) {
+              styleEl.textContent = `
+                html, body, [role="main"], mat-sidenav-content, mat-sidenav-container,
+                .chat-container, .chat-viewport, .to-user-container, .message-content,
+                .rendered-markdown, .query-container, .response-container,
+                table, tr, td, th, mat-card, .mat-mdc-card, app-chat-message, app-chat-response,
+                .chat-message-container, .notebook-content, .scrollable-content,
+                .sources-panel, .studio-panel, div.content-container, main {
+                  background-color: #0E0E10 !important;
+                  color: #E4E4E7 !important;
+                }
+                table, th, td { border-color: #27272A !important; }
+                a { color: #A1A1AA !important; }
+              `;
+            } else {
+              styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
+            }
+
+            if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
+              window.otNotebook.setTheme($isDark);
+            }
+          } catch(e) {}
+        })();
+      ''';
+      await controller.evaluateJavascript(source: js);
     } catch (_) {}
   }
 
@@ -553,16 +604,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      if (isLogin || (_readySamples >= 7 && elapsedMs >= 6500)) {
+      if (isLogin || (_readySamples >= 5 && elapsedMs >= 4000)) {
         _readinessTimer?.cancel();
-        if (mounted && widget.session.isWebLoading) {
-          setState(() => widget.session.isWebLoading = false);
+        if (mounted) {
+          setState(() {
+            widget.session.isWebLoading = false;
+            widget.session.isSessionReady = true;
+          });
         }
       } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
+            widget.session.isSessionReady = true;
             widget.session.errorMessage =
                 'AI belum siap merespons. Periksa koneksi lalu coba muat kembali.';
           });
@@ -663,7 +718,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             verticalScrollBarEnabled: false,
             horizontalScrollBarEnabled: false,
             forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-            forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+            forceDarkStrategy: ForceDarkStrategy.USER_AGENT_DARKENING_ONLY,
             algorithmicDarkeningAllowed: true,
             userAgent: 'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
           ),
@@ -701,14 +756,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 return false;
               },
             );
-            _startReadinessCheck();
+            if (!session.isSessionReady) {
+              _startReadinessCheck();
+            }
           },
           onLoadStart: (controller, uri) {
-            // Hanya aktifkan full loader jika belum pernah siap (inisialisasi awal)
-            if (mounted && !session.hasAcknowledgedAdab && !session.isWebLoading) {
+            // Hanya aktifkan full loader jika sesi BELUM pernah siap sama sekali
+            if (mounted && !session.isSessionReady && !session.isWebLoading) {
               setState(() => session.isWebLoading = true);
             }
-            _startReadinessCheck();
+            if (!session.isSessionReady) {
+              _startReadinessCheck();
+            }
           },
           onLoadStop: (controller, uri) async {
             await controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
@@ -716,7 +775,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             await controller.evaluateJavascript(
               source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
             );
-            await _checkReady();
+            if (!session.isSessionReady) {
+              await _checkReady();
+            }
           },
           onProgressChanged: (controller, progress) async {
             if (progress >= 35) {
@@ -734,8 +795,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           },
         ),
 
-        // Fullscreen pulsing loader until NotebookLM UI is 100% prepared & ready
-        if (session.isWebLoading)
+        // Fullscreen pulsing loader hanya saat inisialisasi awal
+        if (!session.isSessionReady && session.isWebLoading)
           Positioned.fill(
             child: AppLoader.fullscreen(
               title: session.agent.title,
