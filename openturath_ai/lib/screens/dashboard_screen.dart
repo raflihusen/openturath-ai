@@ -82,7 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        '${agent.title} sedang dalam tahap kurasi naskah kitab primer (Segera Hadir).',
+        'Koleksi kitab untuk ${agent.title} masih disiapkan.',
       );
       return;
     }
@@ -356,7 +356,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil Pencarian',
+                        'Hasil pencarian',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -409,13 +409,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── Section: Pilih Bidang Ilmu ──
+                      // ── Section: Pilih Bidang ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Pilih Bidang Ilmu',
+                            'Pilih bidang',
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -436,7 +436,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Lihat Semua',
+                                  'Lihat semua',
                                   style: GoogleFonts.outfit(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,

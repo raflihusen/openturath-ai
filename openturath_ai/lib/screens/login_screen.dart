@@ -11,12 +11,12 @@ import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
-/// LoginScreen: Gerbang Masuk Ruang Riset OpenTurath AI
+/// LoginScreen: Gerbang Masuk OpenTurath
 /// Mengadopsi filosofi desain minimalis modern Claude:
 /// - Dark mode hitam pekat (pure deep black)
 /// - Light mode putih pekat (pure clean white)
 /// - Shape minimalis dengan garis abu-abu tipis (subtle hairline border)
-/// - Slogan resmi: "AI for Islamic Scholarship" dengan tipografi editorial serif
+/// - Slogan resmi: "Membaca kitab, menelusuri ibarah." dengan tipografi editorial serif
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -164,17 +164,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
 
-                  // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
+                  // ── 3. Academic Editorial Slogan: "Membaca kitab, menelusuri ibarah." ──
                   _stagger(
                     delayMs: 140,
                     child: Text(
-                      'AI for Islamic Scholarship',
+                      'Membaca kitab, menelusuri ibarah.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
-                        fontSize: 17,
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.italic,
-                        letterSpacing: 0.1,
+                        letterSpacing: -0.1,
                         color: textMuted,
                         height: 1.3,
                       ),
