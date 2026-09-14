@@ -546,7 +546,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   }
 }
 
-class _BookmarkCard extends StatelessWidget {
+class _BookmarkCard extends StatefulWidget {
   final BookmarkModel item;
   final Color surface;
   final Color surfaceSubtle;
@@ -576,224 +576,320 @@ class _BookmarkCard extends StatelessWidget {
   });
 
   @override
+  State<_BookmarkCard> createState() => _BookmarkCardState();
+}
+
+class _BookmarkCardState extends State<_BookmarkCard> {
+  bool _isExpanded = false;
+
+  IconData _getCategoryIcon(BookmarkModel item) {
+    final id = item.id.toLowerCase();
+    final f = item.fieldName.toLowerCase();
+    if (id.startsWith('book_') || f.contains('rujukan')) return Icons.menu_book_rounded;
+    if (f.contains('catatan')) return Icons.edit_note_rounded;
+    if (f.contains('fikih') || f.contains('fiqh') || f.contains('ushul')) return Icons.gavel_rounded;
+    if (f.contains('hadis') || f.contains('hadits')) return Icons.format_quote_rounded;
+    if (f.contains('tafsir')) return Icons.auto_stories_rounded;
+    if (f.contains('tasawuf') || f.contains('akhlak')) return Icons.spa_outlined;
+    if (f.contains('tarikh') || f.contains('sejarah')) return Icons.history_edu_rounded;
+    if (f.contains('akidah') || f.contains('aqidah')) return Icons.mosque_outlined;
+    return Icons.bookmark_rounded;
+  }
+
+  String _formatRelativeTime(DateTime dt) {
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+    if (diff.inSeconds < 60) return 'Baru saja';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m lalu';
+    if (diff.inHours < 24) return '${diff.inHours}j lalu';
+    if (diff.inDays == 1) return 'Kemarin';
+    if (diff.inDays < 7) return '${diff.inDays}h lalu';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    return '${dt.day} ${months[dt.month - 1]}';
+  }
+
+  String _cleanSingleLine(String text) {
+    final lines = text.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty);
+    if (lines.isEmpty) return '';
+    return lines.first.replaceAll(RegExp(r'[#*>`_~]'), '').trim();
+  }
+
+  String _cleanExcerpt(String text, int maxLength) {
+    final trimmed = text.trim();
+    if (trimmed.length <= maxLength) return trimmed;
+    final sub = trimmed.substring(0, maxLength);
+    final lastSpace = sub.lastIndexOf(' ');
+    if (lastSpace > maxLength ~/ 2) {
+      return '${sub.substring(0, lastSpace)}...';
+    }
+    return '$sub...';
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final item = widget.item;
     final isBookRef = item.id.startsWith('book_') || item.fieldName == 'Rujukan Kitab';
     final hasValidBookRef = item.bookReference.isNotEmpty &&
         !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
-    return InkWell(
-      onTap: onEdit,
-      borderRadius: OTRadius.cardBorder,
-      child: Container(
-        padding: const EdgeInsets.all(OTSpacing.base),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: OTRadius.cardBorder,
-          border: Border.all(color: border, width: 0.8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header: Category Pill + Agent Title + Delete
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: accent.withValues(alpha: 0.12),
-                          borderRadius: OTRadius.chipBorder,
-                        ),
-                        child: Text(
-                          isBookRef
-                              ? 'Rujukan Kitab'
-                              : (item.fieldName.contains('Catatan') ? 'Catatan' : item.fieldName),
-                          style: OTTypography.captionMedium(color: accent).copyWith(
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: OTSpacing.sm),
-                      Flexible(
-                        child: Text(
-                          item.agentTitle,
-                          style: OTTypography.caption(color: textSecondary),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 4),
-                IconButton(
-                  icon: Icon(
-                    Icons.delete_outline_rounded,
-                    size: 20,
-                    color: textSecondary.withValues(alpha: 0.7),
-                  ),
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                  tooltip: 'Hapus catatan',
-                  onPressed: onDelete,
-                ),
-              ],
+    return AnimatedContainer(
+      duration: OTMotion.normal,
+      curve: OTMotion.curve,
+      child: InkWell(
+        onTap: () {
+          OTMotion.selection();
+          setState(() => _isExpanded = !_isExpanded);
+        },
+        borderRadius: OTRadius.cardBorder,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.md + 2, vertical: 12),
+          decoration: BoxDecoration(
+            color: widget.surface,
+            borderRadius: OTRadius.cardBorder,
+            border: Border.all(
+              color: _isExpanded ? widget.accent.withValues(alpha: 0.4) : widget.border,
+              width: _isExpanded ? 1.0 : 0.8,
             ),
-
-            const SizedBox(height: OTSpacing.sm),
-
-            // Title
-            Text(
-              item.title,
-              style: OTTypography.cardTitle(color: textPrimary),
-            ),
-
-            if (hasValidBookRef) ...[
-              const SizedBox(height: OTSpacing.sm),
-              // Book Reference Pill
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: surfaceSubtle,
-                  borderRadius: OTRadius.chipBorder,
-                  border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.menu_book_rounded, size: 14, color: accent),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(
-                        '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
-                        style: OTTypography.captionMedium(color: textPrimary),
-                        overflow: TextOverflow.ellipsis,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Bar: Category Icon + Pill + Agent Title + Time + Chevron
+              Row(
+                children: [
+                  Icon(_getCategoryIcon(item), size: 16, color: widget.accent),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: widget.accent.withValues(alpha: 0.12),
+                      borderRadius: OTRadius.chipBorder,
+                    ),
+                    child: Text(
+                      isBookRef
+                          ? 'Rujukan Kitab'
+                          : (item.fieldName.contains('Catatan') ? 'Catatan' : item.fieldName),
+                      style: OTTypography.captionMedium(color: widget.accent).copyWith(
+                        fontSize: 10.5,
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ],
-
-            if (item.arabicExcerpt.isNotEmpty) ...[
-              const SizedBox(height: OTSpacing.md),
-              // Arabic Excerpt Box
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: surfaceSubtle,
-                  borderRadius: BorderRadius.circular(OTRadius.input),
-                  border: Border.all(color: border.withValues(alpha: 0.4), width: 0.8),
-                ),
-                child: Text(
-                  item.arabicExcerpt,
-                  textDirection: TextDirection.rtl,
-                  style: GoogleFonts.tajawal(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    height: 1.6,
-                    color: textPrimary,
                   ),
-                  maxLines: 3,
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      item.agentTitle,
+                      style: OTTypography.caption(color: widget.textSecondary).copyWith(
+                        fontSize: 11,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    _formatRelativeTime(item.effectiveTime),
+                    style: OTTypography.caption(
+                      color: widget.textSecondary.withValues(alpha: 0.8),
+                    ).copyWith(fontSize: 11),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    _isExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    size: 18,
+                    color: widget.textSecondary,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // Title
+              Text(
+                item.title,
+                style: OTTypography.cardTitle(color: widget.textPrimary).copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: _isExpanded ? null : 1,
+                overflow: _isExpanded ? null : TextOverflow.ellipsis,
+              ),
+
+              // Compact Preview (when collapsed)
+              if (!_isExpanded && item.fullAnswer.trim().isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  _cleanSingleLine(item.fullAnswer),
+                  style: OTTypography.caption(color: widget.textSecondary).copyWith(
+                    fontSize: 12,
+                  ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
 
-            // Markdown Body Excerpt
-            if (item.fullAnswer.trim().isNotEmpty) ...[
-              const SizedBox(height: OTSpacing.sm),
-              MarkdownBody(
-                data: item.fullAnswer.length > 250
-                    ? '${item.fullAnswer.substring(0, 250).trim()}...'
-                    : item.fullAnswer.trim(),
-                styleSheet: MarkdownStyleSheet(
-                  p: GoogleFonts.outfit(
-                    fontSize: 13,
-                    height: 1.5,
-                    color: textSecondary,
-                  ),
-                  strong: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: textPrimary,
-                  ),
-                  blockquote: GoogleFonts.outfit(
-                    fontSize: 12.5,
-                    fontStyle: FontStyle.italic,
-                    color: textSecondary,
-                  ),
-                ),
-              ),
-            ],
-
-            const SizedBox(height: OTSpacing.md),
-
-            // Action Buttons
-            Row(
-              children: [
-                OutlinedButton.icon(
-                  onPressed: onEdit,
-                  icon: const Icon(Icons.edit_outlined, size: 14),
-                  label: const Text('Edit'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: textPrimary,
-                    side: BorderSide(color: border, width: 0.8),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    textStyle: OTTypography.captionMedium(),
-                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                  ),
-                ),
-                const SizedBox(width: OTSpacing.xs + 2),
-                OutlinedButton.icon(
-                  onPressed: onCopy,
-                  icon: const Icon(Icons.copy_rounded, size: 14),
-                  label: Text(
-                    item.arabicExcerpt.isNotEmpty
-                        ? AppCopy.copyIbarahAction
-                        : (isBookRef
-                            ? 'Salin rujukan'
-                            : (item.fieldName.contains('Catatan') ? 'Salin catatan' : 'Salin jawaban')),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: textPrimary,
-                    side: BorderSide(color: border, width: 0.8),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    textStyle: OTTypography.captionMedium(),
-                    shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-                  ),
-                ),
-                if (isBookRef) ...[
-                  const SizedBox(width: OTSpacing.xs + 2),
-                  FilledButton.icon(
-                    onPressed: onOpen,
-                    icon: const Icon(Icons.menu_book, size: 14),
-                    label: const Text('Lihat rujukan'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: surfaceSubtle,
-                      foregroundColor: textPrimary,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      textStyle: OTTypography.captionMedium(),
-                      shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+              // Expanded Content
+              if (_isExpanded) ...[
+                if (hasValidBookRef) ...[
+                  const SizedBox(height: OTSpacing.sm),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: widget.surfaceSubtle,
+                      borderRadius: OTRadius.chipBorder,
+                      border: Border.all(
+                        color: widget.border.withValues(alpha: 0.6),
+                        width: 0.8,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.menu_book_rounded, size: 14, color: widget.accent),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
+                            style: OTTypography.captionMedium(color: widget.textPrimary),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
-                const Spacer(),
-                IconButton(
-                  onPressed: onShare,
-                  icon: const Icon(Icons.share_outlined, size: 18),
-                  tooltip: AppCopy.shareReferenceTooltip,
-                  color: textSecondary,
-                  padding: const EdgeInsets.all(8),
-                  constraints: const BoxConstraints(),
+
+                if (item.arabicExcerpt.isNotEmpty) ...[
+                  const SizedBox(height: OTSpacing.md),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: widget.surfaceSubtle,
+                      borderRadius: BorderRadius.circular(OTRadius.input),
+                      border: Border.all(
+                        color: widget.border.withValues(alpha: 0.4),
+                        width: 0.8,
+                      ),
+                    ),
+                    child: Text(
+                      item.arabicExcerpt,
+                      textDirection: TextDirection.rtl,
+                      style: GoogleFonts.tajawal(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        height: 1.6,
+                        color: widget.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+
+                if (item.fullAnswer.trim().isNotEmpty) ...[
+                  const SizedBox(height: OTSpacing.sm),
+                  MarkdownBody(
+                    data: item.fullAnswer.length > 300
+                        ? _cleanExcerpt(item.fullAnswer, 300)
+                        : item.fullAnswer.trim(),
+                    styleSheet: MarkdownStyleSheet(
+                      p: GoogleFonts.outfit(
+                        fontSize: 13,
+                        height: 1.5,
+                        color: widget.textSecondary,
+                      ),
+                      strong: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: widget.textPrimary,
+                      ),
+                      blockquote: GoogleFonts.outfit(
+                        fontSize: 12.5,
+                        fontStyle: FontStyle.italic,
+                        color: widget.textSecondary,
+                      ),
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: OTSpacing.md),
+
+                // Action Buttons
+                Row(
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: widget.onEdit,
+                      icon: const Icon(Icons.edit_outlined, size: 14),
+                      label: const Text('Edit'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: widget.textPrimary,
+                        side: BorderSide(color: widget.border, width: 0.8),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        textStyle: OTTypography.captionMedium(),
+                        shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                      ),
+                    ),
+                    const SizedBox(width: OTSpacing.xs + 2),
+                    OutlinedButton.icon(
+                      onPressed: widget.onCopy,
+                      icon: const Icon(Icons.copy_rounded, size: 14),
+                      label: Text(
+                        item.arabicExcerpt.isNotEmpty
+                            ? AppCopy.copyIbarahAction
+                            : (isBookRef
+                                ? 'Salin rujukan'
+                                : (item.fieldName.contains('Catatan')
+                                    ? 'Salin catatan'
+                                    : 'Salin jawaban')),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: widget.textPrimary,
+                        side: BorderSide(color: widget.border, width: 0.8),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        textStyle: OTTypography.captionMedium(),
+                        shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                      ),
+                    ),
+                    if (isBookRef) ...[
+                      const SizedBox(width: OTSpacing.xs + 2),
+                      FilledButton.icon(
+                        onPressed: widget.onOpen,
+                        icon: const Icon(Icons.menu_book, size: 14),
+                        label: const Text('Lihat kitab'),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: widget.surfaceSubtle,
+                          foregroundColor: widget.textPrimary,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          textStyle: OTTypography.captionMedium(),
+                          shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                        ),
+                      ),
+                    ],
+                    const Spacer(),
+                    IconButton(
+                      onPressed: widget.onShare,
+                      icon: const Icon(Icons.share_outlined, size: 18),
+                      tooltip: AppCopy.shareReferenceTooltip,
+                      color: widget.textSecondary,
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(),
+                    ),
+                    IconButton(
+                      onPressed: widget.onDelete,
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        size: 18,
+                        color: widget.textSecondary.withValues(alpha: 0.7),
+                      ),
+                      tooltip: 'Hapus catatan',
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
