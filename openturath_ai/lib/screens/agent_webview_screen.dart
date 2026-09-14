@@ -468,10 +468,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     await _bookmarkService.addBookmark(copiedAnswerBookmark(text, agent), userId: ownerUid);
   }
 
-  Future<void> _copyLatestResponse() async {
+  Future<void> _copyAnswerToClipboard() async {
     if (_webController == null || _isCopying) return;
-    final uid = _authService.currentUser?.uid;
-    if (uid == null) return;
     setState(() => _isCopying = true);
     try {
       final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
@@ -481,7 +479,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         return;
       }
       await Clipboard.setData(ClipboardData(text: text));
-      await _saveCopiedAnswer(text, uid);
       if (mounted) {
         setState(() => _hasCopied = true);
         AppSnackBar.success(context, AppCopy.answerCopied);
@@ -492,6 +489,31 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       if (mounted) setState(() => _isCopying = false);
     }
   }
+
+  Future<void> _saveAnswerToBookmarks() async {
+    if (_webController == null || _isCopying) return;
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    setState(() => _isCopying = true);
+    try {
+      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
+      final text = result is String ? result.trim() : '';
+      if (text.isEmpty) {
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToSave);
+        return;
+      }
+      await _saveCopiedAnswer(text, uid);
+      if (mounted) {
+        AppSnackBar.success(context, AppCopy.savedSuccess);
+      }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, AppCopy.saveFailed);
+    } finally {
+      if (mounted) setState(() => _isCopying = false);
+    }
+  }
+
+  Future<void> _copyLatestResponse() => _copyAnswerToClipboard();
 
   void _startReadinessCheck() {
     _readinessTimer?.cancel();
@@ -1076,12 +1098,22 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
-              title: Text('Salin jawaban ke Catatan', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text(AppCopy.copyAnswerAction, style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
                       Navigator.pop(ctx);
-                      _copyLatestResponse();
+                      _copyAnswerToClipboard();
+                    },
+            ),
+            ListTile(
+              leading: Icon(Icons.bookmark_border_rounded, color: textPrimary, size: 20),
+              title: Text(AppCopy.saveAnswerMenu, style: OTTypography.bodyMedium(color: textPrimary)),
+              onTap: _isCopying
+                  ? null
+                  : () {
+                      Navigator.pop(ctx);
+                      _saveAnswerToBookmarks();
                     },
             ),
           ],

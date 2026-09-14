@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
+import '../core/app_copy.dart';
 
 class EvidenceBottomSheet extends StatelessWidget {
   final int citationNumber;
@@ -64,13 +65,10 @@ class EvidenceBottomSheet extends StatelessWidget {
     if (explanation.isNotEmpty) {
       buffer.writeln('Taqrir & Syarah:');
       buffer.writeln(explanation);
-      buffer.writeln();
     }
-    buffer.writeln('—');
-    buffer.writeln('Disimpan melalui *OpenTurath*');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
-    AppSnackBar.success(context, 'Sitasi rujukan tersalin.');
+    AppSnackBar.success(context, AppCopy.referenceCopied);
   }
 
   Widget _stagger(int index, Widget child) {

@@ -202,13 +202,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     if (item.author != null && item.author!.isNotEmpty) {
       buffer.write(', karya ${item.author}');
     }
-    buffer.writeln('.');
-    buffer.write('Disimpan melalui OpenTurath AI (${item.agentTitle}).');
+    buffer.write('.');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Sitasi rujukan tersalin.',
+      AppCopy.referenceCopied,
     );
   }
 
