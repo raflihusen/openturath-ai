@@ -483,6 +483,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     final themeInitScript = '''
       (function() {
         try {
+          window._otIsDark = $isDark;
           var meta = document.querySelector('meta[name="color-scheme"]');
           if (!meta) {
             meta = document.createElement('meta');
@@ -498,6 +499,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             style.type = 'text/css';
             (document.head || document.documentElement).appendChild(style);
           }
+          style.setAttribute('data-applied-theme', ${isDark ? "'dark'" : "'light'"});
           style.textContent = $cssSource;
 
           if (document.documentElement) {
@@ -510,12 +512,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             document.body.classList.toggle('dark-theme', $isDark);
             document.body.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
           }
+          if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
+            window.otNotebook.setTheme($isDark);
+          }
         } catch(e) {}
       })();
     ''';
 
     return UserScript(
-      source: _turatsMasterScript + notebookUiScript + themeInitScript,
+      source: 'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript$themeInitScript',
       injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
       forMainFrameOnly: true,
     );
@@ -566,6 +571,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final js = '''
         (function() {
           try {
+            window._otIsDark = $isDark;
             var meta = document.querySelector('meta[name="color-scheme"]');
             if (!meta) {
               meta = document.createElement('meta');
@@ -592,6 +598,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               styleEl.id = styleId;
               (document.head || document.documentElement).appendChild(styleEl);
             }
+            styleEl.setAttribute('data-applied-theme', ${isDark ? "'dark'" : "'light'"});
             styleEl.textContent = $cssSource;
 
             if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
@@ -796,7 +803,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             }
           },
           onLoadStop: (controller, uri) async {
-            await controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+            await controller.evaluateJavascript(source: 'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
             await _applyThemeCss(isDark);
             await controller.evaluateJavascript(
               source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
@@ -807,7 +814,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           },
           onProgressChanged: (controller, progress) async {
             if (progress >= 35) {
-              await controller.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+              await controller.evaluateJavascript(source: 'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
               await _applyThemeCss(isDark);
             }
           },

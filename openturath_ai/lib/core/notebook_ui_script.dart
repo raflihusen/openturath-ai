@@ -42,8 +42,13 @@ const notebookUiScript = r'''
     if (Date.now() < copyUntil && selectedAnswer) sendCopy(selectedAnswer);
   });
   function applyOtTheme(isDark) {
-    if (typeof isDark !== 'boolean') {
+    if (typeof isDark === 'boolean') {
+      window._otIsDark = isDark;
+    } else if (typeof window._otIsDark === 'boolean') {
+      isDark = window._otIsDark;
+    } else {
       isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      window._otIsDark = isDark;
     }
     try {
       var meta = document.querySelector('meta[name="color-scheme"]');
@@ -72,11 +77,15 @@ const notebookUiScript = r'''
         styleEl.id = 'ot-native-dark-mode';
         (document.head || document.documentElement).appendChild(styleEl);
       }
-      if (isDark) {
-        styleEl.textContent = `
-          :root, :host, html, body {
-            color-scheme: dark !important;
-            --mdc-theme-background: #0E0E10 !important;
+      var currentTheme = styleEl.getAttribute('data-applied-theme');
+      var targetTheme = isDark ? 'dark' : 'light';
+      if (currentTheme !== targetTheme) {
+        styleEl.setAttribute('data-applied-theme', targetTheme);
+        if (isDark) {
+          styleEl.textContent = `
+            :root, :host, html, body {
+              color-scheme: dark !important;
+              --mdc-theme-background: #0E0E10 !important;
             --mdc-theme-surface: #18181B !important;
             --mdc-theme-on-surface: #FAFAFA !important;
             --mat-sys-color-surface: #0E0E10 !important;
@@ -180,6 +189,7 @@ const notebookUiScript = r'''
       } else {
         styleEl.textContent = 'html, body { background-color: #FFFFFF !important; color: #18181B !important; }';
       }
+    }
     } catch(e) {}
   }
   window.otSetTheme = applyOtTheme;
