@@ -20,6 +20,7 @@ import '../services/bookmark_service.dart';
 import '../services/canonical_library_service.dart';
 import '../widgets/note_editor_sheet.dart';
 import 'main_shell_screen.dart';
+import 'note_reader_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
@@ -236,7 +237,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       }
     }
 
-    _openNoteEditor(item);
+    if (!mounted) return;
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => NoteReaderScreen(item: item)),
+    );
+    if (changed == true && mounted) _loadBookmarks();
   }
 
   @override

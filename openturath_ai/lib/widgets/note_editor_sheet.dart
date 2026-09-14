@@ -15,22 +15,26 @@ import '../services/bookmark_service.dart';
 class NoteEditorSheet extends StatefulWidget {
   final BookmarkModel? item;
   final ValueChanged<BookmarkModel>? onSaved;
+  final bool fullScreen;
 
   const NoteEditorSheet({
     super.key,
     this.item,
     this.onSaved,
+    this.fullScreen = false,
   });
 
   static Future<BookmarkModel?> show(
     BuildContext context, {
     BookmarkModel? item,
   }) {
-    return showModalBottomSheet<BookmarkModel>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => NoteEditorSheet(item: item),
+    return Navigator.of(context).push<BookmarkModel>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => Scaffold(
+          body: SafeArea(child: NoteEditorSheet(item: item, fullScreen: true)),
+        ),
+      ),
     );
   }
 
@@ -252,27 +256,27 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     final mediaQuery = MediaQuery.of(context);
 
     return Container(
-      height: mediaQuery.size.height * 0.88,
+      height:
+          widget.fullScreen ? double.infinity : mediaQuery.size.height * 0.88,
       padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: widget.fullScreen
+            ? BorderRadius.zero
+            : const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(color: border, width: 0.8),
       ),
       child: Column(
         children: [
-          // Drag Handle
-          Center(
-            child: Container(
-              width: 36,
-              height: 4,
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              decoration: BoxDecoration(
-                color: textSecondary.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
+          if (!widget.fullScreen)
+            Center(
+                child: Container(
+                    width: 36,
+                    height: 4,
+                    margin: const EdgeInsets.only(top: 12, bottom: 8),
+                    decoration: BoxDecoration(
+                        color: textSecondary.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2)))),
 
           // Appbar Row: Mode Toggle, Close, Save
           Padding(
@@ -280,6 +284,12 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                 horizontal: OTSpacing.lg, vertical: 4),
             child: Row(
               children: [
+                if (widget.fullScreen)
+                  IconButton(
+                    icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+                    tooltip: 'Kembali',
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
