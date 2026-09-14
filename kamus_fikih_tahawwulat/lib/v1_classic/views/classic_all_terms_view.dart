@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/models/term_model.dart';
-import '../../core/i18n/translations.dart';
 import '../widgets/glass_panel.dart';
 
 class ClassicAllTermsView extends StatelessWidget {

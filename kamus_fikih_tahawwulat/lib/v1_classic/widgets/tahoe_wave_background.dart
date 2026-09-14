@@ -76,9 +76,6 @@ class _TahoeWavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-
     // Layer 1: Sky blue wave
     final paint1 = Paint()
       ..color = isDark

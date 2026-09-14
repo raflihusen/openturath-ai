@@ -20,7 +20,6 @@ class ClassicSettingsModal extends ConsumerWidget {
     final prefs = ref.watch(appPreferencesProvider);
     final statsAsync = ref.watch(statsProvider);
     final lang = prefs.languageCode;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Dialog(
       backgroundColor: Colors.transparent,
