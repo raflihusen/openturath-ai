@@ -53,7 +53,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Akses dibatasi'), findsOneWidget);
+      expect(find.text('Langganan diperlukan'), findsOneWidget);
       expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
     });
 

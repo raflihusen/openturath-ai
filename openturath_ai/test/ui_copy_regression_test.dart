@@ -10,14 +10,15 @@ void main() {
     expect(SubscriptionService.redeemErrorMessage('already-exists'), contains('sudah pernah'));
     expect(SubscriptionService.redeemErrorMessage('unauthenticated'), contains('masuk'));
   });
-  test('All assistant titles identify AI without changing entitlement IDs', () {
+  test('All assistant titles have serene field names without changing entitlement IDs', () {
     for (final agent in AgentModel.defaultAgents) {
-      expect(agent.title, startsWith('AI '));
+      expect(agent.title.isNotEmpty, isTrue);
+      expect(agent.title, isNot(startsWith('AI ')));
       expect(agent.id, isNot(startsWith('AI ')));
     }
   });
   test('Conversation loading and menu describe their actions', () {
     expect(AppCopy.loadingReferences, 'Menyiapkan asisten…');
-    expect(AppCopy.studyOptions, 'Tampilan bacaan');
+    expect(AppCopy.studyOptions, 'Opsi percakapan');
   });
 }
