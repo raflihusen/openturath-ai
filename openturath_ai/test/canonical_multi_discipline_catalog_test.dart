@@ -9,7 +9,7 @@ void main() {
 
   group('Canonical Multi-Discipline Catalog Integration (2,226 Kitab)', () {
     test('All 6 JSON catalog asset files exist and parse exactly 2,226 books', () {
-      final baseDir = 'assets/data';
+      const baseDir = 'assets/data';
       final files = {
         '01_KATALOG_FIKIH_SYAFII.json': 87,
         '02_KATALOG_HADITS_DAN_SYARAH.json': 1173,
@@ -80,7 +80,7 @@ void main() {
 
     test('CanonicalLibraryService filterBooks filters by century, section, and query with harakat', () {
       final books = [
-        CanonicalBookPresentation(
+        const CanonicalBookPresentation(
           editionId: '1',
           titleArabic: 'صَحِيحُ البُخَارِيِّ',
           shortTitleArabic: 'صحيح البخاري',
@@ -89,7 +89,7 @@ void main() {
           sectionArabic: 'كتب السنة',
           muhaqqiq: 'زهير الناصر',
         ),
-        CanonicalBookPresentation(
+        const CanonicalBookPresentation(
           editionId: '2',
           titleArabic: 'فَتْحُ البَارِي شَرْحُ صَحِيحِ البُخَارِي',
           shortTitleArabic: 'فتح الباري',
@@ -98,7 +98,7 @@ void main() {
           sectionArabic: 'كتب السنة',
           muhaqqiq: 'محب الدين الخطيب',
         ),
-        CanonicalBookPresentation(
+        const CanonicalBookPresentation(
           editionId: '3',
           titleArabic: 'الكشاف عن حقائق غوامض التنزيل',
           shortTitleArabic: 'تفسير الزمخشري',

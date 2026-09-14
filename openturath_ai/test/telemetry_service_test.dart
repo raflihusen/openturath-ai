@@ -9,28 +9,28 @@ void main() {
 
     test('sanitizeData masks sensitive tokens, passwords, and cookies', () {
       // 1. Bearer Token
-      final withToken = 'Request header: Bearer ya29.a0AfH6SMD123456';
+      const withToken = 'Request header: Bearer ya29.a0AfH6SMD123456';
       expect(
         telemetry.sanitizeData(withToken),
         contains('Bearer [REDACTED_TOKEN]'),
       );
 
       // 2. Passwords and secrets
-      final withPassword = '{"user": "admin", "password": "supersecret123"}';
+      const withPassword = '{"user": "admin", "password": "supersecret123"}';
       expect(
         telemetry.sanitizeData(withPassword),
         contains('password: "[REDACTED]"'),
       );
 
       // 3. API Key
-      final withApiKey = 'key apiKey="AIzaSyA123456789"';
+      const withApiKey = 'key apiKey="AIzaSyA123456789"';
       expect(
         telemetry.sanitizeData(withApiKey),
         contains('apiKey: "[REDACTED]"'),
       );
 
       // 4. Google Cookies (SID / HSID)
-      final withCookie = 'Cookie: SID=abc123xyz; HSID=def456; other=123';
+      const withCookie = 'Cookie: SID=abc123xyz; HSID=def456; other=123';
       expect(
         telemetry.sanitizeData(withCookie),
         contains('SID=[REDACTED_COOKIE]'),
@@ -41,7 +41,7 @@ void main() {
       );
 
       // 5. Voucher code
-      final withVoucher = 'Redeem attempt voucher="PERDANA7HARI"';
+      const withVoucher = 'Redeem attempt voucher="PERDANA7HARI"';
       expect(
         telemetry.sanitizeData(withVoucher),
         contains('voucher: "[REDACTED_CODE]"'),
