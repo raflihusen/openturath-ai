@@ -16,6 +16,7 @@ import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
+import '../core/membership_pass_state.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/legal_document_sheet.dart';
 
@@ -189,57 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  List<ModuleEntitlement> _activeEntitlements(UserModel? user) {
-    if (user == null) return const [];
-    return user.entitlements.values
-        .where((entitlement) => entitlement.isActive && entitlement.isPremium)
-        .toList();
-  }
-
-  bool _hasActiveSubscription(UserModel? user) {
-    return (user?.isSubscriptionActive ?? false) ||
-        _activeEntitlements(user).isNotEmpty;
-  }
-
-  String _accessLabel(UserModel? user) {
-    if (user == null || !_hasActiveSubscription(user)) {
-      return 'Belum ada akses AI aktif';
-    }
-
-    final hasAllAccess = user.isSubscriptionActive &&
-        user.plan != 'single' &&
-        !(user.entitlements['all_access']?.status == 'revoked');
-    final allEntitlement =
-        user.entitlements['all_access'] ?? user.entitlements['all_ai'];
-    if (hasAllAccess || (allEntitlement?.isActive ?? false)) {
-      return 'Seluruh asisten OpenTurath';
-    }
-
-    final entitledKeys = user.entitlements.entries
-        .where((entry) => entry.value.isActive && entry.value.isPremium)
-        .map((entry) => entry.key)
-        .toSet();
-    final titles = AgentModel.defaultAgents
-        .where((agent) => entitledKeys.contains(agent.id))
-        .map((agent) => agent.title)
-        .toList();
-
-    if (titles.isEmpty) return 'Asisten pilihan Anda';
-    if (titles.length == 1) return titles.first;
-    if (titles.length == 2) return '${titles.first} & ${titles.last}';
-    return '${titles.first} +${titles.length - 1} asisten';
-  }
-
-  DateTime? _accessExpiry(UserModel? user) {
-    if (user?.subscriptionExpiry != null) return user!.subscriptionExpiry;
-    final expiries = _activeEntitlements(user)
-        .map((entitlement) => entitlement.expiry)
-        .whereType<DateTime>()
-        .toList()
-      ..sort();
-    return expiries.isEmpty ? null : expiries.first;
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -279,9 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final email = userModel?.email.isNotEmpty == true
                 ? userModel!.email
                 : (fbUser?.email ?? 'pengguna@openturath.id');
-            final isSubscribed = _hasActiveSubscription(userModel);
-            final accessExpiry = _accessExpiry(userModel);
-            final accessLabel = _accessLabel(userModel);
+            final membership = resolveMembershipPass(userModel);
 
             return ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
@@ -290,9 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _MembershipPass(
                   holderName: displayName,
                   email: email,
-                  accessLabel: accessLabel,
-                  expiresAt: accessExpiry,
-                  isActive: isSubscribed,
+                  summary: membership,
                   isDark: isDark,
                   onManage: () => _openSubscription(userModel),
                 ),
@@ -767,24 +713,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 class _MembershipPass extends StatelessWidget {
   final String holderName;
   final String email;
-  final String accessLabel;
-  final DateTime? expiresAt;
-  final bool isActive;
+  final MembershipPassSummary summary;
   final bool isDark;
   final VoidCallback onManage;
 
   const _MembershipPass({
     required this.holderName,
     required this.email,
-    required this.accessLabel,
-    required this.expiresAt,
-    required this.isActive,
+    required this.summary,
     required this.isDark,
     required this.onManage,
   });
 
   String _expiryLabel() {
-    if (expiresAt == null) return '—';
+    if (summary.expiresAt == null) return '—';
     const shortMonths = [
       'JAN',
       'FEB',
@@ -799,7 +741,7 @@ class _MembershipPass extends StatelessWidget {
       'NOV',
       'DES',
     ];
-    return '${expiresAt!.day.toString().padLeft(2, '0')} ${shortMonths[expiresAt!.month - 1]} ${expiresAt!.year}';
+    return '${summary.expiresAt!.day.toString().padLeft(2, '0')} ${shortMonths[summary.expiresAt!.month - 1]} ${summary.expiresAt!.year}';
   }
 
   @override
@@ -809,14 +751,18 @@ class _MembershipPass extends StatelessWidget {
     final cardEnd = isDark ? const Color(0xFF17171A) : const Color(0xFF111114);
     const foreground = Color(0xFFF8F8F8);
     const muted = Color(0xFFC7C7CC);
-    final statusLabel = isActive ? 'PRO' : 'TRIAL';
+    final isOpen = summary.isOpen;
+    final motion = MediaQuery.of(context).disableAnimations
+        ? Duration.zero
+        : const Duration(milliseconds: 460);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Semantics(
           button: true,
-          label: 'Kartu akses OpenTurath. $statusLabel. $accessLabel',
+          label:
+              'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
           child: Material(
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(24),
@@ -911,7 +857,7 @@ class _MembershipPass extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: isActive
+                                    color: isOpen
                                         ? Colors.white.withValues(alpha: 0.16)
                                         : Colors.white.withValues(alpha: 0.08),
                                     borderRadius: BorderRadius.circular(100),
@@ -920,7 +866,7 @@ class _MembershipPass extends StatelessWidget {
                                             .withValues(alpha: 0.14)),
                                   ),
                                   child: Text(
-                                    statusLabel,
+                                    summary.badge,
                                     style: GoogleFonts.outfit(
                                       color: foreground,
                                       fontSize: 10,
@@ -968,7 +914,7 @@ class _MembershipPass extends StatelessWidget {
                                   flex: 3,
                                   child: _PassMeta(
                                     label: 'AI YANG DIAKSES',
-                                    value: accessLabel,
+                                    value: summary.accessLabel,
                                     valueColor: foreground,
                                   ),
                                 ),
@@ -976,14 +922,82 @@ class _MembershipPass extends StatelessWidget {
                                 Expanded(
                                   flex: 2,
                                   child: _PassMeta(
-                                    label: 'BERLAKU HINGGA',
-                                    value: _expiryLabel(),
+                                    label: summary.expiryLabel.isEmpty
+                                        ? 'STATUS AKSES'
+                                        : summary.expiryLabel,
+                                    value: summary.expiresAt == null
+                                        ? summary.supportingLabel
+                                        : _expiryLabel(),
                                     valueColor: foreground,
                                   ),
                                 ),
                               ],
                             ),
                           ],
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          ignoring: isOpen,
+                          child: AnimatedSwitcher(
+                            duration: motion,
+                            switchInCurve: Curves.easeOutCubic,
+                            switchOutCurve: Curves.easeInCubic,
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
+                              opacity: animation,
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(0, .035),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              ),
+                            ),
+                            child: isOpen
+                                ? const SizedBox(key: ValueKey('pass-open'))
+                                : Container(
+                                    key: const ValueKey('pass-locked'),
+                                    color: const Color(0xE9151518),
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 28),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          summary.state ==
+                                                  MembershipPassState
+                                                      .paymentPending
+                                              ? Icons.hourglass_top_rounded
+                                              : summary.state ==
+                                                      MembershipPassState
+                                                          .paymentFailed
+                                                  ? Icons
+                                                      .sentiment_dissatisfied_rounded
+                                                  : Icons
+                                                      .sentiment_dissatisfied_rounded,
+                                          color: foreground,
+                                          size: 28,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(summary.accessLabel,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.outfit(
+                                                color: foreground,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16)),
+                                        const SizedBox(height: 4),
+                                        Text(summary.supportingLabel,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.outfit(
+                                                color: muted,
+                                                fontSize: 11.5,
+                                                height: 1.35)),
+                                      ],
+                                    ),
+                                  ),
+                          ),
                         ),
                       ),
                     ],
@@ -1005,7 +1019,7 @@ class _MembershipPass extends StatelessWidget {
           ),
           icon: const Icon(Icons.tune_rounded, size: 18),
           label: Text(
-            isActive ? 'Kelola langganan' : 'Lihat pilihan langganan',
+            summary.ctaLabel,
             style: OTTypography.button(),
           ),
         ),
