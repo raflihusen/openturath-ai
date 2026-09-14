@@ -582,20 +582,6 @@ class _BookmarkCard extends StatefulWidget {
 class _BookmarkCardState extends State<_BookmarkCard> {
   bool _isExpanded = false;
 
-  IconData _getCategoryIcon(BookmarkModel item) {
-    final id = item.id.toLowerCase();
-    final f = item.fieldName.toLowerCase();
-    if (id.startsWith('book_') || f.contains('rujukan')) return Icons.menu_book_rounded;
-    if (f.contains('catatan')) return Icons.edit_note_rounded;
-    if (f.contains('fikih') || f.contains('fiqh') || f.contains('ushul')) return Icons.gavel_rounded;
-    if (f.contains('hadis') || f.contains('hadits')) return Icons.format_quote_rounded;
-    if (f.contains('tafsir')) return Icons.auto_stories_rounded;
-    if (f.contains('tasawuf') || f.contains('akhlak')) return Icons.spa_outlined;
-    if (f.contains('tarikh') || f.contains('sejarah')) return Icons.history_edu_rounded;
-    if (f.contains('akidah') || f.contains('aqidah')) return Icons.mosque_outlined;
-    return Icons.bookmark_rounded;
-  }
-
   String _formatRelativeTime(DateTime dt) {
     final now = DateTime.now();
     final diff = now.difference(dt);
@@ -654,13 +640,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Bar: Category Icon + Pill + Agent Title + Time + Chevron
+              // Top Bar: Pill + Agent Title + Time + Chevron
               Row(
                 children: [
-                  Icon(_getCategoryIcon(item), size: 16, color: widget.accent),
-                  const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                     decoration: BoxDecoration(
                       color: widget.accent.withValues(alpha: 0.12),
                       borderRadius: OTRadius.chipBorder,
@@ -674,7 +658,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       item.agentTitle,
@@ -742,19 +726,10 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         width: 0.8,
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.menu_book_rounded, size: 14, color: widget.accent),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
-                            style: OTTypography.captionMedium(color: widget.textPrimary),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
+                      style: OTTypography.captionMedium(color: widget.textPrimary),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

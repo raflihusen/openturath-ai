@@ -3,16 +3,20 @@ const notebookUiScript = r'''
 (function () {
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
   if (window.otNotebook) { window.otNotebook.clean(); return; }
-  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"]';
+  const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
+    if (!el) return '';
     const clone = el.cloneNode(true);
-    clone.querySelectorAll('button, [role="button"], .message-actions, .feedback-buttons').forEach(e => e.remove());
+    clone.querySelectorAll('button, [role="button"], .message-actions, .feedback-buttons, [class*="action" i], [class*="feedback" i]').forEach(e => e.remove());
     return text(clone);
   }
   function latest() {
-    const answers = [...document.querySelectorAll(answerSelector)].filter(visible);
+    let answers = [...document.querySelectorAll(answerSelector)].filter(visible);
+    if (!answers.length) {
+      answers = [...document.querySelectorAll('.rendered-markdown, div[class*="response-container" i], [role="article"]')].filter(visible);
+    }
     return answers.length ? answerText(answers[answers.length - 1]) : '';
   }
   let lastCopy = '';
@@ -23,23 +27,41 @@ const notebookUiScript = r'''
     lastCopy = value.trim(); lastCopyAt = Date.now();
     if (window.flutter_inappwebview?.callHandler) window.flutter_inappwebview.callHandler('otCopiedAnswer', value.trim());
   }
-  // Observe only explicit answer-copy gestures; never read the device clipboard.
+  // Tangkap klik pada tombol copy NotebookLM maupun seleksi copy biasa
   let copyUntil = 0;
   let selectedAnswer = '';
   document.addEventListener('click', event => {
-    const button = event.target.closest?.('button, [role="button"]');
-    if (!button) return;
-    const label = [button.getAttribute('aria-label'), button.getAttribute('title'), text(button)].filter(Boolean).join(' ');
-    if (!/\b(copy|salin|content_copy)\b|نسخ/i.test(label)) return;
-    const answer = button.closest(answerSelector);
-    if (!answer) return;
-    selectedAnswer = answerText(answer);
-    copyUntil = Date.now() + 2000;
-    // Save the selected answer even where the host uses a private clipboard API.
+    const copyTarget = event.target.closest?.('button, [role="button"], [data-action*="copy" i], [aria-label*="copy" i], [aria-label*="salin" i], .copy-button');
+    if (!copyTarget) return;
+    const label = [
+      copyTarget.getAttribute('aria-label'),
+      copyTarget.getAttribute('title'),
+      copyTarget.getAttribute('data-action'),
+      text(copyTarget),
+      copyTarget.className
+    ].filter(Boolean).join(' ');
+    if (!/\b(copy|salin|content_copy)\b|نسخ/i.test(label) && !copyTarget.classList.toString().toLowerCase().includes('copy')) return;
+
+    let answer = copyTarget.closest(answerSelector) ||
+                 copyTarget.closest('.chat-message, .chat-response, app-chat-response, app-chat-message, [role="article"], .to-user-container, div[class*="response" i], div[class*="message" i], mat-card, .rendered-markdown');
+    let extracted = answer ? answerText(answer) : '';
+    if (!extracted) extracted = latest();
+    if (!extracted) return;
+
+    selectedAnswer = extracted;
+    copyUntil = Date.now() + 3000;
     sendCopy(selectedAnswer);
   }, true);
   document.addEventListener('copy', event => {
-    if (Date.now() < copyUntil && selectedAnswer) sendCopy(selectedAnswer);
+    var sel = (window.getSelection ? window.getSelection().toString() : '').trim();
+    if (sel) {
+      sendCopy(sel);
+    } else if (Date.now() < copyUntil && selectedAnswer) {
+      sendCopy(selectedAnswer);
+    } else {
+      var last = latest();
+      if (last) sendCopy(last);
+    }
   });
   function syncTheme(isDark) {
     if (typeof isDark !== 'boolean') {

@@ -35,35 +35,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final AgentSessionManager _sessionManager = AgentSessionManager.instance;
   final BookmarkService _bookmarkService = BookmarkService();
   final AuthService _authService = AuthService();
-  bool _isSavingAnswer = false;
-
-  Future<void> _saveActiveTabAnswer(AgentSessionTab session) async {
-    if (_isSavingAnswer) return;
-    final controller = session.webController;
-    if (controller == null) return;
-    setState(() => _isSavingAnswer = true);
-    try {
-      final result = await controller.evaluateJavascript(
-        source: 'window.otNotebook ? window.otNotebook.latest() : ""',
-      );
-      final text = result is String ? result.trim() : '';
-      if (text.isEmpty) {
-        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToSave);
-        return;
-      }
-      final ownerUid = _authService.currentUser?.uid;
-      final bookmark = copiedAnswerBookmark(text, session.agent);
-      await _bookmarkService.addBookmark(bookmark, userId: ownerUid);
-      if (mounted) {
-        OTMotion.success();
-        AppSnackBar.success(context, AppCopy.savedSuccess);
-      }
-    } catch (_) {
-      if (mounted) AppSnackBar.error(context, AppCopy.saveFailed);
-    } finally {
-      if (mounted) setState(() => _isSavingAnswer = false);
-    }
-  }
 
   Future<void> _copyActiveTabAnswer(AgentSessionTab session) async {
     final controller = session.webController;
@@ -77,9 +48,16 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
         return;
       }
+      // 1. Simpan langsung ke Catatan (Bookmarks)
+      final uid = _authService.currentUser?.uid;
+      final bookmark = copiedAnswerBookmark(text, session.agent);
+      await _bookmarkService.addBookmark(bookmark, userId: uid);
+
+      // 2. Salin ke clipboard perangkat
       await Clipboard.setData(ClipboardData(text: text));
+
       if (mounted) {
-        OTMotion.light();
+        OTMotion.success();
         AppSnackBar.success(context, AppCopy.answerCopied);
       }
     } catch (_) {
@@ -223,11 +201,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.bookmark_add_outlined, color: textPrimary, size: 21),
-            tooltip: AppCopy.saveAnswerMenu,
-            onPressed: () => _saveActiveTabAnswer(activeTab),
-          ),
           IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
@@ -765,13 +738,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           ),
           onWebViewCreated: (controller) {
             session.webController = controller;
-            final ownerUid = _authService.currentUser?.uid;
             controller.addJavaScriptHandler(
               handlerName: 'otCopiedAnswer',
               callback: (args) async {
                 final url = await controller.getUrl();
-                if (ownerUid == null ||
-                    url?.scheme != 'https' ||
+                if (url?.scheme != 'https' ||
                     !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) ||
                     args.isEmpty ||
                     args.first is! String) {
@@ -780,11 +751,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 try {
                   final text = (args.first as String).trim();
                   if (text.isNotEmpty && text.length <= 200000) {
+                    final uid = _authService.currentUser?.uid;
                     await _bookmarkService.addBookmark(
                       copiedAnswerBookmark(text, session.agent),
-                      userId: ownerUid,
+                      userId: uid,
                     );
+                    await Clipboard.setData(ClipboardData(text: text));
                     if (context.mounted) {
+                      OTMotion.light();
                       AppSnackBar.success(context, AppCopy.answerCopied);
                     }
                     return true;
