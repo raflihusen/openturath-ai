@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -274,79 +273,81 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           ),
           const SizedBox(width: 4),
         ],
-        // Chrome-like Multi-Tab Bar
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(42),
-          child: Container(
-            height: 42,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: surfaceSubtle,
-              border: Border(
-                top: BorderSide(color: border, width: 0.8),
-                bottom: BorderSide(color: border, width: 0.8),
-              ),
-            ),
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              itemCount: sessions.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 6),
-              itemBuilder: (context, index) {
-                final session = sessions[index];
-                final isActive = index == _sessionManager.activeIndex;
-
-                return InkWell(
-                  onTap: () => _sessionManager.selectTab(index),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isActive ? surface : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isActive ? border : Colors.transparent,
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 13,
-                          color: isActive ? textPrimary : textSecondary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          session.agent.title.replaceFirst('AI ', ''),
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                            color: isActive ? textPrimary : textSecondary,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        InkWell(
-                          onTap: () => _sessionManager.closeTab(index),
-                          borderRadius: BorderRadius.circular(10),
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 14,
-                              color: textSecondary,
-                            ),
-                          ),
-                        ),
-                      ],
+        // Chrome-like Multi-Tab Bar (Hanya tampil jika terdapat lebih dari 1 sesi aktif)
+        bottom: sessions.length > 1
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(42),
+                child: Container(
+                  height: 42,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: surfaceSubtle,
+                    border: Border(
+                      top: BorderSide(color: border, width: 0.8),
+                      bottom: BorderSide(color: border, width: 0.8),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-        ),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    itemCount: sessions.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 6),
+                    itemBuilder: (context, index) {
+                      final session = sessions[index];
+                      final isActive = index == _sessionManager.activeIndex;
+
+                      return InkWell(
+                        onTap: () => _sessionManager.selectTab(index),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: isActive ? surface : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isActive ? border : Colors.transparent,
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.chat_bubble_outline_rounded,
+                                size: 13,
+                                color: isActive ? textPrimary : textSecondary,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                session.agent.title.replaceFirst('AI ', ''),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                                  color: isActive ? textPrimary : textSecondary,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              InkWell(
+                                onTap: () => _sessionManager.closeTab(index),
+                                borderRadius: BorderRadius.circular(10),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.close_rounded,
+                                    size: 14,
+                                    color: textSecondary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            : null,
       ),
       body: IndexedStack(
         index: _sessionManager.activeIndex,
@@ -479,7 +480,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   """;
 
   static UserScript _buildCloakScript(bool isDark) {
-    final cssSource = jsonEncode(isDark ? otDarkThemeCss : otLightThemeCss);
     final themeInitScript = '''
       (function() {
         try {
@@ -492,26 +492,31 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           }
           meta.content = ${isDark ? "'dark'" : "'light'"};
 
-          var style = document.getElementById('ot-native-dark-mode');
-          if (!style) {
-            style = document.createElement('style');
-            style.id = 'ot-native-dark-mode';
-            style.type = 'text/css';
-            (document.head || document.documentElement).appendChild(style);
-          }
-          style.setAttribute('data-applied-theme', ${isDark ? "'dark'" : "'light'"});
-          style.textContent = $cssSource;
+          var oldStyle = document.getElementById('ot-native-dark-mode');
+          if (oldStyle) oldStyle.remove();
 
           if (document.documentElement) {
             document.documentElement.classList.toggle('dark', $isDark);
             document.documentElement.classList.toggle('dark-theme', $isDark);
+            document.documentElement.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
             document.documentElement.style.colorScheme = ${isDark ? "'dark'" : "'light'"};
           }
           if (document.body) {
             document.body.classList.toggle('dark', $isDark);
             document.body.classList.toggle('dark-theme', $isDark);
             document.body.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
+            document.body.style.colorScheme = ${isDark ? "'dark'" : "'light'"};
           }
+
+          var canvasStyleId = 'ot-theme-canvas-style';
+          var styleEl = document.getElementById(canvasStyleId);
+          if (!styleEl) {
+            styleEl = document.createElement('style');
+            styleEl.id = canvasStyleId;
+            (document.head || document.documentElement).appendChild(styleEl);
+          }
+          styleEl.textContent = ${isDark ? "'html, body { background-color: #202124 !important; color: #E4E4E7 !important; }'" : "'html, body { background-color: #FFFFFF !important; color: #18181B !important; }'"};
+
           if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
             window.otNotebook.setTheme($isDark);
           }
@@ -567,7 +572,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     final controller = widget.session.webController;
     if (controller == null) return;
     try {
-      final cssSource = jsonEncode(isDark ? otDarkThemeCss : otLightThemeCss);
       final js = '''
         (function() {
           try {
@@ -580,26 +584,30 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             }
             meta.content = ${isDark ? "'dark'" : "'light'"};
 
+            var oldStyle = document.getElementById('ot-native-dark-mode');
+            if (oldStyle) oldStyle.remove();
+
             if (document.documentElement) {
               document.documentElement.classList.toggle('dark', $isDark);
               document.documentElement.classList.toggle('dark-theme', $isDark);
+              document.documentElement.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
               document.documentElement.style.colorScheme = ${isDark ? "'dark'" : "'light'"};
             }
             if (document.body) {
               document.body.classList.toggle('dark', $isDark);
               document.body.classList.toggle('dark-theme', $isDark);
               document.body.setAttribute('data-theme', ${isDark ? "'dark'" : "'light'"});
+              document.body.style.colorScheme = ${isDark ? "'dark'" : "'light'"};
             }
 
-            var styleId = 'ot-native-dark-mode';
-            var styleEl = document.getElementById(styleId);
+            var canvasStyleId = 'ot-theme-canvas-style';
+            var styleEl = document.getElementById(canvasStyleId);
             if (!styleEl) {
               styleEl = document.createElement('style');
-              styleEl.id = styleId;
+              styleEl.id = canvasStyleId;
               (document.head || document.documentElement).appendChild(styleEl);
             }
-            styleEl.setAttribute('data-applied-theme', ${isDark ? "'dark'" : "'light'"});
-            styleEl.textContent = $cssSource;
+            styleEl.textContent = ${isDark ? "'html, body { background-color: #202124 !important; color: #E4E4E7 !important; }'" : "'html, body { background-color: #FFFFFF !important; color: #18181B !important; }'"};
 
             if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
               window.otNotebook.setTheme($isDark);
