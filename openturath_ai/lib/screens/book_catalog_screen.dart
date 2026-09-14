@@ -447,6 +447,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
   Future<void> _showFilterSheet(bool isDark, Color surface, Color border,
       Color textPrimary, Color textSecondary) {
+    final isSyafii = widget.agent == null ||
+        widget.agent!.id == 'fiqh_syafii' ||
+        widget.agent!.catalogId == 'canonical_syafii' ||
+        widget.agent!.fieldId == 'fiqh';
+    final eraChoices = isSyafii && _hasEras ? _eras : _centuries;
     return showModalBottomSheet<void>(
       context: context,
       backgroundColor: surface,
@@ -487,16 +492,22 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                     style: OTTypography.captionMedium(color: textSecondary)),
                 Wrap(
                     spacing: 8,
-                    children: _centuries
+                    children: eraChoices
                         .map((era) => ChoiceChip(
                             label: Text(era),
                             selected:
                                 _selectedCentury == era || _selectedEra == era,
                             onSelected: (_) {
                               setState(() {
-                                _selectedCentury =
-                                    _selectedCentury == era ? null : era;
-                                _selectedEra = _selectedEra == era ? null : era;
+                                if (isSyafii && _hasEras) {
+                                  _selectedEra =
+                                      _selectedEra == era ? null : era;
+                                  _selectedCentury = null;
+                                } else {
+                                  _selectedCentury =
+                                      _selectedCentury == era ? null : era;
+                                  _selectedEra = null;
+                                }
                                 _applyFilters();
                               });
                               setSheetState(() {});
