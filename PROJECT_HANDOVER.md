@@ -7,7 +7,7 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ## 1. Identitas & Batasan Mutlak Proyek (Non-Negotiable)
 - **Target Platform**: **Android** (Material 3 Adaptive), **macOS & Windows** (Desktop Adaptive).
-- **Versi Rilis Terkini**: **`v1.0.26+27`** (Binary: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`).
+- **Versi Rilis Terkini**: **`v1.0.26+27`** (Binary: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`, Size: 60.6 MB, SHA-256: `5e69bfe02881a40fbb66eca733301cff38c195b190ebb724314501bb02254947`).
 - **Batasan Eksplisit**:
   - **TIDAK ADA rilis iOS / App Store**.
   - **TIDAK ADA rilis Google Play Store**. Pembaruan aplikasi mandiri via internal updater berbasis SHA-256.
