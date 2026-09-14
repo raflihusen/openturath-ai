@@ -37,6 +37,24 @@ void main() {
     expect(summary.ctaLabel, 'Lihat status pembayaran');
   });
 
+  test('keeps an active Pro pass open when another payment is pending', () {
+    final user = UserModel(
+      uid: 'u1', name: 'Udin', email: '', photoUrl: '', plan: 'free', questionsUsed: 0,
+      entitlements: {
+        'fiqh_syafii': ModuleEntitlement(
+          plan: 'premium', expiry: DateTime(2026, 10, 1),
+        ),
+        'hadits': const ModuleEntitlement(
+          plan: 'premium', status: 'pending', paymentStatus: 'pending',
+        ),
+      },
+    );
+
+    final pass = resolveMembershipPass(user, now: DateTime(2026, 9, 14));
+    expect(pass.isOpen, isTrue);
+    expect(pass.state, MembershipPassState.activePro);
+  });
+
   test('locks a user without a valid entitlement', () {
     final summary = resolveMembershipPass(user(const {}));
     expect(summary.state, MembershipPassState.locked);

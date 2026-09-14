@@ -4,9 +4,6 @@ class AppConstants {
   static const String appNameArabic = 'الذكاء الاصطناعي للعلوم الإسلامية';
   static const String appTagline = 'Membaca kitab, menelusuri ibarah.';
 
-  // ── Trial Limit Config ────────────────────────────────────────
-  static const int trialQuestionLimit = 10;
-
   // ── Chrome Mobile User Agent Resmi (Mitigasi Error 403 Google) ──
   static const String chromeMobileUserAgent =
       'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.127 Mobile Safari/537.36';

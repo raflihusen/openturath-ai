@@ -47,7 +47,7 @@ void main() {
       }
     });
 
-    test('Active subscriber with redeem voucher code has full access', () {
+  test('Active subscriber with redeem voucher code has full access', () {
       final user = UserModel(
         uid: 'user_redeem',
         name: 'Santri',
@@ -101,5 +101,25 @@ void main() {
       expect(user.hasAccessToAgent('fiqh_syafii'), isTrue);
       expect(user.hasAccessToAgent('hadits'), isFalse);
     });
+  });
+
+  test('time-bound trial voucher grants access without a question quota', () {
+    final user = UserModel(
+      uid: 'trial-user',
+      name: 'Trial',
+      email: 'trial@example.test',
+      photoUrl: '',
+      plan: 'trial',
+      questionsUsed: 999,
+      entitlements: {
+        'all_access': ModuleEntitlement(
+          plan: 'trial',
+          expiry: DateTime.now().add(const Duration(days: 7)),
+        ),
+      },
+    );
+
+    expect(user.hasAccessToAgent('fikih-syafii'), isTrue);
+    expect(user.questionsRemainingForAgent('fikih-syafii'), 9999);
   });
 }

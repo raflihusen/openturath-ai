@@ -25,7 +25,7 @@ class ModuleEntitlement {
   });
 
   bool get isPremium => RegExp(
-          r'^(tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
+          r'^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
       .hasMatch(plan);
 
   bool get isActive =>
@@ -137,19 +137,16 @@ class UserModel {
     return false;
   }
 
-  bool get hasAccess {
-    if (isSubscriptionActive) return true;
-    if (isTrial && questionsUsed < AppConstants.trialQuestionLimit) return true;
-    return false;
-  }
+  /// Trial is an entitlement with an expiry supplied by the server voucher.
+  /// A local question counter must never grant or revoke access.
+  bool get hasAccess => isSubscriptionActive ||
+      entitlements.values.any((entitlement) =>
+          entitlement.isActive && entitlement.isPremium);
 
-  int get questionsRemaining {
-    if (isPremium) return 9999;
-    return AppConstants.trialQuestionLimit - questionsUsed;
-  }
+  /// Retained for legacy presentation only. Questions are no longer a quota.
+  int get questionsRemaining => hasAccess ? 9999 : 0;
 
-  bool get isTrialExhausted =>
-      isTrial && questionsUsed >= AppConstants.trialQuestionLimit;
+  bool get isTrialExhausted => false;
 
   // ── Modular Entitlement Helpers ──
   ModuleEntitlement? getEntitlement(String agentId) =>
@@ -211,7 +208,7 @@ class UserModel {
 
   int questionsRemainingForAgent(String agentId) {
     if (isAgentSubscriptionActive(agentId)) return 9999;
-    return AppConstants.trialQuestionLimit - questionsUsed;
+    return 0;
   }
 
   factory UserModel.fromMap(String uid, Map<String, dynamic> data) {

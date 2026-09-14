@@ -45,20 +45,6 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
   final entitlements =
       user?.entitlements ?? const <String, ModuleEntitlement>{};
   final values = entitlements.entries.toList();
-  final hasPending = values.any((entry) =>
-      entry.value.status == 'pending' ||
-      entry.value.paymentStatus == 'pending');
-  final hasFailed = values.any((entry) =>
-      entry.value.status == 'failed' || entry.value.paymentStatus == 'failed');
-  if (hasPending) {
-    return _base(MembershipPassState.paymentPending, 'Menyiapkan akses Pro',
-        'Pembayaran sedang diverifikasi', 'Lihat status pembayaran');
-  }
-  if (hasFailed) {
-    return _base(MembershipPassState.paymentFailed, 'Akses belum aktif',
-        'Pembayaran belum berhasil', 'Coba pembayaran lagi');
-  }
-
   final active = values.where((entry) {
     final entitlement = entry.value;
     return entitlement.status != 'revoked' &&
@@ -84,6 +70,20 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     );
   }
   if (active.isEmpty) {
+    final hasPending = values.any((entry) =>
+        entry.value.status == 'pending' ||
+        entry.value.paymentStatus == 'pending');
+    final hasFailed = values.any((entry) =>
+        entry.value.status == 'failed' ||
+        entry.value.paymentStatus == 'failed');
+    if (hasPending) {
+      return _base(MembershipPassState.paymentPending, 'Menyiapkan akses Pro',
+          'Pembayaran sedang diverifikasi', 'Lihat status pembayaran');
+    }
+    if (hasFailed) {
+      return _base(MembershipPassState.paymentFailed, 'Akses belum aktif',
+          'Pembayaran belum berhasil', 'Coba pembayaran lagi');
+    }
     return _base(
         MembershipPassState.locked,
         'Akses Pro belum aktif',
