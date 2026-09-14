@@ -1,9 +1,9 @@
-# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.23+24)
+# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.26+27)
 # ==============================================================================
 # PERHATIAN UNTUK AI AUDITOR (CLAUDE / CHATGPT / GEMINI / DEEPSEEK):
 # Dokumen ini adalah SATU KESATUAN BERKAS TUNGGAL (SINGLE MONOLITHIC AUDIT PACK)
 # yang memuat seluruh instrumen audit, spesifikasi arsitektur, dan seluruh
-# kode sumber resmi aplikasi OpenTurath AI / Maktabah AI tanpa ada yang dipotong:
+# kode sumber resmi aplikasi OpenTurath AI tanpa ada yang dipotong:
 #
 #   BAGIAN 1: INSTRUKSI & MASTER PROMPT AUDIT FORENSIK 360° (8 PILAR AUDIT)
 #   BAGIAN 2: DOKUMENTASI KONTEKS PROYEK & ATURAN KERJA
@@ -31,9 +31,14 @@ Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dar
 ---
 
 ### 2. KONTEKS PROYEK & SUMBER DAYA
-- **Nama Entitas & Produk:** OpenTurath (Induk Lembaga) & Maktabah AI (Aplikasi Meja Telaah Kitab).
-- **Versi Rilis Terkini:** v1.0.23+24
-- **Karakter Produk:** Meja Telaah Digital (*Scholarly Research Desk*) naskah primer kitab kuning (turats) berbasis RAG engine Google NotebookLM untuk kalangan santri, asatidz, dan peneliti akademis.
+- **Nama Entitas & Produk:** OpenTurath AI (Aplikasi Meja Telaah Kitab & Penelusuran Ibarah Turats).
+- **Tagline Kanonikal:** "Membaca kitab, menelusuri ibarah."
+- **Versi Rilis Terkini:** v1.0.26+27
+- **Karakter Produk:** Meja telaah digital naskah primer kitab turats berbasis RAG engine Google NotebookLM untuk kalangan santri, asatidz, dan peneliti akademis.
+- **Pembaruan Arsitektur Terkini (v1.0.26+27):**
+  1. *Resolusi Audit Forensik 360° (OT-F001 - OT-F023)*: Penutupan celah moneter P0 `all_access`, eliminasi double-dispatch provisioning outbox, allowlist DOKU checkout WebView, perbaikan konsistensi tahun wafat/pengarang turats.
+  2. *Restorasi Performa Bebas Lag (OT-F007, OT-F019)*: Menghapus seluruh ScaleTransition pada PlatformView/WebView dan Transform.scale pada background scaffold; transisi vertikal murni 240ms (Slide + Fade `Curves.easeOutCubic`) dan penutupan double-back race window.
+  3. *Overhaul Copywriting Quiet Scholar v2*: Mengeliminasi istilah internal produk kaku ("ruang riset manuskrip AI", "AI Spesialis", "naskah primer terkatalogisasi", "autentikasi sesi"), pemisahan aksi salin vs simpan catatan, penghapusan watermark promosi paksa pada kutipan turats, dan 133/133 unit tests lulus 100%.
 - **Basis Kode Terlampir:** Seluruh dokumen arsitektur, aturan keamanan, backend Cloud Functions, seluruh kode Flutter (`openturath_ai/lib/`), dan suite pengujian unit (`openturath_ai/test/`) telah **TERLAMPIR LENGKAP PADA BAGIAN 2 SAMPAI BAGIAN 5 DI BAWAH INI**.
 
 ---
@@ -118,7 +123,7 @@ Langkah-langkah terurut yang harus diambil oleh tim pengembang untuk menjadikan 
 ## DOKUMEN: PROJECT_HANDOVER.md
 ```
 # OpenTurath AI — Project Handover & Context Snapshot
-**Terakhir Diperbarui:** 14 September 2026 (Fase: Resolusi Audit Forensik 360° & Restorasi Performa Bebas Lag — v1.0.24+25)
+**Terakhir Diperbarui:** 14 September 2026 (Fase: Transformasi Bahasa & Penyatuan Tone of Voice Quiet Scholar v2 — v1.0.26+27)
 
 Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context handover*). Setiap agen atau sesi chat baru di Antigravity IDE dapat langsung membaca dokumen ini untuk melanjutkan pekerjaan tanpa perlu penjelasan ulang dari pengguna.
 
@@ -126,7 +131,7 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ## 1. Identitas & Batasan Mutlak Proyek (Non-Negotiable)
 - **Target Platform**: **Android** (Material 3 Adaptive), **macOS & Windows** (Desktop Adaptive).
-- **Versi Rilis Terkini**: **`v1.0.24+25`** (Binary: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`).
+- **Versi Rilis Terkini**: **`v1.0.26+27`** (Binary: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`, Size: 60.6 MB, SHA-256: `5e69bfe02881a40fbb66eca733301cff38c195b190ebb724314501bb02254947`).
 - **Batasan Eksplisit**:
   - **TIDAK ADA rilis iOS / App Store**.
   - **TIDAK ADA rilis Google Play Store**. Pembaruan aplikasi mandiri via internal updater berbasis SHA-256.
@@ -137,9 +142,21 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 
 ---
 
-## 2. Status Terkini: 100% Selesai & Terverifikasi (v1.0.24+25)
+## 2. Status Terkini: 100% Selesai & Terverifikasi (v1.0.26+27)
 
-### A. Keamanan Moneter & Backend Cloud Functions (OT-F001, OT-F003)
+### A. Transformasi Bahasa & Tone of Voice Kanonikal (Quiet Scholar v2)
+1. **Eliminasi Istilah SaaS Produk Internal**:
+   - Menghapus frasa kaku seperti *"ruang riset manuskrip AI"*, *"AI Spesialis"*, *"naskah primer terkatalogisasi"*, *"autentikasi sesi riset naskah turats"*, dan *"kurasi kebahasaan"*.
+   - Mengganti dengan terminologi tradisi keilmuan yang tenang, bersahaja, dan alami: *"bidang"*, *"asisten"*, *"kitab"*, *"rujukan"*, dan *"hubungkan akun Google"*.
+2. **Penyatuan Suara & Tagline Resmi**:
+   - Menetapkan satu tagline kanonikal tunggal di seluruh aplikasi: **"Membaca kitab, menelusuri ibarah."** (menghilangkan variasi slogan bahasa Inggris).
+3. **Pemisahan Aksi Salin vs Simpan & Integritas Rujukan**:
+   - Memisahkan aksi pada menu percakapan: **Salin jawaban** (hanya ke clipboard sistem) dan **Simpan ke Catatan** (ke bookmark lokal).
+   - Menghilangkan watermark promosi paksa (*"Disimpan melalui OpenTurath AI..."*) pada sitasi ilmiah guna menjaga otentisitas kutipan turats para peneliti.
+4. **Pencegahan Regresi Copywriting UI**:
+   - `test/copywriting_test.dart` diperluas dengan scanner regex yang memindai langsung file UI (`subscription_screen.dart`, `google_session_auth_screen.dart`, `profile_screen.dart`, `dashboard_screen.dart`, `library_screen.dart`, dsb.) untuk memastikan kata-kata terlarang tidak muncul kembali.
+
+### B. Keamanan Moneter & Backend Cloud Functions (OT-F001, OT-F003)
 1. **Penutupan Celah P0 `all_access`**:
    - `resolvePlanPricing()` menggunakan *strict closed-set whitelist* `PURCHASABLE_AGENTS` dan `MODULE_PLANS`.
    - Caller dilarang keras membeli entitlement global `all_access` atau `all_ai` dengan harga per-modul.
@@ -149,7 +166,7 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
    - Panggilan langsung ke Cloud Run di luar transaksi dihapus; outbox worker `processProvisioningOutbox` (ber-lease dan ber-retry) menjadi *single source of truth*.
    - Kode voucher mentah pada notifikasi Telegram direduksi (`***`).
 
-### B. Restorasi Performa UI & Animasi Ruang AI Bebas Lag (OT-F007, OT-F019)
+### C. Restorasi Performa UI & Animasi Ruang AI Bebas Lag (OT-F007, OT-F019)
 1. **Pembersihan GPU Overhead**:
    - Menghapus `Transform.scale` pada seluruh `baseScaffold` (mencegah rasterisasi ulang pohon widget Dashboard/Navigasi pada setiap frame).
    - Menghapus `ScaleTransition` pada `AgentMultiTabRoom` (mencegah deformasi tekstur native Android PlatformView Chromium/WebView yang memicu lag dan stuttering).
@@ -159,35 +176,40 @@ Dokumen ini berfungsi sebagai jembatan konteks instan (*zero-friction context ha
 3. **Penutupan Double-Back Race Window (OT-F007)**:
    - `PopScope` di `MainShellScreen` memvalidasi `_roomAnimController.isDismissed`. Ketukan Back kedua saat animasi penutupan berlangsung diserap aman dan tidak menutup aplikasi.
 
-### C. Keamanan Payment WebView & Kepatuhan Legal (OT-F005, OT-F006)
+### D. Keamanan Payment WebView & Kepatuhan Legal (OT-F005, OT-F006)
 1. **Destination Allowlist DOKU Sheet**:
    - `shouldOverrideUrlLoading` memvalidasi skema `https` dan membatasi rute navigasi hanya ke domain resmi DOKU (`*.doku.com`, `*.doku.id`) dan domain aplikasi OpenTurath (`openturath-ai.web.app`, `openturath.ai`). URL di luar itu dibatalkan (`CANCEL`).
 2. **Keselarasan Privasi & Penyimpanan**:
    - Teks pada `legal_copy.dart` dan `public/privacy.html` dikoreksi secara faktual menjadi *"penyimpanan aplikasi secara lokal pada perangkat Anda"*.
 
-### D. Integritas Data Bibliografis Turats (OT-F011)
+### E. Integritas Data Bibliografis Turats (OT-F011)
 - Konsistensi identitas pengarang dan tahun wafat pada `canonical_syafii.json` divalidasi 100%:
   - *Al-Hidayah ila Auham al-Kifayah*: Atribusi kanonikal Al-Isnawi (w. 772 H).
   - *Bidayat al-Muhtaj fi Syarh al-Minhaj*: Atribusi kanonikal Ibnu Qadhi Syuhbah (w. 874 H).
   - *Ithaf al-Arib bi Syarh al-Ghayah wa at-Taqrib*: Atribusi kanonikal Asy-Syabrawi bin Abi al-Ma'athi.
 
-### E. Verifikasi Mutu & Pengujian
+### F. Verifikasi Mutu & Pengujian
 - `flutter analyze lib/`: **0 issues found** (Analisis statis bersih 100%).
-- `flutter test`: **132 dari 132 test case LULUS 100%**.
+- `flutter test`: **133 dari 133 test case LULUS 100%**.
 - `npm run build` (Functions): **TypeScript tsc 100% BERSIH tanpa error**.
 
 ---
 
 ## 3. Riwayat Git Checkpoint Penting
-- `ee3d18f`: `fix(catalog): koreksi atribusi pengarang kanonikal dan tahun wafat kontradiktif (OT-F011)`
-- `9f1f952`: `fix(legal): selaraskan klaim penyimpanan catatan dengan implementasi lokal perangkat (OT-F006)`
-- `b823158`: `security(payment): terapkan destination allowlist ketat pada DOKU checkout WebView (OT-F005)`
+- `569f70b`: `chore(release): bump version ke 1.0.26+27 untuk rilis Quiet Scholar Copywriting v2`
+- `6a17e78`: `test(regression): perbarui ekspektasi gelar asisten dan status error sesuai kamus kanonikal v2`
+- `d636d56`: `test(copy): perluas pengujian copywriting untuk memindai file UI dan menegakkan kamus kanonikal v2`
+- `edff1eb`: `fix(copy): selaraskan pesan error state dan exception sesuai kamus kanonikal v2`
+- `96d804b`: `fix(copy): pisahkan aksi salin jawaban vs simpan catatan dan hapus watermark rujukan`
+- `b67db6f`: `fix(copy): perbaiki istilah katalog perpustakaan menjadi kitab dan rapikan detail edisi`
+- `8a92fb6`: `fix(copy): selaraskan teks profil, tier langganan, dan dialog bahasa sesuai kamus kanonikal v2`
+- `c3de8c6`: `fix(copy): tetapkan tagline resmi kanonikal dan rapikan teks dashboard ke sentence case`
+- `229a6fa`: `fix(copy): sederhanakan alur hubungkan akun Google tanpa istilah ruang riset manuskrip`
+- `46675e8`: `fix(copy): selaraskan copywriting paket langganan dan hilangkan istilah AI Spesialis`
+- `390b9a1`: `fix(copy): selaraskan penamaan asisten, sub-agen, dan suggested prompts ke gaya Quiet Scholar v2`
+- `47efca9`: `fix(copy): terapkan Kamus Kanonikal v2 dan tata bahasa santri Quiet Scholar pada AppCopy`
 - `ad4c449`: `fix(ui): restorasi performa animasi vertikal murni dan tutup double-back race window (OT-F007, OT-F019)`
 - `935a571`: `fix(security): tutup celah P0 checkout all_access dan hilangkan double-dispatch provisioning (OT-F001, OT-F003)`
-- `78cd4d3`: `security(rules): perketat validasi dan kepemilikan client_error_logs (AUD-04)`
-- `0ea400a`: `fix(ui): selaraskan textAlign RTL Arab dan bersihkan peringatan analyzer (AUD-06, AUD-07)`
-- `b21ae70`: `fix(session): perbaiki pergeseran indeks tab saat closeTab dan batasi maxTabs 7 (AUD-03)`
-- `6cd559f`: `fix(navigation): terapkan per-route in-flight window 450ms pada NavigationGuard (AUD-01)`
 
 ---
 
@@ -197,6 +219,7 @@ Jika pengguna membuka chat baru dan meminta:
   1. Langsung pahami seluruh status di atas.
   2. Selalu patuhi **Rule 1 (Git commit otomatis per perubahan)** dan **Rule 2 (Integritas release APK)**.
   3. Periksa ketersediaan test dan lakukan build release hanya setelah verifikasi kode 100% lulus.
+
 
 ```
 
@@ -222,7 +245,7 @@ Jika pengguna membuka chat baru dan meminta:
 name: openturath_ai
 description: "OpenTurath AI - الذكاء الاصطناعي للعلوم الإسلامية"
 publish_to: 'none'
-version: 1.0.24+25
+version: 1.0.26+27
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -4754,24 +4777,27 @@ abstract final class AppCopy {
   static const appName = 'OpenTurath';
   static const appTagline = LegalCopy.aboutAppTagline;
   static const defaultFieldDesc =
-      'Pelajari berbagai bidang ilmu dari kitab-kitab rujukan.';
+      'Pilih bidang untuk mulai menelusuri kitab.';
   static const aboutTitle = LegalCopy.aboutAppTitle;
   static const aboutDescription = LegalCopy.aboutAppParagraph1;
   static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
+  static const scholarlyPrinciple = LegalCopy.aboutAppParagraph2;
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
-  static const navStudies = 'Asisten AI';
+  static const navStudies = 'Asisten';
   static const navSaved = 'Catatan';
   static const navSettings = 'Pengaturan';
 
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
   static const studySpace = 'Percakapan';
   static const openStudy = 'Membuka asisten…';
-  static const studyOptions = 'Tampilan bacaan';
+  static const studyOptions = 'Opsi percakapan';
   static const referenceBooks = 'Kitab rujukan';
   static const savedCollection = 'Catatan';
-  static const bookDetails = 'Tentang kitab';
+  static const bookDetails = 'Detail edisi';
+  static const chooseField = 'Pilih bidang';
+  static const searchResults = 'Hasil pencarian';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
   static const loadingReferences = 'Menyiapkan asisten…';
@@ -4783,10 +4809,16 @@ abstract final class AppCopy {
   static const studyNotLoadedYet =
       'Percakapan belum bisa dimuat. Coba lagi sebentar.';
   static const subscriptionRequiredTitle = 'Berlangganan untuk melanjutkan';
+  static const subscriptionRequiredShort = 'Langganan diperlukan';
   static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
+  static const catalogPreparing = 'Katalog kitab sedang disiapkan.';
   static const inputQuestionHint = 'Tulis pertanyaan seputar kitab ini…';
   static const viewSubscription = 'Lihat langganan';
   static const tryAgain = 'Coba lagi';
+  static const sessionExpiredOrNoAccess =
+      'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.';
+  static const agentLoadFailed =
+      'Asisten belum dapat dimuat. Coba lagi sebentar.';
 
   // Platform & Inisialisasi
   static const deviceNotSupportedTitle = 'Perangkat belum didukung';
@@ -4814,12 +4846,13 @@ abstract final class AppCopy {
 
   // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
   static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
-  static const answerCopied = 'Jawaban disalin dan disimpan ke Catatan.';
+  static const answerCopied = 'Jawaban disalin.';
   static const copyFailed = 'Jawaban belum bisa disalin. Coba lagi.';
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
   static const savedSuccess = 'Tersimpan ke Catatan.';
   static const saveFailed = 'Jawaban belum tersimpan. Coba lagi.';
   static const emptyAnswerCannotSave = 'Belum ada jawaban untuk disimpan.';
+  static const referenceCopied = 'Rujukan disalin.';
 
   // ── Catatan ───────────────────────────────────────────────────
   static const searchSavedHint = 'Cari catatan atau ibarah…';
@@ -4830,20 +4863,37 @@ abstract final class AppCopy {
   static const copyIbarahAction = 'Salin ibarah';
   static const viewReferenceAction = 'Lihat rujukan';
   static const shareReferenceTooltip = 'Bagikan catatan';
+  static const copyAnswerAction = 'Salin jawaban';
   static const saveAnswerMenu = 'Simpan ke Catatan';
+
+  // ── Sesi Akun Google & NotebookLM ──────────────────────────────
+  static const googleSessionConnectTitle = 'Hubungkan akun Google';
+  static const googleSessionConnectSubtitle =
+      'Gunakan akun Google untuk membuka NotebookLM';
+  static const googleSessionConnectDesc =
+      'Hubungkan akun Google agar NotebookLM dapat dibuka tanpa perlu masuk ulang.';
+  static const googleSessionSignInHint =
+      'Masuk dengan akun Google yang memiliki akses ke kitab ini.';
+  static const googleSessionConnected = 'Akun Google terhubung';
+  static const googleSessionPreparing = 'Menyiapkan percakapan…';
+  static const cancelSignIn = 'Batalkan proses masuk';
 
   // ── Akun & Pengaturan ──────────────────────────────────────────
   static const profile = 'Profil';
   static const subscription = 'Langganan';
   static const activeSubscription = 'Langganan aktif';
   static const inactiveSubscription =
-      'Pilih paket atau gunakan voucher untuk mulai berlangganan.';
+      'Pilih paket atau gunakan voucher untuk mendapatkan akses.';
   static const appearance = 'Tampilan';
   static const modeDark = 'Gelap';
   static const modeLight = 'Terang';
   static const modeSystem = 'Ikuti perangkat';
   static const language = 'Bahasa';
   static const languageIndonesian = 'Bahasa Indonesia';
+  static const languageDialogNotice =
+      'Bahasa Arab dan Inggris sedang disiapkan.';
+  static const languageDialogCurrent =
+      'Antarmuka saat ini tersedia dalam Bahasa Indonesia.';
 
   static const logoutDialogTitle = 'Keluar dari akun';
   static const logoutDialogBody =
@@ -4859,6 +4909,19 @@ abstract final class AppCopy {
       'Masuk kembali untuk melanjutkan penghapusan akun.';
   static const networkError = 'Periksa koneksi internet, lalu coba lagi.';
 
+  // ── Pembayaran & Status Langganan ─────────────────────────────
+  static const paymentSuccessTitle = 'Pembayaran berhasil';
+  static const paymentSuccessRedirect =
+      'Akses sudah aktif. Membuka OpenTurath…';
+  static const packagePerField = 'Paket per bidang';
+  static const packageAllFields = 'Paket semua bidang';
+  static const packageAllFieldsPreparing =
+      'Paket semua bidang sedang disiapkan.';
+  static const chooseFieldPlan = 'Pilih bidang';
+  static const accessAllFields = 'Akses semua bidang';
+  static const accessSingleField = 'Akses satu bidang';
+  static const notSubscribed = 'Belum berlangganan';
+
   // ── Kebijakan, Hukum & Bantuan ─────────────────────────────────
   static const termsOfService = LegalCopy.termsTitle;
   static const privacyPolicy = LegalCopy.privacyTitle;
@@ -4866,7 +4929,7 @@ abstract final class AppCopy {
   static const aiGuideline = LegalCopy.aiGuidelineTitle;
   static const supportAndContact = LegalCopy.contactTitle;
   static const manualRenewalNotice =
-      'Langganan diperpanjang secara manual tanpa penagihan berulang otomatis. Masa akses dihitung sejak pembayaran berhasil.';
+      'Langganan tidak diperpanjang otomatis. Anda dapat memperpanjangnya saat masa akses berakhir.';
 
   // ── Helper Interpolasi Dinamis ─────────────────────────────────
   static String preparingModule(String module) => '$module sedang disiapkan.';
@@ -4875,7 +4938,7 @@ abstract final class AppCopy {
       'Berlangganan untuk membuka $module.';
 
   static String accessUnavailableFor(String module) =>
-      'Akun ini belum mendapat akses ke $module. Aktifkan langganan untuk melanjutkan.';
+      'Akses ke $module belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.';
 
   static String planWithAgent(String agentTitle, String duration) =>
       '$agentTitle — $duration';
@@ -6107,12 +6170,12 @@ class Loc {
       'settings': 'Profil',
       'logout': 'Keluar',
       'welcome': 'أهلاً',
-      'subtitle_dash': 'Pilih ruang riset.',
+      'subtitle_dash': 'Pilih bidang.',
       'active_sub': 'Akses aktif',
       'valid_until': 'Aktif hingga',
-      'full_access': 'Akses semua ruang riset yang tersedia',
-      'unlimited_research': 'Telaah ibarah dari marja\' mu\'tamad',
-      'explore_corpus': 'Pilih ruang riset.',
+      'full_access': 'Akses semua bidang yang tersedia',
+      'unlimited_research': 'Telusuri ibarah dari kitab rujukan',
+      'explore_corpus': 'Pilih bidang.',
       'theme_mode': 'Tampilan Tema',
       'theme_system': 'Sistem Default',
       'theme_light': 'Terang',
@@ -7531,10 +7594,10 @@ class AgentModel {
         // ── 1. FIKIH TAHAWWULAT (SOVEREIGN FLAGSHIP) ─────────
         AgentModel(
           id: 'fiqh_tahawwulat',
-          title: 'AI Fikih Tahawwulat',
+          title: 'Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
-              'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan ceramah Habib Abu Bakar Al-Masyhur.',
+              'Kajian tentang perubahan zaman, tanda-tanda zaman, dan Fikih Tahawwulat dalam karya Habib Abu Bakar al-Masyhur.',
           emoji: '📜',
           category: 'Fikih Tahawwulat',
           kind: CorpusKind.discipline,
@@ -7556,17 +7619,17 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',
-              name: 'Al-Muhaqqiq (Riset Dalil)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu menemukan dalil, ibarah, dan rujukan yang relevan.',
               descriptionArabic: 'البحث والتحقيق وعزو النصوص إلى مصادرها',
               emoji: '🔍',
-              badge: 'Riset Dalil',
+              badge: 'Dalil & rujukan',
             ),
             SubAgentModel(
               id: 'fiqh_tahawwulat_bayan',
-              name: 'Al-Bayan (Penjelasan Luas)',
+              name: 'Al-Bayan',
               nameArabic: 'البيان',
               description:
                   'Menjelaskan pokok bahasan dengan bahasa yang lebih ringkas.',
@@ -7594,7 +7657,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_syafii',
-          title: 'AI Fikih Syafi\'i',
+          title: 'Fikih Syafi\'i',
           titleArabic: 'الفقه الشافعي',
           description:
               'Cari penjelasan dan rujukan dalam kitab-kitab mazhab Syafi\'i.',
@@ -7618,7 +7681,7 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_syafii_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Syafi\'i',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu menemukan dalil, ibarah, dan rujukan dalam mazhab Syafi\'i.',
@@ -7645,7 +7708,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanafi',
-          title: 'AI Fikih Hanafi',
+          title: 'Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
               'Pelajari fikih mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
@@ -7656,7 +7719,7 @@ class AgentModel {
           suggestedPrompts: [
             'Bagaimana kaidah istihsan dalam mazhab Hanafi?',
             'Apa pendapat mu\'tamad mazhab Hanafi mengenai syarat shalat berjamaah?',
-            'Bawakan ibarah Radd Al-Muhtar tentang bab muamalat dan tijarah!',
+            'Tunjukkan ibarah dalam Radd al-Muhtar tentang jual beli dan muamalah.',
           ],
           status: 'coming_soon',
           sortOrder: 3,
@@ -7666,9 +7729,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanafi_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Hanafi',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis riset Zhahir Ar-Riwayah dan fatwa mazhab Hanafi.',
+              description: 'Riset Zhahir Ar-Riwayah dan fatwa mazhab Hanafi.',
               descriptionArabic: 'تحقيق المعتمد في المذهب الحنفي',
               emoji: '⚖️',
               badge: 'Fikih Hanafi',
@@ -7691,7 +7754,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_maliki',
-          title: 'AI Fikih Maliki',
+          title: 'Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
               'Pelajari fikih mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
@@ -7701,8 +7764,8 @@ class AgentModel {
           subtitleAcademic: 'Al-Mudawwanah · Mukhtashar Khalil & Syarah',
           suggestedPrompts: [
             'Bagaimana kedudukan \'Amal Ahlil Madinah dalam istinbath Maliki?',
-            'Rincikan syarat sah shalat menurut Mukhtashar Khalil!',
-            'Bawakan ibarah Bidayatul Mujtahid mengenai perbedaan pendapat dalam thaharah!',
+            'Apa saja syarat sah salat menurut Mukhtashar Khalil?',
+            'Bagaimana Bidayatul Mujtahid menjelaskan perbedaan pendapat tentang thaharah?',
           ],
           status: 'coming_soon',
           sortOrder: 4,
@@ -7712,9 +7775,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_maliki_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Maliki',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis riset Al-Mudawwanah dan Mukhtashar Khalil.',
+              description: 'Riset Al-Mudawwanah dan Mukhtashar Khalil.',
               descriptionArabic: 'تحقيق المعتمد في المذهب المالكي',
               emoji: '⚖️',
               badge: 'Fikih Maliki',
@@ -7737,7 +7800,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanbali',
-          title: 'AI Fikih Hanbali',
+          title: 'Fikih Hanbali',
           titleArabic: 'الفقه الحنبلي',
           description:
               'Pelajari fikih mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
@@ -7747,7 +7810,7 @@ class AgentModel {
           subtitleAcademic: 'Al-Mughni · Zad Al-Mustaqni\' & Syuruh',
           suggestedPrompts: [
             'Apa mu\'tamad mazhab Hanbali mengenai pembatalan wudhu?',
-            'Bawakan ibarah Al-Mughni tentang hukum jual beli bersyarat!',
+            'Bagaimana penjelasan Al-Mughni tentang jual beli bersyarat?',
             'Bagaimana perbedaan riwayat dari Imam Ahmad dalam masalah ibadah?',
           ],
           status: 'coming_soon',
@@ -7758,9 +7821,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanbali_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Hanbali',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis telaah Al-Mughni dan perbandingan riwayat Imam Ahmad.',
+              description: 'Telaah Al-Mughni dan perbandingan riwayat Imam Ahmad.',
               descriptionArabic: 'تحقيق المعتمد في المذهب الحنبلي',
               emoji: '⚖️',
               badge: 'Fikih Hanbali',
@@ -7783,7 +7846,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_muqaran',
-          title: 'AI Perbandingan Mazhab',
+          title: 'Perbandingan Mazhab',
           titleArabic: 'الفقه المقارن',
           description:
               'Bandingkan dalil dan pandangan mazhab Hanafi, Maliki, Syafi\'i, dan Hanbali.',
@@ -7792,9 +7855,9 @@ class AgentModel {
           fieldId: 'fiqh',
           subtitleAcademic: 'Perbandingan Mazhab Empat & Tarjih Dalil',
           suggestedPrompts: [
-            'Bandingkan pandangan 4 mazhab mengenai rukun nikah!',
+            'Bagaimana pandangan empat mazhab mengenai rukun nikah?',
             'Apa dalil perbedaan ulama tentang batas menyentuh bukan mahram?',
-            'Kompilasi fatwa kontemporer vs klasik mengenai zakat saham dan uang digital!',
+            'Bagaimana perbandingan ulama mengenai zakat aset dan uang digital?',
           ],
           status: 'coming_soon',
           sortOrder: 6,
@@ -7804,9 +7867,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_muqaran_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Muqaran',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis komparasi dalil mazhab Arba\'ah dan tarjih.',
+              description: 'Komparasi dalil mazhab Arba\'ah dan tarjih.',
               descriptionArabic: 'المقارنة بين المذاهب والترجيح بالدليل',
               emoji: '⚖️',
               badge: 'Fikih Muqaran',
@@ -7831,10 +7894,10 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'AI Hadis & Syarah',
+          title: 'Hadis & Syarah',
           titleArabic: 'الحديث الشريف',
           description:
-              'Kajian matan hadis, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah dan syarahnya).',
+              'Telusuri hadis, sanad, perawi, dan penjelasannya dalam kitab rujukan.',
           emoji: '📖',
           category: 'Hadis',
           fieldId: 'hadith',
@@ -7853,7 +7916,7 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'hadits_muhaqqiq',
-              name: 'Al-Muhaqqiq (Takhrij Hadis)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu takhrij hadis, telaah rijalul hadis, dan derajat kesahihan sanad.',
@@ -7881,10 +7944,10 @@ class AgentModel {
         // ── 3. TAFSIR ─────────────────────────────────────────
         AgentModel(
           id: 'tafsir',
-          title: 'AI Tafsir Al-Qur\'an',
+          title: 'Tafsir Al-Qur\'an',
           titleArabic: 'تفسير القرآن',
           description:
-              'Penelusuran makna ayat, asbabun nuzul, dan penjelasan ulama dari kitab-kitab tafsir mu\'tabar.',
+              'Telusuri makna ayat, sebab turunnya, hubungan antarayat, dan penjelasan para mufasir.',
           emoji: '🌟',
           category: 'Tafsir',
           fieldId: 'tafsir',
@@ -7892,7 +7955,7 @@ class AgentModel {
           suggestedPrompts: [
             'Apa asbabun nuzul surah Al-Baqarah ayat 183?',
             'Bagaimana tafsir ayat Muhkamat dan Mutasyabihat menurut Al-Qurtubi?',
-            'Kompilasi pandangan mufassirin tentang tafsir "Ihdinas shiratal mustaqim"!',
+            'Bagaimana para mufasir menjelaskan makna "Ihdinas shiratal mustaqim"?',
           ],
           catalogId: 'canonical_tafsir',
           status: 'active',
@@ -7903,10 +7966,10 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'tafsir_muhaqqiq',
-              name: 'Al-Muhaqqiq (Tafsir Riwayat)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis kompilasi penafsiran mufassirin salaf dan asbabun nuzul.',
+                  'Kompilasi penafsiran mufassirin salaf dan asbabun nuzul.',
               descriptionArabic: 'تحقيق الروايات وأسباب النزول',
               emoji: '🔍',
               badge: 'Riset Tafsir',
@@ -7931,18 +7994,18 @@ class AgentModel {
         // ── 4. USUL FIQH ──────────────────────────────────────
         AgentModel(
           id: 'ushul_fiqh',
-          title: 'AI Usul Fikih',
+          title: 'Usul Fikih',
           titleArabic: 'أصول الفقه',
           description:
-              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan.',
+              'Pelajari kaidah penggalian hukum, dalil, dan maqashid syariah melalui kitab usul fikih.',
           emoji: '📐',
           category: 'Usul Fikih',
           fieldId: 'usul',
           subtitleAcademic: 'Kaidah Istinbath & Maqashid Syariah',
           suggestedPrompts: [
-            'Jelaskan perbedaan Mafhum Mukhalafah dan Mafhum Muwafaqah!',
+            'Apa perbedaan Mafhum Mukhalafah dan Mafhum Muwafaqah?',
             'Bagaimana kaidah "Al-Amru ba\'dan-nahyi yufidul ibahah"?',
-            'Bawakan ibarah Al-Waraqat tentang pembagian hukum taklifi!',
+            'Bagaimana Al-Waraqat menjelaskan pembagian hukum taklifi?',
           ],
           catalogId: 'canonical_ushul_fikih',
           status: 'active',
@@ -7953,7 +8016,7 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'ushul_muhaqqiq',
-              name: 'Al-Muhaqqiq (Kaidah Usul)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu penelusuran kaidah usuliyyah dan metode istinbath dalil.',
@@ -7981,18 +8044,18 @@ class AgentModel {
         // ── 5. BAHASA ARAB ────────────────────────────────────
         AgentModel(
           id: 'nahwu_sharaf',
-          title: 'AI Bahasa Arab & Balaghah',
+          title: 'Bahasa Arab',
           titleArabic: 'النحو والصرف',
           description:
-              'Pelajari nahwu, sharaf, balaghah, dan makna kata dalam kitab berbahasa Arab.',
+              'Pelajari nahwu, sharaf, balaghah, dan makna kosakata dalam kamus Arab klasik.',
           emoji: '🔤',
           category: 'Bahasa Arab',
           fieldId: 'lughah',
           subtitleAcademic: 'Alfiyah Ibnu Malik & Lisanul Arab',
           suggestedPrompts: [
-            'I\'rab kalimat: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ" secara mendalam!',
-            'Jelaskan faidah wazan Fa\'ala dan Af\'ala dalam ilmu sharaf!',
-            'Bawakan kaidah Munada dalam bait Alfiyah Ibnu Malik!',
+            'Bagaimana i\'rab kalimat: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ"?',
+            'Apa perbedaan faedah wazan Fa\'ala dan Af\'ala dalam ilmu sharaf?',
+            'Bagaimana kaidah Munada dalam bait Alfiyah Ibnu Malik?',
           ],
           catalogId: 'canonical_bahasa_arab',
           status: 'active',
@@ -8003,23 +8066,23 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'nahwu_sharaf_muerib',
-              name: 'Al-Mu\'rib (Kaidah Sintaksis)',
+              name: 'Al-Mu\'rib',
               nameArabic: 'المعرب',
               description:
-                  'Spesialis i\'rab kata dan analisis sintaksis (nahwu) sesuai kaidah Alfiyah Ibnu Malik.',
+                  'I\'rab kata dan analisis sintaksis sesuai kaidah Alfiyah Ibnu Malik.',
               descriptionArabic: 'إعراب الكلمات والتحليل النحوي',
               emoji: '🔍',
-              badge: 'Analisis Nahwu',
+              badge: 'I\'rab & nahwu',
             ),
             SubAgentModel(
               id: 'nahwu_sharaf_tashrif',
-              name: 'Al-Tashrif (Kaidah Morfologi)',
+              name: 'At-Tashrif',
               nameArabic: 'المصرف',
               description:
-                  'Spesialis perubahan wazan, derivasi kata (sharaf), dan morfologi bahasa Arab klasik.',
+                  'Perubahan wazan, derivasi kata, dan morfologi bahasa Arab.',
               descriptionArabic: 'تحليل الأوزان والاشتقاق الصرفي',
               emoji: '🔄',
-              badge: 'Analisis Sharaf',
+              badge: 'Tashrif & sharaf',
             ),
           ],
           referenceBooks: [
@@ -8043,7 +8106,7 @@ class AgentModel {
         // ── 6. AQIDAH ─────────────────────────────────────────
         AgentModel(
           id: 'aqidah',
-          title: 'AI Akidah Islamiyah',
+          title: 'Akidah',
           titleArabic: 'العقيدة والتوحيد',
           description:
               'Pembahasan ushuluddin, tauhid sifat dua puluh, dan manhaj Ahlussunnah wal Jama\'ah.',
@@ -8066,7 +8129,7 @@ class AgentModel {
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
         AgentModel(
           id: 'tarikh',
-          title: 'AI Sejarah & Sirah',
+          title: 'Sejarah & Sirah',
           titleArabic: 'السيرة والتاريخ',
           description:
               'Telusuri perjalanan hidup Nabi, Khulafaur Rasyidin, dan biografi ulama salaf.',
@@ -8075,9 +8138,9 @@ class AgentModel {
           fieldId: 'tarikh',
           subtitleAcademic: 'Sirah Ibnu Hisyam & Tarikh Thabari',
           suggestedPrompts: [
-            'Rincikan kronologi Perang Badar dari Sirah Ibnu Hisyam!',
+            'Bagaimana kronologi Perang Badar menurut Sirah Ibnu Hisyam?',
             'Bagaimana riwayat musyawarah Tsaqifah Bani Sa\'idah?',
-            'Biografi singkat dan thabaqat Imam An-Nawawi!',
+            'Bagaimana biografi dan thabaqat Imam An-Nawawi?',
           ],
           status: 'coming_soon',
           sortOrder: 12,
@@ -8089,7 +8152,7 @@ class AgentModel {
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
         AgentModel(
           id: 'habib_umar',
-          title: 'AI Habib Umar bin Hafizh',
+          title: 'Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
               'Telusuri fatwa, khutbah, tulisan, dan nasihat dakwah Habib Umar bin Hafizh.',
@@ -8110,7 +8173,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'imam_ghazali',
-          title: 'AI Hujjatul Islam Al-Ghazali',
+          title: 'Imam Al-Ghazali',
           titleArabic: 'حجة الإسلام الغزالي',
           description:
               'Pelajari tasawuf, akhlak, dan usul fikih dalam karya-karya Imam Al-Ghazali, termasuk Ihya Ulumiddin.',
@@ -9465,10 +9528,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     await _bookmarkService.addBookmark(copiedAnswerBookmark(text, agent), userId: ownerUid);
   }
 
-  Future<void> _copyLatestResponse() async {
+  Future<void> _copyAnswerToClipboard() async {
     if (_webController == null || _isCopying) return;
-    final uid = _authService.currentUser?.uid;
-    if (uid == null) return;
     setState(() => _isCopying = true);
     try {
       final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
@@ -9478,7 +9539,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         return;
       }
       await Clipboard.setData(ClipboardData(text: text));
-      await _saveCopiedAnswer(text, uid);
       if (mounted) {
         setState(() => _hasCopied = true);
         AppSnackBar.success(context, AppCopy.answerCopied);
@@ -9489,6 +9549,30 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       if (mounted) setState(() => _isCopying = false);
     }
   }
+
+  Future<void> _saveAnswerToBookmarks() async {
+    if (_webController == null || _isCopying) return;
+    final uid = _authService.currentUser?.uid;
+    if (uid == null) return;
+    setState(() => _isCopying = true);
+    try {
+      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
+      final text = result is String ? result.trim() : '';
+      if (text.isEmpty) {
+        if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToSave);
+        return;
+      }
+      await _saveCopiedAnswer(text, uid);
+      if (mounted) {
+        AppSnackBar.success(context, AppCopy.savedSuccess);
+      }
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, AppCopy.saveFailed);
+    } finally {
+      if (mounted) setState(() => _isCopying = false);
+    }
+  }
+
 
   void _startReadinessCheck() {
     _readinessTimer?.cancel();
@@ -10073,12 +10157,22 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
-              title: Text('Salin jawaban ke Catatan', style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text(AppCopy.copyAnswerAction, style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
                       Navigator.pop(ctx);
-                      _copyLatestResponse();
+                      _copyAnswerToClipboard();
+                    },
+            ),
+            ListTile(
+              leading: Icon(Icons.bookmark_border_rounded, color: textPrimary, size: 20),
+              title: Text(AppCopy.saveAnswerMenu, style: OTTypography.bodyMedium(color: textPrimary)),
+              onTap: _isCopying
+                  ? null
+                  : () {
+                      Navigator.pop(ctx);
+                      _saveAnswerToBookmarks();
                     },
             ),
           ],
@@ -10206,9 +10300,9 @@ import '../services/canonical_library_service.dart';
 import '../widgets/book_row_item.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
-/// Halaman Katalog Naskah Penuh (Full-Screen Route).
+/// Halaman Katalog Kitab (Full-Screen Route).
 /// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
-/// filter hierarki disiplin (القسم), abad keilmuan, dan kartu naskah minimalis bergaya turath.
+/// filter hierarki disiplin (القسم), abad keilmuan, dan kartu kitab minimalis bergaya turath.
 class BookCatalogScreen extends StatefulWidget {
   final AgentModel? agent;
   final String? initialQuery;
@@ -10536,7 +10630,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 child: Row(
                   children: [
                     Text(
-                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} naskah',
+                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
                       style: OTTypography.caption(color: textSecondary).copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -11743,13 +11837,12 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     if (item.author != null && item.author!.isNotEmpty) {
       buffer.write(', karya ${item.author}');
     }
-    buffer.writeln('.');
-    buffer.write('Disimpan melalui OpenTurath AI (${item.agentTitle}).');
+    buffer.write('.');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     AppSnackBar.success(
       context,
-      'Sitasi rujukan tersalin.',
+      AppCopy.referenceCopied,
     );
   }
 
@@ -12404,7 +12497,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        '${agent.title} sedang dalam tahap kurasi naskah kitab primer (Segera Hadir).',
+        'Koleksi kitab untuk ${agent.title} masih disiapkan.',
       );
       return;
     }
@@ -12678,7 +12771,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil Pencarian',
+                        'Hasil pencarian',
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -12731,13 +12824,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── Section: Pilih Bidang Ilmu ──
+                      // ── Section: Pilih Bidang ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Pilih Bidang Ilmu',
+                            'Pilih bidang',
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -12758,7 +12851,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Lihat Semua',
+                                  'Lihat semua',
                                   style: GoogleFonts.outfit(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
@@ -13213,7 +13306,7 @@ import '../widgets/app_loader.dart';
 
 /// Gerbang Sesi Google (Pre-Auth Gate)
 /// Memastikan kuki autentikasi Google aktif di WebView sehingga pengguna
-/// langsung dapat menggunakan korpus riset AI tanpa kendala login berulang.
+/// langsung dapat membuka NotebookLM tanpa kendala masuk berulang.
 class GoogleSessionAuthScreen extends StatefulWidget {
   const GoogleSessionAuthScreen({super.key});
 
@@ -13262,14 +13355,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
         title: Text(
-          'Batal Hubungkan Google?',
+          'Batalkan proses masuk?',
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w600,
             color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
           ),
         ),
         content: Text(
-          'Akun Google diperlukan agar ruang riset manuskrip AI dapat langsung digunakan tanpa meminta login berulang kali.',
+          'Hubungkan akun Google agar NotebookLM dapat dibuka tanpa perlu masuk ulang.',
           style: GoogleFonts.outfit(
             fontSize: 13,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
@@ -13293,7 +13386,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text(
-              'Keluar Akun',
+              'Keluar',
               style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
             ),
           ),
@@ -13355,7 +13448,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hubungkan Akun Google',
+                'Hubungkan akun Google',
                 style: GoogleFonts.newsreader(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
@@ -13364,7 +13457,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 ),
               ),
               Text(
-                'Autentikasi sesi riset naskah turats',
+                'Gunakan akun Google untuk membuka NotebookLM',
                 style: GoogleFonts.outfit(
                   fontSize: 12,
                   color: textSecondary,
@@ -13374,7 +13467,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
           actions: [
             IconButton(
-              tooltip: 'Keluar Akun',
+              tooltip: 'Keluar',
               icon: Icon(Icons.logout_rounded, size: 20, color: textSecondary),
               onPressed: _confirmCancelAndSignOut,
             ),
@@ -13414,7 +13507,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Masuk ke akun Google Anda agar ruang riset AI langsung aktif tanpa meminta login berulang.',
+                        'Masuk dengan akun Google yang memiliki akses ke kitab ini.',
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           height: 1.35,
@@ -13609,7 +13702,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Rincian Edisi Naskah',
+                        'Detail edisi',
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
                       IconButton(
@@ -13645,16 +13738,16 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   if (book.verifiedDeathYearHijri != null)
                     _detailRow('Tahun Wafat', '${book.verifiedDeathYearHijri} H', textPrimary, textSecondary),
                   if (book.reviewedTypeLabel != null)
-                    _detailRow('Kategori Teks', book.reviewedTypeLabel!, textPrimary, textSecondary),
+                    _detailRow('Jenis kitab', book.reviewedTypeLabel!, textPrimary, textSecondary),
                   if (book.reviewedEraLabel != null)
-                    _detailRow('Masa Penulisan', book.reviewedEraLabel!, textPrimary, textSecondary),
+                    _detailRow('Periode', book.reviewedEraLabel!, textPrimary, textSecondary),
                   if (book.volumesCount != null)
                     _detailRow('Jumlah Jilid', '${book.volumesCount} Jilid', textPrimary, textSecondary),
                   if (book.publisher != null && book.publisher!.isNotEmpty)
                     _detailRow('Penerbit', book.publisher!, textPrimary, textSecondary),
                   if (book.muhaqqiq != null && book.muhaqqiq!.isNotEmpty)
                     _detailRow('Tahqiq / Editor', book.muhaqqiq!, textPrimary, textSecondary),
-                  _detailRow('Pengidentifikasi Edisi', book.editionId, textPrimary, textSecondary),
+                  _detailRow('ID edisi', book.editionId, textPrimary, textSecondary),
                   const SizedBox(height: OTSpacing.base),
                 ],
               ),
@@ -13722,7 +13815,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
             ),
             if (_allBooks != null)
               Text(
-                '${_filteredBooks?.length ?? 0} naskah primer terkatalogisasi',
+                '${_filteredBooks?.length ?? 0} kitab',
                 style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
               ),
           ],
@@ -13770,14 +13863,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             const SizedBox(height: OTSpacing.md),
                             Text(_errorMessage!, style: OTTypography.body(color: textSecondary)),
                             const SizedBox(height: OTSpacing.base),
-                            OutlinedButton(onPressed: _loadData, child: const Text('Coba Lagi')),
+                            OutlinedButton(onPressed: _loadData, child: const Text('Coba lagi')),
                           ],
                         ),
                       )
                     : _filteredBooks == null || _filteredBooks!.isEmpty
                         ? Center(
                             child: Text(
-                              'Tidak ada naskah yang cocok dengan pencarian',
+                              'Tidak ada kitab yang cocok dengan pencarian',
                               style: OTTypography.body(color: textSecondary),
                             ),
                           )
@@ -13818,12 +13911,12 @@ import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
-/// LoginScreen: Gerbang Masuk Ruang Riset OpenTurath AI
+/// LoginScreen: Gerbang Masuk OpenTurath
 /// Mengadopsi filosofi desain minimalis modern Claude:
 /// - Dark mode hitam pekat (pure deep black)
 /// - Light mode putih pekat (pure clean white)
 /// - Shape minimalis dengan garis abu-abu tipis (subtle hairline border)
-/// - Slogan resmi: "AI for Islamic Scholarship" dengan tipografi editorial serif
+/// - Slogan resmi: "Membaca kitab, menelusuri ibarah." dengan tipografi editorial serif
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -13971,17 +14064,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
 
-                  // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
+                  // ── 3. Academic Editorial Slogan: "Membaca kitab, menelusuri ibarah." ──
                   _stagger(
                     delayMs: 140,
                     child: Text(
-                      'AI for Islamic Scholarship',
+                      'Membaca kitab, menelusuri ibarah.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
-                        fontSize: 17,
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.italic,
-                        letterSpacing: 0.1,
+                        letterSpacing: -0.1,
                         color: textMuted,
                         height: 1.3,
                       ),
@@ -14876,7 +14969,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 userModel?.isSubscriptionActive ?? (userModel?.isPremium ?? false);
 
             final exp = userModel?.subscriptionExpiry;
-            final expStr = exp != null ? ' · Aktif sampai ${exp.day}/${exp.month}/${exp.year}' : '';
+            const months = [
+              '',
+              'Januari',
+              'Februari',
+              'Maret',
+              'April',
+              'Mei',
+              'Juni',
+              'Juli',
+              'Agustus',
+              'September',
+              'Oktober',
+              'November',
+              'Desember'
+            ];
+            final expStr = exp != null
+                ? ' · Aktif hingga ${exp.day} ${months[exp.month]} ${exp.year}'
+                : '';
             final String subscriptionSubtitle;
 
             if (isSubscribed) {
@@ -14889,11 +14999,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   (userModel?.entitlements['all_access']?.isActive ?? false);
 
               if (isAllAccess) {
-                subscriptionSubtitle = 'Akses Penuh Seluruh Modul AI$expStr';
+                subscriptionSubtitle = 'Akses semua bidang$expStr';
               } else if (plan == 'field') {
-                subscriptionSubtitle = 'Paket Bidang Kajian$expStr';
+                subscriptionSubtitle = 'Paket per bidang$expStr';
               } else if (plan == 'single') {
-                subscriptionSubtitle = 'Paket 1 Modul$expStr';
+                subscriptionSubtitle = 'Akses satu bidang$expStr';
               } else {
                 subscriptionSubtitle = '${AppCopy.activeSubscription}$expStr';
               }
@@ -14968,7 +15078,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               child: Text(
-                                isSubscribed ? 'Aktif' : 'Gratis',
+                                isSubscribed ? 'Aktif' : 'Belum berlangganan',
                                 style: GoogleFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
@@ -15371,7 +15481,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           side: BorderSide(color: border, width: 0.8),
         ),
         title: Text(
-          'Bahasa Aplikasi',
+          'Bahasa',
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
         ),
         content: Column(
@@ -15379,12 +15489,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Menu tersedia dalam bahasa Indonesia. Teks Arab dapat dibaca dengan atau tanpa harakat.',
+              'Antarmuka saat ini tersedia dalam Bahasa Indonesia.',
               style: OTTypography.body(color: textPrimary),
             ),
             const SizedBox(height: 10),
             Text(
-              'Dukungan antarmuka penuh Bahasa Arab (العربية) dan Inggris (English) sedang dalam proses finalisasi kurasi kebahasaan.',
+              'Bahasa Arab dan Inggris sedang disiapkan.',
               style: OTTypography.caption(color: textSecondary),
             ),
           ],
@@ -16078,7 +16188,7 @@ import '../widgets/redeem_code_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/legal_document_sheet.dart';
 
-/// Halaman Langganan Ruang Riset OpenTurath AI (Quiet Scholar Adaptive)
+/// Halaman Langganan OpenTurath (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
 
@@ -16324,7 +16434,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         if (!mounted) return;
         AppSnackBar.success(
           context,
-          'Pembayaran berhasil. Akses AI Spesialis Anda telah aktif.',
+          'Pembayaran berhasil. Akses sudah aktif.',
           duration: const Duration(seconds: 4),
         );
         Navigator.pop(context);
@@ -16457,7 +16567,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'PAKET AI SPESIALIS',
+                              'Paket per bidang',
                               style: OTTypography.sectionHeading(color: accent),
                             ),
                             Container(
@@ -16467,7 +16577,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                '1 AI SPESIALIS',
+                                '1 bidang',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
@@ -16475,12 +16585,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Pilih AI Spesialis',
+                          'Pilih bidang',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Telaah mendalam satu disiplin keilmuan Islam berbasis naskah kitab rujukan.',
+                          'Akses satu bidang beserta kitab rujukannya.',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                         ),
 
@@ -16591,24 +16701,24 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Divider(color: border.withValues(alpha: 0.6), height: 1),
                         const SizedBox(height: OTSpacing.base),
 
-                        // Core Benefits (Quiet Scholar Natural Phrasing, No generic green checkmarks)
+                        // Core Benefits (Quiet Scholar Natural Phrasing)
                         _benefitRow(
-                          'Kajian mendalam bersama AI Spesialis ${_agent?.title ?? "terpilih"}',
+                          'Akses Asisten ${_agent?.title ?? "terpilih"}',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Telaah teks dan ibarah naskah rujukan ${_agent?.title ?? "keilmuan turats"}',
+                          'Telusuri ibarah dan penjelasan dari kitab rujukan',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Rujukan teks asli, penomoran jilid, dan halaman kitab',
+                          'Lihat kitab, jilid, dan halaman yang dirujuk',
                           textPrimary,
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         _benefitRow(
-                          'Verifikasi kutipan ibarah dengan naskah kitab cetak dan digital',
+                          'Cocokkan ibarah dengan kitab cetak atau digital',
                           textPrimary,
                         ),
 
@@ -16624,7 +16734,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 : () {
                                     _handleSubscribe(
                                       plan: tierPlanId,
-                                      planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
+                                      planTitle: '${currentTier['name']} ${_agent?.title ?? ""}'.trim(),
                                       price: tierPrice,
                                       targetAgent: _agent,
                                     );
@@ -16638,7 +16748,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   : () {
                                       _handleSubscribe(
                                         plan: tierPlanId,
-                                        planTitle: '${currentTier['name']} ${_agent?.title ?? "AI Spesialis"}',
+                                        planTitle: '${currentTier['name']} ${_agent?.title ?? ""}'.trim(),
                                         price: tierPrice,
                                         targetAgent: _agent,
                                       );
@@ -16650,7 +16760,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 elevation: 0,
                               ),
                               child: Text(
-                                'Berlangganan ${_agent?.title ?? "AI Spesialis"} ($tierLabel)',
+                                'Pilih paket ${_agent?.title ?? ""} ($tierLabel)',
                                 style: OTTypography.button(color: canvas),
                               ),
                             ),
@@ -16662,7 +16772,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   const SizedBox(height: OTSpacing.lg),
 
-                  // ── Bundling Card: Semua AI (Segera Hadir) ──
+                  // ── Bundling Card: Semua Bidang (Segera Hadir) ──
                   Container(
                     decoration: BoxDecoration(
                       color: surfaceSubtle,
@@ -16681,7 +16791,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                'PAKET LENGKAP SEMUA AI',
+                                'Paket semua bidang',
                                 style: OTTypography.sectionHeading(color: textSecondary),
                               ),
                             ),
@@ -16694,7 +16804,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 border: Border.all(color: border, width: 0.6),
                               ),
                               child: Text(
-                                'SEGERA HADIR',
+                                'Segera hadir',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(
                                   fontSize: 10,
                                   letterSpacing: 0.8,
@@ -16705,22 +16815,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: OTSpacing.sm),
                         Text(
-                          'Akses Seluruh AI Spesialis',
+                          'Akses semua bidang',
                           style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Satu paket untuk mengakses seluruh asisten keilmuan turats (Fikih, Hadis, Tafsir, Usul Fikih, Bahasa Arab, dan Tahawwulat).',
+                          'Satu paket untuk mengakses seluruh bidang yang tersedia beserta kitab rujukannya.',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
                         ),
                         const SizedBox(height: OTSpacing.base),
                         Divider(color: border.withValues(alpha: 0.5), height: 1),
                         const SizedBox(height: OTSpacing.base),
-                        _benefitRow('Akses ke seluruh bidang keilmuan Islam yang tersedia', textSecondary),
+                        _benefitRow('Akses ke seluruh bidang yang tersedia', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Telaah terpadu lintas Fikih, Hadis, Tafsir, Usul Fikih, dan Bahasa Arab', textSecondary),
+                        _benefitRow('Akses lintas bidang dalam satu langganan', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Pembaruan berkala rujukan Khazanah Ulama terverifikasi', textSecondary),
+                        _benefitRow('Pembaruan berkala seluruh kitab rujukan', textSecondary),
                         const SizedBox(height: OTSpacing.md),
                         // Catatan Edukatif
                         Container(
@@ -16745,7 +16855,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Paket lengkap seluruh AI Spesialis sedang dipersiapkan untuk pembaruan berikutnya.',
+                                  'Paket semua bidang sedang disiapkan.',
                                   style: OTTypography.body(color: textSecondary).copyWith(
                                     fontSize: 12,
                                     height: 1.4,
@@ -16914,15 +17024,15 @@ class AgentService {
       if (url != null && url.isNotEmpty) {
         return url;
       }
-      throw const AgentAccessException('empty-url', 'URL ruang riset belum tersedia untuk modul ini.');
+      throw const AgentAccessException('empty-url', 'URL asisten belum tersedia untuk bidang ini.');
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'permission-denied') {
         throw AgentAccessException(
           'permission-denied',
-          e.message ?? 'Langganan aktif diperlukan untuk mengakses modul riset ini.',
+          e.message ?? 'Langganan diperlukan untuk membuka asisten ini.',
         );
       }
-      throw AgentAccessException(e.code, e.message ?? 'Gagal menghubungi server riset.');
+      throw AgentAccessException(e.code, e.message ?? 'Tidak dapat terhubung ke server.');
     } catch (e) {
       if (e is AgentAccessException) rethrow;
       throw AgentAccessException('unknown-error', e.toString());
@@ -17855,7 +17965,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// NativeAgentLauncher: Menangani pembukaan ruang riset langsung ke aplikasi resmi
+/// NativeAgentLauncher: Menangani pembukaan asisten langsung ke aplikasi resmi
 /// Google Gemini Notebook (com.google.android.apps.labs.language.tailwind) secara instan (0.1 detik)
 /// tanpa overhead browser atau webview jika aplikasi terinstal.
 class NativeAgentLauncher {
@@ -19623,11 +19733,11 @@ class AppErrorState extends StatelessWidget {
 
   const AppErrorState.unauthorized({
     super.key,
-    this.title = 'Akses dibatasi',
-    this.message = 'Sesi akun kedaluwarsa atau modul telaah membutuhkan paket langganan aktif.',
+    this.title = 'Langganan diperlukan',
+    this.message = 'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.',
     this.icon = Icons.lock_outline_rounded,
     this.onRetry,
-    this.retryLabel = 'Lihat paket langganan',
+    this.retryLabel = 'Lihat langganan',
     this.onBack,
     this.backLabel = 'Kembali',
   });
@@ -19646,7 +19756,7 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.generic({
     super.key,
     this.title = 'Terjadi kendala teknis',
-    this.message = 'Sistem mengalami kendala saat memproses telaah. Silakan coba kembali beberapa saat lagi.',
+    this.message = 'Asisten belum dapat dimuat. Coba lagi sebentar.',
     this.icon = Icons.error_outline_rounded,
     this.onRetry,
     this.retryLabel = 'Muat ulang',
@@ -21157,6 +21267,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
+import '../core/app_copy.dart';
 
 class EvidenceBottomSheet extends StatelessWidget {
   final int citationNumber;
@@ -21217,13 +21328,10 @@ class EvidenceBottomSheet extends StatelessWidget {
     if (explanation.isNotEmpty) {
       buffer.writeln('Taqrir & Syarah:');
       buffer.writeln(explanation);
-      buffer.writeln();
     }
-    buffer.writeln('—');
-    buffer.writeln('Disimpan melalui *OpenTurath*');
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
-    AppSnackBar.success(context, 'Sitasi rujukan tersalin.');
+    AppSnackBar.success(context, AppCopy.referenceCopied);
   }
 
   Widget _stagger(int index, Widget child) {
@@ -22796,7 +22904,7 @@ class OpenTurathBrand extends StatelessWidget {
             if (showSlogan) ...[
               const SizedBox(height: 1),
               Text(
-                'AI for Islamic Scholarship',
+                'Membaca kitab, menelusuri ibarah.',
                 style: GoogleFonts.newsreader(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
@@ -23659,7 +23767,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Akses dibatasi'), findsOneWidget);
+      expect(find.text('Langganan diperlukan'), findsOneWidget);
       expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
     });
 
@@ -24370,15 +24478,16 @@ void main() {
 
 ### TEST FILE: openturath_ai/test/copywriting_test.dart
 ```dart
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_copy.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 
 void main() {
-  group('OpenTurath Copywriting Overhaul — Quiet Scholar Principles', () {
+  group('OpenTurath Copywriting Overhaul — Quiet Scholar Principles v2', () {
     test('Canonical navigation labels use concise, quiet terms', () {
       expect(AppCopy.navHome, equals('Beranda'));
-      expect(AppCopy.navStudies, equals('Asisten AI'));
+      expect(AppCopy.navStudies, equals('Asisten'));
       expect(AppCopy.navSaved, equals('Catatan'));
       expect(AppCopy.navSettings, equals('Pengaturan'));
     });
@@ -24399,6 +24508,10 @@ void main() {
     test('Public strings do not contain prohibited marketing or academic jargon', () {
       final prohibitedWords = [
         'korpus',
+        'ruang riset',
+        'ai spesialis',
+        'naskah primer',
+        'kurasi kebahasaan',
         'penelaahan',
         'fasilitas',
         'komprehensif',
@@ -24426,6 +24539,15 @@ void main() {
         AppCopy.catalogLoadFailed,
         AppCopy.activeSubscription,
         AppCopy.inactiveSubscription,
+        AppCopy.googleSessionConnectTitle,
+        AppCopy.googleSessionConnectSubtitle,
+        AppCopy.googleSessionConnectDesc,
+        AppCopy.googleSessionSignInHint,
+        AppCopy.packagePerField,
+        AppCopy.packageAllFields,
+        AppCopy.packageAllFieldsPreparing,
+        AppCopy.sessionExpiredOrNoAccess,
+        AppCopy.agentLoadFailed,
       ];
 
       for (final text in samplePublicStrings) {
@@ -24445,6 +24567,7 @@ void main() {
         'secara menyeluruh',
         'solusi',
         'optimal',
+        'ai spesialis',
       ];
 
       for (final agent in AgentModel.defaultAgents) {
@@ -24463,9 +24586,53 @@ void main() {
       expect(AppCopy.subscriptionRequiredFor('Fikih Syafi\'i'),
           equals('Berlangganan untuk membuka Fikih Syafi\'i.'));
       expect(AppCopy.accessUnavailableFor('Fikih Syafi\'i'),
-          equals('Akun ini belum mendapat akses ke Fikih Syafi\'i. Aktifkan langganan untuk melanjutkan.'));
+          equals('Akses ke Fikih Syafi\'i belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.'));
       expect(AppCopy.planWithAgent('Fikih Syafi\'i', '1 Bulan'),
           equals('Fikih Syafi\'i — 1 Bulan'));
+    });
+
+    test('UI screens and widgets do not leak prohibited terms into user-facing code', () {
+      final filesToScan = [
+        'lib/screens/subscription_screen.dart',
+        'lib/screens/google_session_auth_screen.dart',
+        'lib/screens/profile_screen.dart',
+        'lib/screens/dashboard_screen.dart',
+        'lib/screens/library_screen.dart',
+        'lib/screens/book_catalog_screen.dart',
+        'lib/screens/bookmark_screen.dart',
+        'lib/widgets/app_error_state.dart',
+        'lib/widgets/evidence_bottom_sheet.dart',
+        'lib/widgets/openturath_brand.dart',
+      ];
+
+      final bannedPatterns = [
+        RegExp(r"['\x22][^'\x22]*ruang\s+riset[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*ai\s+spesialis[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*naskah\s+primer[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*kurasi\s+kebahasaan[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*autentikasi\s+sesi[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*modul\s+telaah[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*memproses\s+telaah[^'\x22]*['\x22]", caseSensitive: false),
+        RegExp(r"['\x22][^'\x22]*ai\s+for\s+islamic\s+scholarship[^'\x22]*['\x22]", caseSensitive: false),
+      ];
+
+      for (final path in filesToScan) {
+        final file = File(path);
+        if (!file.existsSync()) continue;
+        final lines = file.readAsLinesSync();
+        for (var i = 0; i < lines.length; i++) {
+          final line = lines[i];
+          final trimmed = line.trim();
+          if (trimmed.startsWith('//') && !trimmed.contains("Text(")) continue;
+          for (final pattern in bannedPatterns) {
+            expect(
+              pattern.hasMatch(line),
+              isFalse,
+              reason: 'Banned user-facing term matched ${pattern.pattern} in $path at line ${i + 1}:\n$line',
+            );
+          }
+        }
+      }
     });
   });
 }
@@ -25886,15 +26053,16 @@ void main() {
     expect(SubscriptionService.redeemErrorMessage('already-exists'), contains('sudah pernah'));
     expect(SubscriptionService.redeemErrorMessage('unauthenticated'), contains('masuk'));
   });
-  test('All assistant titles identify AI without changing entitlement IDs', () {
+  test('All assistant titles have serene field names without changing entitlement IDs', () {
     for (final agent in AgentModel.defaultAgents) {
-      expect(agent.title, startsWith('AI '));
+      expect(agent.title.isNotEmpty, isTrue);
+      expect(agent.title, isNot(startsWith('AI ')));
       expect(agent.id, isNot(startsWith('AI ')));
     }
   });
   test('Conversation loading and menu describe their actions', () {
     expect(AppCopy.loadingReferences, 'Menyiapkan asisten…');
-    expect(AppCopy.studyOptions, 'Tampilan bacaan');
+    expect(AppCopy.studyOptions, 'Opsi percakapan');
   });
 }
 

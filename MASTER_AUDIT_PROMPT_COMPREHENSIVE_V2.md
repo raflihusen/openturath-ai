@@ -1,21 +1,22 @@
-# PANDUAN & MASTER PROMPT AUDIT KOMPREHENSIF OPENTURATH AI (v1.0.23+24)
+# PANDUAN & MASTER PROMPT AUDIT KOMPREHENSIF OPENTURATH AI (v1.0.26+27)
 
-Dokumen ini memuat **Prompt Master Audit Forensik 360°** yang dirancang untuk mengaudit seluruh basis kode aplikasi **OpenTurath AI / Maktabah AI** menggunakan model AI berkonteks besar (Claude 3.5 Sonnet, ChatGPT o3-mini / o1 / GPT-4o, Gemini 1.5 Pro, atau DeepSeek V3/R1).
+Dokumen ini memuat **Prompt Master Audit Forensik 360°** yang dirancang untuk mengaudit seluruh basis kode aplikasi **OpenTurath AI** menggunakan model AI berkonteks besar (Claude 3.5 Sonnet, ChatGPT o3-mini / o1 / GPT-4o, Gemini 1.5 Pro, atau DeepSeek V3/R1).
 
 ---
 
 ## CARA PENGGUNAAN AUDIT (MUDAH & CEPAT)
 
-1. Ambil berkas bundle monolitik yang telah disiapkan di root workspace:
-   - **Markdown**: [`/Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.md`](file:///Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.md) (981.9 KB)
-   - **Teks Murni**: [`/Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.txt`](file:///Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.txt) (981.9 KB)
+1. Ambil berkas kode sumber terbaru yang telah disiapkan di root workspace:
+   - **Teks Murni Tunggal (Rekomendasi untuk AI)**: [`/Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.txt`](file:///Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.txt) (997.3 KB, 26.237 baris)
+   - **Markdown Tunggal**: [`/Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.md`](file:///Users/apple/Downloads/ramadhan/OPENTURATH_AI_MASTER_AUDIT_PACK.md) (997.3 KB)
+   - **Arsip ZIP Kode Sumber Murni**: [`/Users/apple/Downloads/ramadhan/openturath_ai_latest_pure_code_v1.0.26+27.zip`](file:///Users/apple/Downloads/ramadhan/openturath_ai_latest_pure_code_v1.0.26+27.zip) (464.6 KB)
 2. Unggah (*upload*) berkas tersebut sebagai lampiran (*attachment*) ke antarmuka AI (Claude Project, ChatGPT Plus, atau Google AI Studio).
-3. Salin (*copy*) teks prompt master di bawah ini, lalu tempelkan (*paste*) sebagai instruksi tugas.
+3. Salin (*copy*) teks prompt master di bawah ini, lalu tempelkan (*paste*) sebagai instruksi tugas audit.
 
 ---
 
 ```markdown
-# MASTER PROMPT AUDIT FORENSIK 360°: OPENTURATH AI (v1.0.23+24)
+# MASTER PROMPT AUDIT FORENSIK 360°: OPENTURATH AI (v1.0.26+27)
 
 ### 1. PERAN & SIKAP AUDITOR
 Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dari 4 figur pakar:
@@ -28,13 +29,14 @@ Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dar
 
 ---
 
-### 2. KONTEKS SISTEM & PERUBAHAN TERBARU
-Aplikasi terlampir berada pada versi **v1.0.23+24** dengan pembaruan arsitektural penting:
-1. **Single-Flight Navigation Guard (`NavigationGuard.safePushNamed`)**: Diterapkan untuk mencegah halaman langganan/upgrade terbuka berlapis-lapis saat pengguna menekan tombol berkali-kali di kala perangkat sedang lag.
-2. **Animasi Berwibawa "Fathul Kitab"**: Transisi buka/tutup ruang kajian AI di `MainShellScreen` menggunakan koordinasi `Curves.fastOutSlowIn` (380ms) dan `Curves.easeInOutCubic` (300ms) dengan zero-reload pada native WebView Google NotebookLM.
-3. **Native Dark Mode di WebView**: Injeksi CSS dan script DOM untuk menyelaraskan tema gelap ke dalam iframe/WebView Google NotebookLM.
-4. **Layar Tentang Kitab Full Bahasa Arab & RTL Murni**: Menggunakan khat Scheherazade New Naskh dan istilah turats baku (`بطاقة الكتاب`, `متن معتمد`, `شرح`, `حاشية`).
-5. **Proteksi Multi-Akun Voucher Fisik**: Penukaran kode voucher dibatasi 1 kali per perangkat fisik menggunakan SHA-256 salted hash di `DeviceService` dan Cloud Functions.
+### 2. KONTEKS SISTEM & PERUBAHAN TERBARU (v1.0.26+27)
+Aplikasi terlampir berada pada versi **v1.0.26+27** dengan pembaruan arsitektural dan bahasa penting:
+1. **Penyatuan Suara & Tagline Resmi Kanonikal**: Tagline kanonikal resmi **"Membaca kitab, menelusuri ibarah."** (membersihkan slogan bahasa Inggris dan istilah SaaS produk internal seperti *"ruang riset manuskrip AI"*, *"AI Spesialis"*, *"naskah primer terkatalogisasi"*, *"autentikasi sesi"*).
+2. **Pemisahan Aksi Salin vs Simpan & Integritas Rujukan**: Aksi *Salin jawaban* (hanya ke clipboard sistem) dipisahkan tegas dari *Simpan ke Catatan* (bookmark lokal internal). Watermark promosi paksa pada rujukan kutipan turats dihilangkan total.
+3. **Restorasi Performa Bebas Lag (OT-F007, OT-F019)**: Seluruh animasi `ScaleTransition` pada PlatformView/WebView dan `Transform.scale` pada background scaffold telah dibersihkan; digantikan dengan transisi vertikal murni 240ms berbasis `SlideTransition` dan `FadeTransition` dengan kurva `Curves.easeOutCubic`. Double-back race window ditutup di `MainShellScreen`.
+4. **Penutupan Celah Keamanan Moneter & Backend (OT-F001, OT-F003)**: Penutupan celah P0 checkout `all_access`, eliminasi double-dispatch provisioning outbox, allowlist DOKU checkout WebView, perbaikan konsistensi atribusi tahun wafat/pengarang turats kanonikal.
+5. **Suite Pengujian Mutu 133 Tests (100% Passed)**: Seluruh 133 unit & widget tests lulus, scanner anti-regresi file UI aktif, dan analisis statis Dart 0 issues found.
+
 
 ---
 
@@ -79,7 +81,7 @@ Bedah berkas kode terlampir pada 8 pilar forensik berikut:
 - Standarisasi Email Kontak: Pastikan seluruh rujukan email bantuan dan refund konsisten ke `openturath@gmail.com`.
 
 #### PILAR 8: Validasi Unit Test & Boundary Coverage
-- Analisis Suite Pengujian: Tinjau berkas-berkas di `openturath_ai/test/` (129 unit tests). Apakah pengujian mencakup batas logika nyata (*boundary conditions*, *leap years 29 Feb*, *clamped month-ends*, *concurrent double tap*, *device binding*, *arabic search diacritics*)?
+- Analisis Suite Pengujian: Tinjau berkas-berkas di `openturath_ai/test/` (133 unit tests). Apakah pengujian mencakup batas logika nyata (*boundary conditions*, *leap years 29 Feb*, *clamped month-ends*, *concurrent double tap*, *device binding*, *arabic search diacritics*, *UI copywriting anti-regression scanner*)?
 - Area Tanpa Tes (Blind Spots): Identifikasi fungsi kritis apa saja yang belum memiliki cakupan unit test.
 
 ---

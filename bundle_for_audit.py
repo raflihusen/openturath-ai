@@ -6,12 +6,12 @@ output_txt = os.path.join(base_dir, 'OPENTURATH_AI_MASTER_AUDIT_PACK.txt')
 
 sections = []
 
-header = """# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.23+24)
+header = """# MASTER AUDIT BUNDLE: OPENTURATH AI (v1.0.26+27)
 # ==============================================================================
 # PERHATIAN UNTUK AI AUDITOR (CLAUDE / CHATGPT / GEMINI / DEEPSEEK):
 # Dokumen ini adalah SATU KESATUAN BERKAS TUNGGAL (SINGLE MONOLITHIC AUDIT PACK)
 # yang memuat seluruh instrumen audit, spesifikasi arsitektur, dan seluruh
-# kode sumber resmi aplikasi OpenTurath AI / Maktabah AI tanpa ada yang dipotong:
+# kode sumber resmi aplikasi OpenTurath AI tanpa ada yang dipotong:
 #
 #   BAGIAN 1: INSTRUKSI & MASTER PROMPT AUDIT FORENSIK 360° (8 PILAR AUDIT)
 #   BAGIAN 2: DOKUMENTASI KONTEKS PROYEK & ATURAN KERJA
@@ -39,9 +39,14 @@ Bertindaklah sebagai Dewan Auditor Independen Tingkat Tertinggi yang terdiri dar
 ---
 
 ### 2. KONTEKS PROYEK & SUMBER DAYA
-- **Nama Entitas & Produk:** OpenTurath (Induk Lembaga) & Maktabah AI (Aplikasi Meja Telaah Kitab).
-- **Versi Rilis Terkini:** v1.0.23+24
-- **Karakter Produk:** Meja Telaah Digital (*Scholarly Research Desk*) naskah primer kitab kuning (turats) berbasis RAG engine Google NotebookLM untuk kalangan santri, asatidz, dan peneliti akademis.
+- **Nama Entitas & Produk:** OpenTurath AI (Aplikasi Meja Telaah Kitab & Penelusuran Ibarah Turats).
+- **Tagline Kanonikal:** "Membaca kitab, menelusuri ibarah."
+- **Versi Rilis Terkini:** v1.0.26+27
+- **Karakter Produk:** Meja telaah digital naskah primer kitab turats berbasis RAG engine Google NotebookLM untuk kalangan santri, asatidz, dan peneliti akademis.
+- **Pembaruan Arsitektur Terkini (v1.0.26+27):**
+  1. *Resolusi Audit Forensik 360° (OT-F001 - OT-F023)*: Penutupan celah moneter P0 `all_access`, eliminasi double-dispatch provisioning outbox, allowlist DOKU checkout WebView, perbaikan konsistensi tahun wafat/pengarang turats.
+  2. *Restorasi Performa Bebas Lag (OT-F007, OT-F019)*: Menghapus seluruh ScaleTransition pada PlatformView/WebView dan Transform.scale pada background scaffold; transisi vertikal murni 240ms (Slide + Fade `Curves.easeOutCubic`) dan penutupan double-back race window.
+  3. *Overhaul Copywriting Quiet Scholar v2*: Mengeliminasi istilah internal produk kaku ("ruang riset manuskrip AI", "AI Spesialis", "naskah primer terkatalogisasi", "autentikasi sesi"), pemisahan aksi salin vs simpan catatan, penghapusan watermark promosi paksa pada kutipan turats, dan 133/133 unit tests lulus 100%.
 - **Basis Kode Terlampir:** Seluruh dokumen arsitektur, aturan keamanan, backend Cloud Functions, seluruh kode Flutter (`openturath_ai/lib/`), dan suite pengujian unit (`openturath_ai/test/`) telah **TERLAMPIR LENGKAP PADA BAGIAN 2 SAMPAI BAGIAN 5 DI BAWAH INI**.
 
 ---
