@@ -90,10 +90,10 @@ class AgentModel {
         // ── 1. FIKIH TAHAWWULAT (SOVEREIGN FLAGSHIP) ─────────
         AgentModel(
           id: 'fiqh_tahawwulat',
-          title: 'AI Fikih Tahawwulat',
+          title: 'Fikih Tahawwulat',
           titleArabic: 'فقه التحولات',
           description:
-              'Membantu menelusuri pembahasan Fikih Tahawwulat dari kitab dan ceramah Habib Abu Bakar Al-Masyhur.',
+              'Kajian tentang perubahan zaman, tanda-tanda zaman, dan Fikih Tahawwulat dalam karya Habib Abu Bakar al-Masyhur.',
           emoji: '📜',
           category: 'Fikih Tahawwulat',
           kind: CorpusKind.discipline,
@@ -115,17 +115,17 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',
-              name: 'Al-Muhaqqiq (Riset Dalil)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu menemukan dalil, ibarah, dan rujukan yang relevan.',
               descriptionArabic: 'البحث والتحقيق وعزو النصوص إلى مصادرها',
               emoji: '🔍',
-              badge: 'Riset Dalil',
+              badge: 'Dalil & rujukan',
             ),
             SubAgentModel(
               id: 'fiqh_tahawwulat_bayan',
-              name: 'Al-Bayan (Penjelasan Luas)',
+              name: 'Al-Bayan',
               nameArabic: 'البيان',
               description:
                   'Menjelaskan pokok bahasan dengan bahasa yang lebih ringkas.',
@@ -153,7 +153,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_syafii',
-          title: 'AI Fikih Syafi\'i',
+          title: 'Fikih Syafi\'i',
           titleArabic: 'الفقه الشافعي',
           description:
               'Cari penjelasan dan rujukan dalam kitab-kitab mazhab Syafi\'i.',
@@ -177,7 +177,7 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_syafii_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Syafi\'i',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu menemukan dalil, ibarah, dan rujukan dalam mazhab Syafi\'i.',
@@ -204,7 +204,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanafi',
-          title: 'AI Fikih Hanafi',
+          title: 'Fikih Hanafi',
           titleArabic: 'الفقه الحنفي',
           description:
               'Pelajari fikih mazhab Hanafi dengan rujukan Al-Mabsuth, Radd Al-Muhtar, dan Hidayah Al-Marghinani.',
@@ -215,7 +215,7 @@ class AgentModel {
           suggestedPrompts: [
             'Bagaimana kaidah istihsan dalam mazhab Hanafi?',
             'Apa pendapat mu\'tamad mazhab Hanafi mengenai syarat shalat berjamaah?',
-            'Bawakan ibarah Radd Al-Muhtar tentang bab muamalat dan tijarah!',
+            'Tunjukkan ibarah dalam Radd al-Muhtar tentang jual beli dan muamalah.',
           ],
           status: 'coming_soon',
           sortOrder: 3,
@@ -225,9 +225,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanafi_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Hanafi',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis riset Zhahir Ar-Riwayah dan fatwa mazhab Hanafi.',
+              description: 'Riset Zhahir Ar-Riwayah dan fatwa mazhab Hanafi.',
               descriptionArabic: 'تحقيق المعتمد في المذهب الحنفي',
               emoji: '⚖️',
               badge: 'Fikih Hanafi',
@@ -250,7 +250,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_maliki',
-          title: 'AI Fikih Maliki',
+          title: 'Fikih Maliki',
           titleArabic: 'الفقه المالكي',
           description:
               'Pelajari fikih mazhab Maliki dan \'Amal Ahlil Madinah dengan rujukan Al-Mudawwanah, Risalah Ibnu Abi Zaid, dan Mukhtashar Khalil.',
@@ -260,8 +260,8 @@ class AgentModel {
           subtitleAcademic: 'Al-Mudawwanah · Mukhtashar Khalil & Syarah',
           suggestedPrompts: [
             'Bagaimana kedudukan \'Amal Ahlil Madinah dalam istinbath Maliki?',
-            'Rincikan syarat sah shalat menurut Mukhtashar Khalil!',
-            'Bawakan ibarah Bidayatul Mujtahid mengenai perbedaan pendapat dalam thaharah!',
+            'Apa saja syarat sah salat menurut Mukhtashar Khalil?',
+            'Bagaimana Bidayatul Mujtahid menjelaskan perbedaan pendapat tentang thaharah?',
           ],
           status: 'coming_soon',
           sortOrder: 4,
@@ -271,9 +271,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_maliki_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Maliki',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis riset Al-Mudawwanah dan Mukhtashar Khalil.',
+              description: 'Riset Al-Mudawwanah dan Mukhtashar Khalil.',
               descriptionArabic: 'تحقيق المعتمد في المذهب المالكي',
               emoji: '⚖️',
               badge: 'Fikih Maliki',
@@ -296,7 +296,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_hanbali',
-          title: 'AI Fikih Hanbali',
+          title: 'Fikih Hanbali',
           titleArabic: 'الفقه الحنبلي',
           description:
               'Pelajari fikih mazhab Hanbali merujuk Al-Mughni Ibnu Qudamah, Kasysyaf Al-Qina\', dan Zad Al-Mustaqni\'.',
@@ -306,7 +306,7 @@ class AgentModel {
           subtitleAcademic: 'Al-Mughni · Zad Al-Mustaqni\' & Syuruh',
           suggestedPrompts: [
             'Apa mu\'tamad mazhab Hanbali mengenai pembatalan wudhu?',
-            'Bawakan ibarah Al-Mughni tentang hukum jual beli bersyarat!',
+            'Bagaimana penjelasan Al-Mughni tentang jual beli bersyarat?',
             'Bagaimana perbedaan riwayat dari Imam Ahmad dalam masalah ibadah?',
           ],
           status: 'coming_soon',
@@ -317,9 +317,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_hanbali_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Hanbali',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis telaah Al-Mughni dan perbandingan riwayat Imam Ahmad.',
+              description: 'Telaah Al-Mughni dan perbandingan riwayat Imam Ahmad.',
               descriptionArabic: 'تحقيق المعتمد في المذهب الحنبلي',
               emoji: '⚖️',
               badge: 'Fikih Hanbali',
@@ -342,7 +342,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'fiqh_muqaran',
-          title: 'AI Perbandingan Mazhab',
+          title: 'Perbandingan Mazhab',
           titleArabic: 'الفقه المقارن',
           description:
               'Bandingkan dalil dan pandangan mazhab Hanafi, Maliki, Syafi\'i, dan Hanbali.',
@@ -351,9 +351,9 @@ class AgentModel {
           fieldId: 'fiqh',
           subtitleAcademic: 'Perbandingan Mazhab Empat & Tarjih Dalil',
           suggestedPrompts: [
-            'Bandingkan pandangan 4 mazhab mengenai rukun nikah!',
+            'Bagaimana pandangan empat mazhab mengenai rukun nikah?',
             'Apa dalil perbedaan ulama tentang batas menyentuh bukan mahram?',
-            'Kompilasi fatwa kontemporer vs klasik mengenai zakat saham dan uang digital!',
+            'Bagaimana perbandingan ulama mengenai zakat aset dan uang digital?',
           ],
           status: 'coming_soon',
           sortOrder: 6,
@@ -363,9 +363,9 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'fiqh_muqaran_muhaqqiq',
-              name: 'Al-Muhaqqiq Fikih Muqaran',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description: 'Spesialis komparasi dalil mazhab Arba\'ah dan tarjih.',
+              description: 'Komparasi dalil mazhab Arba\'ah dan tarjih.',
               descriptionArabic: 'المقارنة بين المذاهب والترجيح بالدليل',
               emoji: '⚖️',
               badge: 'Fikih Muqaran',
@@ -390,10 +390,10 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'AI Hadis & Syarah',
+          title: 'Hadis & Syarah',
           titleArabic: 'الحديث الشريف',
           description:
-              'Kajian matan hadis, perawi, dan syarah dari induk kitab-kitab As-Sunnah (Kutubus Sittah dan syarahnya).',
+              'Telusuri hadis, sanad, perawi, dan penjelasannya dalam kitab rujukan.',
           emoji: '📖',
           category: 'Hadis',
           fieldId: 'hadith',
@@ -412,7 +412,7 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'hadits_muhaqqiq',
-              name: 'Al-Muhaqqiq (Takhrij Hadis)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu takhrij hadis, telaah rijalul hadis, dan derajat kesahihan sanad.',
@@ -440,10 +440,10 @@ class AgentModel {
         // ── 3. TAFSIR ─────────────────────────────────────────
         AgentModel(
           id: 'tafsir',
-          title: 'AI Tafsir Al-Qur\'an',
+          title: 'Tafsir Al-Qur\'an',
           titleArabic: 'تفسير القرآن',
           description:
-              'Penelusuran makna ayat, asbabun nuzul, dan penjelasan ulama dari kitab-kitab tafsir mu\'tabar.',
+              'Telusuri makna ayat, sebab turunnya, hubungan antarayat, dan penjelasan para mufasir.',
           emoji: '🌟',
           category: 'Tafsir',
           fieldId: 'tafsir',
@@ -451,7 +451,7 @@ class AgentModel {
           suggestedPrompts: [
             'Apa asbabun nuzul surah Al-Baqarah ayat 183?',
             'Bagaimana tafsir ayat Muhkamat dan Mutasyabihat menurut Al-Qurtubi?',
-            'Kompilasi pandangan mufassirin tentang tafsir "Ihdinas shiratal mustaqim"!',
+            'Bagaimana para mufasir menjelaskan makna "Ihdinas shiratal mustaqim"?',
           ],
           catalogId: 'canonical_tafsir',
           status: 'active',
@@ -462,10 +462,10 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'tafsir_muhaqqiq',
-              name: 'Al-Muhaqqiq (Tafsir Riwayat)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
-                  'Spesialis kompilasi penafsiran mufassirin salaf dan asbabun nuzul.',
+                  'Kompilasi penafsiran mufassirin salaf dan asbabun nuzul.',
               descriptionArabic: 'تحقيق الروايات وأسباب النزول',
               emoji: '🔍',
               badge: 'Riset Tafsir',
@@ -490,18 +490,18 @@ class AgentModel {
         // ── 4. USUL FIQH ──────────────────────────────────────
         AgentModel(
           id: 'ushul_fiqh',
-          title: 'AI Usul Fikih',
+          title: 'Usul Fikih',
           titleArabic: 'أصول الفقه',
           description:
-              'Metode istinbath hukum dan kaidah usul fikih dari kitab rujukan.',
+              'Pelajari kaidah penggalian hukum, dalil, dan maqashid syariah melalui kitab usul fikih.',
           emoji: '📐',
           category: 'Usul Fikih',
           fieldId: 'usul',
           subtitleAcademic: 'Kaidah Istinbath & Maqashid Syariah',
           suggestedPrompts: [
-            'Jelaskan perbedaan Mafhum Mukhalafah dan Mafhum Muwafaqah!',
+            'Apa perbedaan Mafhum Mukhalafah dan Mafhum Muwafaqah?',
             'Bagaimana kaidah "Al-Amru ba\'dan-nahyi yufidul ibahah"?',
-            'Bawakan ibarah Al-Waraqat tentang pembagian hukum taklifi!',
+            'Bagaimana Al-Waraqat menjelaskan pembagian hukum taklifi?',
           ],
           catalogId: 'canonical_ushul_fikih',
           status: 'active',
@@ -512,7 +512,7 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'ushul_muhaqqiq',
-              name: 'Al-Muhaqqiq (Kaidah Usul)',
+              name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
               description:
                   'Membantu penelusuran kaidah usuliyyah dan metode istinbath dalil.',
@@ -540,18 +540,18 @@ class AgentModel {
         // ── 5. BAHASA ARAB ────────────────────────────────────
         AgentModel(
           id: 'nahwu_sharaf',
-          title: 'AI Bahasa Arab & Balaghah',
+          title: 'Bahasa Arab',
           titleArabic: 'النحو والصرف',
           description:
-              'Pelajari nahwu, sharaf, balaghah, dan makna kata dalam kitab berbahasa Arab.',
+              'Pelajari nahwu, sharaf, balaghah, dan makna kosakata dalam kamus Arab klasik.',
           emoji: '🔤',
           category: 'Bahasa Arab',
           fieldId: 'lughah',
           subtitleAcademic: 'Alfiyah Ibnu Malik & Lisanul Arab',
           suggestedPrompts: [
-            'I\'rab kalimat: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ" secara mendalam!',
-            'Jelaskan faidah wazan Fa\'ala dan Af\'ala dalam ilmu sharaf!',
-            'Bawakan kaidah Munada dalam bait Alfiyah Ibnu Malik!',
+            'Bagaimana i\'rab kalimat: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ"?',
+            'Apa perbedaan faedah wazan Fa\'ala dan Af\'ala dalam ilmu sharaf?',
+            'Bagaimana kaidah Munada dalam bait Alfiyah Ibnu Malik?',
           ],
           catalogId: 'canonical_bahasa_arab',
           status: 'active',
@@ -562,23 +562,23 @@ class AgentModel {
           subAgents: [
             SubAgentModel(
               id: 'nahwu_sharaf_muerib',
-              name: 'Al-Mu\'rib (Kaidah Sintaksis)',
+              name: 'Al-Mu\'rib',
               nameArabic: 'المعرب',
               description:
-                  'Spesialis i\'rab kata dan analisis sintaksis (nahwu) sesuai kaidah Alfiyah Ibnu Malik.',
+                  'I\'rab kata dan analisis sintaksis sesuai kaidah Alfiyah Ibnu Malik.',
               descriptionArabic: 'إعراب الكلمات والتحليل النحوي',
               emoji: '🔍',
-              badge: 'Analisis Nahwu',
+              badge: 'I\'rab & nahwu',
             ),
             SubAgentModel(
               id: 'nahwu_sharaf_tashrif',
-              name: 'Al-Tashrif (Kaidah Morfologi)',
+              name: 'At-Tashrif',
               nameArabic: 'المصرف',
               description:
-                  'Spesialis perubahan wazan, derivasi kata (sharaf), dan morfologi bahasa Arab klasik.',
+                  'Perubahan wazan, derivasi kata, dan morfologi bahasa Arab.',
               descriptionArabic: 'تحليل الأوزان والاشتقاق الصرفي',
               emoji: '🔄',
-              badge: 'Analisis Sharaf',
+              badge: 'Tashrif & sharaf',
             ),
           ],
           referenceBooks: [
@@ -602,7 +602,7 @@ class AgentModel {
         // ── 6. AQIDAH ─────────────────────────────────────────
         AgentModel(
           id: 'aqidah',
-          title: 'AI Akidah Islamiyah',
+          title: 'Akidah',
           titleArabic: 'العقيدة والتوحيد',
           description:
               'Pembahasan ushuluddin, tauhid sifat dua puluh, dan manhaj Ahlussunnah wal Jama\'ah.',
@@ -625,7 +625,7 @@ class AgentModel {
         // ── 7. SEJARAH & SIRAH ────────────────────────────────
         AgentModel(
           id: 'tarikh',
-          title: 'AI Sejarah & Sirah',
+          title: 'Sejarah & Sirah',
           titleArabic: 'السيرة والتاريخ',
           description:
               'Telusuri perjalanan hidup Nabi, Khulafaur Rasyidin, dan biografi ulama salaf.',
@@ -634,9 +634,9 @@ class AgentModel {
           fieldId: 'tarikh',
           subtitleAcademic: 'Sirah Ibnu Hisyam & Tarikh Thabari',
           suggestedPrompts: [
-            'Rincikan kronologi Perang Badar dari Sirah Ibnu Hisyam!',
+            'Bagaimana kronologi Perang Badar menurut Sirah Ibnu Hisyam?',
             'Bagaimana riwayat musyawarah Tsaqifah Bani Sa\'idah?',
-            'Biografi singkat dan thabaqat Imam An-Nawawi!',
+            'Bagaimana biografi dan thabaqat Imam An-Nawawi?',
           ],
           status: 'coming_soon',
           sortOrder: 12,
@@ -648,7 +648,7 @@ class AgentModel {
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
         AgentModel(
           id: 'habib_umar',
-          title: 'AI Habib Umar bin Hafizh',
+          title: 'Habib Umar bin Hafizh',
           titleArabic: 'الحبيب عمر بن حفيظ',
           description:
               'Telusuri fatwa, khutbah, tulisan, dan nasihat dakwah Habib Umar bin Hafizh.',
@@ -669,7 +669,7 @@ class AgentModel {
         ),
         AgentModel(
           id: 'imam_ghazali',
-          title: 'AI Hujjatul Islam Al-Ghazali',
+          title: 'Imam Al-Ghazali',
           titleArabic: 'حجة الإسلام الغزالي',
           description:
               'Pelajari tasawuf, akhlak, dan usul fikih dalam karya-karya Imam Al-Ghazali, termasuk Ihya Ulumiddin.',
