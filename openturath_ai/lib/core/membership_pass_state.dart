@@ -67,6 +67,22 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
             (entitlement.expiry != null &&
                 entitlement.expiry!.isAfter(reference)));
   }).toList();
+  if (active.isEmpty && user?.isSubscriptionActive == true) {
+    final expiry = user!.subscriptionExpiry;
+    final expiring = expiry != null && expiry.difference(reference).inDays <= 3;
+    return MembershipPassSummary(
+      state: expiring
+          ? MembershipPassState.expiringSoon
+          : MembershipPassState.activePro,
+      badge: 'PRO',
+      accessLabel: 'Seluruh asisten OpenTurath',
+      supportingLabel:
+          expiring ? 'Berakhir dalam waktu dekat' : 'Langganan aktif',
+      expiryLabel: 'BERLAKU HINGGA',
+      expiresAt: expiry,
+      ctaLabel: expiring ? 'Perpanjang Pro' : 'Kelola langganan',
+    );
+  }
   if (active.isEmpty) {
     return _base(
         MembershipPassState.locked,
