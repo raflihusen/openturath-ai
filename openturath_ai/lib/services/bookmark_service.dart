@@ -205,13 +205,13 @@ class BookmarkService extends ChangeNotifier {
       final merged = <String, BookmarkModel>{...localMap};
       for (final entry in cloudMap.entries) {
         final existing = merged[entry.key];
-        if (existing == null || entry.value.createdAt.isAfter(existing.createdAt)) {
+        if (existing == null || entry.value.effectiveTime.isAfter(existing.effectiveTime)) {
           merged[entry.key] = entry.value;
         }
       }
 
       final finalList = merged.values.toList()
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        ..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));
 
       await _store.replace(userKey, finalList);
       notifyListeners();
