@@ -11,6 +11,7 @@ class BookmarkModel {
   final String pageNumber;
   final String? author;
   final DateTime createdAt;
+  final DateTime? updatedAt;
 
   BookmarkModel({
     required this.id,
@@ -25,7 +26,10 @@ class BookmarkModel {
     required this.pageNumber,
     this.author,
     required this.createdAt,
+    this.updatedAt,
   });
+
+  DateTime get effectiveTime => updatedAt ?? createdAt;
 
   Map<String, dynamic> toJson() {
     return {
@@ -41,6 +45,7 @@ class BookmarkModel {
       'pageNumber': pageNumber,
       'author': author,
       'createdAt': createdAt.toIso8601String(),
+      'updatedAt': (updatedAt ?? createdAt).toIso8601String(),
     };
   }
 
@@ -60,6 +65,9 @@ class BookmarkModel {
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
           : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'] as String)
+          : null,
     );
   }
 
@@ -76,6 +84,7 @@ class BookmarkModel {
     String? pageNumber,
     String? author,
     DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return BookmarkModel(
       id: id ?? this.id,
@@ -90,6 +99,7 @@ class BookmarkModel {
       pageNumber: pageNumber ?? this.pageNumber,
       author: author ?? this.author,
       createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }
