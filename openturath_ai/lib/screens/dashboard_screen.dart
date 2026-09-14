@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants.dart';
 import '../core/routes.dart';
+import '../core/app_config.dart';
 import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
@@ -147,13 +148,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
-  static const List<({String fieldId, String name, int specialistCount})> _curatedDisciplines = [
-    (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
-    (fieldId: 'hadith', name: 'Hadis', specialistCount: 1),
-    (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
-    (fieldId: 'aqidah', name: 'Akidah', specialistCount: 1),
-    (fieldId: 'usul', name: 'Usul Fikih', specialistCount: 1),
-    (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1),
+  static const List<({String fieldId, String name, int specialistCount, IconData icon})> _curatedDisciplines = [
+    (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6, icon: Icons.account_balance_rounded),
+    (fieldId: 'hadith', name: 'Hadis', specialistCount: 1, icon: Icons.menu_book_rounded),
+    (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1, icon: Icons.auto_stories_rounded),
+    (fieldId: 'aqidah', name: 'Akidah', specialistCount: 1, icon: Icons.psychology_alt_rounded),
+    (fieldId: 'usul', name: 'Usul Fikih', specialistCount: 1, icon: Icons.account_tree_outlined),
+    (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1, icon: Icons.translate_rounded),
   ];
 
   @override
@@ -197,148 +198,115 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Header Centered: OpenTurath ──
-                    Center(
-                      child: Text(
-                        'OpenTurath',
-                        style: GoogleFonts.newsreader(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.4,
-                          color: textPrimary,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // Banner pembaruan jika tersedia
-                    const UpdateReadyBanner(),
-
-                    // ── 2. Minimalist Monochrome Greeting Card (Black/White/Grey Palette) ──
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF141416) : Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFE5E7EB),
-                          width: 1.0,
-                        ),
-                        boxShadow: isDark
-                            ? null
-                            : [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Baris Atas: Sapaan [Nama]
-                          Text(
-                            user.name.isNotEmpty && user.name != 'Ahlan' ? 'Ahlan, ${user.name}' : 'Ahlan',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.outfit(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.3,
-                              color: isDark ? Colors.white : const Color(0xFF18181B),
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          // Baris Bawah: Dua Pill Tanggal Monokrom (Masehi & Hijriah)
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                                  decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
-                                      width: 0.8,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today_outlined,
-                                        size: 13,
-                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Flexible(
-                                        child: Text(
-                                          HijriDateUtils.formatMasehiOnly(),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 11.5,
-                                            fontWeight: FontWeight.w500,
-                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                    // ── 1. Top Header Row with Brand & Theme Switcher ──
+                    Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'OpenTurath',
+                              style: GoogleFonts.newsreader(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.4,
+                                color: textPrimary,
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                                  decoration: BoxDecoration(
-                                    color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
-                                      width: 0.8,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.nightlight_outlined,
-                                        size: 13,
-                                        color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Flexible(
-                                        child: Text(
-                                          HijriDateUtils.formatHijriOnly(),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 11.5,
-                                            fontWeight: FontWeight.w500,
-                                            color: isDark ? const Color(0xFFD4D4D8) : const Color(0xFF3F3F46),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                            ),
+                            Text(
+                              'Al-Maktabah Al-Bahthiyyah',
+                              style: GoogleFonts.outfit(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.2,
+                                color: textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: surface,
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(color: border, width: 0.8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.nightlight_outlined, size: 12, color: textSecondary),
+                              const SizedBox(width: 5),
+                              Text(
+                                HijriDateUtils.formatHijriOnly(),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: textSecondary,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 8),
+                        AppleInteractiveWrapper(
+                          onTap: () {
+                            final newMode = isDark ? ThemeMode.light : ThemeMode.dark;
+                            AppConfig.setThemeMode(newMode);
+                          },
+                          pressedScale: 0.92,
+                          hapticType: HapticFeedbackType.selection,
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: surface,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: border, width: 0.8),
+                            ),
+                            child: Icon(
+                              isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                              size: 18,
+                              color: textPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
+
+                    // Banner pembaruan jika tersedia
+                    const UpdateReadyBanner(),
+
+                    // ── 2. Minimalist Sapaan & Tanggal Masehi ──
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          user.name.isNotEmpty && user.name != 'Ahlan' ? 'Ahlan, ${user.name}' : 'Ahlan wa sahlan',
+                          style: GoogleFonts.outfit(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary,
+                          ),
+                        ),
+                        Text(
+                          HijriDateUtils.formatMasehiOnly(),
+                          style: GoogleFonts.outfit(
+                            fontSize: 11.5,
+                            color: textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
 
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
-                      height: 48,
+                      height: 46,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         color: surface,
@@ -381,7 +349,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 14),
 
                     // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
@@ -450,13 +418,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         user: user,
                       ),
 
+                      // ── Asisten Kajian Unggulan ──
+                      _buildFeaturedAssistantsSection(
+                        context: context,
+                        isDark: isDark,
+                        surface: surface,
+                        border: border,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        user: user,
+                      ),
+
+                      const SizedBox(height: 18),
+
                       // ── Section: Pilih Bidang ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Pilih bidang',
+                            'Pilih bidang ilmu',
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -492,17 +473,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ],
                       ),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 12),
 
-                      // 2-Column Minimalist Purism Grid (6 Cards, Aspect Ratio 1.45)
+                      // 2-Column Purism Grid (Dense Horizontal Banner Cards, Aspect Ratio 2.15)
                       GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 1.45,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 2.15,
                         ),
                         itemCount: _curatedDisciplines.length,
                         itemBuilder: (context, index) {
@@ -522,35 +503,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                             pressedScale: 0.96,
                             hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(14),
                             child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                               decoration: BoxDecoration(
                                 color: surface,
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(color: border, width: 1.0),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: border, width: 0.8),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                              child: Row(
                                 children: [
-                                  Text(
-                                    disc.name,
-                                    style: GoogleFonts.newsreader(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: -0.2,
-                                      color: textPrimary,
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                    textAlign: TextAlign.center,
+                                    child: Icon(disc.icon, size: 16, color: textPrimary),
                                   ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    '${disc.specialistCount} asisten',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 12.5,
-                                      color: textSecondary,
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          disc.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: -0.1,
+                                            color: textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          '${disc.specialistCount} asisten',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11,
+                                            color: textSecondary,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
@@ -559,7 +559,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
 
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 20),
 
                       // ── Catatan Telaah Terkini ──
                       _buildRecentNotesSection(
@@ -571,7 +571,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         textSecondary: textSecondary,
                       ),
 
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 20),
 
                       // ── Wasiat Adab & Pedoman Telaah (Carousel di bagian bawah) ──
                       _DashboardAnnouncementCarousel(
@@ -626,13 +626,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       subtitleText = 'Buka kembali asisten kajian sebelumnya';
       leadingIcon = Icons.history_rounded;
     } else {
-      return const SizedBox.shrink();
+      targetAgent = _agents.isNotEmpty ? _agents.first : AgentModel.defaultAgents.first;
+      titleText = 'Mulai telaah: ${targetAgent.title.replaceFirst('AI ', '')}';
+      subtitleText = 'Kutub mutamadah · Buka meja telaah utama';
+      leadingIcon = Icons.school_outlined;
     }
 
     final accent = OTColors.accent(isDark);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 16),
       child: AppleInteractiveWrapper(
         onTap: () => _openNotebook(targetAgent!, user),
         pressedScale: 0.98,
@@ -694,6 +697,186 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFeaturedAssistantsSection({
+    required BuildContext context,
+    required bool isDark,
+    required Color surface,
+    required Color border,
+    required Color textPrimary,
+    required Color textSecondary,
+    required UserModel? user,
+  }) {
+    final shell = MainShellController.of(context);
+    final featured = _agents.where((a) => !a.isComingSoon).take(3).toList();
+    if (featured.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'Asisten kajian unggulan',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.2,
+                color: textPrimary,
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                if (shell != null) {
+                  shell.switchTab(1);
+                } else {
+                  NavigationGuard.safePushNamed(context, AppRoutes.specialistList);
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Koleksi lengkap',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Icon(Icons.chevron_right_rounded, size: 16, color: textPrimary),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 128,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: featured.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, idx) {
+              final agent = featured[idx];
+              final bookCount = agent.referenceBooks?.length ?? 0;
+              return Container(
+                width: 240,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: border, width: 0.8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 34,
+                          height: 34,
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(Icons.auto_stories_rounded, size: 17, color: textPrimary),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                agent.title.replaceFirst('AI ', ''),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                agent.category,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.outfit(
+                                  fontSize: 11,
+                                  color: textSecondary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1E1E22) : const Color(0xFFF4F4F5),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Text(
+                            bookCount > 0 ? '$bookCount Kitab' : 'Kitab Pilihan',
+                            style: GoogleFonts.outfit(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w500,
+                              color: textSecondary,
+                            ),
+                          ),
+                        ),
+                        AppleInteractiveWrapper(
+                          onTap: () => _openNotebook(agent, user),
+                          pressedScale: 0.94,
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: textPrimary,
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Telaah',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: isDark ? Colors.black : Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 11,
+                                  color: isDark ? Colors.black : Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
