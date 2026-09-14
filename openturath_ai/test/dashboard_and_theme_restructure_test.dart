@@ -5,6 +5,7 @@ import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/hijri_date_utils.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/bookmark_model.dart';
+import 'package:openturath_ai/services/agent_session_manager.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -71,6 +72,10 @@ void main() {
       expect(note1.id.startsWith('book_'), isTrue);
       expect(note1.author, 'Imam an-Nawawi');
       expect(note1.bookReference, 'Minhaj al-Talibin');
+    });
+
+    test('AgentSessionManager maxTabs is limited to 3 to prevent Android WebView memory bloat', () {
+      expect(AgentSessionManager.maxTabs, 3);
     });
   });
 }
