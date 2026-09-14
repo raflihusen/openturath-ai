@@ -162,6 +162,10 @@ const notebookUiScript = r'''
         div[class*="placeholder-bar" i],
         button[aria-label*="More" i], button[aria-label*="Opsi" i],
         button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+        /* Anti-flicker zero-latency disclaimer suppression (OT-A003) */
+        [aria-label*="Gemini" i],
+        [aria-label*="disclaimer" i],
+        div[role="region"][aria-label*="disclaimer" i],
         .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer" i], footer[class*="disclaimer" i],
         div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
         app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
