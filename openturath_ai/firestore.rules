@@ -54,7 +54,15 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasOnly([
         'error', 'context', 'severity', 'stackTrace', 'breadcrumbs',
         'extra', 'userId', 'userEmail', 'platform', 'deviceTimestamp', 'createdAt'
-      ]) && request.resource.data.error is string && request.resource.data.error.size() <= 2500;
+      ])
+      && request.resource.data.error is string
+      && request.resource.data.error.size() <= 2500
+      && request.resource.data.severity in ['info', 'warning', 'error', 'critical']
+      && (
+        (request.auth != null && request.resource.data.userId == request.auth.uid) ||
+        (request.auth == null && request.resource.data.userId == 'unauthenticated')
+      )
+      && request.resource.data.createdAt == request.time;
       allow read, update, delete: if false;
     }
 
