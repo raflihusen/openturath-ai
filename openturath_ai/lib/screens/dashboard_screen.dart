@@ -203,27 +203,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                         final target = activeAgent ?? lastAgent;
                         final hasLiveSession = activeAgent != null;
-
-                        return _StudyEntryCard(
-                          name: user.name,
-                          masehiDate: HijriDateUtils.formatMasehiOnly(),
-                          hijriDate: HijriDateUtils.formatHijriOnly(),
-                          agent: target,
-                          hasLiveSession: hasLiveSession,
-                          isDark: isDark,
-                          onPrimary: () {
-                            if (target != null) {
-                              _openNotebook(target, user);
-                              return;
-                            }
-                            final shell = MainShellController.of(context);
-                            if (shell != null) {
-                              shell.switchTab(1);
-                            } else {
-                              NavigationGuard.safePushNamed(
-                                  context, AppRoutes.specialistList);
-                            }
-                          },
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _StudyEntryCard(
+                              name: user.name,
+                              agent: target,
+                              hasLiveSession: hasLiveSession,
+                              isDark: isDark,
+                              onPrimary: () {
+                                if (target != null) {
+                                  _openNotebook(target, user);
+                                  return;
+                                }
+                                final shell = MainShellController.of(context);
+                                if (shell != null) {
+                                  shell.switchTab(1);
+                                } else {
+                                  NavigationGuard.safePushNamed(
+                                      context, AppRoutes.specialistList);
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            _ScholarlyDatePanel(
+                              masehiDate: HijriDateUtils.formatMasehiOnly(),
+                              hijriDate: HijriDateUtils.formatHijriOnly(),
+                              surface: surface,
+                              border: border,
+                              textPrimary: textPrimary,
+                              textSecondary: textSecondary,
+                              accent: accent,
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -510,8 +522,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 class _StudyEntryCard extends StatelessWidget {
   final String name;
-  final String masehiDate;
-  final String hijriDate;
   final AgentModel? agent;
   final bool hasLiveSession;
   final bool isDark;
@@ -519,8 +529,6 @@ class _StudyEntryCard extends StatelessWidget {
 
   const _StudyEntryCard({
     required this.name,
-    required this.masehiDate,
-    required this.hijriDate,
     required this.agent,
     required this.hasLiveSession,
     required this.isDark,
@@ -532,7 +540,7 @@ class _StudyEntryCard extends StatelessWidget {
     final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
     final hasHistory = agent != null;
     final eyebrow = hasLiveSession
-        ? 'Masih terbuka'
+        ? 'Sesi aktif'
         : hasHistory
             ? 'Terakhir dibuka'
             : 'Mulai kajian';
@@ -542,15 +550,27 @@ class _StudyEntryCard extends StatelessWidget {
             ? 'Buka kembali ${agent!.title}'
             : 'Mulai dari satu pertanyaan';
     final subtitle = hasLiveSession
-        ? 'Lanjutkan percakapan yang tadi.'
+        ? 'Lanjutkan penelusuran kitab Anda.'
         : hasHistory
             ? 'Kembali ke asisten yang terakhir Anda buka.'
             : 'Pilih bidang untuk mulai menelusuri ibarah dan rujukan.';
     final primaryLabel = hasLiveSession
-        ? 'Lanjutkan kajian'
+        ? 'Lanjutkan'
         : hasHistory
             ? 'Buka kembali'
             : 'Pilih bidang';
+
+    final bgGradient = isDark
+        ? const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF232730), Color(0xFF14171D)],
+          )
+        : const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF2D323D), Color(0xFF1B1E26)],
+          );
 
     return Semantics(
       button: true,
@@ -562,22 +582,18 @@ class _StudyEntryCard extends StatelessWidget {
           onTap: onPrimary,
           borderRadius: BorderRadius.circular(24),
           child: Ink(
-            height: 248,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: isDark
-                    ? const [Color(0xFF343640), Color(0xFF1A1B22)]
-                    : const [Color(0xFF30323D), Color(0xFF191A21)],
+              gradient: bgGradient,
+              border: Border.all(
+                color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.16),
+                width: 1.0,
               ),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.16),
-                  blurRadius: 22,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.18),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
@@ -586,156 +602,169 @@ class _StudyEntryCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned(
-                    right: -54,
-                    top: -82,
+                    right: -30,
+                    top: -40,
                     child: Container(
-                      width: 202,
-                      height: 202,
+                      width: 170,
+                      height: 170,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.12),
+                          color: Colors.white.withValues(alpha: 0.07),
                           width: 1.2,
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    right: 34,
-                    bottom: -22,
-                    child: Transform.rotate(
-                      angle: 0.35,
-                      child: Container(
-                        width: 106,
-                        height: 106,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.07)),
-                          borderRadius: BorderRadius.circular(24),
+                    right: 25,
+                    bottom: -30,
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.05),
+                          width: 1.0,
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 18, 18, 60),
+                    padding: const EdgeInsets.all(22),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Expanded(
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.09),
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.12),
+                                ),
+                              ),
                               child: Text(
                                 displayName == null
                                     ? 'Ahlan'
                                     : 'Ahlan, $displayName',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.outfit(
                                   color: const Color(0xFFF8F8F8),
-                                  fontSize: 15,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.2,
                                 ),
                               ),
                             ),
+                            const Spacer(),
+                            if (hasLiveSession)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4ADE80)
+                                      .withValues(alpha: 0.16),
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(
+                                    color: const Color(0xFF4ADE80)
+                                        .withValues(alpha: 0.35),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF4ADE80),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      'Sesi aktif',
+                                      style: GoogleFonts.outfit(
+                                        color: const Color(0xFF4ADE80),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
-                        const Spacer(),
+                        const SizedBox(height: 18),
                         Text(
-                          eyebrow,
+                          eyebrow.toUpperCase(),
                           style: GoogleFonts.outfit(
                             color: const Color(0xFFC7C7CC),
                             fontSize: 9.5,
                             fontWeight: FontWeight.w700,
-                            letterSpacing: 1.05,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.newsreader(
-                            color: const Color(0xFFF8F8F8),
-                            fontSize: 23,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.4,
+                            letterSpacing: 1.1,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.newsreader(
+                            color: const Color(0xFFF8F8F8),
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.4,
+                            height: 1.25,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
                           subtitle,
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.outfit(
                             color: const Color(0xFFC7C7CC),
-                            fontSize: 12,
+                            fontSize: 12.5,
+                            height: 1.35,
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 18),
                         Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 7),
+                                  horizontal: 14, vertical: 7),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.14),
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                    color:
-                                        Colors.white.withValues(alpha: 0.12)),
                               ),
-                              child: Text(
-                                primaryLabel,
-                                style: GoogleFonts.outfit(
-                                  color: const Color(0xFFF8F8F8),
-                                  fontSize: 11.5,
-                                  fontWeight: FontWeight.w700,
-                                ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    primaryLabel,
+                                    style: GoogleFonts.outfit(
+                                      color: const Color(0xFF141418),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  const Icon(
+                                    Icons.arrow_forward_rounded,
+                                    size: 13,
+                                    color: Color(0xFF141418),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 7),
-                            const Icon(Icons.arrow_forward_rounded,
-                                size: 16, color: Color(0xFFF8F8F8)),
-                            const Spacer(),
                           ],
                         ),
                       ],
-                    ),
-                  ),
-                  Positioned(
-                    left: 12,
-                    right: 12,
-                    bottom: 11,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 13, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.11),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.12)),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: _StudyDate(
-                                label: 'Hari ini', value: masehiDate),
-                          ),
-                          Container(
-                            width: 1,
-                            height: 26,
-                            color: Colors.white.withValues(alpha: 0.14),
-                          ),
-                          Expanded(
-                            child: _StudyDate(
-                              label: 'Kalender Hijriah',
-                              value: hijriDate,
-                              alignEnd: true,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ],
@@ -748,38 +777,124 @@ class _StudyEntryCard extends StatelessWidget {
   }
 }
 
-class _StudyDate extends StatelessWidget {
-  const _StudyDate({
-    required this.label,
-    required this.value,
-    this.alignEnd = false,
+class _ScholarlyDatePanel extends StatelessWidget {
+  const _ScholarlyDatePanel({
+    required this.masehiDate,
+    required this.hijriDate,
+    required this.surface,
+    required this.border,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.accent,
   });
 
-  final String label;
-  final String value;
-  final bool alignEnd;
+  final String masehiDate;
+  final String hijriDate;
+  final Color surface;
+  final Color border;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color accent;
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment:
-            alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      decoration: BoxDecoration(
+        color: surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: border, width: 1.0),
+      ),
+      child: Row(
         children: [
-          Text(label,
-              style: GoogleFonts.outfit(
-                  color: const Color(0xFFC7C7CC),
-                  fontSize: 9,
-                  fontWeight: FontWeight.w500)),
-          const SizedBox(height: 2),
-          Text(value,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: alignEnd ? TextAlign.end : TextAlign.start,
-              style: GoogleFonts.outfit(
-                  color: const Color(0xFFF8F8F8),
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600)),
+          Expanded(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 14,
+                  color: accent.withValues(alpha: 0.8),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Hari ini',
+                        style: GoogleFonts.outfit(
+                          color: textSecondary,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        masehiDate,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          color: textPrimary,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 1,
+            height: 24,
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            color: border,
+          ),
+          Expanded(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.nightlight_outlined,
+                  size: 14,
+                  color: accent.withValues(alpha: 0.8),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Kalender Hijriah',
+                        style: GoogleFonts.outfit(
+                          color: textSecondary,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        hijriDate,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          color: textPrimary,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
-      );
+      ),
+    );
+  }
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
