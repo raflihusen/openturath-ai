@@ -949,7 +949,7 @@ class _MembershipPass extends StatelessWidget {
                             ),
                             const Spacer(),
                             Text(
-                              'Untuk',
+                              'Pemilik',
                               style: GoogleFonts.outfit(
                                 color: muted,
                                 fontSize: 9.5,
@@ -996,9 +996,7 @@ class _MembershipPass extends StatelessWidget {
                                         ? 'Berlaku hingga'
                                         : summary.expiryLabel,
                                     value: summary.expiresAt == null
-                                        ? (summary.supportingLabel.isNotEmpty
-                                            ? summary.supportingLabel
-                                            : '—')
+                                        ? '—'
                                         : _expiryLabel(),
                                     valueColor: foreground,
                                   ),
