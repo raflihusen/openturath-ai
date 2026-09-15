@@ -678,7 +678,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      if (isLogin || (_readySamples >= 2 && elapsedMs >= 800)) {
+      if (isLogin || (_readySamples >= 1 && elapsedMs >= 600)) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
@@ -687,15 +687,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isTimeoutError = false;
           });
         }
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 15) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 8) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
-            widget.session.isSessionReady = false;
-            widget.session.isTimeoutError = true;
-            widget.session.errorMessage =
-                'Asisten belum berhasil dibuka. Periksa koneksi internet Anda lalu coba lagi.';
+            widget.session.isSessionReady = true;
+            widget.session.isTimeoutError = false;
           });
         }
       }

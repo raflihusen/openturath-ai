@@ -230,21 +230,20 @@ const notebookUiScript = r'''
     });
   }
   function ready() {
-    if (accessDenied()) return false;
     clean();
-    const bodyText = document.body ? (document.body.textContent || document.body.innerText || '') : '';
-    if (/loading notebook|memuat notebook|\b0 sources\b/i.test(bodyText)) {
-      return false;
-    }
-    const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
-    return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
+    if (accessDenied()) return false;
+    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
+    if (input) return true;
+    if (document.querySelector(answerSelector) || document.querySelector('.chat-message, .chat-response')) return true;
+    const bodyText = (document.body?.innerText || '').toLowerCase();
+    return bodyText.length > 50 && !/loading notebook|memuat notebook/i.test(bodyText);
   }
   function accessDenied() {
-    const rawText = (document.body?.textContent || document.body?.innerText || '').toLowerCase();
+    const body = (document.body?.innerText || '').toLowerCase();
     const title = (document.title || '').toLowerCase();
-    const hasTextMatch = /anda memerlukan akses|minta akses|you need access|request access|access denied|tidak memiliki izin|no access|need permission/.test(rawText) ||
-      /anda memerlukan akses|you need access|access denied/.test(title);
-    const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, .access-denied, div[class*="access-denied" i], div[class*="denied" i], .error-page, .permission-denied');
+    const hasTextMatch = /anda memerlukan akses|minta akses|you need access|request access|tidak memiliki izin/.test(body) ||
+      /anda memerlukan akses|you need access/.test(title);
+    const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="access-denied" i]');
     return hasTextMatch || hasElementMatch;
   }
   window.otNotebook = {clean, ready, latest, conversation, accessDenied, setTheme: syncTheme};

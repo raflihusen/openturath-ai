@@ -206,20 +206,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: Text(
-                                user.name.isEmpty || user.name == 'Ahlan'
-                                    ? 'Ahlan wa Sahlan'
-                                    : 'Ahlan, ${user.name}',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: textPrimary,
-                                ),
-                              ),
-                            ),
                             _StudyEntryCard(
+                              name: user.name,
                               agent: target,
                               hasLiveSession: hasLiveSession,
                               isDark: isDark,
@@ -533,12 +521,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 }
 
 class _StudyEntryCard extends StatelessWidget {
+  final String name;
   final AgentModel? agent;
   final bool hasLiveSession;
   final bool isDark;
   final VoidCallback onPrimary;
 
   const _StudyEntryCard({
+    required this.name,
     required this.agent,
     required this.hasLiveSession,
     required this.isDark,
@@ -547,6 +537,7 @@ class _StudyEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
     final hasHistory = agent != null;
     final title = hasLiveSession || hasHistory
         ? agent!.title
@@ -559,6 +550,12 @@ class _StudyEntryCard extends StatelessWidget {
     final primaryLabel = hasLiveSession || hasHistory
         ? 'Lanjutkan Kajian'
         : 'Mulai Kajian';
+
+    final categoryLabel = (agent != null &&
+            agent!.category.trim().toLowerCase() !=
+                agent!.title.trim().toLowerCase())
+        ? agent!.category.toUpperCase()
+        : 'KAJIAN TURATS';
 
     final bgGradient = isDark
         ? const LinearGradient(
@@ -603,7 +600,7 @@ class _StudyEntryCard extends StatelessWidget {
                 children: [
                   Positioned.fill(
                     child: CustomPaint(
-                      painter: _StudyDeskFolioPainter(isDark: isDark),
+                      painter: _DashboardAbstractPatternPainter(isDark: isDark),
                     ),
                   ),
                   Padding(
@@ -611,9 +608,34 @@ class _StudyEntryCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.09),
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.12),
+                                ),
+                              ),
+                              child: Text(
+                                displayName == null
+                                    ? 'Ahlan'
+                                    : 'Ahlan, $displayName',
+                                style: GoogleFonts.outfit(
+                                  color: const Color(0xFFF8F8F8),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
                         Text(
-                          (agent != null ? agent!.category : 'Kajian Turats')
-                              .toUpperCase(),
+                          categoryLabel,
                           style: GoogleFonts.outfit(
                             color: const Color(0xFFC7C7CC),
                             fontSize: 9.5,
@@ -621,7 +643,7 @@ class _StudyEntryCard extends StatelessWidget {
                             letterSpacing: 1.1,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 5),
                         Text(
                           title,
                           maxLines: 2,
@@ -690,89 +712,60 @@ class _StudyEntryCard extends StatelessWidget {
   }
 }
 
-/// Ornamen batas folio naskah klasik dan geometris meja kajian turats
-class _StudyDeskFolioPainter extends CustomPainter {
+/// Latar belakang abstrak minimalis kartu beranda (siluet kubah/mihrab geometris islami)
+class _DashboardAbstractPatternPainter extends CustomPainter {
   final bool isDark;
-  const _StudyDeskFolioPainter({required this.isDark});
+  const _DashboardAbstractPatternPainter({required this.isDark});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final folioBorderPaint = Paint()
-      ..color = Colors.white.withValues(alpha: isDark ? 0.08 : 0.10)
+    final linePaint = Paint()
+      ..color = Colors.white.withValues(alpha: isDark ? 0.065 : 0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
-    final subtleRulePaint = Paint()
-      ..color = Colors.white.withValues(alpha: isDark ? 0.04 : 0.05)
+    final faintPaint = Paint()
+      ..color = Colors.white.withValues(alpha: isDark ? 0.035 : 0.045)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.8;
 
-    // Bingkai margin naskah folio turats
-    const inset = 10.0;
-    final outerRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(
-          inset, inset, size.width - inset * 2, size.height - inset * 2),
-      const Radius.circular(16),
-    );
-    canvas.drawRRect(outerRect, folioBorderPaint);
+    final fillPaint = Paint()
+      ..color = Colors.white.withValues(alpha: isDark ? 0.02 : 0.025)
+      ..style = PaintingStyle.fill;
 
-    // Aksen sudut geometris khas naskah
-    const cornerLength = 14.0;
-    final cornerPaint = Paint()
-      ..color = Colors.white.withValues(alpha: isDark ? 0.14 : 0.16)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4;
+    final cx = size.width * 0.86;
+    final cy = size.height * 0.42;
 
-    // Top-left
-    canvas.drawLine(
-      const Offset(inset + 4, inset + 4),
-      const Offset(inset + 4 + cornerLength, inset + 4),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      const Offset(inset + 4, inset + 4),
-      const Offset(inset + 4, inset + 4 + cornerLength),
-      cornerPaint,
-    );
-
-    // Top-right
-    canvas.drawLine(
-      Offset(size.width - inset - 4, inset + 4),
-      Offset(size.width - inset - 4 - cornerLength, inset + 4),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width - inset - 4, inset + 4),
-      Offset(size.width - inset - 4, inset + 4 + cornerLength),
-      cornerPaint,
-    );
-
-    // Bottom-right
-    canvas.drawLine(
-      Offset(size.width - inset - 4, size.height - inset - 4),
-      Offset(size.width - inset - 4 - cornerLength, size.height - inset - 4),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width - inset - 4, size.height - inset - 4),
-      Offset(size.width - inset - 4, size.height - inset - 4 - cornerLength),
-      cornerPaint,
-    );
-
-    // Garis lengkung geometris halus di sudut latar belakang
-    final cx = size.width * 0.88;
-    final cy = size.height * 0.38;
-    for (int i = 1; i <= 3; i++) {
-      final r = 32.0 * i;
+    // 1. Lengkungan kubah arsitektural minimalis
+    for (int i = 1; i <= 4; i++) {
+      final w = 28.0 * i;
+      final h = 42.0 * i;
       final path = Path();
-      path.moveTo(cx - r, size.height + 10);
-      path.quadraticBezierTo(cx, cy - r * 0.5, cx + r, size.height + 10);
-      canvas.drawPath(path, subtleRulePaint);
+      path.moveTo(cx - w, size.height + 15);
+      path.lineTo(cx - w, cy + h * 0.25);
+      path.quadraticBezierTo(cx - w * 0.7, cy - h * 0.65, cx, cy - h);
+      path.quadraticBezierTo(cx + w * 0.7, cy - h * 0.65, cx + w, cy + h * 0.25);
+      path.lineTo(cx + w, size.height + 15);
+
+      canvas.drawPath(path, i == 1 ? linePaint : faintPaint);
+      if (i == 1) {
+        canvas.drawPath(path, fillPaint);
+      }
     }
+
+    // 2. Garis geometris halus bersilangan khas naskah turats
+    final gridPath = Path();
+    for (double x = size.width * 0.52; x < size.width + 40; x += 34) {
+      gridPath.moveTo(x, -10);
+      gridPath.lineTo(x + size.height * 0.75, size.height + 10);
+      gridPath.moveTo(x, size.height + 10);
+      gridPath.lineTo(x + size.height * 0.75, -10);
+    }
+    canvas.drawPath(gridPath, faintPaint);
   }
 
   @override
-  bool shouldRepaint(covariant _StudyDeskFolioPainter oldDelegate) =>
+  bool shouldRepaint(covariant _DashboardAbstractPatternPainter oldDelegate) =>
       oldDelegate.isDark != isDark;
 }
 
