@@ -2,6 +2,8 @@ const entitlementKeys = <String, String>{
   'fiqh_tahawwulat': 'fiqh_tahawwulat',
   'fiqh_tahawwulat_muhaqqiq': 'fiqh_tahawwulat',
   'fiqh_tahawwulat_bayan': 'fiqh_tahawwulat',
+  'fiqh_tahawwulat_mukhtabir': 'fiqh_tahawwulat',
+  'fiqh_tahawwulat_habib': 'fiqh_tahawwulat',
   'fiqh_syafii': 'fiqh_syafii',
   'fiqh_syafii_muhaqqiq': 'fiqh_syafii',
   'fiqh_hanafi': 'fiqh_hanafi',

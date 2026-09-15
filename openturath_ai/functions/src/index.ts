@@ -40,6 +40,8 @@ const AGENT_URLS: Record<string, string> = {
   fiqh_tahawwulat: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
   fiqh_tahawwulat_muhaqqiq: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
   fiqh_tahawwulat_bayan: "https://notebooklm.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+  fiqh_tahawwulat_mukhtabir: "https://notebooklm.google.com/notebook/8527a426-1383-48b9-be1c-85276113edb3",
+  fiqh_tahawwulat_habib: "https://notebooklm.google.com/notebook/8ac3c7fc-db0d-447d-8d85-61cdf4b7f503",
   fiqh_syafii: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
   fiqh_syafii_muhaqqiq: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
 
@@ -81,6 +83,8 @@ const AGENT_ENTITLEMENTS: Record<string, string> = {
   fiqh_tahawwulat: "fiqh_tahawwulat",
   fiqh_tahawwulat_muhaqqiq: "fiqh_tahawwulat",
   fiqh_tahawwulat_bayan: "fiqh_tahawwulat",
+  fiqh_tahawwulat_mukhtabir: "fiqh_tahawwulat",
+  fiqh_tahawwulat_habib: "fiqh_tahawwulat",
   fiqh_syafii: "fiqh_syafii",
   fiqh_syafii_muhaqqiq: "fiqh_syafii",
   fiqh_hanafi: "fiqh_hanafi",
@@ -1582,6 +1586,18 @@ const AGENTS: Record<string, { notebookId: string; akalCuid: string; label: stri
     notebookId: "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
     akalCuid: "cmln2i27k0000jx047oabzw8p",
     label: "AI Fikih Tahawwulat (Al-Bayan)",
+    entitlementKey: "fiqh_tahawwulat"
+  },
+  "fikih-tahawwulat-mukhtabir": {
+    notebookId: "8527a426-1383-48b9-be1c-85276113edb3",
+    akalCuid: "cmln2i27k0000jx047oabzw8p",
+    label: "AI Fikih Tahawwulat (Al-Mukhtabir)",
+    entitlementKey: "fiqh_tahawwulat"
+  },
+  "fikih-tahawwulat-habib": {
+    notebookId: "8ac3c7fc-db0d-447d-8d85-61cdf4b7f503",
+    akalCuid: "cmln2i27k0000jx047oabzw8p",
+    label: "AI Fikih Tahawwulat (Al-Habib)",
     entitlementKey: "fiqh_tahawwulat"
   },
   "fikih-syafii": {

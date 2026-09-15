@@ -126,7 +126,7 @@ void main() {
 
       final tahawwulat = agents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
       expect(tahawwulat.title, contains('Tahawwulat'));
-      expect(tahawwulat.subAgents?.length, equals(2));
+      expect(tahawwulat.subAgents?.length, equals(4));
       expect(tahawwulat.referenceBooks?.isNotEmpty, isTrue);
     });
   });
