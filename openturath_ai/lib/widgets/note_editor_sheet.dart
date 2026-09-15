@@ -133,12 +133,37 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     }
   }
 
+  TextDirection _textDirection = TextDirection.ltr;
+
   @override
   void dispose() {
     _autoSaveDebounce?.cancel();
     _titleController.dispose();
     _bodyController.dispose();
     super.dispose();
+  }
+
+  void _applyDirection(TextDirection dir) {
+    final selection = _bodyController.selection;
+    final text = _bodyController.text;
+
+    if (selection.isValid && !selection.isCollapsed) {
+      final selectedText = text.substring(selection.start, selection.end);
+      final marker = dir == TextDirection.rtl ? '\u200F' : '\u200E';
+      final replaced = text.replaceRange(
+        selection.start,
+        selection.end,
+        '$marker$selectedText',
+      );
+      _bodyController.text = replaced;
+      _bodyController.selection = TextSelection(
+        baseOffset: selection.start,
+        extentOffset: selection.start + marker.length + selectedText.length,
+      );
+    }
+    setState(() => _textDirection = dir);
+    OTMotion.selection();
+    _scheduleAutoSave();
   }
 
   void _applyFormat(String prefix, String suffix,
@@ -261,22 +286,20 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
       padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: widget.fullScreen
-            ? BorderRadius.zero
-            : const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.zero,
         border: Border.all(color: border, width: 0.8),
       ),
       child: Column(
         children: [
           if (!widget.fullScreen)
             Center(
-                child: Container(
-                    width: 36,
-                    height: 4,
-                    margin: const EdgeInsets.only(top: 12, bottom: 8),
-                    decoration: BoxDecoration(
-                        color: textSecondary.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2)))),
+              child: Container(
+                width: 36,
+                height: 3,
+                margin: const EdgeInsets.only(top: 8, bottom: 6),
+                color: textSecondary.withValues(alpha: 0.25),
+              ),
+            ),
 
           // Appbar Row: Mode Toggle, Close, Save
           Padding(
@@ -323,7 +346,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   height: 32,
                   decoration: BoxDecoration(
                     color: surfaceSubtle,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.zero,
                     border: Border.all(color: border, width: 0.6),
                   ),
                   child: Row(
@@ -337,7 +360,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           decoration: BoxDecoration(
                             color:
                                 !_isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.circular(7),
+                            borderRadius: BorderRadius.zero,
                           ),
                           child: Text(
                             'Tulis',
@@ -362,7 +385,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           decoration: BoxDecoration(
                             color:
                                 _isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.circular(7),
+                            borderRadius: BorderRadius.zero,
                           ),
                           child: Text(
                             'Pratinjau',
@@ -388,8 +411,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                     backgroundColor: textPrimary,
                     foregroundColor:
                         isDark ? const Color(0xFF18181B) : Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero),
                   ),
                   child: Text(
                     'Simpan',
@@ -404,17 +427,17 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
           const Divider(height: 1),
 
-          // Formatting Toolbar (Only in Edit mode)
+          // Formatting Toolbar (Full width row, centered and evenly distributed)
           if (!_isPreview)
             Container(
               height: 42,
-              padding: const EdgeInsets.symmetric(horizontal: OTSpacing.md),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               decoration: BoxDecoration(
                 color: surfaceSubtle,
                 border: Border(bottom: BorderSide(color: border, width: 0.6)),
               ),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _ToolbarBtn(
                     label: 'B',
@@ -454,10 +477,16 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
                   ),
                   _ToolbarBtn(
-                    label: 'H2',
-                    tooltip: 'Sub-bab',
-                    onTap: () =>
-                        _applyFormat('\n## ', '\n', defaultText: 'Sub-bab'),
+                    icon: Icons.format_textdirection_l_to_r_rounded,
+                    tooltip: 'Orientasi Kiri ke Kanan (LTR)',
+                    isActive: _textDirection == TextDirection.ltr,
+                    onTap: () => _applyDirection(TextDirection.ltr),
+                  ),
+                  _ToolbarBtn(
+                    icon: Icons.format_textdirection_r_to_l_rounded,
+                    tooltip: 'Orientasi Kanan ke Kiri / Arab (RTL)',
+                    isActive: _textDirection == TextDirection.rtl,
+                    onTap: () => _applyDirection(TextDirection.rtl),
                   ),
                 ],
               ),
@@ -496,44 +525,47 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                   ),
                                 ),
                               )
-                            : MarkdownBody(
-                                data: _bodyController.text,
-                                selectable: true,
-                                styleSheet: MarkdownStyleSheet(
-                                  p: GoogleFonts.outfit(
-                                    fontSize: 14.5,
-                                    height: 1.6,
-                                    color: textPrimary,
-                                  ),
-                                  h1: GoogleFonts.newsreader(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: textPrimary,
-                                  ),
-                                  h2: GoogleFonts.newsreader(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                    color: textPrimary,
-                                  ),
-                                  blockquote: GoogleFonts.outfit(
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic,
-                                    color: textSecondary,
-                                  ),
-                                  blockquoteDecoration: BoxDecoration(
-                                    color: surfaceSubtle,
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border(
-                                      left: BorderSide(
-                                        color:
-                                            textPrimary.withValues(alpha: 0.6),
-                                        width: 3.5,
+                            : Directionality(
+                                textDirection: _textDirection,
+                                child: MarkdownBody(
+                                  data: _bodyController.text,
+                                  selectable: true,
+                                  styleSheet: MarkdownStyleSheet(
+                                    p: GoogleFonts.outfit(
+                                      fontSize: 14.5,
+                                      height: 1.6,
+                                      color: textPrimary,
+                                    ),
+                                    h1: GoogleFonts.newsreader(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: textPrimary,
+                                    ),
+                                    h2: GoogleFonts.newsreader(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: textPrimary,
+                                    ),
+                                    blockquote: GoogleFonts.outfit(
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic,
+                                      color: textSecondary,
+                                    ),
+                                    blockquoteDecoration: BoxDecoration(
+                                      color: surfaceSubtle,
+                                      borderRadius: BorderRadius.zero,
+                                      border: Border(
+                                        left: BorderSide(
+                                          color: textPrimary.withValues(
+                                              alpha: 0.6),
+                                          width: 3.5,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  code: GoogleFonts.sourceCodePro(
-                                    fontSize: 13,
-                                    backgroundColor: surfaceSubtle,
+                                    code: GoogleFonts.sourceCodePro(
+                                      fontSize: 13,
+                                      backgroundColor: surfaceSubtle,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -572,6 +604,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         maxLines: null,
                         minLines: 12,
                         keyboardType: TextInputType.multiline,
+                        textDirection: _textDirection,
+                        textAlign: _textDirection == TextDirection.rtl
+                            ? TextAlign.right
+                            : TextAlign.left,
                         style: GoogleFonts.outfit(
                           fontSize: 14.5,
                           height: 1.55,
@@ -579,6 +615,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         ),
                         decoration: InputDecoration(
                           hintText: 'Tulis catatan atau tempel ibarah di sini…',
+                          hintTextDirection: _textDirection,
                           hintStyle: GoogleFonts.outfit(
                             fontSize: 14,
                             color: textSecondary.withValues(alpha: 0.6),
@@ -604,6 +641,7 @@ class _ToolbarBtn extends StatelessWidget {
   final VoidCallback onTap;
   final bool isBold;
   final bool isItalic;
+  final bool isActive;
 
   const _ToolbarBtn({
     this.label,
@@ -612,33 +650,44 @@ class _ToolbarBtn extends StatelessWidget {
     required this.onTap,
     this.isBold = false,
     this.isItalic = false,
+    this.isActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textSecondary =
-        OTColors.textSecondary(Theme.of(context).brightness == Brightness.dark);
-    final textPrimary =
-        OTColors.textPrimary(Theme.of(context).brightness == Brightness.dark);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textSecondary = OTColors.textSecondary(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    const accent = OTColors.sovereignAmber;
 
     return Tooltip(
       message: tooltip,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(6),
         child: Container(
-          width: 38,
+          constraints: const BoxConstraints(minWidth: 36, maxWidth: 44),
           height: 32,
+          decoration: BoxDecoration(
+            color: isActive
+                ? accent.withValues(alpha: 0.14)
+                : Colors.transparent,
+            border: isActive
+                ? Border.all(
+                    color: accent.withValues(alpha: 0.45), width: 0.9)
+                : null,
+          ),
           alignment: Alignment.center,
           child: icon != null
-              ? Icon(icon, size: 17, color: textSecondary)
+              ? Icon(icon,
+                  size: 17, color: isActive ? accent : textSecondary)
               : Text(
                   label!,
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-                    fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
-                    color: textPrimary,
+                    fontStyle:
+                        isItalic ? FontStyle.italic : FontStyle.normal,
+                    color: isActive ? accent : textPrimary,
                   ),
                 ),
         ),
