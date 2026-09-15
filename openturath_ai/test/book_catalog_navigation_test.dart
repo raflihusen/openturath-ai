@@ -39,9 +39,8 @@ void main() {
       expect(find.text('كتاب الأم'), findsOneWidget);
       expect(find.text('الإمام محمد بن إدريس الشافعي'), findsOneWidget);
       expect(find.text('w. 204 H'), findsOneWidget);
-      expect(find.text('Asal Mazhab'), findsOneWidget);
-      expect(find.text('Mutaqaddimin'), findsOneWidget);
       expect(find.text('8 jilid'), findsOneWidget);
+      expect(find.text('Darul Kutub Al-Ilmiyyah'), findsOneWidget);
 
       // Tap the item
       await tester.tap(find.byType(BookRowItem));
@@ -90,7 +89,7 @@ void main() {
 
       expect(find.text('Kitab rujukan'), findsOneWidget);
       expect(find.text('87 Kitab Mazhab Syafi\'i'), findsOneWidget);
-      expect(find.text('Semua Era'), findsOneWidget);
+      expect(find.text('Semua kitab'), findsOneWidget);
     });
 
     testWidgets('AppRoutes contains bookCatalog and bookDetail', (tester) async {

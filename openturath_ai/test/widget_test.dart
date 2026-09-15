@@ -8,7 +8,7 @@ import 'package:openturath_ai/services/research_notes_service.dart';
 
 void main() {
   group('UserModel & ModuleEntitlement Unit Tests', () {
-    test('User trial calculation correctly counts remaining quota', () {
+    test('User trial without active voucher entitlement has no access', () {
       final user = UserModel(
         uid: 'test_uid_1',
         name: 'Peneliti Turats',
@@ -20,12 +20,34 @@ void main() {
 
       expect(user.isTrial, isTrue);
       expect(user.isPremium, isFalse);
-      expect(user.questionsRemaining, equals(6));
+      expect(user.questionsRemaining, equals(0));
       expect(user.isTrialExhausted, isFalse);
-      expect(user.hasAccess, isTrue);
+      expect(user.hasAccess, isFalse);
     });
 
-    test('User trial is exhausted when questions reach limit', () {
+    test('User with active voucher trial entitlement has access and questions', () {
+      final user = UserModel(
+        uid: 'test_uid_trial',
+        name: 'Peneliti Turats',
+        email: 'peneliti@openturath.id',
+        photoUrl: '',
+        plan: AppConstants.planTrial,
+        questionsUsed: 4,
+        entitlements: {
+          'all_access': ModuleEntitlement(
+            plan: 'trial',
+            expiry: DateTime.now().add(const Duration(days: 7)),
+            status: 'active',
+          ),
+        },
+      );
+
+      expect(user.isTrial, isTrue);
+      expect(user.hasAccess, isTrue);
+      expect(user.questionsRemaining, equals(9999));
+    });
+
+    test('User trial is denied when voucher entitlement is expired', () {
       final user = UserModel(
         uid: 'test_uid_2',
         name: 'Peneliti Turats',
@@ -33,9 +55,15 @@ void main() {
         photoUrl: '',
         plan: AppConstants.planTrial,
         questionsUsed: 10,
+        entitlements: {
+          'all_access': ModuleEntitlement(
+            plan: 'trial',
+            expiry: DateTime.now().subtract(const Duration(days: 1)),
+            status: 'expired',
+          ),
+        },
       );
 
-      expect(user.isTrialExhausted, isTrue);
       expect(user.questionsRemaining, equals(0));
       expect(user.hasAccess, isFalse);
     });

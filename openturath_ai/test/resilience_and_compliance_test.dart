@@ -75,8 +75,8 @@ void main() {
 
       expect(guest.isGuest, isTrue);
       expect(guest.isTrial, isTrue);
-      expect(guest.questionsRemaining, equals(10));
-      expect(guest.hasAccess, isTrue);
+      expect(guest.questionsRemaining, equals(0));
+      expect(guest.hasAccess, isFalse);
     });
 
     test('AppTheme Obsidian standard does not leak gold color #D4AF37', () {
@@ -142,7 +142,7 @@ void main() {
       );
 
       expect(expiredUser.hasAccessToAgent('fiqh_tahawwulat'), isFalse);
-      expect(expiredUser.isTrialExhausted, isTrue);
+      expect(expiredUser.isTrialExhausted, isFalse);
     });
 
     test('ThemeData dark and light include hardened component themes', () {
