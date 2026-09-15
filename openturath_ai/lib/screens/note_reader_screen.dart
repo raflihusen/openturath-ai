@@ -100,7 +100,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
             padding: const EdgeInsets.fromLTRB(
                 OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
             children: [
-              Text(_kindLabel(_item.documentKind),
+              Text(_kindLabel(_item),
                   style: GoogleFonts.outfit(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -113,9 +113,18 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                       height: 1.15,
                       fontWeight: FontWeight.w700,
                       color: primary)),
-              const SizedBox(height: 10),
-              Text(_item.agentTitle,
-                  style: GoogleFonts.outfit(fontSize: 13, color: secondary)),
+              if (_item.agentTitle.isNotEmpty &&
+                  _item.documentKind == BookmarkDocumentKind.aiAnswer &&
+                  !displayTitle.toLowerCase().contains(_item.agentTitle
+                      .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+                      .toLowerCase())) ...[
+                const SizedBox(height: 10),
+                Text(
+                  _item.agentTitle
+                      .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), ''),
+                  style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+                ),
+              ],
               const SizedBox(height: 20),
               Divider(color: secondary.withValues(alpha: .25)),
               const SizedBox(height: 20),
@@ -153,9 +162,11 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     );
   }
 
-  String _kindLabel(BookmarkDocumentKind kind) => switch (kind) {
-        BookmarkDocumentKind.personalNote => 'Catatan pribadi',
-        BookmarkDocumentKind.aiAnswer => 'Catatan kajian',
-        BookmarkDocumentKind.bookReference => 'Rujukan kitab',
+  String _kindLabel(BookmarkModel item) => switch (item.documentKind) {
+        BookmarkDocumentKind.personalNote => 'Catatan',
+        BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
+            ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+            : (item.fieldName.isNotEmpty ? item.fieldName : 'Kajian'),
+        BookmarkDocumentKind.bookReference => 'Rujukan Kitab',
       };
 }

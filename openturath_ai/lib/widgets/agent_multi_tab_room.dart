@@ -48,7 +48,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         if (mounted) AppSnackBar.warning(context, AppCopy.noConversationToCopy);
         return;
       }
-      final formatted = '# Percakapan ${session.agent.title}\n\n$text';
+      final formatted = text;
       // 1. Simpan langsung ke Catatan (Bookmarks)
       final uid = _authService.currentUser?.uid;
       final bookmark = copiedAnswerBookmark(formatted, session.agent);

@@ -42,7 +42,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   static const List<String> _categories = [
     'Semua',
     'Catatan',
-    'Dari kajian',
+    'Kajian',
     'Rujukan',
   ];
 
@@ -91,7 +91,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         matchesCategory = true;
       } else if (_selectedCategory == 'Catatan') {
         matchesCategory = b.documentKind == BookmarkDocumentKind.personalNote;
-      } else if (_selectedCategory == 'Dari kajian') {
+      } else if (_selectedCategory == 'Kajian') {
         matchesCategory = b.documentKind == BookmarkDocumentKind.aiAnswer;
       } else {
         matchesCategory = b.documentKind == BookmarkDocumentKind.bookReference;
@@ -781,9 +781,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
     final pillLabel = switch (item.documentKind) {
-      BookmarkDocumentKind.personalNote => 'Catatan pribadi',
-      BookmarkDocumentKind.aiAnswer => 'Dari kajian',
-      BookmarkDocumentKind.bookReference => 'Rujukan kitab',
+      BookmarkDocumentKind.personalNote => 'Catatan',
+      BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
+          ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+          : (item.fieldName.contains('Catatan') ? 'Catatan' : (item.fieldName.isNotEmpty ? item.fieldName : 'Kajian')),
+      BookmarkDocumentKind.bookReference => 'Rujukan Kitab',
     };
     final displayTitle = item.documentKind == BookmarkDocumentKind.aiAnswer
         ? aiAnswerTitle(item.fullAnswer, item.agentTitle)

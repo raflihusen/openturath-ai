@@ -16,8 +16,13 @@ class ParsedAiAnswerContent {
 
 ParsedAiAnswerContent parseAiAnswerContent(String answer) {
   final lines = answer.split(RegExp(r'\r?\n'));
-  final headingIndex =
-      lines.indexWhere((line) => RegExp(r'^\s{0,3}#{1,6}\s+\S').hasMatch(line));
+  final headingIndex = lines.indexWhere((line) {
+    final clean = line.trim();
+    if (RegExp(r'^#{1,6}\s*percakapan\b', caseSensitive: false).hasMatch(clean)) {
+      return false;
+    }
+    return RegExp(r'^\s{0,3}#{1,6}\s+\S').hasMatch(line);
+  });
   final hasHeading = headingIndex >= 0;
   final titleIndex = hasHeading
       ? headingIndex
@@ -48,10 +53,13 @@ ParsedAiAnswerContent parseAiAnswerContent(String answer) {
 
 String _displayLine(String line) {
   var value = line.trim();
+  if (RegExp(r'^#{1,6}\s*percakapan\b', caseSensitive: false).hasMatch(value)) {
+    return '';
+  }
   value = value.replaceFirst(RegExp(r'^#{1,6}\s*'), '');
   value = value.replaceFirst(RegExp(r'^\[[^\]]{1,12}\]\s*'), '');
   value = value.replaceFirst(
-      RegExp(r'^(jawaban\s+langsung|jawaban\s+ai)\s*:\s*',
+      RegExp(r'^(jawaban\s+langsung|jawaban\s+ai|percakapan)\s*:\s*',
           caseSensitive: false),
       '');
   value = value.replaceAll(RegExp(r'^[>*\-\s]+'), '').trim();
@@ -97,14 +105,8 @@ String readableAiAnswerMarkdown(String answer) {
 }
 
 String aiAnswerTitle(String answer, String agentTitle) {
-  final parsed = parseAiAnswerContent(answer);
-  final raw = parsed.title.toLowerCase();
-  if (!raw.contains('percakapan') &&
-      !raw.contains('jawaban langsung') &&
-      !raw.contains('jawaban ai') &&
-      parsed.title.isNotEmpty) {
-    return parsed.title;
-  }
+  final cleanAgent =
+      agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '');
   final lines = answer.split(RegExp(r'\r?\n'));
   final questionIndex = lines.indexWhere((line) =>
       RegExp(r'^\s*pertanyaan\s*\d*\s*$', caseSensitive: false).hasMatch(line));
@@ -114,5 +116,25 @@ String aiAnswerTitle(String answer, String agentTitle) {
       if (candidate.isNotEmpty) return _limitTitle(candidate);
     }
   }
-  return 'Kajian bersama $agentTitle';
+  final parsed = parseAiAnswerContent(answer);
+  final raw = parsed.title.toLowerCase();
+  if (!raw.contains('percakapan') &&
+      !raw.contains('jawaban langsung') &&
+      !raw.contains('jawaban ai') &&
+      parsed.title.isNotEmpty &&
+      parsed.title != 'Kajian tanpa judul') {
+    return parsed.title;
+  }
+  for (final line in lines) {
+    final candidate = _displayLine(line);
+    final lower = candidate.toLowerCase();
+    if (candidate.isNotEmpty &&
+        !lower.contains('percakapan') &&
+        !lower.contains('jawaban langsung') &&
+        !lower.contains('jawaban ai') &&
+        !lower.startsWith('pertanyaan')) {
+      return _limitTitle(candidate);
+    }
+  }
+  return cleanAgent.isNotEmpty ? cleanAgent : 'Catatan Kajian';
 }
