@@ -372,7 +372,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           _isLoadingUrl = false;
           _isWebViewLoading = false;
           _errorMessage = alreadyEntitled
-              ? 'Hak akses sudah tercatat. NotebookLM belum mengenali akun ini. Pastikan akun Google sesuai, lalu coba muat kembali.'
+              ? 'Hak akses sudah tercatat. Sesi belum mengenali akun ini. Pastikan akun Google sesuai, lalu coba muat kembali.'
               : AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
         });
       }

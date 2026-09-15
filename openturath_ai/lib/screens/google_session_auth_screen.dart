@@ -68,7 +68,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
         ),
         content: Text(
-          'Hubungkan akun Google agar NotebookLM dapat dibuka tanpa perlu masuk ulang.',
+          'Hubungkan akun Google agar ruang kajian dapat dibuka tanpa perlu masuk ulang.',
           style: GoogleFonts.outfit(
             fontSize: 13,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
