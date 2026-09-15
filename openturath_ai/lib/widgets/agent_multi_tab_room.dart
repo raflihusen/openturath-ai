@@ -678,7 +678,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      if (isLogin || (_readySamples >= 1 && elapsedMs >= 600)) {
+      if (isLogin || (_readySamples >= 2 && elapsedMs >= 2200)) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
@@ -687,7 +687,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isTimeoutError = false;
           });
         }
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 8) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 12) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {

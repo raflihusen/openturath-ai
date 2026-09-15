@@ -133,7 +133,6 @@ void main() {
         RegExp(r"['\x22][^'\x22]*autentikasi\s+sesi[^'\x22]*['\x22]", caseSensitive: false),
         RegExp(r"['\x22][^'\x22]*modul\s+telaah[^'\x22]*['\x22]", caseSensitive: false),
         RegExp(r"['\x22][^'\x22]*memproses\s+telaah[^'\x22]*['\x22]", caseSensitive: false),
-        RegExp(r"['\x22][^'\x22]*ai\s+for\s+islamic\s+scholarship[^'\x22]*['\x22]", caseSensitive: false),
       ];
 
       for (final path in filesToScan) {

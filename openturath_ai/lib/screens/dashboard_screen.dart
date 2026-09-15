@@ -541,32 +541,28 @@ class _StudyEntryCard extends StatelessWidget {
     final hasHistory = agent != null;
     final title = hasLiveSession || hasHistory
         ? agent!.title
-        : 'Telaah Turats';
+        : 'Cari Jawaban Beserta Ibarahnya';
     final subtitle = hasLiveSession
         ? 'Sesi kajian siap dibuka kembali.'
         : (hasHistory
             ? 'Buka kembali rujukan dan catatan sebelumnya.'
-            : 'Ajukan pertanyaan dan telusuri teks kitab kuning.');
+            : 'Ajukan pertanyaan dan temukan pembahasannya langsung dari kitab-kitab ulama.');
     final primaryLabel = hasLiveSession || hasHistory
-        ? 'Lanjutkan Kajian'
-        : 'Mulai Kajian';
+        ? 'Lanjutkan Telaah'
+        : 'Mulai Telaah';
 
-    final categoryLabel = (agent != null &&
-            agent!.category.trim().toLowerCase() !=
-                agent!.title.trim().toLowerCase())
-        ? agent!.category.toUpperCase()
-        : 'KAJIAN TURATS';
+    const categoryLabel = 'TELAAH KITAB';
 
     final bgGradient = isDark
         ? const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF232730), Color(0xFF14171D)],
+            colors: [Color(0xFF303036), Color(0xFF17171A)],
           )
         : const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF2D323D), Color(0xFF1B1E26)],
+            colors: [Color(0xFF28282D), Color(0xFF141417)],
           );
 
     return Semantics(

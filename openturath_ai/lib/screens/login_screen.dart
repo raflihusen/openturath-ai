@@ -164,11 +164,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
 
-                  // ── 3. Academic Editorial Slogan: "Membaca kitab, menelusuri ibarah." ──
+                  // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
                   _stagger(
                     delayMs: 140,
                     child: Text(
-                      'Membaca kitab, menelusuri ibarah.',
+                      'AI for Islamic Scholarship',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
                         fontSize: 16,

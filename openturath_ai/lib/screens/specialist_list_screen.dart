@@ -219,7 +219,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             onChanged: _onSearchChanged,
                             style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
                             decoration: InputDecoration(
-                              hintText: 'Cari asisten, kitab, atau bab…',
+                              hintText: 'Cari asisten atau ulama…',
                               hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
