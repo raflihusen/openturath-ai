@@ -9,10 +9,9 @@ BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
   if (text.isEmpty || text.length > 200000) {
     throw ArgumentError('Invalid answer length');
   }
-  final parsed = parseAiAnswerContent(text);
   return BookmarkModel(
     id: sha256.convert(utf8.encode('${agent.id}:$text')).toString(),
-    title: parsed.title,
+    title: aiAnswerTitle(text, agent.title),
     agentId: agent.id,
     agentTitle: agent.title,
     fieldName: agent.category,

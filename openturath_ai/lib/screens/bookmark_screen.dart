@@ -42,7 +42,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   static const List<String> _categories = [
     'Semua',
     'Catatan',
-    'Jawaban AI',
+    'Dari kajian',
     'Rujukan',
   ];
 
@@ -91,7 +91,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         matchesCategory = true;
       } else if (_selectedCategory == 'Catatan') {
         matchesCategory = b.documentKind == BookmarkDocumentKind.personalNote;
-      } else if (_selectedCategory == 'Jawaban AI') {
+      } else if (_selectedCategory == 'Dari kajian') {
         matchesCategory = b.documentKind == BookmarkDocumentKind.aiAnswer;
       } else {
         matchesCategory = b.documentKind == BookmarkDocumentKind.bookReference;
@@ -360,7 +360,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               child: Row(
                 children: [
                   Text(
-                    '${_filteredBookmarks.length} arsip kajian',
+                    '${_filteredBookmarks.length} catatan tersimpan',
                     style: OTTypography.captionMedium(color: textSecondary),
                   ),
                   const Spacer(),
@@ -781,10 +781,16 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
     final pillLabel = switch (item.documentKind) {
-      BookmarkDocumentKind.personalNote => 'CATATAN PRIBADI',
-      BookmarkDocumentKind.aiAnswer => 'JAWABAN AI',
-      BookmarkDocumentKind.bookReference => 'RUJUKAN KITAB',
+      BookmarkDocumentKind.personalNote => 'Catatan pribadi',
+      BookmarkDocumentKind.aiAnswer => 'Dari kajian',
+      BookmarkDocumentKind.bookReference => 'Rujukan kitab',
     };
+    final displayTitle = item.documentKind == BookmarkDocumentKind.aiAnswer
+        ? aiAnswerTitle(item.fullAnswer, item.agentTitle)
+        : item.title;
+    final readableAnswer = item.documentKind == BookmarkDocumentKind.aiAnswer
+        ? readableAiAnswerMarkdown(item.fullAnswer)
+        : item.fullAnswer;
 
     return AnimatedContainer(
       duration: OTMotion.normal,
@@ -808,7 +814,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Bar: Rounded Pill (e.g. Fikih Tahawwulat) + Spacer + Time + Chevron
+              // Waktu diletakkan tenang di ujung kanan; kartu sendiri sudah
+              // menjadi affordance untuk membuka detail, jadi tanpa panah.
               Row(
                 children: [
                   Flexible(
@@ -838,12 +845,6 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       color: widget.textSecondary.withValues(alpha: 0.8),
                     ).copyWith(fontSize: 11),
                   ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: widget.textSecondary,
-                  ),
                 ],
               ),
 
@@ -851,7 +852,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
 
               // Title (dengan highlight pencarian)
               _buildHighlightedText(
-                text: item.title,
+                text: displayTitle,
                 query: widget.searchQuery,
                 baseStyle:
                     OTTypography.cardTitle(color: widget.textPrimary).copyWith(
@@ -869,8 +870,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                 _buildHighlightedText(
                   text: item.documentKind == BookmarkDocumentKind.aiAnswer &&
                           widget.searchQuery.trim().isEmpty
-                      ? parseAiAnswerContent(item.fullAnswer).preview
-                      : _getSnippet(item.fullAnswer, widget.searchQuery),
+                      ? parseAiAnswerContent(readableAnswer).preview
+                      : _getSnippet(readableAnswer, widget.searchQuery),
                   query: widget.searchQuery,
                   baseStyle: OTTypography.caption(color: widget.textSecondary)
                       .copyWith(

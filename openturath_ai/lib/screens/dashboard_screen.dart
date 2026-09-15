@@ -440,7 +440,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          (index + 1).toString().padLeft(2, '0'),
+                                          (index + 1)
+                                              .toString()
+                                              .padLeft(2, '0'),
                                           style: GoogleFonts.outfit(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w700,
@@ -718,7 +720,7 @@ class _StudyEntryCard extends StatelessWidget {
                         children: [
                           Expanded(
                             child: _StudyDate(
-                              label: 'Hari ini', value: masehiDate),
+                                label: 'Hari ini', value: masehiDate),
                           ),
                           Container(
                             width: 1,

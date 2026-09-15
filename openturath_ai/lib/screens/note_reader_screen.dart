@@ -4,6 +4,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_snackbar.dart';
+import '../core/bookmark_content.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/note_clipboard_content.dart';
@@ -61,6 +62,12 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     final primary = OTColors.textPrimary(isDark);
     final secondary = OTColors.textSecondary(isDark);
     final subtle = OTColors.surfaceSubtle(isDark);
+    final displayTitle = _item.documentKind == BookmarkDocumentKind.aiAnswer
+        ? aiAnswerTitle(_item.fullAnswer, _item.agentTitle)
+        : _item.title;
+    final displayContent = _item.documentKind == BookmarkDocumentKind.aiAnswer
+        ? readableAiAnswerMarkdown(_item.fullAnswer)
+        : (_item.fullAnswer.isEmpty ? _item.arabicExcerpt : _item.fullAnswer);
     return Scaffold(
       backgroundColor: canvas,
       appBar: AppBar(
@@ -100,7 +107,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                       color: secondary,
                       letterSpacing: .6)),
               const SizedBox(height: 8),
-              Text(_item.title,
+              Text(displayTitle,
                   style: GoogleFonts.newsreader(
                       fontSize: 29,
                       height: 1.15,
@@ -113,9 +120,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
               Divider(color: secondary.withValues(alpha: .25)),
               const SizedBox(height: 20),
               MarkdownBody(
-                data: _item.fullAnswer.isEmpty
-                    ? _item.arabicExcerpt
-                    : _item.fullAnswer,
+                data: displayContent,
                 selectable: true,
                 styleSheet: MarkdownStyleSheet(
                   p: GoogleFonts.outfit(
@@ -149,8 +154,8 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
   }
 
   String _kindLabel(BookmarkDocumentKind kind) => switch (kind) {
-        BookmarkDocumentKind.personalNote => 'CATATAN PRIBADI',
-        BookmarkDocumentKind.aiAnswer => 'JAWABAN AI',
-        BookmarkDocumentKind.bookReference => 'RUJUKAN KITAB',
+        BookmarkDocumentKind.personalNote => 'Catatan pribadi',
+        BookmarkDocumentKind.aiAnswer => 'Catatan kajian',
+        BookmarkDocumentKind.bookReference => 'Rujukan kitab',
       };
 }
