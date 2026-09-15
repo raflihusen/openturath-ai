@@ -6,8 +6,9 @@ import 'bookmark_content.dart';
 
 BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
   final text = answer.trim();
-  if (text.isEmpty || text.length > 200000)
+  if (text.isEmpty || text.length > 200000) {
     throw ArgumentError('Invalid answer length');
+  }
   final parsed = parseAiAnswerContent(text);
   return BookmarkModel(
     id: sha256.convert(utf8.encode('${agent.id}:$text')).toString(),

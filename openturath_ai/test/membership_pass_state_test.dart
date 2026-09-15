@@ -31,7 +31,7 @@ void main() {
 
   test('does not claim access while a payment is pending', () {
     final summary = resolveMembershipPass(user({
-      'fiqh': ModuleEntitlement(plan: 'pro', status: 'pending', paymentStatus: 'pending'),
+      'fiqh': const ModuleEntitlement(plan: 'pro', status: 'pending', paymentStatus: 'pending'),
     }));
     expect(summary.state, MembershipPassState.paymentPending);
     expect(summary.ctaLabel, 'Lihat status pembayaran');
