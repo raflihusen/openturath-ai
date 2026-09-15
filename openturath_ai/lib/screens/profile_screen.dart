@@ -951,7 +951,7 @@ class _MembershipPass extends StatelessWidget {
                             ),
                             const Spacer(),
                             Text(
-                              'PEMEGANG AKSES',
+                              'Untuk',
                               style: GoogleFonts.outfit(
                                 color: muted,
                                 fontSize: 9.5,
@@ -985,7 +985,7 @@ class _MembershipPass extends StatelessWidget {
                                 Expanded(
                                   flex: 3,
                                   child: _PassMeta(
-                                    label: 'AI YANG DIAKSES',
+                                    label: 'Asisten kajian',
                                     value: summary.accessLabel,
                                     valueColor: foreground,
                                   ),

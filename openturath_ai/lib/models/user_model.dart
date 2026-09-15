@@ -107,7 +107,6 @@ class UserModel {
   bool get isTrial => plan == AppConstants.planTrial || plan == 'trial';
   bool get isGuest => email.isEmpty || uid.startsWith('guest_');
   bool get isPremium =>
-      !isTrial &&
       plan != 'free' &&
       (plan == AppConstants.planTholib1m ||
           plan == AppConstants.planTholib6m ||
@@ -130,12 +129,11 @@ class UserModel {
           (subscriptionExpiry != null &&
               subscriptionExpiry!.isAfter(DateTime.now())));
 
-  bool get isSubscriptionActive {
-    if (isPremium && subscriptionExpiry != null) {
-      return subscriptionExpiry!.isAfter(DateTime.now());
-    }
-    return false;
-  }
+  /// Voucher trial dan paket berbayar memakai sumber masa berlaku yang sama.
+  /// Jangan pernah menjadikan nama paket sebagai alasan menolak masa berlaku
+  /// yang masih aktif dari server.
+  bool get isSubscriptionActive =>
+      subscriptionExpiry != null && subscriptionExpiry!.isAfter(DateTime.now());
 
   /// Trial is an entitlement with an expiry supplied by the server voucher.
   /// A local question counter must never grant or revoke access.

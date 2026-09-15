@@ -412,6 +412,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           div.chat-input-container + div,
           div[class*="input-container" i] + div,
           div[class*="query-container" i] + div,
+          .chat-disclaimer, .query-disclaimer, .model-disclaimer,
+          [class*="disclaimer" i], [aria-label*="disclaimer" i],
+          [data-testid*="disclaimer" i],
           [data-ot-hidden] {
             display: none !important;
             visibility: hidden !important;
@@ -629,6 +632,20 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final isLogin = url?.host == 'accounts.google.com' ||
           url?.host == 'accounts.youtube.com' ||
           url?.host == 'consent.google.com';
+      final isDenied = await controller.evaluateJavascript(
+          source: 'window.otNotebook ? window.otNotebook.accessDenied() : false');
+      if (isDenied == true) {
+        _readinessTimer?.cancel();
+        if (mounted) {
+          setState(() {
+            widget.session.isWebLoading = false;
+            widget.session.isPaywallRequired = true;
+            widget.session.errorMessage =
+                'Akses untuk asisten ini belum tersedia pada akun Anda.';
+          });
+        }
+        return;
+      }
       final result = await controller.evaluateJavascript(
           source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
@@ -717,7 +734,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         color: canvas,
         child: AppErrorState(
           title: session.isPaywallRequired
-              ? 'Akses Terbatas'
+              ? 'Asisten belum tersedia'
               : 'Asisten Belum Bisa Dibuka',
           message: session.errorMessage!,
           icon: session.isPaywallRequired

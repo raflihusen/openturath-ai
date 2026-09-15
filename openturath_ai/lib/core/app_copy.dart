@@ -100,13 +100,13 @@ abstract final class AppCopy {
   static const saveAnswerMenu = 'Simpan ke Catatan';
 
   // ── Sesi Akun Google & NotebookLM ──────────────────────────────
-  static const googleSessionConnectTitle = 'Hubungkan akun Google';
+  static const googleSessionConnectTitle = 'Masuk ke akun Google';
   static const googleSessionConnectSubtitle =
-      'Gunakan akun Google untuk membuka NotebookLM';
+      'Siapkan akun untuk ruang kajian Anda';
   static const googleSessionConnectDesc =
-      'Hubungkan akun Google agar NotebookLM dapat dibuka tanpa perlu masuk ulang.';
+      'Setelah masuk, Anda akan kembali ke ruang kajian secara otomatis.';
   static const googleSessionSignInHint =
-      'Masuk dengan akun Google yang memiliki akses ke kitab ini.';
+      'Gunakan akun Google yang Anda pakai untuk belajar di perangkat ini.';
   static const googleSessionConnected = 'Akun Google terhubung';
   static const googleSessionPreparing = 'Menyiapkan percakapan…';
   static const cancelSignIn = 'Batalkan proses masuk';

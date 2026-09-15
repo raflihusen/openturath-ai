@@ -144,7 +144,10 @@ const notebookUiScript = r'''
         .notebook-cover, .notebook-cover-container, .notebook-title-card,
         .notebook-header, .project-header, .chat-header, .chat-panel-header,
         .header-content, .title-card, mat-card.title-card,
-        .loading-notebook, [class*="skeleton"] {
+        .loading-notebook, [class*="skeleton"],
+        .chat-disclaimer, .query-disclaimer, .model-disclaimer,
+        [class*="disclaimer" i], [aria-label*="disclaimer" i],
+        [data-testid*="disclaimer" i] {
           display:none!important;
           visibility:hidden!important;
           height:0px!important;
@@ -215,6 +218,15 @@ const notebookUiScript = r'''
         }
       }
     });
+    // Peringatan bawaan Gemini tidak termasuk antarmuka OpenTurath. Batasan
+    // penggunaan sudah disampaikan di dalam aplikasi, jadi jangan sisakan
+    // satu baris pun di bawah kolom pertanyaan.
+    document.querySelectorAll('div, p, span, small').forEach(el => {
+      const t = text(el).toLowerCase();
+      if (t.length < 260 && /gemini notebook.*(mungkin|may).*(tidak akurat|inaccurate)|responses? may be inaccurate/i.test(t)) {
+        hide(el);
+      }
+    });
   }
   function ready() {
     clean();
@@ -231,7 +243,11 @@ const notebookUiScript = r'''
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
     return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
   }
-  window.otNotebook = {clean, ready, latest, conversation, setTheme: syncTheme};
+  function accessDenied() {
+    const body = (document.body?.innerText || '').toLowerCase();
+    return /anda memerlukan akses|minta akses|you need access|request access|access denied/.test(body);
+  }
+  window.otNotebook = {clean, ready, latest, conversation, accessDenied, setTheme: syncTheme};
   let scheduled = false;
   const observer = new MutationObserver(() => {
     if (scheduled) return;

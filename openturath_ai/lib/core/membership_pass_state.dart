@@ -61,10 +61,9 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
           ? MembershipPassState.expiringSoon
           : MembershipPassState.activePro,
       badge: 'PRO',
-      accessLabel: 'Seluruh asisten OpenTurath',
-      supportingLabel:
-          expiring ? 'Berakhir dalam waktu dekat' : 'Langganan aktif',
-      expiryLabel: 'BERLAKU HINGGA',
+      accessLabel: 'Semua asisten tersedia',
+      supportingLabel: expiring ? 'Masa akses hampir berakhir' : 'Siap digunakan',
+      expiryLabel: 'Berlaku sampai',
       expiresAt: expiry,
       ctaLabel: expiring ? 'Perpanjang Pro' : 'Kelola langganan',
     );
@@ -86,9 +85,9 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     }
     return _base(
         MembershipPassState.locked,
-        'Akses Pro belum aktif',
-        'Aktifkan langganan untuk membuka asisten kajian pilihanmu.',
-        'Aktifkan Pro');
+        'Belum ada akses aktif',
+        'Pilih paket untuk mulai menggunakan asisten kajian.',
+        'Lihat pilihan paket');
   }
 
   final all = active
@@ -110,17 +109,17 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
           .length >
       1;
   final accessLabel = all.isNotEmpty
-      ? 'Seluruh asisten OpenTurath'
+      ? 'Semua asisten tersedia'
       : selected.length == 1
-          ? '1 asisten aktif'
-          : '${selected.length} asisten aktif';
+          ? '1 asisten tersedia'
+          : '${selected.length} asisten tersedia';
   if (isPermanent) {
     return MembershipPassSummary(
         state: MembershipPassState.permanent,
         badge: 'PRO',
         accessLabel: accessLabel,
-        supportingLabel: 'Akses permanen',
-        expiryLabel: 'AKSES',
+        supportingLabel: 'Tanpa batas waktu',
+        expiryLabel: 'Masa berlaku',
         expiresAt: null,
         ctaLabel: 'Kelola akses',
         agentIds: selected.map((entry) => entry.key).toList());
@@ -131,8 +130,8 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
         state: MembershipPassState.trialPro,
         badge: 'PRO',
         accessLabel: accessLabel,
-        supportingLabel: 'MASA COBA · $days HARI',
-        expiryLabel: 'BERAKHIR',
+        supportingLabel: 'Masa coba · $days hari',
+        expiryLabel: 'Berakhir pada',
         expiresAt: expiry,
         ctaLabel: 'Pilih paket Pro',
         agentIds: selected.map((entry) => entry.key).toList());
@@ -145,9 +144,9 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       badge: 'PRO',
       accessLabel: accessLabel,
       supportingLabel: state == MembershipPassState.expiringSoon
-          ? 'Berakhir dalam waktu dekat'
-          : 'Langganan aktif',
-      expiryLabel: isMixedExpiry ? 'AKSES TERDEKAT BERAKHIR' : 'BERLAKU HINGGA',
+          ? 'Masa akses hampir berakhir'
+          : 'Siap digunakan',
+      expiryLabel: isMixedExpiry ? 'Yang berakhir lebih dulu' : 'Berlaku sampai',
       expiresAt: expiry,
       ctaLabel: state == MembershipPassState.expiringSoon
           ? 'Perpanjang Pro'

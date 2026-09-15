@@ -153,7 +153,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hubungkan akun Google',
+                AppCopy.googleSessionConnectTitle,
                 style: GoogleFonts.newsreader(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
@@ -162,7 +162,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                 ),
               ),
               Text(
-                'Gunakan akun Google untuk membuka NotebookLM',
+                AppCopy.googleSessionConnectSubtitle,
                 style: GoogleFonts.outfit(
                   fontSize: 12,
                   color: textSecondary,
@@ -212,7 +212,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Masuk dengan akun Google yang memiliki akses ke kitab ini.',
+                        AppCopy.googleSessionSignInHint,
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           height: 1.35,
