@@ -26,7 +26,7 @@ void main() {
     }));
     expect(summary.state, MembershipPassState.expiringSoon);
     expect(summary.accessLabel, '3 asisten tersedia');
-    expect(summary.expiryLabel, 'Yang berakhir lebih dulu');
+    expect(summary.expiryLabel, 'Berlaku hingga');
   });
 
   test('does not claim access while a payment is pending', () {
@@ -58,7 +58,7 @@ void main() {
   test('locks a user without a valid entitlement', () {
     final summary = resolveMembershipPass(user(const {}));
     expect(summary.state, MembershipPassState.locked);
-    expect(summary.ctaLabel, 'Lihat pilihan paket');
+    expect(summary.ctaLabel, 'Pilih paket Pro');
   });
 
   test('keeps a legacy account-level Pro subscription open during migration', () {

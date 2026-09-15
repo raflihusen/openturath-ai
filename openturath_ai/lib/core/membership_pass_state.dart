@@ -63,7 +63,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       badge: 'PRO',
       accessLabel: 'Semua asisten tersedia',
       supportingLabel: expiring ? 'Masa akses hampir berakhir' : 'Siap digunakan',
-      expiryLabel: 'Berlaku sampai',
+      expiryLabel: 'Berlaku hingga',
       expiresAt: expiry,
       ctaLabel: expiring ? 'Perpanjang Pro' : 'Kelola langganan',
     );
@@ -76,18 +76,30 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
         entry.value.status == 'failed' ||
         entry.value.paymentStatus == 'failed');
     if (hasPending) {
-      return _base(MembershipPassState.paymentPending, 'Menyiapkan akses Pro',
-          'Pembayaran sedang diverifikasi', 'Lihat status pembayaran');
+      return _base(
+        MembershipPassState.paymentPending,
+        'Menyiapkan akses Pro',
+        'Pembayaran sedang diverifikasi',
+        'Lihat status pembayaran',
+        badge: 'PRO',
+      );
     }
     if (hasFailed) {
-      return _base(MembershipPassState.paymentFailed, 'Akses belum aktif',
-          'Pembayaran belum berhasil', 'Coba pembayaran lagi');
+      return _base(
+        MembershipPassState.paymentFailed,
+        'Akses belum aktif',
+        'Pembayaran belum berhasil',
+        'Coba pembayaran lagi',
+        badge: 'GRATIS',
+      );
     }
     return _base(
-        MembershipPassState.locked,
-        'Belum ada akses aktif',
-        'Pilih paket untuk mulai menggunakan asisten kajian.',
-        'Lihat pilihan paket');
+      MembershipPassState.locked,
+      'Belum berlangganan',
+      'Pilih paket untuk membuka asisten kajian.',
+      'Pilih paket Pro',
+      badge: 'GRATIS',
+    );
   }
 
   final all = active
@@ -103,11 +115,6 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       .toList()
     ..sort();
   final expiry = expiries.isEmpty ? null : expiries.first;
-  final isMixedExpiry = expiries
-          .map((item) => item.toIso8601String().substring(0, 10))
-          .toSet()
-          .length >
-      1;
   final accessLabel = all.isNotEmpty
       ? 'Semua asisten tersedia'
       : selected.length == 1
@@ -119,7 +126,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
         badge: 'PRO',
         accessLabel: accessLabel,
         supportingLabel: 'Tanpa batas waktu',
-        expiryLabel: 'Masa berlaku',
+        expiryLabel: 'Berlaku hingga',
         expiresAt: null,
         ctaLabel: 'Kelola akses',
         agentIds: selected.map((entry) => entry.key).toList());
@@ -131,7 +138,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
         badge: 'PRO',
         accessLabel: accessLabel,
         supportingLabel: 'Masa coba · $days hari',
-        expiryLabel: 'Berakhir pada',
+        expiryLabel: 'Berlaku hingga',
         expiresAt: expiry,
         ctaLabel: 'Pilih paket Pro',
         agentIds: selected.map((entry) => entry.key).toList());
@@ -146,7 +153,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       supportingLabel: state == MembershipPassState.expiringSoon
           ? 'Masa akses hampir berakhir'
           : 'Siap digunakan',
-      expiryLabel: isMixedExpiry ? 'Yang berakhir lebih dulu' : 'Berlaku sampai',
+      expiryLabel: 'Berlaku hingga',
       expiresAt: expiry,
       ctaLabel: state == MembershipPassState.expiringSoon
           ? 'Perpanjang Pro'
@@ -154,13 +161,19 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       agentIds: selected.map((entry) => entry.key).toList());
 }
 
-MembershipPassSummary _base(MembershipPassState state, String access,
-        String supporting, String cta) =>
+MembershipPassSummary _base(
+  MembershipPassState state,
+  String access,
+  String supporting,
+  String cta, {
+  String badge = 'GRATIS',
+}) =>
     MembershipPassSummary(
-        state: state,
-        badge: 'PRO',
-        accessLabel: access,
-        supportingLabel: supporting,
-        expiryLabel: '',
-        expiresAt: null,
-        ctaLabel: cta);
+      state: state,
+      badge: badge,
+      accessLabel: access,
+      supportingLabel: supporting,
+      expiryLabel: 'Berlaku hingga',
+      expiresAt: null,
+      ctaLabel: cta,
+    );

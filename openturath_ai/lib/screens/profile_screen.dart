@@ -273,8 +273,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: StreamBuilder<UserModel?>(
           stream: _authService.userStream,
+          initialData: _authService.cachedCurrentUser,
           builder: (context, snapshot) {
-            final userModel = snapshot.data;
+            final userModel = snapshot.data ?? _authService.cachedCurrentUser;
             final fbUser = FirebaseAuth.instance.currentUser;
 
             final displayName = userModel?.name.isNotEmpty == true
@@ -811,9 +812,6 @@ class _MembershipPass extends StatelessWidget {
     const foreground = Color(0xFFF8F8F8);
     const muted = Color(0xFFC7C7CC);
     final isOpen = summary.isOpen;
-    final motion = MediaQuery.of(context).disableAnimations
-        ? Duration.zero
-        : const Duration(milliseconds: 460);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -929,7 +927,7 @@ class _MembershipPass extends StatelessWidget {
                                     children: [
                                       Icon(
                                         isOpen
-                                            ? Icons.sentiment_satisfied_alt_rounded
+                                            ? Icons.workspace_premium_rounded
                                             : Icons.lock_outline_rounded,
                                         color: foreground,
                                         size: 13,
@@ -985,7 +983,7 @@ class _MembershipPass extends StatelessWidget {
                                 Expanded(
                                   flex: 3,
                                   child: _PassMeta(
-                                    label: 'Asisten kajian',
+                                    label: 'Asisten aktif',
                                     value: summary.accessLabel,
                                     valueColor: foreground,
                                   ),
@@ -994,14 +992,13 @@ class _MembershipPass extends StatelessWidget {
                                 Expanded(
                                   flex: 2,
                                   child: _PassMeta(
-                                    label: summary.state ==
-                                            MembershipPassState.trialPro
-                                        ? summary.supportingLabel
-                                        : summary.expiryLabel.isEmpty
-                                            ? 'STATUS AKSES'
-                                            : summary.expiryLabel,
+                                    label: summary.expiryLabel.isEmpty
+                                        ? 'Berlaku hingga'
+                                        : summary.expiryLabel,
                                     value: summary.expiresAt == null
-                                        ? summary.supportingLabel
+                                        ? (summary.supportingLabel.isNotEmpty
+                                            ? summary.supportingLabel
+                                            : '—')
                                         : _expiryLabel(),
                                     valueColor: foreground,
                                   ),
@@ -1009,70 +1006,6 @@ class _MembershipPass extends StatelessWidget {
                               ],
                             ),
                           ],
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          ignoring: isOpen,
-                          child: AnimatedSwitcher(
-                            duration: motion,
-                            switchInCurve: Curves.easeOutCubic,
-                            switchOutCurve: Curves.easeInCubic,
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(
-                              opacity: animation,
-                              child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0, .035),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                              ),
-                            ),
-                            child: isOpen
-                                ? const SizedBox(key: ValueKey('pass-open'))
-                                : Container(
-                                    key: const ValueKey('pass-locked'),
-                                    color: const Color(0xE9151518),
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 28),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          summary.state ==
-                                                  MembershipPassState
-                                                      .paymentPending
-                                              ? Icons.hourglass_top_rounded
-                                              : summary.state ==
-                                                      MembershipPassState
-                                                          .paymentFailed
-                                                  ? Icons
-                                                      .sentiment_dissatisfied_rounded
-                                                  : Icons
-                                                      .sentiment_dissatisfied_rounded,
-                                          color: foreground,
-                                          size: 28,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(summary.accessLabel,
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.outfit(
-                                                color: foreground,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16)),
-                                        const SizedBox(height: 4),
-                                        Text(summary.supportingLabel,
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.outfit(
-                                                color: muted,
-                                                fontSize: 11.5,
-                                                height: 1.35)),
-                                      ],
-                                    ),
-                                  ),
-                          ),
                         ),
                       ),
                     ],
