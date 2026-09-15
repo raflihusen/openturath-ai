@@ -137,15 +137,6 @@ const notebookUiScript = r'''
         div[class*="placeholder-bar" i],
         button[aria-label*="More" i], button[aria-label*="Opsi" i],
         button[aria-label*="options" i], button[aria-label*="Notebook options" i],
-        /* Anti-flicker zero-latency disclaimer suppression (OT-A003) */
-        [aria-label*="Gemini" i],
-        [aria-label*="disclaimer" i],
-        div[role="region"][aria-label*="disclaimer" i],
-        .chat-disclaimer, .disclaimer, .chat-footer-disclaimer, [class*="disclaimer" i], footer[class*="disclaimer" i],
-        div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
-        app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
-        .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
-        footer, .chat-footer, .conversation-footer,
         div.chat-input-container + div,
         div[class*="input-container" i] + div,
         div[class*="query-container" i] + div,
@@ -173,29 +164,6 @@ const notebookUiScript = r'''
       const t = (el.innerText || '').toLowerCase();
       if ((t.includes('sources') || t.includes('sumber')) && (t.includes('studio') || t.includes('chat'))) {
         if (!el.closest(answerSelector) && el.children.length <= 6) hide(el);
-      }
-    });
-    // Sembunyikan disclaimer Google Gemini / NotebookLM secara komprehensif
-    const disclaimerPattern = /(?:inaccurate|double-check|double check|can make mistakes|make mistakes|may display inaccurate|tidak akurat|membuat kesalahan|periksa kembali|gemini notebook|notebooklm)/i;
-    document.querySelectorAll('p, span, div, footer, small, a').forEach(el => {
-      if (el.closest(answerSelector) || el.querySelector('textarea, [contenteditable="true"]') || el.closest('button, [role="button"]')) return;
-      const value = text(el);
-      if (value.length > 5 && value.length < 350 && disclaimerPattern.test(value)) {
-        let target = el;
-        for (let i = 0; target && i < 4; i++) {
-          if (target.parentElement && 
-              !target.parentElement.querySelector('textarea, [contenteditable="true"]') && 
-              !target.parentElement.closest(answerSelector) && 
-              target.parentElement !== document.body && 
-              target.parentElement !== document.documentElement) {
-            target = target.parentElement;
-          } else {
-            break;
-          }
-        }
-        hide(target);
-        hide(el);
-        try { target.style.setProperty('display', 'none', 'important'); } catch (_) {}
       }
     });
     // Sembunyikan card overview / cover di awal percakapan

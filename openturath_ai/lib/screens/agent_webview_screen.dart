@@ -161,12 +161,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           div[class*="skeleton" i], div[class*="shimmer" i],
           div[class*="placeholder-bar" i],
           /* Disclaimer Google NotebookLM & Gemini */
-          .chat-disclaimer, .disclaimer, .footer-disclaimer, .chat-footer-disclaimer,
-          [class*="disclaimer" i], [id*="disclaimer" i], footer[class*="disclaimer" i],
-          div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
-          app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
-          .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
-          [aria-label*="disclaimer" i], footer, .chat-footer, .conversation-footer,
           div.chat-input-container + div,
           div[class*="input-container" i] + div,
           div[class*="query-container" i] + div,
@@ -728,8 +722,19 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     final url = await controller.getUrl();
                     if (ownerUid == null || url?.scheme != 'https' || !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) || args.isEmpty || args.first is! String) return false;
                     try {
-                      await _saveCopiedAnswer(args.first as String, ownerUid);
-                      if (context.mounted) AppSnackBar.success(context, AppCopy.answerCopied);
+                      final text = (args.first as String).trim();
+                      if (text.isEmpty || text.length > 200000) return false;
+                      await Clipboard.setData(ClipboardData(text: text));
+                      if (context.mounted) {
+                        AppSnackBar.success(
+                          context,
+                          AppCopy.answerCopied,
+                          action: SnackBarAction(
+                            label: 'Simpan',
+                            onPressed: () => unawaited(_saveCopiedAnswer(text, ownerUid)),
+                          ),
+                        );
+                      }
                       return true;
                     } catch (_) {
                       if (context.mounted) AppSnackBar.error(context, AppCopy.saveFailed);
@@ -1218,5 +1223,4 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     );
   }
 }
-
 

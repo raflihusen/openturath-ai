@@ -409,12 +409,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
           button.mat-tonal-button, a[aria-label*="Google" i],
-          .chat-disclaimer, .disclaimer, .footer-disclaimer, .chat-footer-disclaimer,
-          [class*="disclaimer" i], [id*="disclaimer" i], footer[class*="disclaimer" i],
-          div[class*="disclaimer" i], p[class*="disclaimer" i], span[class*="disclaimer" i],
-          app-disclaimer, .disclaimer-container, .disclaimer-text, .bottom-disclaimer,
-          .chat-input-subtext, .input-subtext, .query-disclaimer, .model-disclaimer,
-          [aria-label*="disclaimer" i], footer, .chat-footer, .conversation-footer,
           div.chat-input-container + div,
           div[class*="input-container" i] + div,
           div[class*="query-container" i] + div,
@@ -787,15 +781,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   try {
                     final text = (args.first as String).trim();
                     if (text.isNotEmpty && text.length <= 200000) {
-                      final uid = _authService.currentUser?.uid;
-                      await _bookmarkService.addBookmark(
-                        copiedAnswerBookmark(text, session.agent),
-                        userId: uid,
-                      );
                       await Clipboard.setData(ClipboardData(text: text));
                       if (context.mounted) {
                         OTMotion.light();
-                        AppSnackBar.success(context, AppCopy.answerCopied);
+                        AppSnackBar.success(
+                          context,
+                          AppCopy.answerCopied,
+                          action: SnackBarAction(
+                            label: 'Simpan',
+                            onPressed: () {
+                              final uid = _authService.currentUser?.uid;
+                              if (uid != null) {
+                                unawaited(_bookmarkService.addBookmark(
+                                  copiedAnswerBookmark(text, session.agent),
+                                  userId: uid,
+                                ));
+                              }
+                            },
+                          ),
+                        );
                       }
                       return true;
                     }
