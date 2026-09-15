@@ -52,7 +52,7 @@ class AppSnackBar {
                 : const Duration(milliseconds: 2600));
 
     final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
+    messenger.clearSnackBars();
     messenger.showSnackBar(
       SnackBar(
         content: Row(
@@ -93,9 +93,9 @@ class AppSnackBar {
     // Safeguard timeout: jamin snackbar selalu tertutup otomatis setelah durasi habis,
     // bahkan jika ada persistensi bawaan framework saat action != null atau service aksesibilitas aktif.
     if (!persist) {
-      Timer(effectiveDuration + const Duration(milliseconds: 300), () {
+      Timer(effectiveDuration + const Duration(milliseconds: 200), () {
         try {
-          messenger.hideCurrentSnackBar();
+          messenger.clearSnackBars();
         } catch (_) {}
       });
     }
@@ -103,7 +103,7 @@ class AppSnackBar {
 
   static void hide(BuildContext context) {
     try {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).clearSnackBars();
     } catch (_) {}
   }
 

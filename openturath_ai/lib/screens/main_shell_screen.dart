@@ -63,6 +63,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
   }
 
   void _onTabSelected(int index, {String? fieldId, CorpusKind? kind}) {
+    AppSnackBar.clear(context);
     if (_pageController.hasClients && _currentIndex != index) {
       _pageController.animateToPage(
         index,
@@ -275,14 +276,14 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   return;
                 }
                 if (context.mounted) {
-                  AppSnackBar.hide(context);
+                  AppSnackBar.clear(context);
                 }
                 sessionManager.closeRoom();
                 return;
               }
               if (_currentIndex != 0) {
                 if (context.mounted) {
-                  AppSnackBar.hide(context);
+                  AppSnackBar.clear(context);
                 }
                 _onTabSelected(0);
               }

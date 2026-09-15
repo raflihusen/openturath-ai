@@ -48,7 +48,7 @@ const notebookUiScript = r'''
   let lastCopyAt = 0;
   function sendCopy(value) {
     if (typeof value !== 'string' || !value.trim() || value.length > 200000) return;
-    if (value.trim() === lastCopy && Date.now() - lastCopyAt < 1000) return;
+    if (Date.now() - lastCopyAt < 3500) return;
     lastCopy = value.trim(); lastCopyAt = Date.now();
     if (window.flutter_inappwebview?.callHandler) window.flutter_inappwebview.callHandler('otCopiedAnswer', value.trim());
   }
@@ -74,7 +74,7 @@ const notebookUiScript = r'''
     if (!extracted) return;
 
     selectedAnswer = extracted;
-    copyUntil = Date.now() + 3000;
+    copyUntil = Date.now() + 2000;
     sendCopy(selectedAnswer);
   }, true);
   document.addEventListener('copy', event => {
@@ -83,9 +83,6 @@ const notebookUiScript = r'''
       sendCopy(sel);
     } else if (Date.now() < copyUntil && selectedAnswer) {
       sendCopy(selectedAnswer);
-    } else {
-      var last = latest();
-      if (last) sendCopy(last);
     }
   });
   function syncTheme(isDark) {

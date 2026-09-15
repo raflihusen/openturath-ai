@@ -109,9 +109,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     } catch (_) {}
   }
 
+  DateTime? _lastCopiedToastAt;
+
   @override
   void dispose() {
     _readinessTimer?.cancel();
+    if (mounted) {
+      AppSnackBar.clear(context);
+    }
     final controller = _webController;
     _webController = null;
     if (controller != null) {
@@ -554,7 +559,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       await _webController?.stopLoading();
     } catch (_) {}
     if (mounted) {
-      AppSnackBar.hide(context);
+      AppSnackBar.clear(context);
       Navigator.pop(context);
     }
   }
@@ -725,6 +730,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     try {
                       final text = (args.first as String).trim();
                       if (text.isEmpty || text.length > 200000) return false;
+                      final now = DateTime.now();
+                      if (_lastCopiedToastAt != null &&
+                          now.difference(_lastCopiedToastAt!) <
+                              const Duration(milliseconds: 3500)) {
+                        return true;
+                      }
+                      _lastCopiedToastAt = now;
+
                       await Clipboard.setData(ClipboardData(text: text));
                       if (context.mounted) {
                         AppSnackBar.success(

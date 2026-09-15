@@ -203,7 +203,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
           tooltip: 'Kembali ke Beranda',
           onPressed: () {
-            AppSnackBar.hide(context);
+            AppSnackBar.clear(context);
             _sessionManager.closeRoom();
           },
         ),
@@ -295,7 +295,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
 
                       return InkWell(
                         onTap: () {
-                          AppSnackBar.hide(context);
+                          AppSnackBar.clear(context);
                           _sessionManager.selectTab(index);
                         },
                         borderRadius: BorderRadius.circular(8),
@@ -332,7 +332,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                               const SizedBox(width: 6),
                               InkWell(
                                 onTap: () {
-                                  AppSnackBar.hide(context);
+                                  AppSnackBar.clear(context);
                                   _sessionManager.closeTab(index);
                                 },
                                 borderRadius: BorderRadius.circular(10),
@@ -543,6 +543,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   int _readySamples = 0;
   bool _checkingReady = false;
   bool? _lastIsDark;
+  DateTime? _lastCopiedToastAt;
 
   @override
   void initState() {
@@ -555,6 +556,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   @override
   void dispose() {
     _readinessTimer?.cancel();
+    if (mounted) {
+      AppSnackBar.clear(context);
+    }
     super.dispose();
   }
 
@@ -885,6 +889,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   try {
                     final text = (args.first as String).trim();
                     if (text.isNotEmpty && text.length <= 200000) {
+                      final now = DateTime.now();
+                      if (_lastCopiedToastAt != null &&
+                          now.difference(_lastCopiedToastAt!) <
+                              const Duration(milliseconds: 3500)) {
+                        return true;
+                      }
+                      _lastCopiedToastAt = now;
+
                       await Clipboard.setData(ClipboardData(text: text));
                       if (context.mounted) {
                         OTMotion.light();
