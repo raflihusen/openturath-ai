@@ -138,6 +138,10 @@ const AGENT_ENTITLEMENTS: Record<string, string> = {
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
 export const PURCHASABLE_AGENTS = new Set([
   "fiqh_tahawwulat",
+  "fiqh_tahawwulat_muhaqqiq",
+  "fiqh_tahawwulat_bayan",
+  "fiqh_tahawwulat_mukhtabir",
+  "fiqh_tahawwulat_habib",
   "fiqh_syafii",
   "fiqh_hanafi",
   "fiqh_maliki",
@@ -371,6 +375,27 @@ function resolvePlanPricing(agentId: string, plan: string): { amount: number; du
       "invalid-argument",
       "Modul spesialis tidak valid atau tidak dapat dibeli."
     );
+  }
+
+  // Harga Mandiri Khusus Fikih Tahawwulat
+  if (agentId.startsWith("fiqh_tahawwulat")) {
+    const tahawwulatTiers: Record<string, { amount: number; durationMonths: number; labelSuffix: string }> = {
+      tholib_1m: { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+      tholib_6m: { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+      bahits_1y: { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+      "1m": { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+      "6m": { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+      "1y": { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+    };
+    const tTier = tahawwulatTiers[plan];
+    if (tTier) {
+      return {
+        amount: tTier.amount,
+        durationMonths: tTier.durationMonths,
+        label: `AI Fikih Tahawwulat ${tTier.labelSuffix}`,
+        entitlementKey: "fiqh_tahawwulat",
+      };
+    }
   }
 
   const tier = MODULE_PLANS[plan];
@@ -838,11 +863,13 @@ export const dokuWebhook = functions
       const expectedSig1 = generateDokuSignature(clientId, requestId, timestamp, req.originalUrl || "/dokuWebhook", rawBody, dokuCfg.secretKey);
       const expectedSig2 = generateDokuSignature(clientId, requestId, timestamp, req.path || "/dokuWebhook", rawBody, dokuCfg.secretKey);
       const expectedSig3 = generateDokuSignature(clientId, requestId, timestamp, "/dokuWebhook", rawBody, dokuCfg.secretKey);
+      const expectedSig4 = generateDokuSignature(clientId, requestId, timestamp, "/doku-webhook", rawBody, dokuCfg.secretKey);
 
       // F-06: Verifikasi signature dengan constant-time comparison mencegah timing attacks
       const isValidSig = safeTimingEqual(incomingSignature, expectedSig1) ||
                          safeTimingEqual(incomingSignature, expectedSig2) ||
-                         safeTimingEqual(incomingSignature, expectedSig3);
+                         safeTimingEqual(incomingSignature, expectedSig3) ||
+                         safeTimingEqual(incomingSignature, expectedSig4);
 
       if (!isValidSig) {
         console.error(`[DOKU Webhook] Signature mismatch for request ${requestId}`);

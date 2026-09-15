@@ -36,6 +36,8 @@ const AGENT_URLS = {
     fiqh_tahawwulat: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
     fiqh_tahawwulat_muhaqqiq: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
     fiqh_tahawwulat_bayan: "https://notebooklm.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd",
+    fiqh_tahawwulat_mukhtabir: "https://notebooklm.google.com/notebook/8527a426-1383-48b9-be1c-85276113edb3",
+    fiqh_tahawwulat_habib: "https://notebooklm.google.com/notebook/8ac3c7fc-db0d-447d-8d85-61cdf4b7f503",
     fiqh_syafii: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
     fiqh_syafii_muhaqqiq: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
     // Hadits
@@ -72,6 +74,8 @@ const AGENT_ENTITLEMENTS = {
     fiqh_tahawwulat: "fiqh_tahawwulat",
     fiqh_tahawwulat_muhaqqiq: "fiqh_tahawwulat",
     fiqh_tahawwulat_bayan: "fiqh_tahawwulat",
+    fiqh_tahawwulat_mukhtabir: "fiqh_tahawwulat",
+    fiqh_tahawwulat_habib: "fiqh_tahawwulat",
     fiqh_syafii: "fiqh_syafii",
     fiqh_syafii_muhaqqiq: "fiqh_syafii",
     fiqh_hanafi: "fiqh_hanafi",
@@ -115,6 +119,10 @@ const AGENT_ENTITLEMENTS = {
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
 exports.PURCHASABLE_AGENTS = new Set([
     "fiqh_tahawwulat",
+    "fiqh_tahawwulat_muhaqqiq",
+    "fiqh_tahawwulat_bayan",
+    "fiqh_tahawwulat_mukhtabir",
+    "fiqh_tahawwulat_habib",
     "fiqh_syafii",
     "fiqh_hanafi",
     "fiqh_maliki",
@@ -291,6 +299,26 @@ function resolvePlanPricing(agentId, plan) {
     // OT-F001: Closed-set whitelist enforcement
     if (!exports.PURCHASABLE_AGENTS.has(agentId)) {
         throw new functions.https.HttpsError("invalid-argument", "Modul spesialis tidak valid atau tidak dapat dibeli.");
+    }
+    // Harga Mandiri Khusus Fikih Tahawwulat
+    if (agentId.startsWith("fiqh_tahawwulat")) {
+        const tahawwulatTiers = {
+            tholib_1m: { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+            tholib_6m: { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+            bahits_1y: { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+            "1m": { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+            "6m": { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+            "1y": { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+        };
+        const tTier = tahawwulatTiers[plan];
+        if (tTier) {
+            return {
+                amount: tTier.amount,
+                durationMonths: tTier.durationMonths,
+                label: `AI Fikih Tahawwulat ${tTier.labelSuffix}`,
+                entitlementKey: "fiqh_tahawwulat",
+            };
+        }
     }
     const tier = exports.MODULE_PLANS[plan];
     if (!tier) {
@@ -681,10 +709,12 @@ exports.dokuWebhook = functions
         const expectedSig1 = generateDokuSignature(clientId, requestId, timestamp, req.originalUrl || "/dokuWebhook", rawBody, dokuCfg.secretKey);
         const expectedSig2 = generateDokuSignature(clientId, requestId, timestamp, req.path || "/dokuWebhook", rawBody, dokuCfg.secretKey);
         const expectedSig3 = generateDokuSignature(clientId, requestId, timestamp, "/dokuWebhook", rawBody, dokuCfg.secretKey);
+        const expectedSig4 = generateDokuSignature(clientId, requestId, timestamp, "/doku-webhook", rawBody, dokuCfg.secretKey);
         // F-06: Verifikasi signature dengan constant-time comparison mencegah timing attacks
         const isValidSig = safeTimingEqual(incomingSignature, expectedSig1) ||
             safeTimingEqual(incomingSignature, expectedSig2) ||
-            safeTimingEqual(incomingSignature, expectedSig3);
+            safeTimingEqual(incomingSignature, expectedSig3) ||
+            safeTimingEqual(incomingSignature, expectedSig4);
         if (!isValidSig) {
             console.error(`[DOKU Webhook] Signature mismatch for request ${requestId}`);
             res.status(401).send("Invalid signature");
@@ -1365,6 +1395,18 @@ const AGENTS = {
         notebookId: "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
         akalCuid: "cmln2i27k0000jx047oabzw8p",
         label: "AI Fikih Tahawwulat (Al-Bayan)",
+        entitlementKey: "fiqh_tahawwulat"
+    },
+    "fikih-tahawwulat-mukhtabir": {
+        notebookId: "8527a426-1383-48b9-be1c-85276113edb3",
+        akalCuid: "cmln2i27k0000jx047oabzw8p",
+        label: "AI Fikih Tahawwulat (Al-Mukhtabir)",
+        entitlementKey: "fiqh_tahawwulat"
+    },
+    "fikih-tahawwulat-habib": {
+        notebookId: "8ac3c7fc-db0d-447d-8d85-61cdf4b7f503",
+        akalCuid: "cmln2i27k0000jx047oabzw8p",
+        label: "AI Fikih Tahawwulat (Al-Habib)",
         entitlementKey: "fiqh_tahawwulat"
     },
     "fikih-syafii": {
