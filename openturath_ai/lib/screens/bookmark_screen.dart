@@ -39,12 +39,41 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   bool _isLoading = true;
   bool _showSearch = false;
 
-  static const List<String> _categories = [
-    'Semua',
-    'Catatan',
-    'Kajian',
-    'Rujukan',
-  ];
+  String _bookmarkDiscipline(BookmarkModel b) {
+    if (b.agentTitle.isNotEmpty) {
+      return b.agentTitle
+          .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+          .trim();
+    }
+    if (b.fieldName.isNotEmpty &&
+        !b.fieldName.toLowerCase().contains('catatan')) {
+      return b.fieldName.trim();
+    }
+    if (b.bookReference.isNotEmpty) {
+      return 'Kitab';
+    }
+    return 'Catatan';
+  }
+
+  List<String> get _categories {
+    final disciplines = <String>{};
+    for (final b in _allBookmarks) {
+      final disc = _bookmarkDiscipline(b);
+      if (disc.isNotEmpty) {
+        disciplines.add(disc);
+      }
+    }
+    if (disciplines.isEmpty) {
+      return const [
+        'Semua',
+        'Fikih Syafi\'i',
+        'Fikih Tahawwulat',
+        'Hadis',
+        'Tafsir',
+      ];
+    }
+    return ['Semua', ...disciplines];
+  }
 
   @override
   void initState() {
@@ -77,6 +106,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     if (mounted) {
       setState(() {
         _allBookmarks = list;
+        if (!_categories.contains(_selectedCategory)) {
+          _selectedCategory = 'Semua';
+        }
         _filter();
         _isLoading = false;
       });
@@ -86,18 +118,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _filter() {
     final q = _searchQuery.toLowerCase().trim();
     _filteredBookmarks = _allBookmarks.where((b) {
-      bool matchesCategory;
-      if (_selectedCategory == 'Semua') {
-        matchesCategory = true;
-      } else if (_selectedCategory == 'Catatan') {
-        matchesCategory = b.documentKind == BookmarkDocumentKind.personalNote;
-      } else if (_selectedCategory == 'Kajian') {
-        matchesCategory = b.documentKind == BookmarkDocumentKind.aiAnswer;
-      } else {
-        matchesCategory = b.documentKind == BookmarkDocumentKind.bookReference;
+      if (_selectedCategory != 'Semua') {
+        final disc = _bookmarkDiscipline(b).toLowerCase();
+        final sel = _selectedCategory.toLowerCase();
+        if (disc != sel &&
+            !b.agentTitle.toLowerCase().contains(sel) &&
+            !b.fieldName.toLowerCase().contains(sel)) {
+          return false;
+        }
       }
-
-      if (!matchesCategory) return false;
       if (q.isEmpty) return true;
       return ArabicUtils.matches(b.title, q) ||
           ArabicUtils.matches(b.agentTitle, q) ||
@@ -356,24 +385,23 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 0),
-              child: Row(
-                children: [
-                  Text(
-                    '${_filteredBookmarks.length} catatan tersimpan',
-                    style: OTTypography.captionMedium(color: textSecondary),
+                  OTSpacing.lg, 12, OTSpacing.lg, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${_filteredBookmarks.length} catatan tersimpan',
+                  style: OTTypography.caption(color: textSecondary).copyWith(
+                    fontSize: 12,
+                    letterSpacing: 0.2,
                   ),
-                  const Spacer(),
-                  Icon(Icons.inventory_2_outlined,
-                      size: 15, color: textSecondary),
-                ],
+                ),
               ),
             ),
 
-            // ── Horizontal Filter Pills ──
+            // ── Horizontal Filter Pills (Pengelompokan Keilmuan) ──
             Container(
               height: 38,
-              margin: const EdgeInsets.symmetric(vertical: OTSpacing.xs + 2),
+              margin: const EdgeInsets.only(bottom: 8),
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
@@ -816,31 +844,36 @@ class _BookmarkCardState extends State<_BookmarkCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Waktu diletakkan tenang di ujung kanan; kartu sendiri sudah
-              // menjadi affordance untuk membuka detail, jadi tanpa panah.
+              // Metadata Bar: Pill Asisten / Keilmuan berdampingan rapi dengan keterangan waktu
               Row(
                 children: [
-                  Flexible(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2.5),
-                      decoration: BoxDecoration(
-                        color: widget.accent.withValues(alpha: 0.12),
-                        borderRadius: OTRadius.chipBorder,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 2.5),
+                    decoration: BoxDecoration(
+                      color: widget.accent.withValues(alpha: 0.12),
+                      borderRadius: OTRadius.chipBorder,
+                    ),
+                    child: Text(
+                      pillLabel,
+                      style: OTTypography.captionMedium(color: widget.accent)
+                          .copyWith(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
                       ),
-                      child: Text(
-                        pillLabel,
-                        style: OTTypography.captionMedium(color: widget.accent)
-                            .copyWith(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 8),
+                  Text(
+                    '•',
+                    style: TextStyle(
+                      color: widget.textSecondary.withValues(alpha: 0.4),
+                      fontSize: 10,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   Text(
                     _formatRelativeTime(item.effectiveTime),
                     style: OTTypography.caption(
