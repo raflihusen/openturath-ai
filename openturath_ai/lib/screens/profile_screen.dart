@@ -190,6 +190,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showAccessPortfolio(UserModel? user, MembershipPassSummary summary) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final surface = OTColors.surface(isDark);
+    final entries = (user?.entitlements.entries ?? const <MapEntry<String, ModuleEntitlement>>[])
+        .where((entry) => summary.agentIds.contains(entry.key))
+        .toList();
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: textSecondary.withValues(alpha: .35), borderRadius: BorderRadius.circular(99)))),
+          const SizedBox(height: 18),
+          Text('Rincian akses Pro', style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 19)),
+          const SizedBox(height: 5),
+          Text('Akses yang aktif di akun ini.', style: OTTypography.caption(color: textSecondary)),
+          const SizedBox(height: 16),
+          if (summary.agentIds.contains('all_access') || summary.agentIds.contains('all_ai'))
+            _AccessPortfolioRow(title: 'Seluruh asisten OpenTurath', subtitle: summary.supportingLabel, color: textPrimary, muted: textSecondary)
+          else
+            ...entries.map((entry) => _AccessPortfolioRow(
+              title: _entitlementTitle(entry.key),
+              subtitle: entry.value.expiry == null ? 'Akses aktif' : 'Berakhir ${_formatAccessDate(entry.value.expiry!)}',
+              color: textPrimary,
+              muted: textSecondary,
+            )),
+        ]),
+      ),
+    );
+  }
+
+  static String _formatAccessDate(DateTime value) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    return '${value.day} ${months[value.month - 1]} ${value.year}';
+  }
+
+  static String _entitlementTitle(String key) => switch (key) {
+        'fiqh_tahawwulat' => 'AI Fikih Tahawwulat',
+        'fiqh_syafii' => "AI Fikih Syafi'i",
+        'nahwu' => 'AI Bahasa Arab',
+        'ushul_fiqh' => 'AI Usul Fikih',
+        'tafsir' => 'AI Tafsir',
+        'hadits' => 'AI Hadis',
+        'aqidah' => 'AI Akidah',
+        _ => 'Asisten kajian',
+      };
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -241,6 +295,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   summary: membership,
                   isDark: isDark,
                   onManage: () => _openSubscription(userModel),
+                  onViewAccess: membership.isOpen && membership.agentIds.isNotEmpty
+                      ? () => _showAccessPortfolio(userModel, membership)
+                      : null,
                 ),
 
                 const SizedBox(height: 16),
@@ -716,6 +773,7 @@ class _MembershipPass extends StatelessWidget {
   final MembershipPassSummary summary;
   final bool isDark;
   final VoidCallback onManage;
+  final VoidCallback? onViewAccess;
 
   const _MembershipPass({
     required this.holderName,
@@ -723,6 +781,7 @@ class _MembershipPass extends StatelessWidget {
     required this.summary,
     required this.isDark,
     required this.onManage,
+    this.onViewAccess,
   });
 
   String _expiryLabel() {
@@ -767,7 +826,7 @@ class _MembershipPass extends StatelessWidget {
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(24),
             child: InkWell(
-              onTap: onManage,
+              onTap: onViewAccess ?? onManage,
               borderRadius: BorderRadius.circular(24),
               child: Ink(
                 height: 206,
@@ -1086,6 +1145,42 @@ class _PassMeta extends StatelessWidget {
       ],
     );
   }
+}
+
+class _AccessPortfolioRow extends StatelessWidget {
+  const _AccessPortfolioRow({
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.muted,
+  });
+
+  final String title;
+  final String subtitle;
+  final Color color;
+  final Color muted;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Row(children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: muted.withValues(alpha: .10),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.auto_awesome_rounded, color: color, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: OTTypography.bodyMedium(color: color)),
+            const SizedBox(height: 2),
+            Text(subtitle, style: OTTypography.caption(color: muted)),
+          ])),
+        ]),
+      );
 }
 
 class _SettingsTile extends StatelessWidget {
