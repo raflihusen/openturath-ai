@@ -18,6 +18,8 @@ import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
+import '../widgets/tahawwulat_flagship_card.dart';
+import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
@@ -127,6 +129,36 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     }
 
     AgentSessionManager.instance.openAgent(agent, user: user);
+  }
+
+  void _openTahawwulatSubAgent(AgentModel parentAgent, SubAgentModel subAgent) {
+    OTMotion.light();
+    final user = _authService.cachedCurrentUser;
+    if (user == null || !user.hasAccessToAgent(parentAgent.id)) {
+      _openSubscriptionForAgent(parentAgent, user: user);
+      return;
+    }
+
+    final personaAgent = AgentModel(
+      id: subAgent.id,
+      title: 'Fikih Tahawwulat: ${subAgent.name}',
+      titleArabic: subAgent.nameArabic,
+      description: subAgent.description,
+      emoji: subAgent.emoji,
+      category: parentAgent.category,
+      status: 'active',
+      sortOrder: parentAgent.sortOrder,
+      fieldId: parentAgent.fieldId,
+      subtitleAcademic: subAgent.description,
+      suggestedPrompts: parentAgent.suggestedPrompts,
+      referenceBooks: parentAgent.referenceBooks,
+      catalogId: parentAgent.catalogId,
+      kind: parentAgent.kind,
+      disciplineIds: parentAgent.disciplineIds,
+      scholarIds: parentAgent.scholarIds,
+    );
+
+    AgentSessionManager.instance.openAgent(personaAgent, user: user);
   }
 
   void _openSubscriptionForAgent(AgentModel agent, {UserModel? user}) {
@@ -345,6 +377,19 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               separatorBuilder: (_, __) => const SizedBox(height: 12),
                               itemBuilder: (context, index) {
                                 final agent = sorted[index];
+                                if (agent.id == 'fiqh_tahawwulat') {
+                                  final user = _authService.cachedCurrentUser;
+                                  final isSubscribed = user != null && user.hasAccessToAgent(agent.id);
+                                  return TahawwulatFlagshipCard(
+                                    agent: agent,
+                                    isSubscribed: isSubscribed,
+                                    onOpenMain: () => _openAgent(agent),
+                                    onOpenSubAgent: (sub) => _openTahawwulatSubAgent(agent, sub),
+                                    onOpenLibrary: agent.catalogId != null
+                                        ? () => showResearchLibrary(context, agent: agent)
+                                        : null,
+                                  );
+                                }
                                 return SpecialistCard(
                                   title: agent.title,
                                   statusLabel: agent.isComingSoon ? 'Segera hadir' : null,
