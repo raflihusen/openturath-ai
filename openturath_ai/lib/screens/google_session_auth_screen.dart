@@ -149,27 +149,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           backgroundColor: canvas,
           elevation: 0,
           scrolledUnderElevation: 0,
-          titleSpacing: 16,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppCopy.googleSessionConnectTitle,
-                style: GoogleFonts.newsreader(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: textPrimary,
-                  letterSpacing: -0.2,
-                ),
-              ),
-              Text(
-                AppCopy.googleSessionConnectSubtitle,
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  color: textSecondary,
-                ),
-              ),
-            ],
+          title: Text(
+            AppCopy.googleSessionConnectTitle,
+            style: GoogleFonts.newsreader(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: textPrimary,
+              letterSpacing: -0.2,
+            ),
           ),
           actions: [
             IconButton(

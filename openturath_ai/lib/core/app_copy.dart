@@ -106,7 +106,7 @@ abstract final class AppCopy {
   static const googleSessionConnectDesc =
       'Setelah masuk, Anda akan kembali ke ruang kajian secara otomatis.';
   static const googleSessionSignInHint =
-      'Gunakan akun Google yang Anda pakai untuk belajar di perangkat ini.';
+      'Gunakan akun Google yang sama agar Anda dapat langsung melanjutkan kajian tanpa perlu masuk ulang.';
   static const googleSessionConnected = 'Akun Google terhubung';
   static const googleSessionPreparing = 'Menyiapkan percakapan…';
   static const cancelSignIn = 'Batalkan proses masuk';
