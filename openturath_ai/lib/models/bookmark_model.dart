@@ -21,6 +21,9 @@ class BookmarkModel {
   final String? author;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  /// Tombstone for conflict-safe offline deletion. It is synchronized so an
+  /// older device cannot resurrect a note that was deliberately removed.
+  final DateTime? deletedAt;
   final BookmarkDocumentKind documentKind;
   final BookmarkVerificationStatus verificationStatus;
 
@@ -38,11 +41,14 @@ class BookmarkModel {
     this.author,
     required this.createdAt,
     this.updatedAt,
+    this.deletedAt,
     this.documentKind = BookmarkDocumentKind.aiAnswer,
     this.verificationStatus = BookmarkVerificationStatus.unverified,
   });
 
   DateTime get effectiveTime => updatedAt ?? createdAt;
+  DateTime get syncTime => deletedAt ?? effectiveTime;
+  bool get isDeleted => deletedAt != null;
 
   Map<String, dynamic> toJson() {
     return {
@@ -59,6 +65,7 @@ class BookmarkModel {
       'author': author,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': (updatedAt ?? createdAt).toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
       'documentKind': documentKind.name,
       'verificationStatus': verificationStatus.name,
     };
@@ -92,6 +99,9 @@ class BookmarkModel {
       updatedAt: json['updatedAt'] != null
           ? DateTime.tryParse(json['updatedAt'] as String)
           : null,
+      deletedAt: json['deletedAt'] != null
+          ? DateTime.tryParse(json['deletedAt'] as String)
+          : null,
       documentKind: kind,
       verificationStatus: _verificationStatusFromJson(
         json['verificationStatus'] as String?,
@@ -114,6 +124,7 @@ class BookmarkModel {
     String? author,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
     BookmarkDocumentKind? documentKind,
     BookmarkVerificationStatus? verificationStatus,
   }) {
@@ -131,6 +142,7 @@ class BookmarkModel {
       author: author ?? this.author,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       documentKind: documentKind ?? this.documentKind,
       verificationStatus: verificationStatus ?? this.verificationStatus,
     );

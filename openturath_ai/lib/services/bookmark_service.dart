@@ -62,11 +62,16 @@ class BookmarkService extends ChangeNotifier {
     return uid == null || uid.isEmpty ? _legacyKey : 'openturath_${uid}_saved_bookmarks';
   }
 
-  Future<List<BookmarkModel>> getBookmarks({String? userId}) => _store.read(_key(userId));
+  Future<List<BookmarkModel>> getBookmarks({String? userId}) async =>
+      (await _store.read(_key(userId)))
+          .where((bookmark) => !bookmark.isDeleted)
+          .toList();
 
   Future<void> saveAll(List<BookmarkModel> bookmarks, {String? userId}) async {
     final key = _key(userId);
-    await _store.replace(key, bookmarks);
+    final existing = await _store.read(key);
+    final tombstones = existing.where((bookmark) => bookmark.isDeleted);
+    await _store.replace(key, [...bookmarks, ...tombstones]);
     notifyListeners();
   }
 
@@ -93,12 +98,23 @@ class BookmarkService extends ChangeNotifier {
     final key = _key(effectiveUid);
 
     // 1. Instant local update
-    await _store.update(key, (items) => items..removeWhere((item) => item.id == id));
+    BookmarkModel? deleted;
+    await _store.update(key, (items) {
+      final index = items.indexWhere((item) => item.id == id);
+      if (index == -1) return items;
+      deleted = items[index].copyWith(
+        deletedAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      items[index] = deleted!;
+      return items;
+    });
     notifyListeners();
 
-    // 2. Asynchronous cloud deletion
-    if (effectiveUid != null && effectiveUid.isNotEmpty) {
-      unawaited(_deleteFromCloud(id, effectiveUid));
+    // 2. Sync a tombstone instead of deleting remotely. An offline older
+    // device will then receive the deletion rather than restoring stale data.
+    if (effectiveUid != null && effectiveUid.isNotEmpty && deleted != null) {
+      unawaited(_pushToCloud(deleted!, effectiveUid));
     }
   }
 
@@ -118,21 +134,6 @@ class BookmarkService extends ChangeNotifier {
     } catch (e) {
       // Offline or network glitch; will be reconciled during next sync
       debugPrint('[BookmarkService] Cloud push skipped/failed: $e');
-    }
-  }
-
-  Future<void> _deleteFromCloud(String id, String uid) async {
-    final db = _db;
-    if (db == null) return;
-    try {
-      await db
-          .collection('users')
-          .doc(uid)
-          .collection('bookmarks')
-          .doc(id)
-          .delete();
-    } catch (e) {
-      debugPrint('[BookmarkService] Cloud delete skipped/failed: $e');
     }
   }
 
@@ -205,7 +206,7 @@ class BookmarkService extends ChangeNotifier {
       final merged = <String, BookmarkModel>{...localMap};
       for (final entry in cloudMap.entries) {
         final existing = merged[entry.key];
-        if (existing == null || entry.value.effectiveTime.isAfter(existing.effectiveTime)) {
+        if (existing == null || entry.value.syncTime.isAfter(existing.syncTime)) {
           merged[entry.key] = entry.value;
         }
       }

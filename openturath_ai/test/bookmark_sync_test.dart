@@ -75,6 +75,22 @@ void main() {
       expect(notificationCount, greaterThanOrEqualTo(2));
     });
 
+    test('deleted note remains as a hidden sync tombstone', () async {
+      final service = BookmarkService();
+      final bookmark = createSampleBookmark(id: 'tombstone', title: 'Hapus aman');
+      await service.addBookmark(bookmark, userId: 'user_tombstone');
+      await service.deleteBookmark(bookmark.id, userId: 'user_tombstone');
+
+      expect(await service.getBookmarks(userId: 'user_tombstone'), isEmpty);
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('openturath_user_tombstone_saved_bookmarks')!;
+      final stored = BookmarkModel.fromJson(
+        Map<String, dynamic>.from((jsonDecode(raw) as List).single as Map),
+      );
+      expect(stored.isDeleted, isTrue);
+      expect(stored.deletedAt, isNotNull);
+    });
+
     test('syncWithCloud seamlessly migrates legacy anonymous bookmarks to logged-in user', () async {
       final legacyBookmark = createSampleBookmark(
         id: 'legacy_1',
