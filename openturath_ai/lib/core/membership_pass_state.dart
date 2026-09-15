@@ -79,7 +79,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       return _base(
         MembershipPassState.paymentPending,
         'Menyiapkan akses Pro',
-        'Pembayaran sedang diverifikasi',
+        'Pembayaran sedang diperiksa',
         'Lihat status pembayaran',
         badge: 'PRO',
       );
@@ -96,7 +96,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     return _base(
       MembershipPassState.locked,
       'Belum berlangganan',
-      'Pilih paket untuk membuka asisten kajian.',
+      'Pilih asisten dan paket yang sesuai untuk mulai bertanya.',
       'Pilih paket Pro',
       badge: 'GRATIS',
     );
