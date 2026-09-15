@@ -539,26 +539,17 @@ class _StudyEntryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
     final hasHistory = agent != null;
-    final eyebrow = hasLiveSession
-        ? 'Sesi aktif'
-        : hasHistory
-            ? 'Terakhir dibuka'
-            : 'Mulai kajian';
-    final title = hasLiveSession
-        ? 'Lanjutkan ${agent!.title}'
-        : hasHistory
-            ? 'Buka kembali ${agent!.title}'
-            : 'Mulai dari satu pertanyaan';
+    final title = hasLiveSession || hasHistory
+        ? agent!.title
+        : 'Telaah Turats';
     final subtitle = hasLiveSession
-        ? 'Lanjutkan penelusuran kitab Anda.'
-        : hasHistory
-            ? 'Kembali ke asisten yang terakhir Anda buka.'
-            : 'Pilih bidang untuk mulai menelusuri ibarah dan rujukan.';
-    final primaryLabel = hasLiveSession
-        ? 'Lanjutkan'
-        : hasHistory
-            ? 'Buka kembali'
-            : 'Pilih bidang';
+        ? 'Sesi kajian siap dibuka kembali.'
+        : (hasHistory
+            ? 'Buka kembali rujukan dan catatan sebelumnya.'
+            : 'Ajukan pertanyaan dan telusuri teks kitab kuning.');
+    final primaryLabel = hasLiveSession || hasHistory
+        ? 'Buka Kajian'
+        : 'Mulai Kajian';
 
     final bgGradient = isDark
         ? const LinearGradient(
@@ -601,34 +592,9 @@ class _StudyEntryCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(23),
               child: Stack(
                 children: [
-                  Positioned(
-                    right: -30,
-                    top: -40,
-                    child: Container(
-                      width: 170,
-                      height: 170,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.07),
-                          width: 1.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 25,
-                    bottom: -30,
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          width: 1.0,
-                        ),
-                      ),
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: _DashboardAbstractPatternPainter(isDark: isDark),
                     ),
                   ),
                   Padding(
@@ -659,55 +625,29 @@ class _StudyEntryCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const Spacer(),
-                            if (hasLiveSession)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF4ADE80)
-                                      .withValues(alpha: 0.16),
-                                  borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(
-                                    color: const Color(0xFF4ADE80)
-                                        .withValues(alpha: 0.35),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFF4ADE80),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      'Sesi aktif',
-                                      style: GoogleFonts.outfit(
-                                        color: const Color(0xFF4ADE80),
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                           ],
                         ),
                         const SizedBox(height: 18),
-                        Text(
-                          eyebrow.toUpperCase(),
-                          style: GoogleFonts.outfit(
-                            color: const Color(0xFFC7C7CC),
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.1,
+                        if (agent != null)
+                          Text(
+                            agent!.category.toUpperCase(),
+                            style: GoogleFonts.outfit(
+                              color: const Color(0xFFC7C7CC),
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.1,
+                            ),
+                          )
+                        else
+                          Text(
+                            'KAJIAN TURATS',
+                            style: GoogleFonts.outfit(
+                              color: const Color(0xFFC7C7CC),
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.1,
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 5),
                         Text(
                           title,
@@ -775,6 +715,63 @@ class _StudyEntryCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Latar belakang abstrak minimalis kartu beranda (siluet kubah/mihrab geometris islami)
+class _DashboardAbstractPatternPainter extends CustomPainter {
+  final bool isDark;
+  const _DashboardAbstractPatternPainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final linePaint = Paint()
+      ..color = Colors.white.withValues(alpha: isDark ? 0.065 : 0.08)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    final faintPaint = Paint()
+      ..color = Colors.white.withValues(alpha: isDark ? 0.035 : 0.045)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8;
+
+    final fillPaint = Paint()
+      ..color = Colors.white.withValues(alpha: isDark ? 0.02 : 0.025)
+      ..style = PaintingStyle.fill;
+
+    final cx = size.width * 0.86;
+    final cy = size.height * 0.42;
+
+    // 1. Lengkungan kubah arsitektural minimalis
+    for (int i = 1; i <= 4; i++) {
+      final w = 28.0 * i;
+      final h = 42.0 * i;
+      final path = Path();
+      path.moveTo(cx - w, size.height + 15);
+      path.lineTo(cx - w, cy + h * 0.25);
+      path.quadraticBezierTo(cx - w * 0.7, cy - h * 0.65, cx, cy - h);
+      path.quadraticBezierTo(cx + w * 0.7, cy - h * 0.65, cx + w, cy + h * 0.25);
+      path.lineTo(cx + w, size.height + 15);
+
+      canvas.drawPath(path, i == 1 ? linePaint : faintPaint);
+      if (i == 1) {
+        canvas.drawPath(path, fillPaint);
+      }
+    }
+
+    // 2. Garis geometris halus bersilangan khas naskah turats
+    final gridPath = Path();
+    for (double x = size.width * 0.52; x < size.width + 40; x += 34) {
+      gridPath.moveTo(x, -10);
+      gridPath.lineTo(x + size.height * 0.75, size.height + 10);
+      gridPath.moveTo(x, size.height + 10);
+      gridPath.lineTo(x + size.height * 0.75, -10);
+    }
+    canvas.drawPath(gridPath, faintPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashboardAbstractPatternPainter oldDelegate) =>
+      oldDelegate.isDark != isDark;
 }
 
 class _ScholarlyDatePanel extends StatelessWidget {
