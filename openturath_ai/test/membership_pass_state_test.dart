@@ -15,7 +15,7 @@ void main() {
     }));
     expect(summary.state, MembershipPassState.trialPro);
     expect(summary.badge, 'PRO');
-    expect(summary.supportingLabel, contains('MASA COBA'));
+    expect(summary.supportingLabel.toLowerCase(), contains('masa coba'));
   });
 
   test('uses nearest expiry and count for several individual AI accesses', () {
@@ -25,8 +25,8 @@ void main() {
       'tafsir': ModuleEntitlement(plan: 'pro', expiry: DateTime.now().add(const Duration(days: 5))),
     }));
     expect(summary.state, MembershipPassState.expiringSoon);
-    expect(summary.accessLabel, '3 asisten aktif');
-    expect(summary.expiryLabel, 'AKSES TERDEKAT BERAKHIR');
+    expect(summary.accessLabel, '3 asisten tersedia');
+    expect(summary.expiryLabel, 'Yang berakhir lebih dulu');
   });
 
   test('does not claim access while a payment is pending', () {
@@ -58,7 +58,7 @@ void main() {
   test('locks a user without a valid entitlement', () {
     final summary = resolveMembershipPass(user(const {}));
     expect(summary.state, MembershipPassState.locked);
-    expect(summary.ctaLabel, 'Aktifkan Pro');
+    expect(summary.ctaLabel, 'Lihat pilihan paket');
   });
 
   test('keeps a legacy account-level Pro subscription open during migration', () {
