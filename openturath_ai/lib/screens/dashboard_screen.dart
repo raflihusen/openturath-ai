@@ -348,13 +348,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                       ),
                     ] else ...[
-                      // ── Indeks Korpus: pintu masuk utama ke studi ──
+                      // ── Bidang kajian: pintu masuk utama ke studi ──
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Indeks korpus',
+                            'Pilih bidang kajian',
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -530,20 +530,20 @@ class _StudyEntryCard extends StatelessWidget {
     final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
     final hasHistory = agent != null;
     final eyebrow = hasLiveSession
-        ? 'SESI KAJIAN TERSIMPAN'
+        ? 'Masih terbuka'
         : hasHistory
-            ? 'KAJIAN TERAKHIR'
-            : 'RUANG KAJIAN';
+            ? 'Terakhir dibuka'
+            : 'Mulai kajian';
     final title = hasLiveSession
         ? 'Lanjutkan ${agent!.title}'
         : hasHistory
             ? 'Buka kembali ${agent!.title}'
             : 'Mulai dari satu pertanyaan';
     final subtitle = hasLiveSession
-        ? 'Ruang AI masih siap tanpa memuat ulang.'
+        ? 'Lanjutkan percakapan yang tadi.'
         : hasHistory
             ? 'Kembali ke asisten yang terakhir Anda buka.'
-            : 'Pilih bidang, lalu telusuri ibarah dan rujukan.';
+            : 'Pilih bidang untuk mulai menelusuri ibarah dan rujukan.';
     final primaryLabel = hasLiveSession
         ? 'Lanjutkan kajian'
         : hasHistory
@@ -560,15 +560,15 @@ class _StudyEntryCard extends StatelessWidget {
           onTap: onPrimary,
           borderRadius: BorderRadius.circular(24),
           child: Ink(
-            height: 214,
+            height: 248,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: isDark
-                    ? const [Color(0xFF303036), Color(0xFF17171A)]
-                    : const [Color(0xFF29292E), Color(0xFF151518)],
+                    ? const [Color(0xFF343640), Color(0xFF1A1B22)]
+                    : const [Color(0xFF30323D), Color(0xFF191A21)],
               ),
               border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
               boxShadow: [
@@ -615,7 +615,7 @@ class _StudyEntryCard extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 18, 18, 16),
+                    padding: const EdgeInsets.fromLTRB(20, 18, 18, 60),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -633,21 +633,6 @@ class _StudyEntryCard extends StatelessWidget {
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: -0.2,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            SizedBox(
-                              width: 92,
-                              child: Text(
-                                masehiDate,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.end,
-                                style: GoogleFonts.outfit(
-                                  color: const Color(0xFFC7C7CC),
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -711,19 +696,44 @@ class _StudyEntryCard extends StatelessWidget {
                             const Icon(Icons.arrow_forward_rounded,
                                 size: 16, color: Color(0xFFF8F8F8)),
                             const Spacer(),
-                            Text(
-                              hijriDate,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
-                                color: const Color(0xFFC7C7CC),
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                  Positioned(
+                    left: 12,
+                    right: 12,
+                    bottom: 11,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 13, vertical: 9),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.11),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.12)),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _StudyDate(
+                              label: 'Hari ini', value: masehiDate),
+                          ),
+                          Container(
+                            width: 1,
+                            height: 26,
+                            color: Colors.white.withValues(alpha: 0.14),
+                          ),
+                          Expanded(
+                            child: _StudyDate(
+                              label: 'Kalender Hijriah',
+                              value: hijriDate,
+                              alignEnd: true,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -734,6 +744,40 @@ class _StudyEntryCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _StudyDate extends StatelessWidget {
+  const _StudyDate({
+    required this.label,
+    required this.value,
+    this.alignEnd = false,
+  });
+
+  final String label;
+  final String value;
+  final bool alignEnd;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment:
+            alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: GoogleFonts.outfit(
+                  color: const Color(0xFFC7C7CC),
+                  fontSize: 9,
+                  fontWeight: FontWeight.w500)),
+          const SizedBox(height: 2),
+          Text(value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: alignEnd ? TextAlign.end : TextAlign.start,
+              style: GoogleFonts.outfit(
+                  color: const Color(0xFFF8F8F8),
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600)),
+        ],
+      );
 }
 
 class _DashboardAnnouncementCarousel extends StatefulWidget {
