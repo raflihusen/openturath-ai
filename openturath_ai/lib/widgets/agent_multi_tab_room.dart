@@ -633,7 +633,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           url?.host == 'accounts.youtube.com' ||
           url?.host == 'consent.google.com';
       final isDenied = await controller.evaluateJavascript(
-          source: 'window.otNotebook ? window.otNotebook.accessDenied() : false');
+          source:
+              'window.otNotebook ? window.otNotebook.accessDenied() : false');
       if (isDenied == true) {
         _readinessTimer?.cancel();
         if (mounted) {
@@ -850,9 +851,21 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 source:
                     'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
               );
-              if (!session.isSessionReady) {
-                await _checkReady();
-              }
+              // Halaman selesai dimuat adalah sinyal paling andal untuk
+              // WebView NotebookLM. Menunggu deteksi textarea membuat ruang
+              // kajian dapat berputar terus pada perubahan DOM Google.
+              final denied = await controller.evaluateJavascript(
+                  source:
+                      'window.otNotebook ? window.otNotebook.accessDenied() : false');
+              if (!mounted) return;
+              setState(() {
+                session.isWebLoading = false;
+                session.isSessionReady = denied != true;
+                session.isPaywallRequired = denied == true;
+                session.errorMessage = denied == true
+                    ? 'Akses untuk asisten ini belum tersedia pada akun Anda.'
+                    : null;
+              });
             },
             onProgressChanged: (controller, progress) async {
               if (progress >= 35) {
