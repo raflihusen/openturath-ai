@@ -147,10 +147,7 @@ const notebookUiScript = r'''
         .loading-notebook, [class*="skeleton"],
         .chat-disclaimer, .query-disclaimer, .model-disclaimer,
         [class*="disclaimer" i], [aria-label*="disclaimer" i],
-        [data-testid*="disclaimer" i], footer, div[class*="footer" i],
-        .access-denied, div[class*="access-denied" i], div[class*="denied" i],
-        [aria-label*="Request access" i], [aria-label*="Minta akses" i],
-        app-access-denied, .error-page, .permission-denied {
+        [data-testid*="disclaimer" i] {
           display:none!important;
           visibility:hidden!important;
           height:0px!important;
@@ -224,7 +221,8 @@ const notebookUiScript = r'''
     // Peringatan bawaan Gemini tidak termasuk antarmuka OpenTurath. Batasan
     // penggunaan sudah disampaikan di dalam aplikasi, jadi jangan sisakan
     // satu baris pun di bawah kolom pertanyaan.
-    document.querySelectorAll('div, p, span, small, footer').forEach(el => {
+    document.querySelectorAll('div, p, span, small').forEach(el => {
+      if (el.closest(answerSelector)) return;
       const t = text(el).toLowerCase();
       if (t.length < 300 && (/gemini notebook.*(mungkin|may).*(tidak akurat|inaccurate)/i.test(t) || /responses? may be inaccurate/i.test(t) || (/tidak akurat/i.test(t) && /gemini/i.test(t)))) {
         hide(el);
@@ -232,9 +230,9 @@ const notebookUiScript = r'''
     });
   }
   function ready() {
-    clean();
     if (accessDenied()) return false;
-    const bodyText = document.body ? (document.body.innerText || '') : '';
+    clean();
+    const bodyText = document.body ? (document.body.textContent || document.body.innerText || '') : '';
     if (/loading notebook|memuat notebook|\b0 sources\b/i.test(bodyText)) {
       return false;
     }
@@ -242,9 +240,12 @@ const notebookUiScript = r'''
     return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
   }
   function accessDenied() {
-    const body = (document.body?.innerText || '').toLowerCase();
-    return /anda memerlukan akses|minta akses|you need access|request access|access denied|tidak memiliki izin|no access|need permission/.test(body) ||
-      !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="denied" i]');
+    const rawText = (document.body?.textContent || document.body?.innerText || '').toLowerCase();
+    const title = (document.title || '').toLowerCase();
+    const hasTextMatch = /anda memerlukan akses|minta akses|you need access|request access|access denied|tidak memiliki izin|no access|need permission/.test(rawText) ||
+      /anda memerlukan akses|you need access|access denied/.test(title);
+    const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, .access-denied, div[class*="access-denied" i], div[class*="denied" i], .error-page, .permission-denied');
+    return hasTextMatch || hasElementMatch;
   }
   window.otNotebook = {clean, ready, latest, conversation, accessDenied, setTheme: syncTheme};
   let scheduled = false;

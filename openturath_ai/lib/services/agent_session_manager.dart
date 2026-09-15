@@ -14,6 +14,8 @@ class AgentSessionTab {
   bool isSessionReady = false;
   String? errorMessage;
   bool isPaywallRequired = false;
+  bool isTimeoutError = false;
+  bool isGooglePermissionError = false;
   double fontScale = 1.0;
   bool hasAcknowledgedAdab = false;
 

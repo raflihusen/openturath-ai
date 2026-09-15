@@ -626,6 +626,33 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
   }
 
+  void _handleAccessDenied(AgentSessionTab session) {
+    _readinessTimer?.cancel();
+    final user = _authService.cachedCurrentUser;
+    final hasSubscription =
+        user != null && user.hasAccessToAgent(session.agent.id);
+
+    if (mounted) {
+      setState(() {
+        session.isWebLoading = false;
+        session.isSessionReady = false;
+        if (hasSubscription) {
+          session.isGooglePermissionError = true;
+          session.isPaywallRequired = false;
+          session.isTimeoutError = false;
+          session.errorMessage =
+              'Akun Google ini belum dapat membuka asisten. Gunakan akun Google yang sudah dihubungkan dengan OpenTurath.';
+        } else {
+          session.isGooglePermissionError = false;
+          session.isPaywallRequired = true;
+          session.isTimeoutError = false;
+          session.errorMessage =
+              'Akses untuk asisten ini memerlukan langganan aktif.';
+        }
+      });
+    }
+  }
+
   Future<void> _checkReady() async {
     if (_checkingReady || widget.session.webController == null || !mounted) {
       return;
@@ -641,16 +668,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           source:
               'window.otNotebook ? window.otNotebook.accessDenied() : false');
       if (isDenied == true) {
-        _readinessTimer?.cancel();
-        if (mounted) {
-          setState(() {
-            widget.session.isWebLoading = false;
-            widget.session.isSessionReady = false;
-            widget.session.isPaywallRequired = true;
-            widget.session.errorMessage =
-                'Akses untuk asisten ini memerlukan langganan aktif.';
-          });
-        }
+        _handleAccessDenied(widget.session);
         return;
       }
       final result = await controller.evaluateJavascript(
@@ -666,14 +684,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           setState(() {
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = true;
+            widget.session.isTimeoutError = false;
           });
         }
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 12) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 15) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
-            widget.session.isSessionReady = true;
+            widget.session.isSessionReady = false;
+            widget.session.isTimeoutError = true;
+            widget.session.errorMessage =
+                'Asisten belum berhasil dibuka. Periksa koneksi internet Anda lalu coba lagi.';
           });
         }
       }
@@ -735,21 +757,41 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
 
     if (session.errorMessage != null) {
+      final isGoogleErr = session.isGooglePermissionError;
+      final isPaywall = session.isPaywallRequired;
+      final isTimeout = session.isTimeoutError;
+
+      final title = isPaywall
+          ? 'Akses khusus diperlukan'
+          : (isGoogleErr
+              ? 'Akun Google belum memiliki izin'
+              : (isTimeout
+                  ? 'Asisten belum berhasil dibuka'
+                  : 'Asisten Belum Bisa Dibuka'));
+
+      final icon = isPaywall
+          ? Icons.workspace_premium_rounded
+          : (isGoogleErr
+              ? Icons.account_circle_outlined
+              : (isTimeout
+                  ? Icons.wifi_off_rounded
+                  : Icons.info_outline_rounded));
+
+      final retryLabel = isPaywall
+          ? 'Buka Akses Langganan'
+          : (isGoogleErr
+              ? 'Ganti Akun Google'
+              : 'Coba lagi');
+
       return Container(
         color: canvas,
         child: AppErrorState(
-          title: session.isPaywallRequired
-              ? 'Akses khusus diperlukan'
-              : 'Asisten Belum Bisa Dibuka',
+          title: title,
           message: session.errorMessage!,
-          icon: session.isPaywallRequired
-              ? Icons.workspace_premium_rounded
-              : Icons.info_outline_rounded,
-          retryLabel: session.isPaywallRequired
-              ? 'Buka Akses Langganan'
-              : 'Coba lagi',
+          icon: icon,
+          retryLabel: retryLabel,
           onRetry: () {
-            if (session.isPaywallRequired) {
+            if (isPaywall) {
               NavigationGuard.safePushNamed(
                 context,
                 AppRoutes.subscription,
@@ -758,8 +800,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   'agent': session.agent,
                 },
               );
+            } else if (isGoogleErr) {
+              NavigationGuard.safePushNamed(
+                context,
+                AppRoutes.googleSessionAuth,
+              );
             } else {
-              _fetchUrl();
+              setState(() {
+                session.errorMessage = null;
+                session.isTimeoutError = false;
+                session.isGooglePermissionError = false;
+                session.isWebLoading = true;
+                session.isSessionReady = false;
+              });
+              if (session.webController != null) {
+                session.webController!.reload();
+                _startReadinessCheck();
+              } else {
+                _fetchUrl();
+              }
             }
           },
           onBack: () => AgentSessionManager.instance.closeRoom(),
@@ -876,14 +935,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       'window.otNotebook ? window.otNotebook.accessDenied() : false');
               if (!mounted) return;
               if (denied == true) {
-                _readinessTimer?.cancel();
-                setState(() {
-                  session.isWebLoading = false;
-                  session.isSessionReady = false;
-                  session.isPaywallRequired = true;
-                  session.errorMessage =
-                      'Akses untuk asisten ini memerlukan langganan aktif.';
-                });
+                _handleAccessDenied(session);
                 return;
               }
             },
