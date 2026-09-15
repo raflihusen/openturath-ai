@@ -121,8 +121,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     }
 
     final user = _authService.cachedCurrentUser;
-    if (user != null && !user.hasAccessToAgent(agent.id)) {
-      _openSubscriptionForAgent(agent);
+    if (user == null || !user.hasAccessToAgent(agent.id)) {
+      _openSubscriptionForAgent(agent, user: user);
       return;
     }
 

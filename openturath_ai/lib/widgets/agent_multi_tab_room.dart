@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
+import '../core/navigation_guard.dart';
+import '../core/routes.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
@@ -414,7 +416,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           div[class*="query-container" i] + div,
           .chat-disclaimer, .query-disclaimer, .model-disclaimer,
           [class*="disclaimer" i], [aria-label*="disclaimer" i],
-          [data-testid*="disclaimer" i],
+          [data-testid*="disclaimer" i], footer, div[class*="footer" i],
+          .access-denied, div[class*="access-denied" i], div[class*="denied" i],
+          [aria-label*="Request access" i], [aria-label*="Minta akses" i],
+          app-access-denied, .error-page, .permission-denied,
           [data-ot-hidden] {
             display: none !important;
             visibility: hidden !important;
@@ -640,9 +645,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
+            widget.session.isSessionReady = false;
             widget.session.isPaywallRequired = true;
             widget.session.errorMessage =
-                'Akses untuk asisten ini belum tersedia pada akun Anda.';
+                'Akses untuk asisten ini memerlukan langganan aktif.';
           });
         }
         return;
@@ -654,7 +660,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      if (isLogin || (_readySamples >= 5 && elapsedMs >= 4000)) {
+      if (isLogin || (_readySamples >= 2 && elapsedMs >= 800)) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
@@ -662,14 +668,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isSessionReady = true;
           });
         }
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 12) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = true;
-            widget.session.errorMessage =
-                'AI belum siap merespons. Periksa koneksi lalu coba muat kembali.';
           });
         }
       }
@@ -735,13 +739,29 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         color: canvas,
         child: AppErrorState(
           title: session.isPaywallRequired
-              ? 'Asisten belum tersedia'
+              ? 'Akses khusus diperlukan'
               : 'Asisten Belum Bisa Dibuka',
           message: session.errorMessage!,
           icon: session.isPaywallRequired
               ? Icons.workspace_premium_rounded
               : Icons.info_outline_rounded,
-          onRetry: _fetchUrl,
+          retryLabel: session.isPaywallRequired
+              ? 'Buka Akses Langganan'
+              : 'Coba lagi',
+          onRetry: () {
+            if (session.isPaywallRequired) {
+              NavigationGuard.safePushNamed(
+                context,
+                AppRoutes.subscription,
+                arguments: {
+                  'user': _authService.cachedCurrentUser,
+                  'agent': session.agent,
+                },
+              );
+            } else {
+              _fetchUrl();
+            }
+          },
           onBack: () => AgentSessionManager.instance.closeRoom(),
           backLabel: 'Kembali ke Beranda',
         ),
@@ -851,21 +871,21 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 source:
                     'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
               );
-              // Halaman selesai dimuat adalah sinyal paling andal untuk
-              // WebView NotebookLM. Menunggu deteksi textarea membuat ruang
-              // kajian dapat berputar terus pada perubahan DOM Google.
               final denied = await controller.evaluateJavascript(
                   source:
                       'window.otNotebook ? window.otNotebook.accessDenied() : false');
               if (!mounted) return;
-              setState(() {
-                session.isWebLoading = false;
-                session.isSessionReady = denied != true;
-                session.isPaywallRequired = denied == true;
-                session.errorMessage = denied == true
-                    ? 'Akses untuk asisten ini belum tersedia pada akun Anda.'
-                    : null;
-              });
+              if (denied == true) {
+                _readinessTimer?.cancel();
+                setState(() {
+                  session.isWebLoading = false;
+                  session.isSessionReady = false;
+                  session.isPaywallRequired = true;
+                  session.errorMessage =
+                      'Akses untuk asisten ini memerlukan langganan aktif.';
+                });
+                return;
+              }
             },
             onProgressChanged: (controller, progress) async {
               if (progress >= 35) {

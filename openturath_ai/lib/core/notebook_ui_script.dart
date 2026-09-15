@@ -147,7 +147,10 @@ const notebookUiScript = r'''
         .loading-notebook, [class*="skeleton"],
         .chat-disclaimer, .query-disclaimer, .model-disclaimer,
         [class*="disclaimer" i], [aria-label*="disclaimer" i],
-        [data-testid*="disclaimer" i] {
+        [data-testid*="disclaimer" i], footer, div[class*="footer" i],
+        .access-denied, div[class*="access-denied" i], div[class*="denied" i],
+        [aria-label*="Request access" i], [aria-label*="Minta akses" i],
+        app-access-denied, .error-page, .permission-denied {
           display:none!important;
           visibility:hidden!important;
           height:0px!important;
@@ -221,31 +224,27 @@ const notebookUiScript = r'''
     // Peringatan bawaan Gemini tidak termasuk antarmuka OpenTurath. Batasan
     // penggunaan sudah disampaikan di dalam aplikasi, jadi jangan sisakan
     // satu baris pun di bawah kolom pertanyaan.
-    document.querySelectorAll('div, p, span, small').forEach(el => {
+    document.querySelectorAll('div, p, span, small, footer').forEach(el => {
       const t = text(el).toLowerCase();
-      if (t.length < 260 && /gemini notebook.*(mungkin|may).*(tidak akurat|inaccurate)|responses? may be inaccurate/i.test(t)) {
+      if (t.length < 300 && (/gemini notebook.*(mungkin|may).*(tidak akurat|inaccurate)/i.test(t) || /responses? may be inaccurate/i.test(t) || (/tidak akurat/i.test(t) && /gemini/i.test(t)))) {
         hide(el);
       }
     });
   }
   function ready() {
     clean();
+    if (accessDenied()) return false;
     const bodyText = document.body ? (document.body.innerText || '') : '';
     if (/loading notebook|memuat notebook|\b0 sources\b/i.test(bodyText)) {
       return false;
     }
-    const hasSpinner = [...document.querySelectorAll('[role="progressbar"], mat-progress-spinner, mat-spinner, .loading-spinner, .mdc-circular-progress, svg.spinner, div[class*="spinner" i], div[class*="skeleton" i], div[class*="shimmer" i]')].some(el => {
-      if (!el) return false;
-      return el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0;
-    });
-    if (hasSpinner) return false;
-
     const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')].find(visible);
     return !!input && !input.disabled && input.getAttribute('aria-disabled') !== 'true';
   }
   function accessDenied() {
     const body = (document.body?.innerText || '').toLowerCase();
-    return /anda memerlukan akses|minta akses|you need access|request access|access denied/.test(body);
+    return /anda memerlukan akses|minta akses|you need access|request access|access denied|tidak memiliki izin|no access|need permission/.test(body) ||
+      !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="denied" i]');
   }
   window.otNotebook = {clean, ready, latest, conversation, accessDenied, setTheme: syncTheme};
   let scheduled = false;
