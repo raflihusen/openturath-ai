@@ -3,6 +3,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/notebook_navigation.dart';
 import '../core/theme.dart';
