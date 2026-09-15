@@ -44,49 +44,45 @@ Menjaga kesetiaan 100% pada pedoman [DESIGN.md](file:///Users/apple/Downloads/ra
 
 ### A. Bagian Kepala Kartu (Card Header & Overview)
 
-| Elemen UI | Copy Saat Ini | Catatan Desain / Konteks | Rekomendasi Koreksi Anda |
-|---|---|---|---|
-| **Eyebrow Pill** | `KORPUS KHUSUS · TAHKIK MANDIRI` | Micro-caps dengan latar wash amber 10% (`#1AD97706`) dan titik indikator. Menegaskan modul ini independen. | *(Bisa disesuaikan)* |
-| **Judul Utama** | `Fikih Tahawwulat` | Font Editorial Serif (*Newsreader*), tebal, ukuran 24–26sp, putih tajam (`#FAFAFA`). | *(Tetap / Ada tambahan?)* |
-| **Sub-Judul / Deskripsi** | `Menjawab realitas kontemporer dengan metodologi fikih yang kokoh.` | Font *Outfit Sans*, ukuran 13sp, warna `textSecondary` (`#A1A1AA`), tinggi baris 1.4. | *(Silakan ubah jika ada kalimat yang lebih mantap)* |
+| Elemen UI | Copy Resmi Terpilih | Konteks & Catatan Desain |
+|---|---|---|
+| **Eyebrow Pill** | `RUKUN KEEMPAT AGAMA` | Merujuk langsung pada kodifikasi Hadits Jibril (*Ar-Rukn ar-Rabi'*) oleh Habib Abu Bakar al-Masyhur. Dipasang dengan kontainer wash amber 10% (`#1AD97706`). |
+| **Judul Utama** | `Fikih Tahawwulat` | Font Editorial Serif (*Newsreader*), tebal, ukuran 24–26sp, putih tajam (`#FAFAFA`), disertai emblem kubah bercahaya OpenTurath. |
+| **Sub-Judul / Deskripsi** | `Khazanah ilmu kenabian seputar tanda-tanda akhir zaman untuk memahami realitas dan menjaga diri dari fitnah.` | Kalimat padat, berbobot, dan mencakup esensi *Fikih Wiqa'i* (pencegahan) serta pembacaan sejarah dari teks-teks kenabian. |
 
 ---
 
 ### B. Kisi 4 Bilik Asisten (The 4 Scholar Chambers)
 
-Ke-4 asisten ini disusun dalam kisi 2x2 (*two-column grid*) dengan micro-surface elegan yang masing-masing memiliki ikon dan indikator panah navigasi:
+Ke-4 asisten disusun dalam format kisi 2x2 (*two-column grid*) dengan micro-surface berwibawa, ikon tembaga bersahaja, dan panah navigasi halus (`chevron_right`):
 
 #### Bilik 1: Al-Muhaqqiq (المحقق)
-- **Nomor / Indeks**: `01`
+- **Nomor**: `01`
 - **Ikon**: Buku Terbuka Ilmiah (`Icons.menu_book_rounded`)
 - **Nama Asisten**: `Al-Muhaqqiq`
 - **Gelar Penjelas**: `Teks Matan & Ibarah`
-- **Deskripsi Detail (saat diklik/tooltip)**:
-  > *"Menelusuri ibarah otentik, nash matan, syarah, dan maraji' primer kitab-kitab Fikih Tahawwulat dengan presisi rujukan jilid dan halaman."*
+- **Fungsi**: Menelusuri ibarah otentik, nash matan, syarah, dan maraji' primer kitab-kitab Fikih Tahawwulat dengan presisi rujukan jilid dan halaman.
 
 #### Bilik 2: Al-Bayan (البيان)
-- **Nomor / Indeks**: `02`
+- **Nomor**: `02`
 - **Ikon**: Lembar Naskah / Pena (`Icons.description_outlined`)
 - **Nama Asisten**: `Al-Bayan`
 - **Gelar Penjelas**: `Penyederhanaan Konsep`
-- **Deskripsi Detail (saat diklik/tooltip)**:
-  > *"Menguraikan istilah-istilah rumit Nusus as-Sa'ah, kaidah sunnatullah, dan metodologi peradaban dengan analogi zaman yang ramah dan mudah dipahami."*
+- **Fungsi**: Menguraikan istilah-istilah rumit Nusus as-Sa'ah, kaidah sunnatullah, dan metodologi peradaban dengan analogi zaman yang ramah dan mudah dipahami.
 
 #### Bilik 3: Al-Mumtahin (الممتحن)
-- **Nomor / Indeks**: `03`
+- **Nomor**: `03`
 - **Ikon**: Topi Akademik / Timbangan Nalar (`Icons.school_outlined`)
 - **Nama Asisten**: `Al-Mumtahin`
 - **Gelar Penjelas**: `Ujian Pemahaman Interaktif`
-- **Deskripsi Detail (saat diklik/tooltip)**:
-  > *"Menguji ketajaman nalar santri melalui studi kasus fenomena mutakhir, menilai ketepatan jawaban, dan meluruskan kerancuan pemahaman secara sokratik."*
+- **Fungsi**: Menguji ketajaman nalar santri melalui studi kasus fenomena mutakhir, menilai ketepatan jawaban, dan meluruskan kerancuan pemahaman secara sokratik.
 
 #### Bilik 4: Khazanah Lisan (مستودع المحاضرات)
-- **Nomor / Indeks**: `04`
-- **Ikon**: Gelombang Suara / Audio Rekaman (`Icons.graphic_eq_rounded`)
+- **Nomor**: `04`
+- **Ikon**: Gelombang Suara / Rekaman Audio (`Icons.graphic_eq_rounded`)
 - **Nama Asisten**: `Khazanah Lisan`
 - **Gelar Penjelas**: `Arsip Muhadharah Habib Abu Bakar`
-- **Deskripsi Detail (saat diklik/tooltip)**:
-  > *"Menyajikan hikmah, adab dakwah, dan fatwa lisan langsung dari transkrip ribuan jam ceramah dan muhadharah al-Habib Abu Bakar al-Adni."*
+- **Fungsi**: Menyajikan hikmah, adab dakwah, dan fatwa lisan langsung dari transkrip ribuan jam ceramah dan muhadharah al-Habib Abu Bakar al-Adni.
 
 ---
 
@@ -94,7 +90,7 @@ Ke-4 asisten ini disusun dalam kisi 2x2 (*two-column grid*) dengan micro-surface
 
 | Kondisi Pengguna | Teks Tombol | Aksi yang Terjadi Saat Ditekan |
 |---|---|---|
-| **Belum Berlangganan** | `Masuk Majelis Telaah →` | Membuka lembar dialog eksklusif: penjelasan 4 asisten, preview singkat, dan opsi paket langganan DOKU. |
+| **Belum Berlangganan** | `Masuk Majelis Telaah →` | Membuka lembar dialog eksklusif: pengenalan 4 asisten, preview singkat, dan opsi paket langganan DOKU. |
 | **Sudah Berlangganan (Aktif)** | `Buka Majelis 4 Asisten →` | Membuka ruang multi-tab yang langsung memuat ke-4 asisten secara instan di bilah tab atas. |
 
 ---
