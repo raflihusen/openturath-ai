@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'theme.dart';
@@ -11,6 +12,7 @@ class AppSnackBar {
     SnackType type = SnackType.info,
     Duration? duration,
     SnackBarAction? action,
+    bool persist = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -47,10 +49,11 @@ class AppSnackBar {
             ? const Duration(seconds: 4)
             : type == SnackType.warning
                 ? const Duration(seconds: 3)
-                : const Duration(milliseconds: 2200));
+                : const Duration(milliseconds: 2600));
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
       SnackBar(
         content: Row(
           children: [
@@ -81,9 +84,33 @@ class AppSnackBar {
           ),
         ),
         duration: effectiveDuration,
+        persist: persist,
+        dismissDirection: DismissDirection.horizontal,
         action: action,
       ),
     );
+
+    // Safeguard timeout: jamin snackbar selalu tertutup otomatis setelah durasi habis,
+    // bahkan jika ada persistensi bawaan framework saat action != null atau service aksesibilitas aktif.
+    if (!persist) {
+      Timer(effectiveDuration + const Duration(milliseconds: 300), () {
+        try {
+          messenger.hideCurrentSnackBar();
+        } catch (_) {}
+      });
+    }
+  }
+
+  static void hide(BuildContext context) {
+    try {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    } catch (_) {}
+  }
+
+  static void clear(BuildContext context) {
+    try {
+      ScaffoldMessenger.of(context).clearSnackBars();
+    } catch (_) {}
   }
 
   static void success(
@@ -91,30 +118,63 @@ class AppSnackBar {
     String message, {
     Duration? duration,
     SnackBarAction? action,
+    bool persist = false,
   }) =>
-      show(context, message: message, type: SnackType.success, duration: duration, action: action);
+      show(
+        context,
+        message: message,
+        type: SnackType.success,
+        duration: duration,
+        action: action,
+        persist: persist,
+      );
 
   static void error(
     BuildContext context,
     String message, {
     Duration? duration,
     SnackBarAction? action,
+    bool persist = false,
   }) =>
-      show(context, message: message, type: SnackType.error, duration: duration, action: action);
+      show(
+        context,
+        message: message,
+        type: SnackType.error,
+        duration: duration,
+        action: action,
+        persist: persist,
+      );
 
   static void warning(
     BuildContext context,
     String message, {
     Duration? duration,
     SnackBarAction? action,
+    bool persist = false,
   }) =>
-      show(context, message: message, type: SnackType.warning, duration: duration, action: action);
+      show(
+        context,
+        message: message,
+        type: SnackType.warning,
+        duration: duration,
+        action: action,
+        persist: persist,
+      );
 
   static void info(
     BuildContext context,
     String message, {
     Duration? duration,
     SnackBarAction? action,
+    bool persist = false,
   }) =>
-      show(context, message: message, type: SnackType.info, duration: duration, action: action);
+      show(
+        context,
+        message: message,
+        type: SnackType.info,
+        duration: duration,
+        action: action,
+        persist: persist,
+      );
 }
+

@@ -554,6 +554,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       await _webController?.stopLoading();
     } catch (_) {}
     if (mounted) {
+      AppSnackBar.hide(context);
       Navigator.pop(context);
     }
   }
@@ -729,8 +730,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         AppSnackBar.success(
                           context,
                           AppCopy.answerCopied,
+                          duration: const Duration(milliseconds: 2500),
                           action: SnackBarAction(
                             label: 'Simpan',
+                            textColor: const Color(0xFF34D399),
                             onPressed: () => unawaited(_saveCopiedAnswer(text, ownerUid)),
                           ),
                         );

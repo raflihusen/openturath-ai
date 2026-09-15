@@ -13,6 +13,7 @@ import 'specialist_list_screen.dart';
 import 'bookmark_screen.dart';
 import 'profile_screen.dart';
 import '../widgets/openturath_brand.dart';
+import '../core/app_snackbar.dart';
 import '../services/agent_session_manager.dart';
 import '../widgets/agent_multi_tab_room.dart';
 
@@ -273,10 +274,16 @@ class _MainShellScreenState extends State<MainShellScreen> {
                   await activeController.goBack();
                   return;
                 }
+                if (context.mounted) {
+                  AppSnackBar.hide(context);
+                }
                 sessionManager.closeRoom();
                 return;
               }
               if (_currentIndex != 0) {
+                if (context.mounted) {
+                  AppSnackBar.hide(context);
+                }
                 _onTabSelected(0);
               }
             },

@@ -202,7 +202,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
           tooltip: 'Kembali ke Beranda',
-          onPressed: () => _sessionManager.closeRoom(),
+          onPressed: () {
+            AppSnackBar.hide(context);
+            _sessionManager.closeRoom();
+          },
         ),
         titleSpacing: 0,
         title: Text(
@@ -291,7 +294,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       final isActive = index == _sessionManager.activeIndex;
 
                       return InkWell(
-                        onTap: () => _sessionManager.selectTab(index),
+                        onTap: () {
+                          AppSnackBar.hide(context);
+                          _sessionManager.selectTab(index);
+                        },
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -325,7 +331,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                               ),
                               const SizedBox(width: 6),
                               InkWell(
-                                onTap: () => _sessionManager.closeTab(index),
+                                onTap: () {
+                                  AppSnackBar.hide(context);
+                                  _sessionManager.closeTab(index);
+                                },
                                 borderRadius: BorderRadius.circular(10),
                                 child: Padding(
                                   padding: const EdgeInsets.all(2),
@@ -882,8 +891,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         AppSnackBar.success(
                           context,
                           AppCopy.answerCopied,
+                          duration: const Duration(milliseconds: 2500),
                           action: SnackBarAction(
                             label: 'Simpan',
+                            textColor: const Color(0xFF34D399),
                             onPressed: () {
                               final uid = _authService.currentUser?.uid;
                               if (uid != null) {
