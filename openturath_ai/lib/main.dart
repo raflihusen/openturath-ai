@@ -9,7 +9,6 @@ import 'screens/main_shell_screen.dart';
 import 'screens/specialist_list_screen.dart';
 import 'screens/bookmark_screen.dart';
 import 'screens/profile_screen.dart';
-import 'screens/agent_webview_screen.dart';
 import 'screens/subscription_screen.dart';
 import 'screens/google_session_auth_screen.dart';
 import 'screens/book_catalog_screen.dart';
@@ -153,31 +152,12 @@ class OpenTurathApp extends StatelessWidget {
                     page = const ProfileScreen();
                     break;
                   case AppRoutes.agentWebview:
-                    page = const AgentWebviewScreen();
-                    // Slide & cross-fade for immersive agent workspace
-                    return PageRouteBuilder(
-                      settings: settings,
-                      pageBuilder: (context, animation, secondaryAnimation) => page,
-                      transitionDuration: const Duration(milliseconds: 360),
-                      reverseTransitionDuration: const Duration(milliseconds: 280),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        final curvedAnimation = CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeOutCubic,
-                          reverseCurve: Curves.easeInCubic,
-                        );
-                        return SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0.9, 0.0),
-                            end: Offset.zero,
-                          ).animate(curvedAnimation),
-                          child: FadeTransition(
-                            opacity: Tween<double>(begin: 0.4, end: 1.0).animate(curvedAnimation),
-                            child: child,
-                          ),
-                        );
-                      },
-                    );
+                    // Jalur lama tetap kompatibel, tetapi selalu kembali ke
+                    // shell yang memiliki ruang kajian multi-tab persisten.
+                    // Ini mencegah dua WebView dengan perilaku copy/close
+                    // yang berbeda hidup bersamaan.
+                    page = const MainShellScreen();
+                    break;
                   case AppRoutes.subscription:
                     page = const SubscriptionScreen();
                     break;
