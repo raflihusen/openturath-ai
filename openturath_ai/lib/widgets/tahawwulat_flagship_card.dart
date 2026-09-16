@@ -122,10 +122,12 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                            color:
+                                const Color(0xFF10B981).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(100),
                             border: Border.all(
-                              color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                              color: const Color(0xFF10B981)
+                                  .withValues(alpha: 0.3),
                               width: 0.8,
                             ),
                           ),
@@ -221,7 +223,8 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                   style: GoogleFonts.jetBrainsMono(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF6EE7B7).withValues(alpha: 0.7),
+                                    color: const Color(0xFF6EE7B7)
+                                        .withValues(alpha: 0.7),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -232,13 +235,15 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                     color: Colors.white.withValues(alpha: 0.05),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: Icon(icon, size: 14, color: const Color(0xFFFCD34D)),
+                                  child: Icon(icon,
+                                      size: 14, color: const Color(0xFFFCD34D)),
                                 ),
                                 const SizedBox(width: 10),
                                 // Judul dan Gelar
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         sub.name,
@@ -285,8 +290,14 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: isSubscribed
-                                    ? const [Color(0xFF059669), Color(0xFF047857)]
-                                    : const [Color(0xFFD97706), Color(0xFFB45309)],
+                                    ? const [
+                                        Color(0xFF059669),
+                                        Color(0xFF047857)
+                                      ]
+                                    : const [
+                                        Color(0xFFD97706),
+                                        Color(0xFFB45309)
+                                      ],
                               ),
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
