@@ -155,27 +155,25 @@ class UserModel {
     final all = entitlements['all_access'] ?? entitlements['all_ai'];
     if (all != null && all.isActive && all.isPremium) return true;
 
-    // 2. Specific module entitlement
-    final specific = getEntitlement(agentId);
-    if (specific != null && specific.isActive && specific.isPremium) {
-      return true;
-    }
-
     // If an explicit all_access was REVOKED, deny fallback
     if (all != null && all.status == 'revoked') {
       return false;
     }
 
-    // 3. Account-level active subscription (tholib_1m, tholib_6m, bahits_1y, all_ai*, sultan, full, voucher, etc.)
-    if (isSubscriptionActive) {
-      if (plan == 'single') {
-        return specific != null && specific.isActive && specific.isPremium;
-      }
+    // 2. Specific module entitlement
+    final mappedKey = entitlementKeys[agentId] ?? agentId;
+    final specific = entitlements[mappedKey];
+    if (specific != null && specific.isActive && specific.isPremium) {
       return true;
     }
 
-    // 4. Fallback legacy plan check
-    const legacyPlans = [
+    // If a specific module entitlement was explicitly revoked, deny fallback
+    if (specific != null && specific.status == 'revoked') {
+      return false;
+    }
+
+    // 3. Explicit global all-access plan check (ONLY truly global all-access plans)
+    const globalAllPlans = [
       'all_access',
       'all_ai_1m',
       'all_ai_6m',
@@ -183,24 +181,30 @@ class UserModel {
       'all_ai',
       'full',
       'sultan',
-      'tholib_1m',
-      'tholib_6m',
-      'bahits_1y',
-      'tholib',
-      'bahits',
-      'pro',
-      'premium',
-      'custom',
     ];
-    final isLegacyMatching = legacyPlans.contains(plan) ||
-        plan.startsWith('all_ai') ||
-        plan.startsWith('redeem') ||
-        plan.startsWith('voucher');
-    return isLegacyMatching && isSubscriptionActive;
+    final isGlobalPlan = (globalAllPlans.contains(plan) ||
+            plan.startsWith('all_ai')) &&
+        isSubscriptionActive;
+    if (isGlobalPlan) {
+      return true;
+    }
+
+    // 4. Module-specific plan matching (e.g. 'fiqh_syafii_1m', 'fiqh_tahawwulat_1m')
+    if (isSubscriptionActive) {
+      final cleanPlan = plan.toLowerCase();
+      final cleanKey = mappedKey.toLowerCase();
+      if (cleanPlan == cleanKey ||
+          cleanPlan.startsWith('${cleanKey}_') ||
+          cleanPlan.contains(cleanKey)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   bool hasAccessToAgent(String agentId) {
-    // Akses notebook memerlukan hak akses langganan atau voucher aktif (F24: hapus jalur trial tanpa batas server)
+    // Akses notebook memerlukan hak akses langganan atau voucher aktif spesifik modul
     return isAgentSubscriptionActive(agentId);
   }
 

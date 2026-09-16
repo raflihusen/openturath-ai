@@ -723,6 +723,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       session.errorMessage = null;
     });
 
+    final user = _authService.cachedCurrentUser;
+    if (user == null || !user.hasAccessToAgent(session.agent.id)) {
+      if (!mounted) return;
+      setState(() {
+        session.isUrlLoading = false;
+        session.isPaywallRequired = true;
+        session.isGooglePermissionError = false;
+        session.errorMessage =
+            'Akses untuk asisten ini memerlukan langganan aktif.';
+      });
+      return;
+    }
+
     try {
       final url = await _agentService.getAgentUrl(session.agent.id);
       if (!mounted) return;

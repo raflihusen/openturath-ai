@@ -97,6 +97,39 @@ void main() {
       expect(userWithTahawwulatOnly.hasAccessToAgent('hadits'), isFalse);
     });
 
+    test('User with active Syafii subscription cannot access Tahawwulat even if subscriptionExpiry is active', () {
+      final futureExpiry = DateTime.now().add(const Duration(days: 30));
+      final userSyafiiOnly = UserModel(
+        uid: 'test_uid_syafii',
+        name: 'Santri Fikih Syafii',
+        email: 'syafii@openturath.id',
+        photoUrl: '',
+        plan: 'fiqh_syafii_1m',
+        questionsUsed: 5,
+        subscriptionExpiry: futureExpiry,
+        entitlements: {
+          'fiqh_syafii': ModuleEntitlement(
+            plan: 'fiqh_syafii_1m',
+            expiry: futureExpiry,
+            status: 'active',
+          ),
+        },
+      );
+
+      // Pastikan akun aktif secara umum
+      expect(userSyafiiOnly.isSubscriptionActive, isTrue);
+
+      // Pastikan akses ke Fikih Syafi'i diizinkan
+      expect(userSyafiiOnly.hasAccessToAgent('fiqh_syafii'), isTrue);
+      expect(userSyafiiOnly.hasAccessToAgent('fiqh_syafii_muhaqqiq'), isTrue);
+
+      // Pastikan TIDAK BISA akses Fikih Tahawwulat ataupun sub-agennya
+      expect(userSyafiiOnly.hasAccessToAgent('fiqh_tahawwulat'), isFalse);
+      expect(userSyafiiOnly.hasAccessToAgent('fiqh_tahawwulat_mukhtabir'), isFalse);
+      expect(userSyafiiOnly.hasAccessToAgent('fiqh_tahawwulat_bayan'), isFalse);
+      expect(userSyafiiOnly.hasAccessToAgent('hadits'), isFalse);
+    });
+
     test('Expired module entitlement correctly denies premium access', () {
       final pastExpiry = DateTime.now().subtract(const Duration(days: 1));
       final userExpired = UserModel(
