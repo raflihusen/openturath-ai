@@ -1,0 +1,18 @@
+{
+  "version": "1.0.46",
+  "buildNumber": 47,
+  "versionFull": "1.0.46+47",
+  "buildTimestamp": "2026-09-16T17:20:25+03:00",
+  "sha256": "17c62c4e1174c313853708c05a2e330d3aca5f362180941e299ebf741fdd2550",
+  "fileSizeBytes": 61681547,
+  "apkArtifacts": [
+    "/Users/apple/Downloads/ramadhan/app-release-latest.apk",
+    "/Users/apple/Downloads/ramadhan/openturath_ai/public/app-release-latest.apk",
+    "/Users/apple/Downloads/ramadhan/openturath_ai/public/OpenTurath_AI.apk"
+  ],
+  "verification": {
+    "gradleBuildStatus": "SUCCESS (100%)",
+    "flutterAnalyze": "0 issues found",
+    "flutterTest": "158/158 passed (100%)"
+  }
+}
