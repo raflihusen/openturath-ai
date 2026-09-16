@@ -6,9 +6,11 @@ import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'apple_interactive_wrapper.dart';
 
-/// Kartu Flagship Eksklusif Fikih Tahawwulat (Korpus Mahkota OpenTurath AI).
-/// Menggunakan palet Deep Emerald Twilight dengan hairline border sovereignAmber,
-/// kisi 4 bilik asisten ilmiah, dan tanpa emblem logo sesuai arahan desain.
+/// Kartu monokrom untuk paket utama OpenTurath.
+///
+/// Kemewahan dibangun melalui ruang, tipografi, dan detail hairline. Seluruh
+/// asisten berada dalam satu daftar editorial agar kartu tetap tenang dan tidak
+/// berubah menjadi kumpulan kartu kecil yang ramai.
 class TahawwulatFlagshipCard extends StatelessWidget {
   final AgentModel agent;
   final bool isSubscribed;
@@ -25,408 +27,395 @@ class TahawwulatFlagshipCard extends StatelessWidget {
     this.onOpenLibrary,
   });
 
-  static const _deepEmeraldStart = Color(0xFF0D201A);
-  static const _deepEmeraldEnd = Color(0xFF050D0A);
-  static const _sovereignAmber = Color(0xFFD97706);
-  static const _chamberSurface = Color(0xFF12241D);
-  static const _chamberBorder = Color(0xFF1E3A2F);
-
-  IconData _iconForSubAgent(String id) {
-    if (id.contains('muhaqqiq')) return Icons.menu_book_rounded;
-    if (id.contains('bayan')) return Icons.auto_stories_outlined;
-    if (id.contains('mukhtabir')) return Icons.school_outlined;
-    if (id.contains('habib')) return Icons.graphic_eq_rounded;
-    return Icons.auto_awesome_rounded;
-  }
+  static const _obsidian = Color(0xFF09090A);
+  static const _graphite = Color(0xFF141416);
+  static const _pearl = Color(0xFFF5F5F3);
+  static const _silver = Color(0xFFB5B5BC);
+  static const _muted = Color(0xFF8C8C94);
+  static const _hairline = Color(0xFF303034);
 
   String _numberForIndex(int index) {
-    return '0${index + 1}';
+    return (index + 1).toString().padLeft(2, '0');
   }
 
   @override
   Widget build(BuildContext context) {
-    final subAgents = agent.subAgents ?? const [];
+    final subAgents = agent.subAgents ?? const <SubAgentModel>[];
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [_deepEmeraldStart, _deepEmeraldEnd],
-        ),
-        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-        border: Border.all(
-          color: _sovereignAmber.withValues(alpha: 0.38),
-          width: 0.8,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.28),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
+    return Semantics(
+      container: true,
+      label: '${agent.title}, paket utama OpenTurath, '
+          '${subAgents.length} asisten khusus',
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [_graphite, _obsidian],
+            stops: [0, 0.72],
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-        child: Stack(
-          children: [
-            // Watermark Geometri Kubah Mihrab Klasik (opasitas 4.5% sangat halus)
-            Positioned(
-              right: -30,
-              top: -20,
-              child: IgnorePointer(
-                child: Opacity(
-                  opacity: 0.045,
-                  child: CustomPaint(
-                    size: const Size(200, 200),
-                    painter: _MihrabWatermarkPainter(),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.16),
+            width: 0.8,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.30),
+              blurRadius: 24,
+              offset: const Offset(0, 12),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+          child: Stack(
+            children: [
+              const Positioned.fill(
+                child: IgnorePointer(
+                  child: CustomPaint(painter: _ObsidianDetailPainter()),
+                ),
+              ),
+              Positioned(
+                right: 18,
+                top: 62,
+                child: IgnorePointer(
+                  child: Text(
+                    subAgents.length.toString().padLeft(2, '0'),
+                    style: GoogleFonts.newsreader(
+                      fontSize: 78,
+                      fontWeight: FontWeight.w500,
+                      height: 0.9,
+                      color: Colors.white.withValues(alpha: 0.035),
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 1. Eyebrow Pill (Rukun Keempat Agama - Tanpa Emblem di sudut kanan)
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _sovereignAmber.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            color: _sovereignAmber.withValues(alpha: 0.32),
-                            width: 0.8,
-                          ),
-                        ),
-                        child: Text(
-                          'RUKUN KEEMPAT AGAMA',
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'KOLEKSI UTAMA',
                           style: GoogleFonts.outfit(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.8,
-                            color: const Color(0xFFF59E0B),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.8,
+                            color: _silver,
                           ),
                         ),
-                      ),
-                      const Spacer(),
-                      // Status Berlangganan / Riset
-                      if (isSubscribed)
+                        const SizedBox(width: 10),
+                        Container(
+                          width: 18,
+                          height: 0.8,
+                          color: Colors.white.withValues(alpha: 0.30),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          '${subAgents.length} ASISTEN',
+                          style: GoogleFonts.outfit(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.25,
+                            color: _muted,
+                          ),
+                        ),
+                        const Spacer(),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                            horizontal: 9,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xFF10B981).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(100),
+                            color: isSubscribed
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.transparent,
+                            borderRadius:
+                                BorderRadius.circular(AppTheme.radiusPill),
                             border: Border.all(
-                              color: const Color(0xFF10B981)
-                                  .withValues(alpha: 0.3),
+                              color: Colors.white.withValues(alpha: 0.17),
                               width: 0.8,
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.check_circle_rounded,
-                                  size: 11, color: Color(0xFF34D399)),
-                              const SizedBox(width: 4),
+                              Container(
+                                width: 5,
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _pearl,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
                               Text(
-                                'Akses Aktif',
+                                isSubscribed ? 'AKTIF' : 'PREMIUM',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 10,
+                                  fontSize: 9.5,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF34D399),
+                                  letterSpacing: 1.1,
+                                  color: _pearl,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  // 2. Judul Utama & Kaligrafi Arab
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          agent.title,
-                          style: GoogleFonts.newsreader(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFFFAFAFA),
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'فقه التحولات',
-                        style: GoogleFonts.amiri(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF6EE7B7).withValues(alpha: 0.8),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // 3. Deskripsi Singkat Resmi
-                  Text(
-                    agent.description,
-                    style: GoogleFonts.outfit(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w400,
-                      color: const Color(0xFFCBD5E1),
-                      height: 1.45,
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 26),
+                    Text(
+                      agent.title,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.55,
+                        height: 1.05,
+                        color: _pearl,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      agent.titleArabic,
+                      textDirection: TextDirection.rtl,
+                      style: GoogleFonts.amiri(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                        height: 1.3,
+                        color: _silver,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      agent.description,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        color: _silver,
+                        height: 1.55,
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+                    Container(height: 0.8, color: _hairline),
+                    Column(
+                      children: List.generate(subAgents.length, (index) {
+                        final sub = subAgents[index];
+                        final number = _numberForIndex(index);
 
-                  // 4. Kisi 4 Bilik Asisten (The 4 Scholar Chambers)
-                  Column(
-                    children: List.generate(subAgents.length, (index) {
-                      final sub = subAgents[index];
-                      final icon = _iconForSubAgent(sub.id);
-                      final number = _numberForIndex(index);
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: AppleInteractiveWrapper(
+                        return AppleInteractiveWrapper(
                           onTap: () => onOpenSubAgent(sub),
+                          pressedScale: 0.99,
+                          semanticLabel: 'Buka ${sub.name}, ${sub.description}',
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 9),
+                            constraints: const BoxConstraints(minHeight: 66),
                             decoration: BoxDecoration(
-                              color: _chamberSurface,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: _chamberBorder,
-                                width: 0.8,
-                              ),
+                              border: index < subAgents.length - 1
+                                  ? const Border(
+                                      bottom: BorderSide(
+                                        color: _hairline,
+                                        width: 0.8,
+                                      ),
+                                    )
+                                  : null,
                             ),
+                            padding: const EdgeInsets.symmetric(vertical: 11),
                             child: Row(
                               children: [
-                                // Nomor bilik
-                                Text(
-                                  number,
-                                  style: GoogleFonts.jetBrainsMono(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF6EE7B7)
-                                        .withValues(alpha: 0.7),
+                                SizedBox(
+                                  width: 34,
+                                  child: Text(
+                                    number,
+                                    style: GoogleFonts.jetBrainsMono(
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.35,
+                                      color: _muted,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                // Ikon bilik
                                 Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.05),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Icon(icon,
-                                      size: 14, color: const Color(0xFFFCD34D)),
+                                  width: 1,
+                                  height: 26,
+                                  color: Colors.white.withValues(alpha: 0.12),
                                 ),
-                                const SizedBox(width: 10),
-                                // Judul dan Gelar
+                                const SizedBox(width: 14),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         sub.name,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.outfit(
-                                          fontSize: 13,
+                                          fontSize: 13.5,
                                           fontWeight: FontWeight.w600,
-                                          color: const Color(0xFFF8FAFC),
+                                          letterSpacing: -0.1,
+                                          color: _pearl,
                                         ),
                                       ),
+                                      const SizedBox(height: 2),
                                       Text(
                                         sub.description,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.outfit(
-                                          fontSize: 11,
+                                          fontSize: 11.5,
                                           fontWeight: FontWeight.w400,
-                                          color: const Color(0xFF94A3B8),
+                                          color: _muted,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
+                                const SizedBox(width: 12),
                                 const Icon(
-                                  Icons.chevron_right_rounded,
-                                  size: 18,
-                                  color: Color(0xFF64748B),
+                                  Icons.north_east_rounded,
+                                  size: 16,
+                                  color: _silver,
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      );
-                    }),
-                  ),
-                  const SizedBox(height: 6),
-
-                  // 5. Tombol Aksi Bawah
-                  Row(
-                    children: [
-                      // Tombol Utama (Buka Majelis)
-                      Expanded(
-                        child: AppleInteractiveWrapper(
-                          onTap: onOpenMain,
-                          child: Container(
-                            height: 42,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: isSubscribed
-                                    ? const [
-                                        Color(0xFF059669),
-                                        Color(0xFF047857)
-                                      ]
-                                    : const [
-                                        Color(0xFFD97706),
-                                        Color(0xFFB45309)
-                                      ],
+                        );
+                      }),
+                    ),
+                    Container(height: 0.8, color: _hairline),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AppleInteractiveWrapper(
+                            onTap: onOpenMain,
+                            pressedScale: 0.985,
+                            borderRadius: BorderRadius.circular(10),
+                            semanticLabel: isSubscribed
+                                ? 'Buka ${subAgents.length} asisten ${agent.title}'
+                                : 'Lihat akses premium ${agent.title}',
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: _pearl,
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: (isSubscribed
-                                          ? const Color(0xFF059669)
-                                          : const Color(0xFFD97706))
-                                      .withValues(alpha: 0.25),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  isSubscribed
-                                      ? 'Buka Majelis 4 Asisten'
-                                      : 'Masuk Majelis Telaah',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      isSubscribed
+                                          ? 'Buka ${subAgents.length} asisten'
+                                          : 'Lihat akses premium',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.15,
+                                        color: _obsidian,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 6),
-                                const Icon(Icons.arrow_forward_rounded,
-                                    size: 15, color: Colors.white),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Tombol Pustaka Maraji'
-                      if (onOpenLibrary != null) ...[
-                        const SizedBox(width: 8),
-                        AppleInteractiveWrapper(
-                          onTap: onOpenLibrary,
-                          child: Container(
-                            height: 42,
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.06),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.12),
-                                width: 0.8,
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.arrow_forward_rounded,
+                                    size: 17,
+                                    color: _obsidian,
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.menu_book_outlined,
-                                    size: 15, color: Color(0xFFCBD5E1)),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Pustaka',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFFCBD5E1),
-                                  ),
-                                ),
-                              ],
-                            ),
                           ),
                         ),
+                        if (onOpenLibrary != null) ...[
+                          const SizedBox(width: 10),
+                          AppleInteractiveWrapper(
+                            onTap: onOpenLibrary,
+                            pressedScale: 0.96,
+                            borderRadius: BorderRadius.circular(10),
+                            semanticLabel: 'Buka pustaka ${agent.title}',
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: _graphite,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.14),
+                                  width: 0.8,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: const Icon(
+                                Icons.auto_stories_outlined,
+                                size: 19,
+                                color: _pearl,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _MihrabWatermarkPainter extends CustomPainter {
+/// Kilau diagonal yang sangat tipis menjadi satu-satunya ornamen dekoratif.
+class _ObsidianDetailPainter extends CustomPainter {
+  const _ObsidianDetailPainter();
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white
+    final linePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.055)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
+      ..strokeWidth = 0.8;
 
-    final path = Path();
-    // Siluet kubah mihrab melengkung
-    path.moveTo(size.width * 0.1, size.height);
-    path.lineTo(size.width * 0.1, size.height * 0.45);
-    path.quadraticBezierTo(
-      size.width * 0.1,
-      size.height * 0.1,
-      size.width * 0.5,
-      0,
+    canvas.drawLine(
+      Offset(size.width * 0.72, 0),
+      Offset(size.width, size.height * 0.20),
+      linePaint,
     );
-    path.quadraticBezierTo(
-      size.width * 0.9,
-      size.height * 0.1,
-      size.width * 0.9,
-      size.height * 0.45,
+    canvas.drawLine(
+      Offset(size.width * 0.82, 0),
+      Offset(size.width, size.height * 0.12),
+      linePaint,
     );
-    path.lineTo(size.width * 0.9, size.height);
 
-    canvas.drawPath(path, paint);
+    final sheenPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.white.withValues(alpha: 0.045),
+          Colors.transparent,
+        ],
+      ).createShader(
+        Rect.fromLTWH(size.width * 0.48, 0, size.width * 0.52, size.height),
+      );
 
-    // Garis kubah konsentris kedua
-    final innerPath = Path();
-    innerPath.moveTo(size.width * 0.25, size.height);
-    innerPath.lineTo(size.width * 0.25, size.height * 0.5);
-    innerPath.quadraticBezierTo(
-      size.width * 0.25,
-      size.height * 0.22,
-      size.width * 0.5,
-      size.height * 0.12,
-    );
-    innerPath.quadraticBezierTo(
-      size.width * 0.75,
-      size.height * 0.22,
-      size.width * 0.75,
-      size.height * 0.5,
-    );
-    innerPath.lineTo(size.width * 0.75, size.height);
-
-    canvas.drawPath(innerPath, paint);
+    final sheen = Path()
+      ..moveTo(size.width * 0.68, 0)
+      ..lineTo(size.width, 0)
+      ..lineTo(size.width, size.height * 0.44)
+      ..close();
+    canvas.drawPath(sheen, sheenPaint);
   }
 
   @override
