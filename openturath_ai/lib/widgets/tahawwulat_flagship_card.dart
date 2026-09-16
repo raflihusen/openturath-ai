@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'apple_interactive_wrapper.dart';
+import 'tahawwulat_introduction_sheet.dart';
 
 /// Kartu monokrom untuk paket utama OpenTurath.
 ///
@@ -17,6 +18,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
   final VoidCallback onOpenMain;
   final void Function(SubAgentModel subAgent) onOpenSubAgent;
   final VoidCallback? onOpenLibrary;
+  final VoidCallback? onOpenIntroduction;
 
   const TahawwulatFlagshipCard({
     super.key,
@@ -25,6 +27,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
     required this.onOpenMain,
     required this.onOpenSubAgent,
     this.onOpenLibrary,
+    this.onOpenIntroduction,
   });
 
   static const _obsidian = Color(0xFF09090A);
@@ -293,12 +296,16 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: AppleInteractiveWrapper(
-                            onTap: onOpenMain,
+                            onTap: onOpenIntroduction ??
+                                () => TahawwulatIntroductionSheet.show(
+                                      context,
+                                      agent: agent,
+                                      onSelectSubAgent: onOpenSubAgent,
+                                      onOpenMain: onOpenMain,
+                                    ),
                             pressedScale: 0.985,
                             borderRadius: BorderRadius.circular(10),
-                            semanticLabel: isSubscribed
-                                ? 'Buka ${subAgents.length} asisten ${agent.title}'
-                                : 'Lihat akses premium ${agent.title}',
+                            semanticLabel: 'Mengenal Fikih Tahawwulat',
                             child: Container(
                               height: 50,
                               decoration: BoxDecoration(
@@ -310,11 +317,15 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  const Icon(
+                                    Icons.auto_stories_rounded,
+                                    size: 18,
+                                    color: _obsidian,
+                                  ),
+                                  const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      isSubscribed
-                                          ? 'Buka ${subAgents.length} asisten'
-                                          : 'Lihat akses premium',
+                                      'Mengenal Fikih Tahawwulat',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.outfit(
