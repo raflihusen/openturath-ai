@@ -292,12 +292,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
     final activeList = _activeAgents;
 
+    final agentId = _agent?.id ?? '';
+    final isTahawwulat = agentId.startsWith('fiqh_tahawwulat');
+
     // Pricing tiers untuk AI Spesialis Terpilih
-    final moduleTiers = [
+    final regularTiers = [
       {'name': '1 Bulan', 'price': 49000, 'label': 'Rp 49.000', 'period': '/ bulan', 'planId': AppConstants.planTholib1m},
       {'name': '6 Bulan', 'price': 299000, 'label': 'Rp 299.000', 'period': '/ 6 bulan', 'planId': AppConstants.planTholib6m},
       {'name': '1 Tahun', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ tahun', 'planId': AppConstants.planBahits1y},
     ];
+
+    final tahawwulatTiers = [
+      {'name': '1 Bulan', 'price': 300000, 'label': 'Rp 300.000', 'period': '/ bulan', 'planId': AppConstants.planTholib1m},
+      {'name': '6 Bulan', 'price': 1500000, 'label': 'Rp 1.500.000', 'period': '/ 6 bulan', 'planId': AppConstants.planTholib6m},
+      {'name': '1 Tahun', 'price': 2000000, 'label': 'Rp 2.000.000', 'period': '/ tahun', 'planId': AppConstants.planBahits1y},
+    ];
+
+    final moduleTiers = isTahawwulat ? tahawwulatTiers : regularTiers;
 
     final currentTier = moduleTiers[_selectedDurationIndex];
     final tierPrice = currentTier['price'] as int;
@@ -339,13 +350,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 children: [
                   // Editorial Header
                   Text(
-                    'Pilihan langganan',
+                    'Pilih akses riset Anda',
                     style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 22),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
-                    'Pilih paket langganan untuk menelaah ibarah dan rujukan kitab turats.',
-                    style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                    'Telusuri khazanah kitab ulama dengan Super AI yang mengubah cara Anda menemukan, memahami, dan memverifikasi rujukan.',
+                    style: OTTypography.body(color: textSecondary).copyWith(
+                      fontSize: 13,
+                      height: 1.45,
+                    ),
                   ),
 
                   const SizedBox(height: OTSpacing.sm),
@@ -396,7 +410,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Paket per bidang',
+                              isTahawwulat ? 'Paket Fikih Tahawwulat' : 'Paket per bidang',
                               style: OTTypography.sectionHeading(color: accent),
                             ),
                             Container(
@@ -406,7 +420,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                '1 bidang',
+                                isTahawwulat ? 'Korpus Utama' : '1 bidang',
                                 style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
                               ),
                             ),
@@ -419,7 +433,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Akses satu bidang beserta kitab rujukannya.',
+                          isTahawwulat
+                              ? 'Akses eksklusif korpus khusus Fikih Tahawwulat untuk menelusuri ibarah.'
+                              : 'Akses ke satu bidang untuk menelusuri ibarah',
                           style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
                         ),
 
@@ -530,26 +546,48 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         Divider(color: border.withValues(alpha: 0.6), height: 1),
                         const SizedBox(height: OTSpacing.base),
 
-                        // Core Benefits (Quiet Scholar Natural Phrasing)
-                        _benefitRow(
-                          'Akses Asisten ${_agent?.title ?? "terpilih"}',
-                          textPrimary,
-                        ),
-                        const SizedBox(height: OTSpacing.sm),
-                        _benefitRow(
-                          'Telusuri ibarah dan penjelasan dari kitab rujukan',
-                          textPrimary,
-                        ),
-                        const SizedBox(height: OTSpacing.sm),
-                        _benefitRow(
-                          'Lihat kitab, jilid, dan halaman yang dirujuk',
-                          textPrimary,
-                        ),
-                        const SizedBox(height: OTSpacing.sm),
-                        _benefitRow(
-                          'Cocokkan ibarah dengan kitab cetak atau digital',
-                          textPrimary,
-                        ),
+                        // Core Benefits
+                        if (isTahawwulat) ...[
+                          _benefitRow(
+                            'Akses Eksklusif ke Super AI Fikih Tahawwulat yang Pertama Di Dunia',
+                            textPrimary,
+                          ),
+                          const SizedBox(height: OTSpacing.sm),
+                          _benefitRow(
+                            'Akses 4 AI spesialis dengan karakter dan pendekatan yang berbeda',
+                            textPrimary,
+                          ),
+                          const SizedBox(height: OTSpacing.sm),
+                          _benefitRow(
+                            'Uji Pemahaman Interaktif & Evaluasi Mandiri',
+                            textPrimary,
+                          ),
+                          const SizedBox(height: OTSpacing.sm),
+                          _benefitRow(
+                            'Akses Arsip Muhadharah & Transkrip Habib Abu Bakar',
+                            textPrimary,
+                          ),
+                        ] else ...[
+                          _benefitRow(
+                            'Akses Penuh AI Spesialis ${_agent?.title ?? "terpilih"} 24/7',
+                            textPrimary,
+                          ),
+                          const SizedBox(height: OTSpacing.sm),
+                          _benefitRow(
+                            'Temukan Ibarah & Konsep dalam waktu tersingkat',
+                            textPrimary,
+                          ),
+                          const SizedBox(height: OTSpacing.sm),
+                          _benefitRow(
+                            'Rujukan terperinci mencakup nama kitab, jilid dan halaman dengan akurasi tinggi',
+                            textPrimary,
+                          ),
+                          const SizedBox(height: OTSpacing.sm),
+                          _benefitRow(
+                            'Permudah pemahaman konsep melalui ibarah dan penjelasan yang disederhanakan dan tersusun',
+                            textPrimary,
+                          ),
+                        ],
 
                         const SizedBox(height: OTSpacing.lg),
 
@@ -655,11 +693,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.base),
                         Divider(color: border.withValues(alpha: 0.5), height: 1),
                         const SizedBox(height: OTSpacing.base),
-                        _benefitRow('Akses ke seluruh bidang yang tersedia', textSecondary),
+                        _benefitRow('Akses Penuh ke seluruh AI Spesialis yang tersedia 24/7', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Akses lintas bidang dalam satu langganan', textSecondary),
+                        _benefitRow('Bebas berpindah lintas bidang kajian dalam satu akses riset', textSecondary),
                         const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Pembaruan berkala seluruh kitab rujukan', textSecondary),
+                        _benefitRow('Temukan ibarah & konsep dari berbagai cabang ilmu dalam waktu tersingkat', textSecondary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Rujukan terperinci mencakup nama kitab, jilid dan halaman dengan akurasi tinggi', textSecondary),
                         const SizedBox(height: OTSpacing.md),
                         // Catatan Edukatif
                         Container(

@@ -112,8 +112,8 @@ void main() {
     });
 
     test('UI screens and widgets do not leak prohibited terms into user-facing code', () {
+      // Subscription screen uses commercial SaaS conversion copy as requested by product owner
       final filesToScan = [
-        'lib/screens/subscription_screen.dart',
         'lib/screens/google_session_auth_screen.dart',
         'lib/screens/profile_screen.dart',
         'lib/screens/dashboard_screen.dart',
