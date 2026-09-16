@@ -1,0 +1,94 @@
+{
+  "store_url": "https://goakal.com/openturath-ai",
+  "scraped_at": "",
+  "total_services": 3,
+  "services": [
+    {
+      "slug": "fikih-syafii",
+      "title": "SUPER AI FIKIH SYAFI'I",
+      "sales_url": "https://goakal.com/openturath-ai/fikih-syafii",
+      "tiers_count": 3,
+      "tiers": [
+        {
+          "tier": "1_month",
+          "card_text": "1 Bulan | 2 kursi tersisa | Akses ke AI FIKI SYAFI'I | Rp299.000/bulan | Daftar",
+          "price": "Rp 299.000",
+          "quota": "2 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/tjvxw/apply"
+        },
+        {
+          "tier": "6_months",
+          "card_text": "6 Bulan | 13 kursi tersisa | Akses ke AI FIKIH SYAFI'I | Rp1.499.000/6 bulan | Daftar",
+          "price": "Rp 1.499.000",
+          "quota": "13 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/16oun/apply"
+        },
+        {
+          "tier": "1_year",
+          "card_text": "12 Bulan | 9 kursi tersisa | Akses ke AI FIKIH SYAFI'I | Rp1.999.000/tahun | Daftar",
+          "price": "Rp 1.999.000",
+          "quota": "9 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/ianjf/apply"
+        }
+      ]
+    },
+    {
+      "slug": "ai-bahasa-arab",
+      "title": "SUPER AI BAHASA ARAB",
+      "sales_url": "https://goakal.com/openturath-ai/ai-bahasa-arab",
+      "tiers_count": 3,
+      "tiers": [
+        {
+          "tier": "1_month",
+          "card_text": "1 Bulan | 9 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp299.000/bulan | Daftar",
+          "price": "Rp 299.000",
+          "quota": "9 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/kbp4j/apply"
+        },
+        {
+          "tier": "6_months",
+          "card_text": "6 Bulan | 15 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp1.499.000/6 bulan | Daftar",
+          "price": "Rp 1.499.000",
+          "quota": "15 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/ydvfs/apply"
+        },
+        {
+          "tier": "1_year",
+          "card_text": "12 Bulan | 10 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp1.999.000/tahun | Daftar",
+          "price": "Rp 1.999.000",
+          "quota": "10 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/yfi9q/apply"
+        }
+      ]
+    },
+    {
+      "slug": "ai-fikih-tahawwulat",
+      "title": "AI Fikih Tahawwulat",
+      "sales_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat",
+      "tiers_count": 3,
+      "tiers": [
+        {
+          "tier": "1_month",
+          "card_text": "1 Bulan | 8 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp1.000.000/bulan | Daftar",
+          "price": "Rp 1.000.000",
+          "quota": "8 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/1js2e/apply"
+        },
+        {
+          "tier": "6_months",
+          "card_text": "6 Bulan | 8 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp2.995.000/6 bulan | Daftar",
+          "price": "Rp 2.995.000",
+          "quota": "8 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/sp6zh/apply"
+        },
+        {
+          "tier": "1_year",
+          "card_text": "12 Bulan | 9 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp4.995.000/tahun | Daftar",
+          "price": "Rp 4.995.000",
+          "quota": "9 kursi tersisa",
+          "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/8yt9m/apply"
+        }
+      ]
+    }
+  ]
+}
