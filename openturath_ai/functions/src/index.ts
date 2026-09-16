@@ -40,8 +40,9 @@ const AGENT_URLS: Record<string, string> = {
   fiqh_tahawwulat: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
   fiqh_tahawwulat_muhaqqiq: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
   fiqh_tahawwulat_bayan: "https://notebooklm.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd",
-  fiqh_tahawwulat_mukhtabir: "https://notebooklm.google.com/notebook/8527a426-1383-48b9-be1c-85276113edb3",
-  fiqh_tahawwulat_habib: "https://notebooklm.google.com/notebook/8ac3c7fc-db0d-447d-8d85-61cdf4b7f503",
+  fiqh_tahawwulat_mukhtabir: "https://notebooklm.google.com/notebook/ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
+  fiqh_tahawwulat_habib: "https://notebooklm.google.com/notebook/6673e79a-7156-42e1-b116-bc1653a32094",
+  fiqh_tahawwulat_khatib: "https://notebooklm.google.com/notebook/1288e413-9569-47a3-892f-64008e53c1e8",
   fiqh_syafii: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
   fiqh_syafii_muhaqqiq: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
 
@@ -85,6 +86,7 @@ const AGENT_ENTITLEMENTS: Record<string, string> = {
   fiqh_tahawwulat_bayan: "fiqh_tahawwulat",
   fiqh_tahawwulat_mukhtabir: "fiqh_tahawwulat",
   fiqh_tahawwulat_habib: "fiqh_tahawwulat",
+  fiqh_tahawwulat_khatib: "fiqh_tahawwulat",
   fiqh_syafii: "fiqh_syafii",
   fiqh_syafii_muhaqqiq: "fiqh_syafii",
   fiqh_hanafi: "fiqh_hanafi",
@@ -142,6 +144,7 @@ export const PURCHASABLE_AGENTS = new Set([
   "fiqh_tahawwulat_bayan",
   "fiqh_tahawwulat_mukhtabir",
   "fiqh_tahawwulat_habib",
+  "fiqh_tahawwulat_khatib",
   "fiqh_syafii",
   "fiqh_hanafi",
   "fiqh_maliki",
@@ -1616,15 +1619,21 @@ const AGENTS: Record<string, { notebookId: string; akalCuid: string; label: stri
     entitlementKey: "fiqh_tahawwulat"
   },
   "fikih-tahawwulat-mukhtabir": {
-    notebookId: "8527a426-1383-48b9-be1c-85276113edb3",
+    notebookId: "ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
     akalCuid: "cmln2i27k0000jx047oabzw8p",
     label: "AI Fikih Tahawwulat (Al-Mukhtabir)",
     entitlementKey: "fiqh_tahawwulat"
   },
   "fikih-tahawwulat-habib": {
-    notebookId: "8ac3c7fc-db0d-447d-8d85-61cdf4b7f503",
+    notebookId: "6673e79a-7156-42e1-b116-bc1653a32094",
     akalCuid: "cmln2i27k0000jx047oabzw8p",
     label: "AI Fikih Tahawwulat (Al-Habib)",
+    entitlementKey: "fiqh_tahawwulat"
+  },
+  "fikih-tahawwulat-khatib": {
+    notebookId: "1288e413-9569-47a3-892f-64008e53c1e8",
+    akalCuid: "cmln2i27k0000jx047oabzw8p",
+    label: "AI Fikih Tahawwulat (Al-Khatib)",
     entitlementKey: "fiqh_tahawwulat"
   },
   "fikih-syafii": {

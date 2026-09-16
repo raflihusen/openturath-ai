@@ -51,7 +51,7 @@ class _BookLevel {
   });
 }
 
-/// Item pembantu untuk 4 bilik Super AI
+/// Item pembantu untuk 5 bilik Super AI
 class _AiRoomItem {
   final String number;
   final String name;
@@ -122,7 +122,7 @@ class _TahawwulatIntroductionSheetState
     "Sunanul Khalaq",
     "Khuwaishah",
     "Kurikulum",
-    "4 Bilik AI",
+    "5 Bilik AI",
   ];
 
   @override
@@ -225,7 +225,7 @@ class _TahawwulatIntroductionSheetState
                             ),
                           ),
                           Text(
-                            "Hakikat, Landasan, Kurikulum & 4 Bilik AI",
+                            "Hakikat, Landasan, Kurikulum & 5 Bilik AI",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
@@ -418,13 +418,13 @@ class _TahawwulatIntroductionSheetState
                   _buildSectionHeader(
                     context,
                     tag: "BAB 06",
-                    title: "Super AI 4 Bilik Keilmuan OpenTurath",
-                    arabic: "الغُرَفُ الأَرْبَعُ لِلذَّكَاءِ الاصْطِنَاعِيِّ",
+                    title: "Super AI 5 Bilik Keilmuan OpenTurath",
+                    arabic: "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
                     "Karena Fikih Tahawwulat sarat dengan diksi-diksi baru (al-mustalahat al-mubtakarah) serta ribuan jam transkrip rekaman lisan mualif, "
-                    "OpenTurath AI menghadirkan 4 Bilik Super AI spesialis untuk mendampingi penelaahan Anda:",
+                    "OpenTurath AI menghadirkan 5 Bilik Super AI spesialis untuk mendampingi penelaahan Anda:",
                     isDark,
                   ),
                   const SizedBox(height: 16),
@@ -1299,6 +1299,14 @@ class _TahawwulatIntroductionSheetState
         role: "Arsip Ceramah & Ruhani",
         desc: "Transkrip ribuan jam muhadharah lisan, tausiyah penyejuk batin, adab dakwah & sentuhan hati.",
         subAgentId: "fiqh_tahawwulat_habib",
+      ),
+      _AiRoomItem(
+        number: "05",
+        name: "Al-Khatib",
+        arabic: "الخَطِيب",
+        role: "Penyusun Materi Dakwah & Khutbah",
+        desc: "Spesialis formulasi khutbah Jumat, materi tabligh tematik, panduan da'i di era fitnah, dan narasi dakwah bil hikmah.",
+        subAgentId: "fiqh_tahawwulat_khatib",
       ),
     ];
 

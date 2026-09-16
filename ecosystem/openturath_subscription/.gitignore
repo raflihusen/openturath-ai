@@ -1,0 +1,6 @@
+# OpenTurath Subscription Automation — .gitignore
+.env
+*.log
+__pycache__/
+*.pyc
+.DS_Store

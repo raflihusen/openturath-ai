@@ -149,6 +149,15 @@ class AgentModel {
               emoji: '🎙️',
               badge: 'Khazanah Lisan',
             ),
+            SubAgentModel(
+              id: 'fiqh_tahawwulat_khatib',
+              name: 'Al-Khatib',
+              nameArabic: 'الخطيب',
+              description: 'Penyusun Materi Dakwah & Khutbah',
+              descriptionArabic: 'إعداد الخطب والمواعظ وتوجيه النوازل الدعوية',
+              emoji: '🕌',
+              badge: 'Dakwah & Khutbah',
+            ),
           ],
           referenceBooks: [
             BookModel(

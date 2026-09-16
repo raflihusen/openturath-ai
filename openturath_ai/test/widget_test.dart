@@ -90,6 +90,7 @@ void main() {
       expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat'), isTrue);
       expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_muhaqqiq'), isTrue);
       expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_bayan'), isTrue);
+      expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_tahawwulat_khatib'), isTrue);
 
       // Tapi TIDAK BISA akses Fikih Syafi'i karena trial habis dan modul tidak dibeli
       expect(userWithTahawwulatOnly.hasAccessToAgent('fiqh_syafii'), isFalse);
@@ -115,7 +116,7 @@ void main() {
       );
 
       expect(userExpired.isAgentSubscriptionActive('fiqh_tahawwulat'), isFalse);
-      expect(userExpired.hasAccessToAgent('fiqh_tahawwulat'), isFalse);
+      expect(userExpired.hasAccessToAgent('fiqh_tahawwulat_khatib'), isFalse);
     });
   });
 
@@ -126,7 +127,7 @@ void main() {
 
       final tahawwulat = agents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
       expect(tahawwulat.title, contains('Tahawwulat'));
-      expect(tahawwulat.subAgents?.length, equals(4));
+      expect(tahawwulat.subAgents?.length, equals(5));
       expect(tahawwulat.referenceBooks?.isNotEmpty, isTrue);
     });
   });
