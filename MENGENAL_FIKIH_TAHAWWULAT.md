@@ -289,42 +289,90 @@ Fikih Tahawwulat hadir sebagai obat penenang jiwa (*sakīnah*):
 
 ---
 
-## BAB 11: KURIKULUM LIMA TINGKAT PUSTAKA RUJUKAN
+## BAB 11: STRUKTUR KURIKULUM PUSTAKA: DUA KATEGORI BESAR (AL-QAWĀ'ID & AT-TAṬBĪQĀT)
 
-Untuk mendalami keilmuan ini secara berjenjang (*tadarruj keilmuan*), Al-Habib Abu Bakar Al-Adni telah menyusun 5 karya rujukan utama:
+Khazanah karya tulis Fikih Tahawwulat yang diwariskan oleh Al-Musnid Al-`Allāmah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur bukanlah kumpulan wacana lepas, melainkan sebuah arsitektur keilmuan yang sangat tertata rapi. Secara garis besar, seluruh karya kepustakaan beliau dalam disiplin ilmu ini terbagi menjadi **dua kategori utama**:
 
 ```
-  ┌─────────────────────────────────────────────────────────┐
-  │ 5. Al-Usūs wal-Munṭalaqāt (Puncak Kitab Induk Terlengkap)│
-  └────────────────────────────▲────────────────────────────┘
-                               │
-  ┌────────────────────────────┴────────────────────────────┐
-  │ 4. At-Talīd wat-Ṭarīf (Syarah Manzhumah Sunnah Mawaqif) │
-  └────────────────────────────▲────────────────────────────┘
-                               │
-  ┌────────────────────────────┴────────────────────────────┐
-  │ 3. Al-Iqlīd (Kunci Pembuka Lima Cabang Ilmu Terapan)    │
-  └────────────────────────────▲────────────────────────────┘
-                               │
-  ┌────────────────────────────┴────────────────────────────┐
-  │ 2. Dawā'ir al-I'ādah (Pendalaman Siklus Sejarah Umat)   │
-  └────────────────────────────▲────────────────────────────┘
-                               │
-  ┌────────────────────────────┴────────────────────────────┐
-  │ 1. An-Nubżah aṣ-Ṣughrā (Kitab Saku Dasar Pemula)        │
-  └─────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│             KORPUS KEPUSTAKAAN FIKIH TAHAWWULAT AL-HABIB ABU BAKAR AL-ADNI             │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │
+           ┌────────────────────────────────┴────────────────────────────────┐
+           ▼                                                                 ▼
+┌──────────────────────────────────────┐          ┌──────────────────────────────────────┐
+│       KATEGORI I: AL-QAWĀ'ID         │          │      KATEGORI II: AT-TAṬBĪQĀT        │
+│    (القواعد - Pondasi Kaidah Usul)   │          │  (التطبيقات - Aplikasi Lapangan)     │
+├──────────────────────────────────────┤          ├──────────────────────────────────────┤
+│ • 6 Kitab Kaidah Pokok (Berjenjang)  │          │ • Lebih dari 50 Kitab Studi Kasus    │
+│ • Kerangka Metodologi & Aksioma      │          │ • Pembacaan Sejarah & Krisis Zaman   │
+│ • Kaidah Istinbath Tanda-Tanda Akhir │          │ • Ratusan Dīwān Syair & Qashidah     │
+│   Zaman                              │          │   (Bahasa Cita Rasa Sastra Kenabian) │
+└──────────────────────────────────────┘          └──────────────────────────────────────┘
 ```
 
-1. **Tingkat 1 (Pemula)**: *An-Nubżah aṣ-Ṣughrā* (النُّبْذَةُ الصُّغْرَى)  
-   $\rightarrow$ Pintu masuk (*madkhal*) memahami definisi, istilah kunci, dan klasifikasi tanda-tanda kiamat (kecil, tengah, besar).
-2. **Tingkat 2 (Menengah)**: *Dawā'ir al-I'ādah* (دَوَائِرُ الإِعَادَةِ)  
-   $\rightarrow$ Mempelajari bagaimana empat rukun agama menyatu serta bagaimana siklus sejarah peradaban berulang.
-3. **Tingkat 3 (Pengembangan)**: *Al-Iqlīd fī Fatḥ Abwāb al-`Ulūm al-Khamsah* (الإِقْلِيدُ)  
-   $\rightarrow$ Kunci pembuka lima cabang ilmu turunan Fikih Tahawwulat (termasuk ilmu *an-nawāqiḍ wal-naqā'iḍ* dan fikih antisipasi krisis).
-4. **Tingkat 4 (Penerapan Sejarah)**: *At-Talīd wat-Ṭarīf* (التَّلِيدُ وَالطَّارِفُ)  
-   $\rightarrow$ Syarah mendalam mengenai keteladanan *Sunnah Mawaqif* para Khulafa' Rasyidin dan ulama salaf dalam merespons konflik.
-5. **Tingkat 5 (Mahakarya Induk)**: *Al-Usūs wal-Munṭalaqāt* (الأَسَاسُ وَالمُنْطَلَقَاتُ)  
-   $\rightarrow$ Kitab ensiklopedis paling komprehensif yang merangkum seluruh dalil syar'i, teori usul, dan aplikasi Fikih Tahawwulat secara paripurna.
+---
+
+### 1. Kategori I: Al-Qawā'id (القواعد) — 6 Kitab Kaidah & Pondasi Usul
+Kategori pertama memuat kitab-kitab perumusan kaidah teoritis, aksioma metodologis, dan fondasi usul Fikih Tahawwulat. Pembelajar dianjurkan mempelajarinya secara berjenjang (*tadarruj keilmuan*) melalui **6 Kitab Kaidah Pokok**:
+
+```
+  ┌────────────────────────────────────────────────────────────────────────────────────────┐
+  │ 6. Al-Usūs wal-Munṭalaqāt (الأُسُسُ وَالمُنْطَلَقَاتُ) — Puncak Mahakarya Kaidah Induk │
+  └──────────────────────────────────────────▲─────────────────────────────────────────────┘
+                                             │
+  ┌──────────────────────────────────────────┴─────────────────────────────────────────────┐
+  │ 5. Al-Mukhtaṣar al-Ḥabīk / Siyāḥatul Fikr (المُخْتَصَرُ الحَبِيك) — Ikhtisar Metodologis │
+  └──────────────────────────────────────────▲─────────────────────────────────────────────┘
+                                             │
+  ┌──────────────────────────────────────────┴─────────────────────────────────────────────┐
+  │ 4. At-Talīd wat-Ṭarīf (التَّلِيدُ وَالطَّارِفُ) — Syarah Kaidah Sunnah al-Mawāqif      │
+  └──────────────────────────────────────────▲─────────────────────────────────────────────┘
+                                             │
+  ┌──────────────────────────────────────────┴─────────────────────────────────────────────┐
+  │ 3. Al-Iqlīd fī Fatḥ Abwāb al-`Ulūm al-Khamsah (الإِقْلِيدُ) — Kunci 5 Cabang Ilmu     │
+  └──────────────────────────────────────────▲─────────────────────────────────────────────┘
+                                             │
+  ┌──────────────────────────────────────────┴─────────────────────────────────────────────┐
+  │ 2. Dawā'ir al-I'ādah (دَوَائِرُ الإِعَادَةِ) — Kaidah Siklus Pengulangan Sejarah Umat    │
+  └──────────────────────────────────────────▲─────────────────────────────────────────────┘
+                                             │
+  ┌──────────────────────────────────────────┴─────────────────────────────────────────────┐
+  │ 1. An-Nubżah aṣ-Ṣughrā (النُّبْذَةُ الصُّغْرَى) — Kitab Saku Kaidah Dasar Pemula       │
+  └────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Tingkat 1 (Pemula)**: *An-Nubżah aṣ-Ṣughrā fī Ma'rifat Qawā'id 'Ilm 'Alāmāt as-Sā'ah wa Fiqh at-Taḥawwulāt* (النُّبْذَةُ الصُّغْرَى)  
+   $\rightarrow$ Pintu gerbang (*madkhal*) pengenalan definisi, dalil Hadis Jibril, istilah kunci, serta klasifikasi tanda kiamat (kecil, tengah, besar).
+2. **Tingkat 2 (Keterpaduan & Siklus)**: *Dawā'ir al-I'ādah fī Marātib al-Iḥāṭah* (دَوَائِرُ الإِعَادَةِ)  
+   $\rightarrow$ Membedah bagaimana 4 rukun agama saling mengunci secara integral dan bagaimana siklus sejarah peradaban terus berputar serta berulang dalam lingkaran takdir (*sunan taghayyurāt*).
+3. **Tingkat 3 (Kunci Cabang Ilmu)**: *Al-Iqlīd fī Fatḥ Abwāb al-`Ulūm al-Khamsah* (الإِقْلِيدُ)  
+   $\rightarrow$ Menjelaskan kaidah pengoperasian lima cabang ilmu turunan Fikih Tahawwulat (termasuk ilmu *an-nawāqiḍ wal-naqā'iḍ* dan fikih antisipasi krisis peradaban).
+4. **Tingkat 4 (Kaidah Sikap Kenabian)**: *At-Talīd wat-Ṭarīf Syarḥ Manẓūmat as-Sunnah fī al-Mawāqif* (التَّلِيدُ وَالطَّارِفُ)  
+   $\rightarrow$ Syarah kaidah atas bait-bait manzhumah mengenai *Sunnah al-Mawāqif* dan *Manhaj as-Salāmah*, meneladani ketetapan sikap para Khulafa' Rasyidin dan salafus shalih dalam menghadapi fitnah perselisihan umat.
+5. **Tingkat 5 (Ikhtisar Metodologis Terpadat)**: *Al-Mukhtaṣar al-Ḥabīk fī Ma'ālim ad-Da'wah wa Fiqh at-Taḥawwulāt* / *Siyāḥatul Fikr* (المُخْتَصَرُ الحَبِيك / سِيَاحَةُ الفِكْرِ)  
+   $\rightarrow$ Ringkasan padat dan sistematis yang memetakan seluruh peta konsep dakwah, kaidah gerakan, dan nalar kritis terhadap ideologi modern.
+6. **Tingkat 6 (Puncak Mahakarya Induk)**: *Al-Usūs wal-Munṭalaqāt fī Ta'ṣīl Fiqh at-Taḥawwulāt* (الأُسُسُ وَالمُنْطَلَقَاتُ)  
+   $\rightarrow$ Kitab ensiklopedis babon setebal ratusan halaman yang menjadi rujukan tertinggi; merangkum seluruh dalil syar'i, usul kaidah istinbath, dan fondasi metodologi Fikih Tahawwulat secara paripurna.
+
+---
+
+### 2. Kategori II: At-Taṭbīqāt (التطبيقات) — Lebih dari 50 Kitab Terapan & Ratusan Karya Syair
+
+Apabila kategori *Al-Qawā'id* merupakan teori dan dalil pondasi, maka kategori *At-Taṭbīqāt* adalah pembuktian empiris, studi kasus lapangan, pembacaan sejarah, serta sublimasi keindahan sastra ruhani. Kategori ini mencakup:
+
+#### A. Lebih dari 50 Kitab Studi Kasus & Terapan Lapangan
+Al-Habib Abu Bakar Al-Adni menulis **lebih dari 50 kitab terapan** yang mengkaji secara langsung bagaimana kaidah-kaidah Fikih Tahawwulat bekerja di pentas nyata sejarah dan kehidupan kontemporer:
+* **Analisis Sejarah Peradaban & Fitnah Politik**: Menelaah secara objektif titik-titik krusial krisis umat, mulai dari fitnah terbunuhnya Sayyidina Utsman, Perang Jamal dan Shiffin, rekonsiliasi agung Sayyidina Hasan (*'Āmul Jamā'ah*), tragedi Karbala Sayyidina Husain, peralihan ke Dinasti Umawiyyah dan Abbasiyyah, hingga kejatuhan Khilafah Utsmaniyyah dan terbentuknya tatanan dunia baru (*an-niẓām al-'ālamī al-jadīd*).
+* **Studi Tokoh-Tokoh Penyelamat Umat (*Aimmatul Hudā*)**: Mengupas biografi para imam mazhab, perawi hadis, dan para wali mujaddid yang konsisten memegang *Sunnah Mawaqif* dan *Manhaj as-Salāmah* di masanya tanpa tergiur ambisi politik kekuasaan.
+* **Manajemen Dakwah Damai di Era Krisis**: Kitab-kitab panduan lapangan bagi para dai, pimpinan pesantren (*ribath*), dan aktivis Islam tentang bagaimana membina masyarakat di tengah cengkeraman sistem ribawi, serbuan budaya konsumerisme, polarisasi politik, dan fitnah media sosial tanpa memicu kerusuhan.
+* **Strategi Penyelamatan Komunitas (*Al-Khuwaiṣah*)**: Risalah-risalah praktis mengenai pembinaan keluarga sakinah, pendidikan adab anak di era gawai pintar, dan etika interaksi sosial di zaman penuh kegaduhan.
+
+#### B. Ratusan Karya Syair & Qashīdah (Dīwān Sya'ir)
+Keistimewaan luar biasa dari Al-Habib Abu Bakar Al-Adni adalah kapasitas beliau sebagai seorang sastrawan (*adīb*) dan penyair sufi ulung. Beliau menggubah **ratusan karya syair dan qashidah** yang dibukukan dalam berbagai *Dīwān Sya'ir*:
+* **Media Edukasi Berbasis Cita Rasa Ruhani (*Az-Żawq*)**: Beliau menyadari bahwa kaidah usul yang teoritis bisa terasa berat bagi sebagian orang. Maka, beliau merangkum intisari Fikih Tahawwulat ke dalam bait-bait syair yang indah, berima merdu (*baḥar syi'ir*), dan mudah dihafalkan oleh santri.
+* **Bait-Bait Pengingat Zaman & Kerinduan Kenabian**: Syair-syair beliau sarat dengan peringatan akan bahaya tipu daya dunia (*al-ghurūr*), analisis pergeseran zaman, ratapan keinsyafan atas kemunduran moral umat, kerinduan mendalam kepada Baginda Nabi Muhammad ﷺ, serta seruan untuk memperbanyak shalawat, zikir, dan menjaga keselamatan hati.
+* **Sastra Dakwah yang Menyejukkan Kalbu**: Melalui bait syairnya, ilmu tidak sekadar menjadi hafalan di kepala, melainkan menetes menjadi air mata keinsyafan dan kelembutan adab di dalam dada.
 
 ---
 
@@ -336,7 +384,7 @@ Meskipun urgensinya luar biasa besar, kita harus mengakui sebuah realitas: **Fik
 Mengapa demikian?
 1. **Keilmuan yang Benar-Benar Baru Dikodifikasikan**: Berbeda dengan Fikih Mazhab Syafi'i yang telah memiliki ribuan syarah dan kitab penjelasan selama seribu tahun, Fikih Tahawwulat baru dikodifikasikan dan dirumuskan kaidah usulnya secara mandiri pada era modern oleh Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.
 2. **Diksi dan Istilah Khusus (*Al-Muṣṭalaḥāt al-Mubtakarah*)**: Mualif menggunakan banyak sekali kosakata dan terminologi orisinal yang asing bagi telinga santri awam, seperti: *Dā'iratul Āfāq*, *Sunnah al-Mawāqif*, *An-Nawāqiḍ wal-Naqā'iḍ*, *Al-Khuwaiṣah*, *Al-Ghutsa'iyyah*, *Al-Mustajaddāt*, *Tablyghul Kidzbah*, dan *Manhaj as-Salāmah*. Tanpa bimbingan guru, membaca kitab-kitab beliau secara otodidak rentan melahirkan kesalahpahaman.
-3. **Volume Khazanah yang Raksasa**: Khazanah keilmuan ini terbentang luas dalam puluhan jilid kitab berbobot tinggi, ratusan makalah ilmiah, serta **ribuan jam rekaman suara muhadharah dan ceramah lisan** Al-Habib Abu Bakar Al-Adni yang tersebar di berbagai belahan dunia. Santri atau peneliti sering kali merasa kewalahan dan kebingungan: *Dari mana harus memulai? Bagaimana mencocokkan naskah kitab dengan rekaman ceramah beliau?*
+3. **Volume Khazanah yang Raksasa**: Khazanah keilmuan ini terbentang luas dalam 6 kitab kaidah usul, lebih dari 50 kitab kajian terapan (*taṭbīqāt*), ratusan karya syair (*dīwān*), serta **ribuan jam rekaman suara muhadharah dan ceramah lisan** Al-Habib Abu Bakar Al-Adni yang tersebar di berbagai belahan dunia. Santri atau peneliti sering kali merasa kewalahan dan kebingungan: *Dari mana harus memulai? Bagaimana menghubungkan antara kaidah, kitab tatbiqat, bait syair, dan rekaman ceramah beliau?*
 
 ---
 
