@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/app_copy.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
@@ -149,7 +150,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               uid: curFirebaseUser?.uid ?? 'user',
               name: curFirebaseUser?.displayName?.isNotEmpty == true
                   ? curFirebaseUser!.displayName!
-                  : 'Ahlan',
+                  : AppCopy.ahlanDefault,
               email: curFirebaseUser?.email ?? '',
               photoUrl: curFirebaseUser?.photoURL ?? '',
               plan: AppConstants.planTrial,
@@ -264,7 +265,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               style: GoogleFonts.outfit(
                                   fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari asisten atau topik kajian…',
+                                hintText: AppCopy.dashboardSearchHint,
                                 hintStyle: GoogleFonts.outfit(
                                     fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
@@ -297,7 +298,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
-                        'Hasil pencarian',
+                        AppCopy.searchResults,
                         style: GoogleFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
@@ -329,7 +330,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 36),
                               child: Center(
                                 child: Text(
-                                  'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.',
+                                  AppCopy.noAssistantsFound,
                                   style: GoogleFonts.outfit(
                                       fontSize: 13.5, color: textSecondary),
                                 ),
@@ -348,7 +349,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               return SpecialistCard(
                                 title: agent.title,
                                 statusLabel:
-                                    agent.isComingSoon ? 'Segera hadir' : null,
+                                    agent.isComingSoon ? AppCopy.comingSoon : null,
                                 onOpen: () => _openNotebook(agent, user),
                                 onOpenLibrary: agent.catalogId != null
                                     ? () => showResearchLibrary(context,
@@ -366,7 +367,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'Pilih bidang kajian',
+                            AppCopy.chooseField,
                             style: GoogleFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -388,7 +389,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Lihat semua',
+                                  AppCopy.seeAll,
                                   style: GoogleFonts.outfit(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
@@ -484,7 +485,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      '${disc.specialistCount} asisten tersedia',
+                                      AppCopy.assistantsAvailableCount(disc.specialistCount),
                                       style: GoogleFonts.outfit(
                                         fontSize: 11.5,
                                         color: textSecondary,
@@ -541,17 +542,17 @@ class _StudyEntryCard extends StatelessWidget {
     final hasHistory = agent != null;
     final title = hasLiveSession || hasHistory
         ? agent!.title
-        : 'Cari Jawaban Beserta Ibarahnya';
+        : AppCopy.studyEntryDefaultTitle;
     final subtitle = hasLiveSession
-        ? 'Sesi kajian siap dibuka kembali.'
+        ? AppCopy.studyEntryResumeSubtitle
         : (hasHistory
-            ? 'Buka kembali rujukan dan catatan sebelumnya.'
-            : 'Ajukan pertanyaan dan temukan pembahasannya langsung dari kitab-kitab ulama.');
+            ? AppCopy.studyEntryHistorySubtitle
+            : AppCopy.studyEntryDefaultSubtitle);
     final primaryLabel = hasLiveSession || hasHistory
-        ? 'Lanjutkan Telaah'
-        : 'Mulai Telaah';
+        ? AppCopy.continueStudy
+        : AppCopy.startStudy;
 
-    const categoryLabel = 'TELAAH KITAB';
+    const categoryLabel = AppCopy.studyBookCategory;
 
     final bgGradient = isDark
         ? const LinearGradient(
@@ -618,8 +619,8 @@ class _StudyEntryCard extends StatelessWidget {
                               ),
                               child: Text(
                                 displayName == null
-                                    ? 'Ahlan'
-                                    : 'Ahlan, $displayName',
+                                    ? AppCopy.ahlanDefault
+                                    : AppCopy.ahlanWithName(displayName),
                                 style: GoogleFonts.outfit(
                                   color: const Color(0xFFF8F8F8),
                                   fontSize: 12,
@@ -810,7 +811,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Hari ini',
+                        AppCopy.today,
                         style: GoogleFonts.outfit(
                           color: textSecondary,
                           fontSize: 9.5,
@@ -855,7 +856,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Kalender Hijriah',
+                        AppCopy.hijriCalendar,
                         style: GoogleFonts.outfit(
                           color: textSecondary,
                           fontSize: 9.5,
@@ -1067,7 +1068,7 @@ class _DashboardAnnouncementCarouselState
                     ),
                   ),
                   child: Text(
-                    'Tutup',
+                    AppCopy.close,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -1156,7 +1157,7 @@ class _DashboardAnnouncementCarouselState
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Baca Selengkapnya',
+                                  AppCopy.readMore,
                                   style: GoogleFonts.outfit(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,

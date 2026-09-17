@@ -29,6 +29,8 @@ abstract final class AppCopy {
   static const searchResults = 'Hasil pencarian';
   static const continueStudy = 'Lanjutkan telaah';
   static const startStudy = 'Mulai telaah';
+  static const dashboardSearchHint = 'Cari asisten atau topik kajian…';
+  static const ahlanDefault = 'Ahlan';
   static const studyBookCategory = 'TELAAH KITAB';
   static const studyEntryDefaultTitle = 'Cari jawaban beserta ibarahnya';
   static const studyEntryResumeSubtitle = 'Sesi kajian siap dibuka kembali.';
@@ -275,4 +277,6 @@ abstract final class AppCopy {
 
   static String versionWithTagline(String version) =>
       'Versi $version · $appTagline';
+
+  static String ahlanWithName(String name) => 'Ahlan, $name';
 }
