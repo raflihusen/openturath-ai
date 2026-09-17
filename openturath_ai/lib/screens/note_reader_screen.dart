@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/bookmark_content.dart';
 import '../core/design/ot_colors.dart';
@@ -33,15 +34,15 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     final remove = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hapus catatan?'),
-        content: const Text('Catatan ini akan dihapus permanen.'),
+        title: const Text(AppCopy.deleteNoteTitle),
+        content: const Text(AppCopy.deleteNoteDesc),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Batal')),
+              child: const Text(AppCopy.cancel)),
           FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Hapus')),
+              child: const Text(AppCopy.delete)),
         ],
       ),
     );
@@ -52,7 +53,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
 
   void _copy() {
     Clipboard.setData(ClipboardData(text: noteClipboardText(_item)));
-    AppSnackBar.success(context, 'Isi catatan disalin.');
+    AppSnackBar.success(context, AppCopy.noteContentCopied);
   }
 
   @override
@@ -73,13 +74,13 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
       appBar: AppBar(
         backgroundColor: canvas,
         surfaceTintColor: Colors.transparent,
-        title: Text('Catatan',
+        title: Text(AppCopy.savedCollection,
             style: GoogleFonts.newsreader(
                 color: primary, fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
               icon: const Icon(Icons.copy_outlined),
-              tooltip: 'Salin isi',
+              tooltip: AppCopy.copyContentTooltip,
               onPressed: _copy),
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -87,8 +88,8 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
               if (value == 'delete') _delete();
             },
             itemBuilder: (_) => const [
-              PopupMenuItem(value: 'edit', child: Text('Edit catatan')),
-              PopupMenuItem(value: 'delete', child: Text('Hapus catatan')),
+              PopupMenuItem(value: 'edit', child: Text(AppCopy.editNote)),
+              PopupMenuItem(value: 'delete', child: Text(AppCopy.deleteNote)),
             ],
           ),
         ],
@@ -163,10 +164,10 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
   }
 
   String _kindLabel(BookmarkModel item) => switch (item.documentKind) {
-        BookmarkDocumentKind.personalNote => 'Catatan',
+        BookmarkDocumentKind.personalNote => AppCopy.navSaved,
         BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
             ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-            : (item.fieldName.isNotEmpty ? item.fieldName : 'Kajian'),
-        BookmarkDocumentKind.bookReference => 'Rujukan Kitab',
+            : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace),
+        BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
       };
 }
