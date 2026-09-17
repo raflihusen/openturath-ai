@@ -1,7 +1,7 @@
 import 'legal_copy.dart';
 
 /// AppCopy: Sumber teks kanonik terpusat untuk OpenTurath.
-/// Menjaga nada bahasa tetap tenang, ringkas, jelas, dan wajar untuk kajian keislaman.
+/// Menjaga nada bahasa tetap tenang, ringkas, jelas, dan wajar untuk kajian keislaman (The Quiet Scholar).
 abstract final class AppCopy {
   // ── Identitas & Merek ──────────────────────────────────────────
   static const appName = 'OpenTurath';
@@ -10,7 +10,7 @@ abstract final class AppCopy {
   static const aboutTitle = LegalCopy.aboutAppTitle;
   static const aboutDescription = LegalCopy.aboutAppParagraph1;
   static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
-  static const scholarlyPrinciple = LegalCopy.aboutAppParagraph2;
+  static const academicSlogan = 'AI for Islamic Scholarship';
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
@@ -27,6 +27,14 @@ abstract final class AppCopy {
   static const bookDetails = 'Detail edisi';
   static const chooseField = 'Pilih bidang';
   static const searchResults = 'Hasil pencarian';
+  static const continueStudy = 'Lanjutkan telaah';
+  static const startStudy = 'Mulai telaah';
+  static const studyBookCategory = 'TELAAH KITAB';
+  static const studyEntryDefaultTitle = 'Cari jawaban beserta ibarahnya';
+  static const studyEntryResumeSubtitle = 'Sesi kajian siap dibuka kembali.';
+  static const studyEntryHistorySubtitle = 'Buka kembali rujukan dan catatan sebelumnya.';
+  static const studyEntryDefaultSubtitle =
+      'Ajukan pertanyaan dan temukan pembahasannya langsung dari kitab-kitab turats.';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
   static const loadingReferences = 'Menyiapkan asisten…';
@@ -48,6 +56,10 @@ abstract final class AppCopy {
       'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.';
   static const agentLoadFailed =
       'Asisten belum dapat dimuat. Coba lagi sebentar.';
+  static const backToHome = 'Kembali ke beranda';
+  static const noAssistantsFound =
+      'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.';
+  static const comingSoon = 'Segera hadir';
 
   // Platform & Inisialisasi
   static const deviceNotSupportedTitle = 'Perangkat belum didukung';
@@ -60,6 +72,8 @@ abstract final class AppCopy {
   // ── Dialog Catatan Sebelum Mulai (Adab) ────────────────────────
   static const adabDialogTitle = 'Catatan sebelum mulai';
   static const adabAcknowledgeButton = 'Saya mengerti';
+  static const adabDialogLead =
+      'OpenTurath membantu mencari kutipan dan menelaah penjelasan dalam kitab. Periksa kembali rujukan pada kitab asal, dan tetaplah belajar kepada guru serta ulama yang berkompeten.';
 
   static const adabHeading1 = 'Bantuan untuk menelusuri kitab';
   static const adabBody1 =
@@ -83,10 +97,14 @@ abstract final class AppCopy {
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
   static const savedSuccess = 'Tersimpan ke Catatan.';
   static const saveFailed = 'Jawaban belum tersimpan. Coba lagi.';
-  static const emptyAnswerCannotSave = 'Belum ada jawaban untuk disimpan.';
   static const referenceCopied = 'Rujukan disalin.';
+  static const ibarahCopied = 'Ibarah disalin.';
+  static const noteContentCopied = 'Isi catatan disalin.';
+  static const bookmarkDeleted = 'Catatan dihapus.';
+  static const bookmarkDeleteFailed = 'Catatan belum bisa dihapus. Coba lagi.';
+  static const cacheClearedSuccess = 'Cache berhasil dibersihkan.';
 
-  // ── Catatan ───────────────────────────────────────────────────
+  // ── Catatan & Bacaan ───────────────────────────────────────────
   static const searchSavedHint = 'Cari catatan atau ibarah…';
   static const searchSavedTooltip = 'Cari catatan';
   static const noSavedTitle = 'Belum ada catatan';
@@ -98,6 +116,15 @@ abstract final class AppCopy {
   static const copyAnswerAction = 'Salin jawaban';
   static const copyConversationAction = 'Salin percakapan';
   static const saveAnswerMenu = 'Simpan ke Catatan';
+  static const copyContentTooltip = 'Salin isi';
+  static const editNote = 'Edit catatan';
+  static const deleteNote = 'Hapus catatan';
+  static const deleteNoteTitle = 'Hapus catatan?';
+  static const deleteNoteDesc = 'Catatan ini akan dihapus permanen.';
+  static const addNote = 'Tambah catatan';
+  static const closeSearch = 'Tutup pencarian';
+  static const undo = 'Urungkan';
+  static const bookReferenceLabel = 'Rujukan Kitab';
 
   // ── Sesi Akun Google & NotebookLM ──────────────────────────────
   static const googleSessionConnectTitle = 'Masuk ke akun Google';
@@ -107,9 +134,20 @@ abstract final class AppCopy {
       'Setelah masuk, Anda akan kembali ke ruang kajian secara otomatis.';
   static const googleSessionSignInHint =
       'Gunakan akun Google yang sama agar Anda dapat langsung melanjutkan kajian tanpa perlu masuk ulang.';
+  static const googleSessionSignInSameAccountDesc =
+      'Masukan akun Google yang sama agar akses AI dapat dibuka tanpa perlu masuk ulang.';
   static const googleSessionConnected = 'Akun Google terhubung';
   static const googleSessionPreparing = 'Menyiapkan percakapan…';
   static const cancelSignIn = 'Batalkan proses masuk';
+  static const cancelSignInTitle = 'Batalkan proses masuk?';
+  static const connectingGoogleAccount = 'Menghubungkan akun Google…';
+  static const googleSessionFailed = 'Gagal menghubungkan akun Google.';
+  static const googleSessionActive = 'Sesi Google aktif';
+
+  // ── Autentikasi & Masuk ────────────────────────────────────────
+  static const continueWithGoogle = 'Lanjutkan dengan Google';
+  static const googleSignInFailed = 'Gagal masuk dengan Google. Coba lagi.';
+  static const termsAgreementPrefix = 'Dengan masuk, Anda menyetujui';
 
   // ── Akun & Pengaturan ──────────────────────────────────────────
   static const profile = 'Profil';
@@ -132,6 +170,7 @@ abstract final class AppCopy {
   static const logoutDialogBody =
       'Anda perlu masuk kembali untuk menggunakan akun ini.';
   static const logoutButton = 'Keluar';
+  static const loggingOut = 'Sedang keluar…';
 
   static const deleteAccountTitle = 'Hapus akun';
   static const deleteAccountBody = LegalCopy.deleteAccountConfirmationBody;
@@ -141,6 +180,57 @@ abstract final class AppCopy {
   static const recentLoginRequired =
       'Masuk kembali untuk melanjutkan penghapusan akun.';
   static const networkError = 'Periksa koneksi internet, lalu coba lagi.';
+
+  // ── Pengaturan Tambahan ───────────────────────────────────────
+  static const accountSection = 'Akun';
+  static const generalSettingsSection = 'Pengaturan umum';
+  static const supportAndPolicySection = 'Bantuan & kebijakan';
+  static const clearCache = 'Bersihkan cache';
+  static const clearCacheSubtitle =
+      'Hapus data sementara untuk meringankan penyimpanan';
+  static const clearCacheDialogTitle = 'Bersihkan cache?';
+  static const clearCacheDialogDesc =
+      'Data unduhan dan cache sesi lokal akan dibersihkan. Anda tetap berada dalam akun.';
+  static const clearAction = 'Bersihkan';
+  static const chooseAppearance = 'Pilih tampilan';
+
+  // ── Status Akses & Membership Pass ────────────────────────────
+  static const accessStatus = 'Status akses';
+  static const fullAccess = 'Akses penuh';
+  static const planSyafii = 'Fikih Syafi\'i';
+  static const planTahawwulat = 'Fikih Tahawwulat';
+  static const trialAccess = 'Akses uji coba';
+  static const activeUntil = 'Aktif hingga';
+  static const allAssistantsAvailable = 'Semua asisten tersedia';
+  static const accessExpiringSoon = 'Masa akses hampir berakhir';
+  static const readyToUse = 'Siap digunakan';
+  static const validUntil = 'Berlaku hingga';
+  static const renewPro = 'Perpanjang Pro';
+  static const manageSubscription = 'Kelola langganan';
+  static const preparingProAccess = 'Menyiapkan akses Pro';
+  static const paymentBeingVerified = 'Pembayaran sedang diperiksa';
+  static const viewPaymentStatus = 'Lihat status pembayaran';
+  static const accessNotYetActive = 'Akses belum aktif';
+  static const paymentNotSuccessful = 'Pembayaran belum berhasil';
+  static const tryPaymentAgain = 'Coba pembayaran lagi';
+  static const chooseAssistantAndPlan =
+      'Pilih asisten dan paket yang sesuai untuk mulai bertanya.';
+  static const chooseProPlan = 'Pilih paket Pro';
+  static const permanentAccessLabel = 'Tanpa batas waktu';
+  static const manageAccess = 'Kelola akses';
+
+  // ── Tombol Umum & Aksi ─────────────────────────────────────────
+  static const close = 'Tutup';
+  static const cancel = 'Batal';
+  static const exit = 'Keluar';
+  static const reload = 'Muat ulang';
+  static const delete = 'Hapus';
+  static const seeAll = 'Lihat semua';
+  static const openAction = 'Buka';
+  static const stayHere = 'Tetap di sini';
+  static const readMore = 'Baca selengkapnya';
+  static const today = 'Hari ini';
+  static const hijriCalendar = 'Kalender Hijriah';
 
   // ── Pembayaran & Status Langganan ─────────────────────────────
   static const paymentSuccessTitle = 'Pembayaran berhasil';
@@ -175,4 +265,14 @@ abstract final class AppCopy {
 
   static String planWithAgent(String agentTitle, String duration) =>
       '$agentTitle — $duration';
+
+  static String trialDaysLeft(int days) => 'Masa coba · $days hari';
+
+  static String assistantsAvailableCount(int count) =>
+      count == 1 ? '1 asisten tersedia' : '$count asisten tersedia';
+
+  static String savedNotesCount(int count) => '$count catatan tersimpan';
+
+  static String versionWithTagline(String version) =>
+      'Versi $version · $appTagline';
 }
