@@ -61,14 +61,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
         title: Text(
-          'Batalkan proses masuk?',
+          AppCopy.cancelSignInTitle,
           style: GoogleFonts.outfit(
             fontWeight: FontWeight.w600,
             color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
           ),
         ),
         content: Text(
-          'Hubungkan akun Google agar ruang kajian dapat dibuka tanpa perlu masuk ulang.',
+          AppCopy.googleSessionSignInSameAccountDesc,
           style: GoogleFonts.outfit(
             fontSize: 13,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
@@ -78,7 +78,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
-              'Tetap di Sini',
+              AppCopy.stayHere,
               style: GoogleFonts.outfit(
                 color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
                 fontWeight: FontWeight.w600,
@@ -92,7 +92,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text(
-              'Keluar',
+              AppCopy.exit,
               style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
             ),
           ),
@@ -123,8 +123,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         backgroundColor: canvas,
         body: const Center(
           child: AppLoader(
-            title: 'Sesi Google Terhubung',
-            subtitle: 'Menyiapkan akses kitab.',
+            title: AppCopy.googleSessionConnected,
+            subtitle: AppCopy.googleSessionPreparing,
             dotSize: 10,
           ),
         ),
@@ -160,7 +160,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
           actions: [
             IconButton(
-              tooltip: 'Keluar',
+              tooltip: AppCopy.exit,
               icon: Icon(Icons.logout_rounded, size: 20, color: textSecondary),
               onPressed: _confirmCancelAndSignOut,
             ),
