@@ -151,24 +151,27 @@ class UserModel {
       entitlements[entitlementKeys[agentId] ?? agentId];
 
   bool isAgentSubscriptionActive(String agentId) {
-    // 1. Explicit all_access entitlement
-    final all = entitlements['all_access'] ?? entitlements['all_ai'];
-    if (all != null && all.isActive && all.isPremium) return true;
-
-    // If an explicit all_access was REVOKED, deny fallback
-    if (all != null && all.status == 'revoked') {
-      return false;
-    }
-
-    // 2. Specific module entitlement
     final mappedKey = entitlementKeys[agentId] ?? agentId;
+
+    // 1. Specific module entitlement check FIRST
     final specific = entitlements[mappedKey];
     if (specific != null && specific.isActive && specific.isPremium) {
       return true;
     }
 
-    // If a specific module entitlement was explicitly revoked, deny fallback
+    // 2. Explicit all_access entitlement
+    final all = entitlements['all_access'] ?? entitlements['all_ai'];
+    if (all != null && all.isActive && all.isPremium) {
+      return true;
+    }
+
+    // If a specific module entitlement was explicitly revoked, deny access
     if (specific != null && specific.status == 'revoked') {
+      return false;
+    }
+
+    // If an explicit all_access was REVOKED and no active specific entitlement, deny access
+    if (all != null && all.status == 'revoked') {
       return false;
     }
 
@@ -196,6 +199,21 @@ class UserModel {
       if (cleanPlan == cleanKey ||
           cleanPlan.startsWith('${cleanKey}_') ||
           cleanPlan.contains(cleanKey)) {
+        return true;
+      }
+    }
+
+    // 5. Legacy plan backward-compatibility (ONLY when entitlements is empty)
+    // When a user has modular entitlements, legacy fallback must never leak unpurchased modules.
+    if (entitlements.isEmpty && isSubscriptionActive) {
+      const legacyAllAccessPlans = [
+        AppConstants.planTholib1m,
+        AppConstants.planTholib6m,
+        AppConstants.planBahits1y,
+      ];
+      if (legacyAllAccessPlans.contains(plan) ||
+          plan.startsWith('redeem') ||
+          plan.startsWith('voucher')) {
         return true;
       }
     }
