@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -332,23 +331,37 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required AgentModel targetAgent,
   }) async {
     final applyUrl = tier['applyUrl'] as String? ?? '';
+    final planTitle = '${tier['name']} ${targetAgent.title}'.trim();
+    final price = tier['price'] as int;
+
+    // Buka pop-up modal checkout in-app (DokuCheckoutSheet) langsung di dalam aplikasi!
+    // Menggunakan InAppWebView agar pengalaman pengguna persis seperti checkout DOKU
+    // dan TIDAK PERNAH dialihkan keluar ke browser Chrome/Safari.
     if (applyUrl.isNotEmpty) {
-      final uri = Uri.parse(applyUrl);
-      try {
-        final launched =
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-        if (launched) return;
-        final launchedAlt =
-            await launchUrl(uri, mode: LaunchMode.platformDefault);
-        if (launchedAlt) return;
-      } catch (_) {}
+      final isPaid = await DokuCheckoutSheet.show(
+        context,
+        paymentUrl: applyUrl,
+        invoiceNumber: '',
+        planTitle: planTitle,
+        amount: price,
+      );
+
+      if (isPaid == true && mounted) {
+        AppSnackBar.success(
+          context,
+          'Pembayaran berhasil diproses. Akses sudah aktif.',
+          duration: const Duration(seconds: 4),
+        );
+        Navigator.pop(context);
+      }
+      return;
     }
 
     // Fallback pembayaran via DOKU
     await _handleSubscribe(
       plan: tier['planId'] as String,
-      planTitle: '${tier['name']} ${targetAgent.title}'.trim(),
-      price: tier['price'] as int,
+      planTitle: planTitle,
+      price: price,
       targetAgent: targetAgent,
     );
   }
@@ -811,6 +824,31 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   Icon(Icons.arrow_forward_rounded,
                                       size: 16, color: canvas),
                                 ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: OTSpacing.sm),
+
+                        Center(
+                          child: TextButton.icon(
+                            onPressed: _isProcessing
+                                ? null
+                                : () => _handleSubscribe(
+                                      plan: tahawwulatCurrentTier['planId'] as String,
+                                      planTitle: '${tahawwulatCurrentTier['name']} ${_tahawwulatAgent.title}'.trim(),
+                                      price: tahawwulatCurrentTier['price'] as int,
+                                      targetAgent: _tahawwulatAgent,
+                                    ),
+                            icon: Icon(Icons.payment_rounded,
+                                size: 14, color: textSecondary),
+                            label: Text(
+                              'Atau bayar via DOKU Payment Gateway (QRIS / VA)',
+                              style: OTTypography.caption(color: textSecondary).copyWith(
+                                fontSize: 11.5,
+                                decoration: TextDecoration.underline,
+                                decorationColor: textSecondary.withValues(alpha: 0.3),
                               ),
                             ),
                           ),
