@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
@@ -68,8 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (!mounted) return;
       final message = e.toString().contains('network') || e.toString().contains('SocketException')
-          ? 'Koneksi internet bermasalah. Periksa jaringan Anda.'
-          : 'Gagal masuk akun Google. Silakan coba kembali.';
+          ? AppCopy.networkError
+          : AppCopy.googleSignInFailed;
       AppSnackBar.error(context, message);
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -151,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _stagger(
                     delayMs: 90,
                     child: Text(
-                      'OpenTurath',
+                      AppCopy.appName,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
                         fontSize: 32,
@@ -168,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _stagger(
                     delayMs: 140,
                     child: Text(
-                      'AI for Islamic Scholarship',
+                      AppCopy.academicSlogan,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.newsreader(
                         fontSize: 16,
@@ -217,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _GoogleGVector(),
                                     const SizedBox(width: 12),
                                     Text(
-                                      'Lanjutkan dengan Google',
+                                      AppCopy.continueWithGoogle,
                                       style: GoogleFonts.outfit(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
@@ -240,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       constraints: const BoxConstraints(maxWidth: 320),
                       child: Text.rich(
                         TextSpan(
-                          text: 'Dengan masuk, Anda menyetujui\n',
+                          text: '${AppCopy.termsAgreementPrefix}\n',
                           style: GoogleFonts.outfit(
                             color: textMuted,
                             fontSize: 12,
@@ -248,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           children: [
                             TextSpan(
-                              text: 'Ketentuan Layanan',
+                              text: AppCopy.termsOfService,
                               style: const TextStyle(
                                 color: textPrimary,
                                 decoration: TextDecoration.underline,
@@ -258,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const TextSpan(text: ' & '),
                             TextSpan(
-                              text: 'Kebijakan Privasi',
+                              text: AppCopy.privacyPolicy,
                               style: const TextStyle(
                                 color: textPrimary,
                                 decoration: TextDecoration.underline,
