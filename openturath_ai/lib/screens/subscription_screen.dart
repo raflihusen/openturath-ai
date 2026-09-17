@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -30,10 +32,148 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   UserModel? _user;
   AgentModel? _agent;
   bool _isProcessing = false;
-  int _selectedDurationIndex = 0; // 0: 1 Bulan, 1: 6 Bulan, 2: 1 Tahun
 
-  List<AgentModel> get _activeAgents =>
-      AgentModel.defaultAgents.where((a) => a.isActive).toList();
+  // Durasi terpisah untuk masing-masing kartu
+  int _tahawwulatDurationIndex = 0; // 0: 1 Bulan, 1: 6 Bulan, 2: 1 Tahun
+  int _otherDurationIndex = 0;      // 0: 1 Bulan, 1: 6 Bulan, 2: 1 Tahun
+  AgentModel? _selectedOtherAgent;
+
+  AgentModel get _tahawwulatAgent => AgentModel.defaultAgents.firstWhere(
+        (a) => a.id == 'fiqh_tahawwulat',
+        orElse: () => AgentModel.defaultAgents.first,
+      );
+
+  List<AgentModel> get _otherAgents => AgentModel.defaultAgents
+      .where((a) => a.isActive && a.id != 'fiqh_tahawwulat')
+      .toList();
+
+  // Tier resmi GoAkal AI Fikih Tahawwulat (Direct Apply Links)
+  static const List<Map<String, dynamic>> _tahawwulatTiers = [
+    {
+      'name': '1 Bulan',
+      'price': 1000000,
+      'label': 'Rp 1.000.000',
+      'period': '/ bulan',
+      'planId': 'tahawwulat_1m',
+      'applyUrl':
+          'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/1js2e/apply',
+    },
+    {
+      'name': '6 Bulan',
+      'price': 2995000,
+      'label': 'Rp 2.995.000',
+      'period': '/ 6 bulan',
+      'planId': 'tahawwulat_6m',
+      'applyUrl':
+          'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/sp6zh/apply',
+    },
+    {
+      'name': '1 Tahun',
+      'price': 4995000,
+      'label': 'Rp 4.995.000',
+      'period': '/ tahun',
+      'planId': 'tahawwulat_1y',
+      'applyUrl':
+          'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/8yt9m/apply',
+    },
+  ];
+
+  // Tier untuk disiplin ilmu lainnya
+  List<Map<String, dynamic>> _getOtherTiers(AgentModel? agent) {
+    final id = agent?.id ?? '';
+    if (id == 'fiqh_syafii') {
+      return [
+        {
+          'name': '1 Bulan',
+          'price': 299000,
+          'label': 'Rp 299.000',
+          'period': '/ bulan',
+          'planId': 'fiqh_syafii_1m',
+          'applyUrl':
+              'https://goakal.com/openturath-ai/fikih-syafii/tjvxw/apply',
+        },
+        {
+          'name': '6 Bulan',
+          'price': 1499000,
+          'label': 'Rp 1.499.000',
+          'period': '/ 6 bulan',
+          'planId': 'fiqh_syafii_6m',
+          'applyUrl':
+              'https://goakal.com/openturath-ai/fikih-syafii/16oun/apply',
+        },
+        {
+          'name': '1 Tahun',
+          'price': 1999000,
+          'label': 'Rp 1.999.000',
+          'period': '/ tahun',
+          'planId': 'fiqh_syafii_1y',
+          'applyUrl':
+              'https://goakal.com/openturath-ai/fikih-syafii/ianjf/apply',
+        },
+      ];
+    } else if (id == 'nahwu_sharaf' ||
+        id == 'bahasa_arab' ||
+        id == 'lughah_nahwu' ||
+        id == 'nahwu') {
+      return [
+        {
+          'name': '1 Bulan',
+          'price': 299000,
+          'label': 'Rp 299.000',
+          'period': '/ bulan',
+          'planId': 'bahasa_arab_1m',
+          'applyUrl':
+              'https://goakal.com/openturath-ai/ai-bahasa-arab/kbp4j/apply',
+        },
+        {
+          'name': '6 Bulan',
+          'price': 1499000,
+          'label': 'Rp 1.499.000',
+          'period': '/ 6 bulan',
+          'planId': 'bahasa_arab_6m',
+          'applyUrl':
+              'https://goakal.com/openturath-ai/ai-bahasa-arab/ydvfs/apply',
+        },
+        {
+          'name': '1 Tahun',
+          'price': 1999000,
+          'label': 'Rp 1.999.000',
+          'period': '/ tahun',
+          'planId': 'bahasa_arab_1y',
+          'applyUrl':
+              'https://goakal.com/openturath-ai/ai-bahasa-arab/yfi9q/apply',
+        },
+      ];
+    }
+
+    // Default regular tier untuk disiplin lainnya
+    return [
+      {
+        'name': '1 Bulan',
+        'price': 49000,
+        'label': 'Rp 49.000',
+        'period': '/ bulan',
+        'planId': AppConstants.planTholib1m,
+        'applyUrl': '',
+      },
+      {
+        'name': '6 Bulan',
+        'price': 299000,
+        'label': 'Rp 299.000',
+        'period': '/ 6 bulan',
+        'planId': AppConstants.planTholib6m,
+        'applyUrl': '',
+      },
+      {
+        'name': '1 Tahun',
+        'price': 499000,
+        'label': 'Rp 499.000',
+        'period': '/ tahun',
+        'planId': AppConstants.planBahits1y,
+        'applyUrl': '',
+      },
+    ];
+  }
 
   @override
   void didChangeDependencies() {
@@ -60,12 +200,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         );
       }
 
-      _agent ??= AgentModel.defaultAgents.firstWhere(
-        (a) => a.id == 'fiqh_tahawwulat',
-        orElse: () => AgentModel.defaultAgents.first,
-      );
-      if (_agent != null && _agent!.isComingSoon && _activeAgents.isNotEmpty) {
-        _agent = _activeAgents.first;
+      final others = _otherAgents;
+      if (_selectedOtherAgent == null && others.isNotEmpty) {
+        if (_agent != null && _agent!.id != 'fiqh_tahawwulat') {
+          _selectedOtherAgent = others.firstWhere(
+            (a) => a.id == _agent!.id,
+            orElse: () => others.first,
+          );
+        } else {
+          _selectedOtherAgent = others.firstWhere(
+            (a) => a.id == 'fiqh_syafii',
+            orElse: () => others.first,
+          );
+        }
       }
     }
   }
@@ -103,7 +250,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
           title: Text(
             'Nomor WhatsApp',
-            style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
+            style:
+                OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 17),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -111,7 +259,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             children: [
               Text(
                 'Masukkan nomor WhatsApp aktif untuk konfirmasi pembayaran dan aktivasi langganan.',
-                style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                style:
+                    OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
               ),
               const SizedBox(height: OTSpacing.base),
               TextField(
@@ -122,8 +271,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 decoration: InputDecoration(
                   hintText: 'Contoh: 081234567890',
                   hintStyle: OTTypography.body(color: textSecondary),
-                  prefixIcon: const Icon(Icons.phone_iphone_rounded, size: 20),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  prefixIcon:
+                      const Icon(Icons.phone_iphone_rounded, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: OTRadius.inputBorder,
                     borderSide: BorderSide(color: border),
@@ -138,7 +289,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 OTMotion.light();
                 Navigator.pop(ctx, null);
               },
-              child: Text('Batal', style: OTTypography.button(color: textSecondary)),
+              child:
+                  Text('Batal', style: OTTypography.button(color: textSecondary)),
             ),
             FilledButton(
               onPressed: () {
@@ -152,8 +304,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               },
               style: FilledButton.styleFrom(
                 backgroundColor: textPrimary,
-                foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                foregroundColor:
+                    isDark ? const Color(0xFF18181B) : Colors.white,
+                shape:
+                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text('Lanjutkan pembayaran', style: OTTypography.button()),
             ),
@@ -171,6 +325,32 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       } catch (_) {}
     }
     return phone;
+  }
+
+  Future<void> _handleTierCheckout({
+    required Map<String, dynamic> tier,
+    required AgentModel targetAgent,
+  }) async {
+    final applyUrl = tier['applyUrl'] as String? ?? '';
+    if (applyUrl.isNotEmpty) {
+      final uri = Uri.parse(applyUrl);
+      try {
+        final launched =
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+        if (launched) return;
+        final launchedAlt =
+            await launchUrl(uri, mode: LaunchMode.platformDefault);
+        if (launchedAlt) return;
+      } catch (_) {}
+    }
+
+    // Fallback pembayaran via DOKU
+    await _handleSubscribe(
+      plan: tier['planId'] as String,
+      planTitle: '${tier['name']} ${targetAgent.title}'.trim(),
+      price: tier['price'] as int,
+      targetAgent: targetAgent,
+    );
   }
 
   Future<void> _handleSubscribe({
@@ -215,7 +395,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     try {
       final userName = _user!.name.trim().isNotEmpty
           ? _user!.name.trim()
-          : (_user!.email.isNotEmpty ? _user!.email.split('@').first : 'Santri Peneliti');
+          : (_user!.email.isNotEmpty
+              ? _user!.email.split('@').first
+              : 'Santri Peneliti');
 
       final result = await _subService
           .createPayment(
@@ -290,31 +472,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
     final accent = OTColors.accent(isDark);
 
-    final activeList = _activeAgents;
+    // Data kartu Fikih Tahawwulat (Flagship)
+    final tahawwulatCurrentTier = _tahawwulatTiers[_tahawwulatDurationIndex];
 
-    final agentId = _agent?.id ?? '';
-    final isTahawwulat = agentId.startsWith('fiqh_tahawwulat');
-
-    // Pricing tiers untuk AI Spesialis Terpilih
-    final regularTiers = [
-      {'name': '1 Bulan', 'price': 49000, 'label': 'Rp 49.000', 'period': '/ bulan', 'planId': AppConstants.planTholib1m},
-      {'name': '6 Bulan', 'price': 299000, 'label': 'Rp 299.000', 'period': '/ 6 bulan', 'planId': AppConstants.planTholib6m},
-      {'name': '1 Tahun', 'price': 499000, 'label': 'Rp 499.000', 'period': '/ tahun', 'planId': AppConstants.planBahits1y},
-    ];
-
-    final tahawwulatTiers = [
-      {'name': '1 Bulan', 'price': 300000, 'label': 'Rp 300.000', 'period': '/ bulan', 'planId': AppConstants.planTholib1m},
-      {'name': '6 Bulan', 'price': 1500000, 'label': 'Rp 1.500.000', 'period': '/ 6 bulan', 'planId': AppConstants.planTholib6m},
-      {'name': '1 Tahun', 'price': 2000000, 'label': 'Rp 2.000.000', 'period': '/ tahun', 'planId': AppConstants.planBahits1y},
-    ];
-
-    final moduleTiers = isTahawwulat ? tahawwulatTiers : regularTiers;
-
-    final currentTier = moduleTiers[_selectedDurationIndex];
-    final tierPrice = currentTier['price'] as int;
-    final tierLabel = currentTier['label'] as String;
-    final tierPeriod = currentTier['period'] as String;
-    final tierPlanId = currentTier['planId'] as String;
+    // Data kartu Disiplin Lainnya
+    final otherList = _otherAgents;
+    final otherTargetAgent = _selectedOtherAgent ??
+        (otherList.isNotEmpty ? otherList.first : _tahawwulatAgent);
+    final otherTiers = _getOtherTiers(otherTargetAgent);
+    final safeOtherIndex =
+        _otherDurationIndex < otherTiers.length ? _otherDurationIndex : 0;
+    final otherCurrentTier = otherTiers[safeOtherIndex];
 
     return Scaffold(
       backgroundColor: canvas,
@@ -346,16 +514,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
+                padding: const EdgeInsets.fromLTRB(
+                    OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
                 children: [
                   // Editorial Header
                   Text(
-                    'Pilih akses riset Anda',
-                    style: OTTypography.editorialHero(color: textPrimary).copyWith(fontSize: 22),
+                    'Pilihan langganan',
+                    style: OTTypography.editorialHero(color: textPrimary)
+                        .copyWith(fontSize: 22),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Telusuri khazanah kitab ulama dengan Super AI yang mengubah cara Anda menemukan, memahami, dan memverifikasi rujukan.',
+                    'Pilih paket langganan untuk menelaah ibarah dan rujukan kitab turats.',
                     style: OTTypography.body(color: textSecondary).copyWith(
                       fontSize: 13,
                       height: 1.45,
@@ -378,11 +548,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.confirmation_number_outlined, size: 16, color: accent),
+                            Icon(Icons.confirmation_number_outlined,
+                                size: 16, color: accent),
                             const SizedBox(width: 6),
                             Text(
                               'Punya kode voucher? Masukkan di sini',
-                              style: OTTypography.button(color: accent).copyWith(fontSize: 13.5),
+                              style: OTTypography.button(color: accent)
+                                  .copyWith(fontSize: 13.5),
                             ),
                           ],
                         ),
@@ -390,16 +562,275 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: OTSpacing.sm),
+                  const SizedBox(height: OTSpacing.md),
 
-                  // ── Unified Module Package Card: Modul Spesialis Terpilih ──
+                  // ════════════════════════════════════════════════════════
+                  // 1. KARTU MANDIRI MEWAH-MINIMALIS: FIKIH TAHAWWULAT
+                  // ════════════════════════════════════════════════════════
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF141418)
+                          : const Color(0xFFFAF9F6),
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF383842)
+                            : const Color(0xFFD4D4D8),
+                        width: 1.3,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black
+                              .withValues(alpha: isDark ? 0.35 : 0.04),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(OTSpacing.lg),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4.5),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? const Color(0xFF22222A)
+                                    : const Color(0xFFEEEEF0),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: isDark
+                                      ? const Color(0xFF40404C)
+                                      : const Color(0xFFD4D4D8),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.workspace_premium_rounded,
+                                      size: 14, color: textPrimary),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    'KORPUS UTAMA · 5 BILIK AI',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.1,
+                                      color: textPrimary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: surfaceSubtle,
+                                borderRadius: OTRadius.chipBorder,
+                                border: Border.all(color: border, width: 0.6),
+                              ),
+                              child: Text(
+                                'Eksklusif',
+                                style: OTTypography.captionMedium(
+                                        color: textSecondary)
+                                    .copyWith(fontSize: 10.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        Text(
+                          'Super AI Fikih Tahawwulat',
+                          style: OTTypography.corpusTitle(color: textPrimary)
+                              .copyWith(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Akses penuh ke 5 persona AI spesialis (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib) yang dilatih dari 50+ kitab otoritatif & ribuan jam transkrip muhadharah Al-Habib Abu Bakar Al-Adni.',
+                          style:
+                              OTTypography.body(color: textSecondary).copyWith(
+                            fontSize: 12.8,
+                            height: 1.45,
+                          ),
+                        ),
+
+                        const SizedBox(height: OTSpacing.lg),
+
+                        // Segmented Control Durasi Fikih Tahawwulat
+                        Container(
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: surfaceSubtle,
+                            borderRadius: OTRadius.chipBorder,
+                            border: Border.all(color: border, width: 0.8),
+                          ),
+                          child: Row(
+                            children:
+                                List.generate(_tahawwulatTiers.length, (idx) {
+                              final tier = _tahawwulatTiers[idx];
+                              final isSelected =
+                                  _tahawwulatDurationIndex == idx;
+                              return Expanded(
+                                child: AppleInteractiveWrapper(
+                                  onTap: () {
+                                    OTMotion.selection();
+                                    setState(
+                                        () => _tahawwulatDurationIndex = idx);
+                                  },
+                                  pressedScale: 0.94,
+                                  hapticType: HapticFeedbackType.selection,
+                                  child: AnimatedContainer(
+                                    duration: OTMotion.fast,
+                                    curve: OTMotion.curve,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? textPrimary
+                                          : Colors.transparent,
+                                      borderRadius: OTRadius.chipBorder,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      tier['name'] as String,
+                                      style: OTTypography.caption(
+                                        color:
+                                            isSelected ? canvas : textSecondary,
+                                      ).copyWith(
+                                        fontSize: 11.5,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+
+                        const SizedBox(height: OTSpacing.lg),
+
+                        // Price Display Tahawwulat
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              tahawwulatCurrentTier['label'] as String,
+                              style: OTTypography.price(color: textPrimary)
+                                  .copyWith(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              tahawwulatCurrentTier['period'] as String,
+                              style: OTTypography.caption(color: textSecondary)
+                                  .copyWith(fontSize: 13),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: OTSpacing.base),
+                        Divider(
+                            color: border.withValues(alpha: 0.6), height: 1),
+                        const SizedBox(height: OTSpacing.base),
+
+                        _benefitRow(
+                            '5 Bilik AI Spesialis Terpadu dalam Satu Ruang Kajian',
+                            textPrimary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                            'Verifikasi ibarah presisi ke kitab matan induk, jilid, & halaman',
+                            textPrimary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                            'Akses arsip ribuan jam muhadharah & transkrip lisan mualif',
+                            textPrimary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                            'Ujian nalar ilmiah interaktif & penyusun materi dakwah',
+                            textPrimary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                            'Terhubung langsung ke infrastruktur Google NotebookLM Pro',
+                            textPrimary),
+
+                        const SizedBox(height: OTSpacing.lg),
+
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: AppleInteractiveWrapper(
+                            onTap: _isProcessing
+                                ? null
+                                : () => _handleTierCheckout(
+                                      tier: tahawwulatCurrentTier,
+                                      targetAgent: _tahawwulatAgent,
+                                    ),
+                            pressedScale: 0.97,
+                            hapticType: HapticFeedbackType.light,
+                            borderRadius:
+                                BorderRadius.circular(OTRadius.button),
+                            child: FilledButton(
+                              onPressed: _isProcessing
+                                  ? null
+                                  : () => _handleTierCheckout(
+                                        tier: tahawwulatCurrentTier,
+                                        targetAgent: _tahawwulatAgent,
+                                      ),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: textPrimary,
+                                foregroundColor: canvas,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: OTRadius.buttonBorder),
+                                elevation: 0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Pilih Paket Fikih Tahawwulat (${tahawwulatCurrentTier['label']})',
+                                    style: OTTypography.button(color: canvas)
+                                        .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(Icons.arrow_forward_rounded,
+                                      size: 16, color: canvas),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: OTSpacing.xl),
+
+                  // ════════════════════════════════════════════════════════
+                  // 2. KARTU SPESIALIS PER BIDANG LAINNYA
+                  // ════════════════════════════════════════════════════════
                   Container(
                     decoration: BoxDecoration(
                       color: surface,
                       borderRadius: OTRadius.cardBorder,
                       border: Border.all(
-                        color: textPrimary,
-                        width: 1.2,
+                        color: border,
+                        width: 1.0,
                       ),
                     ),
                     padding: const EdgeInsets.all(OTSpacing.lg),
@@ -410,18 +841,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              isTahawwulat ? 'Paket Fikih Tahawwulat' : 'Paket per bidang',
-                              style: OTTypography.sectionHeading(color: accent),
+                              'Paket per bidang',
+                              style: OTTypography.sectionHeading(
+                                  color: textSecondary),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
                                 color: surfaceSubtle,
                                 borderRadius: OTRadius.chipBorder,
                               ),
                               child: Text(
-                                isTahawwulat ? 'Korpus Utama' : '1 bidang',
-                                style: OTTypography.captionMedium(color: textSecondary).copyWith(fontSize: 10),
+                                '1 bidang',
+                                style: OTTypography.captionMedium(
+                                        color: textSecondary)
+                                    .copyWith(fontSize: 10),
                               ),
                             ),
                           ],
@@ -429,23 +864,27 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.sm),
                         Text(
                           'Pilih bidang',
-                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
+                          style: OTTypography.corpusTitle(color: textPrimary)
+                              .copyWith(fontSize: 20),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          isTahawwulat
-                              ? 'Akses eksklusif korpus khusus Fikih Tahawwulat untuk menelusuri ibarah.'
-                              : 'Akses ke satu bidang untuk menelusuri ibarah',
-                          style: OTTypography.body(color: textSecondary).copyWith(fontSize: 13),
+                          'Akses satu bidang beserta kitab rujukannya.',
+                          style:
+                              OTTypography.body(color: textSecondary).copyWith(
+                            fontSize: 13,
+                          ),
                         ),
 
                         const SizedBox(height: OTSpacing.md),
 
+                        // Dropdown HANYA untuk disiplin lainnya (bukan Tahawwulat)
                         DropdownButtonFormField<String>(
-                          initialValue: _agent?.id ?? (activeList.isNotEmpty ? activeList.first.id : 'fiqh_tahawwulat'),
+                          initialValue: otherTargetAgent.id,
                           isExpanded: true,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 10),
                             filled: true,
                             fillColor: surfaceSubtle,
                             border: OutlineInputBorder(
@@ -458,12 +897,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             ),
                           ),
                           dropdownColor: surface,
-                          items: activeList.map((a) {
+                          items: otherList.map((a) {
                             return DropdownMenuItem<String>(
                               value: a.id,
                               child: Text(
                                 a.title,
-                                style: OTTypography.bodyMedium(color: textPrimary).copyWith(fontSize: 13),
+                                style: OTTypography.bodyMedium(
+                                        color: textPrimary)
+                                    .copyWith(fontSize: 13),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             );
@@ -471,7 +912,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           onChanged: (val) {
                             if (val != null) {
                               setState(() {
-                                _agent = activeList.firstWhere((a) => a.id == val);
+                                _selectedOtherAgent = otherList
+                                    .firstWhere((a) => a.id == val);
                               });
                             }
                           },
@@ -479,7 +921,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         const SizedBox(height: OTSpacing.lg),
 
-                        // Segmented Control Durasi
+                        // Segmented Control Durasi Bidang Lainnya
                         Container(
                           height: 38,
                           decoration: BoxDecoration(
@@ -488,14 +930,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             border: Border.all(color: border, width: 0.8),
                           ),
                           child: Row(
-                            children: List.generate(moduleTiers.length, (idx) {
-                              final tier = moduleTiers[idx];
-                              final isSelected = _selectedDurationIndex == idx;
+                            children: List.generate(otherTiers.length, (idx) {
+                              final tier = otherTiers[idx];
+                              final isSelected = safeOtherIndex == idx;
                               return Expanded(
                                 child: AppleInteractiveWrapper(
                                   onTap: () {
                                     OTMotion.selection();
-                                    setState(() => _selectedDurationIndex = idx);
+                                    setState(() => _otherDurationIndex = idx);
                                   },
                                   pressedScale: 0.94,
                                   hapticType: HapticFeedbackType.selection,
@@ -503,17 +945,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     duration: OTMotion.fast,
                                     curve: OTMotion.curve,
                                     decoration: BoxDecoration(
-                                      color: isSelected ? textPrimary : Colors.transparent,
+                                      color: isSelected
+                                          ? textPrimary
+                                          : Colors.transparent,
                                       borderRadius: OTRadius.chipBorder,
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
                                       tier['name'] as String,
                                       style: OTTypography.caption(
-                                        color: isSelected ? canvas : textSecondary,
+                                        color:
+                                            isSelected ? canvas : textSecondary,
                                       ).copyWith(
                                         fontSize: 11,
-                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
                                       ),
                                     ),
                                   ),
@@ -525,109 +972,81 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         const SizedBox(height: OTSpacing.lg),
 
-                        // Price Display
+                        // Price Display Bidang Lainnya
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.baseline,
                           textBaseline: TextBaseline.alphabetic,
                           children: [
                             Text(
-                              tierLabel,
+                              otherCurrentTier['label'] as String,
                               style: OTTypography.price(color: textPrimary),
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              tierPeriod,
+                              otherCurrentTier['period'] as String,
                               style: OTTypography.caption(color: textSecondary),
                             ),
                           ],
                         ),
 
                         const SizedBox(height: OTSpacing.base),
-                        Divider(color: border.withValues(alpha: 0.6), height: 1),
+                        Divider(
+                            color: border.withValues(alpha: 0.6), height: 1),
                         const SizedBox(height: OTSpacing.base),
 
-                        // Core Benefits
-                        if (isTahawwulat) ...[
-                          _benefitRow(
-                            'Akses Eksklusif ke Super AI Fikih Tahawwulat yang Pertama Di Dunia',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Akses 4 AI spesialis dengan karakter dan pendekatan yang berbeda',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Uji Pemahaman Interaktif & Evaluasi Mandiri',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Akses Arsip Muhadharah & Transkrip Habib Abu Bakar',
-                            textPrimary,
-                          ),
-                        ] else ...[
-                          _benefitRow(
-                            'Akses Penuh AI Spesialis ${_agent?.title ?? "terpilih"} 24/7',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Temukan Ibarah & Konsep dalam waktu tersingkat',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Rujukan terperinci mencakup nama kitab, jilid dan halaman dengan akurasi tinggi',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Permudah pemahaman konsep melalui ibarah dan penjelasan yang disederhanakan dan tersusun',
-                            textPrimary,
-                          ),
-                        ],
+                        _benefitRow(
+                          'Akses Asisten ${otherTargetAgent.title}',
+                          textPrimary,
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                          'Telusuri ibarah dan penjelasan dari kitab rujukan',
+                          textPrimary,
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                          'Lihat kitab, jilid, dan halaman yang dirujuk',
+                          textPrimary,
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                          'Cocokkan ibarah dengan kitab cetak atau digital',
+                          textPrimary,
+                        ),
 
                         const SizedBox(height: OTSpacing.lg),
 
-                        // CTA Button
+                        // CTA Button Bidang Lainnya
                         SizedBox(
                           width: double.infinity,
                           height: 48,
                           child: AppleInteractiveWrapper(
                             onTap: _isProcessing
                                 ? null
-                                : () {
-                                    _handleSubscribe(
-                                      plan: tierPlanId,
-                                      planTitle: '${currentTier['name']} ${_agent?.title ?? ""}'.trim(),
-                                      price: tierPrice,
-                                      targetAgent: _agent,
-                                    );
-                                  },
+                                : () => _handleTierCheckout(
+                                      tier: otherCurrentTier,
+                                      targetAgent: otherTargetAgent,
+                                    ),
                             pressedScale: 0.97,
                             hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(OTRadius.button),
+                            borderRadius:
+                                BorderRadius.circular(OTRadius.button),
                             child: FilledButton(
                               onPressed: _isProcessing
                                   ? null
-                                  : () {
-                                      _handleSubscribe(
-                                        plan: tierPlanId,
-                                        planTitle: '${currentTier['name']} ${_agent?.title ?? ""}'.trim(),
-                                        price: tierPrice,
-                                        targetAgent: _agent,
-                                      );
-                                    },
+                                  : () => _handleTierCheckout(
+                                        tier: otherCurrentTier,
+                                        targetAgent: otherTargetAgent,
+                                      ),
                               style: FilledButton.styleFrom(
                                 backgroundColor: textPrimary,
                                 foregroundColor: canvas,
-                                shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: OTRadius.buttonBorder),
                                 elevation: 0,
                               ),
                               child: Text(
-                                'Pilih paket ${_agent?.title ?? ""} ($tierLabel)',
+                                'Pilih paket ${otherTargetAgent.title} (${otherCurrentTier['label']})',
                                 style: OTTypography.button(color: canvas),
                               ),
                             ),
@@ -659,20 +1078,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             Expanded(
                               child: Text(
                                 'Paket semua bidang',
-                                style: OTTypography.sectionHeading(color: textSecondary),
+                                style: OTTypography.sectionHeading(
+                                    color: textSecondary),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
                                 color: surface,
                                 borderRadius: OTRadius.chipBorder,
-                                border: Border.all(color: border, width: 0.6),
+                                border:
+                                    Border.all(color: border, width: 0.6),
                               ),
                               child: Text(
                                 'Segera hadir',
-                                style: OTTypography.captionMedium(color: textSecondary).copyWith(
+                                style: OTTypography.captionMedium(
+                                        color: textSecondary)
+                                    .copyWith(
                                   fontSize: 10,
                                   letterSpacing: 0.8,
                                 ),
@@ -683,75 +1107,52 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: OTSpacing.sm),
                         Text(
                           'Akses semua bidang',
-                          style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
+                          style: OTTypography.corpusTitle(color: textPrimary)
+                              .copyWith(fontSize: 18),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           'Satu paket untuk mengakses seluruh bidang yang tersedia beserta kitab rujukannya.',
-                          style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
-                        ),
-                        const SizedBox(height: OTSpacing.base),
-                        Divider(color: border.withValues(alpha: 0.5), height: 1),
-                        const SizedBox(height: OTSpacing.base),
-                        _benefitRow('Akses Penuh ke seluruh AI Spesialis yang tersedia 24/7', textSecondary),
-                        const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Bebas berpindah lintas bidang kajian dalam satu akses riset', textSecondary),
-                        const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Temukan ibarah & konsep dari berbagai cabang ilmu dalam waktu tersingkat', textSecondary),
-                        const SizedBox(height: OTSpacing.sm),
-                        _benefitRow('Rujukan terperinci mencakup nama kitab, jilid dan halaman dengan akurasi tinggi', textSecondary),
-                        const SizedBox(height: OTSpacing.md),
-                        // Catatan Edukatif
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(OTSpacing.md),
-                          decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF18181B) : Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: border.withValues(alpha: 0.8),
-                              width: 0.8,
-                            ),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.info_outline_rounded,
-                                size: 16,
-                                color: textSecondary,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Paket semua bidang sedang disiapkan.',
-                                  style: OTTypography.body(color: textSecondary).copyWith(
-                                    fontSize: 12,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          style:
+                              OTTypography.body(color: textSecondary).copyWith(
+                            fontSize: 12.5,
                           ),
                         ),
+                        const SizedBox(height: OTSpacing.base),
+                        Divider(
+                            color: border.withValues(alpha: 0.5), height: 1),
+                        const SizedBox(height: OTSpacing.base),
+                        _benefitRow(
+                            'Akses ke seluruh bidang yang tersedia',
+                            textSecondary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow(
+                            'Akses lintas bidang dalam satu langganan',
+                            textSecondary),
+                        const SizedBox(height: OTSpacing.sm),
+                        _benefitRow('Pembaruan berkala seluruh kitab rujukan',
+                            textSecondary),
                         const SizedBox(height: OTSpacing.lg),
                         SizedBox(
                           width: double.infinity,
                           height: 46,
                           child: OutlinedButton(
-                            onPressed: null, // Dinonaktifkan sesuai arahan
+                            onPressed: null,
                             style: OutlinedButton.styleFrom(
                               side: BorderSide(color: border),
-                              shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: OTRadius.buttonBorder),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.lock_outline_rounded, size: 16, color: textSecondary),
+                                Icon(Icons.lock_outline_rounded,
+                                    size: 16, color: textSecondary),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Segera Hadir',
-                                  style: OTTypography.button(color: textSecondary),
+                                  style:
+                                      OTTypography.button(color: textSecondary),
                                 ),
                               ],
                             ),
@@ -763,7 +1164,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   const SizedBox(height: OTSpacing.lg),
 
-                  // ── Catatan Transparansi Pembelian (Bab 4 & Bab 10.4) ──
+                  // ── Catatan Transparansi Pembelian ──
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(OTSpacing.base),
@@ -775,12 +1176,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.info_outline_rounded, size: 16, color: textSecondary),
+                        Icon(Icons.info_outline_rounded,
+                            size: 16, color: textSecondary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             AppCopy.manualRenewalNotice,
-                            style: OTTypography.caption(color: textSecondary).copyWith(
+                            style: OTTypography.caption(color: textSecondary)
+                                .copyWith(
                               fontSize: 12,
                               height: 1.45,
                             ),
