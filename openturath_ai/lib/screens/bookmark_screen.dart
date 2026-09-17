@@ -149,19 +149,19 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           backgroundColor: surface,
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
-            'Hapus catatan?',
+            AppCopy.deleteNoteTitle,
             style: OTTypography.screenTitle(color: textPrimary)
                 .copyWith(fontSize: 18),
           ),
           content: Text(
-            'Catatan ini akan dihapus permanen.',
+            AppCopy.deleteNoteDesc,
             style: OTTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text(
-                'Batal',
+                AppCopy.cancel,
                 style: OTTypography.button(color: textSecondary),
               ),
             ),
@@ -173,7 +173,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(
-                'Hapus',
+                AppCopy.delete,
                 style: OTTypography.button(color: Colors.white),
               ),
             ),
@@ -187,9 +187,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       if (mounted) {
         AppSnackBar.show(
           context,
-          message: 'Catatan dihapus.',
+          message: AppCopy.bookmarkDeleted,
           action: SnackBarAction(
-            label: 'Urungkan',
+            label: AppCopy.undo,
             textColor: OTColors.accent(isDark),
             onPressed: () => _bookmarkService.addBookmark(item),
           ),
@@ -201,7 +201,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void _copyIbarah(String ibarah) {
     OTMotion.light();
     Clipboard.setData(ClipboardData(text: ibarah));
-    AppSnackBar.success(context, 'Ibarah tersalin.');
+    AppSnackBar.success(context, AppCopy.ibarahCopied);
   }
 
   void _shareBookmark(BookmarkModel item) {
@@ -291,7 +291,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
-          'Catatan',
+          AppCopy.savedCollection,
           style: OTTypography.corpusTitle(color: textPrimary).copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w600,
@@ -300,7 +300,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.add_rounded, color: textPrimary),
-            tooltip: 'Tambah catatan',
+            tooltip: AppCopy.addNote,
             onPressed: () => _openNoteEditor(),
           ),
           IconButton(
@@ -309,7 +309,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               color: textPrimary,
             ),
             tooltip:
-                _showSearch ? 'Tutup pencarian' : AppCopy.searchSavedTooltip,
+                _showSearch ? AppCopy.closeSearch : AppCopy.searchSavedTooltip,
             onPressed: () {
               OTMotion.selection();
               setState(() {
@@ -389,7 +389,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '${_filteredBookmarks.length} catatan tersimpan',
+                  AppCopy.savedNotesCount(_filteredBookmarks.length),
                   style: OTTypography.caption(color: textSecondary).copyWith(
                     fontSize: 12,
                     letterSpacing: 0.2,
@@ -537,7 +537,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                             icon: const Icon(
                                                 Icons.menu_book_outlined,
                                                 size: 16),
-                                            label: const Text('Mulai telaah'),
+                                            label: Text(AppCopy.startStudy),
                                             style: OutlinedButton.styleFrom(
                                               foregroundColor: textPrimary,
                                               side: BorderSide(
@@ -809,11 +809,11 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         !item.bookReference.toLowerCase().contains('belum diidentifikasi');
 
     final pillLabel = switch (item.documentKind) {
-      BookmarkDocumentKind.personalNote => 'Catatan',
+      BookmarkDocumentKind.personalNote => AppCopy.navSaved,
       BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
           ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-          : (item.fieldName.contains('Catatan') ? 'Catatan' : (item.fieldName.isNotEmpty ? item.fieldName : 'Kajian')),
-      BookmarkDocumentKind.bookReference => 'Rujukan Kitab',
+          : (item.fieldName.contains('Catatan') ? AppCopy.navSaved : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace)),
+      BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
     };
     final displayTitle = item.documentKind == BookmarkDocumentKind.aiAnswer
         ? aiAnswerTitle(item.fullAnswer, item.agentTitle)
@@ -1090,7 +1090,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         size: 18,
                         color: widget.textSecondary.withValues(alpha: 0.7),
                       ),
-                      tooltip: 'Hapus catatan',
+                      tooltip: AppCopy.deleteNote,
                       padding: const EdgeInsets.all(8),
                       constraints: const BoxConstraints(),
                     ),
