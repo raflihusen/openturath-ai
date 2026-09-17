@@ -6,44 +6,14 @@ import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'apple_interactive_wrapper.dart';
 
-/// Item pembantu untuk data Sunanul Khalaq
-class _SunanItem {
-  final String number;
-  final String title;
-  final String arabic;
-  final String desc;
-
-  const _SunanItem({
-    required this.number,
-    required this.title,
-    required this.arabic,
-    required this.desc,
-  });
-}
-
-/// Item pembantu untuk data Al-Khuwaishah
-class _KhuwaishahLayer {
-  final String layer;
-  final String title;
-  final String arabic;
-  final String desc;
-
-  const _KhuwaishahLayer({
-    required this.layer,
-    required this.title,
-    required this.arabic,
-    required this.desc,
-  });
-}
-
-/// Item pembantu untuk data kitab kurikulum
-class _BookLevel {
+/// Item pembantu untuk data 6 Kitab Qawa'id
+class _QawaidBook {
   final String level;
   final String title;
   final String arabic;
   final String desc;
 
-  const _BookLevel({
+  const _QawaidBook({
     required this.level,
     required this.title,
     required this.arabic,
@@ -71,8 +41,8 @@ class _AiRoomItem {
 }
 
 /// Modal interaktif komprehensif untuk mengenal disiplin ilmu Fikih Tahawwulat.
-/// Menampilkan teks penjelasan terstruktur, komparasi, serta flowchart minimalis & elegan
-/// yang ramah layar sentuh (The Quiet Scholar design system).
+/// Menampilkan teks penjelasan mendalam, komparasi peradaban, serta flowchart minimalis & elegan
+/// yang ramah layar sentuh (The Quiet Scholar design system - strictly monokrom minimalis).
 class TahawwulatIntroductionSheet extends StatefulWidget {
   final AgentModel? agent;
   final void Function(SubAgentModel subAgent)? onSelectSubAgent;
@@ -117,11 +87,11 @@ class _TahawwulatIntroductionSheetState
 
   static const List<String> _tabs = [
     "Semua",
-    "Hakikat",
-    "Rukun ke-4",
-    "Sunanul Khalaq",
-    "Khuwaishah",
-    "Kurikulum",
+    "Hakikat & Pondasi",
+    "Dua Pilar & Nawāqid",
+    "Manhaj Dakwah & Sikap",
+    "Al-Khuwaishah",
+    "Kurikulum Pustaka",
     "5 Bilik AI",
   ];
 
@@ -191,10 +161,14 @@ class _TahawwulatIntroductionSheetState
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: OTColors.sovereignAmberBg,
+                        color: isDark
+                            ? const Color(0xFF222228)
+                            : const Color(0xFFF4F4F5),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: OTColors.sovereignAmber.withValues(alpha: 0.3),
+                          color: isDark
+                              ? const Color(0xFF383842)
+                              : const Color(0xFFE4E4E7),
                           width: 0.8,
                         ),
                       ),
@@ -204,7 +178,7 @@ class _TahawwulatIntroductionSheetState
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.2,
-                          color: OTColors.sovereignAmber,
+                          color: textPrimary,
                         ),
                       ),
                     ),
@@ -225,7 +199,7 @@ class _TahawwulatIntroductionSheetState
                             ),
                           ),
                           Text(
-                            "Hakikat, Landasan, Kurikulum & 5 Bilik AI",
+                            "Navigasi Kenabian & Benteng Akhir Zaman",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.outfit(
@@ -313,21 +287,41 @@ class _TahawwulatIntroductionSheetState
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
               physics: const BouncingScrollPhysics(),
               children: [
+                // ════════════════════════════════════════════════════════
+                // TAB 1: HAKIKAT & PONDASI
+                // ════════════════════════════════════════════════════════
                 if (_selectedTabIndex == 0 || _selectedTabIndex == 1) ...[
                   _buildSectionHeader(
                     context,
-                    tag: "BAB 01",
-                    title: "Hakikat & Landasan Syariat",
-                    arabic: "حَقِيقَةُ فِقْهِ التَّحَوُّلَاتِ وَمَفْهُومُهُ",
+                    tag: "MUKADIMAH",
+                    title: "Kebutuhan akan GPS Navigasi Kenabian",
+                    arabic: "الحَاجَةُ إِلَى بَوْصَلَةِ النُّبُوَّةِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
-                    "Fikih Tahawwulat (فِقْهُ التَّحَوُّلَاتِ) merupakan disiplin ilmu syariat komprehensif yang dirumuskan oleh Al-Musnid Al-`Allāmah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur. "
-                    "Secara terminologi syariat, ilmu ini didefinisikan sebagai pemahaman mendalam terhadap ketetapan takdir Allah di alam azali, sunatullah atas perubahan zaman, "
-                    "serta kaidah membaca tanda-tanda akhir zaman (kebangkitan, krisis, dan fitnah) berdasarkan timbangan Al-Qur'an dan As-Sunnah.",
+                    "Di era modern hari ini, tatanan peradaban berguncang hebat: banjir informasi melampaui kejernihan hakikat (fujā'at al-aḥdāṡ), "
+                    "sesama Muslim mudah diadu domba dan saling mengafirkan (at-taḥrīsy wat-takfīr), konten ramalan kiamat serampangan melahirkan kecemasan jiwa (apocalyptic anxiety), "
+                    "dan kemajuan kecerdasan buatan (AI) melompati etika moral manusia.\n\n"
+                    "Di tengah kabut tebal zaman ini, umat membutuhkan kompas nubuwwah agar tidak gamang membaca peristiwa dunia. "
+                    "Untuk menjawab krisis peradaban inilah, ulama besar abad ini asal Hadhramaut, Al-Musnid Al-`Allāmah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur (1366–1444 H / 1947–2022 M), "
+                    "mengkodifikasi disiplin ilmu mandiri: Fikih Tahawwulat (فِقْهُ التَّحَوُّلَاتِ).",
                     isDark,
                   ),
+                  const SizedBox(height: 14),
+
+                  _buildSectionHeader(
+                    context,
+                    tag: "BAB 01",
+                    title: "Hakikat & Definisi Syariat",
+                    arabic: "حَقِيقَةُ فِقْهِ التَّحَوُّلَاتِ وَمَفْهُومُهُ الشَّرْعِيُّ",
+                  ),
                   const SizedBox(height: 12),
+                  _buildBodyText(
+                    "Secara bahasa, Al-Fiqh bermakna pemahaman mendalam yang menembus hakikat batin, sedangkan At-Tahawwulat adalah bentuk jamak dari tahawwul (fase pergeseran atau transformasi peradaban manusia).\n\n"
+                    "Adapun secara istilah syariat, Fikih Tahawwulat didefinisikan sebagai:",
+                    isDark,
+                  ),
+                  const SizedBox(height: 10),
                   _buildQuoteCard(
                     context,
                     quote:
@@ -335,22 +329,25 @@ class _TahawwulatIntroductionSheetState
                     source: "Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur",
                     isDark: isDark,
                   ),
-                  const SizedBox(height: 24),
-                ],
+                  const SizedBox(height: 14),
+                  _buildBodyText(
+                    "Ilmu ini memutus kebuntuan Krisis Cara Berpikir (Al-Azmah Al-Manhajiyyah) yang terbelah ke dalam dua kutub ekstrem: "
+                    "Kutub Tekstualis Kaku (memaksakan teks hukum klasik untuk menghakimi krisis sosial tanpa paham konteks) dan Kutub Liberalisme Liar (menundukkan syariat demi tren modern). "
+                    "Fikih Tahawwulat menjaga pondasi syariat tetap murni tanpa kompromi, seraya membimbing pembacaan zaman dengan kompas kenabian.",
+                    isDark,
+                  ),
+                  const SizedBox(height: 20),
 
-                if (_selectedTabIndex == 0 || _selectedTabIndex == 2) ...[
                   _buildSectionHeader(
                     context,
                     tag: "BAB 02",
-                    title: "Rukun Keempat Agama (Hadis Jibril AS)",
-                    arabic: "الرُّكْنُ الرَّابِعُ مِنْ أَرْكَانِ الدِّينِ",
+                    title: "Pondasi Dalil: Rukun Keempat Agama",
+                    arabic: "الرُّكْنُ الرَّابِعُ: عِلْمُ عَلَامَاتِ السَّاعَةِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
-                    "Landasan primer Fikih Tahawwulat bersumber langsung dari Hadis Jibril AS yang masyhur (HR. Muslim). "
-                    "Di akhir dialog agung tersebut, Malaikat Jibril mengajukan 4 pertanyaan inti kepada Baginda Nabi ﷺ: "
-                    "tentang Islam, Iman, Ihsan, dan Tanda-Tanda Hari Kiamat (Asyrat As-Sa'ah). "
-                    "Sebagaimana tiga rukun terdahulu melahirkan disiplin ilmu Fikih Hukum, Ilmu Tauhid/Akidah, dan Ilmu Tasawuf/Suluk, maka rukun keempat ini melahirkan disiplin ilmu Fikih Tahawwulat.",
+                    "Pondasi disiplin ilmu ini bersumber langsung dari Hadis Jibril AS dalam Sahih Muslim yang digelari Umm as-Sunnah (Induk Segala Sunnah). "
+                    "Di hadapan Rasulullah ﷺ dan para sahabat, Malaikat Jibril AS menanyakan empat rukun yang disatukan oleh Nabi ﷺ dalam sabda pamungkas: «فَإِنَّهُ جِبْرِيلُ أَتَاكُمْ يُعَلِّمُكُمْ دِينَكُمْ» (\"Sesungguhnya dia adalah Jibril yang datang mengajarkan AGAMA KALIAN\").",
                     isDark,
                   ),
                   const SizedBox(height: 16),
@@ -358,55 +355,173 @@ class _TahawwulatIntroductionSheetState
                   const SizedBox(height: 24),
                 ],
 
-                if (_selectedTabIndex == 0 || _selectedTabIndex == 3) ...[
+                // ════════════════════════════════════════════════════════
+                // TAB 2: DUA PILAR KERUNTUHAN & PISAU BEDAH NAWAQID
+                // ════════════════════════════════════════════════════════
+                if (_selectedTabIndex == 0 || _selectedTabIndex == 2) ...[
                   _buildSectionHeader(
                     context,
                     tag: "BAB 03",
-                    title: "Arsitektur Sunanul Khalaq (Hukum Penciptaan)",
-                    arabic: "سُنَنُ الخَلْقِ الإِلَهِيَّةِ وَنَوَامِيسُ الكَوْنِ",
+                    title: "Dua Pilar Keruntuhan Otoritas Peradaban",
+                    arabic: "رُكْنَا عِلْمِ السَّاعَةِ: نَقْضُ قَرَارِ العِلْمِ وَالحُكْمِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
-                    "Alam semesta dan kehidupan manusia diatur oleh 5 hukum penciptaan ketuhanan (Sunanul Khalaq). "
-                    "Fikih Tahawwulat bertindak sebagai instrumen syar'i untuk memahami hukum kelima: Sunan at-Taghayyurat (hukum pergeseran dan transformasi zaman) "
-                    "agar umat tidak kaget atau terseret arus kegelapan akhir zaman.",
+                    "Ketika Nabi ﷺ ditanya tentang tanda kiamat, beliau tidak menyebutkan fenomena acak, melainkan mengisyaratkan Dua Keruntuhan Otoritas Terbesar dalam sejarah manusia:",
                     isDark,
                   ),
-                  const SizedBox(height: 16),
-                  _buildSunanulKhalaqFlowchart(context, isDark),
-                  const SizedBox(height: 24),
-                ],
+                  const SizedBox(height: 14),
+                  _buildTwoPillarsCollapseCard(context, isDark),
+                  const SizedBox(height: 20),
 
-                if (_selectedTabIndex == 0 || _selectedTabIndex == 4) ...[
                   _buildSectionHeader(
                     context,
                     tag: "BAB 04",
-                    title: "Konsep Al-Khuwaishah (Penyelamatan Komunitas)",
-                    arabic: "مَنْظُومَةُ الخُوَيْصَةِ: النَّجَاةُ الذَّاتِيَّةُ وَالأُسْرِيَّةُ",
+                    title: "Pisau Bedah: An-Nawāqid & An-Naqā'id",
+                    arabic: "النَّوَاِقضُ وَالنَّقَائِضُ: تَفْكِيكُ الغَزْوِ الفِكْرِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
-                    "Al-Khuwaishah (الـخُوَيْصَة) — bentuk pengecilan (tashghir) dari Al-Khashshah (lingkaran privat) — "
-                    "adalah strategi taktis kenabian untuk menyelamatkan diri, keluarga, dan majelis ilmu di saat ruang publik "
-                    "(Al-`Ammah) dilanda badai fitnah, ujaran kebencian, dan adu domba.",
+                    "Bagaimana tatanan Islam dirusak dari dalam? Fikih Tahawwulat menyediakan instrumen forensik pemikiran:\n\n"
+                    "1. An-Nawāqid (النَّوَاقِض - Pembatal / Proses Peruntuhan):\n"
+                    "Proses sistematis meruntuhkan pilar Islam dari dalam. Contoh paling nyata di era digital adalah Naqd Manhaj at-Talaqqi (peruntuhan tradisi adab berguru). "
+                    "Generasi muda digiring merasa cukup belajar dari potongan video medsos atau mesin pencari tanpa bersimpuh menyerap akhlak guru bersanad.\n\n"
+                    "2. An-Naqā'id (النَّقَائِض - Ideologi Tandingan / Pengganti):\n"
+                    "Setelah nilai Islam runtuh lewat Nawāqid, ruang kosong itu diisi dengan paham tandingan buatan manusia seperti Materialisme, Sekularisme ekstrem, Konsumerisme, dan Hedonisme.",
                     isDark,
                   ),
-                  const SizedBox(height: 16),
-                  _buildKhuwaishahFlowchart(context, isDark),
-                  const SizedBox(height: 24),
-                ],
+                  const SizedBox(height: 20),
 
-                if (_selectedTabIndex == 0 || _selectedTabIndex == 5) ...[
                   _buildSectionHeader(
                     context,
                     tag: "BAB 05",
-                    title: "Kurikulum Pustaka: Qawa'id & Tatbiqat",
-                    arabic: "مَنْهَجِيَّةُ التَّأْلِيفِ: القَوَاعِدُ وَالتَّطْبِيقَاتُ",
+                    title: "Menyikapi Teknologi & Kecerdasan Buatan (AI)",
+                    arabic: "المُسْتَجَدَّاتُ التِّقَنِيَّةُ وَقَاعِدَةُ الِاغْتِنَامِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
-                    "Karya tulis Fikih Tahawwulat oleh Al-Habib Abu Bakar Al-Adni terbagi secara tegas ke dalam dua kategori: "
-                    "Al-Qawa'id (6 kitab kaidah usul pokok berjenjang) dan At-Tatbiqat (lebih dari 50 kitab terapan sejarah & ratusan diwan karya syair).",
+                    "Fikih Tahawwulat menempatkan seluruh lompatan teknologi modern ke dalam kelompok Al-Mustajaddāt dengan dua kaidah emas:\n\n"
+                    "• Naskah Mendahului Sejarah (Al-Naṣṣ Asbaq min al-Ḥadaṡ):\n"
+                    "Ketika teknologi mampu memviralkan kebohongan atau deepfake ke seluruh bumi dalam sekejap, santri teringat sabda Nabi ﷺ mengenai tanda akhir zaman: Tablyghul Kidzbah ilal Afāq (tersiarnya kedustaan ke segenap penjuru dalam sekejap).\n\n"
+                    "• Kaidah Merebut untuk Kebaikan (Al-Ightinām):\n"
+                    "Teknologi digital dan AI bersifat netral. Kita dilarang kuper (menolak membabi buta) dan dilarang lugu (terseret arus tanpa filter syar'i). Kita diperintahkan merebut (al-ightinām) kecanggihan teknologi ini untuk khidmat menyiarkan khazanah turats dan dakwah yang damai.",
+                    isDark,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+
+                // ════════════════════════════════════════════════════════
+                // TAB 3: MANHAJ DAKWAH & SIKAP
+                // ════════════════════════════════════════════════════════
+                if (_selectedTabIndex == 0 || _selectedTabIndex == 3) ...[
+                  _buildSectionHeader(
+                    context,
+                    tag: "BAB 06",
+                    title: "Transformasi Bahasa Dakwah Kenabian",
+                    arabic: "لُغَةُ الطِّبِّ وَالإِنْقَاذِ بَدَلَ التَّكْفِيرِ وَالتَّحْرِيشِ",
+                  ),
+                  const SizedBox(height: 12),
+                  _buildBodyText(
+                    "Sumbangsih monumental Fikih Tahawwulat adalah revolusi paradigma dakwah dari penghakiman menjadi penyelamatan:",
+                    isDark,
+                  ),
+                  const SizedBox(height: 14),
+                  _buildDakwahTransformationCard(context, isDark),
+                  const SizedBox(height: 20),
+
+                  _buildSectionHeader(
+                    context,
+                    tag: "BAB 07",
+                    title: "Sunnah Mawāqif & Manhaj as-Salāmah",
+                    arabic: "سُنَّةُ المَوَاقِفِ وَمَنْهَجُ السَّلَامَةِ النَّبَوِيَّةِ",
+                  ),
+                  const SizedBox(height: 12),
+                  _buildBodyText(
+                    "Selain Sunnah Dalālah (petunjuk arah syariat atas hal-hal baru), Fikih Tahawwulat menekankan Sunnah Mawāqif (teladan ketetapan sikap saat terjadi fitnah sosial dan politik).\n\n"
+                    "Puncak prinsip keselamatan terangkum dalam kaidah agung:",
+                    isDark,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildQuoteCard(
+                    context,
+                    quote:
+                        "«سَالِمًا بِاللِّسَانِ مِنَ الذَّمِّ، وَسَالِمًا بِالأَرْكَانِ مِنَ الدَّمِّ»",
+                    source:
+                        "Selamat lisan dari mencela, selamat tangan dari menumpahkan darah",
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildBodyText(
+                    "Sebagaimana teladan Sayyidina Hasan bin Ali r.a. yang rela menanggalkan kekhalifahan demi menyatukan darah kaum Muslimin, serta Sayyidina Ali Zainal Abidin r.a. yang fokus mendidik adab jiwa pasca-Tragedi Karbala.\n\n"
+                    "Fikih Tahawwulat melarang keras Al-Ittijār bid-Dīn (menjual ayat, hadis, dan mimbar masjid untuk kepentingan panggung politik partisan).",
+                    isDark,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+
+                // ════════════════════════════════════════════════════════
+                // TAB 4: AL-KHUWAISHAH & KETENANGAN JIWA
+                // ════════════════════════════════════════════════════════
+                if (_selectedTabIndex == 0 || _selectedTabIndex == 4) ...[
+                  _buildSectionHeader(
+                    context,
+                    tag: "BAB 08",
+                    title: "Konsep Masterpiece: Al-Khuwaiṣah (الـخُوَيْصَة)",
+                    arabic: "مَنْظُومَةُ الخُوَيْصَةِ: حِصْنُ النَّجَاةِ فِي طُوفَانِ الفِتَنِ",
+                  ),
+                  const SizedBox(height: 12),
+                  _buildBodyText(
+                    "Al-Khuwaiṣah (bentuk tashghīr penuh kasih dari Al-Khāṣṣah) bermakna lingkaran privat terdekat. "
+                    "Secara istilah, Al-Khuwaishah adalah strategi taktis penyelamatan diri, keluarga, dan komunitas terbatas ketika ruang publik (Al-`Āmmah) dilanda badai fitnah yang tidak bisa diubah seketika.\n\n"
+                    "Analogi Shelter Badai Topan:\n"
+                    "Ketika kota diterjang badai dahsyat, orang bijak tidak berdiri di lapangan memarahi angin, melainkan masuk ke dalam shelter aman, mengunci pintu, dan memastikan keluarganya hangat dan cukup bekal.",
+                    isDark,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildKhuwaishahLayersCard(context, isDark),
+                  const SizedBox(height: 20),
+
+                  _buildSectionHeader(
+                    context,
+                    tag: "BAB 09",
+                    title: "Mengatasi Kecemasan Akhir Zaman",
+                    arabic: "عِلَاجُ القَلَقِ النَّفْسِيِّ وَالسَّكِينَةُ الإِيمَانِيَّةُ",
+                  ),
+                  const SizedBox(height: 12),
+                  _buildBodyText(
+                    "Fikih Tahawwulat menyembuhkan Apocalyptic Anxiety (kecemasan akibat ramalan viral kiamat) dengan:\n"
+                    "1. Mengharamkan cocokologi serampangan (al-isqāṭ al-mubāsyir) dan mewajibkan sikap sabar mengamati (al-intiẓār wat-tarakqub).\n"
+                    "2. Menanamkan ketenangan batin (sakīnah) bahwa seluruh perputaran sejarah berada dalam garis takdir azali Allah.\n"
+                    "3. Melawan sikap putus asa: Sebagaimana sabda Nabi ﷺ, jika kiamat tiba dan di tanganmu ada bibit kurma, tetaplah menanamnya!",
+                    isDark,
+                  ),
+                  const SizedBox(height: 20),
+
+                  _buildSectionHeader(
+                    context,
+                    tag: "BAB 10",
+                    title: "Komparasi: Sebelum vs Sesudah",
+                    arabic: "مُقَارَنَةٌ شَامِلَةٌ بَيْنَ حَالَتَيْنِ",
+                  ),
+                  const SizedBox(height: 14),
+                  _buildComparisonTable(context, isDark),
+                  const SizedBox(height: 24),
+                ],
+
+                // ════════════════════════════════════════════════════════
+                // TAB 5: KURIKULUM PUSTAKA
+                // ════════════════════════════════════════════════════════
+                if (_selectedTabIndex == 0 || _selectedTabIndex == 5) ...[
+                  _buildSectionHeader(
+                    context,
+                    tag: "BAB 11",
+                    title: "Struktur Kurikulum: Al-Qawā'id & At-Taṭbīqāt",
+                    arabic: "هَيْكَلُ الكُتُبِ: القَوَاعِدُ التَّأْصِيلِيَّةُ وَالتَّطْبِيقَاتُ العَمَلِيَّةُ",
+                  ),
+                  const SizedBox(height: 12),
+                  _buildBodyText(
+                    "Khazanah karya tulis Fikih Tahawwulat oleh Al-Habib Abu Bakar Al-Adni terbagi rapi ke dalam dua kategori besar: "
+                    "6 Kitab Kaidah Pokok Berjenjang (Al-Qawā'id) serta Lebih dari 50 Kitab Terapan Lapangan & Ratusan Dīwān Sya'ir (At-Taṭbīqāt).",
                     isDark,
                   ),
                   const SizedBox(height: 16),
@@ -414,25 +529,28 @@ class _TahawwulatIntroductionSheetState
                   const SizedBox(height: 24),
                 ],
 
+                // ════════════════════════════════════════════════════════
+                // TAB 6: 5 BILIK SUPER AI
+                // ════════════════════════════════════════════════════════
                 if (_selectedTabIndex == 0 || _selectedTabIndex == 6) ...[
                   _buildSectionHeader(
                     context,
-                    tag: "BAB 06",
-                    title: "Super AI 5 Bilik Keilmuan OpenTurath",
-                    arabic: "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ",
+                    tag: "BAB 12",
+                    title: "Arsitektur 5 Bilik Super AI OpenTurath",
+                    arabic: "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ التَّخَصُّصِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
-                    "Karena Fikih Tahawwulat sarat dengan diksi-diksi baru (al-mustalahat al-mubtakarah) serta ribuan jam transkrip rekaman lisan mualif, "
-                    "OpenTurath AI menghadirkan 5 Bilik Super AI spesialis untuk mendampingi penelaahan Anda:",
+                    "Karena disiplin ini sarat dengan peristilahan baru (al-muṣṭalaḥāt al-mubtakarah) serta ribuan jam transkrip lisan mualif, "
+                    "OpenTurath AI menghadirkan 5 Bilik AI Spesialis Terpadu dalam satu ruang kajian:",
                     isDark,
                   ),
                   const SizedBox(height: 16),
-                  _buildFourAiRoomsFlowchart(context, isDark),
+                  _buildFiveAiRoomsList(context, isDark),
                   const SizedBox(height: 24),
                 ],
 
-                // ── Closing & Prayer ──
+                // ── Closing Card ──
                 _buildClosingCard(context, isDark),
               ],
             ),
@@ -448,6 +566,8 @@ class _TahawwulatIntroductionSheetState
   Widget _buildFourPillarsFlowchart(BuildContext context, bool isDark) {
     final borderColor = OTColors.border(isDark);
     final cardBg = OTColors.surfaceSubtle(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     return Container(
       decoration: BoxDecoration(
@@ -461,49 +581,44 @@ class _TahawwulatIntroductionSheetState
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.account_tree_outlined,
-                size: 16,
-                color: OTColors.sovereignAmber,
-              ),
+              Icon(Icons.account_tree_outlined, size: 16, color: textPrimary),
               const SizedBox(width: 8),
               Text(
-                "STRUKTUR 4 RUKUN AGAMA",
+                "INTEGRASI 4 RUKUN AGAMA (HADIS JIBRIL AS)",
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: OTColors.sovereignAmber,
+                  letterSpacing: 1.1,
+                  color: textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
 
-          // 4 Pillar Tiles
           _buildPillarTile(
             number: "01",
-            title: "Al-Islam (الإِسْلَام)",
-            discipline: "Fikih Hukum & Syariat",
-            desc: "Ibadah praktis, halal-haram, muamalah & hukum lahiriah.",
+            title: "Al-Islām (الإِسْلَام)",
+            discipline: "Fikih Hukum & Syariat (Aṡ-Ṡawābit)",
+            desc: "Ibadah lahiriah, rukun fi'li, halal-haram & muamalah baku sepanjang masa.",
             isDark: isDark,
             isHighlight: false,
           ),
           _buildConnectorLine(isDark),
           _buildPillarTile(
             number: "02",
-            title: "Al-Iman (الإِيمَان)",
-            discipline: "Fikih Akidah & Tauhid",
-            desc: "Keimanan pada Allah, malaikat, kitab, rasul & takdir azali.",
+            title: "Al-Īmān (الإِيمَان)",
+            discipline: "Akidah & Tauhid (Aṡ-Ṡawābit)",
+            desc: "Pondasi keyakinan pada Allah, malaikat, kitab, rasul & takdir azali.",
             isDark: isDark,
             isHighlight: false,
           ),
           _buildConnectorLine(isDark),
           _buildPillarTile(
             number: "03",
-            title: "Al-Ihsan (الإِحْسَان)",
-            discipline: "Fikih Suluk & Tasawuf",
-            desc: "Penyucian jiwa (tazkiyah), muraqabah & keindahan akhlak.",
+            title: "Al-Iḥsān (الإِحْسَان)",
+            discipline: "Tasawuf & Akhlak (Aṡ-Ṡawābit)",
+            desc: "Penyucian jiwa (tazkiyatun nufūs), muraqabah hati & keluhuran adab batin.",
             isDark: isDark,
             isHighlight: false,
           ),
@@ -511,41 +626,31 @@ class _TahawwulatIntroductionSheetState
           _buildPillarTile(
             number: "04",
             title: "Fikih Tahawwulat (فِقْهُ التَّحَوُّلَاتِ)",
-            discipline: "Tanda Kiamat & Navigasi Zaman",
-            desc:
-                "Membaca perubahan zaman, siklus peradaban, fitnah & sunnah mawaqif.",
+            discipline: "Tanda Kiamat & Navigasi Zaman (Al-Mutaghayyirāt)",
+            desc: "Peta kompas nubuwwah yang memandu agar Islam, Iman, dan Ihsan tidak tersapu badai fitnah akhir zaman.",
             isDark: isDark,
             isHighlight: true,
           ),
 
           const SizedBox(height: 14),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.3)
-                  : Colors.white.withValues(alpha: 0.7),
+              color: isDark ? const Color(0xFF141418) : Colors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: borderColor.withValues(alpha: 0.6),
-                width: 0.6,
-              ),
+              border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.auto_awesome,
-                  size: 14,
-                  color: OTColors.sovereignAmber,
-                ),
+                Icon(Icons.hub_outlined, size: 15, color: textPrimary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    "Disatukan dalam Hadis Jibril AS sebagai satu kesatuan rukun yang saling mengunci.",
+                    "Disatukan oleh Nabi ﷺ dalam satu kalimat: «يُعَلِّمُكُمْ دِينَكُمْ» (\"Mengajarkan Agama Kalian\").",
                     style: GoogleFonts.outfit(
-                      fontSize: 11,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.w500,
-                      color: OTColors.textSecondary(isDark),
+                      color: textSecondary,
                     ),
                   ),
                 ),
@@ -565,32 +670,30 @@ class _TahawwulatIntroductionSheetState
     required bool isDark,
     required bool isHighlight,
   }) {
-    final surface = isDark ? const Color(0xFF1F1F23) : Colors.white;
+    final borderColor = isHighlight
+        ? (isDark ? const Color(0xFF4A4A58) : const Color(0xFFC4C4C8))
+        : OTColors.border(isDark);
+    final bgColor = isHighlight
+        ? (isDark ? const Color(0xFF1F1F26) : const Color(0xFFF4F4F6))
+        : (isDark ? const Color(0xFF16161A) : Colors.white);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
     return Container(
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isHighlight
-              ? OTColors.sovereignAmber.withValues(alpha: 0.6)
-              : OTColors.border(isDark),
-          width: isHighlight ? 1.2 : 0.8,
-        ),
-      ),
       padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: borderColor, width: isHighlight ? 1.2 : 0.8),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 26,
+            height: 26,
             decoration: BoxDecoration(
-              color: isHighlight
-                  ? OTColors.sovereignAmberBg
-                  : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05)),
+              color: isDark ? const Color(0xFF282832) : const Color(0xFFE4E4E8),
               borderRadius: BorderRadius.circular(6),
             ),
             alignment: Alignment.center,
@@ -599,64 +702,59 @@ class _TahawwulatIntroductionSheetState
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: isHighlight ? OTColors.sovereignAmber : textSecondary,
+                color: textPrimary,
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: GoogleFonts.newsreader(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: isHighlight ? OTColors.sovereignAmber : textPrimary,
-                        ),
+                    Text(
+                      title,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
                       ),
                     ),
                     if (isHighlight)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
+                            horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: OTColors.sovereignAmber,
+                          color: isDark ? Colors.white24 : Colors.black87,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          "RUKUN KE-4",
+                          "Peta Navigasi",
                           style: GoogleFonts.outfit(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
                         ),
                       ),
                   ],
                 ),
-                const SizedBox(height: 2),
                 Text(
                   discipline,
                   style: GoogleFonts.outfit(
-                    fontSize: 12,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w600,
                     color: textSecondary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   desc,
                   style: GoogleFonts.outfit(
                     fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: textSecondary.withValues(alpha: 0.85),
+                    color: textSecondary,
                     height: 1.35,
                   ),
                 ),
@@ -668,55 +766,14 @@ class _TahawwulatIntroductionSheetState
     );
   }
 
-  Widget _buildConnectorLine(bool isDark) {
-    return Center(
-      child: Container(
-        width: 1.2,
-        height: 10,
-        color: OTColors.border(isDark).withValues(alpha: 0.8),
-      ),
-    );
-  }
-
   // ──────────────────────────────────────────────────────────────────────────
-  // FLOWCHART 2: 5 RANAH SUNANUL KHALAQ
+  // DUA PILAR KERUNTUHAN OTORITAS
   // ──────────────────────────────────────────────────────────────────────────
-  Widget _buildSunanulKhalaqFlowchart(BuildContext context, bool isDark) {
+  Widget _buildTwoPillarsCollapseCard(BuildContext context, bool isDark) {
     final borderColor = OTColors.border(isDark);
     final cardBg = OTColors.surfaceSubtle(isDark);
-
-    const sunanItems = [
-      _SunanItem(
-        number: "1",
-        title: "Sunan I'tiqadiyah",
-        arabic: "سُنَنٌ اعْتِقَادِيَّةٌ",
-        desc: "Pilar Keyakinan & Rukun Iman Azali",
-      ),
-      _SunanItem(
-        number: "2",
-        title: "Sunan 'Ilmiyyah",
-        arabic: "سُنَنٌ عِلْمِيَّةٌ",
-        desc: "Hukum Alam, Kosmologi & Sains Eksakta",
-      ),
-      _SunanItem(
-        number: "3",
-        title: "Sunan Sulukiyah",
-        arabic: "سُنَنٌ سُلُوكِيَّةٌ",
-        desc: "Hukum Etika, Moralitas & Relasi Manusia",
-      ),
-      _SunanItem(
-        number: "4",
-        title: "Sunan Diniyyah",
-        arabic: "سُنَنٌ دِينِيَّةٌ",
-        desc: "Syariat, Ibadah, Muamalah & Panduan Hidup",
-      ),
-      _SunanItem(
-        number: "5",
-        title: "Sunan at-Taghayyurat",
-        arabic: "سُنَنُ التَّغَيُّرَاتِ",
-        desc: "Siklus Transformasi Sejarah & Tanda Kiamat",
-      ),
-    ];
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     return Container(
       decoration: BoxDecoration(
@@ -730,104 +787,103 @@ class _TahawwulatIntroductionSheetState
         children: [
           Row(
             children: [
-              const Icon(Icons.hub_outlined, size: 16, color: OTColors.sovereignAmber),
+              Icon(Icons.domain_disabled_rounded, size: 16, color: textPrimary),
               const SizedBox(width: 8),
               Text(
-                "5 RANAH HUKUM SUNANUL KHALAQ",
+                "DUA ISYARAT KENABIAN ATAS KERUNTUHAN OTORITAS",
                 style: GoogleFonts.outfit(
-                  fontSize: 11,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: OTColors.sovereignAmber,
+                  letterSpacing: 1.1,
+                  color: textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          Column(
-            children: sunanItems.map((item) {
-              final isTarget = item.number == "5";
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E22) : Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: isTarget
-                        ? OTColors.sovereignAmber.withValues(alpha: 0.6)
-                        : borderColor,
-                    width: isTarget ? 1.2 : 0.8,
+
+          // Pilar 1
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF16161A) : Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: borderColor, width: 0.8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "«أَنْ تَلِدَ الأَمَةُ رَبَّتَهَا»",
+                  style: GoogleFonts.amiri(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: textPrimary,
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: isTarget
-                            ? OTColors.sovereignAmberBg
-                            : (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05)),
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        item.number,
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: isTarget
-                              ? OTColors.sovereignAmber
-                              : OTColors.textSecondary(isDark),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                item.title,
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: isTarget
-                                      ? OTColors.sovereignAmber
-                                      : OTColors.textPrimary(isDark),
-                                ),
-                              ),
-                              const Spacer(),
-                              Text(
-                                item.arabic,
-                                style: GoogleFonts.amiri(
-                                  fontSize: 13,
-                                  color: OTColors.textSecondary(isDark),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            item.desc,
-                            style: GoogleFonts.outfit(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w400,
-                              color: OTColors.textSecondary(isDark),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 4),
+                Text(
+                  "1. Keruntuhan Otoritas Ilmu & Akidah (Naqḍ Qarār al-`Ilm wal-I'tiqād)",
+                  style: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: textPrimary,
+                  ),
                 ),
-              );
-            }).toList(),
+                const SizedBox(height: 3),
+                Text(
+                  "Runtuhnya tradisi talaqqi dan adab berguru. Anak menindas orang tua, murid tidak menghormati ulama bersanad, dan ilmu dicari murni demi keuntungan duniawi.",
+                  style: GoogleFonts.outfit(
+                    fontSize: 11.5,
+                    color: textSecondary,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Pilar 2
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF16161A) : Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: borderColor, width: 0.8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "«أَنْ تَرَى الحُفَاةَ العُرَاةَ يَتَطَاوَلُونَ فِي البُنْيَانِ»",
+                  style: GoogleFonts.amiri(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "2. Keruntuhan Otoritas Kepemimpinan & Ekonomi (Naqḍ Qarār al-Ḥukm wal-Iqtiṣād)",
+                  style: GoogleFonts.outfit(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  "Tatanan kepemimpinan dunia jatuh ke tangan orang yang tidak amanah, ekonomi global dikuasai sistem ribawi, dan kemuliaan diukur murni dari kemegahan material.",
+                  style: GoogleFonts.outfit(
+                    fontSize: 11.5,
+                    color: textSecondary,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -835,36 +891,155 @@ class _TahawwulatIntroductionSheetState
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // FLOWCHART 3: BENTENG AL-KHUWAISHAH (4 LAPIS PERLINDUNGAN)
+  // TRANSFORMASI BAHASA DAKWAH
   // ──────────────────────────────────────────────────────────────────────────
-  Widget _buildKhuwaishahFlowchart(BuildContext context, bool isDark) {
+  Widget _buildDakwahTransformationCard(BuildContext context, bool isDark) {
     final borderColor = OTColors.border(isDark);
     final cardBg = OTColors.surfaceSubtle(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor, width: 0.8),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.healing_outlined, size: 16, color: textPrimary),
+              const SizedBox(width: 8),
+              Text(
+                "REVOLUSI PARADIGMA BAHASA DAKWAH",
+                style: GoogleFonts.outfit(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
+                  color: textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(11),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1A1A1E) : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: borderColor, width: 0.8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Lughatut-Takfīr",
+                        style: GoogleFonts.newsreader(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "• Menghakimi & mencaci\n• Menganggap masyarakat lawan\n• Mudah mengafirkan",
+                        style: GoogleFonts.outfit(
+                          fontSize: 10.5,
+                          color: textSecondary,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Icon(Icons.arrow_forward_rounded,
+                    size: 16, color: textSecondary),
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(11),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E222A) : const Color(0xFFF0F4F8),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF384050) : const Color(0xFFD0DCE5),
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Lughatut-Ṭibb",
+                        style: GoogleFonts.newsreader(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "• Dokter penolong beradab\n• Memandang umat pasien\n• Inqāḏ mā yumkinu inqāḏuh",
+                        style: GoogleFonts.outfit(
+                          fontSize: 10.5,
+                          color: textSecondary,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // 4 LAPIS AL-KHUWAISHAH
+  // ──────────────────────────────────────────────────────────────────────────
+  Widget _buildKhuwaishahLayersCard(BuildContext context, bool isDark) {
+    final borderColor = OTColors.border(isDark);
+    final cardBg = OTColors.surfaceSubtle(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     const layers = [
-      _KhuwaishahLayer(
-        layer: "Lapis 1 (Inti)",
-        title: "Khuwaishat an-Nafs",
+      (
+        layer: "Lapis 1",
+        title: "Benteng Diri (Khuwaiṣat an-Nafs)",
         arabic: "خُوَيْصَةُ النَّفْسِ",
-        desc: "Benteng jiwa pribadi: zikir, pembersihan hati, serta puasa dari kebisingan media & perdebatan.",
+        desc: "Menjaga hati dari dengki, lisan dari mencela, dan tangan dari kekerasan. Menjalankan puasa dari kebisingan perdebatan media (shiyām 'an al-wasā'il)."
       ),
-      _KhuwaishahLayer(
+      (
         layer: "Lapis 2",
-        title: "Khuwaishat al-Usrah",
-        arabic: "خُوَيْصَةُ الأُسْرَةِ",
-        desc: "Benteng rumah tangga: surga sakinah, pendampingan gawai anak & ruang dialog hangat berakidah.",
+        title: "Benteng Keluarga (Khuwaiṣat al-Usrah)",
+        arabic: "خُوَيْصَةُ الأُسْرَةِ وَالبَيْتِ",
+        desc: "Menjadikan rumah sebagai shelter peradaban kecil. Mendampingi gawai anak, menanamkan akidah di meja makan keluarga, dan memupuk kehangatan cinta."
       ),
-      _KhuwaishahLayer(
+      (
         layer: "Lapis 3",
-        title: "Khuwaishat al-Majalis",
-        arabic: "خُوَيْصَةُ المَجَالِسِ",
-        desc: "Benteng majelis & zawiyah: zona aman spiritual, adab talaqqi, dan transmisi sanad keilmuan.",
+        title: "Benteng Majelis & Zawiyah",
+        arabic: "خُوَيْصَةُ الأَتْبَاعِ وَالمَجَالِسِ",
+        desc: "Mendirikan zawiyah, pesantren (ribath), dan majelis taklim sebagai Zona Aman Spiritual (Manāṭiq Āminah) bagi siapa saja yang lelah oleh fitnah dunia."
       ),
-      _KhuwaishahLayer(
+      (
         layer: "Lapis 4",
-        title: "Khuwaishat al-Wasail",
+        title: "Benteng Gawai & Alat (Khuwaiṣat al-Wasā'il)",
         arabic: "خُوَيْصَةُ الوَسَائِلِ",
-        desc: "Benteng media digital: kuasai AI & medsos sebagai alat dakwah, tolak terseret arus perdebatan.",
+        desc: "Menggunakan gawai dan kecerdasan buatan secara produktif untuk riset ilmu dan syiar dakwah damai, bukan untuk terseret arus polemik di kolom komentar."
       ),
     ];
 
@@ -880,27 +1055,28 @@ class _TahawwulatIntroductionSheetState
         children: [
           Row(
             children: [
-              const Icon(Icons.shield_outlined, size: 16, color: OTColors.sovereignAmber),
+              Icon(Icons.shield_outlined, size: 16, color: textPrimary),
               const SizedBox(width: 8),
               Text(
-                "4 LAPIS BENTENG AL-KHUWAISHAH",
+                "EMPAT LAPIS PERTAHANAN MIKRO AL-KHUWAISHAH",
                 style: GoogleFonts.outfit(
-                  fontSize: 11,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: OTColors.sovereignAmber,
+                  letterSpacing: 1.1,
+                  color: textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
+
           Column(
-            children: layers.map((layer) {
+            children: layers.map((l) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E22) : Colors.white,
+                  color: isDark ? const Color(0xFF16161A) : Colors.white,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: borderColor, width: 0.8),
                 ),
@@ -908,47 +1084,31 @@ class _TahawwulatIntroductionSheetState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: OTColors.sovereignAmberBg,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            layer.layer,
-                            style: GoogleFonts.outfit(
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.w700,
-                              color: OTColors.sovereignAmber,
-                            ),
+                        Text(
+                          l.title,
+                          style: GoogleFonts.outfit(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "${layer.title} (${layer.arabic})",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.newsreader(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: OTColors.textPrimary(isDark),
-                            ),
+                        Text(
+                          l.arabic,
+                          style: GoogleFonts.amiri(
+                            fontSize: 13,
+                            color: textSecondary,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
-                      layer.desc,
+                      l.desc,
                       style: GoogleFonts.outfit(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w400,
-                        color: OTColors.textSecondary(isDark),
+                        fontSize: 11,
+                        color: textSecondary,
                         height: 1.35,
                       ),
                     ),
@@ -963,48 +1123,189 @@ class _TahawwulatIntroductionSheetState
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // FLOWCHART 4: STRUKTUR KURIKULUM PUSTAKA (QAWA'ID & TATBIQAT)
+  // TABEL KOMPARASI SEBELUM VS SESUDAH
+  // ──────────────────────────────────────────────────────────────────────────
+  Widget _buildComparisonTable(BuildContext context, bool isDark) {
+    final borderColor = OTColors.border(isDark);
+    final cardBg = OTColors.surfaceSubtle(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
+    const rows = [
+      (
+        aspect: "Nalar Ilmiah",
+        before: "Kaku memaksakan teks hukum ibadah tetap untuk menghakimi krisis sosial modern.",
+        after: "Menjaga teks syariat tetap murni seraya luwes membaca pergeseran peradaban zaman."
+      ),
+      (
+        aspect: "Teknologi & AI",
+        before: "Terbelah ekstrem: menolak total sebagai bid'ah atau menelan mentah-mentah hingga hilang adab.",
+        after: "Kaidah Al-Ightinām: merebut teknologi dan AI untuk khidmat ilmu turats secara selamat."
+      ),
+      (
+        aspect: "Gaya Dakwah",
+        before: "Suka memvonis dan mencaci; menganggap masyarakat sebagai lawan yang harus dihantam.",
+        after: "Dokter penolong yang merangkul; menyelamatkan korban sistem zaman yang rusak."
+      ),
+      (
+        aspect: "Fitnah Politik",
+        before: "Fanatik buta golongan dan mengeksploitasi ayat agama untuk politik praktis.",
+        after: "Manhaj as-Salāmah: lisan bersih dari mencela, tangan bersih dari menumpahkan darah."
+      ),
+      (
+        aspect: "Keluarga",
+        before: "Sibuk berdebat di medsos hingga anak-istri di rumah terbengkalai.",
+        after: "Al-Khuwaiṣah: membentengi rumah tangga dan majelis sebagai shelter rohani yang kokoh."
+      ),
+      (
+        aspect: "Kondisi Batin",
+        before: "Gampang panik dan stres (apocalyptic anxiety) akibat dicekoki ramalan kiamat viral.",
+        after: "Hati tenang (sakīnah); yakin sejarah dalam takdir Allah dan optimis giat beramal shalih."
+      ),
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: borderColor, width: 0.8),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.compare_arrows_rounded, size: 16, color: textPrimary),
+              const SizedBox(width: 8),
+              Text(
+                "KOMPARASI PERSPEKTIF KEHIDUPAN",
+                style: GoogleFonts.outfit(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
+                  color: textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          Column(
+            children: rows.map((r) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF16161A) : Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: borderColor, width: 0.7),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      r.aspect,
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("❌ ", style: TextStyle(fontSize: 10)),
+                        Expanded(
+                          child: Text(
+                            r.before,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              color: textSecondary,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("✓ ",
+                            style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: textPrimary)),
+                        Expanded(
+                          child: Text(
+                            r.after,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: textPrimary,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // FLOWCHART 4: KURIKULUM 6 KITAB QAWAID & 50+ KITAB TATBIQAT
   // ──────────────────────────────────────────────────────────────────────────
   Widget _buildCurriculumFlowchart(BuildContext context, bool isDark) {
     final borderColor = OTColors.border(isDark);
     final cardBg = OTColors.surfaceSubtle(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     const qawaidBooks = [
-      _BookLevel(
-        level: "Tk. 1",
-        title: "An-Nubzah ash-Shughra",
+      _QawaidBook(
+        level: "Tingkat 1 (Pemula)",
+        title: "An-Nubżah aṣ-Ṣughrā",
         arabic: "النُّبْذَةُ الصُّغْرَى",
-        desc: "Kitab Saku Dasar & Pengenalan Istilah Kunci",
+        desc: "Pintu gerbang pengenalan definisi, dalil Hadis Jibril, dan klasifikasi tanda kiamat.",
       ),
-      _BookLevel(
-        level: "Tk. 2",
-        title: "Dawa'ir al-I'adah",
+      _QawaidBook(
+        level: "Tingkat 2 (Siklus Sejarah)",
+        title: "Dawā'ir al-I'ādah",
         arabic: "دَوَائِرُ الإِعَادَةِ",
-        desc: "Kaidah Siklus Sejarah & Keterpaduan 4 Rukun",
+        desc: "Kaidah siklus pengulangan sejarah peradaban dalam lingkaran takdir azali.",
       ),
-      _BookLevel(
-        level: "Tk. 3",
-        title: "Al-Iqlid fi Fath Abwab",
-        arabic: "الإِقْلِيدُ",
-        desc: "Kunci Pengoperasian 5 Cabang Ilmu Turunan",
+      _QawaidBook(
+        level: "Tingkat 3 (Kunci Cabang)",
+        title: "Al-Iqlīd",
+        arabic: "الإِقْلِيدُ فِي فَتْحِ أَبْوَابِ العُلُومِ",
+        desc: "Kaidah pengoperasian 5 cabang ilmu turunan Fikih Tahawwulat & antisipasi krisis.",
       ),
-      _BookLevel(
-        level: "Tk. 4",
-        title: "At-Talid wat-Tharif",
+      _QawaidBook(
+        level: "Tingkat 4 (Sikap Kenabian)",
+        title: "At-Talīd wat-Ṭarīf",
         arabic: "التَّلِيدُ وَالطَّارِفُ",
-        desc: "Syarah Sunnah al-Mawaqif & Manhaj as-Salamah",
+        desc: "Syarah atas kaidah Sunnah al-Mawāqif dan Manhaj as-Salāmah para salafus shalih.",
       ),
-      _BookLevel(
-        level: "Tk. 5",
-        title: "Al-Mukhtasar al-Habik",
+      _QawaidBook(
+        level: "Tingkat 5 (Ikhtisar Padat)",
+        title: "Al-Mukhtaṣar al-Ḥabīk / Siyāḥatul Fikr",
         arabic: "المُخْتَصَرُ الحَبِيك",
-        desc: "Ikhtisar Metodologis Terpadat & Peta Dakwah",
+        desc: "Peta konsep dakwah terpadat, kaidah gerakan, dan nalar kritis terhadap ideologi modern.",
       ),
-      _BookLevel(
-        level: "Tk. 6",
-        title: "Al-Usus wal-Muntalaqat",
+      _QawaidBook(
+        level: "Tingkat 6 (Puncak Induk)",
+        title: "Al-Usūs wal-Munṭalaqāt",
         arabic: "الأُسُسُ وَالمُنْطَلَقَاتُ",
-        desc: "Puncak Mahakarya Kaidah Induk Ensiklopedis",
+        desc: "Kitab ensiklopedis babon setebal ratusan halaman; rujukan tertinggi kaidah istinbath.",
       ),
     ];
 
@@ -1020,31 +1321,28 @@ class _TahawwulatIntroductionSheetState
         children: [
           Row(
             children: [
-              const Icon(Icons.school_outlined, size: 16, color: OTColors.sovereignAmber),
+              Icon(Icons.school_outlined, size: 16, color: textPrimary),
               const SizedBox(width: 8),
               Text(
-                "DUA KATEGORI BESAR PUSTAKA",
+                "DUA KATEGORI KURIKULUM PUSTAKA",
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: OTColors.sovereignAmber,
+                  letterSpacing: 1.1,
+                  color: textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
 
-          // ── Kategori 1: Al-Qawa'id ──
+          // Kategori 1: Al-Qawa'id
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF18181B) : Colors.white,
+              color: isDark ? const Color(0xFF16161A) : Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: OTColors.sovereignAmber.withValues(alpha: 0.4),
-                width: 0.8,
-              ),
+              border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1053,11 +1351,9 @@ class _TahawwulatIntroductionSheetState
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 3,
-                      ),
+                          horizontal: 7, vertical: 3),
                       decoration: BoxDecoration(
-                        color: OTColors.sovereignAmber,
+                        color: isDark ? Colors.white24 : Colors.black87,
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
@@ -1072,47 +1368,45 @@ class _TahawwulatIntroductionSheetState
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "Al-Qawa'id (القواعد) — 6 Kitab Pokok",
+                        "Al-Qawā'id (القواعد) — 6 Kitab Kaidah Pokok",
                         style: GoogleFonts.newsreader(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
-                          color: OTColors.textPrimary(isDark),
+                          color: textPrimary,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  "Tangga berjenjang (tadarruj) penguasaan dalil syar'i, teori usul, dan aksioma metodologi:",
-                  style: GoogleFonts.outfit(
-                    fontSize: 11,
-                    color: OTColors.textSecondary(isDark),
-                  ),
-                ),
                 const SizedBox(height: 10),
+
                 Column(
                   children: qawaidBooks.map((book) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.all(9),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF1F1F24)
+                            : const Color(0xFFF7F7F8),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            width: 38,
-                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white10
-                                  : Colors.black.withValues(alpha: 0.05),
+                              color: isDark ? Colors.white12 : Colors.black12,
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            alignment: Alignment.center,
                             child: Text(
                               book.level,
-                              style: GoogleFonts.jetBrainsMono(
-                                fontSize: 10,
+                              style: GoogleFonts.outfit(
+                                fontSize: 9,
                                 fontWeight: FontWeight.w600,
-                                color: OTColors.sovereignAmber,
+                                color: textSecondary,
                               ),
                             ),
                           ),
@@ -1126,18 +1420,17 @@ class _TahawwulatIntroductionSheetState
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.outfit(
-                                    fontSize: 12,
+                                    fontSize: 11.5,
                                     fontWeight: FontWeight.w600,
-                                    color: OTColors.textPrimary(isDark),
+                                    color: textPrimary,
                                   ),
                                 ),
                                 Text(
                                   book.desc,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.outfit(
                                     fontSize: 10.5,
-                                    color: OTColors.textSecondary(isDark),
+                                    color: textSecondary,
+                                    height: 1.3,
                                   ),
                                 ),
                               ],
@@ -1154,11 +1447,11 @@ class _TahawwulatIntroductionSheetState
 
           const SizedBox(height: 12),
 
-          // ── Kategori 2: At-Tatbiqat ──
+          // Kategori 2: At-Tatbiqat
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF18181B) : Colors.white,
+              color: isDark ? const Color(0xFF16161A) : Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor, width: 0.8),
             ),
@@ -1169,9 +1462,7 @@ class _TahawwulatIntroductionSheetState
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 3,
-                      ),
+                          horizontal: 7, vertical: 3),
                       decoration: BoxDecoration(
                         color: isDark ? Colors.white24 : Colors.black87,
                         borderRadius: BorderRadius.circular(5),
@@ -1188,11 +1479,11 @@ class _TahawwulatIntroductionSheetState
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "At-Tatbiqat (التطبيقات) — Aplikasi & Sastra",
+                        "At-Taṭbīqāt (التطبيقات) — Terapan & Sastra",
                         style: GoogleFonts.newsreader(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
-                          color: OTColors.textPrimary(isDark),
+                          color: textPrimary,
                         ),
                       ),
                     ),
@@ -1203,15 +1494,15 @@ class _TahawwulatIntroductionSheetState
                   icon: Icons.menu_book_rounded,
                   title: "50+ Kitab Studi Kasus & Terapan Lapangan",
                   desc:
-                      "Analisis krisis politik Khulafa' Rasyidin s.d. era modern, biografi para imam mujaddid (Aimmatul Huda), serta manajemen dakwah damai.",
+                      "Analisis krisis politik umat, biografi para imam mujaddid penyejuk zaman (Aimmatul Hudā), manajemen dakwah damai di era buih, dan risalah praktis pembinaan keluarga.",
                   isDark: isDark,
                 ),
                 const SizedBox(height: 8),
                 _buildTatbiqatFeature(
                   icon: Icons.music_note_rounded,
-                  title: "Ratusan Karya Syair & Qashidah (Diwan Sya'ir)",
+                  title: "Ratusan Karya Syair & Qashīdah (Dīwān Sya'ir)",
                   desc:
-                      "Sastra sufi bernilai tinggi perangkum intisari Fikih Tahawwulat dengan bahasa rasa ruhani (dzawq) dan keindahan rima.",
+                      "Sastra sufi perangkum intisari Fikih Tahawwulat dengan bahasa rasa ruhani (aż-żawq). Meneteskan air mata keinsyafan, adab, dan kerinduan kenabian.",
                   isDark: isDark,
                 ),
               ],
@@ -1231,7 +1522,7 @@ class _TahawwulatIntroductionSheetState
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 16, color: OTColors.sovereignAmber),
+        Icon(icon, size: 16, color: OTColors.textPrimary(isDark)),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -1262,9 +1553,9 @@ class _TahawwulatIntroductionSheetState
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // FLOWCHART 5: 4 BILIK SUPER AI OPENTURATH
+  // FLOWCHART 5: 5 BILIK SUPER AI OPENTURATH
   // ──────────────────────────────────────────────────────────────────────────
-  Widget _buildFourAiRoomsFlowchart(BuildContext context, bool isDark) {
+  Widget _buildFiveAiRoomsList(BuildContext context, bool isDark) {
     final subAgents = widget.agent?.subAgents ?? const <SubAgentModel>[];
 
     const rooms = [
@@ -1272,40 +1563,40 @@ class _TahawwulatIntroductionSheetState
         number: "01",
         name: "Al-Muhaqqiq",
         arabic: "المُحَقِّق",
-        role: "Penjaga Matan & Ibarah",
-        desc: "Verifikasi teks Arab asli, sanad, kutipan matan, serta rujukan jilid & nomor halaman kitab.",
+        role: "Penjaga Teks Matan & Ibarah",
+        desc: "Verifikasi redaksi Arab asli mualif, mencocokkan kutipan matan, serta rujukan presisi ke nama kitab, jilid, dan nomor halaman.",
         subAgentId: "fiqh_tahawwulat_muhaqqiq",
       ),
       _AiRoomItem(
         number: "02",
         name: "Al-Bayan",
         arabic: "البَيَان",
-        role: "Pensyarah Konsep & Istilah",
-        desc: "Mengurai istilah baru (mustalahat mubtakarah) ke bahasa yang mudah dicerna serta peta konsep.",
+        role: "Pensyarah Konsep & Istilah Baru",
+        desc: "Mengurai istilah rumit (mustalahat mubtakarah) ke bahasa yang mudah dicerna pemula, analogi modern, serta peta pemikiran komprehensif.",
         subAgentId: "fiqh_tahawwulat_bayan",
       ),
       _AiRoomItem(
         number: "03",
         name: "Al-Mukhtabir",
         arabic: "المُخْتَبِر",
-        role: "Penguji Nalar & Studi Kasus",
-        desc: "Kuis pemahaman interaktif, studi kasus fitnah zaman, dan evaluasi pemikiran objektif.",
+        role: "Ujian Nalar & Kaji Kasus Interaktif",
+        desc: "Mitra diskusi dan penguji pemahaman ilmiah; menyajikan studi kasus fitnah zaman untuk memastikan nalar tetap lurus dan bebas dari cocokologi.",
         subAgentId: "fiqh_tahawwulat_mukhtabir",
       ),
       _AiRoomItem(
         number: "04",
         name: "Al-Habib",
         arabic: "الحَبِيب",
-        role: "Arsip Ceramah & Ruhani",
-        desc: "Transkrip ribuan jam muhadharah lisan, tausiyah penyejuk batin, adab dakwah & sentuhan hati.",
+        role: "Arsip Muhadharah & Sentuhan Ruhani",
+        desc: "Menghadirkan kehangatan nada lisan dari ribuan jam rekaman ceramah mualif, tausiyah penyejuk batin, serta bimbingan adab tazkiyatun nufus.",
         subAgentId: "fiqh_tahawwulat_habib",
       ),
       _AiRoomItem(
         number: "05",
         name: "Al-Khatib",
         arabic: "الخَطِيب",
-        role: "Penyusun Materi Dakwah & Khutbah",
-        desc: "Spesialis formulasi khutbah Jumat, materi tabligh tematik, panduan da'i di era fitnah, dan narasi dakwah bil hikmah.",
+        role: "Penyusun Materi Khutbah & Dakwah",
+        desc: "Formulasi materi khutbah Jumat, panduan dakwah di era krisis, materi tabligh tematik, serta narasi penyejuk umat di tengah polarisasi.",
         subAgentId: "fiqh_tahawwulat_khatib",
       ),
     ];
@@ -1342,7 +1633,7 @@ class _TahawwulatIntroductionSheetState
                     width: 26,
                     height: 26,
                     decoration: BoxDecoration(
-                      color: OTColors.sovereignAmberBg,
+                      color: isDark ? const Color(0xFF282832) : const Color(0xFFE4E4E8),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     alignment: Alignment.center,
@@ -1351,7 +1642,7 @@ class _TahawwulatIntroductionSheetState
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: OTColors.sovereignAmber,
+                        color: OTColors.textPrimary(isDark),
                       ),
                     ),
                   ),
@@ -1457,13 +1748,17 @@ class _TahawwulatIntroductionSheetState
   // CLOSING CARD
   // ──────────────────────────────────────────────────────────────────────────
   Widget _buildClosingCard(BuildContext context, bool isDark) {
+    final borderColor = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF141416) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: OTColors.sovereignAmber.withValues(alpha: 0.3),
+          color: borderColor,
           width: 0.8,
         ),
       ),
@@ -1472,15 +1767,15 @@ class _TahawwulatIntroductionSheetState
         children: [
           Row(
             children: [
-              const Icon(Icons.spa_outlined, size: 16, color: OTColors.sovereignAmber),
+              Icon(Icons.spa_outlined, size: 16, color: textPrimary),
               const SizedBox(width: 8),
               Text(
                 "HARAPAN LUHUR & DOA PENUTUP",
                 style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
-                  color: OTColors.sovereignAmber,
+                  letterSpacing: 1.1,
+                  color: textPrimary,
                 ),
               ),
             ],
@@ -1488,22 +1783,22 @@ class _TahawwulatIntroductionSheetState
           const SizedBox(height: 10),
           Text(
             "Kehadiran teknologi Super AI di OpenTurath AI ini lahir murni sebagai Khadim Khazanah (pelayan ilmu), "
-            "meruntuhkan dinding kesulitan istilah agar mutiara warisan kenabian ini dapat dipelajari dengan mudah, jernih, dan beradab.",
+            "meruntuhkan dinding kesulitan istilah dan kendala akses agar mutiara warisan kenabian ini dapat dipelajari dengan mudah, jernih, dan beradab.",
             style: GoogleFonts.outfit(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: OTColors.textSecondary(isDark),
+              color: textSecondary,
               height: 1.45,
             ),
           ),
           const SizedBox(height: 10),
           Text(
             "Semoga setiap huruf ibarah yang dikaji menjadi amal jariyah yang pahalanya mengalir tanpa putus ke haribaan mualif: "
-            "Al-Musnid Al-`Allāmah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur, para guru beliau, dan seluruh kaum Muslimin.",
+            "Al-Musnid Al-`Allāmah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur, para guru beliau, dan seluruh kaum Muslimin hingga hari Kiamat. Āmīn.",
             style: GoogleFonts.outfit(
               fontSize: 11.5,
               fontStyle: FontStyle.italic,
-              color: OTColors.sovereignAmber,
+              color: textPrimary,
               height: 1.4,
             ),
           ),
@@ -1520,6 +1815,8 @@ class _TahawwulatIntroductionSheetState
     required String arabic,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1527,8 +1824,12 @@ class _TahawwulatIntroductionSheetState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
           decoration: BoxDecoration(
-            color: OTColors.sovereignAmberBg,
+            color: isDark ? const Color(0xFF222228) : const Color(0xFFF4F4F5),
             borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: isDark ? const Color(0xFF383842) : const Color(0xFFE4E4E7),
+              width: 0.7,
+            ),
           ),
           child: Text(
             tag,
@@ -1536,18 +1837,18 @@ class _TahawwulatIntroductionSheetState
               fontSize: 9.5,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.1,
-              color: OTColors.sovereignAmber,
+              color: textPrimary,
             ),
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
           title,
           style: GoogleFonts.newsreader(
             fontSize: 20,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.3,
-            color: OTColors.textPrimary(isDark),
+            color: textPrimary,
           ),
         ),
         const SizedBox(height: 2),
@@ -1555,7 +1856,7 @@ class _TahawwulatIntroductionSheetState
           arabic,
           style: GoogleFonts.amiri(
             fontSize: 15,
-            color: OTColors.textSecondary(isDark),
+            color: textSecondary,
           ),
         ),
       ],
@@ -1580,13 +1881,16 @@ class _TahawwulatIntroductionSheetState
     required String source,
     required bool isDark,
   }) {
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textTertiary = OTColors.textTertiary(isDark);
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1B1B1E) : const Color(0xFFF9F9F8),
         borderRadius: BorderRadius.circular(10),
-        border: const Border(
-          left: BorderSide(color: OTColors.sovereignAmber, width: 3),
+        border: Border(
+          left: BorderSide(color: textPrimary, width: 2.5),
         ),
       ),
       child: Column(
@@ -1600,7 +1904,7 @@ class _TahawwulatIntroductionSheetState
               fontSize: 16,
               fontWeight: FontWeight.w500,
               height: 1.6,
-              color: OTColors.textPrimary(isDark),
+              color: textPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -1609,10 +1913,20 @@ class _TahawwulatIntroductionSheetState
             style: GoogleFonts.outfit(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: OTColors.textTertiary(isDark),
+              color: textTertiary,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildConnectorLine(bool isDark) {
+    return Center(
+      child: Container(
+        width: 1.5,
+        height: 12,
+        color: OTColors.border(isDark).withValues(alpha: 0.7),
       ),
     );
   }
