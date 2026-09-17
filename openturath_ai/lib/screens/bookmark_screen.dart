@@ -537,7 +537,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                             icon: const Icon(
                                                 Icons.menu_book_outlined,
                                                 size: 16),
-                                            label: Text(AppCopy.startStudy),
+                                            label: const Text(AppCopy.startStudy),
                                             style: OutlinedButton.styleFrom(
                                               foregroundColor: textPrimary,
                                               side: BorderSide(
