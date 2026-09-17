@@ -1,3 +1,4 @@
+import 'app_copy.dart';
 import '../models/user_model.dart';
 
 enum MembershipPassState {
@@ -61,11 +62,12 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
           ? MembershipPassState.expiringSoon
           : MembershipPassState.activePro,
       badge: 'PRO',
-      accessLabel: 'Semua asisten tersedia',
-      supportingLabel: expiring ? 'Masa akses hampir berakhir' : 'Siap digunakan',
-      expiryLabel: 'Berlaku hingga',
+      accessLabel: AppCopy.allAssistantsAvailable,
+      supportingLabel:
+          expiring ? AppCopy.accessExpiringSoon : AppCopy.readyToUse,
+      expiryLabel: AppCopy.validUntil,
       expiresAt: expiry,
-      ctaLabel: expiring ? 'Perpanjang Pro' : 'Kelola langganan',
+      ctaLabel: expiring ? AppCopy.renewPro : AppCopy.manageSubscription,
     );
   }
   if (active.isEmpty) {
@@ -78,26 +80,26 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     if (hasPending) {
       return _base(
         MembershipPassState.paymentPending,
-        'Menyiapkan akses Pro',
-        'Pembayaran sedang diperiksa',
-        'Lihat status pembayaran',
+        AppCopy.preparingProAccess,
+        AppCopy.paymentBeingVerified,
+        AppCopy.viewPaymentStatus,
         badge: 'PRO',
       );
     }
     if (hasFailed) {
       return _base(
         MembershipPassState.paymentFailed,
-        'Akses belum aktif',
-        'Pembayaran belum berhasil',
-        'Coba pembayaran lagi',
+        AppCopy.accessNotYetActive,
+        AppCopy.paymentNotSuccessful,
+        AppCopy.tryPaymentAgain,
         badge: 'GRATIS',
       );
     }
     return _base(
       MembershipPassState.locked,
-      'Belum berlangganan',
-      'Pilih asisten dan paket yang sesuai untuk mulai bertanya.',
-      'Pilih paket Pro',
+      AppCopy.notSubscribed,
+      AppCopy.chooseAssistantAndPlan,
+      AppCopy.chooseProPlan,
       badge: 'GRATIS',
     );
   }
@@ -116,19 +118,17 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
     ..sort();
   final expiry = expiries.isEmpty ? null : expiries.first;
   final accessLabel = all.isNotEmpty
-      ? 'Semua asisten tersedia'
-      : selected.length == 1
-          ? '1 asisten tersedia'
-          : '${selected.length} asisten tersedia';
+      ? AppCopy.allAssistantsAvailable
+      : AppCopy.assistantsAvailableCount(selected.length);
   if (isPermanent) {
     return MembershipPassSummary(
         state: MembershipPassState.permanent,
         badge: 'PRO',
         accessLabel: accessLabel,
-        supportingLabel: 'Tanpa batas waktu',
-        expiryLabel: 'Berlaku hingga',
+        supportingLabel: AppCopy.permanentAccessLabel,
+        expiryLabel: AppCopy.validUntil,
         expiresAt: null,
-        ctaLabel: 'Kelola akses',
+        ctaLabel: AppCopy.manageAccess,
         agentIds: selected.map((entry) => entry.key).toList());
   }
   if (isTrial) {
@@ -137,10 +137,10 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
         state: MembershipPassState.trialPro,
         badge: 'PRO',
         accessLabel: accessLabel,
-        supportingLabel: 'Masa coba · $days hari',
-        expiryLabel: 'Berlaku hingga',
+        supportingLabel: AppCopy.trialDaysLeft(days),
+        expiryLabel: AppCopy.validUntil,
         expiresAt: expiry,
-        ctaLabel: 'Pilih paket Pro',
+        ctaLabel: AppCopy.chooseProPlan,
         agentIds: selected.map((entry) => entry.key).toList());
   }
   final state = expiry != null && expiry.difference(reference).inDays <= 3
@@ -151,13 +151,13 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
       badge: 'PRO',
       accessLabel: accessLabel,
       supportingLabel: state == MembershipPassState.expiringSoon
-          ? 'Masa akses hampir berakhir'
-          : 'Siap digunakan',
-      expiryLabel: 'Berlaku hingga',
+          ? AppCopy.accessExpiringSoon
+          : AppCopy.readyToUse,
+      expiryLabel: AppCopy.validUntil,
       expiresAt: expiry,
       ctaLabel: state == MembershipPassState.expiringSoon
-          ? 'Perpanjang Pro'
-          : 'Kelola langganan',
+          ? AppCopy.renewPro
+          : AppCopy.manageSubscription,
       agentIds: selected.map((entry) => entry.key).toList());
 }
 
@@ -173,7 +173,7 @@ MembershipPassSummary _base(
       badge: badge,
       accessLabel: access,
       supportingLabel: supporting,
-      expiryLabel: 'Berlaku hingga',
+      expiryLabel: AppCopy.validUntil,
       expiresAt: null,
       ctaLabel: cta,
     );
