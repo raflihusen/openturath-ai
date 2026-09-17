@@ -26,6 +26,7 @@ abstract final class AppCopy {
   static const savedCollection = 'Catatan';
   static const bookDetails = 'Detail edisi';
   static const chooseField = 'Pilih bidang';
+  static const allCategories = 'Semua bidang';
   static const searchResults = 'Hasil pencarian';
   static const continueStudy = 'Lanjutkan telaah';
   static const startStudy = 'Mulai telaah';

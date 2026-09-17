@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
@@ -117,7 +118,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        '${agent.title} sedang disiapkan.',
+        AppCopy.preparingModule(agent.title),
       );
       return;
     }
@@ -181,7 +182,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
 
     final isGeneralTab = widget.field == null;
-    final title = isGeneralTab ? 'Asisten AI' : widget.field!.name;
+    final title = isGeneralTab ? AppCopy.navStudies : widget.field!.name;
     final filtered = _computeFilteredAgents();
     final shell = MainShellController.of(context);
 
@@ -304,7 +305,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
                   children: [
                     _filterChip(
-                      label: 'Semua Bidang',
+                      label: AppCopy.allCategories,
                       isSelected: _selectedFieldId == null || _selectedFieldId == 'all',
                       onTap: () => setState(() => _selectedFieldId = 'all'),
                       isDark: isDark,
@@ -350,8 +351,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 const SizedBox(height: OTSpacing.sm),
                                 Text(
                                   _searchQuery.isNotEmpty
-                                      ? 'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.'
-                                      : 'Belum ada asisten di kategori ini.',
+                                      ? AppCopy.noAssistantsFound
+                                      : AppCopy.noAssistantsFound,
                                   style: OTTypography.body(color: textSecondary),
                                   textAlign: TextAlign.center,
                                 ),
@@ -392,7 +393,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 }
                                 return SpecialistCard(
                                   title: agent.title,
-                                  statusLabel: agent.isComingSoon ? 'Segera hadir' : null,
+                                  statusLabel: agent.isComingSoon ? AppCopy.comingSoon : null,
                                   onOpen: () => _openAgent(agent),
                                   onOpenLibrary: agent.catalogId != null
                                       ? () => showResearchLibrary(context, agent: agent)
