@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Batal',
+              child: Text(AppCopy.cancel,
                   style: OTTypography.button(color: textSecondary)),
             ),
             FilledButton(
@@ -135,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Batal',
+              child: Text(AppCopy.cancel,
                   style: OTTypography.button(
                       color: OTColors.textSecondary(isDark))),
             ),
@@ -347,7 +347,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: Row(
                                     children: [
                                       _buildThemeOption(
-                                        title: 'Ikuti Sistem',
+                                        title: AppCopy.modeSystem,
                                         icon: Icons.brightness_auto_rounded,
                                         isSelected:
                                             currentMode == ThemeMode.system,
@@ -358,7 +358,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             ThemeMode.system),
                                       ),
                                       _buildThemeOption(
-                                        title: 'Terang',
+                                        title: AppCopy.modeLight,
                                         icon: Icons.light_mode_rounded,
                                         isSelected:
                                             currentMode == ThemeMode.light,
@@ -369,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             ThemeMode.light),
                                       ),
                                       _buildThemeOption(
-                                        title: 'Gelap',
+                                        title: AppCopy.modeDark,
                                         icon: Icons.dark_mode_rounded,
                                         isSelected:
                                             currentMode == ThemeMode.dark,
@@ -419,7 +419,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: _SettingsTile(
                     icon: Icons.info_outline_rounded,
                     title: AppCopy.aboutTitle,
-                    subtitle: 'Versi $_appVersion · ${AppCopy.appTagline}',
+                    subtitle: AppCopy.versionWithTagline(_appVersion),
                     trailing: Icon(Icons.chevron_right_rounded,
                         color: textSecondary, size: 20),
                     onTap: () => _showAboutModal(
@@ -463,7 +463,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(width: 14),
                             Text(
                               _isLoggingOut
-                                  ? 'Sedang keluar...'
+                                  ? AppCopy.loggingOut
                                   : AppCopy.logoutButton,
                               style: GoogleFonts.outfit(
                                 fontSize: 14.5,
@@ -541,7 +541,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Versi $_appVersion · ${AppCopy.appTagline}',
+                AppCopy.versionWithTagline(_appVersion),
                 style: OTTypography.captionMedium(color: textSecondary),
               ),
               const SizedBox(height: 12),
@@ -619,7 +619,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               shape:
                   RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
-            child: Text('Tutup', style: OTTypography.button()),
+            child: Text(AppCopy.close, style: OTTypography.button()),
           ),
         ],
       ),
@@ -700,7 +700,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               shape:
                   RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
-            child: Text('Tutup', style: OTTypography.button()),
+            child: Text(AppCopy.close, style: OTTypography.button()),
           ),
         ],
       ),
@@ -983,7 +983,7 @@ class _MembershipPass extends StatelessWidget {
                                 Expanded(
                                   flex: 3,
                                   child: _PassMeta(
-                                    label: 'Asisten aktif',
+                                    label: AppCopy.navStudies,
                                     value: summary.accessLabel,
                                     valueColor: foreground,
                                   ),
@@ -993,7 +993,7 @@ class _MembershipPass extends StatelessWidget {
                                   flex: 2,
                                   child: _PassMeta(
                                     label: summary.expiryLabel.isEmpty
-                                        ? 'Berlaku hingga'
+                                        ? AppCopy.validUntil
                                         : summary.expiryLabel,
                                     value: summary.expiresAt == null
                                         ? '—'
