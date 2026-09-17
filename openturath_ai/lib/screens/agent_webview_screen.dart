@@ -372,13 +372,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           },
         );
         setState(() {
-          final alreadyEntitled = _user?.hasAccessToAgent(_agent?.id ?? '') ?? false;
-          _isPaywallRequired = !alreadyEntitled;
+          _isPaywallRequired = true;
           _isLoadingUrl = false;
           _isWebViewLoading = false;
-          _errorMessage = alreadyEntitled
-              ? 'Hak akses sudah tercatat. Sesi belum mengenali akun ini. Pastikan akun Google sesuai, lalu coba muat kembali.'
-              : AppCopy.accessUnavailableFor(_agent?.title ?? 'kajian ini');
+          _errorMessage = AppCopy.accessUnavailableFor(_agent?.title ?? AppCopy.studySpace);
         });
       }
     } catch (_) {}
@@ -537,7 +534,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         _readinessTimer?.cancel();
         setState(() {
           _isWebViewLoading = false;
-          _errorMessage = 'AI belum siap merespons. Periksa koneksi lalu coba muat kembali.';
+          _errorMessage = AppCopy.studyNotLoadedYet;
         });
       }
     } catch (_) {
@@ -840,7 +837,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         ? AppCopy.viewSubscription
                         : AppCopy.tryAgain,
                     onBack: () => Navigator.pop(context),
-                    backLabel: 'Kembali ke Beranda',
+                    backLabel: AppCopy.backToHome,
                   ),
                 ),
               ),
@@ -941,7 +938,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'OpenTurath membantu mencari kutipan dan mempelajari penjelasan dalam kitab. Periksa hasilnya pada sumber yang dirujuk. Untuk memahami agama dan menetapkan hukum, tetaplah merujuk kepada guru dan ulama yang berkompeten.',
+                  AppCopy.adabDialogLead,
                   style: GoogleFonts.outfit(
                     fontSize: 12.5,
                     height: 1.45,
