@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants.dart';
 import '../core/checkout_completion.dart';
@@ -259,6 +260,31 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
       return true;
     }
 
+    // Platform checkout resmi GoAkal & Midtrans
+    if (host == 'goakal.com' ||
+        host.endsWith('.goakal.com') ||
+        host == 'midtrans.com' ||
+        host.endsWith('.midtrans.com') ||
+        host == 'veritrans.co.id' ||
+        host.endsWith('.veritrans.co.id')) {
+      return true;
+    }
+
+    // Partner perbankan & e-wallet resmi untuk pembayaran QRIS / VA / Direct Debit
+    if (host.endsWith('.bca.co.id') ||
+        host.endsWith('.mandiri.co.id') ||
+        host.endsWith('.bri.co.id') ||
+        host.endsWith('.bni.co.id') ||
+        host.endsWith('.cimbniaga.co.id') ||
+        host.endsWith('.permata.co.id') ||
+        host.endsWith('.gopay.co.id') ||
+        host.endsWith('.shopeepay.co.id') ||
+        host.endsWith('.ovo.id') ||
+        host.endsWith('.dana.id') ||
+        host.endsWith('.linkaja.id')) {
+      return true;
+    }
+
     return false;
   }
 
@@ -344,16 +370,38 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Pembayaran',
+                                    widget.planTitle != null && widget.planTitle!.isNotEmpty
+                                        ? widget.planTitle!
+                                        : 'Pembayaran',
                                     style: GoogleFonts.outfit(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 15,
                                       color: textPrimary,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   if (widget.invoiceNumber.isNotEmpty)
                                     Text(
                                       widget.invoiceNumber,
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12,
+                                        letterSpacing: 0.3,
+                                        color: textSecondary,
+                                      ),
+                                    )
+                                  else if (widget.amount != null && widget.amount! > 0)
+                                    Text(
+                                      'Rp ${widget.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12,
+                                        letterSpacing: 0.3,
+                                        color: textSecondary,
+                                      ),
+                                    )
+                                  else
+                                    Text(
+                                      'Koneksi Aman Terenkripsi',
                                       style: GoogleFonts.outfit(
                                         fontSize: 12,
                                         letterSpacing: 0.3,
@@ -443,18 +491,29 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                         if (webUri == null) return NavigationActionPolicy.CANCEL;
 
                         final uri = Uri.tryParse(webUri.toString());
-                        if (uri == null || !_isAllowedPaymentDestination(uri)) {
+                        if (uri == null) return NavigationActionPolicy.CANCEL;
+
+                        // Deep links untuk aplikasi perbankan atau e-wallet (GoPay, ShopeePay, dsb.)
+                        if (uri.scheme != 'http' && uri.scheme != 'https') {
+                          try {
+                            await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
+                          } catch (_) {}
+                          return NavigationActionPolicy.CANCEL;
+                        }
+
+                        if (!_isAllowedPaymentDestination(uri)) {
                           debugPrint('[DokuCheckout] Navigation to untrusted destination rejected: $webUri');
                           return NavigationActionPolicy.CANCEL;
                         }
 
                         final urlStr = uri.toString().toLowerCase();
 
-                        // Intersep jika DOKU mengarah ke callback URL kita atau URL sukses
+                        // Intersep jika gateway mengarah ke callback URL sukses
                         if (urlStr.contains('openturath-ai.web.app') ||
                             urlStr.contains('callback') ||
                             urlStr.contains('finish') ||
-                            urlStr.contains('checkout-success')) {
+                            urlStr.contains('checkout-success') ||
+                            urlStr.contains('success')) {
                           _checkPaymentStatus();
                           return NavigationActionPolicy.ALLOW;
                         }
