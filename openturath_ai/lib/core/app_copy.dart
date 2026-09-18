@@ -19,40 +19,40 @@ abstract final class AppCopy {
   static const navSettings = 'Pengaturan';
 
   // ── Istilah Ruang & Kajian ─────────────────────────────────────
-  static const studySpace = 'Percakapan';
-  static const openStudy = 'Membuka asisten…';
-  static const studyOptions = 'Opsi percakapan';
-  static const referenceBooks = 'Kitab rujukan';
-  static const savedCollection = 'Catatan';
+  static const studySpace = 'Ruang Telaah';
+  static const openStudy = 'Membuka ruang telaah…';
+  static const studyOptions = 'Opsi telaah';
+  static const referenceBooks = 'Marja\' mu\'tamad';
+  static const savedCollection = 'Perbendaharaan Catatan';
   static const bookDetails = 'Detail edisi';
   static const chooseField = 'Pilih bidang';
   static const allCategories = 'Semua bidang';
   static const searchResults = 'Hasil pencarian';
   static const continueStudy = 'Lanjutkan telaah';
   static const startStudy = 'Mulai telaah';
-  static const dashboardSearchHint = 'Cari asisten atau topik kajian…';
+  static const dashboardSearchHint = 'Cari marja\', topik, atau ibarah…';
   static const ahlanDefault = 'Ahlan';
   static const studyBookCategory = 'TELAAH KITAB';
-  static const studyEntryDefaultTitle = 'Cari jawaban beserta ibarahnya';
-  static const studyEntryResumeSubtitle = 'Sesi kajian siap dibuka kembali.';
-  static const studyEntryHistorySubtitle = 'Buka kembali rujukan dan catatan sebelumnya.';
+  static const studyEntryDefaultTitle = 'Ibarah & Istinbath Turats';
+  static const studyEntryResumeSubtitle = 'Sesi telaah siap dibuka kembali.';
+  static const studyEntryHistorySubtitle = 'Buka kembali marja\' dan catatan telaah sebelumnya.';
   static const studyEntryDefaultSubtitle =
-      'Ajukan pertanyaan dan temukan pembahasannya langsung dari kitab-kitab turats.';
+      'Ajukan mas\'alah dan telusuri pembahasannya langsung dari naskah turats mu\'tamad.';
 
   // ── Loading, Error & Akses ─────────────────────────────────────
-  static const loadingReferences = 'Menyiapkan asisten…';
+  static const loadingReferences = 'Menyiapkan ruang telaah…';
   static const modulePreparing = 'sedang disiapkan.';
   static const moduleUnavailable =
-      'Asisten ini belum tersedia. Coba lagi nanti.';
+      'Ruang telaah ini belum tersedia. Coba lagi nanti.';
   static const cannotLoad = 'Data belum bisa dimuat. Coba lagi.';
-  static const cannotLoadStudy = 'Asisten belum bisa dibuka';
+  static const cannotLoadStudy = 'Ruang telaah belum bisa dibuka';
   static const studyNotLoadedYet =
-      'Percakapan belum bisa dimuat. Coba lagi sebentar.';
+      'Ruang telaah belum bisa dimuat. Coba lagi sebentar.';
   static const subscriptionRequiredTitle = 'Berlangganan untuk melanjutkan';
   static const subscriptionRequiredShort = 'Langganan diperlukan';
   static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
   static const catalogPreparing = 'Katalog kitab sedang disiapkan.';
-  static const inputQuestionHint = 'Tulis pertanyaan seputar kitab ini…';
+  static const inputQuestionHint = 'Tuliskan mas\'alah atau ibarah yang ingin ditelaah…';
   static const viewSubscription = 'Lihat langganan';
   static const tryAgain = 'Coba lagi';
   static const sessionExpiredOrNoAccess =
@@ -92,10 +92,10 @@ abstract final class AppCopy {
 
   // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
   static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
-  static const noConversationToCopy = 'Belum ada percakapan untuk disalin.';
+  static const noConversationToCopy = 'Belum ada catatan telaah untuk disalin.';
   static const answerCopied = 'Jawaban disalin.';
   static const conversationCopied =
-      'Percakapan disalin dan tersimpan ke Catatan.';
+      'Catatan telaah disalin dan tersimpan ke Catatan.';
   static const copyFailed = 'Jawaban belum bisa disalin. Coba lagi.';
   static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
   static const savedSuccess = 'Tersimpan ke Catatan.';
@@ -117,7 +117,7 @@ abstract final class AppCopy {
   static const viewReferenceAction = 'Lihat rujukan';
   static const shareReferenceTooltip = 'Bagikan catatan';
   static const copyAnswerAction = 'Salin jawaban';
-  static const copyConversationAction = 'Salin percakapan';
+  static const copyConversationAction = 'Salin catatan telaah';
   static const saveAnswerMenu = 'Simpan ke Catatan';
   static const copyContentTooltip = 'Salin isi';
   static const editNote = 'Edit catatan';
@@ -132,15 +132,15 @@ abstract final class AppCopy {
   // ── Sesi Akun Google & NotebookLM ──────────────────────────────
   static const googleSessionConnectTitle = 'Masuk ke akun Google';
   static const googleSessionConnectSubtitle =
-      'Siapkan akun untuk ruang kajian Anda';
+      'Siapkan akun untuk ruang telaah Anda';
   static const googleSessionConnectDesc =
-      'Setelah masuk, Anda akan kembali ke ruang kajian secara otomatis.';
+      'Setelah masuk, Anda akan kembali ke ruang telaah secara otomatis.';
   static const googleSessionSignInHint =
-      'Gunakan akun Google yang sama agar Anda dapat langsung melanjutkan kajian tanpa perlu masuk ulang.';
+      'Gunakan akun Google yang sama agar Anda dapat langsung melanjutkan telaah tanpa perlu masuk ulang.';
   static const googleSessionSignInSameAccountDesc =
-      'Masukan akun Google yang sama agar akses AI dapat dibuka tanpa perlu masuk ulang.';
+      'Masukan akun Google yang sama agar akses telaah dapat dibuka tanpa perlu masuk ulang.';
   static const googleSessionConnected = 'Akun Google terhubung';
-  static const googleSessionPreparing = 'Menyiapkan percakapan…';
+  static const googleSessionPreparing = 'Menyiapkan ruang telaah…';
   static const cancelSignIn = 'Batalkan proses masuk';
   static const cancelSignInTitle = 'Batalkan proses masuk?';
   static const connectingGoogleAccount = 'Menghubungkan akun Google…';
@@ -199,26 +199,26 @@ abstract final class AppCopy {
 
   // ── Status Akses & Membership Pass ────────────────────────────
   static const accessStatus = 'Status akses';
-  static const fullAccess = 'Akses penuh';
+  static const fullAccess = 'Akses Pustaka Lengkap';
   static const planSyafii = 'Fikih Syafi\'i';
   static const planTahawwulat = 'Fikih Tahawwulat';
   static const trialAccess = 'Akses uji coba';
   static const activeUntil = 'Aktif hingga';
-  static const allAssistantsAvailable = 'Semua asisten tersedia';
+  static const allAssistantsAvailable = 'Seluruh bidang telaah tersedia';
   static const accessExpiringSoon = 'Masa akses hampir berakhir';
   static const readyToUse = 'Siap digunakan';
   static const validUntil = 'Berlaku hingga';
-  static const renewPro = 'Perpanjang Pro';
+  static const renewPro = 'Perpanjang Akses';
   static const manageSubscription = 'Kelola langganan';
-  static const preparingProAccess = 'Menyiapkan akses Pro';
+  static const preparingProAccess = 'Menyiapkan akses pustaka';
   static const paymentBeingVerified = 'Pembayaran sedang diperiksa';
   static const viewPaymentStatus = 'Lihat status pembayaran';
   static const accessNotYetActive = 'Akses belum aktif';
   static const paymentNotSuccessful = 'Pembayaran belum berhasil';
   static const tryPaymentAgain = 'Coba pembayaran lagi';
   static const chooseAssistantAndPlan =
-      'Pilih asisten dan paket yang sesuai untuk mulai bertanya.';
-  static const chooseProPlan = 'Pilih paket Pro';
+      'Pilih bidang kajian dan paket yang sesuai untuk mulai menelaah.';
+  static const chooseProPlan = 'Pilih paket akses pustaka';
   static const permanentAccessLabel = 'Tanpa batas waktu';
   static const manageAccess = 'Kelola akses';
 
@@ -272,7 +272,7 @@ abstract final class AppCopy {
   static String trialDaysLeft(int days) => 'Masa coba · $days hari';
 
   static String assistantsAvailableCount(int count) =>
-      count == 1 ? '1 asisten tersedia' : '$count asisten tersedia';
+      count == 1 ? '1 bidang telaah tersedia' : '$count bidang telaah tersedia';
 
   static String savedNotesCount(int count) => '$count catatan tersimpan';
 
