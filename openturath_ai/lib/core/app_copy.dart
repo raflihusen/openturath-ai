@@ -14,7 +14,7 @@ abstract final class AppCopy {
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
-  static const navStudies = 'Keilmuan';
+  static const navStudies = 'Asisten';
   static const navSaved = 'Catatan';
   static const navSettings = 'Pengaturan';
 
@@ -76,9 +76,9 @@ abstract final class AppCopy {
   static const adabDialogTitle = 'Catatan sebelum telaah';
   static const adabAcknowledgeButton = 'Saya mengerti';
   static const adabDialogLead =
-      'OpenTurath membantu mencari kutipan dan menelaah ibarah dalam kitab naskah primer. Cocokkan kembali rujukan pada naskah asal, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.';
+      'OpenTurath membantu mencari kutipan dan menelaah ibarah dalam kitab. Cocokkan kembali rujukan pada kitab rujukan, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.';
 
-  static const adabHeading1 = 'Penelusuran ibarah naskah primer';
+  static const adabHeading1 = 'Bantuan untuk menelusuri kitab';
   static const adabBody1 =
       'Gunakan OpenTurath untuk mencari ibarah dan menelaah penjelasan ulama dalam kitab. Verifikasi hasilnya langsung dengan naskah kitab rujukan.';
 
@@ -199,26 +199,26 @@ abstract final class AppCopy {
 
   // ── Status Akses & Membership Pass ────────────────────────────
   static const accessStatus = 'Status akses';
-  static const fullAccess = 'Semua ruang riset';
+  static const fullAccess = 'Akses penuh';
   static const planSyafii = 'Fikih Syafi\'i';
   static const planTahawwulat = 'Fikih Tahawwulat';
   static const trialAccess = 'Akses uji coba';
   static const activeUntil = 'Aktif hingga';
-  static const allAssistantsAvailable = 'Semua ruang riset tersedia';
+  static const allAssistantsAvailable = 'Semua asisten tersedia';
   static const accessExpiringSoon = 'Masa akses hampir berakhir';
   static const readyToUse = 'Siap digunakan';
-  static const validUntil = 'Aktif hingga';
-  static const renewPro = 'Perpanjang akses';
+  static const validUntil = 'Berlaku hingga';
+  static const renewPro = 'Perpanjang Pro';
   static const manageSubscription = 'Kelola langganan';
-  static const preparingProAccess = 'Menyiapkan akses ruang riset';
+  static const preparingProAccess = 'Menyiapkan akses Pro';
   static const paymentBeingVerified = 'Pembayaran sedang diperiksa';
   static const viewPaymentStatus = 'Lihat status pembayaran';
   static const accessNotYetActive = 'Akses belum aktif';
   static const paymentNotSuccessful = 'Pembayaran belum berhasil';
   static const tryPaymentAgain = 'Coba pembayaran lagi';
   static const chooseAssistantAndPlan =
-      'Pilih bidang kajian dan paket yang sesuai untuk mulai menelaah.';
-  static const chooseProPlan = 'Pilih paket akses riset';
+      'Pilih asisten dan paket yang sesuai untuk mulai bertanya.';
+  static const chooseProPlan = 'Pilih paket Pro';
   static const permanentAccessLabel = 'Tanpa batas waktu';
   static const manageAccess = 'Kelola akses';
 
@@ -239,13 +239,13 @@ abstract final class AppCopy {
   static const paymentSuccessTitle = 'Pembayaran diterima';
   static const paymentSuccessRedirect =
       'Akses sudah aktif. Membuka OpenTurath…';
-  static const packagePerField = 'Satu ruang riset';
-  static const packageAllFields = 'Semua ruang riset';
+  static const packagePerField = 'Satu asisten';
+  static const packageAllFields = 'Semua asisten';
   static const packageAllFieldsPreparing =
-      'Paket semua ruang riset sedang disiapkan.';
+      'Paket semua asisten sedang disiapkan.';
   static const chooseFieldPlan = 'Pilih bidang';
-  static const accessAllFields = 'Akses semua ruang riset';
-  static const accessSingleField = 'Akses satu ruang riset';
+  static const accessAllFields = 'Akses semua asisten';
+  static const accessSingleField = 'Akses satu asisten';
   static const notSubscribed = 'Belum ada akses aktif';
 
   // ── Kebijakan, Hukum & Bantuan ─────────────────────────────────
@@ -261,10 +261,10 @@ abstract final class AppCopy {
   static String preparingModule(String module) => '$module sedang disiapkan.';
 
   static String subscriptionRequiredFor(String module) =>
-      'Akses diperlukan untuk membuka $module.';
+      'Berlangganan untuk membuka $module.';
 
   static String accessUnavailableFor(String module) =>
-      'Akses ke $module belum aktif. Pilih paket atau gunakan kode akses untuk melanjutkan.';
+      'Akses ke $module belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.';
 
   static String planWithAgent(String agentTitle, String duration) =>
       '$agentTitle — $duration';
@@ -272,7 +272,7 @@ abstract final class AppCopy {
   static String trialDaysLeft(int days) => 'Masa coba · $days hari';
 
   static String assistantsAvailableCount(int count) =>
-      count == 1 ? '1 ruang riset tersedia' : '$count ruang riset tersedia';
+      count == 1 ? '1 asisten tersedia' : '$count asisten tersedia';
 
   static String savedNotesCount(int count) => '$count catatan tersimpan';
 
