@@ -130,16 +130,16 @@ class OTTypography {
       );
 
   static TextStyle screenTitle({Color? color}) => _newsreader(
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.5,
+        letterSpacing: -0.3,
         color: color,
       );
 
   static TextStyle corpusTitle({Color? color}) => _newsreader(
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.3,
+        letterSpacing: -0.2,
         color: color,
       );
 
@@ -215,16 +215,16 @@ class OTTypography {
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
   static TextStyle arabicDisplay({Color? color}) => _scheherazadeNew(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        height: 1.25,
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        height: 1.5,
         color: color,
       );
 
   static TextStyle arabicReading({Color? color}) => _scheherazadeNew(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        height: 1.4,
+        fontSize: 18,
+        fontWeight: FontWeight.w500,
+        height: 1.6,
         color: color,
       );
 
@@ -236,9 +236,9 @@ class OTTypography {
       );
 
   static TextStyle arabicQuote({Color? color}) => _scheherazadeNew(
-        fontSize: 18,
-        fontWeight: FontWeight.normal,
-        height: 1.5,
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        height: 1.65,
         color: color,
       );
 }
