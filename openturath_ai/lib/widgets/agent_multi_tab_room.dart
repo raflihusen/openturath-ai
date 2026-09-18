@@ -293,60 +293,77 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       final session = sessions[index];
                       final isActive = index == _sessionManager.activeIndex;
 
-                      return InkWell(
-                        onTap: () {
-                          AppSnackBar.clear(context);
-                          _sessionManager.selectTab(index);
-                        },
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: isActive ? surface : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: isActive ? border : Colors.transparent,
-                              width: 1.0,
-                            ),
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: isActive ? surface : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isActive ? border : Colors.transparent,
+                            width: 1.0,
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.chat_bubble_outline_rounded,
-                                size: 13,
-                                color: isActive ? textPrimary : textSecondary,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                session.agent.title.replaceFirst('AI ', ''),
-                                style: GoogleFonts.outfit(
-                                  fontSize: 12,
-                                  fontWeight: isActive
-                                      ? FontWeight.w600
-                                      : FontWeight.w400,
-                                  color: isActive ? textPrimary : textSecondary,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Area klik tab untuk berpindah asisten
+                            InkWell(
+                              onTap: () {
+                                AppSnackBar.clear(context);
+                                _sessionManager.selectTab(index);
+                              },
+                              borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.chat_bubble_outline_rounded,
+                                      size: 13,
+                                      color: isActive ? textPrimary : textSecondary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      session.agent.title.replaceFirst('AI ', ''),
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12,
+                                        fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                                        color: isActive ? textPrimary : textSecondary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 6),
-                              InkWell(
-                                onTap: () {
-                                  AppSnackBar.clear(context);
-                                  _sessionManager.closeTab(index);
-                                },
-                                borderRadius: BorderRadius.circular(10),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Icon(
-                                    Icons.close_rounded,
-                                    size: 14,
-                                    color: textSecondary,
+                            ),
+                            // Tombol tutup tab terpisah tanpa nesting InkWell
+                            Semantics(
+                              label: 'Tutup tab ${session.agent.title}',
+                              button: true,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkResponse(
+                                  onTap: () {
+                                    AppSnackBar.clear(context);
+                                    _sessionManager.closeTab(index);
+                                  },
+                                  radius: 18,
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      size: 15,
+                                      color: textSecondary,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(width: 2),
+                          ],
                         ),
                       );
                     },
@@ -947,6 +964,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             onLoadStart: (controller, uri) {
+              session.hasInjectedEarlyScript = false;
               // Hanya aktifkan full loader jika sesi BELUM pernah siap sama sekali
               if (mounted && !session.isSessionReady && !session.isWebLoading) {
                 setState(() => session.isWebLoading = true);
@@ -974,7 +992,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             onProgressChanged: (controller, progress) async {
-              if (progress >= 35) {
+              if (progress >= 35 && !session.hasInjectedEarlyScript) {
+                session.hasInjectedEarlyScript = true;
                 await controller.evaluateJavascript(
                     source:
                         'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
