@@ -129,6 +129,20 @@ class OTTypography {
         color: color,
       );
 
+  static TextStyle screenTitle({Color? color}) => _newsreader(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
+        color: color,
+      );
+
+  static TextStyle corpusTitle({Color? color}) => _newsreader(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.3,
+        color: color,
+      );
+
   // ── Interface & Body Styles ──
   static TextStyle sectionTitle({Color? color}) => _outfit(
         fontSize: 18,

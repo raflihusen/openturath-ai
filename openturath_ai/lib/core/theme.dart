@@ -1,58 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'design/ot_colors.dart';
 
-// OpenTurath AI: Google NotebookLM Design System
+// OpenTurath AI: Monochrome Editorial Theme (Quiet Scholar Adaptive)
 class AppTheme {
-  // ── 1. Light Mode Tokens (Claude Minimalist Aesthetic) ───────────────────
-  static const Color canvasLight          = Color(0xFFFFFFFF); // Putih Pekat Murni
-  static const Color groupedCanvasLight   = Color(0xFFF6F6F8); // Apple System Grouped Gray Canvas
-  static const Color surfaceCardLight     = Color(0xFFFFFFFF); // Pure White Floating Card
-  static const Color surfaceHeaderLight   = Color(0xFFFFFFFF); // Header Bar Canvas
-  static const Color borderLight          = Color(0xFFE5E7EB); // 1px Subtle Outline (Abu-abu Tipis)
-  static const Color borderSubtleLight    = Color(0xFFF1F5F9); 
-  static const Color textPrimaryLight     = Color(0xFF18181B); // Main Title & Body
-  static const Color textSecondaryLight   = Color(0xFF71717A); // Metadata & Subtitles
-  static const Color textTertiaryLight    = Color(0xFF6B7280); // WCAG AA Compliant (4.8:1) Placeholders & Subtitles
-  static const Color accentLight          = Color(0xFF18181B); // Refined Monochrome Black
-  static const Color pillActionBgLight    = Color(0xFF18181B); // Solid Black Action Pill
-  static const Color pillActionTextLight  = Color(0xFFFFFFFF);
-  static const Color pillSecondaryBgLight = Color(0xFFF4F4F5);
-  static const Color citationBgLight      = Color(0xFFF1F5F9); // Soft Chip
-  static const Color citationTextLight    = Color(0xFF18181B); // Citation Text
-  static const Color queryBoxBgLight      = Color(0xFFFFFFFF); // Stadium Chat Input
-  static const Color queryBoxBorderLight  = Color(0xFFE5E7EB);
+  // ── 1. Light Mode Tokens (Warm Archival Paper) ───────────────────────────
+  static const Color canvasLight          = OTColors.canvasLight;
+  static const Color groupedCanvasLight   = OTColors.canvasLight;
+  static const Color surfaceCardLight     = OTColors.surfaceLight;
+  static const Color surfaceHeaderLight   = OTColors.surfaceLight;
+  static const Color borderLight          = OTColors.borderLight;
+  static const Color borderSubtleLight    = OTColors.borderSubtleLight; 
+  static const Color textPrimaryLight     = OTColors.textPrimaryLight;
+  static const Color textSecondaryLight   = OTColors.textSecondaryLight;
+  static const Color textTertiaryLight    = OTColors.textTertiaryLight;
+  static const Color accentLight          = OTColors.accentLight;
+  static const Color pillActionBgLight    = OTColors.textPrimaryLight;
+  static const Color pillActionTextLight  = OTColors.surfaceLight;
+  static const Color pillSecondaryBgLight = OTColors.surfaceSubtleLight;
+  static const Color citationBgLight      = OTColors.surfaceSubtleLight;
+  static const Color citationTextLight    = OTColors.textPrimaryLight;
+  static const Color queryBoxBgLight      = OTColors.surfaceLight;
+  static const Color queryBoxBorderLight  = OTColors.borderLight;
 
   // ── 1b. Apple HIG Specific Tokens ─────────────────────────────────────────
-  static const Color appleGreen          = Color(0xFF34C759); // Apple System Green Toggle
-  static const Color appleRed            = Color(0xFFFF3B30); // Apple System Destructive Red
-  static const Color navBarDark          = Color(0xCC0E0E10); // Translucent 80% Dark Canvas
-  static const Color navBarLight         = Color(0xD9FFFFFF); // Translucent 85% Light Canvas
-  static const Color navBarBorderDark    = Color(0x26FFFFFF); // 15% Hairline White
-  static const Color navBarBorderLight   = Color(0x1F000000); // 12% Hairline Black
-  static const double dividerIndent      = 54.0;              // iOS Inset Divider
+  static const Color appleGreen          = Color(0xFF34C759);
+  static const Color appleRed            = Color(0xFFFF3B30);
+  static const Color navBarDark          = Color(0xCC111110);
+  static const Color navBarLight         = Color(0xD9F6F6F3);
+  static const Color navBarBorderDark    = OTColors.borderDark;
+  static const Color navBarBorderLight   = OTColors.borderLight;
+  static const double dividerIndent      = 54.0;
 
-  // ── 2. Dark Mode Tokens (Claude Pure Deep Black) ─────────────────────────
-  static const Color canvasDark           = Color(0xFF0E0E10); // Hitam Pekat Murni
-  static const Color groupedCanvasDark    = Color(0xFF0E0E10); // Hitam Pekat Murni Grouped
-  static const Color surfaceCardDark      = Color(0xFF18181B); // Elevated Surface Card
-  static const Color surfaceHeaderDark    = Color(0xFF0E0E10); // Header Bar Canvas
-  static const Color borderDark           = Color(0xFF27272A); // Subtle 1px Dark Outline (Abu-abu Tipis)
-  static const Color borderSubtleDark     = Color(0xFF1E1E22);
-  static const Color textPrimaryDark      = Color(0xFFFAFAFA); // Main Title & Body
-  static const Color textSecondaryDark    = Color(0xFFA1A1AA); // Muted Subtitles
-  static const Color textTertiaryDark     = Color(0xFFA1A1AA); // WCAG AA Compliant (7.3:1) Disclaimers
-  static const Color accentDark           = Color(0xFFFAFAFA); // Monochrome White Action
-  static const Color pillActionBgDark     = Color(0xFFFFFFFF); // Solid White Action Pill
-  static const Color pillActionTextDark   = Color(0xFF18181B);
-  static const Color pillSecondaryBgDark  = Color(0xFF18181B);
-  static const Color citationBgDark       = Color(0xFF1E1E22); // Deep Pill
-  static const Color citationTextDark     = Color(0xFFFAFAFA); // Monochrome Citation Text
-  static const Color queryBoxBgDark       = Color(0xFF18181B); // Stadium Chat Input
-  static const Color queryBoxBorderDark   = Color(0xFF27272A);
-  static const Color surfaceElevated      = Color(0xFF18181B); // Elevated chip / pill container
-  static const Color scholarlyIndigo      = Color(0xFF18181B); // Monochrome Ink
-  static const Color readingCanvasParchmentLight = Color(0xFFFBF7EE); // Warm parchment reading surface
-  static const Color readingCanvasParchmentDark  = Color(0xFF1C1A17);
+  // ── 2. Dark Mode Tokens (Quiet Obsidian Scholar) ─────────────────────────
+  static const Color canvasDark           = OTColors.canvasDark;
+  static const Color groupedCanvasDark    = OTColors.canvasDark;
+  static const Color surfaceCardDark      = OTColors.surfaceDark;
+  static const Color surfaceHeaderDark    = OTColors.surfaceDark;
+  static const Color borderDark           = OTColors.borderDark;
+  static const Color borderSubtleDark     = OTColors.borderSubtleDark;
+  static const Color textPrimaryDark      = OTColors.textPrimaryDark;
+  static const Color textSecondaryDark    = OTColors.textSecondaryDark;
+  static const Color textTertiaryDark     = OTColors.textTertiaryDark;
+  static const Color accentDark           = OTColors.accentDark;
+  static const Color pillActionBgDark     = OTColors.textPrimaryDark;
+  static const Color pillActionTextDark   = OTColors.surfaceDark;
+  static const Color pillSecondaryBgDark  = OTColors.surfaceSubtleDark;
+  static const Color citationBgDark       = OTColors.surfaceSubtleDark;
+  static const Color citationTextDark     = OTColors.textPrimaryDark;
+  static const Color queryBoxBgDark       = OTColors.surfaceDark;
+  static const Color queryBoxBorderDark   = OTColors.borderDark;
+  static const Color surfaceElevated      = OTColors.surfaceSubtleDark;
+  static const Color scholarlyIndigo      = OTColors.textPrimaryDark;
+  static const Color readingCanvasParchmentLight = Color(0xFFF6F6F3);
+  static const Color readingCanvasParchmentDark  = Color(0xFF181817);
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
   static const Color lmLightCanvas        = canvasLight;
@@ -139,7 +140,7 @@ class AppTheme {
   );
 
   static const LinearGradient geminiSparkleGradient = LinearGradient(
-    colors: [Color(0xFF4285F4), Color(0xFF9B72CB), Color(0xFFD96570)],
+    colors: [accentDark, accentDark],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -501,7 +502,7 @@ class AppTheme {
 
   static LinearGradient agentGradient(String agentId) {
     return const LinearGradient(
-      colors: [Color(0xFF0B57D0), Color(0xFF4285F4)],
+      colors: [accentDark, accentDark],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
