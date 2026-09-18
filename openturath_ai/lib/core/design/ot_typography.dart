@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// OpenTurath Design System v2 — Typography (3-Layer Strict Architecture)
-/// 1. Brand Layer: Editorial Serif (hanya untuk Brand, Editorial Hero, dan Judul Korpus)
-/// 2. Interface Layer: Clean Sans (untuk tombol, navigasi, pengaturan, formulir, metadata, harga)
-/// 3. Arabic Scholarly Layer: Scheherazade New (Naskh klasik, tanpa Amiri)
+/// OpenTurath Design System — Typography (3-Pilar Arsitektur Baku)
+/// 1. Editorial & Heading Layer: Newsreader (Display, Page Title, Nama Kitab Besar)
+/// 2. Interface Layer: Outfit (Tombol, Navigasi, Input, Chip, Metadata, Angka Indeks)
+/// 3. Arabic & Turats Layer: Scheherazade New (Naskh murni teks Arab, matan, syarah, ibarah)
+///
+/// Hapus total ketergantungan pada font Amiri dan Tajawal.
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
 
-  // ── Private font builders with test/offline fallback ──
+  // ── 1. Newsreader (Editorial & Heading) ──
   static TextStyle _newsreader({
     required double fontSize,
     FontWeight? fontWeight,
@@ -36,6 +38,7 @@ class OTTypography {
     );
   }
 
+  // ── 2. Outfit (Interface, UI, Metadata & Body) ──
   static TextStyle _outfit({
     required double fontSize,
     FontWeight? fontWeight,
@@ -62,7 +65,8 @@ class OTTypography {
     );
   }
 
-  static TextStyle _tajawal({
+  // ── 3. Scheherazade New (Arabic Scholarly Turats) ──
+  static TextStyle _scheherazadeNew({
     required double fontSize,
     FontWeight? fontWeight,
     double? letterSpacing,
@@ -71,7 +75,7 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: 'Tajawal',
+        fontFamily: 'Scheherazade New',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
@@ -79,7 +83,7 @@ class OTTypography {
         color: color,
       );
     }
-    return GoogleFonts.tajawal(
+    return GoogleFonts.scheherazadeNew(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -88,7 +92,7 @@ class OTTypography {
     );
   }
 
-  // ── 1. Brand & Editorial Layer (Serif / Newsreader) ──
+  // ── Editorial & Heading Styles ──
   static TextStyle brandLogo({Color? color}) => _newsreader(
         fontSize: 22,
         fontWeight: FontWeight.w600,
@@ -96,26 +100,40 @@ class OTTypography {
         color: color,
       );
 
+  static TextStyle displayLarge({Color? color}) => _newsreader(
+        fontSize: 36,
+        fontWeight: FontWeight.w500,
+        letterSpacing: -1.0,
+        color: color,
+      );
+
+  static TextStyle pageTitle({Color? color}) => _newsreader(
+        fontSize: 26,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.6,
+        color: color,
+      );
+
   static TextStyle editorialHero({Color? color}) => _newsreader(
         fontSize: 26,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.5,
+        letterSpacing: -0.4,
         height: 1.25,
         color: color,
       );
 
-  static TextStyle corpusTitle({Color? color}) => _newsreader(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.2,
-        color: color,
-      );
-
-  // ── 2. Interface Layer (Modern Sans / Outfit) ──
-  static TextStyle screenTitle({Color? color}) => _outfit(
+  static TextStyle bookTitle({Color? color}) => _newsreader(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.3,
+        color: color,
+      );
+
+  // ── Interface & Body Styles ──
+  static TextStyle sectionTitle({Color? color}) => _outfit(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
         color: color,
       );
 
@@ -160,6 +178,13 @@ class OTTypography {
         color: color,
       );
 
+  static TextStyle metadataTag({Color? color}) => _outfit(
+        fontSize: 10,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.8,
+        color: color,
+      );
+
   static TextStyle button({Color? color}) => _outfit(
         fontSize: 14,
         fontWeight: FontWeight.w600,
@@ -174,25 +199,32 @@ class OTTypography {
         color: color,
       );
 
-  // ── 3. Arabic Scholarly Layer (Tajawal) ──
-  static TextStyle arabicDisplay({Color? color}) => _tajawal(
+  // ── Arabic Scholarly Layer (Scheherazade New) ──
+  static TextStyle arabicDisplay({Color? color}) => _scheherazadeNew(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        height: 1.25,
+        color: color,
+      );
+
+  static TextStyle arabicReading({Color? color}) => _scheherazadeNew(
+        fontSize: 22,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        color: color,
+      );
+
+  static TextStyle arabicIbarah({Color? color}) => _scheherazadeNew(
         fontSize: 24,
-        fontWeight: FontWeight.w700,
-        height: 1.5,
+        fontWeight: FontWeight.bold,
+        height: 1.35,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color}) => _tajawal(
+  static TextStyle arabicQuote({Color? color}) => _scheherazadeNew(
         fontSize: 18,
-        fontWeight: FontWeight.w500,
-        height: 1.6,
-        color: color,
-      );
-
-  static TextStyle arabicQuote({Color? color}) => _tajawal(
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        height: 1.65,
+        fontWeight: FontWeight.normal,
+        height: 1.5,
         color: color,
       );
 }
