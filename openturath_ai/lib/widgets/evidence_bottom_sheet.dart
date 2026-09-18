@@ -174,9 +174,9 @@ class EvidenceBottomSheet extends StatelessWidget {
                       0,
                       Text(
                         bookName,
-                        style: GoogleFonts.outfit(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w700,
+                        style: GoogleFonts.newsreader(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
                           color: textPrimary,
                           letterSpacing: -0.3,
                         ),
@@ -188,54 +188,60 @@ class EvidenceBottomSheet extends StatelessWidget {
                     _stagger(
                       1,
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: isDark ? AppTheme.surfaceCardDark : AppTheme.groupedCanvasLight,
+                          color: isDark ? AppTheme.surfaceElevated : AppTheme.surfaceCardLight,
                           borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                          border: Border.all(color: border, width: 1),
+                          border: Border.all(color: border),
                         ),
-                        child: Column(
+                        child: Row(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Pengarang', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
-                                Flexible(
-                                  child: Text(
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Pengarang', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  const SizedBox(height: 2),
+                                  Text(
                                     author,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
-                                    textAlign: TextAlign.right,
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Divider(height: 1, color: border),
+                            Container(width: 1, height: 28, color: border, margin: const EdgeInsets.symmetric(horizontal: 12)),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Halaman', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    pageNumber,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Halaman', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
-                                Text(
-                                  pageNumber,
-                                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Divider(height: 1, color: border),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Disiplin', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
-                                Text(
-                                  category,
-                                  style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
-                                ),
-                              ],
+                            Container(width: 1, height: 28, color: border, margin: const EdgeInsets.symmetric(horizontal: 12)),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Disiplin', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    category,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -286,11 +292,11 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: GoogleFonts.tajawal(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                height: 1.6,
-                                color: isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A),
+                              style: GoogleFonts.scheherazadeNew(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                height: 1.8,
+                                color: textPrimary,
                               ),
                             ),
                           ),
