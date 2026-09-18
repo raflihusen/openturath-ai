@@ -32,6 +32,30 @@ class GoAkalTierLink {
   }
 }
 
+class ThematicBundleMeta {
+  final String slug;
+  final String title;
+  final String subtitle;
+  final String badgeText;
+  final String iconEmoji;
+  final int originalPrice1m;
+  final int launchPrice1m;
+  final List<String> includedItems;
+
+  const ThematicBundleMeta({
+    required this.slug,
+    required this.title,
+    required this.subtitle,
+    required this.badgeText,
+    required this.iconEmoji,
+    required this.originalPrice1m,
+    required this.launchPrice1m,
+    required this.includedItems,
+  });
+
+  List<GoAkalTierLink> get tiers => GoAkalCatalogRegistry.getTierLinksForSlug(slug);
+}
+
 class GoAkalCatalogRegistry {
   static const String storeUrl = 'https://goakal.com/openturath-ai';
 
@@ -444,6 +468,180 @@ class GoAkalCatalogRegistry {
         applyUrl: 'https://goakal.com/openturath-ai/musthalah-hadits/8nfa7/apply',
       ),
     },
+    'paket-fikih-pesantren': {
+      '1_month': GoAkalTierLink(
+        durationKey: '1_month',
+        title: '1 Bulan (Harga Khusus Launch)',
+        amount: 99000,
+        priceLabel: 'Rp 99.000',
+        periodLabel: '/ bulan',
+        planId: 'paket-fikih-pesantren_1_month',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-fikih-pesantren/cmu6rsr0a001mjn0437i6o3hy/apply',
+      ),
+      '6_months': GoAkalTierLink(
+        durationKey: '6_months',
+        title: '6 Bulan (1 Semester)',
+        amount: 499000,
+        priceLabel: 'Rp 499.000',
+        periodLabel: '/ 6 bulan',
+        planId: 'paket-fikih-pesantren_6_months',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-fikih-pesantren/cmu6rsrp9001qjn04ml7uq9og/apply',
+      ),
+      '1_year': GoAkalTierLink(
+        durationKey: '1_year',
+        title: '12 Bulan (1 Tahun)',
+        amount: 890000,
+        priceLabel: 'Rp 890.000',
+        periodLabel: '/ tahun',
+        planId: 'paket-fikih-pesantren_1_year',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-fikih-pesantren/lh0db/apply',
+      ),
+    },
+    'paket-fikih-tahawwulat': {
+      '1_month': GoAkalTierLink(
+        durationKey: '1_month',
+        title: '1 Bulan (Harga Khusus Launch)',
+        amount: 99000,
+        priceLabel: 'Rp 99.000',
+        periodLabel: '/ bulan',
+        planId: 'paket-fikih-tahawwulat_1_month',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-fikih-tahawwulat/cmu6rt45n003ijn04wnrbivh5/apply',
+      ),
+      '6_months': GoAkalTierLink(
+        durationKey: '6_months',
+        title: '6 Bulan (1 Semester)',
+        amount: 499000,
+        priceLabel: 'Rp 499.000',
+        periodLabel: '/ 6 bulan',
+        planId: 'paket-fikih-tahawwulat_6_months',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-fikih-tahawwulat/cmu6rt4zh003mjn04puwzuh3b/apply',
+      ),
+      '1_year': GoAkalTierLink(
+        durationKey: '1_year',
+        title: '12 Bulan (1 Tahun)',
+        amount: 890000,
+        priceLabel: 'Rp 890.000',
+        periodLabel: '/ tahun',
+        planId: 'paket-fikih-tahawwulat_1_year',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-fikih-tahawwulat/cmu6rt5q4003qjn041xmhj9mh/apply',
+      ),
+    },
+    'paket-mazhab-akbar': {
+      '1_month': GoAkalTierLink(
+        durationKey: '1_month',
+        title: '1 Bulan (Harga Khusus Launch)',
+        amount: 149000,
+        priceLabel: 'Rp 149.000',
+        periodLabel: '/ bulan',
+        planId: 'paket-mazhab-akbar_1_month',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-mazhab-akbar/cmu6rt1fl0031jn04eugtuqsz/apply',
+      ),
+      '6_months': GoAkalTierLink(
+        durationKey: '6_months',
+        title: '6 Bulan (1 Semester)',
+        amount: 749000,
+        priceLabel: 'Rp 749.000',
+        periodLabel: '/ 6 bulan',
+        planId: 'paket-mazhab-akbar_6_months',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-mazhab-akbar/cmu6rt2480035jn04zhz22qml/apply',
+      ),
+      '1_year': GoAkalTierLink(
+        durationKey: '1_year',
+        title: '12 Bulan (1 Tahun)',
+        amount: 1390000,
+        priceLabel: 'Rp 1.390.000',
+        periodLabel: '/ tahun',
+        planId: 'paket-mazhab-akbar_1_year',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-mazhab-akbar/cmu6rt2uv0039jn04eimivjqb/apply',
+      ),
+    },
+    'paket-samudra-hadits': {
+      '1_month': GoAkalTierLink(
+        durationKey: '1_month',
+        title: '1 Bulan (Harga Khusus Launch)',
+        amount: 129000,
+        priceLabel: 'Rp 129.000',
+        periodLabel: '/ bulan',
+        planId: 'paket-samudra-hadits_1_month',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-samudra-hadits/cmu6rsubc0023jn04otf28nuq/apply',
+      ),
+      '6_months': GoAkalTierLink(
+        durationKey: '6_months',
+        title: '6 Bulan (1 Semester)',
+        amount: 649000,
+        priceLabel: 'Rp 649.000',
+        periodLabel: '/ 6 bulan',
+        planId: 'paket-samudra-hadits_6_months',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-samudra-hadits/cmu6rsvd40027jn046dpjg44e/apply',
+      ),
+      '1_year': GoAkalTierLink(
+        durationKey: '1_year',
+        title: '12 Bulan (1 Tahun)',
+        amount: 1190000,
+        priceLabel: 'Rp 1.190.000',
+        periodLabel: '/ tahun',
+        planId: 'paket-samudra-hadits_1_year',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-samudra-hadits/cmu6rsw00002bjn04etw4kniw/apply',
+      ),
+    },
+    'paket-sultan-all-access': {
+      '1_month': GoAkalTierLink(
+        durationKey: '1_month',
+        title: '1 Bulan (Harga Khusus Launch)',
+        amount: 249000,
+        priceLabel: 'Rp 249.000',
+        periodLabel: '/ bulan',
+        planId: 'paket-sultan-all-access_1_month',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-sultan-all-access/cmu6rt75m003zjn048rgk734a/apply',
+      ),
+      '6_months': GoAkalTierLink(
+        durationKey: '6_months',
+        title: '6 Bulan (1 Semester)',
+        amount: 1249000,
+        priceLabel: 'Rp 1.249.000',
+        periodLabel: '/ 6 bulan',
+        planId: 'paket-sultan-all-access_6_months',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-sultan-all-access/cmu6rt85c0043jn04332nmbv0/apply',
+      ),
+      '1_year': GoAkalTierLink(
+        durationKey: '1_year',
+        title: '12 Bulan (1 Tahun)',
+        amount: 1990000,
+        priceLabel: 'Rp 1.990.000',
+        periodLabel: '/ tahun',
+        planId: 'paket-sultan-all-access_1_year',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-sultan-all-access/cmu6rt9ol0047jn04rqj20e2a/apply',
+      ),
+    },
+    'paket-tafsir-bahasa-arab': {
+      '1_month': GoAkalTierLink(
+        durationKey: '1_month',
+        title: '1 Bulan (Harga Khusus Launch)',
+        amount: 99000,
+        priceLabel: 'Rp 99.000',
+        periodLabel: '/ bulan',
+        planId: 'paket-tafsir-bahasa-arab_1_month',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-tafsir-bahasa-arab/cmu6rsxj6002kjn04u59vdqhs/apply',
+      ),
+      '6_months': GoAkalTierLink(
+        durationKey: '6_months',
+        title: '6 Bulan (1 Semester)',
+        amount: 499000,
+        priceLabel: 'Rp 499.000',
+        periodLabel: '/ 6 bulan',
+        planId: 'paket-tafsir-bahasa-arab_6_months',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-tafsir-bahasa-arab/cmu6rsyys002ojn04tb3ts3ox/apply',
+      ),
+      '1_year': GoAkalTierLink(
+        durationKey: '1_year',
+        title: '12 Bulan (1 Tahun)',
+        amount: 890000,
+        priceLabel: 'Rp 890.000',
+        periodLabel: '/ tahun',
+        planId: 'paket-tafsir-bahasa-arab_1_year',
+        applyUrl: 'https://goakal.com/openturath-ai/paket-tafsir-bahasa-arab/cmu6rszpu002sjn04yj6tlfr9/apply',
+      ),
+    },
     'qawaid-fiqhiyyah': {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
@@ -678,6 +876,121 @@ class GoAkalCatalogRegistry {
     },
   };
 
+  /// Metadata 6 Paket Tematik Khusus Launching
+  static const List<ThematicBundleMeta> thematicBundles = [
+    ThematicBundleMeta(
+      slug: "paket-fikih-pesantren",
+      title: "Paket Fikih Pesantren & Santri Salaf",
+      subtitle: "The Syafi'i & Bahtsul Masail Suite",
+      badgeText: "\u2605 BEST SELLER NO. 1",
+      iconEmoji: "\ud83d\udfe2",
+      originalPrice1m: 199000,
+      launchPrice1m: 99000,
+      includedItems: [
+        "Super AI Fikih Syafi'i (Al-Umm, Minhaj, Fathul Mu'in)",
+        "Super AI Ushul Fikih (Kaidah Dalil & Metodologi Istinbath)",
+        "Super AI Qawaid Fiqhiyyah (Kaidah Asasiyyah & Furu')",
+        "Super AI Fatawa & Masail (Fatwa Nawawi, Ibnu Hajar, Ba'alawi)",
+        "Super AI Tasawwuf & Adzkar (Pembersih Hati & Adab Syar'i)",
+      ],
+    ),
+    ThematicBundleMeta(
+      slug: "paket-samudra-hadits",
+      title: "Paket Samudra Hadits & Sirah Nabawiyyah",
+      subtitle: "The Hadith Master Suite",
+      badgeText: "\u2605 PILIHAN PENGKAJI HADIS",
+      iconEmoji: "\ud83d\udcdc",
+      originalPrice1m: 249000,
+      launchPrice1m: 129000,
+      includedItems: [
+        "Super AI Hadits Nabawi (Kutubus Sittah & Kutubut Tis'ah)",
+        "Super AI Syarah Hadits (Fathul Bari, Syarah Nawawi, Umdah)",
+        "Super AI Musthalah & Ulumul Hadits (Takhrij & 'Ilal Hadits)",
+        "Super AI Thabaqat & Tarajim Rijal (20.000+ Biografi Rawi)",
+        "Super AI Tarikh & Sirah Nabawiyyah (Konteks Asbabul Wurud)",
+      ],
+    ),
+    ThematicBundleMeta(
+      slug: "paket-tafsir-bahasa-arab",
+      title: "Paket Mufassir & Khazanah Bahasa Arab",
+      subtitle: "The Qur'an & Arabic Suite",
+      badgeText: "\u2605 FAVORIT ILMU ALAT & TAFSIR",
+      iconEmoji: "\ud83d\udcd6",
+      originalPrice1m: 199000,
+      launchPrice1m: 99000,
+      includedItems: [
+        "Super AI Tafsir & Ulumul Qur'an (Thabari, Ibnu Katsir, Razi)",
+        "Super AI Tajwid & Qira'at (Kaidah Bacaan 10 Imam Mutawatir)",
+        "Super AI Bahasa, Balaghah & Kamus (Lisanul Arab, Alfiyyah)",
+        "Super AI Bibliografi & Faharis (Peta Manuskrip & Penulis Kitab)",
+      ],
+    ),
+    ThematicBundleMeta(
+      slug: "paket-mazhab-akbar",
+      title: "Paket Mufti, Mazhab Akbar & Pemikiran",
+      subtitle: "The Grand Comparative Suite",
+      badgeText: "\u2605 RISET AKADEMIK & MAZHAB",
+      iconEmoji: "\u2696\ufe0f",
+      originalPrice1m: 299000,
+      launchPrice1m: 149000,
+      includedItems: [
+        "Super AI Fikih Hanafi (Kutubul Mu'tamadah Mazhab Hanafi)",
+        "Super AI Fikih Maliki (Mudawwanah, Mukhtashar Khalil)",
+        "Super AI Fikih Hanbali (Al-Mughni, Zadul Mustaqni')",
+        "Super AI Fikih Muqaran & Siyasah (Tata Negara & Politik Islam)",
+        "Super AI Aqidah & Ushuluddin (Kalam, Asy'ariyah-Maturidiyah)",
+        "Super AI Fatawa Akbar Lintas Mazhab",
+      ],
+    ),
+    ThematicBundleMeta(
+      slug: "paket-fikih-tahawwulat",
+      title: "Paket Khusus Fikih Tahawwulat",
+      subtitle: "The Eschatology & Prophetic Sign Suite",
+      badgeText: "\u2605 KORPUS MASTER KHUSUS",
+      iconEmoji: "\ud83c\udf1f",
+      originalPrice1m: 199000,
+      launchPrice1m: 99000,
+      includedItems: [
+        "Persona Al-Muhaqqiq (Bedah Konsep & Dalil Ushul)",
+        "Persona Al-Bayan (Panduan Sikap Dakwah & Solusi Zaman)",
+        "Persona Al-Mukhtabir (Uji Komparasi Realitas & Tanda Zaman)",
+        "Persona Al-Habib (Bimbingan Jiwa & Keselamatan Iman)",
+        "Persona Al-Khatib (Penyusun Teks Khutbah & Retorika Da'i)",
+      ],
+    ),
+    ThematicBundleMeta(
+      slug: "paket-sultan-all-access",
+      title: "Paket Sultan All-Access (Semua 24 AI)",
+      subtitle: "Total VIP Ecosystem Access",
+      badgeText: "\ud83d\udc51 SULTAN VIP (HEMAT MAKSIMAL)",
+      iconEmoji: "\ud83d\udc51",
+      originalPrice1m: 499000,
+      launchPrice1m: 249000,
+      includedItems: [
+        "Akses Tanpa Batas Seluruh 20 Modul Turath Lokal",
+        "Akses Seluruh 5 Persona Fikih Tahawwulat",
+        "Prioritas Pemrosesan AI Tingkat Tertinggi (Super Cepat)",
+        "Update Korpus Digital Baru Secara Otomatis & Terus Menerus",
+        "Dukungan VIP Langsung dari Tim Peneliti OpenTurath AI",
+      ],
+    ),
+  ];
+
+  /// Ambil daftar GoAkalTierLink berdasarkan slug
+  static List<GoAkalTierLink> getTierLinksForSlug(String slug) {
+    final tiersMap = directLinks[slug];
+    if (tiersMap != null && tiersMap.isNotEmpty) {
+      final list = <GoAkalTierLink>[];
+      for (final key in ['1_month', '6_months', '1_year']) {
+        if (tiersMap.containsKey(key)) {
+          list.add(tiersMap[key]!);
+        }
+      }
+      return list;
+    }
+    return const [];
+  }
+
   /// Mendapatkan daftar tier terstruktur untuk Agent tertentu
   static List<Map<String, dynamic>> getTiersForAgent(String? agentId) {
     final slug = resolveSlug(agentId);
@@ -695,25 +1008,25 @@ class GoAkalCatalogRegistry {
     // Default regular tier fallback
     return const [
       {
-        'name': '1 Bulan',
-        'price': 299000,
-        'label': 'Rp 299.000',
+        'name': '1 Bulan (Harga Khusus Launch)',
+        'price': 99000,
+        'label': 'Rp 99.000',
         'period': '/ bulan',
         'planId': 'regular_1m',
         'applyUrl': storeUrl,
       },
       {
         'name': '6 Bulan',
-        'price': 1499000,
-        'label': 'Rp 1.499.000',
+        'price': 499000,
+        'label': 'Rp 499.000',
         'period': '/ 6 bulan',
         'planId': 'regular_6m',
         'applyUrl': storeUrl,
       },
       {
         'name': '1 Tahun',
-        'price': 1999000,
-        'label': 'Rp 1.999.000',
+        'price': 890000,
+        'label': 'Rp 890.000',
         'period': '/ tahun',
         'planId': 'regular_1y',
         'applyUrl': storeUrl,

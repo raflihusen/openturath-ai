@@ -3,6 +3,7 @@
 generate_dart_registry.py
 =========================
 Menghasilkan lib/core/goakal_catalog_registry.dart dari goakal_catalog_master.json
+Menyediakan mapping untuk Single Disciplines maupun 6 Thematic Bundles.
 """
 
 import json
@@ -82,6 +83,105 @@ AGENT_TO_SLUG = {
     "bibliografi_faharis": "bibliografi-faharis",
 }
 
+BUNDLES_META = [
+    {
+        "slug": "paket-fikih-pesantren",
+        "title": "Paket Fikih Pesantren & Santri Salaf",
+        "subtitle": "The Syafi'i & Bahtsul Masail Suite",
+        "badgeText": "★ BEST SELLER NO. 1",
+        "iconEmoji": "🟢",
+        "originalPrice1m": 199000,
+        "launchPrice1m": 99000,
+        "includedItems": [
+            "Super AI Fikih Syafi'i (Al-Umm, Minhaj, Fathul Mu'in)",
+            "Super AI Ushul Fikih (Kaidah Dalil & Metodologi Istinbath)",
+            "Super AI Qawaid Fiqhiyyah (Kaidah Asasiyyah & Furu')",
+            "Super AI Fatawa & Masail (Fatwa Nawawi, Ibnu Hajar, Ba'alawi)",
+            "Super AI Tasawwuf & Adzkar (Pembersih Hati & Adab Syar'i)"
+        ]
+    },
+    {
+        "slug": "paket-samudra-hadits",
+        "title": "Paket Samudra Hadits & Sirah Nabawiyyah",
+        "subtitle": "The Hadith Master Suite",
+        "badgeText": "★ PILIHAN PENGKAJI HADIS",
+        "iconEmoji": "📜",
+        "originalPrice1m": 249000,
+        "launchPrice1m": 129000,
+        "includedItems": [
+            "Super AI Hadits Nabawi (Kutubus Sittah & Kutubut Tis'ah)",
+            "Super AI Syarah Hadits (Fathul Bari, Syarah Nawawi, Umdah)",
+            "Super AI Musthalah & Ulumul Hadits (Takhrij & 'Ilal Hadits)",
+            "Super AI Thabaqat & Tarajim Rijal (20.000+ Biografi Rawi)",
+            "Super AI Tarikh & Sirah Nabawiyyah (Konteks Asbabul Wurud)"
+        ]
+    },
+    {
+        "slug": "paket-tafsir-bahasa-arab",
+        "title": "Paket Mufassir & Khazanah Bahasa Arab",
+        "subtitle": "The Qur'an & Arabic Suite",
+        "badgeText": "★ FAVORIT ILMU ALAT & TAFSIR",
+        "iconEmoji": "📖",
+        "originalPrice1m": 199000,
+        "launchPrice1m": 99000,
+        "includedItems": [
+            "Super AI Tafsir & Ulumul Qur'an (Thabari, Ibnu Katsir, Razi)",
+            "Super AI Tajwid & Qira'at (Kaidah Bacaan 10 Imam Mutawatir)",
+            "Super AI Bahasa, Balaghah & Kamus (Lisanul Arab, Alfiyyah)",
+            "Super AI Bibliografi & Faharis (Peta Manuskrip & Penulis Kitab)"
+        ]
+    },
+    {
+        "slug": "paket-mazhab-akbar",
+        "title": "Paket Mufti, Mazhab Akbar & Pemikiran",
+        "subtitle": "The Grand Comparative Suite",
+        "badgeText": "★ RISET AKADEMIK & MAZHAB",
+        "iconEmoji": "⚖️",
+        "originalPrice1m": 299000,
+        "launchPrice1m": 149000,
+        "includedItems": [
+            "Super AI Fikih Hanafi (Kutubul Mu'tamadah Mazhab Hanafi)",
+            "Super AI Fikih Maliki (Mudawwanah, Mukhtashar Khalil)",
+            "Super AI Fikih Hanbali (Al-Mughni, Zadul Mustaqni')",
+            "Super AI Fikih Muqaran & Siyasah (Tata Negara & Politik Islam)",
+            "Super AI Aqidah & Ushuluddin (Kalam, Asy'ariyah-Maturidiyah)",
+            "Super AI Fatawa Akbar Lintas Mazhab"
+        ]
+    },
+    {
+        "slug": "paket-fikih-tahawwulat",
+        "title": "Paket Khusus Fikih Tahawwulat",
+        "subtitle": "The Eschatology & Prophetic Sign Suite",
+        "badgeText": "★ KORPUS MASTER KHUSUS",
+        "iconEmoji": "🌟",
+        "originalPrice1m": 199000,
+        "launchPrice1m": 99000,
+        "includedItems": [
+            "Persona Al-Muhaqqiq (Bedah Konsep & Dalil Ushul)",
+            "Persona Al-Bayan (Panduan Sikap Dakwah & Solusi Zaman)",
+            "Persona Al-Mukhtabir (Uji Komparasi Realitas & Tanda Zaman)",
+            "Persona Al-Habib (Bimbingan Jiwa & Keselamatan Iman)",
+            "Persona Al-Khatib (Penyusun Teks Khutbah & Retorika Da'i)"
+        ]
+    },
+    {
+        "slug": "paket-sultan-all-access",
+        "title": "Paket Sultan All-Access (Semua 24 AI)",
+        "subtitle": "Total VIP Ecosystem Access",
+        "badgeText": "👑 SULTAN VIP (HEMAT MAKSIMAL)",
+        "iconEmoji": "👑",
+        "originalPrice1m": 499000,
+        "launchPrice1m": 249000,
+        "includedItems": [
+            "Akses Tanpa Batas Seluruh 20 Modul Turath Lokal",
+            "Akses Seluruh 5 Persona Fikih Tahawwulat",
+            "Prioritas Pemrosesan AI Tingkat Tertinggi (Super Cepat)",
+            "Update Korpus Digital Baru Secara Otomatis & Terus Menerus",
+            "Dukungan VIP Langsung dari Tim Peneliti OpenTurath AI"
+        ]
+    }
+]
+
 lines = [
     "// Generated automatically by OpenTurath AI GoAkal Sync.",
     "// DO NOT EDIT MANUALLY.",
@@ -115,6 +215,30 @@ lines = [
     "      'applyUrl': applyUrl,",
     "    };",
     "  }",
+    "}",
+    "",
+    "class ThematicBundleMeta {",
+    "  final String slug;",
+    "  final String title;",
+    "  final String subtitle;",
+    "  final String badgeText;",
+    "  final String iconEmoji;",
+    "  final int originalPrice1m;",
+    "  final int launchPrice1m;",
+    "  final List<String> includedItems;",
+    "",
+    "  const ThematicBundleMeta({",
+    "    required this.slug,",
+    "    required this.title,",
+    "    required this.subtitle,",
+    "    required this.badgeText,",
+    "    required this.iconEmoji,",
+    "    required this.originalPrice1m,",
+    "    required this.launchPrice1m,",
+    "    required this.includedItems,",
+    "  });",
+    "",
+    "  List<GoAkalTierLink> get tiers => GoAkalCatalogRegistry.getTierLinksForSlug(slug);",
     "}",
     "",
     "class GoAkalCatalogRegistry {",
@@ -159,6 +283,43 @@ for slug, data in sorted(catalog.items()):
 lines.extend([
     "  };",
     "",
+    "  /// Metadata 6 Paket Tematik Khusus Launching",
+    "  static const List<ThematicBundleMeta> thematicBundles = [",
+])
+
+for b in BUNDLES_META:
+    lines.append("    ThematicBundleMeta(")
+    lines.append(f"      slug: {json.dumps(b['slug'])},")
+    lines.append(f"      title: {json.dumps(b['title'])},")
+    lines.append(f"      subtitle: {json.dumps(b['subtitle'])},")
+    lines.append(f"      badgeText: {json.dumps(b['badgeText'])},")
+    lines.append(f"      iconEmoji: {json.dumps(b['iconEmoji'])},")
+    lines.append(f"      originalPrice1m: {b['originalPrice1m']},")
+    lines.append(f"      launchPrice1m: {b['launchPrice1m']},")
+    lines.append("      includedItems: [")
+    for item in b["includedItems"]:
+        lines.append(f"        {json.dumps(item)},")
+    lines.append("      ],")
+    lines.append("    ),")
+
+lines.extend([
+    "  ];",
+    "",
+    "  /// Ambil daftar GoAkalTierLink berdasarkan slug",
+    "  static List<GoAkalTierLink> getTierLinksForSlug(String slug) {",
+    "    final tiersMap = directLinks[slug];",
+    "    if (tiersMap != null && tiersMap.isNotEmpty) {",
+    "      final list = <GoAkalTierLink>[];",
+    "      for (final key in ['1_month', '6_months', '1_year']) {",
+    "        if (tiersMap.containsKey(key)) {",
+    "          list.add(tiersMap[key]!);",
+    "        }",
+    "      }",
+    "      return list;",
+    "    }",
+    "    return const [];",
+    "  }",
+    "",
     "  /// Mendapatkan daftar tier terstruktur untuk Agent tertentu",
     "  static List<Map<String, dynamic>> getTiersForAgent(String? agentId) {",
     "    final slug = resolveSlug(agentId);",
@@ -176,25 +337,25 @@ lines.extend([
     "    // Default regular tier fallback",
     "    return const [",
     "      {",
-    "        'name': '1 Bulan',",
-    "        'price': 299000,",
-    "        'label': 'Rp 299.000',",
+    "        'name': '1 Bulan (Harga Khusus Launch)',",
+    "        'price': 99000,",
+    "        'label': 'Rp 99.000',",
     "        'period': '/ bulan',",
     "        'planId': 'regular_1m',",
     "        'applyUrl': storeUrl,",
     "      },",
     "      {",
     "        'name': '6 Bulan',",
-    "        'price': 1499000,",
-    "        'label': 'Rp 1.499.000',",
+    "        'price': 499000,",
+    "        'label': 'Rp 499.000',",
     "        'period': '/ 6 bulan',",
     "        'planId': 'regular_6m',",
     "        'applyUrl': storeUrl,",
     "      },",
     "      {",
     "        'name': '1 Tahun',",
-    "        'price': 1999000,",
-    "        'label': 'Rp 1.999.000',",
+    "        'price': 890000,",
+    "        'label': 'Rp 890.000',",
     "        'period': '/ tahun',",
     "        'planId': 'regular_1y',",
     "        'applyUrl': storeUrl,",

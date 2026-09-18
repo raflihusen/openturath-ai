@@ -2094,6 +2094,69 @@ export const syncAkalPurchases = functions
         entitlementKey: "bibliografi",
         name: "Super AI Bibliografi & Faharis Turath",
       },
+      // ══════════════════════════════════════════════════════════════
+      // 6 PAKET TEMATIK & SULTAN ALL-ACCESS (LAUNCH PROMO BUNDLES)
+      // ══════════════════════════════════════════════════════════════
+      {
+        cuid: "cmu6rsq7z001gjn044acg1ke4",
+        fallbacks: [] as string[],
+        entitlementKey: "fiqh_syafii",
+        entitlementKeys: ["fiqh_syafii", "ushul_fiqh", "fiqh", "tasawwuf"],
+        name: "Paket Fikih Pesantren & Santri Salaf",
+      },
+      {
+        cuid: "cmu6rst3y001xjn0468aypvd0",
+        fallbacks: [] as string[],
+        entitlementKey: "hadits",
+        entitlementKeys: ["hadits", "tarikh"],
+        name: "Paket Samudra Hadits & Sirah Nabawiyyah",
+      },
+      {
+        cuid: "cmu6rswk0002ejn04s90o870l",
+        fallbacks: [] as string[],
+        entitlementKey: "tafsir",
+        entitlementKeys: ["tafsir", "nahwu", "tajwid", "bibliografi"],
+        name: "Paket Mufassir & Khazanah Bahasa Arab",
+      },
+      {
+        cuid: "cmu6rt0ja002vjn04pimuyd84",
+        fallbacks: [] as string[],
+        entitlementKey: "fiqh_muqaran",
+        entitlementKeys: ["fiqh_hanafi", "fiqh_maliki", "fiqh_hanbali", "fiqh_muqaran", "aqidah", "fiqh"],
+        name: "Paket Mufti, Mazhab Akbar & Pemikiran",
+      },
+      {
+        cuid: "cmu6rt3i6003cjn04wp9v6tqt",
+        fallbacks: [] as string[],
+        entitlementKey: "fiqh_tahawwulat",
+        entitlementKeys: ["fiqh_tahawwulat"],
+        name: "Paket Khusus Fikih Tahawwulat",
+      },
+      {
+        cuid: "cmu6rt6aa003tjn04psx42goy",
+        fallbacks: [] as string[],
+        entitlementKey: "all_access",
+        entitlementKeys: [
+          "all_access",
+          "fiqh_tahawwulat",
+          "fiqh_syafii",
+          "fiqh_hanafi",
+          "fiqh_maliki",
+          "fiqh_hanbali",
+          "fiqh_muqaran",
+          "fiqh",
+          "ushul_fiqh",
+          "nahwu",
+          "tafsir",
+          "tajwid",
+          "hadits",
+          "aqidah",
+          "tasawwuf",
+          "tarikh",
+          "bibliografi"
+        ],
+        name: "Paket Sultan All-Access (Semua 24 AI)",
+      },
     ];
 
     const syncedServices: string[] = [];
@@ -2166,18 +2229,22 @@ export const syncAkalPurchases = functions
       }
 
       if (activeTxn) {
-        // Tulis entitlement ke Firestore user
+        // Tulis entitlement ke Firestore user (dukung multi-entitlement untuk bundle)
+        const targetKeys = (service as any).entitlementKeys || [service.entitlementKey];
+        const entUpdates: Record<string, any> = {};
+        for (const k of targetKeys) {
+          entUpdates[k] = {
+            plan: activeTxn.plan,
+            status: "active",
+            expiry: admin.firestore.Timestamp.fromDate(activeTxn.expiryDate),
+            source: "goakal",
+            source_transaction_id: activeTxn.id,
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+          };
+        }
+
         await db.collection("users").doc(uid).set({
-          entitlements: {
-            [service.entitlementKey]: {
-              plan: activeTxn.plan,
-              status: "active",
-              expiry: admin.firestore.Timestamp.fromDate(activeTxn.expiryDate),
-              source: "goakal",
-              source_transaction_id: activeTxn.id,
-              updated_at: admin.firestore.FieldValue.serverTimestamp(),
-            },
-          },
+          entitlements: entUpdates,
           updated_at: admin.firestore.FieldValue.serverTimestamp(),
         }, { merge: true });
 
@@ -2269,21 +2336,47 @@ export const akalWebhook = functions
       return;
     }
 
-    // Tentukan entitlement key
-    let entitlementKey = "fiqh_tahawwulat";
+    // Tentukan entitlement keys (dukung bundle multi-entitlements)
+    let entitlementKeys: string[] = ["fiqh_tahawwulat"];
     const sLower = serviceTitle.toLowerCase();
-    if (sLower.includes("syafii") || sLower.includes("syafi'i")) {
-      entitlementKey = "fiqh_syafii";
+    if (sLower.includes("all") || sLower.includes("sultan") || sLower.includes("semua")) {
+      entitlementKeys = [
+        "all_access",
+        "fiqh_tahawwulat",
+        "fiqh_syafii",
+        "fiqh_hanafi",
+        "fiqh_maliki",
+        "fiqh_hanbali",
+        "fiqh_muqaran",
+        "fiqh",
+        "ushul_fiqh",
+        "nahwu",
+        "tafsir",
+        "tajwid",
+        "hadits",
+        "aqidah",
+        "tasawwuf",
+        "tarikh",
+        "bibliografi",
+      ];
+    } else if (sLower.includes("pesantren") || sLower.includes("santri salaf")) {
+      entitlementKeys = ["fiqh_syafii", "ushul_fiqh", "fiqh", "tasawwuf"];
+    } else if (sLower.includes("samudra hadits") || sLower.includes("hadits & sirah")) {
+      entitlementKeys = ["hadits", "tarikh"];
+    } else if (sLower.includes("mufassir") || (sLower.includes("bahasa arab") && sLower.includes("tafsir"))) {
+      entitlementKeys = ["tafsir", "nahwu", "tajwid", "bibliografi"];
+    } else if (sLower.includes("mufti") || sLower.includes("mazhab akbar")) {
+      entitlementKeys = ["fiqh_hanafi", "fiqh_maliki", "fiqh_hanbali", "fiqh_muqaran", "aqidah", "fiqh"];
+    } else if (sLower.includes("syafii") || sLower.includes("syafi'i")) {
+      entitlementKeys = ["fiqh_syafii"];
     } else if (sLower.includes("arab") || sLower.includes("nahwu")) {
-      entitlementKey = "nahwu";
+      entitlementKeys = ["nahwu"];
     } else if (sLower.includes("ushul")) {
-      entitlementKey = "ushul_fiqh";
+      entitlementKeys = ["ushul_fiqh"];
     } else if (sLower.includes("hadits")) {
-      entitlementKey = "hadits";
+      entitlementKeys = ["hadits"];
     } else if (sLower.includes("tafsir")) {
-      entitlementKey = "tafsir";
-    } else if (sLower.includes("semua") || sLower.includes("all")) {
-      entitlementKey = "all_access";
+      entitlementKeys = ["tafsir"];
     }
 
     const durationMonths = detectDurationMonths(priceSchemeTitle, serviceTitle);
@@ -2304,7 +2397,8 @@ export const akalWebhook = functions
       status: "success",
       source: "goakal",
       service_name: serviceTitle,
-      entitlement_key: entitlementKey,
+      entitlement_key: entitlementKeys[0],
+      entitlement_keys: entitlementKeys,
       paid_at: admin.firestore.Timestamp.fromDate(baseDate),
       processed_at: admin.firestore.FieldValue.serverTimestamp(),
       subscription_expires_at: admin.firestore.Timestamp.fromDate(expiryDate),
@@ -2314,20 +2408,23 @@ export const akalWebhook = functions
     const usersSnap = await db.collection("users").where("email", "==", email).limit(1).get();
     if (!usersSnap.empty) {
       const userDoc = usersSnap.docs[0];
+      const entUpdates: Record<string, any> = {};
+      for (const k of entitlementKeys) {
+        entUpdates[k] = {
+          plan,
+          status: "active",
+          expiry: admin.firestore.Timestamp.fromDate(expiryDate),
+          source: "goakal",
+          source_transaction_id: txnId,
+          updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        };
+      }
+
       await userDoc.ref.set({
-        entitlements: {
-          [entitlementKey]: {
-            plan,
-            status: "active",
-            expiry: admin.firestore.Timestamp.fromDate(expiryDate),
-            source: "goakal",
-            source_transaction_id: txnId,
-            updated_at: admin.firestore.FieldValue.serverTimestamp(),
-          },
-        },
+        entitlements: entUpdates,
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
       }, { merge: true });
-      console.log(`[Akal Webhook] User ${email} entitlement '${entitlementKey}' updated successfully.`);
+      console.log(`[Akal Webhook] User ${email} entitlements '${entitlementKeys.join(", ")}' updated successfully.`);
     } else {
       console.log(`[Akal Webhook] User ${email} not yet registered in Firestore. Transaction stored.`);
     }
@@ -2343,12 +2440,12 @@ export const akalWebhook = functions
       `👤 Pembeli: <code>${email}</code> (${name})\n` +
       `📦 Layanan: <b>${serviceTitle}</b>\n` +
       `⏳ Paket: ${plan} (${durationMonths} bulan)\n` +
-      `🔑 Entitlement: <code>${entitlementKey}</code>\n` +
+      `🔑 Entitlement: <code>${entitlementKeys.join(", ")}</code>\n` +
       `💰 Nominal: Rp ${amount.toLocaleString("id-ID")}\n` +
       `📅 Masa Aktif: s/d ${expiryDate.toISOString().split("T")[0]}`
     );
 
-    res.status(200).json({ success: true, txnId, entitlementKey });
+    res.status(200).json({ success: true, txnId, entitlementKeys });
   });
 
 

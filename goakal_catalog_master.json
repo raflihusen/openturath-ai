@@ -444,5 +444,161 @@
         "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/8yt9m/apply"
       }
     }
+  },
+  "paket-fikih-pesantren": {
+    "title": "PAKET FIKIH PESANTREN & SANTRI SALAF",
+    "cuid": "cmu6rsq7z001gjn044acg1ke4",
+    "url_id": "paket-fikih-pesantren",
+    "page_url": "https://goakal.com/openturath-ai/paket-fikih-pesantren",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan (Harga Khusus Launch)",
+        "amount": 99000,
+        "cuid": "cmu6rsr0a001mjn0437i6o3hy",
+        "apply_url": "https://goakal.com/openturath-ai/paket-fikih-pesantren/cmu6rsr0a001mjn0437i6o3hy/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan (1 Semester)",
+        "amount": 499000,
+        "cuid": "cmu6rsrp9001qjn04ml7uq9og",
+        "apply_url": "https://goakal.com/openturath-ai/paket-fikih-pesantren/cmu6rsrp9001qjn04ml7uq9og/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan (1 Tahun)",
+        "amount": 890000,
+        "cuid": "cmu6rvfcz0001jv04ieveqgf7",
+        "apply_url": "https://goakal.com/openturath-ai/paket-fikih-pesantren/lh0db/apply"
+      }
+    }
+  },
+  "paket-samudra-hadits": {
+    "title": "PAKET SAMUDRA HADITS & SIRAH NABAWIYYAH",
+    "cuid": "cmu6rst3y001xjn0468aypvd0",
+    "url_id": "paket-samudra-hadits",
+    "page_url": "https://goakal.com/openturath-ai/paket-samudra-hadits",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan (Harga Khusus Launch)",
+        "amount": 129000,
+        "cuid": "cmu6rsubc0023jn04otf28nuq",
+        "apply_url": "https://goakal.com/openturath-ai/paket-samudra-hadits/cmu6rsubc0023jn04otf28nuq/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan (1 Semester)",
+        "amount": 649000,
+        "cuid": "cmu6rsvd40027jn046dpjg44e",
+        "apply_url": "https://goakal.com/openturath-ai/paket-samudra-hadits/cmu6rsvd40027jn046dpjg44e/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan (1 Tahun)",
+        "amount": 1190000,
+        "cuid": "cmu6rsw00002bjn04etw4kniw",
+        "apply_url": "https://goakal.com/openturath-ai/paket-samudra-hadits/cmu6rsw00002bjn04etw4kniw/apply"
+      }
+    }
+  },
+  "paket-tafsir-bahasa-arab": {
+    "title": "PAKET MUFASSIR & KHAZANAH BAHASA ARAB",
+    "cuid": "cmu6rswk0002ejn04s90o870l",
+    "url_id": "paket-tafsir-bahasa-arab",
+    "page_url": "https://goakal.com/openturath-ai/paket-tafsir-bahasa-arab",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan (Harga Khusus Launch)",
+        "amount": 99000,
+        "cuid": "cmu6rsxj6002kjn04u59vdqhs",
+        "apply_url": "https://goakal.com/openturath-ai/paket-tafsir-bahasa-arab/cmu6rsxj6002kjn04u59vdqhs/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan (1 Semester)",
+        "amount": 499000,
+        "cuid": "cmu6rsyys002ojn04tb3ts3ox",
+        "apply_url": "https://goakal.com/openturath-ai/paket-tafsir-bahasa-arab/cmu6rsyys002ojn04tb3ts3ox/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan (1 Tahun)",
+        "amount": 890000,
+        "cuid": "cmu6rszpu002sjn04yj6tlfr9",
+        "apply_url": "https://goakal.com/openturath-ai/paket-tafsir-bahasa-arab/cmu6rszpu002sjn04yj6tlfr9/apply"
+      }
+    }
+  },
+  "paket-mazhab-akbar": {
+    "title": "PAKET MUFTI, MAZHAB AKBAR & PEMIKIRAN",
+    "cuid": "cmu6rt0ja002vjn04pimuyd84",
+    "url_id": "paket-mazhab-akbar",
+    "page_url": "https://goakal.com/openturath-ai/paket-mazhab-akbar",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan (Harga Khusus Launch)",
+        "amount": 149000,
+        "cuid": "cmu6rt1fl0031jn04eugtuqsz",
+        "apply_url": "https://goakal.com/openturath-ai/paket-mazhab-akbar/cmu6rt1fl0031jn04eugtuqsz/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan (1 Semester)",
+        "amount": 749000,
+        "cuid": "cmu6rt2480035jn04zhz22qml",
+        "apply_url": "https://goakal.com/openturath-ai/paket-mazhab-akbar/cmu6rt2480035jn04zhz22qml/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan (1 Tahun)",
+        "amount": 1390000,
+        "cuid": "cmu6rt2uv0039jn04eimivjqb",
+        "apply_url": "https://goakal.com/openturath-ai/paket-mazhab-akbar/cmu6rt2uv0039jn04eimivjqb/apply"
+      }
+    }
+  },
+  "paket-fikih-tahawwulat": {
+    "title": "PAKET KHUSUS FIKIH TAHAWWULAT",
+    "cuid": "cmu6rt3i6003cjn04wp9v6tqt",
+    "url_id": "paket-fikih-tahawwulat",
+    "page_url": "https://goakal.com/openturath-ai/paket-fikih-tahawwulat",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan (Harga Khusus Launch)",
+        "amount": 99000,
+        "cuid": "cmu6rt45n003ijn04wnrbivh5",
+        "apply_url": "https://goakal.com/openturath-ai/paket-fikih-tahawwulat/cmu6rt45n003ijn04wnrbivh5/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan (1 Semester)",
+        "amount": 499000,
+        "cuid": "cmu6rt4zh003mjn04puwzuh3b",
+        "apply_url": "https://goakal.com/openturath-ai/paket-fikih-tahawwulat/cmu6rt4zh003mjn04puwzuh3b/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan (1 Tahun)",
+        "amount": 890000,
+        "cuid": "cmu6rt5q4003qjn041xmhj9mh",
+        "apply_url": "https://goakal.com/openturath-ai/paket-fikih-tahawwulat/cmu6rt5q4003qjn041xmhj9mh/apply"
+      }
+    }
+  },
+  "paket-sultan-all-access": {
+    "title": "PAKET SULTAN ALL-ACCESS (SEMUA 24 AI)",
+    "cuid": "cmu6rt6aa003tjn04psx42goy",
+    "url_id": "paket-sultan-all-access",
+    "page_url": "https://goakal.com/openturath-ai/paket-sultan-all-access",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan (Harga Khusus Launch)",
+        "amount": 249000,
+        "cuid": "cmu6rt75m003zjn048rgk734a",
+        "apply_url": "https://goakal.com/openturath-ai/paket-sultan-all-access/cmu6rt75m003zjn048rgk734a/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan (1 Semester)",
+        "amount": 1249000,
+        "cuid": "cmu6rt85c0043jn04332nmbv0",
+        "apply_url": "https://goakal.com/openturath-ai/paket-sultan-all-access/cmu6rt85c0043jn04332nmbv0/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan (1 Tahun)",
+        "amount": 1990000,
+        "cuid": "cmu6rt9ol0047jn04rqj20e2a",
+        "apply_url": "https://goakal.com/openturath-ai/paket-sultan-all-access/cmu6rt9ol0047jn04rqj20e2a/apply"
+      }
+    }
   }
 }
