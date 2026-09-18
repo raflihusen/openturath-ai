@@ -15,20 +15,20 @@ void main() {
   group('Quiet Scholar Design System — Tokens Suite', () {
     test('OTColors provides calm, scholarly palettes without gold leaks', () {
       // 1. Light palette checks
-      expect(OTColors.canvasLight, const Color(0xFFFAFAF9));
+      expect(OTColors.canvasLight, const Color(0xFFF6F6F3));
       expect(OTColors.surfaceLight, const Color(0xFFFFFFFF));
-      expect(OTColors.textPrimaryLight, const Color(0xFF18181B));
-      expect(OTColors.textSecondaryLight, const Color(0xFF52525B));
+      expect(OTColors.textPrimaryLight, const Color(0xFF171717));
+      expect(OTColors.textSecondaryLight, const Color(0xFF656560));
 
       // 2. Dark palette checks
-      expect(OTColors.canvasDark, const Color(0xFF0E0E10));
-      expect(OTColors.surfaceDark, const Color(0xFF18181B));
-      expect(OTColors.textPrimaryDark, const Color(0xFFFAFAFA));
-      expect(OTColors.textSecondaryDark, const Color(0xFFA1A1AA));
+      expect(OTColors.canvasDark, const Color(0xFF111110));
+      expect(OTColors.surfaceDark, const Color(0xFF181817));
+      expect(OTColors.textPrimaryDark, const Color(0xFFF4F4F0));
+      expect(OTColors.textSecondaryDark, const Color(0xFFB2B2AA));
 
       // 3. Scholarly pure monochrome accents
-      expect(OTColors.accentLight, const Color(0xFF18181B));
-      expect(OTColors.accentDark, const Color(0xFFFAFAFA));
+      expect(OTColors.accentLight, const Color(0xFF171717));
+      expect(OTColors.accentDark, const Color(0xFFF4F4F0));
 
       // 4. Adaptive context helpers
       expect(OTColors.canvas(false), OTColors.canvasLight);
