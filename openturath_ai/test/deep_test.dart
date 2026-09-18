@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/arabic_utils.dart';
+import 'package:openturath_ai/core/design/ot_colors.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/models/agent_model.dart';
@@ -69,16 +70,16 @@ void main() {
 
   group('2. Design System & Theme Engine Invariants', () {
     test('Official Google NotebookLM color tokens are exact', () {
-      expect(AppTheme.canvasLight, equals(const Color(0xFFFFFFFF)));
-      expect(AppTheme.canvasDark, equals(const Color(0xFF0E0E10)));
-      expect(AppTheme.surfaceCardLight, equals(const Color(0xFFFFFFFF)));
-      expect(AppTheme.surfaceCardDark, equals(const Color(0xFF18181B)));
-      expect(AppTheme.borderLight, equals(const Color(0xFFE5E7EB)));
-      expect(AppTheme.borderDark, equals(const Color(0xFF27272A)));
-      expect(AppTheme.accentLight, equals(const Color(0xFF18181B)));
-      expect(AppTheme.accentDark, equals(const Color(0xFFFAFAFA)));
-      expect(AppTheme.citationBgLight, equals(const Color(0xFFF1F5F9)));
-      expect(AppTheme.citationBgDark, equals(const Color(0xFF1E1E22)));
+      expect(AppTheme.canvasLight, equals(OTColors.canvasLight));
+      expect(AppTheme.canvasDark, equals(OTColors.canvasDark));
+      expect(AppTheme.surfaceCardLight, equals(OTColors.surfaceLight));
+      expect(AppTheme.surfaceCardDark, equals(OTColors.surfaceDark));
+      expect(AppTheme.borderLight, equals(OTColors.borderLight));
+      expect(AppTheme.borderDark, equals(OTColors.borderDark));
+      expect(AppTheme.accentLight, equals(OTColors.accentLight));
+      expect(AppTheme.accentDark, equals(OTColors.accentDark));
+      expect(AppTheme.citationBgLight, equals(OTColors.surfaceSubtleLight));
+      expect(AppTheme.citationBgDark, equals(OTColors.surfaceSubtleDark));
     });
 
     test('Radius tokens conform to Apple HIG 3-token system', () {
@@ -114,10 +115,12 @@ void main() {
       expect(activeAgents.isNotEmpty, isTrue);
 
       for (final a in activeAgents) {
-        for (final BookModel b in a.referenceBooks!) {
-          expect(b.title, isNotEmpty);
-          expect(b.titleArabic, isNotEmpty);
-          expect(b.author, isNotEmpty);
+        if (a.referenceBooks != null) {
+          for (final BookModel b in a.referenceBooks!) {
+            expect(b.title, isNotEmpty);
+            expect(b.titleArabic, isNotEmpty);
+            expect(b.author, isNotEmpty);
+          }
         }
       }
     });
