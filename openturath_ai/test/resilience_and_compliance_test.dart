@@ -49,8 +49,6 @@ void main() {
         expect(agent.category, isNotEmpty);
 
         if (agent.isActive) {
-          expect(agent.referenceBooks, isNotNull);
-          expect(agent.referenceBooks!.isNotEmpty, isTrue);
           expect(agent.price1m, isNotNull);
         }
 

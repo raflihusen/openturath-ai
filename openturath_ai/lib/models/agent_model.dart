@@ -691,6 +691,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 13,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
         AgentModel(
           id: 'imam_ghazali',
@@ -712,6 +715,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 14,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
 
         // ── 9. SPESIALIS TAMBAHAN KATALOG MASTER ───────────────
@@ -732,6 +738,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 15,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
         AgentModel(
           id: 'fatawa_masail',
@@ -750,6 +759,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 16,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
         AgentModel(
           id: 'tajwid_qiraat',
@@ -768,6 +780,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 17,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
         AgentModel(
           id: 'musthalah_hadits',
@@ -786,6 +801,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 18,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
         AgentModel(
           id: 'syarah_hadits',
@@ -804,6 +822,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 19,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
         AgentModel(
           id: 'thabaqat_rijal',
@@ -822,6 +843,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 20,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
         AgentModel(
           id: 'bibliografi_faharis',
@@ -840,6 +864,9 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 21,
+          price1m: 49000,
+          price6m: 299000,
+          price1y: 499000,
         ),
       ];
 }
