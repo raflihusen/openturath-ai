@@ -6,6 +6,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
 const crypto = require("crypto");
+const notebook_catalog_1 = require("./notebook_catalog");
 admin.initializeApp();
 const db = admin.firestore();
 // ================================================================
@@ -30,60 +31,48 @@ async function sendTelegramNotification(text) {
 // ================================================================
 // HARGA & DURASI OTORITATIF — Ditentukan oleh `resolvePlanPricing`
 // ================================================================
-// URL NotebookLM — HANYA ADA DI SINI, TIDAK DI CLIENT
-const AGENT_URLS = {
-    // Fikih
-    fiqh_tahawwulat: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
-    fiqh_tahawwulat_muhaqqiq: "https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
-    fiqh_tahawwulat_bayan: "https://notebooklm.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd",
-    fiqh_tahawwulat_mukhtabir: "https://notebooklm.google.com/notebook/ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
-    fiqh_tahawwulat_habib: "https://notebooklm.google.com/notebook/6673e79a-7156-42e1-b116-bc1653a32094",
-    fiqh_tahawwulat_khatib: "https://notebooklm.google.com/notebook/1288e413-9569-47a3-892f-64008e53c1e8",
-    fiqh_syafii: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
-    fiqh_syafii_muhaqqiq: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
-    // Hadits
-    hadits: "https://notebooklm.google.com/notebook/b9626501-538c-4358-a44f-6731eaec50b6",
-    hadits_muhaqqiq: "https://notebooklm.google.com/notebook/b9626501-538c-4358-a44f-6731eaec50b6",
-    hadits_takhrij: "https://notebooklm.google.com/notebook/b9626501-538c-4358-a44f-6731eaec50b6",
-    hadits_syarah: "https://notebooklm.google.com/notebook/b9626501-538c-4358-a44f-6731eaec50b6",
-    hadits_ilal: "https://notebooklm.google.com/notebook/b9626501-538c-4358-a44f-6731eaec50b6",
-    // Tafsir
-    tafsir: "https://notebooklm.google.com/notebook/df92cc50-1106-4221-8748-1663f00fa7fe",
-    tafsir_muhaqqiq: "https://notebooklm.google.com/notebook/df92cc50-1106-4221-8748-1663f00fa7fe",
-    tafsir_ahkam: "https://notebooklm.google.com/notebook/df92cc50-1106-4221-8748-1663f00fa7fe",
-    tafsir_matsur: "https://notebooklm.google.com/notebook/df92cc50-1106-4221-8748-1663f00fa7fe",
-    tafsir_ulumul_quran: "https://notebooklm.google.com/notebook/df92cc50-1106-4221-8748-1663f00fa7fe",
-    // Ushul Fiqih
-    ushul_fiqh: "https://notebooklm.google.com/notebook/6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-    ushul_muhaqqiq: "https://notebooklm.google.com/notebook/6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-    usul_qawaid: "https://notebooklm.google.com/notebook/6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-    usul_maqashid: "https://notebooklm.google.com/notebook/6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-    usul_istinbath: "https://notebooklm.google.com/notebook/6ab6dae8-0067-435a-85ca-b6bd4e17dd12",
-    // Bahasa Arab
-    nahwu_sharaf: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-    nahwu_sharaf_muerib: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-    nahwu_sharaf_tashrif: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-    bahasa_arab: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-    lughah_nahwu: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-    lughah_sharaf: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-    lughah_balaghah: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-    lughah_mujam: "https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06",
-};
+// URL NotebookLM — Inisialisasi otomatis dari Katalog 24 Entitas OpenTurath
+const AGENT_URLS = {};
+for (const [agentId, entityCode] of Object.entries(notebook_catalog_1.AGENT_TO_ENTITY)) {
+    const entity = notebook_catalog_1.NOTEBOOK_ENTITIES[entityCode];
+    if (entity) {
+        AGENT_URLS[agentId] = entity.masterUrl;
+    }
+}
 // Mapping eksplisit mencegah agent baru "jatuh" ke entitlement default dan
 // tidak sengaja terbuka oleh langganan modul lain.
 const AGENT_ENTITLEMENTS = {
+    // Fikih Tahawwulat (Sovereign Flagship)
     fiqh_tahawwulat: "fiqh_tahawwulat",
     fiqh_tahawwulat_muhaqqiq: "fiqh_tahawwulat",
     fiqh_tahawwulat_bayan: "fiqh_tahawwulat",
     fiqh_tahawwulat_mukhtabir: "fiqh_tahawwulat",
     fiqh_tahawwulat_habib: "fiqh_tahawwulat",
     fiqh_tahawwulat_khatib: "fiqh_tahawwulat",
+    // 4 Mazhab Fikih & Muqaran
     fiqh_syafii: "fiqh_syafii",
     fiqh_syafii_muhaqqiq: "fiqh_syafii",
     fiqh_hanafi: "fiqh_hanafi",
+    fiqh_hanafi_muhaqqiq: "fiqh_hanafi",
     fiqh_maliki: "fiqh_maliki",
+    fiqh_maliki_muhaqqiq: "fiqh_maliki",
     fiqh_hanbali: "fiqh_hanbali",
+    fiqh_hanbali_muhaqqiq: "fiqh_hanbali",
+    fiqh_hambali: "fiqh_hanbali",
     fiqh_muqaran: "fiqh_muqaran",
+    fiqh_muqaran_muhaqqiq: "fiqh_muqaran",
+    fatawa_masail: "fiqh",
+    fatawa_dan_masail: "fiqh",
+    fatawa: "fiqh",
+    // Kaidah & Ushul Fikih
+    qawaid_fiqhiyyah: "ushul_fiqh",
+    usul_qawaid: "ushul_fiqh",
+    qawaid: "ushul_fiqh",
+    ushul_fiqh: "ushul_fiqh",
+    ushul_muhaqqiq: "ushul_fiqh",
+    usul_maqashid: "ushul_fiqh",
+    usul_istinbath: "ushul_fiqh",
+    // Bahasa & Sastra Arab
     nahwu_sharaf: "nahwu",
     nahwu_sharaf_muerib: "nahwu",
     nahwu_sharaf_tashrif: "nahwu",
@@ -92,30 +81,45 @@ const AGENT_ENTITLEMENTS = {
     lughah_sharaf: "nahwu",
     lughah_balaghah: "nahwu",
     lughah_mujam: "nahwu",
-    ushul_fiqh: "ushul_fiqh",
-    ushul_muhaqqiq: "ushul_fiqh",
-    usul_qawaid: "ushul_fiqh",
-    usul_maqashid: "ushul_fiqh",
-    usul_istinbath: "ushul_fiqh",
+    // Tafsir & Al-Qur'an
     tafsir: "tafsir",
     tafsir_muhaqqiq: "tafsir",
     tafsir_ahkam: "tafsir",
     tafsir_matsur: "tafsir",
     tafsir_ulumul_quran: "tafsir",
+    tajwid_qiraat: "tafsir",
+    tajwid: "tafsir",
+    qiraat: "tafsir",
+    // Hadits & Syarah
     hadits: "hadits",
     hadits_muhaqqiq: "hadits",
-    hadits_takhrij: "hadits",
     hadits_syarah: "hadits",
+    syarah_hadits: "hadits",
+    hadits_takhrij: "hadits",
     hadits_ilal: "hadits",
+    musthalah_hadits: "hadits",
+    // Akidah & Teologi
     aqidah: "aqidah",
     aqidah_kalam: "aqidah",
     aqidah_ushuluddin: "aqidah",
+    ushuluddin: "aqidah",
+    // Sejarah, Sirah & Biografi
     tarikh: "tarikh",
     tarikh_khulafa: "tarikh",
+    sirah: "tarikh",
     tarikh_thabaqat: "tarikh",
-    habib_umar: "tasawwuf",
+    thabaqat_rijal: "tarikh",
+    // Tasawwuf & Ulama
+    tasawwuf: "tasawwuf",
+    tasawwuf_adzkar: "tasawwuf",
     tasawwuf_ihya: "tasawwuf",
     tasawwuf_adab: "tasawwuf",
+    habib_umar: "tasawwuf",
+    imam_ghazali: "tasawwuf",
+    // Bibliografi & Faharis
+    bibliografi_faharis: "all_access",
+    faharis: "all_access",
+    bibliografi: "all_access",
     all_ai: "all_access",
 };
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
@@ -127,16 +131,28 @@ exports.PURCHASABLE_AGENTS = new Set([
     "fiqh_tahawwulat_habib",
     "fiqh_tahawwulat_khatib",
     "fiqh_syafii",
+    "fiqh_syafii_muhaqqiq",
     "fiqh_hanafi",
     "fiqh_maliki",
+    "fiqh_hanbali",
     "fiqh_hambali",
+    "fiqh_muqaran",
+    "fatawa_masail",
+    "qawaid_fiqhiyyah",
     "hadits",
+    "syarah_hadits",
+    "musthalah_hadits",
     "tafsir",
+    "tajwid_qiraat",
     "ushul_fiqh",
     "tarikh",
+    "thabaqat_rijal",
     "tasawwuf",
+    "habib_umar",
+    "imam_ghazali",
     "aqidah",
     "nahwu_sharaf",
+    "bibliografi_faharis",
 ]);
 exports.MODULE_PLANS = {
     tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
@@ -221,7 +237,8 @@ exports.getAgentUrl = functions
     if (!agentId) {
         throw new functions.https.HttpsError("invalid-argument", "agentId diperlukan.");
     }
-    const url = AGENT_URLS[agentId];
+    const resolved = (0, notebook_catalog_1.resolveAgentNotebook)(agentId, uid);
+    const url = resolved ? resolved.url : AGENT_URLS[agentId];
     if (!url) {
         throw new functions.https.HttpsError("not-found", "Agent tidak ditemukan atau belum aktif.");
     }
@@ -234,7 +251,13 @@ exports.getAgentUrl = functions
     const entitlementKey = getEntitlementKey(agentId);
     const entitlementAccess = getEntitlementAccess(userData, entitlementKey);
     if (entitlementAccess.active) {
-        return { url };
+        return {
+            url,
+            notebookId: resolved === null || resolved === void 0 ? void 0 : resolved.notebookId,
+            cloneName: resolved === null || resolved === void 0 ? void 0 : resolved.cloneName,
+            entityCode: resolved === null || resolved === void 0 ? void 0 : resolved.entityCode,
+            isMaster: resolved === null || resolved === void 0 ? void 0 : resolved.isMaster,
+        };
     }
     throw new functions.https.HttpsError("permission-denied", "Akses modul riset ini membutuhkan langganan aktif atau kode redeem santri. Silakan berlangganan atau masukkan kode akses untuk melanjutkan.");
 });
@@ -249,7 +272,8 @@ exports.recordQuestion = functions
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan.");
     }
     const agentId = data.agentId;
-    if (!agentId || !AGENT_URLS[agentId]) {
+    const resolved = (0, notebook_catalog_1.resolveAgentNotebook)(agentId);
+    if (!agentId || (!resolved && !AGENT_URLS[agentId])) {
         throw new functions.https.HttpsError("not-found", "Kajian tidak ditemukan atau belum aktif.");
     }
     const entitlementKey = getEntitlementKey(agentId);
