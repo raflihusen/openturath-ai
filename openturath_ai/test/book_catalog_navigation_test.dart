@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/app_copy.dart';
 import 'package:openturath_ai/core/routes.dart';
 import 'package:openturath_ai/models/book_model.dart';
 import 'package:openturath_ai/screens/book_catalog_screen.dart';
@@ -87,7 +88,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Kitab rujukan'), findsOneWidget);
+      expect(find.text(AppCopy.referenceBooks), findsOneWidget);
       expect(find.text('87 Kitab Mazhab Syafi\'i'), findsOneWidget);
       expect(find.text('Semua kitab'), findsOneWidget);
     });
