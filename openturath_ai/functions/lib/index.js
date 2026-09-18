@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -1129,10 +1129,18 @@ exports.onUserCreate = functions.firestore
     const user = await admin.auth().getUser(uid);
     if (!user.emailVerified || !user.email)
         return null;
-    // Only owned historical transactions may repair an empty profile.
-    const owned = await db.collection("transactions").where("uid", "==", uid)
-        .where("status", "in", ["success", "paid"]).get();
-    if (owned.empty)
+    // Only verified email users may claim historical transactions.
+    const emailLower = user.email.toLowerCase().trim();
+    const [ownedByUid, ownedByEmail] = await Promise.all([
+        db.collection("transactions").where("uid", "==", uid).where("status", "in", ["success", "paid"]).get(),
+        db.collection("transactions").where("customer_email", "==", emailLower).where("status", "in", ["success", "paid"]).get(),
+    ]);
+    const allDocsMap = new Map();
+    for (const doc of ownedByUid.docs)
+        allDocsMap.set(doc.id, doc);
+    for (const doc of ownedByEmail.docs)
+        allDocsMap.set(doc.id, doc);
+    if (allDocsMap.size === 0)
         return null;
     await db.runTransaction(async (t) => {
         const current = await t.get(snapshot.ref);
@@ -1143,18 +1151,22 @@ exports.onUserCreate = functions.firestore
             return;
         const entitlements = {};
         const txs = [];
-        for (const doc of owned.docs)
+        for (const doc of allDocsMap.values())
             txs.push(await t.get(doc.ref));
         for (const tx of txs) {
             const data = tx.data();
-            if (!data || data.uid !== uid || !["paid", "success"].includes(data.status))
+            if (!data || !["paid", "success"].includes(data.status))
                 continue;
             const key = data.entitlement_key;
             const expiry = data.subscription_expires_at;
             if (typeof key !== "string" || !(expiry === null || expiry === void 0 ? void 0 : expiry.toDate) || expiry.toDate() <= new Date())
                 continue;
             if (!entitlements[key] || expiry.toMillis() > entitlements[key].expiry.toMillis()) {
-                entitlements[key] = { plan: data.plan || "premium", status: "active", expiry };
+                entitlements[key] = { plan: data.plan || "premium", status: "active", expiry, source: data.source || "goakal" };
+            }
+            // Link uid if not linked
+            if (!data.uid) {
+                t.update(tx.ref, { uid, updated_at: admin.firestore.FieldValue.serverTimestamp() });
             }
         }
         if (!Object.keys(entitlements).length)
@@ -1684,6 +1696,283 @@ function detectDurationMonths(priceSchemeTitle, serviceTitle) {
         return 6;
     return 1;
 }
+// ================================================================
+// FUNCTION: syncAkalPurchases (Otomasi Sinkronisasi Pembelian GoAkal)
+// ================================================================
+exports.syncAkalPurchases = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 60 })
+    .https.onCall(async (data, context) => {
+    var _a;
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk sinkronisasi.");
+    }
+    const uid = context.auth.uid;
+    const email = (context.auth.token.email || "").toLowerCase().trim();
+    if (!email) {
+        throw new functions.https.HttpsError("failed-precondition", "Akun Google Anda tidak memiliki alamat email yang valid.");
+    }
+    const apiKey = getAkalApiKey();
+    if (!apiKey) {
+        throw new functions.https.HttpsError("internal", "Kunci API GoAkal belum dikonfigurasi di server.");
+    }
+    // Daftar service GoAkal resmi OpenTurath AI
+    const akalServices = [
+        {
+            cuid: "cmln2i27k0000jx047oabzw8p",
+            fallbacks: [],
+            entitlementKey: "fiqh_tahawwulat",
+            name: "AI Fikih Tahawwulat (5 Bilik AI)",
+        },
+        {
+            cuid: "cms4ls3j60001l20439k1nph4",
+            fallbacks: ["cms4ls3j60001l20439k1nqh4"],
+            entitlementKey: "fiqh_syafii",
+            name: "Super AI Fikih Syafi'i",
+        },
+        {
+            cuid: "cmnd7l4o60002l504ab6qq31x",
+            fallbacks: [],
+            entitlementKey: "nahwu",
+            name: "Super AI Bahasa Arab",
+        },
+    ];
+    const syncedServices = [];
+    const now = new Date();
+    for (const service of akalServices) {
+        const allCuids = [service.cuid, ...service.fallbacks];
+        let activeTxn = null;
+        for (const cuid of allCuids) {
+            if (activeTxn)
+                break;
+            const statuses = ["PAID", "SETTLED"];
+            for (const status of statuses) {
+                if (activeTxn)
+                    break;
+                let page = 1;
+                const maxPages = 4;
+                while (page <= maxPages) {
+                    const apiUrl = `https://goakal.com/service/api/v1/services/${cuid}/transactions?status=${status}&pageSize=100&page=${page}`;
+                    try {
+                        const response = await axios_1.default.get(apiUrl, {
+                            headers: { "X-Api-Key": apiKey },
+                            timeout: 8000,
+                        });
+                        const txns = ((_a = response.data) === null || _a === void 0 ? void 0 : _a.data) || [];
+                        if (txns.length === 0)
+                            break;
+                        for (const t of txns) {
+                            const payerEmail = (t.payerEmail || "").trim().toLowerCase();
+                            if (payerEmail !== email)
+                                continue;
+                            let expiryDate = null;
+                            if (t.expiryDate) {
+                                expiryDate = new Date(t.expiryDate);
+                            }
+                            else {
+                                const startStr = t.paidAt || t.createdAt;
+                                if (startStr) {
+                                    const duration = detectDurationMonths(t.priceSchemeTitle || "", t.serviceTitle || "");
+                                    expiryDate = new Date(startStr);
+                                    expiryDate.setMonth(expiryDate.getMonth() + duration);
+                                }
+                            }
+                            if (expiryDate && expiryDate > now) {
+                                const durMonths = detectDurationMonths(t.priceSchemeTitle || "", t.serviceTitle || "");
+                                const plan = durMonths === 12 ? "bahits_1y" : (durMonths === 6 ? "tholib_6m" : "tholib_1m");
+                                activeTxn = {
+                                    id: t.id || `akal_${Date.now()}`,
+                                    payerName: t.payerName || "Santri Peneliti",
+                                    plan,
+                                    durationMonths: durMonths,
+                                    amount: Number(t.amount) || 0,
+                                    expiryDate,
+                                    serviceTitle: t.serviceTitle || service.name,
+                                };
+                                break;
+                            }
+                        }
+                        if (activeTxn || txns.length < 100)
+                            break;
+                        page++;
+                    }
+                    catch (e) {
+                        console.warn(`[syncAkalPurchases] Query failed for cuid ${cuid}: ${e.message}`);
+                        break;
+                    }
+                }
+            }
+        }
+        if (activeTxn) {
+            // Tulis entitlement ke Firestore user
+            await db.collection("users").doc(uid).set({
+                entitlements: {
+                    [service.entitlementKey]: {
+                        plan: activeTxn.plan,
+                        status: "active",
+                        expiry: admin.firestore.Timestamp.fromDate(activeTxn.expiryDate),
+                        source: "goakal",
+                        source_transaction_id: activeTxn.id,
+                        updated_at: admin.firestore.FieldValue.serverTimestamp(),
+                    },
+                },
+                updated_at: admin.firestore.FieldValue.serverTimestamp(),
+            }, { merge: true });
+            // Simpan catatan transaksi idempotensi
+            await db.collection("transactions").doc(activeTxn.id).set({
+                uid,
+                customer_email: email,
+                customer_name: activeTxn.payerName,
+                plan: activeTxn.plan,
+                amount: activeTxn.amount,
+                duration_months: activeTxn.durationMonths,
+                status: "success",
+                source: "goakal",
+                service_name: activeTxn.serviceTitle,
+                entitlement_key: service.entitlementKey,
+                subscription_expires_at: admin.firestore.Timestamp.fromDate(activeTxn.expiryDate),
+                synced_at: admin.firestore.FieldValue.serverTimestamp(),
+            }, { merge: true });
+            // Auto-provision ke NotebookLM via Cloud Run
+            try {
+                await notifySubscriptionServer(email, activeTxn.payerName, activeTxn.plan, "add", activeTxn.serviceTitle);
+            }
+            catch (_) { }
+            syncedServices.push(service.name);
+        }
+    }
+    if (syncedServices.length > 0) {
+        await sendTelegramNotification(`🔄 <b>[SINKRONISASI GOAKAL OTOMATIS]</b>\n` +
+            `👤 Pengguna: <code>${email}</code>\n` +
+            `📚 Hak Akses Aktif: <b>${syncedServices.join(", ")}</b>`);
+    }
+    return {
+        success: true,
+        synced: syncedServices,
+        count: syncedServices.length,
+        message: syncedServices.length > 0
+            ? `Alhamdulillah! Akses aktif berhasil disinkronkan: ${syncedServices.join(", ")}.`
+            : "Belum ditemukan transaksi aktif di GoAkal untuk email ini. Pastikan Anda menggunakan email akun Google yang sama saat membayar di GoAkal.",
+    };
+});
+// ================================================================
+// FUNCTION: akalWebhook (Webhook Receiver HTTP dari GoAkal)
+// ================================================================
+exports.akalWebhook = functions
+    .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
+    .https.onRequest(async (req, res) => {
+    var _a;
+    if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+    }
+    const payload = req.body || {};
+    const akalSecret = process.env.AKAL_WEBHOOK_SECRET || "3b5e4d182c8e150efeae39c651d074e6a602f5e873e710a3604af9023fef3042";
+    // Verifikasi token dari Akal (di dalam body JSON payload.token atau payload.data.token)
+    const token = payload.token || ((_a = payload.data) === null || _a === void 0 ? void 0 : _a.token) || req.headers["x-akal-token"];
+    if (!token || token !== akalSecret) {
+        console.warn("[Akal Webhook] Signature verification failed or missing token.");
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+    }
+    const data = payload.data || payload;
+    const status = (data.status || "").toUpperCase().trim();
+    if (!["PAID", "SETTLED"].includes(status)) {
+        console.log(`[Akal Webhook] Transaction status is '${status}'. Acknowledging receipt.`);
+        res.status(200).json({ received: true, status });
+        return;
+    }
+    const payer = data.payer || data.user || {};
+    const email = (payer.email || "").trim().toLowerCase();
+    const name = (payer.name || "").trim() || "Santri Peneliti";
+    const service = data.service || {};
+    const serviceTitle = (service.name || service.title || "").trim();
+    const priceScheme = data.priceScheme || {};
+    const priceSchemeTitle = (priceScheme.name || priceScheme.title || "").trim();
+    const txnId = (data.id || "").trim() || `akal_${Date.now()}`;
+    const amount = Number(data.amount) || 0;
+    if (!email) {
+        res.status(400).json({ error: "Missing payer email" });
+        return;
+    }
+    // Tentukan entitlement key
+    let entitlementKey = "fiqh_tahawwulat";
+    const sLower = serviceTitle.toLowerCase();
+    if (sLower.includes("syafii") || sLower.includes("syafi'i")) {
+        entitlementKey = "fiqh_syafii";
+    }
+    else if (sLower.includes("arab") || sLower.includes("nahwu")) {
+        entitlementKey = "nahwu";
+    }
+    else if (sLower.includes("ushul")) {
+        entitlementKey = "ushul_fiqh";
+    }
+    else if (sLower.includes("hadits")) {
+        entitlementKey = "hadits";
+    }
+    else if (sLower.includes("tafsir")) {
+        entitlementKey = "tafsir";
+    }
+    else if (sLower.includes("semua") || sLower.includes("all")) {
+        entitlementKey = "all_access";
+    }
+    const durationMonths = detectDurationMonths(priceSchemeTitle, serviceTitle);
+    const plan = durationMonths === 12 ? "bahits_1y" : (durationMonths === 6 ? "tholib_6m" : "tholib_1m");
+    const now = new Date();
+    const baseDate = data.paidAt ? new Date(data.paidAt) : now;
+    const expiryDate = new Date(baseDate);
+    expiryDate.setDate(expiryDate.getDate() + (30 * durationMonths));
+    // 1. Simpan catatan transaksi di Firestore
+    await db.collection("transactions").doc(txnId).set({
+        customer_email: email,
+        customer_name: name,
+        plan,
+        amount,
+        duration_months: durationMonths,
+        status: "success",
+        source: "goakal",
+        service_name: serviceTitle,
+        entitlement_key: entitlementKey,
+        paid_at: admin.firestore.Timestamp.fromDate(baseDate),
+        processed_at: admin.firestore.FieldValue.serverTimestamp(),
+        subscription_expires_at: admin.firestore.Timestamp.fromDate(expiryDate),
+    }, { merge: true });
+    // 2. Update dokumen user jika sudah terdaftar
+    const usersSnap = await db.collection("users").where("email", "==", email).limit(1).get();
+    if (!usersSnap.empty) {
+        const userDoc = usersSnap.docs[0];
+        await userDoc.ref.set({
+            entitlements: {
+                [entitlementKey]: {
+                    plan,
+                    status: "active",
+                    expiry: admin.firestore.Timestamp.fromDate(expiryDate),
+                    source: "goakal",
+                    source_transaction_id: txnId,
+                    updated_at: admin.firestore.FieldValue.serverTimestamp(),
+                },
+            },
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+        console.log(`[Akal Webhook] User ${email} entitlement '${entitlementKey}' updated successfully.`);
+    }
+    else {
+        console.log(`[Akal Webhook] User ${email} not yet registered in Firestore. Transaction stored.`);
+    }
+    // 3. Notifikasi Cloud Run sharing
+    try {
+        await notifySubscriptionServer(email, name, plan, "add", serviceTitle);
+    }
+    catch (_) { }
+    // 4. Notifikasi Telegram
+    await sendTelegramNotification(`⚡ <b>[WEBHOOK GOAKAL REALTIME]</b>\n` +
+        `👤 Pembeli: <code>${email}</code> (${name})\n` +
+        `📦 Layanan: <b>${serviceTitle}</b>\n` +
+        `⏳ Paket: ${plan} (${durationMonths} bulan)\n` +
+        `🔑 Entitlement: <code>${entitlementKey}</code>\n` +
+        `💰 Nominal: Rp ${amount.toLocaleString("id-ID")}\n` +
+        `📅 Masa Aktif: s/d ${expiryDate.toISOString().split("T")[0]}`);
+    res.status(200).json({ success: true, txnId, entitlementKey });
+});
 function verifySessionCookie(cookieHeader, secret) {
     if (!cookieHeader)
         return null;
