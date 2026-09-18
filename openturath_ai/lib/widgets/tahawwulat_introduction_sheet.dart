@@ -815,9 +815,9 @@ class _TahawwulatIntroductionSheetState
               children: [
                 Text(
                   "«أَنْ تَلِدَ الأَمَةُ رَبَّتَهَا»",
-                  style: GoogleFonts.amiri(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  style: GoogleFonts.scheherazadeNew(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                   ),
                 ),
@@ -858,9 +858,9 @@ class _TahawwulatIntroductionSheetState
               children: [
                 Text(
                   "«أَنْ تَرَى الحُفَاةَ العُرَاةَ يَتَطَاوَلُونَ فِي البُنْيَانِ»",
-                  style: GoogleFonts.amiri(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  style: GoogleFonts.scheherazadeNew(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
                     color: textPrimary,
                   ),
                 ),
@@ -1096,8 +1096,8 @@ class _TahawwulatIntroductionSheetState
                         ),
                         Text(
                           l.arabic,
-                          style: GoogleFonts.amiri(
-                            fontSize: 13,
+                          style: GoogleFonts.scheherazadeNew(
+                            fontSize: 15,
                             color: textSecondary,
                           ),
                         ),
@@ -1658,8 +1658,8 @@ class _TahawwulatIntroductionSheetState
                   const SizedBox(width: 6),
                   Text(
                     "(${room.arabic})",
-                    style: GoogleFonts.amiri(
-                      fontSize: 14,
+                    style: GoogleFonts.scheherazadeNew(
+                      fontSize: 15,
                       color: OTColors.textSecondary(isDark),
                     ),
                   ),
