@@ -156,10 +156,198 @@ gantt
 
 ---
 
-## 6. LOG TEMPAT PENAMPUNGAN AUDIT TAMBAHAN DARI USER
-*(Bagian ini disediakan khusus untuk mendokumentasikan setiap poin audit baru yang akan dicopy oleh pengguna pada prompt berikutnya)*
+## 6. SPESIFIKASI BAKU: OPENTURATH MONOCHROME EDITORIAL (SISTEM VISUAL DEFINITIF)
 
-- **Audit Tambahan #1:** *(Menunggu input pengguna...)*
+> **Prinsip Karakter Visual:** Perpustakaan digital turath, ruang telaah akademik, dan katalog kitab modern.  
+> **Bukan:** Aplikasi SaaS generik, fintech/kartu bank, dashboard subscription, AI futuristik neon/gradient, ataupun aplikasi anak warna-warni.  
+> **Filosofi Monokrom:** Kedalaman dibangun melalui kontras, tipografi, ruang kosong (whitespace), garis pembatas (hairline border), hirarki ukuran, dan tekstur kertas halus (paper-like editorial structure).
+
+---
+
+### A. Token Warna Tunggal (Single Source of Truth)
+Menggantikan seluruh warna di `OTColors` dan memusnahkan duplikasi di `core/theme.dart`.
+
+#### 1. Light Mode (Warm Archival Paper)
+| Token Semantik | Nilai Hex | Peran & Penggunaan |
+| :--- | :---: | :--- |
+| `OTColors.canvas` | `#F6F6F3` | Latar utama aplikasi (tekstur kertas arsip hangat) |
+| `OTColors.surface` | `#FFFFFF` | Panel utama, bottom sheet, dialog, kartu, input field |
+| `OTColors.surfaceSubtle` | `#EEEEEB` | Area sekunder, track selector, header list |
+| `OTColors.ink` | `#171717` | Teks utama, heading, tombol primer (kontras tajam) |
+| `OTColors.textSecondary` | `#656560` | Metadata, deskripsi kitab, label sekunder |
+| `OTColors.textTertiary` | `#92928C` | Placeholder, informasi minor, divider halus |
+| `OTColors.border` | `#DDDDD8` | Garis pembatas standar (1.0px hairline) |
+| `OTColors.borderStrong` | `#B8B8B1` | Garis aktif, state fokus, pemisah antar-seksi penting |
+| `OTColors.inverse` | `#171717` | Panel inverse, teks tombol utama |
+
+#### 2. Dark Mode (Quiet Obsidian Scholar)
+| Token Semantik | Nilai Hex | Peran & Penggunaan |
+| :--- | :---: | :--- |
+| `OTColors.canvas` | `#111110` | Latar utama aplikasi (obsidian hangat) |
+| `OTColors.surface` | `#181817` | Panel utama, sheet, dialog, kartu |
+| `OTColors.surfaceSubtle` | `#222220` | Area sekunder, background chip |
+| `OTColors.ink` | `#F4F4F0` | Teks utama, heading, tombol inverse |
+| `OTColors.textSecondary` | `#B2B2AA` | Metadata, deskripsi |
+| `OTColors.textTertiary` | `#85857F` | Placeholder, label minor |
+| `OTColors.border` | `#30302E` | Garis pembatas standar (1.0px) |
+| `OTColors.borderStrong` | `#4B4B47` | Garis aktif, pemisah seksi |
+| `OTColors.inverse` | `#F4F4F0` | Tombol atau teks kontras |
+
+#### 3. Aturan Ketat Warna (Strict Color Invariants):
+- **0 Gradient:** Dilarang menggunakan `LinearGradient`, `SweepGradient`, atau `RadialGradient` pada kartu, hero banner, ataupun background.
+- **0 Warna Jenuh/Neon:** Tidak ada ungu, biru elektrik Google (`0xFF0B57D0`), cyan, oranye, atau hijau stabilo sebagai dekorasi.
+- **Warna Status Fungsional Saja:** Merah (error) dan Hijau (sukses) HANYA boleh dipakai untuk status fungsional krusial (misal: verifikasi pembayaran atau indikator server mati), bukan sebagai dekorasi UI.
+- **Status Akses Tenang:** Status akses ditampilkan dengan teks tenang + hairline border, bukan kartu hijau mencolok:
+  ```text
+  AKSES AKTIF
+  Berlaku sampai 12 Oktober 2026
+  ```
+
+---
+
+### B. Arsitektur Tipografi 3 Pilar
+
+| Pilar Tipografi | Font Resmi | Peruntukan Khusus |
+| :--- | :--- | :--- |
+| **1. UI & Navigasi** | **Outfit** | Tombol, label navigasi, input field, chip, metadata, angka indeks |
+| **2. Editorial & Heading** | **Newsreader** | Judul besar aplikasi, nama kitab utama, heading seksi, judul telaah |
+| **3. Teks Arab & Turats** | **Scheherazade New** | Teks Arab asli, kutipan matan, syarah, hasyiyah, ibarah rujukan |
+
+> **Aturan Penghapusan:** Hapus total ketergantungan pada font `Amiri` dan `Tajawal` di seluruh komponen produksi.
+
+#### Hierarki Ukuran Font:
+- **Display:** 32–40 px (`Newsreader`, regular)
+- **Page Title:** 24–28 px (`Newsreader`, medium)
+- **Section Title:** 18–20 px (`Outfit`, medium)
+- **Body Text:** 15–16 px (`Outfit`, regular)
+- **Metadata:** 12–13 px (`Outfit`, medium)
+- **Arabic Ibarah:** 22–30 px (`Scheherazade New`, regular / bold untuk matan)
+- **Citation:** 13–14 px (`Outfit` atau `Newsreader` italic)
+- **Uppercase Restriction:** Huruf kapital penuh (ALL CAPS) HANYA diizinkan untuk metadata kecil berukuran 9–11 px (seperti `BIDANG KAJIAN`, `STATUS AKSES`), dilarang untuk heading atau kartu promo.
+
+---
+
+### C. Geometri Bentuk, Radius & Bayangan (Anti-Clutter)
+
+| Elemen Antarmuka | Nilai Radius Baku | Penjelasan |
+| :--- | :---: | :--- |
+| **Tombol (Button)** | **8 px** | Tegas, profesional, tidak terlalu melengkung |
+| **Input Field** | **8 px** | Selaras dengan tombol |
+| **Kartu (Card)** | **10–12 px** | Tenang, proporsional (larang radius 24px) |
+| **Bottom Sheet** | **16 px** | Lengkungan halus pada sudut atas |
+| **Dialog Modal** | **12 px** | Kompak dan fokus |
+| **Chip / Filter Tag** | **999 px** | Khusus pil status atau saringan |
+| **List Row Editorial** | **0–4 px** | Hampir flat, dipisahkan oleh hairline border |
+
+> **Aturan Shadow:** Bayangan (`BoxShadow`) hampir tidak digunakan. Efek kedalaman (*elevation*) murni diciptakan melalui garis pembatas (`border: 1.0px`) dan kontras lembut antar tingkat `surface`.
+
+---
+
+### D. Skala Spacing Baku (Base-4/8)
+
+```text
+space4   = 4.0 px
+space8   = 8.0 px
+space12  = 12.0 px
+space16  = 16.0 px
+space24  = 24.0 px
+space32  = 32.0 px
+space48  = 48.0 px
+space64  = 64.0 px
+```
+
+- **Padding Layar HP:** `20.0 px`
+- **Padding Layar Desktop/Tablet:** `32.0 – 48.0 px`
+- **Jarak Antar-Seksi:** `32.0 – 48.0 px`
+- **Jarak Antar-Baris List:** `12.0 – 16.0 px`
+- **Jarak Judul ke Deskripsi:** `6.0 – 8.0 px`
+
+---
+
+### E. Cetak Biru Redesain Per Halaman
+
+#### 1. Dashboard Baru (The Editorial Library Desk)
+- Hapus kartu hero gelap bergaya fintech (`28282D→141417`), kubah CustomPaint, dan deretan kartu kecil berwarna.
+- **Struktur Baru:**
+  ```text
+  OpenTurath
+
+  Mulai telaah
+  [ Cari kitab, ulama, atau bahasan...                   ]
+
+  Lanjutkan telaah
+  Fikih Tahawwulat
+  Majlis terakhir 2 jam yang lalu                    Buka →
+
+  Bidang kajian
+  01  Fikih
+  02  Hadits
+  03  Tafsir
+  04  Ushul Fikih
+  05  Bahasa & Balaghah
+
+  ADAB TELAAH
+  Cocokkan rujukan dengan ibarah kitab asal sebelum menyimpulkan.
+  ```
+- Ganti carousel 5 kartu iklan dengan **satu strip pengingat adab telaah** yang tenang.
+
+#### 2. Halaman Asisten Kajian (Katalog Akademik, Bukan Marketplace)
+- Judul: *"Asisten kajian — Pilih bidang telaah yang sesuai dengan kebutuhan Anda."*
+- Search: *"Cari bidang atau asisten..."* (bukan *"Cari ulama"*).
+- Kartu berbentuk list editorial dengan nomor indeks `01`, `02`, status akses tenang, dan tombol `[Mulai telaah]`. Tahawwulat tetap menggunakan bahasa visual yang sama tanpa dekorasi berlebihan.
+
+#### 3. Ruang Telaah / WebView (Layar Paling Tenang)
+- Header minimalis: `← [Nama Bidang] · Majlis aktif`.
+- Kontainer WebView jernih.
+- Baris aksi bawah yang jelas dan terpisah:
+  - `[Salin Ibarah]`
+  - `[Simpan ke Catatan]`
+  - `[Tutup Majlis]`
+- Jangan menyembunyikan pesan akses gagal (`access-denied`); tampilkan pesan bantuan yang santun dan jelas jika koneksi/sesi terputus.
+
+#### 4. Katalog Kitab & Detail Kitab
+- Nomor indeks editorial (`01 Al-Umm`, `02 Shahih al-Bukhari`).
+- **Detail Kitab:** Shell aplikasi tetap LTR (Bahasa Indonesia). Teks Arab murni pada judul kitab dan nama muallif/muhaqqiq.
+- Ganti tombol "Bagikan" yang manipulatif dengan tombol jujur: `[Salin Kartu Kitab]` atau buka Share Sheet asli sistem operasi.
+- SnackBar feedback dalam Bahasa Indonesia yang santun (bukan bahasa Arab di tengah aplikasi Indonesia).
+
+#### 5. Halaman Langganan (Akses Transparan & Bebas Hype)
+- Judul: *"Akses OpenTurath"*
+- Deskripsi: *"Gunakan OpenTurath untuk menelaah kitab dan materi kajian dengan asisten yang sesuai bidangnya."*
+- Tampilkan tabel paket akses monokrom dengan harga jujur (Rp 499.000 untuk Sultan All-Access).
+- Status pembayaran eksplisit: *Menunggu pembayaran $\rightarrow$ Pembayaran sedang diverifikasi $\rightarrow$ Mengaktifkan akses $\rightarrow$ Akses telah aktif*.
+
+#### 6. Profil & Pengaturan
+- Ganti kartu membership berhias warna dengan **Panel Status Bersih**:
+  ```text
+  Akses OpenTurath
+  Akses aktif · Berlaku sampai 12 Oktober 2026
+  [Kelola akses]
+  ```
+- Seluruh row menu pengaturan memiliki tinggi tap sentuh minimal `44–48 px`.
+
+---
+
+### F. Aturan Implementasi Teknis & Standardisasi Komponen
+1. **Button:**
+   - Primary: Background `OTColors.ink`, teks `OTColors.inverse`, tinggi 44–48px, radius 8px.
+   - Secondary: Background `surface`, border `borderStrong` (1.0px), teks `ink`.
+2. **Search Field:**
+   - Background `surface`, border `border`, aktif `borderStrong`, tinggi 48px, tombol clear 44px.
+3. **Target Sentuh Mutlak:**
+   - Semua elemen interaktif (tombol, chip, close tab, switch tema) **wajib $\ge 44 \times 44\text{ px}$**.
+4. **Enforcement Code Hygiene:**
+   - Larang `Color(0xFF...)` di widget UI.
+   - Larang `Colors.white` dan `Colors.black`.
+   - Larang `GoogleFonts.*` inline.
+   - Hapus `core/theme.dart` (satukan ke token semantik).
+
+---
+
+## 7. LOG PENAMPUNGAN AUDIT TAMBAHAN DARI USER
+*(Dokumentasi akan terus ditambahkan secara kumulatif setiap kali pengguna menempelkan audit baru)*
+
+- **Audit Tambahan #1 (Monochrome Editorial):** ✅ *Telah dikaji relevansinya dan diintegrasikan 100% pada Seksi 6 di atas.*
 - **Audit Tambahan #2:** *(Menunggu input pengguna...)*
 - **Audit Tambahan #3:** *(Menunggu input pengguna...)*
 
