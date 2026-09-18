@@ -348,8 +348,23 @@ space64  = 64.0 px
 *(Dokumentasi akan terus ditambahkan secara kumulatif setiap kali pengguna menempelkan audit baru)*
 
 - **Audit Tambahan #1 (Monochrome Editorial):** ✅ *Telah dikaji relevansinya dan diintegrasikan 100% pada Seksi 6 di atas.*
-- **Audit Tambahan #2:** *(Menunggu input pengguna...)*
+
+- **Audit Tambahan #2: Kajian & Rencana Integrasi `open_turath_library_metadata_page.dart`:**
+  - **Status Relevansi:** ✅ **SANGAT RELEVAN & MERUPAKAN ARTEFAK KUNCI.**
+  - **Fungsi Komponen:** File ini menyediakan halaman gerbang *Metadata Pustaka AI* (`AiLibraryOverviewPage`) yang menjembatani data statistik korpus turats asli dari `assets/data/metadata_modul_lengkap.json` (seperti *103 kitab Fikih Syafi'i, 1.141 kitab Hadits, 866 kitab Bahasa Arab, 148 juta kata terindeks*) ke antarmuka visual sebelum pengguna masuk ke Ruang Telaah.
+  - **Kelebihan Eksisting:**
+    1. Menggunakan 3 font baku yang selaras dengan arahan audit: `Newsreader` (nama modul), `Scheherazade New` (nama Arab), dan `Outfit` (UI & angka).
+    2. Menghadirkan micro-animation bernuansa akademik: `_StaggeredReveal`, `_RevealText` (efek tinta berjalan), dan `_AnimatedCounter` (angka counter halus).
+    3. Mengubah persepsi aplikasi dari "chatbot instan" menjadi "Pustaka Riset Ilmiah Berbasis Korpus Mu'tamad".
+  - **Daftar Refactoring Wajib untuk Standarisasi Desain Purism:**
+    1. **Migrasi Lokasi Berkas:** Pindahkan file dari root `/Users/apple/Downloads/ramadhan/open_turath_library_metadata_page.dart` ke dalam arsitektur aplikasi: `openturath_ai/lib/screens/library_metadata_overview_screen.dart`.
+    2. **Unifikasi Token Warna:** Ganti palet lokal `_Mono` (`Color(0xFF080808)`, dll.) dengan token semantik resmi `OTColors` agar otomatis mendukung **Light Mode (`#F6F6F3`)** dan **Dark Mode (`#111110`)**.
+    3. **Pembersihan Gradient & Shadow:** Hapus `LinearGradient` di `_MonoPanel` (baris 812–819) dan hilangkan `BoxShadow` tebal (baris 820–826) agar murni mengikuti aturan *Flat Surface + 1.0px Hairline Border*.
+    4. **Koreksi Radius:** Sesuaikan `BorderRadius.circular(25)` menjadi `12.0 px` (`OTRadius.cardBorder`).
+    5. **Integrasi Rute Navigasi:** Hubungkan rute `AiLibraryOverviewPage.route(...)` ketika pengguna memilih salah satu bidang kajian di Dashboard atau Asisten Kajian sebelum meluncurkan WebView sesi telaah.
+
 - **Audit Tambahan #3:** *(Menunggu input pengguna...)*
+- **Audit Tambahan #4:** *(Menunggu input pengguna...)*
 
 ---
 *Dokumen ini diperbarui secara otomatis setiap kali ada temuan audit baru dan setiap langkah perbaikan selesai dieksekusi.*
