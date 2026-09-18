@@ -493,7 +493,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             line-height: inherit !important;
           }
           [lang="ar"], .arabic, [dir="rtl"] {
-            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            font-family: 'Scheherazade New', 'Traditional Arabic', serif !important;
             font-size: ${Math.round(scale * 19)}px !important;
             line-height: 1.8 !important;
           }
