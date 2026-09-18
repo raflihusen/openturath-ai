@@ -348,8 +348,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
-                                statusLabel:
-                                    agent.isComingSoon ? AppCopy.comingSoon : null,
+                                statusLabel: agent.isComingSoon
+                                    ? AppCopy.comingSoon
+                                    : null,
                                 onOpen: () => _openNotebook(agent, user),
                                 onOpenLibrary: agent.catalogId != null
                                     ? () => showResearchLibrary(context,
@@ -485,7 +486,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      AppCopy.assistantsAvailableCount(disc.specialistCount),
+                                      AppCopy.assistantsAvailableCount(
+                                          disc.specialistCount),
                                       style: GoogleFonts.outfit(
                                         fontSize: 11.5,
                                         color: textSecondary,
@@ -554,152 +556,116 @@ class _StudyEntryCard extends StatelessWidget {
 
     const categoryLabel = AppCopy.studyBookCategory;
 
-    final bgGradient = isDark
-        ? const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF303036), Color(0xFF17171A)],
-          )
-        : const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF28282D), Color(0xFF141417)],
-          );
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     return Semantics(
       button: true,
       label: '$title. $subtitle',
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: onPrimary,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(16),
           child: Ink(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: bgGradient,
-              border: Border.all(
-                color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.16),
-                width: 1.0,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.18),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+              color: surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: border, width: 1.0),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(23),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: CustomPaint(
-                      painter: _DashboardAbstractPatternPainter(isDark: isDark),
+              borderRadius: BorderRadius.circular(15),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      displayName == null
+                          ? AppCopy.ahlanDefault
+                          : AppCopy.ahlanWithName(displayName),
+                      style: GoogleFonts.outfit(
+                        color: textSecondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(22),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 22),
+                    Text(
+                      hasLiveSession || hasHistory
+                          ? 'LANJUTKAN KAJIAN'
+                          : categoryLabel,
+                      style: GoogleFonts.outfit(
+                        color: textSecondary,
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.newsreader(
+                        color: textPrimary,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.4,
+                        height: 1.25,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(
+                        color: textSecondary,
+                        fontSize: 12.5,
+                        height: 1.35,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.09),
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.12),
-                                ),
-                              ),
-                              child: Text(
-                                displayName == null
-                                    ? AppCopy.ahlanDefault
-                                    : AppCopy.ahlanWithName(displayName),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: OTColors.accent(isDark),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                primaryLabel,
                                 style: GoogleFonts.outfit(
-                                  color: const Color(0xFFF8F8F8),
+                                  color: isDark
+                                      ? OTColors.canvasDark
+                                      : Colors.white,
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          categoryLabel,
-                          style: GoogleFonts.outfit(
-                            color: const Color(0xFFC7C7CC),
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.1,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.newsreader(
-                            color: const Color(0xFFF8F8F8),
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.4,
-                            height: 1.25,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          subtitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.outfit(
-                            color: const Color(0xFFC7C7CC),
-                            fontSize: 12.5,
-                            height: 1.35,
-                          ),
-                        ),
-                        const SizedBox(height: 18),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 7),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(100),
+                              const SizedBox(width: 5),
+                              Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 13,
+                                color:
+                                    isDark ? OTColors.canvasDark : Colors.white,
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    primaryLabel,
-                                    style: GoogleFonts.outfit(
-                                      color: const Color(0xFF141418),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  const Icon(
-                                    Icons.arrow_forward_rounded,
-                                    size: 13,
-                                    color: Color(0xFF141418),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -741,7 +707,8 @@ class _DashboardAbstractPatternPainter extends CustomPainter {
       path.moveTo(cx - w, size.height + 15);
       path.lineTo(cx - w, cy + h * 0.25);
       path.quadraticBezierTo(cx - w * 0.7, cy - h * 0.65, cx, cy - h);
-      path.quadraticBezierTo(cx + w * 0.7, cy - h * 0.65, cx + w, cy + h * 0.25);
+      path.quadraticBezierTo(
+          cx + w * 0.7, cy - h * 0.65, cx + w, cy + h * 0.25);
       path.lineTo(cx + w, size.height + 15);
 
       canvas.drawPath(path, i == 1 ? linePaint : faintPaint);
