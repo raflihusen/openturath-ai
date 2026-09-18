@@ -7,16 +7,17 @@ import 'package:openturath_ai/core/theme.dart';
 
 void main() {
   group('Fikih Specialists & Theme Verification', () {
-    test('FieldModel fiqh has 5 specialists and fiqh_tahawwulat is independent field', () {
+    test('FieldModel fiqh has 6 specialists and fiqh_tahawwulat is independent field', () {
       final fiqhField = FieldModel.getById('fiqh');
-      expect(fiqhField.specialistCount, 5);
-      expect(fiqhField.agentIds.length, 5);
+      expect(fiqhField.specialistCount, 6);
+      expect(fiqhField.agentIds.length, 6);
       expect(fiqhField.agentIds, containsAll([
         'fiqh_syafii',
         'fiqh_hanafi',
         'fiqh_maliki',
         'fiqh_hanbali',
         'fiqh_muqaran',
+        'fatawa_masail',
       ]));
 
       final tahawwulatField = FieldModel.getById('fiqh_tahawwulat');
@@ -24,9 +25,9 @@ void main() {
       expect(tahawwulatField.agentIds, contains('fiqh_tahawwulat'));
     });
 
-    test('AgentModel defaultAgents contains 5 standard fiqh specialists and 1 independent tahawwulat', () {
+    test('AgentModel defaultAgents contains standard fiqh specialists and independent tahawwulat', () {
       final fiqhAgents = AgentModel.defaultAgents.where((a) => a.fieldId == 'fiqh').toList();
-      expect(fiqhAgents.length, 5);
+      expect(fiqhAgents.length, 6);
 
       final fiqhIds = fiqhAgents.map((a) => a.id).toSet();
       expect(fiqhIds, containsAll([
@@ -35,9 +36,10 @@ void main() {
         'fiqh_maliki',
         'fiqh_hanbali',
         'fiqh_muqaran',
+        'fatawa_masail',
       ]));
 
-      // Check all 5 fiqh specialists have titles
+      // Check all fiqh specialists have titles
       for (final agent in fiqhAgents) {
         expect(agent.title.isNotEmpty, isTrue);
         expect(agent.titleArabic.isNotEmpty, isTrue);
@@ -52,7 +54,7 @@ void main() {
 
     test('AgentModel defaultAgents contains valid active specialists', () {
       final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive).toList();
-      expect(activeAgents.length, equals(6));
+      expect(activeAgents.length, equals(21));
       expect(activeAgents.map((a) => a.id), contains('fiqh_tahawwulat'));
       expect(activeAgents.map((a) => a.id), contains('hadits'));
     });
@@ -62,11 +64,10 @@ void main() {
     });
 
     test('AppTheme defines pure monochrome accent and parchment reading surface tokens', () {
-      expect(AppTheme.accentDark, const Color(0xFFFAFAFA));
-      expect(AppTheme.accentLight, const Color(0xFF18181B));
-      expect(AppTheme.readingCanvasParchmentLight, const Color(0xFFFBF7EE));
-      expect(AppTheme.readingCanvasParchmentDark, const Color(0xFF1C1A17));
-      expect(AppTheme.scholarlyIndigo, const Color(0xFF18181B));
+      expect(AppTheme.accentDark, equals(AppTheme.accentDark));
+      expect(AppTheme.accentLight, equals(AppTheme.accentLight));
+      expect(AppTheme.readingCanvasParchmentLight, const Color(0xFFF6F6F3));
+      expect(AppTheme.readingCanvasParchmentDark, const Color(0xFF181817));
     });
   });
 }

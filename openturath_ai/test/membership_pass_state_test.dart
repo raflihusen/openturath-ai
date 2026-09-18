@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/app_copy.dart';
 import 'package:openturath_ai/core/membership_pass_state.dart';
 import 'package:openturath_ai/models/user_model.dart';
 
@@ -25,7 +26,7 @@ void main() {
       'tafsir': ModuleEntitlement(plan: 'pro', expiry: DateTime.now().add(const Duration(days: 5))),
     }));
     expect(summary.state, MembershipPassState.expiringSoon);
-    expect(summary.accessLabel, '3 asisten tersedia');
+    expect(summary.accessLabel, AppCopy.assistantsAvailableCount(3));
     expect(summary.expiryLabel, 'Berlaku hingga');
   });
 
@@ -58,7 +59,7 @@ void main() {
   test('locks a user without a valid entitlement', () {
     final summary = resolveMembershipPass(user(const {}));
     expect(summary.state, MembershipPassState.locked);
-    expect(summary.ctaLabel, 'Pilih paket Pro');
+    expect(summary.ctaLabel, AppCopy.chooseProPlan);
   });
 
   test('keeps a legacy account-level Pro subscription open during migration', () {
