@@ -290,6 +290,13 @@ class CanonicalBookPresentation {
         default:
           eraLabel = entry.eraCode!.replaceAll('_', ' ');
       }
+    } else if (entry.recordedDeathYearHijri != null) {
+      final y = entry.recordedDeathYearHijri!;
+      if (y <= 505) {
+        eraLabel = 'Mutaqaddimin';
+      } else {
+        eraLabel = 'Muta\'akhkhirin';
+      }
     }
 
     return CanonicalBookPresentation(
