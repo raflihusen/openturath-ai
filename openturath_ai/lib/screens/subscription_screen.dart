@@ -31,6 +31,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   UserModel? _user;
   AgentModel? _agent;
   bool _isProcessing = false;
+  bool _isSyncingGoAkal = false;
 
   // Durasi terpisah untuk masing-masing kartu
   int _tahawwulatDurationIndex = 0; // 0: 1 Bulan, 1: 6 Bulan, 2: 1 Tahun
@@ -145,7 +146,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       ];
     }
 
-    // Default regular tier untuk disiplin lainnya
+    // Default regular tier untuk disiplin lainnya (Etalase GoAkal OpenTurath)
     return [
       {
         'name': '1 Bulan',
@@ -153,7 +154,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'label': 'Rp 49.000',
         'period': '/ bulan',
         'planId': AppConstants.planTholib1m,
-        'applyUrl': '',
+        'applyUrl': 'https://goakal.com/openturath-ai',
       },
       {
         'name': '6 Bulan',
@@ -161,7 +162,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'label': 'Rp 299.000',
         'period': '/ 6 bulan',
         'planId': AppConstants.planTholib6m,
-        'applyUrl': '',
+        'applyUrl': 'https://goakal.com/openturath-ai',
       },
       {
         'name': '1 Tahun',
@@ -169,7 +170,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'label': 'Rp 499.000',
         'period': '/ tahun',
         'planId': AppConstants.planBahits1y,
-        'applyUrl': '',
+        'applyUrl': 'https://goakal.com/openturath-ai',
       },
     ];
   }
@@ -326,44 +327,88 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return phone;
   }
 
-  Future<void> _handleTierCheckout({
-    required Map<String, dynamic> tier,
-    required AgentModel targetAgent,
-  }) async {
-    final applyUrl = tier['applyUrl'] as String? ?? '';
-    final planTitle = '${tier['name']} ${targetAgent.title}'.trim();
-    final price = tier['price'] as int;
-
-    // Buka pop-up modal checkout in-app (DokuCheckoutSheet) langsung di dalam aplikasi!
-    // Menggunakan InAppWebView agar pengalaman pengguna persis seperti checkout DOKU
-    // dan TIDAK PERNAH dialihkan keluar ke browser Chrome/Safari.
-    if (applyUrl.isNotEmpty) {
-      final isPaid = await DokuCheckoutSheet.show(
-        context,
-        paymentUrl: applyUrl,
-        invoiceNumber: '',
-        planTitle: planTitle,
-        amount: price,
-      );
-
-      if (isPaid == true && mounted) {
-        AppSnackBar.success(
+  Future<void> _syncAkalPurchases({bool isSilent = false}) async {
+    if (_isSyncingGoAkal) return;
+    final fbUser = FirebaseAuth.instance.currentUser;
+    if (fbUser == null) {
+      if (!isSilent && mounted) {
+        AppSnackBar.warning(
           context,
-          'Pembayaran berhasil diproses. Akses sudah aktif.',
-          duration: const Duration(seconds: 4),
+          'Silakan masuk akun terlebih dahulu untuk menyinkronkan data langganan.',
         );
-        Navigator.pop(context);
       }
       return;
     }
 
-    // Fallback pembayaran via DOKU
-    await _handleSubscribe(
-      plan: tier['planId'] as String,
+    setState(() => _isSyncingGoAkal = true);
+    if (!isSilent && mounted) {
+      AppSnackBar.info(
+        context,
+        'Menyinkronkan transaksi GoAkal dengan akun Google Anda...',
+      );
+    }
+
+    try {
+      final res = await _subService.syncAkalPurchases();
+      final success = res['success'] == true;
+      final syncedList = (res['synced'] as List<dynamic>?)?.cast<String>() ?? [];
+      final message = res['message'] as String? ?? '';
+
+      if (!mounted) return;
+
+      if (success && syncedList.isNotEmpty) {
+        AppSnackBar.success(
+          context,
+          'Alhamdulillah! Akses aktif berhasil disinkronkan: ${syncedList.join(", ")}.',
+          duration: const Duration(seconds: 4),
+        );
+        setState(() {});
+      } else if (!isSilent) {
+        AppSnackBar.info(
+          context,
+          message.isNotEmpty
+              ? message
+              : 'Belum ditemukan transaksi aktif baru di GoAkal untuk email ini.',
+          duration: const Duration(seconds: 4),
+        );
+      }
+    } catch (_) {
+      if (!isSilent && mounted) {
+        AppSnackBar.error(
+          context,
+          'Kendala saat menghubungi server GoAkal. Periksa koneksi internet Anda.',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSyncingGoAkal = false);
+    }
+  }
+
+  Future<void> _handleTierCheckout({
+    required Map<String, dynamic> tier,
+    required AgentModel targetAgent,
+  }) async {
+    final rawApplyUrl = tier['applyUrl'] as String? ?? '';
+    final planTitle = '${tier['name']} ${targetAgent.title}'.trim();
+    final price = tier['price'] as int;
+
+    final paymentUrl = rawApplyUrl.isNotEmpty
+        ? rawApplyUrl
+        : 'https://goakal.com/openturath-ai';
+
+    // Buka pop-up modal checkout in-app resmi GoAkal tanpa keluar aplikasi
+    await DokuCheckoutSheet.show(
+      context,
+      paymentUrl: paymentUrl,
+      invoiceNumber: '',
       planTitle: planTitle,
-      price: price,
-      targetAgent: targetAgent,
+      amount: price,
     );
+
+    // Otomatis sinkronkan status pembelian GoAkal begitu lembar transaksi ditutup
+    if (mounted) {
+      await _syncAkalPurchases(isSilent: false);
+    }
   }
 
   Future<void> _handleSubscribe({
@@ -514,6 +559,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: _isSyncingGoAkal
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Icon(Icons.sync_rounded, color: textPrimary),
+            tooltip: 'Sinkronkan Pembelian GoAkal',
+            onPressed:
+                _isSyncingGoAkal ? null : () => _syncAkalPurchases(isSilent: false),
+          ),
+        ],
       ),
       body: AbsorbPointer(
         absorbing: _isProcessing,
@@ -547,32 +606,87 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                   const SizedBox(height: OTSpacing.sm),
 
-                  // Pintu masuk redeem kode akses voucher
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: AppleInteractiveWrapper(
-                      onTap: () => RedeemCodeSheet.show(context, onSuccess: () {
-                        if (mounted) setState(() {});
-                      }),
-                      pressedScale: 0.96,
-                      hapticType: HapticFeedbackType.selection,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.confirmation_number_outlined,
-                                size: 16, color: accent),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Punya kode voucher? Masukkan di sini',
-                              style: OTTypography.button(color: accent)
-                                  .copyWith(fontSize: 13.5),
+                  // Pintu masuk redeem kode akses voucher & sinkronisasi GoAkal
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppleInteractiveWrapper(
+                          onTap: () => RedeemCodeSheet.show(context, onSuccess: () {
+                            if (mounted) setState(() {});
+                          }),
+                          pressedScale: 0.96,
+                          hapticType: HapticFeedbackType.selection,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                            decoration: BoxDecoration(
+                              color: surfaceSubtle,
+                              borderRadius: OTRadius.chipBorder,
+                              border: Border.all(color: border, width: 0.8),
                             ),
-                          ],
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.confirmation_number_outlined,
+                                    size: 15, color: accent),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    'Punya voucher santri?',
+                                    style: OTTypography.captionMedium(color: accent)
+                                        .copyWith(fontSize: 12),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: AppleInteractiveWrapper(
+                          onTap: _isSyncingGoAkal
+                              ? null
+                              : () => _syncAkalPurchases(isSilent: false),
+                          pressedScale: 0.96,
+                          hapticType: HapticFeedbackType.selection,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                            decoration: BoxDecoration(
+                              color: surfaceSubtle,
+                              borderRadius: OTRadius.chipBorder,
+                              border: Border.all(color: border, width: 0.8),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (_isSyncingGoAkal)
+                                  const SizedBox(
+                                    width: 13,
+                                    height: 13,
+                                    child: CircularProgressIndicator(strokeWidth: 1.8),
+                                  )
+                                else
+                                  Icon(Icons.sync_rounded, size: 15, color: textPrimary),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    _isSyncingGoAkal
+                                        ? 'Sinkron...'
+                                        : 'Cek akses GoAkal',
+                                    style: OTTypography.captionMedium(color: textPrimary)
+                                        .copyWith(fontSize: 12),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: OTSpacing.md),

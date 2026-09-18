@@ -75,6 +75,35 @@ class SubscriptionService {
     }
   }
 
+  // ── Sinkronkan Transaksi GoAkal Secara Otomatis ───────────────
+  Future<Map<String, dynamic>> syncAkalPurchases() async {
+    try {
+      final callable = FirebaseFunctions.instance.httpsCallable('syncAkalPurchases');
+      final result = await callable.call();
+      final data = result.data;
+      if (data is Map) {
+        return Map<String, dynamic>.from(data);
+      }
+      return {
+        'success': true,
+        'synced': <String>[],
+        'message': 'Sinkronisasi berhasil.'
+      };
+    } on FirebaseFunctionsException catch (e) {
+      return {
+        'success': false,
+        'synced': <String>[],
+        'message': e.message ?? 'Gagal menyinkronkan data GoAkal.'
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'synced': <String>[],
+        'message': 'Gagal menghubungi server. Periksa koneksi internet Anda.'
+      };
+    }
+  }
+
   // ── Buat Payment Request resmi ke DOKU Payment Gateway ───────
   Future<Map<String, dynamic>> createPayment({
     required String uid,
