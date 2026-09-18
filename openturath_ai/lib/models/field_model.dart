@@ -17,7 +17,7 @@ class FieldModel {
     required this.agentIds,
   });
 
-  /// 9 Bidang Keilmuan Utama Turats Islam
+  /// 10 Bidang Keilmuan Utama Turats Islam
   static const List<FieldModel> defaultFields = [
     FieldModel(
       id: 'fiqh_tahawwulat',
@@ -31,41 +31,45 @@ class FieldModel {
     ),
     FieldModel(
       id: 'fiqh',
-      name: 'Fikih',
-      description: 'Hukum ibadah, muamalah, fatwa, dan perbandingan mazhab mu\'tabar.',
+      name: 'Fikih & Fatwa',
+      description: 'Hukum ibadah, muamalah, fatwa kontemporer, dan perbandingan mazhab mu\'tabar.',
       icon: Icons.balance_rounded,
-      specialistCount: 5,
+      specialistCount: 6,
       agentIds: [
         'fiqh_syafii',
         'fiqh_hanafi',
         'fiqh_maliki',
         'fiqh_hanbali',
         'fiqh_muqaran',
+        'fatawa_masail',
       ],
     ),
     FieldModel(
       id: 'hadith',
-      name: 'Hadis',
-      description: 'Takhrij sanad, dirayah perawi, dan syarah Kutubus Sittah.',
+      name: 'Hadis & Ulumul Hadis',
+      description: 'Takhrij sanad, kritik rijalul hadis, dan syarah ensiklopedis Kutubus Sittah.',
       icon: Icons.auto_stories_rounded,
-      specialistCount: 1,
+      specialistCount: 3,
       agentIds: [
         'hadits',
+        'syarah_hadits',
+        'musthalah_hadits',
       ],
     ),
     FieldModel(
       id: 'tafsir',
-      name: 'Tafsir',
-      description: 'Asbabun nuzul, munasabah, dan khazanah tafsir bil-ma\'tsur wal-ra\'yi.',
+      name: 'Tafsir & Qiraat',
+      description: 'Asbabun nuzul, munasabah, ilmu tajwid, dan khazanah eksegesis Al-Qur\'an.',
       icon: Icons.menu_book_rounded,
-      specialistCount: 1,
+      specialistCount: 2,
       agentIds: [
         'tafsir',
+        'tajwid_qiraat',
       ],
     ),
     FieldModel(
       id: 'aqidah',
-      name: 'Akidah',
+      name: 'Akidah & Ushuluddin',
       description: 'Kalam Asy\'ariyyah, Maturidiyyah, pembahasan ushuluddin, dan dalil aqli-naqli.',
       icon: Icons.shield_outlined,
       specialistCount: 1,
@@ -75,17 +79,18 @@ class FieldModel {
     ),
     FieldModel(
       id: 'usul',
-      name: 'Usul Fikih',
+      name: 'Usul Fikih & Kaidah',
       description: 'Kaidah istinbath hukum, dalil ijmali, maqashid syariah, dan qawaid fiqhiyyah.',
       icon: Icons.architecture_rounded,
-      specialistCount: 1,
+      specialistCount: 2,
       agentIds: [
         'ushul_fiqh',
+        'qawaid_fiqhiyyah',
       ],
     ),
     FieldModel(
       id: 'lughah',
-      name: 'Bahasa Arab',
+      name: 'Bahasa & Sastra Arab',
       description: 'Nahwu, sharaf, balaghah, dan leksikografi kamus mu\'jam klasik.',
       icon: Icons.translate_rounded,
       specialistCount: 1,
@@ -95,12 +100,13 @@ class FieldModel {
     ),
     FieldModel(
       id: 'tarikh',
-      name: 'Sejarah & Sirah',
+      name: 'Sejarah, Sirah & Rijal',
       description: 'Sirah Nabawiyyah, khulafaur rasyidin, thabaqat ulama, dan peradaban Islam.',
       icon: Icons.history_edu_rounded,
-      specialistCount: 1,
+      specialistCount: 2,
       agentIds: [
         'tarikh',
+        'thabaqat_rijal',
       ],
     ),
     FieldModel(
@@ -112,6 +118,16 @@ class FieldModel {
       agentIds: [
         'habib_umar',
         'imam_ghazali',
+      ],
+    ),
+    FieldModel(
+      id: 'bibliografi',
+      name: 'Bibliografi & Faharis',
+      description: 'Indeks ensiklopedi, biografi manuskrip, dan katalog rujukan khazanah Turath Islam.',
+      icon: Icons.collections_bookmark_rounded,
+      specialistCount: 1,
+      agentIds: [
+        'bibliografi_faharis',
       ],
     ),
   ];
