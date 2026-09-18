@@ -963,10 +963,10 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text: item.arabicExcerpt,
                       query: widget.searchQuery,
                       isRtl: true,
-                      baseStyle: GoogleFonts.tajawal(
-                        fontSize: 16,
+                      baseStyle: GoogleFonts.scheherazadeNew(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        height: 1.6,
+                        height: 1.8,
                         color: widget.textPrimary,
                       ),
                       isDark: isDark,
