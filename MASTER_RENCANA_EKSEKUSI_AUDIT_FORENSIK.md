@@ -382,8 +382,33 @@ space64  = 64.0 px
        - Tombol `onShare` dihubungkan ke Share Sheet resmi OS atau salin sitasi baku.
        - Tombol `onBookmark` dihubungkan ke `BookmarkService` dengan membawa konteks koleksi/bidang kajian lengkap agar tidak default ke Fiqh Syafi'i.
 
-- **Audit Tambahan #4:** *(Menunggu input pengguna...)*
+- **Audit Tambahan #4: Inventarisasi & Rencana Sinkronisasi Pustaka Katalog Kitab Lengkap:**
+  - **Lokasi Sumber Data:** `/Volumes/Husen/AKSARAMAH DEV/KUMPULAN_KATALOG_KITAB/`
+  - **Status Relevansi:** ✅ **SANGAT KRUSIAL UNTUK KELENGKAPAN KORPUS APLIKASI.**
+  - **Temuan Gap Antara Sumber vs Aplikasi (`assets/data/`):**
+    - Saat ini di aplikasi (`openturath_ai/assets/data/`) baru terdapat katalog 01 s/d 06 (`Fikih Syafi'i`, `Hadits`, `Ushul Fikih`, `Bahasa Arab`, `Tafsir`, `Fikih Tahawwulat`).
+    - Sedangkan di volume sumber tersimpan katalog lengkap dan mutakhir yang belum disalin ke aplikasi:
+      1. `07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json` (241 KB)
+      2. `08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json` (56.7 KB)
+      3. `09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json` (257 KB)
+      4. `10_KATALOG_SYARAH_HADITS.json` (181 KB)
+      5. `19_KATALOG_THABAQAT_DAN_TARAJIM.json` (372 KB)
+      6. `20_KATALOG_TAKHIJ_ATHRAF_DAN_ILAL.json` (158 KB)
+      7. `21_KATALOG_ADAB_DAN_BALAGHAH.json` (155 KB)
+      8. `KAMUS_KANONIKAL_METADATA/`:
+         - `canonical_hadits.json` (509 KB)
+         - `canonical_tafsir.json` (80 KB)
+         - `canonical_tahawwulat.json` (17 KB)
+         - `canonical_ushul_fikih.json` (218 KB)
+      9. `metadata_training_seluruh_ai.json` (15 KB) dari `03_APLIKASI_OPENTURATH_DEV`: Berisi metadata akurat (partisi NotebookLM, total kata bersih, badge otoritas, headline aplikasi).
+  - **Rencana Eksekusi Penyelarasan Pustaka (Library Synchronization Plan):**
+    1. **Salin Data Katalog:** Salin seluruh file JSON katalog (01 s/d 21) dan seluruh file kanonikal (`canonical_*.json`) ke `openturath_ai/assets/data/`.
+    2. **Registrasi di `pubspec.yaml`:** Daftarkan seluruh file aset katalog baru tersebut di bawah `flutter.assets` agar terbawa ke bundle runtime aplikasi.
+    3. **Sinkronisasi Model `AiLibraryMetadata`:** Gunakan data dari `metadata_training_seluruh_ai.json` dan `metadata_modul_lengkap.json` sehingga setiap modul AI memiliki halaman ringkasan pustaka (`AiLibraryOverviewPage`) yang datanya 100% akurat.
+    4. **Integrasi Rute Katalog:** Hubungkan layar katalog editorial (`OpenTurathBookLibraryPage`) dengan loader yang membaca file JSON yang sesuai dengan modul yang sedang dibuka user (misal: jika buka Hadits $\rightarrow$ baca `02_KATALOG_HADITS_DAN_SYARAH.json`; jika buka Ushul $\rightarrow$ baca `03_KATALOG_USHUL_FIKIH.json`).
+
 - **Audit Tambahan #5:** *(Menunggu input pengguna...)*
+- **Audit Tambahan #6:** *(Menunggu input pengguna...)*
 
 ---
 *Dokumen ini diperbarui secara otomatis setiap kali ada temuan audit baru dan setiap langkah perbaikan selesai dieksekusi.*
