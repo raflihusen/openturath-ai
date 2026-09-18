@@ -1854,8 +1854,8 @@ class _TahawwulatIntroductionSheetState
         const SizedBox(height: 2),
         Text(
           arabic,
-          style: GoogleFonts.amiri(
-            fontSize: 15,
+          style: GoogleFonts.scheherazadeNew(
+            fontSize: 16,
             color: textSecondary,
           ),
         ),
@@ -1900,10 +1900,10 @@ class _TahawwulatIntroductionSheetState
             quote,
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.right,
-            style: GoogleFonts.amiri(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              height: 1.6,
+            style: GoogleFonts.scheherazadeNew(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              height: 1.7,
               color: textPrimary,
             ),
           ),
