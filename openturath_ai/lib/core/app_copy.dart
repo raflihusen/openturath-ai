@@ -10,11 +10,11 @@ abstract final class AppCopy {
   static const aboutTitle = LegalCopy.aboutAppTitle;
   static const aboutDescription = LegalCopy.aboutAppParagraph1;
   static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
-  static const academicSlogan = 'AI for Islamic Scholarship';
+  static const academicSlogan = 'Riset Kitab Turats';
 
   // ── Navigasi Utama ─────────────────────────────────────────────
   static const navHome = 'Beranda';
-  static const navStudies = 'Asisten';
+  static const navStudies = 'Keilmuan';
   static const navSaved = 'Catatan';
   static const navSettings = 'Pengaturan';
 
@@ -48,21 +48,21 @@ abstract final class AppCopy {
   static const cannotLoadStudy = 'Ruang telaah belum bisa dibuka';
   static const studyNotLoadedYet =
       'Ruang telaah belum bisa dimuat. Coba lagi sebentar.';
-  static const subscriptionRequiredTitle = 'Berlangganan untuk melanjutkan';
-  static const subscriptionRequiredShort = 'Langganan diperlukan';
+  static const subscriptionRequiredTitle = 'Akses diperlukan untuk melanjutkan';
+  static const subscriptionRequiredShort = 'Akses diperlukan';
   static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
   static const catalogPreparing = 'Katalog kitab sedang disiapkan.';
   static const inputQuestionHint = 'Tuliskan mas\'alah atau ibarah yang ingin ditelaah…';
-  static const viewSubscription = 'Lihat langganan';
+  static const viewSubscription = 'Lihat akses';
   static const tryAgain = 'Coba lagi';
   static const sessionExpiredOrNoAccess =
-      'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.';
+      'Sesi Anda telah berakhir atau akses ke ruang telaah ini belum aktif.';
   static const agentLoadFailed =
-      'Asisten belum dapat dimuat. Coba lagi sebentar.';
+      'Ruang telaah belum dapat dimuat. Coba lagi sebentar.';
   static const backToHome = 'Kembali ke beranda';
   static const noAssistantsFound =
-      'Belum ada asisten atau kitab yang cocok. Coba kata kunci lain.';
-  static const comingSoon = 'Segera hadir';
+      'Belum ada bidang atau kitab yang cocok. Coba kata kunci lain.';
+  static const comingSoon = 'Belum tersedia';
 
   // Platform & Inisialisasi
   static const deviceNotSupportedTitle = 'Perangkat belum didukung';
@@ -73,22 +73,22 @@ abstract final class AppCopy {
       'Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi internet, lalu coba lagi.';
 
   // ── Dialog Catatan Sebelum Mulai (Adab) ────────────────────────
-  static const adabDialogTitle = 'Catatan sebelum mulai';
+  static const adabDialogTitle = 'Catatan sebelum telaah';
   static const adabAcknowledgeButton = 'Saya mengerti';
   static const adabDialogLead =
-      'OpenTurath membantu mencari kutipan dan menelaah penjelasan dalam kitab. Periksa kembali rujukan pada kitab asal, dan tetaplah belajar kepada guru serta ulama yang berkompeten.';
+      'OpenTurath membantu mencari kutipan dan menelaah ibarah dalam kitab naskah primer. Cocokkan kembali rujukan pada naskah asal, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.';
 
-  static const adabHeading1 = 'Bantuan untuk menelusuri kitab';
+  static const adabHeading1 = 'Penelusuran ibarah naskah primer';
   static const adabBody1 =
-      'Gunakan OpenTurath untuk mencari ibarah dan membandingkan penjelasan dalam kitab. Cocokkan hasilnya dengan sumber di Maktabah Syamilah atau kitab cetak.';
+      'Gunakan OpenTurath untuk mencari ibarah dan menelaah penjelasan ulama dalam kitab. Verifikasi hasilnya langsung dengan naskah kitab rujukan.';
 
-  static const adabHeading2 = 'Belajar tetap perlu bimbingan';
+  static const adabHeading2 = 'Talaqqi dan bimbingan guru';
   static const adabBody2 =
-      'Untuk memahami agama dengan baik, belajarlah kepada guru dan ulama yang berkompeten.';
+      'Untuk memahami agama dengan baik dan benar, tetaplah bertalaqqi kepada guru dan ulama yang berkompeten.';
 
-  static const adabHeading3 = 'Periksa kembali rujukan';
+  static const adabHeading3 = 'Tahqiq dan periksa rujukan';
   static const adabBody3 =
-      'Periksa dalil dan ibarah pada kitab rujukan sebelum menjadikannya pegangan.';
+      'Periksa matan, syarah, dan nomor jilid/halaman pada kitab rujukan sebelum menjadikannya sandaran istinbath.';
 
   // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
   static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
@@ -154,14 +154,14 @@ abstract final class AppCopy {
 
   // ── Akun & Pengaturan ──────────────────────────────────────────
   static const profile = 'Profil';
-  static const subscription = 'Langganan';
-  static const activeSubscription = 'Langganan aktif';
+  static const subscription = 'Akses & Langganan';
+  static const activeSubscription = 'Akses aktif';
   static const inactiveSubscription =
-      'Pilih paket atau gunakan voucher untuk mendapatkan akses.';
+      'Pilih paket atau gunakan kode akses untuk membuka telaah.';
   static const appearance = 'Tampilan';
   static const modeDark = 'Gelap';
   static const modeLight = 'Terang';
-  static const modeSystem = 'Ikuti perangkat';
+  static const modeSystem = 'Ikuti sistem';
   static const language = 'Bahasa';
   static const languageIndonesian = 'Bahasa Indonesia';
   static const languageDialogNotice =
@@ -199,18 +199,18 @@ abstract final class AppCopy {
 
   // ── Status Akses & Membership Pass ────────────────────────────
   static const accessStatus = 'Status akses';
-  static const fullAccess = 'Akses Pustaka Lengkap';
+  static const fullAccess = 'Semua ruang riset';
   static const planSyafii = 'Fikih Syafi\'i';
   static const planTahawwulat = 'Fikih Tahawwulat';
   static const trialAccess = 'Akses uji coba';
   static const activeUntil = 'Aktif hingga';
-  static const allAssistantsAvailable = 'Seluruh bidang telaah tersedia';
+  static const allAssistantsAvailable = 'Semua ruang riset tersedia';
   static const accessExpiringSoon = 'Masa akses hampir berakhir';
   static const readyToUse = 'Siap digunakan';
-  static const validUntil = 'Berlaku hingga';
-  static const renewPro = 'Perpanjang Akses';
+  static const validUntil = 'Aktif hingga';
+  static const renewPro = 'Perpanjang akses';
   static const manageSubscription = 'Kelola langganan';
-  static const preparingProAccess = 'Menyiapkan akses pustaka';
+  static const preparingProAccess = 'Menyiapkan akses ruang riset';
   static const paymentBeingVerified = 'Pembayaran sedang diperiksa';
   static const viewPaymentStatus = 'Lihat status pembayaran';
   static const accessNotYetActive = 'Akses belum aktif';
@@ -218,7 +218,7 @@ abstract final class AppCopy {
   static const tryPaymentAgain = 'Coba pembayaran lagi';
   static const chooseAssistantAndPlan =
       'Pilih bidang kajian dan paket yang sesuai untuk mulai menelaah.';
-  static const chooseProPlan = 'Pilih paket akses pustaka';
+  static const chooseProPlan = 'Pilih paket akses riset';
   static const permanentAccessLabel = 'Tanpa batas waktu';
   static const manageAccess = 'Kelola akses';
 
@@ -236,17 +236,17 @@ abstract final class AppCopy {
   static const hijriCalendar = 'Kalender Hijriah';
 
   // ── Pembayaran & Status Langganan ─────────────────────────────
-  static const paymentSuccessTitle = 'Pembayaran berhasil';
+  static const paymentSuccessTitle = 'Pembayaran diterima';
   static const paymentSuccessRedirect =
       'Akses sudah aktif. Membuka OpenTurath…';
-  static const packagePerField = 'Paket per bidang';
-  static const packageAllFields = 'Paket semua bidang';
+  static const packagePerField = 'Satu ruang riset';
+  static const packageAllFields = 'Semua ruang riset';
   static const packageAllFieldsPreparing =
-      'Paket semua bidang sedang disiapkan.';
+      'Paket semua ruang riset sedang disiapkan.';
   static const chooseFieldPlan = 'Pilih bidang';
-  static const accessAllFields = 'Akses semua bidang';
-  static const accessSingleField = 'Akses satu bidang';
-  static const notSubscribed = 'Belum berlangganan';
+  static const accessAllFields = 'Akses semua ruang riset';
+  static const accessSingleField = 'Akses satu ruang riset';
+  static const notSubscribed = 'Belum ada akses aktif';
 
   // ── Kebijakan, Hukum & Bantuan ─────────────────────────────────
   static const termsOfService = LegalCopy.termsTitle;
@@ -261,10 +261,10 @@ abstract final class AppCopy {
   static String preparingModule(String module) => '$module sedang disiapkan.';
 
   static String subscriptionRequiredFor(String module) =>
-      'Berlangganan untuk membuka $module.';
+      'Akses diperlukan untuk membuka $module.';
 
   static String accessUnavailableFor(String module) =>
-      'Akses ke $module belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.';
+      'Akses ke $module belum aktif. Pilih paket atau gunakan kode akses untuk melanjutkan.';
 
   static String planWithAgent(String agentTitle, String duration) =>
       '$agentTitle — $duration';
@@ -272,7 +272,7 @@ abstract final class AppCopy {
   static String trialDaysLeft(int days) => 'Masa coba · $days hari';
 
   static String assistantsAvailableCount(int count) =>
-      count == 1 ? '1 bidang telaah tersedia' : '$count bidang telaah tersedia';
+      count == 1 ? '1 ruang riset tersedia' : '$count ruang riset tersedia';
 
   static String savedNotesCount(int count) => '$count catatan tersimpan';
 
