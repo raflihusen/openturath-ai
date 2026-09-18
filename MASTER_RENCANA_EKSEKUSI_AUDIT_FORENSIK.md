@@ -363,8 +363,27 @@ space64  = 64.0 px
     4. **Koreksi Radius:** Sesuaikan `BorderRadius.circular(25)` menjadi `12.0 px` (`OTRadius.cardBorder`).
     5. **Integrasi Rute Navigasi:** Hubungkan rute `AiLibraryOverviewPage.route(...)` ketika pengguna memilih salah satu bidang kajian di Dashboard atau Asisten Kajian sebelum meluncurkan WebView sesi telaah.
 
-- **Audit Tambahan #3:** *(Menunggu input pengguna...)*
+- **Audit Tambahan #3: Kajian & Rencana Integrasi `open_turath_book_library_redesign.dart`:**
+  - **Status Relevansi:** ✅ **SANGAT RELEVAN & MERUPAKAN SOLUSI DEFINITIF KATALOG KITAB.**
+  - **Fungsi Komponen:** File ini memuat perombakan arsitektural total untuk **Katalog Kitab Pustaka (`OpenTurathBookLibraryPage`)** dan **Detail Kartu Kitab (`OpenTurathBookDetailPage`)**, sekaligus menyediakan data parser `OpenTurathBook` yang 100% cocok dengan skema JSON katalog kitab turats riil (seperti `01_KATALOG_FIKIH_SYAFII.json`).
+  - **Kelebihan Eksisting yang Menyelesaikan Masalah Audit:**
+    1. **Eliminasi Clutter Kartu Besar:** Menggantikan tampilan kartu bertumpuk dengan *Editorial Row* (`_BookEditorialRow`) bernomor urut dua digit (`01`, `02`, ...), dipisahkan oleh garis pembatas tipis (`palette.line`).
+    2. **Fokus Teks Arab Elegan:** Judul kitab Arab ditampilkan dalam `Scheherazade New` (27px / 50px) dengan `Directionality(TextDirection.rtl)` yang rata kanan sempurna, sementara informasi metadata (jilid, tahun wafat `W. 204 H`, penerbit) dalam font `Outfit`.
+    3. **Solusi Cacat Detail Kitab (P1-DATA-1):** Shell aplikasi tetap dalam Bahasa Indonesia (LTR), teks Arab hanya digunakan untuk data kitab. Tidak lagi memaksa seluruh layar menjadi RTL.
+    4. **Saringan (Filter) Lembut & Reaktif:** Filter `Semua kitab`, `Satu jilid`, `Multi-jilid` yang muncul secara halus tanpa memakan ruang permanen.
+    5. **Pencarian Komprehensif:** Menelusuri judul, nama ringkas, muallif, muhaqqiq, dan penerbit secara instan.
+  - **Daftar Refactoring Wajib untuk Standarisasi:**
+    1. **Migrasi Berkas:** Pindahkan kode ini ke dalam arsitektur aplikasi:
+       - `openturath_ai/lib/models/open_turath_book.dart` (Model)
+       - `openturath_ai/lib/screens/book_library_editorial_screen.dart` (Katalog)
+       - `openturath_ai/lib/screens/book_detail_editorial_screen.dart` (Detail Kitab)
+    2. **Unifikasi Token Warna ke `OTColors`:** Ganti class lokal `_LibraryPalette` ke token semantik resmi `OTColors` (menggunakan `#F6F6F3` / `#111110`).
+    3. **Penyambungan Fitur Berbagi & Simpan:**
+       - Tombol `onShare` dihubungkan ke Share Sheet resmi OS atau salin sitasi baku.
+       - Tombol `onBookmark` dihubungkan ke `BookmarkService` dengan membawa konteks koleksi/bidang kajian lengkap agar tidak default ke Fiqh Syafi'i.
+
 - **Audit Tambahan #4:** *(Menunggu input pengguna...)*
+- **Audit Tambahan #5:** *(Menunggu input pengguna...)*
 
 ---
 *Dokumen ini diperbarui secara otomatis setiap kali ada temuan audit baru dan setiap langkah perbaikan selesai dieksekusi.*
