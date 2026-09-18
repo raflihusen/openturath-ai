@@ -184,10 +184,10 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                     Text(
                       agent.titleArabic,
                       textDirection: TextDirection.rtl,
-                      style: GoogleFonts.amiri(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        height: 1.3,
+                      style: GoogleFonts.scheherazadeNew(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w500,
+                        height: 1.5,
                         color: _silver,
                       ),
                     ),
