@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,9 @@ import 'session_user_stream.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId: (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS))
+        ? '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com'
+        : null,
     serverClientId: '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
   );
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -72,20 +76,36 @@ class AuthService {
   // ── Google Sign In ─────────────────────────────────────────────
   Future<UserModel?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null; // User membatalkan login
+      User? firebaseUser;
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      try {
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) return null; // User membatalkan login
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-      final User? firebaseUser = userCredential.user;
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        final UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
+        firebaseUser = userCredential.user;
+      } catch (nativeErr) {
+        // Fallback untuk Desktop (macOS / Windows): Gunakan FirebaseAuth OAuth Provider resmi
+        if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.windows)) {
+          final provider = GoogleAuthProvider();
+          provider.addScope('email');
+          provider.addScope('profile');
+          final userCredential = await _auth.signInWithProvider(provider);
+          firebaseUser = userCredential.user;
+        } else {
+          rethrow;
+        }
+      }
+
       if (firebaseUser == null) return null;
 
       // ── Cek apakah user sudah ada di Firestore ──

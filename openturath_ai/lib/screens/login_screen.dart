@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,7 +66,11 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final user = await _authService.signInWithGoogle();
       if (!mounted || user == null) return;
-      Navigator.pushReplacementNamed(context, AppRoutes.googleSessionAuth);
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
+        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.googleSessionAuth);
+      }
     } catch (e) {
       if (!mounted) return;
       final message = e.toString().contains('network') || e.toString().contains('SocketException')
