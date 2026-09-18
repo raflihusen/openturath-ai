@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -308,6 +309,213 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return buffer.toString().split('').reversed.join('');
   }
 
+  Future<void> _showWhatsAppActivationSheet({
+    required String title,
+    required String subtitle,
+    required String priceLabel,
+    required String periodLabel,
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final email = user?.email ?? 'Belum terdaftar';
+    final name = (user?.displayName?.isNotEmpty == true) ? user!.displayName! : 'Thalibul Ilmi';
+
+    final message = '''Assalamu'alaikum Khadim OpenTurath AI,
+Saya ingin mengaktifkan rujukan paket berikut:
+• Paket: $title
+• Masa Akses: $subtitle ($priceLabel $periodLabel)
+• Akun: $email ($name)
+
+Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
+
+    final waUrl = Uri.parse('https://wa.me/6281292979189?text=${Uri.encodeComponent(message)}');
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final canvasColor = isDark ? const Color(0xFF181817) : const Color(0xFFFFFFFF);
+        final textColor = isDark ? const Color(0xFFF4F4F0) : const Color(0xFF171717);
+        final subTextColor = isDark ? const Color(0xFFB2B2AA) : const Color(0xFF656560);
+        final borderColor = isDark ? const Color(0xFF30302E) : const Color(0xFFDDDDD8);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: canvasColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            border: Border.all(color: borderColor, width: 1),
+          ),
+          padding: EdgeInsets.only(
+            left: 24,
+            right: 24,
+            top: 24,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: subTextColor.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF222220) : const Color(0xFFEEEEEB),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.verified_outlined,
+                        color: textColor,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Aktivasi Khazanah Turats',
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Layanan Khusus Tim Khadim OpenTurath',
+                          style: GoogleFonts.outfit(
+                            fontSize: 12,
+                            color: subTextColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF111110) : const Color(0xFFF6F6F3),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: borderColor),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.newsreader(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$subtitle • $priceLabel $periodLabel',
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: subTextColor,
+                      ),
+                    ),
+                    const Divider(height: 20, thickness: 0.8),
+                    Text(
+                      'Email Akun: $email',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        color: subTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Paket ini diproses langsung melalui Khadim Resmi via WhatsApp untuk memastikan konfigurasi lisensi korpus dan verifikasi akses instan tanpa kendala.',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  height: 1.4,
+                  color: subTextColor,
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    if (await canLaunchUrl(waUrl)) {
+                      await launchUrl(waUrl, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                  icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                  label: Text(
+                    'Hubungi Khadim via WhatsApp',
+                    style: GoogleFonts.outfit(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? const Color(0xFFF4F4F0) : const Color(0xFF171717),
+                    foregroundColor: isDark ? const Color(0xFF171717) : const Color(0xFFFFFFFF),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: TextButton(
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    final storeUri = Uri.parse(GoAkalCatalogRegistry.storeUrl);
+                    if (await canLaunchUrl(storeUri)) {
+                      await launchUrl(storeUri, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                  child: Text(
+                    'Buka Katalog Web Resmi GoAkal',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      color: subTextColor,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _handleBundleCheckout({
     required ThematicBundleMeta bundle,
     required int durationIndex,
@@ -316,14 +524,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (tiers.isEmpty) return;
     final safeIdx = durationIndex < tiers.length ? durationIndex : 0;
     final tier = tiers[safeIdx];
-    final paymentUrl = tier.applyUrl.isNotEmpty
-        ? tier.applyUrl
-        : GoAkalCatalogRegistry.storeUrl;
-    final planTitle = '${bundle.title} (${tier.title})';
 
+    // Jika paket bundle belum live langsung di link GoAkal, arahkan via WhatsApp resmi
+    if (!tier.isLiveOnGoAkal) {
+      await _showWhatsAppActivationSheet(
+        title: bundle.title,
+        subtitle: tier.title,
+        priceLabel: tier.priceLabel,
+        periodLabel: tier.periodLabel,
+      );
+      return;
+    }
+
+    final planTitle = '${bundle.title} (${tier.title})';
     await DokuCheckoutSheet.show(
       context,
-      paymentUrl: paymentUrl,
+      paymentUrl: tier.applyUrl,
       invoiceNumber: '',
       planTitle: planTitle,
       amount: tier.amount,
@@ -342,14 +558,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final planTitle = '${tier['name']} ${targetAgent.title}'.trim();
     final price = tier['price'] as int;
 
-    final paymentUrl = rawApplyUrl.isNotEmpty
-        ? rawApplyUrl
-        : 'https://goakal.com/openturath-ai';
+    // Jika URL apply tidak tersedia, arahkan ke WhatsApp resmi
+    if (rawApplyUrl.isEmpty) {
+      await _showWhatsAppActivationSheet(
+        title: targetAgent.title,
+        subtitle: (tier['name'] as String?) ?? '1 Bulan',
+        priceLabel: (tier['label'] as String?) ?? 'Rp 49.000',
+        periodLabel: (tier['period'] as String?) ?? '/ bulan',
+      );
+      return;
+    }
 
     // Buka pop-up modal checkout in-app resmi GoAkal tanpa keluar aplikasi
     await DokuCheckoutSheet.show(
       context,
-      paymentUrl: paymentUrl,
+      paymentUrl: rawApplyUrl,
       invoiceNumber: '',
       planTitle: planTitle,
       amount: price,
