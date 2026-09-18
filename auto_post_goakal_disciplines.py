@@ -215,7 +215,7 @@ def create_service(item: Dict[str, str]) -> Dict[str, Any]:
     payload = {
         "title": item["title"],
         "url_id": item["url_id"],
-        "type": "membership",
+        "type": "digital_product",
         "description": item["description"],
         "media_gallery": DEFAULT_BANNER,
     }
