@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
-import '../core/constants.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
@@ -17,6 +16,7 @@ import '../services/subscription_service.dart';
 import '../widgets/doku_checkout_sheet.dart';
 import '../widgets/redeem_code_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../core/goakal_catalog_registry.dart';
 
 /// Halaman Langganan OpenTurath (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
@@ -78,101 +78,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     },
   ];
 
-  // Tier untuk disiplin ilmu lainnya
+  // Tier untuk disiplin ilmu lainnya berbasis GoAkal Registry Otomatis
   List<Map<String, dynamic>> _getOtherTiers(AgentModel? agent) {
-    final id = agent?.id ?? '';
-    if (id == 'fiqh_syafii') {
-      return [
-        {
-          'name': '1 Bulan',
-          'price': 299000,
-          'label': 'Rp 299.000',
-          'period': '/ bulan',
-          'planId': 'fiqh_syafii_1m',
-          'applyUrl':
-              'https://goakal.com/openturath-ai/fikih-syafii/tjvxw/apply',
-        },
-        {
-          'name': '6 Bulan',
-          'price': 1499000,
-          'label': 'Rp 1.499.000',
-          'period': '/ 6 bulan',
-          'planId': 'fiqh_syafii_6m',
-          'applyUrl':
-              'https://goakal.com/openturath-ai/fikih-syafii/16oun/apply',
-        },
-        {
-          'name': '1 Tahun',
-          'price': 1999000,
-          'label': 'Rp 1.999.000',
-          'period': '/ tahun',
-          'planId': 'fiqh_syafii_1y',
-          'applyUrl':
-              'https://goakal.com/openturath-ai/fikih-syafii/ianjf/apply',
-        },
-      ];
-    } else if (id == 'nahwu_sharaf' ||
-        id == 'bahasa_arab' ||
-        id == 'lughah_nahwu' ||
-        id == 'nahwu') {
-      return [
-        {
-          'name': '1 Bulan',
-          'price': 299000,
-          'label': 'Rp 299.000',
-          'period': '/ bulan',
-          'planId': 'bahasa_arab_1m',
-          'applyUrl':
-              'https://goakal.com/openturath-ai/ai-bahasa-arab/kbp4j/apply',
-        },
-        {
-          'name': '6 Bulan',
-          'price': 1499000,
-          'label': 'Rp 1.499.000',
-          'period': '/ 6 bulan',
-          'planId': 'bahasa_arab_6m',
-          'applyUrl':
-              'https://goakal.com/openturath-ai/ai-bahasa-arab/ydvfs/apply',
-        },
-        {
-          'name': '1 Tahun',
-          'price': 1999000,
-          'label': 'Rp 1.999.000',
-          'period': '/ tahun',
-          'planId': 'bahasa_arab_1y',
-          'applyUrl':
-              'https://goakal.com/openturath-ai/ai-bahasa-arab/yfi9q/apply',
-        },
-      ];
-    }
-
-    // Default regular tier untuk disiplin lainnya (Etalase GoAkal OpenTurath)
-    return [
-      {
-        'name': '1 Bulan',
-        'price': 49000,
-        'label': 'Rp 49.000',
-        'period': '/ bulan',
-        'planId': AppConstants.planTholib1m,
-        'applyUrl': 'https://goakal.com/openturath-ai',
-      },
-      {
-        'name': '6 Bulan',
-        'price': 299000,
-        'label': 'Rp 299.000',
-        'period': '/ 6 bulan',
-        'planId': AppConstants.planTholib6m,
-        'applyUrl': 'https://goakal.com/openturath-ai',
-      },
-      {
-        'name': '1 Tahun',
-        'price': 499000,
-        'label': 'Rp 499.000',
-        'period': '/ tahun',
-        'planId': AppConstants.planBahits1y,
-        'applyUrl': 'https://goakal.com/openturath-ai',
-      },
-    ];
+    return GoAkalCatalogRegistry.getTiersForAgent(agent?.id);
   }
 
   @override

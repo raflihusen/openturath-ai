@@ -1715,7 +1715,7 @@ exports.syncAkalPurchases = functions
     if (!apiKey) {
         throw new functions.https.HttpsError("internal", "Kunci API GoAkal belum dikonfigurasi di server.");
     }
-    // Daftar service GoAkal resmi OpenTurath AI
+    // Daftar service GoAkal resmi OpenTurath AI (Seluruh Disiplin Ilmu)
     const akalServices = [
         {
             cuid: "cmln2i27k0000jx047oabzw8p",
@@ -1724,8 +1724,8 @@ exports.syncAkalPurchases = functions
             name: "AI Fikih Tahawwulat (5 Bilik AI)",
         },
         {
-            cuid: "cms4ls3j60001l20439k1nph4",
-            fallbacks: ["cms4ls3j60001l20439k1nqh4"],
+            cuid: "cms4ls3j60001l20439k1nqh4",
+            fallbacks: ["cms4ls3j60001l20439k1nph4"],
             entitlementKey: "fiqh_syafii",
             name: "Super AI Fikih Syafi'i",
         },
@@ -1734,6 +1734,108 @@ exports.syncAkalPurchases = functions
             fallbacks: [],
             entitlementKey: "nahwu",
             name: "Super AI Bahasa Arab",
+        },
+        {
+            cuid: "cmu6hf53s000mkx04jc3vrj02",
+            fallbacks: [],
+            entitlementKey: "ushul_fiqh",
+            name: "Super AI Ushul Fikih",
+        },
+        {
+            cuid: "cmu6hfbkn0015kx04d87j1b11",
+            fallbacks: [],
+            entitlementKey: "hadits",
+            name: "Super AI Hadits Nabawi",
+        },
+        {
+            cuid: "cmu6hfi5o000cjt04xziipmr2",
+            fallbacks: [],
+            entitlementKey: "tafsir",
+            name: "Super AI Tafsir & Ulumul Qur'an",
+        },
+        {
+            cuid: "cmu6hfq7m000cjm0414zlr67i",
+            fallbacks: [],
+            entitlementKey: "ushul_fiqh",
+            name: "Super AI Qawaid Fiqhiyyah",
+        },
+        {
+            cuid: "cmu6hfx13000xjm04np32pb64",
+            fallbacks: [],
+            entitlementKey: "hadits",
+            name: "Super AI Musthalah & Ulumul Hadits",
+        },
+        {
+            cuid: "cmu6hg3bh001gjm043hjueyh5",
+            fallbacks: [],
+            entitlementKey: "aqidah",
+            name: "Super AI Aqidah & Ushuluddin",
+        },
+        {
+            cuid: "cmu6hg9wl001zjm04lyds535x",
+            fallbacks: [],
+            entitlementKey: "fiqh_hanafi",
+            name: "Super AI Fikih Hanafi",
+        },
+        {
+            cuid: "cmu6hgh6r002ijm040qddnmph",
+            fallbacks: [],
+            entitlementKey: "fiqh_maliki",
+            name: "Super AI Fikih Maliki",
+        },
+        {
+            cuid: "cmu6hgo4z0031jm04bpdj07ki",
+            fallbacks: [],
+            entitlementKey: "fiqh_hanbali",
+            name: "Super AI Fikih Hanbali",
+        },
+        {
+            cuid: "cmu6hgv6n003kjm04tit1vsh8",
+            fallbacks: [],
+            entitlementKey: "fiqh_muqaran",
+            name: "Super AI Fikih Muqaran & Siyasah",
+        },
+        {
+            cuid: "cmu6hh1nn0043jm04r4h40wdb",
+            fallbacks: [],
+            entitlementKey: "fatawa",
+            name: "Super AI Fatawa & Masail",
+        },
+        {
+            cuid: "cmu6hh86n004mjm04ejgkhlg1",
+            fallbacks: [],
+            entitlementKey: "tasawwuf",
+            name: "Super AI Tasawwuf & Adzkar",
+        },
+        {
+            cuid: "cmu6hhet70055jm04ew3lb6wq",
+            fallbacks: [],
+            entitlementKey: "tajwid",
+            name: "Super AI Tajwid & Qiraat",
+        },
+        {
+            cuid: "cmu6hhl7a005ojm04pgptpegm",
+            fallbacks: [],
+            entitlementKey: "tarikh",
+            name: "Super AI Tarikh & Sirah Nabawiyyah",
+        },
+        {
+            cuid: "cmu6hhrvz0067jm04ljdfmycu",
+            fallbacks: [],
+            entitlementKey: "hadits",
+            name: "Super AI Syarah Hadits",
+        },
+        {
+            cuid: "cmu6hhyby006qjm04e0l3p11r",
+            fallbacks: [],
+            entitlementKey: "tarikh",
+            name: "Super AI Thabaqat & Tarajim Rijal",
+        },
+        {
+            cuid: "cmu6hi4lr0079jm0462vczjdm",
+            fallbacks: [],
+            entitlementKey: "bibliografi",
+            name: "Super AI Bibliografi & Faharis Turath",
         },
     ];
     const syncedServices = [];

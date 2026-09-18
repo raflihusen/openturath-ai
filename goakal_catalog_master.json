@@ -1,94 +1,448 @@
 {
-  "store_url": "https://goakal.com/openturath-ai",
-  "scraped_at": "",
-  "total_services": 3,
-  "services": [
-    {
-      "slug": "fikih-syafii",
-      "title": "SUPER AI FIKIH SYAFI'I",
-      "sales_url": "https://goakal.com/openturath-ai/fikih-syafii",
-      "tiers_count": 3,
-      "tiers": [
-        {
-          "tier": "1_month",
-          "card_text": "1 Bulan | 2 kursi tersisa | Akses ke AI FIKI SYAFI'I | Rp299.000/bulan | Daftar",
-          "price": "Rp 299.000",
-          "quota": "2 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/tjvxw/apply"
-        },
-        {
-          "tier": "6_months",
-          "card_text": "6 Bulan | 13 kursi tersisa | Akses ke AI FIKIH SYAFI'I | Rp1.499.000/6 bulan | Daftar",
-          "price": "Rp 1.499.000",
-          "quota": "13 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/16oun/apply"
-        },
-        {
-          "tier": "1_year",
-          "card_text": "12 Bulan | 9 kursi tersisa | Akses ke AI FIKIH SYAFI'I | Rp1.999.000/tahun | Daftar",
-          "price": "Rp 1.999.000",
-          "quota": "9 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/ianjf/apply"
-        }
-      ]
-    },
-    {
-      "slug": "ai-bahasa-arab",
-      "title": "SUPER AI BAHASA ARAB",
-      "sales_url": "https://goakal.com/openturath-ai/ai-bahasa-arab",
-      "tiers_count": 3,
-      "tiers": [
-        {
-          "tier": "1_month",
-          "card_text": "1 Bulan | 9 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp299.000/bulan | Daftar",
-          "price": "Rp 299.000",
-          "quota": "9 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/kbp4j/apply"
-        },
-        {
-          "tier": "6_months",
-          "card_text": "6 Bulan | 15 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp1.499.000/6 bulan | Daftar",
-          "price": "Rp 1.499.000",
-          "quota": "15 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/ydvfs/apply"
-        },
-        {
-          "tier": "1_year",
-          "card_text": "12 Bulan | 10 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp1.999.000/tahun | Daftar",
-          "price": "Rp 1.999.000",
-          "quota": "10 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/yfi9q/apply"
-        }
-      ]
-    },
-    {
-      "slug": "ai-fikih-tahawwulat",
-      "title": "AI Fikih Tahawwulat",
-      "sales_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat",
-      "tiers_count": 3,
-      "tiers": [
-        {
-          "tier": "1_month",
-          "card_text": "1 Bulan | 8 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp1.000.000/bulan | Daftar",
-          "price": "Rp 1.000.000",
-          "quota": "8 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/1js2e/apply"
-        },
-        {
-          "tier": "6_months",
-          "card_text": "6 Bulan | 8 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp2.995.000/6 bulan | Daftar",
-          "price": "Rp 2.995.000",
-          "quota": "8 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/sp6zh/apply"
-        },
-        {
-          "tier": "1_year",
-          "card_text": "12 Bulan | 9 kursi tersisa | Akses ke AI Fikih Tahawwulat | Rp4.995.000/tahun | Daftar",
-          "price": "Rp 4.995.000",
-          "quota": "9 kursi tersisa",
-          "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/8yt9m/apply"
-        }
-      ]
+  "bibliografi-faharis": {
+    "title": "SUPER AI BIBLIOGRAFI & FAHARIS TURATH",
+    "cuid": "cmu6hi4lr0079jm0462vczjdm",
+    "url_link": "https://goakal.com/openturath-ai/bibliografi-faharis",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/bibliografi-faharis/fvf9n/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/bibliografi-faharis/idjz2/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/bibliografi-faharis/4rqws/apply"
+      }
     }
-  ]
+  },
+  "thabaqat-tarajim": {
+    "title": "SUPER AI THABAQAT & TARAJIM RIJAL",
+    "cuid": "cmu6hhyby006qjm04e0l3p11r",
+    "url_link": "https://goakal.com/openturath-ai/thabaqat-tarajim",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/thabaqat-tarajim/bapyj/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/thabaqat-tarajim/slria/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/thabaqat-tarajim/d7yc4/apply"
+      }
+    }
+  },
+  "syarah-hadits": {
+    "title": "SUPER AI SYARAH HADITS",
+    "cuid": "cmu6hhrvz0067jm04ljdfmycu",
+    "url_link": "https://goakal.com/openturath-ai/syarah-hadits",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/syarah-hadits/befmz/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/syarah-hadits/g8iy5/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/syarah-hadits/uhg5y/apply"
+      }
+    }
+  },
+  "tarikh-sirah": {
+    "title": "SUPER AI TARIKH & SIRAH NABAWIYYAH",
+    "cuid": "cmu6hhl7a005ojm04pgptpegm",
+    "url_link": "https://goakal.com/openturath-ai/tarikh-sirah",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/tarikh-sirah/8sl8w/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/tarikh-sirah/dvpom/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/tarikh-sirah/w6qh3/apply"
+      }
+    }
+  },
+  "tajwid-qiraat": {
+    "title": "SUPER AI TAJWID & QIRAAT",
+    "cuid": "cmu6hhet70055jm04ew3lb6wq",
+    "url_link": "https://goakal.com/openturath-ai/tajwid-qiraat",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/tajwid-qiraat/u7ful/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/tajwid-qiraat/nrcif/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/tajwid-qiraat/r15pd/apply"
+      }
+    }
+  },
+  "tasawwuf-adzkar": {
+    "title": "SUPER AI TASAWWUF & ADZKAR",
+    "cuid": "cmu6hh86n004mjm04ejgkhlg1",
+    "url_link": "https://goakal.com/openturath-ai/tasawwuf-adzkar",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/tasawwuf-adzkar/9745y/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/tasawwuf-adzkar/8a3lo/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/tasawwuf-adzkar/tqlj2/apply"
+      }
+    }
+  },
+  "fatawa-masail": {
+    "title": "SUPER AI FATAWA & MASAIL FIQHIYYAH",
+    "cuid": "cmu6hh1nn0043jm04r4h40wdb",
+    "url_link": "https://goakal.com/openturath-ai/fatawa-masail",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/fatawa-masail/nv0m0/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/fatawa-masail/dzs0p/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/fatawa-masail/x53hd/apply"
+      }
+    }
+  },
+  "fikih-muqaran": {
+    "title": "SUPER AI FIKIH MUQARAN & SIYASAH",
+    "cuid": "cmu6hgv6n003kjm04tit1vsh8",
+    "url_link": "https://goakal.com/openturath-ai/fikih-muqaran",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-muqaran/ci0s6/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-muqaran/e6cgt/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-muqaran/5i6um/apply"
+      }
+    }
+  },
+  "fikih-hanbali": {
+    "title": "SUPER AI FIKIH HANBALI",
+    "cuid": "cmu6hgo4z0031jm04bpdj07ki",
+    "url_link": "https://goakal.com/openturath-ai/fikih-hanbali",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-hanbali/p814h/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-hanbali/w2mep/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-hanbali/w7y99/apply"
+      }
+    }
+  },
+  "fikih-maliki": {
+    "title": "SUPER AI FIKIH MALIKI",
+    "cuid": "cmu6hgh6r002ijm040qddnmph",
+    "url_link": "https://goakal.com/openturath-ai/fikih-maliki",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-maliki/r7fit/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-maliki/s8cnz/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-maliki/1nnz8/apply"
+      }
+    }
+  },
+  "fikih-hanafi": {
+    "title": "SUPER AI FIKIH HANAFI",
+    "cuid": "cmu6hg9wl001zjm04lyds535x",
+    "url_link": "https://goakal.com/openturath-ai/fikih-hanafi",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-hanafi/5ofbj/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-hanafi/uhkca/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-hanafi/kwpa6/apply"
+      }
+    }
+  },
+  "aqidah-ushuluddin": {
+    "title": "SUPER AI AQIDAH & USHULUDDIN",
+    "cuid": "cmu6hg3bh001gjm043hjueyh5",
+    "url_link": "https://goakal.com/openturath-ai/aqidah-ushuluddin",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/aqidah-ushuluddin/an70o/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/aqidah-ushuluddin/7n761/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/aqidah-ushuluddin/fvnxh/apply"
+      }
+    }
+  },
+  "musthalah-hadits": {
+    "title": "SUPER AI MUSTHALAH & ULUMUL HADITS",
+    "cuid": "cmu6hfx13000xjm04np32pb64",
+    "url_link": "https://goakal.com/openturath-ai/musthalah-hadits",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/musthalah-hadits/7349m/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/musthalah-hadits/2ikma/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/musthalah-hadits/8nfa7/apply"
+      }
+    }
+  },
+  "qawaid-fiqhiyyah": {
+    "title": "SUPER AI QAWAID FIQHIYYAH",
+    "cuid": "cmu6hfq7m000cjm0414zlr67i",
+    "url_link": "https://goakal.com/openturath-ai/qawaid-fiqhiyyah",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/qawaid-fiqhiyyah/9n3df/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/qawaid-fiqhiyyah/0a4bb/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/qawaid-fiqhiyyah/1fnnl/apply"
+      }
+    }
+  },
+  "tafsir-ulumul-quran": {
+    "title": "SUPER AI TAFSIR & ULUMUL QUR'AN",
+    "cuid": "cmu6hfi5o000cjt04xziipmr2",
+    "url_link": "https://goakal.com/openturath-ai/tafsir-ulumul-quran",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/tafsir-ulumul-quran/v00h9/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/tafsir-ulumul-quran/hpisf/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/tafsir-ulumul-quran/sfpsx/apply"
+      }
+    }
+  },
+  "hadits-nabawi": {
+    "title": "SUPER AI HADITS NABAWI",
+    "cuid": "cmu6hfbkn0015kx04d87j1b11",
+    "url_link": "https://goakal.com/openturath-ai/hadits-nabawi",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/hadits-nabawi/rqlei/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/hadits-nabawi/jpes8/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/hadits-nabawi/bp6zx/apply"
+      }
+    }
+  },
+  "ushul-fikih": {
+    "title": "SUPER AI USHUL FIKIH",
+    "cuid": "cmu6hf53s000mkx04jc3vrj02",
+    "url_link": "https://goakal.com/openturath-ai/ushul-fikih",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/ushul-fikih/172b6/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/ushul-fikih/mcgfs/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/ushul-fikih/0s0yp/apply"
+      }
+    }
+  },
+  "fikih-syafii": {
+    "title": "SUPER AI FIKIH SYAFI'I",
+    "cuid": "cms4ls3j60001l20439k1nqh4",
+    "url_link": "https://goakal.com/openturath-ai/fikih-syafii",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/tjvxw/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/16oun/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/fikih-syafii/ianjf/apply"
+      }
+    }
+  },
+  "ai-bahasa-arab": {
+    "title": "SUPER AI BAHASA ARAB",
+    "cuid": "cmnd7l4o60002l504ab6qq31x",
+    "url_link": "https://goakal.com/openturath-ai/ai-bahasa-arab",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 299000,
+        "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/kbp4j/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 1499000,
+        "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/ydvfs/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 1999000,
+        "apply_url": "https://goakal.com/openturath-ai/ai-bahasa-arab/yfi9q/apply"
+      }
+    }
+  },
+  "syarah": {
+    "title": "Syarah kitab Al-Usus Wa Al-Munthalaqat",
+    "cuid": "cmlp3pu680003im04i8sv1ll2",
+    "url_link": "https://goakal.com/openturath-ai/syarah",
+    "tiers": {}
+  },
+  "ai-fikih-tahawwulat": {
+    "title": "AI Fikih Tahawwulat",
+    "cuid": "cmln2i27k0000jx047oabzw8p",
+    "url_link": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat",
+    "tiers": {
+      "1_month": {
+        "title": "1 Bulan",
+        "amount": 1000000,
+        "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/1js2e/apply"
+      },
+      "6_months": {
+        "title": "6 Bulan",
+        "amount": 2995000,
+        "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/sp6zh/apply"
+      },
+      "1_year": {
+        "title": "12 Bulan",
+        "amount": 4995000,
+        "apply_url": "https://goakal.com/openturath-ai/ai-fikih-tahawwulat/8yt9m/apply"
+      }
+    }
+  }
 }
