@@ -10,4 +10,6 @@ class AppRoutes {
   static const String googleSessionAuth = '/google_session_auth';
   static const String bookCatalog = '/catalog';
   static const String bookDetail = '/book_detail';
+  static const String libraryMetadata = '/library_metadata';
+  static const String editorialCatalog = '/editorial_catalog';
 }

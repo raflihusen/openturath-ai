@@ -9,6 +9,8 @@ import '../core/routes.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
+import '../services/open_turath_catalog_repository.dart';
+import '../screens/library_metadata_overview_screen.dart';
 import 'apple_interactive_wrapper.dart';
 
 /// Opens the Canonical Research Library as a dedicated full-screen scholarly catalog route.
@@ -16,12 +18,24 @@ import 'apple_interactive_wrapper.dart';
 Future<void> showResearchLibrary(
   BuildContext context, {
   AgentModel? agent,
-}) {
-  return NavigationGuard.safePushNamed(
-    context,
-    AppRoutes.bookCatalog,
-    arguments: agent,
-  );
+}) async {
+  final agentKey = agent?.id ?? 'fiqh_syafii';
+  final metadata = await OpenTurathCatalogRepository.instance.getMetadataForModule(agentKey);
+
+  if (context.mounted && metadata != null) {
+    Navigator.of(context).push(
+      AiLibraryOverviewPage.route(metadata: metadata),
+    );
+    return;
+  }
+
+  if (context.mounted) {
+    NavigationGuard.safePushNamed(
+      context,
+      AppRoutes.bookCatalog,
+      arguments: agent,
+    );
+  }
 }
 
 class ResearchLibrarySheet extends StatefulWidget {
