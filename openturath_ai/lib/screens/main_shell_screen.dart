@@ -270,11 +270,6 @@ class _MainShellScreenState extends State<MainShellScreen> {
             onPopInvokedWithResult: (didPop, result) async {
               if (didPop) return;
               if (sessionManager.isOpen) {
-                final activeController = sessionManager.activeTab?.webController;
-                if (activeController != null && await activeController.canGoBack()) {
-                  await activeController.goBack();
-                  return;
-                }
                 if (context.mounted) {
                   AppSnackBar.clear(context);
                 }
