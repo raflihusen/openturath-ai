@@ -136,18 +136,27 @@ class SubscriptionService {
     required String invoiceNumber,
     String? trxId,
   }) async {
-    // 1. Panggil checkPaymentStatus Cloud Function yang inquiry langsung ke DOKU
-    final res = await _dokuService.checkPaymentStatus(invoiceNumber: invoiceNumber);
-    if (res['status'] == 'SUCCESS' || res['success'] == true) {
-      return res;
+    final cleanInvoice = invoiceNumber.trim();
+    if (cleanInvoice.isEmpty) {
+      return {
+        'success': false,
+        'status': 'INVALID_INVOICE',
+        'message': 'Nomor invoice transaksi tidak valid.'
+      };
     }
 
-    // 2. Fallback cek Firestore transaction jika ada trxId
-    if (trxId != null && trxId.isNotEmpty) {
-      final doc = await _db.collection(AppConstants.colTransactions).doc(trxId).get();
-      if (doc.exists && doc.data()?['status'] == 'success') {
-        return {'success': true, 'status': 'SUCCESS'};
-      }
+    // Panggil checkPaymentStatus Cloud Function yang inquiry langsung ke API DOKU (server-to-server)
+    // Server-side function yang memverifikasi signature dan keaslian status transaksi dari DOKU
+    final res = await _dokuService.checkPaymentStatus(invoiceNumber: cleanInvoice);
+    
+    // Validasi ketat respon server Cloud Function
+    final isSuccess = res['status'] == 'SUCCESS' || (res['success'] == true && res['status'] != 'FAILED');
+    if (isSuccess) {
+      return {
+        'success': true,
+        'status': 'SUCCESS',
+        'data': res,
+      };
     }
 
     return res;
