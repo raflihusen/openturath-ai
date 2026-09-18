@@ -78,7 +78,18 @@ class AuthService {
     try {
       User? firebaseUser;
 
-      try {
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.macOS ||
+              defaultTargetPlatform == TargetPlatform.windows)) {
+        // Desktop (macOS / Windows): Gunakan FirebaseAuth OAuth Provider resmi
+        // Ini menghindari NSException / crash dari native GoogleSignIn plugin pada desktop
+        final provider = GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        final userCredential = await _auth.signInWithProvider(provider);
+        firebaseUser = userCredential.user;
+      } else {
+        // Mobile (Android / iOS) & Web: Gunakan native GoogleSignIn SDK
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return null; // User membatalkan login
 
@@ -93,17 +104,6 @@ class AuthService {
         final UserCredential userCredential =
             await _auth.signInWithCredential(credential);
         firebaseUser = userCredential.user;
-      } catch (nativeErr) {
-        // Fallback untuk Desktop (macOS / Windows): Gunakan FirebaseAuth OAuth Provider resmi
-        if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.windows)) {
-          final provider = GoogleAuthProvider();
-          provider.addScope('email');
-          provider.addScope('profile');
-          final userCredential = await _auth.signInWithProvider(provider);
-          firebaseUser = userCredential.user;
-        } else {
-          rethrow;
-        }
       }
 
       if (firebaseUser == null) return null;
