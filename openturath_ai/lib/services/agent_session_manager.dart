@@ -19,10 +19,24 @@ class AgentSessionTab {
   double fontScale = 1.0;
   bool hasAcknowledgedAdab = false;
 
+  bool hasInjectedEarlyScript = false;
+
   AgentSessionTab({
     required this.agent,
     this.resolvedUrl,
   });
+
+  /// Lepaskan seluruh resource WebView dan handler JavaScript untuk mencegah kebocoran memori.
+  Future<void> disposeWebResources() async {
+    try {
+      await webController?.stopLoading();
+      webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
+    } catch (_) {}
+    webController = null;
+    isSessionReady = false;
+    isWebLoading = false;
+    hasInjectedEarlyScript = false;
+  }
 }
 
 /// AgentSessionManager: Singleton state manager for multi-tab AI study sessions.
@@ -79,9 +93,8 @@ class AgentSessionManager extends ChangeNotifier {
   void closeTab(int index) {
     if (index < 0 || index >= _tabs.length) return;
 
-    try {
-      _tabs[index].webController?.stopLoading();
-    } catch (_) {}
+    final tabToClose = _tabs[index];
+    tabToClose.disposeWebResources();
 
     _tabs.removeAt(index);
 
@@ -105,9 +118,7 @@ class AgentSessionManager extends ChangeNotifier {
   /// Reset all sessions (e.g. on user logout).
   void closeAll() {
     for (final tab in _tabs) {
-      try {
-        tab.webController?.stopLoading();
-      } catch (_) {}
+      tab.disposeWebResources();
     }
     _tabs.clear();
     _activeIndex = 0;
