@@ -13,8 +13,8 @@
 ## 📋 2. Tabel Ringkasan Cepat Seluruh Entitas
 | No | Kode Entitas | Nama Disiplin / Cabang AI | Sumber Siap | ID Master | Link Master | Kloning Selesai | Status |
 |:--:|:---|:---|:---:|:---|:---:|:---:|:---:|
-| 01 | `06.1_AL_MUHAQQIQ` | Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul) | 71/71 | `67b65ed8...` | [Buka Notebook](https://notebooklm.google.com/notebook/67b65ed8-0d1e-4fb4-929c-4fcb735d3be3) | **13/13** | ✅ SELESAI |
-| 02 | `06.2_AL_BAYAN` | Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah) | 71/71 | `75882649...` | [Buka Notebook](https://notebooklm.google.com/notebook/75882649-638f-4729-97f8-19897d90b108) | **13/13** | ✅ SELESAI |
+| 01 | `06.1_AL_MUHAQQIQ` | Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul) | 71/71 | `dc7ee7e4...` | [Buka Notebook](https://notebook.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4) | **13/13** | ✅ SELESAI |
+| 02 | `06.2_AL_BAYAN` | Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah) | 71/71 | `483d0291...` | [Buka Notebook](https://notebook.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd) | **13/13** | ✅ SELESAI |
 | 03 | `06.3_AL_MUKHTABIR` | Al-Mukhtabir (Fikih Tahawwulat - Cabang Komparasi & Verifikasi Ilmiah) | 71/71 | `ac803816...` | [Buka Notebook](https://notebooklm.google.com/notebook/ac803816-5541-4446-bc9d-b56326493555) | **13/13** | ✅ SELESAI |
 | 04 | `06.4_AL_HABIB` | Al-Habib (Fikih Tahawwulat - Cabang Hikmah & Tazkiyah) | 71/71 | `c8b8a754...` | [Buka Notebook](https://notebooklm.google.com/notebook/c8b8a754-991d-429d-8379-b0478abb6ceb) | **13/13** | ✅ SELESAI |
 | 05 | `06.5_AL_KHATIB` | Al-Khatib (Fikih Tahawwulat - Cabang Khutbah & Retorika Aktual) | 71/71 | `926f3633...` | [Buka Notebook](https://notebooklm.google.com/notebook/926f3633-53fc-4dbf-81da-0570f7a4d26b) | **13/13** | ✅ SELESAI |
@@ -43,8 +43,8 @@
 ## 📂 3. Rincian Master & 13 Kloning Per Entitas
 
 ### 01. Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul) (`06.1_AL_MUHAQQIQ`)
-- **Master Notebook:** [06.1 - AL-MUHAQQIQ (MASTER)](https://notebooklm.google.com/notebook/67b65ed8-0d1e-4fb4-929c-4fcb735d3be3)
-- **Master ID:** `67b65ed8-0d1e-4fb4-929c-4fcb735d3be3`
+- **Master Notebook:** [06.1 - AL-MUHAQQIQ (MASTER)](https://notebook.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4)
+- **Master ID:** `dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4`
 - **Jumlah Kloning Terverifikasi:** 13 / 13 Salinan
 
 | No | Nama Notebook Kloning | ID Notebook | Direct Link NotebookLM |
@@ -64,8 +64,8 @@
 | 13 | **06.1 - AL-MUHAQQIQ - 13** | `fc209fc9-faf5-4c68-8c2b-8e7b11d919e6` | [Buka Notebook](https://notebooklm.google.com/notebook/fc209fc9-faf5-4c68-8c2b-8e7b11d919e6) |
 
 ### 02. Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah) (`06.2_AL_BAYAN`)
-- **Master Notebook:** [06.2 - AL-BAYAN (MASTER)](https://notebooklm.google.com/notebook/75882649-638f-4729-97f8-19897d90b108)
-- **Master ID:** `75882649-638f-4729-97f8-19897d90b108`
+- **Master Notebook:** [06.2 - AL-BAYAN (MASTER)](https://notebook.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd)
+- **Master ID:** `483d0291-0a70-411c-bff0-f1ea4b83b2fd`
 - **Jumlah Kloning Terverifikasi:** 13 / 13 Salinan
 
 | No | Nama Notebook Kloning | ID Notebook | Direct Link NotebookLM |
@@ -561,9 +561,9 @@ Kode JSON di bawah ini dapat langsung di-copy atau di-import ke aplikasi OpenTur
       "key": "06.1_AL_MUHAQQIQ",
       "name": "Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul)",
       "master": {
-        "id": "67b65ed8-0d1e-4fb4-929c-4fcb735d3be3",
+        "id": "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4",
         "title": "06.1 - AL-MUHAQQIQ (MASTER)",
-        "url": "https://notebooklm.google.com/notebook/67b65ed8-0d1e-4fb4-929c-4fcb735d3be3"
+        "url": "https://notebook.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"
       },
       "clones": [
         {
@@ -637,9 +637,9 @@ Kode JSON di bawah ini dapat langsung di-copy atau di-import ke aplikasi OpenTur
       "key": "06.2_AL_BAYAN",
       "name": "Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah)",
       "master": {
-        "id": "75882649-638f-4729-97f8-19897d90b108",
+        "id": "483d0291-0a70-411c-bff0-f1ea4b83b2fd",
         "title": "06.2 - AL-BAYAN (MASTER)",
-        "url": "https://notebooklm.google.com/notebook/75882649-638f-4729-97f8-19897d90b108"
+        "url": "https://notebook.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd"
       },
       "clones": [
         {
