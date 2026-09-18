@@ -224,7 +224,20 @@ def create_service(item: Dict[str, str]) -> Dict[str, Any]:
     if not data.get("success"):
         logger.error(f"Gagal membuat service '{item['title']}': {data}")
         return {}
-    return data.get("data", {})
+    
+    svc = data.get("data", {})
+    cuid = svc.get("cuid")
+    # Pastikan description dan media_gallery terisi via PATCH jika belum tersimpan
+    if cuid and (not svc.get("description") or not svc.get("media_gallery")):
+        patch_payload = {
+            "title": item["title"],
+            "description": item["description"],
+            "media_gallery": DEFAULT_BANNER,
+        }
+        res_patch = requests.patch(f"{AKAL_BASE_URL}/services/{cuid}", json=patch_payload, headers=HEADERS)
+        if res_patch.status_code == 200 and res_patch.json().get("success"):
+            svc = res_patch.json().get("data", svc)
+    return svc
 
 
 def create_price_scheme(service_cuid: str, scheme: Dict[str, Any]) -> Dict[str, Any]:
