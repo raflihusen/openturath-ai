@@ -1026,94 +1026,34 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                       final activeTier =
                           tiers.isNotEmpty ? tiers[safeTierIdx] : null;
 
-                      final isSultan = bundle.slug == 'paket-sultan-all-access';
-                      final isFikih = bundle.slug == 'paket-fikih-pesantren';
-
                       return Container(
                         margin: const EdgeInsets.only(bottom: OTSpacing.lg),
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF141418)
-                              : const Color(0xFFFAF9F6),
+                          color: surface,
                           borderRadius: OTRadius.cardBorder,
                           border: Border.all(
-                            color: isSultan
-                                ? (isDark
-                                    ? const Color(0xFFEAB308)
-                                    : const Color(0xFFCA8A04))
-                                : (isFikih
-                                    ? (isDark
-                                        ? const Color(0xFF10B981)
-                                        : const Color(0xFF059669))
-                                    : (isDark
-                                        ? const Color(0xFF383842)
-                                        : const Color(0xFFD4D4D8))),
-                            width: (isSultan || isFikih) ? 1.6 : 1.2,
+                            color: border,
+                            width: 0.8,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black
-                                  .withValues(alpha: isDark ? 0.35 : 0.04),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
                         ),
                         padding: const EdgeInsets.all(OTSpacing.lg),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Header Badges
+                            // Label konteks, bukan badge promosi.
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4.5),
-                                  decoration: BoxDecoration(
-                                    color: isSultan
-                                        ? const Color(0xFFFEF3C7)
-                                        : (isFikih
-                                            ? const Color(0xFFD1FAE5)
-                                            : (isDark
-                                                ? const Color(0xFF22222A)
-                                                : const Color(0xFFEEEEF0))),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    bundle.badgeText,
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 10.5,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.9,
-                                      color: isSultan
-                                          ? const Color(0xFFB45309)
-                                          : (isFikih
-                                              ? const Color(0xFF047857)
-                                              : textPrimary),
-                                    ),
+                                Text(
+                                  bundle.badgeText.toUpperCase(),
+                                  style: OTTypography.metadataTag(
+                                    color: textSecondary,
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 3),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFD97706)
-                                        .withValues(alpha: 0.15),
-                                    borderRadius: OTRadius.chipBorder,
-                                    border: Border.all(
-                                        color: const Color(0xFFD97706),
-                                        width: 0.8),
-                                  ),
-                                  child: Text(
-                                    '🏷️ HARGA KHUSUS LAUNCH',
-                                    style: GoogleFonts.outfit(
-                                      color: isDark
-                                          ? const Color(0xFFFBBF24)
-                                          : const Color(0xFFB45309),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 9.5,
-                                    ),
+                                Text(
+                                  'Harga perdana',
+                                  style: OTTypography.caption(
+                                    color: textSecondary,
                                   ),
                                 ),
                               ],
@@ -1123,7 +1063,7 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
 
                             // Judul & Subtitle
                             Text(
-                              '${bundle.iconEmoji} ${bundle.title}',
+                              bundle.title,
                               style:
                                   OTTypography.corpusTitle(color: textPrimary)
                                       .copyWith(
@@ -1262,16 +1202,8 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                                   durationIndex: safeTierIdx,
                                 ),
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: isSultan
-                                      ? (isDark
-                                          ? const Color(0xFFCA8A04)
-                                          : const Color(0xFFD97706))
-                                      : (isFikih
-                                          ? (isDark
-                                              ? const Color(0xFF059669)
-                                              : const Color(0xFF047857))
-                                          : textPrimary),
-                                  foregroundColor: Colors.white,
+                                  backgroundColor: textPrimary,
+                                  foregroundColor: canvas,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: OTRadius.buttonBorder,
@@ -1280,12 +1212,12 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.bolt_rounded, size: 18),
+                                    const Icon(Icons.arrow_forward_rounded,
+                                        size: 18),
                                     const SizedBox(width: 8),
                                     Text(
-                                      'Ambil Akses ${bundle.title.split('(').first.trim()}',
-                                      style: OTTypography.button(
-                                              color: Colors.white)
+                                      'Pilih ${bundle.title.split('(').first.trim()}',
+                                      style: OTTypography.button(color: canvas)
                                           .copyWith(fontSize: 13),
                                     ),
                                   ],
