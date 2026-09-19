@@ -1,139 +1,402 @@
 ================================================================================
-OPENTURATH AI — COMPREHENSIVE REPOSITORY AUDIT SOURCE
-Total Files Bundled: 124
-Sanitization: Strict (API keys, phone numbers, bearer tokens, and private emails redacted)
+OPENTURATH AI — COMPREHENSIVE CODEBASE & AUDIT SOURCE BUNDLE
+Total Files Bundled: 127
+Sanitization: Strict (API keys, private tokens, phone numbers, and personal emails redacted)
 ================================================================================
 
-TABLE OF CONTENTS:
-001. openturath_ai/pubspec.yaml
-002. openturath_ai/android/app/build.gradle.kts
-003. openturath_ai/android/app/src/main/AndroidManifest.xml
-004. openturath_ai/macos/Runner/Info.plist
-005. openturath_ai/macos/Runner/Release.entitlements
-006. openturath_ai/macos/Runner/DebugProfile.entitlements
-007. PROGRESS.md
-008. openturath_ai/assets/data/metadata_training_seluruh_ai.json
-009. openturath_ai/assets/data/metadata_modul_lengkap.json
-010. openturath_ai/lib/firebase_options.dart
-011. openturath_ai/lib/main.dart
-012. openturath_ai/lib/core/app_config.dart
-013. openturath_ai/lib/core/app_copy.dart
-014. openturath_ai/lib/core/app_snackbar.dart
-015. openturath_ai/lib/core/arabic_utils.dart
-016. openturath_ai/lib/core/bookmark_content.dart
-017. openturath_ai/lib/core/catalog_card_content.dart
-018. openturath_ai/lib/core/checkout_completion.dart
-019. openturath_ai/lib/core/constants.dart
-020. openturath_ai/lib/core/copied_answer.dart
-021. openturath_ai/lib/core/entitlement_keys.dart
-022. openturath_ai/lib/core/goakal_catalog_registry.dart
-023. openturath_ai/lib/core/hijri_date_utils.dart
-024. openturath_ai/lib/core/legal_copy.dart
-025. openturath_ai/lib/core/localization.dart
-026. openturath_ai/lib/core/membership_pass_state.dart
-027. openturath_ai/lib/core/navigation_guard.dart
-028. openturath_ai/lib/core/note_clipboard_content.dart
-029. openturath_ai/lib/core/notebook_navigation.dart
-030. openturath_ai/lib/core/notebook_ui_script.dart
-031. openturath_ai/lib/core/routes.dart
-032. openturath_ai/lib/core/theme.dart
-033. openturath_ai/lib/core/design/ot_colors.dart
-034. openturath_ai/lib/core/design/ot_motion.dart
-035. openturath_ai/lib/core/design/ot_radius.dart
-036. openturath_ai/lib/core/design/ot_spacing.dart
-037. openturath_ai/lib/core/design/ot_typography.dart
-038. openturath_ai/lib/models/agent_model.dart
-039. openturath_ai/lib/models/book_model.dart
-040. openturath_ai/lib/models/bookmark_model.dart
-041. openturath_ai/lib/models/field_model.dart
-042. openturath_ai/lib/models/open_turath_book.dart
-043. openturath_ai/lib/models/sub_agent_model.dart
-044. openturath_ai/lib/models/user_model.dart
-045. openturath_ai/lib/screens/agent_webview_screen.dart
-046. openturath_ai/lib/screens/book_catalog_screen.dart
-047. openturath_ai/lib/screens/book_detail_screen.dart
-048. openturath_ai/lib/screens/book_library_editorial_screen.dart
-049. openturath_ai/lib/screens/bookmark_screen.dart
-050. openturath_ai/lib/screens/dashboard_screen.dart
-051. openturath_ai/lib/screens/google_session_auth_screen.dart
-052. openturath_ai/lib/screens/library_metadata_overview_screen.dart
-053. openturath_ai/lib/screens/library_screen.dart
-054. openturath_ai/lib/screens/login_screen.dart
-055. openturath_ai/lib/screens/main_shell_screen.dart
-056. openturath_ai/lib/screens/note_reader_screen.dart
-057. openturath_ai/lib/screens/profile_screen.dart
-058. openturath_ai/lib/screens/specialist_list_screen.dart
-059. openturath_ai/lib/screens/splash_screen.dart
-060. openturath_ai/lib/screens/subscription_screen.dart
-061. openturath_ai/lib/services/agent_service.dart
-062. openturath_ai/lib/services/agent_session_manager.dart
-063. openturath_ai/lib/services/auth_service.dart
-064. openturath_ai/lib/services/bookmark_service.dart
-065. openturath_ai/lib/services/canonical_library_service.dart
-066. openturath_ai/lib/services/device_service.dart
-067. openturath_ai/lib/services/doku_service.dart
-068. openturath_ai/lib/services/native_agent_launcher.dart
-069. openturath_ai/lib/services/open_turath_catalog_repository.dart
-070. openturath_ai/lib/services/research_notes_service.dart
-071. openturath_ai/lib/services/scoped_json_store.dart
-072. openturath_ai/lib/services/session_user_stream.dart
-073. openturath_ai/lib/services/subscription_service.dart
-074. openturath_ai/lib/services/telemetry_service.dart
-075. openturath_ai/lib/services/update_service.dart
-076. openturath_ai/lib/widgets/agent_multi_tab_room.dart
-077. openturath_ai/lib/widgets/app_error_state.dart
-078. openturath_ai/lib/widgets/app_loader.dart
-079. openturath_ai/lib/widgets/apple_interactive_wrapper.dart
-080. openturath_ai/lib/widgets/book_row_item.dart
-081. openturath_ai/lib/widgets/corpus_kind_control.dart
-082. openturath_ai/lib/widgets/doku_checkout_sheet.dart
-083. openturath_ai/lib/widgets/evidence_bottom_sheet.dart
-084. openturath_ai/lib/widgets/legal_document_sheet.dart
-085. openturath_ai/lib/widgets/library_bottom_sheet.dart
-086. openturath_ai/lib/widgets/note_editor_sheet.dart
-087. openturath_ai/lib/widgets/openturath_brand.dart
-088. openturath_ai/lib/widgets/redeem_code_sheet.dart
-089. openturath_ai/lib/widgets/specialist_card.dart
-090. openturath_ai/lib/widgets/tahawwulat_flagship_card.dart
-091. openturath_ai/lib/widgets/tahawwulat_introduction_sheet.dart
-092. openturath_ai/lib/widgets/update_ready_banner.dart
-093. openturath_ai/test/active_subscription_access_test.dart
-094. openturath_ai/test/agent_session_manager_test.dart
-095. openturath_ai/test/application_states_test.dart
-096. openturath_ai/test/arabic_search_normalization_test.dart
-097. openturath_ai/test/audit_auth_stream_test.dart
-098. openturath_ai/test/audit_checkout_completion_test.dart
-099. openturath_ai/test/audit_entitlement_test.dart
-100. openturath_ai/test/audit_navigation_test.dart
-101. openturath_ai/test/audit_storage_test.dart
-102. openturath_ai/test/book_catalog_navigation_test.dart
-103. openturath_ai/test/bookmark_content_contract_test.dart
-104. openturath_ai/test/bookmark_sync_test.dart
-105. openturath_ai/test/canonical_catalog_test.dart
-106. openturath_ai/test/canonical_multi_discipline_catalog_test.dart
-107. openturath_ai/test/catalog_card_content_test.dart
-108. openturath_ai/test/copied_answer_test.dart
-109. openturath_ai/test/copywriting_test.dart
-110. openturath_ai/test/dashboard_and_theme_restructure_test.dart
-111. openturath_ai/test/deep_test.dart
-112. openturath_ai/test/design_system_test.dart
-113. openturath_ai/test/device_service_test.dart
-114. openturath_ai/test/doku_direct_test.dart
-115. openturath_ai/test/fiqh_specialists_and_theme_test.dart
-116. openturath_ai/test/hardening_and_redeem_test.dart
-117. openturath_ai/test/legal_policy_test.dart
-118. openturath_ai/test/membership_pass_state_test.dart
-119. openturath_ai/test/navigation_guard_test.dart
-120. openturath_ai/test/note_clipboard_content_test.dart
-121. openturath_ai/test/resilience_and_compliance_test.dart
-122. openturath_ai/test/telemetry_service_test.dart
-123. openturath_ai/test/ui_copy_regression_test.dart
-124. openturath_ai/test/widget_test.dart
+DAFTAR ISI / TABLE OF CONTENTS:
+001. AGENTS.md
+002. PROGRESS.md
+003. .github/workflows/release_all_platforms.yml
+004. openturath_ai/pubspec.yaml
+005. openturath_ai/android/app/build.gradle.kts
+006. openturath_ai/android/app/src/main/AndroidManifest.xml
+007. openturath_ai/android/app/src/main/kotlin/com/openturath/ai/MainActivity.kt
+008. openturath_ai/macos/Runner/Info.plist
+009. openturath_ai/macos/Runner/Release.entitlements
+010. openturath_ai/macos/Runner/DebugProfile.entitlements
+011. openturath_ai/assets/data/metadata_training_seluruh_ai.json
+012. openturath_ai/assets/data/metadata_modul_lengkap.json
+013. openturath_ai/lib/firebase_options.dart
+014. openturath_ai/lib/main.dart
+015. openturath_ai/lib/core/app_config.dart
+016. openturath_ai/lib/core/app_copy.dart
+017. openturath_ai/lib/core/app_snackbar.dart
+018. openturath_ai/lib/core/arabic_utils.dart
+019. openturath_ai/lib/core/bookmark_content.dart
+020. openturath_ai/lib/core/catalog_card_content.dart
+021. openturath_ai/lib/core/checkout_completion.dart
+022. openturath_ai/lib/core/constants.dart
+023. openturath_ai/lib/core/copied_answer.dart
+024. openturath_ai/lib/core/entitlement_keys.dart
+025. openturath_ai/lib/core/goakal_catalog_registry.dart
+026. openturath_ai/lib/core/hijri_date_utils.dart
+027. openturath_ai/lib/core/legal_copy.dart
+028. openturath_ai/lib/core/localization.dart
+029. openturath_ai/lib/core/membership_pass_state.dart
+030. openturath_ai/lib/core/navigation_guard.dart
+031. openturath_ai/lib/core/note_clipboard_content.dart
+032. openturath_ai/lib/core/notebook_navigation.dart
+033. openturath_ai/lib/core/notebook_ui_script.dart
+034. openturath_ai/lib/core/routes.dart
+035. openturath_ai/lib/core/theme.dart
+036. openturath_ai/lib/core/design/ot_colors.dart
+037. openturath_ai/lib/core/design/ot_motion.dart
+038. openturath_ai/lib/core/design/ot_radius.dart
+039. openturath_ai/lib/core/design/ot_spacing.dart
+040. openturath_ai/lib/core/design/ot_typography.dart
+041. openturath_ai/lib/models/agent_model.dart
+042. openturath_ai/lib/models/book_model.dart
+043. openturath_ai/lib/models/bookmark_model.dart
+044. openturath_ai/lib/models/field_model.dart
+045. openturath_ai/lib/models/open_turath_book.dart
+046. openturath_ai/lib/models/sub_agent_model.dart
+047. openturath_ai/lib/models/user_model.dart
+048. openturath_ai/lib/screens/agent_webview_screen.dart
+049. openturath_ai/lib/screens/book_catalog_screen.dart
+050. openturath_ai/lib/screens/book_detail_screen.dart
+051. openturath_ai/lib/screens/book_library_editorial_screen.dart
+052. openturath_ai/lib/screens/bookmark_screen.dart
+053. openturath_ai/lib/screens/dashboard_screen.dart
+054. openturath_ai/lib/screens/google_session_auth_screen.dart
+055. openturath_ai/lib/screens/library_metadata_overview_screen.dart
+056. openturath_ai/lib/screens/library_screen.dart
+057. openturath_ai/lib/screens/login_screen.dart
+058. openturath_ai/lib/screens/main_shell_screen.dart
+059. openturath_ai/lib/screens/note_reader_screen.dart
+060. openturath_ai/lib/screens/profile_screen.dart
+061. openturath_ai/lib/screens/specialist_list_screen.dart
+062. openturath_ai/lib/screens/splash_screen.dart
+063. openturath_ai/lib/screens/subscription_screen.dart
+064. openturath_ai/lib/services/agent_service.dart
+065. openturath_ai/lib/services/agent_session_manager.dart
+066. openturath_ai/lib/services/auth_service.dart
+067. openturath_ai/lib/services/bookmark_service.dart
+068. openturath_ai/lib/services/canonical_library_service.dart
+069. openturath_ai/lib/services/device_service.dart
+070. openturath_ai/lib/services/doku_service.dart
+071. openturath_ai/lib/services/native_agent_launcher.dart
+072. openturath_ai/lib/services/open_turath_catalog_repository.dart
+073. openturath_ai/lib/services/research_notes_service.dart
+074. openturath_ai/lib/services/scoped_json_store.dart
+075. openturath_ai/lib/services/session_user_stream.dart
+076. openturath_ai/lib/services/subscription_service.dart
+077. openturath_ai/lib/services/telemetry_service.dart
+078. openturath_ai/lib/services/update_service.dart
+079. openturath_ai/lib/widgets/agent_multi_tab_room.dart
+080. openturath_ai/lib/widgets/app_error_state.dart
+081. openturath_ai/lib/widgets/app_loader.dart
+082. openturath_ai/lib/widgets/apple_interactive_wrapper.dart
+083. openturath_ai/lib/widgets/book_row_item.dart
+084. openturath_ai/lib/widgets/corpus_kind_control.dart
+085. openturath_ai/lib/widgets/doku_checkout_sheet.dart
+086. openturath_ai/lib/widgets/evidence_bottom_sheet.dart
+087. openturath_ai/lib/widgets/legal_document_sheet.dart
+088. openturath_ai/lib/widgets/library_bottom_sheet.dart
+089. openturath_ai/lib/widgets/note_editor_sheet.dart
+090. openturath_ai/lib/widgets/openturath_brand.dart
+091. openturath_ai/lib/widgets/redeem_code_sheet.dart
+092. openturath_ai/lib/widgets/specialist_card.dart
+093. openturath_ai/lib/widgets/tahawwulat_flagship_card.dart
+094. openturath_ai/lib/widgets/tahawwulat_introduction_sheet.dart
+095. openturath_ai/lib/widgets/update_ready_banner.dart
+096. openturath_ai/test/active_subscription_access_test.dart
+097. openturath_ai/test/agent_session_manager_test.dart
+098. openturath_ai/test/application_states_test.dart
+099. openturath_ai/test/arabic_search_normalization_test.dart
+100. openturath_ai/test/audit_auth_stream_test.dart
+101. openturath_ai/test/audit_checkout_completion_test.dart
+102. openturath_ai/test/audit_entitlement_test.dart
+103. openturath_ai/test/audit_navigation_test.dart
+104. openturath_ai/test/audit_storage_test.dart
+105. openturath_ai/test/book_catalog_navigation_test.dart
+106. openturath_ai/test/bookmark_content_contract_test.dart
+107. openturath_ai/test/bookmark_sync_test.dart
+108. openturath_ai/test/canonical_catalog_test.dart
+109. openturath_ai/test/canonical_multi_discipline_catalog_test.dart
+110. openturath_ai/test/catalog_card_content_test.dart
+111. openturath_ai/test/copied_answer_test.dart
+112. openturath_ai/test/copywriting_test.dart
+113. openturath_ai/test/dashboard_and_theme_restructure_test.dart
+114. openturath_ai/test/deep_test.dart
+115. openturath_ai/test/design_system_test.dart
+116. openturath_ai/test/device_service_test.dart
+117. openturath_ai/test/doku_direct_test.dart
+118. openturath_ai/test/fiqh_specialists_and_theme_test.dart
+119. openturath_ai/test/hardening_and_redeem_test.dart
+120. openturath_ai/test/legal_policy_test.dart
+121. openturath_ai/test/membership_pass_state_test.dart
+122. openturath_ai/test/navigation_guard_test.dart
+123. openturath_ai/test/note_clipboard_content_test.dart
+124. openturath_ai/test/resilience_and_compliance_test.dart
+125. openturath_ai/test/telemetry_service_test.dart
+126. openturath_ai/test/ui_copy_regression_test.dart
+127. openturath_ai/test/widget_test.dart
 
 ================================================================================
 
 ================================================================================
-FILE 001/124: openturath_ai/pubspec.yaml
+FILE 001/127: AGENTS.md
+================================================================================
+# Workspace Rules — OpenTurath AI
+
+## 1. Automatic Checkpoint Protocol (MANDATORY)
+- **Setiap perubahan sekecil apapun WAJIB langsung dibuatkan check point (Git commit) secara otomatis.**
+- Setiap kali file kode, aset, UI, konfigurasi, atau unit test dimodifikasi atau ditambahkan:
+  1. Jalankan `git add <files>`
+  2. Lakukan commit dengan pesan yang deskriptif dan terstruktur: `git commit -m "<type>(<scope>): <pesan detail perubahan>"`
+- Jangan pernah membiarkan perubahan menumpuk tanpa check point.
+- Check point harus selalu dibuat secara otomatis tanpa menunggu instruksi tambahan dari pengguna.
+
+## 2. Integritas Build & Release
+- Setiap pembuatan APK rilis harus memverifikasi bahwa proses kompilasi Gradle selesai 100% dan file binary rilis yang disalin ke `/Users/apple/Downloads/ramadhan/app-release-latest.apk` memiliki timestamp baru yang valid.
+
+
+================================================================================
+FILE 002/127: PROGRESS.md
+================================================================================
+# OpenTurath AI — Master Progress & Context Tracker
+
+> **Panduan Awet Konteks & Ringan Memori**:
+> File ini adalah *Single Source of Truth* status proyek OpenTurath AI. Ketika sesi chat terasa panjang (>15-20 turn), buka **Chat Baru (New Conversation)** lalu cukup instruksikan:
+> **"Baca PROGRESS.md dan lanjutkan task berikutnya."**
+> Agent akan langsung memahami 100% konteks proyek tanpa membebani RAM laptop.
+
+---
+
+## 1. Identitas & Visi Produk
+- **Aplikasi**: OpenTurath AI (`openturath_ai`) — platform riset dan talaqqi khazanah turats Islam berbasis AI (Flutter Cross-Platform: Android & macOS).
+- **Filosofi Visual**: *The Quiet Islamic Scholar* — desain monokrom teduh, tipografi editorial klasik, hening, minim distraksi, tanpa gradien mencolok (*zero tacky gradients*), tanpa bayangan tebal (*zero heavy shadows*), mengedepankan adab keilmuan dan keterbacaan teks marja'.
+
+---
+
+## 2. Riwayat Konteks & Master Plan (Audit Forensik Independen)
+Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan keras pengguna terhadap UI yang sempat dinilai terlalu ramai/tacky ("najis"):
+
+### Fasa 1 s.d. Fasa 7: Status Eksekusi (100% Selesai & Ter-commit)
+1. **Fasa 1: Data Katalog Kitab & Kamus Kanonikal (`a5a72e1`)**
+   - 21 berkas JSON katalog kitab keilmuan (Fikih Syafi'i s.d. Adab Akhlak) dan kamus kanonikal disinkronkan ke `assets/data/`.
+   - `metadata_training_seluruh_ai.json` terdaftar resmi di `pubspec.yaml`.
+2. **Fasa 2: Keamanan Transaksi & Zero 404 (`e0459f6`, `6f3fde8`, `79d5e2b`)**
+   - Penutupan celah validasi client-side Firestore pada `subscription_service.dart`.
+   - Restrukturisasi harga katalog GoAkal (Paket Sultan All-Access Rp 499rb, Bundle Rp 149–199rb).
+   - Smart fallback WhatsApp Admin Resmi (`[REDACTED_PHONE_NUMBER]`) untuk paket belum aktif (eliminasi total link 404).
+3. **Fasa 3: Stabilitas Memori WebView & Navigasi Mobile (`e958a39`, `73626a5`, `2abd1fb`)**
+   - Pencegahan kebocoran memori WebView dengan `disposeWebResources()` dan pembersihan controller pada `agent_session_manager.dart`.
+   - Pemisahan tombol close tab (area ketuk 44x44 px) tanpa nesting `InkWell`.
+   - Perbaikan `PopScope` tombol Back Android pada `main_shell_screen.dart` agar tidak terjebak riwayat SPA internal.
+4. **Fasa 4: Pustaka Metadata & Katalog Editorial (`4f849df`, `46cf302`, `a2fbf06`)**
+   - Pembuatan entitas `OpenTurathBook` dan repositori `OpenTurathCatalogRepository`.
+   - Integrasi `library_metadata_overview_screen.dart` dan detail kitab editorial.
+   - Pendaftaran rute riset pustaka ke dalam shell navigasi utama.
+5. **Fasa 5: Unifikasi Token Desain Monokrom Editorial (`2f2540c`, `a6d9f8c`, `3cef1ce`)**
+   - Standarisasi `OTColors` adaptif (Light Canvas `#F6F6F3`, Dark Canvas `#111110`, Border lembut, tanpa warna jenuh).
+   - Tipografi 3 Pilar di `OTTypography`:
+     - **Newsreader**: Judul dan subjudul editorial Latin.
+     - **Scheherazade New**: Seluruh teks Arab, matan, kutipan ibarah (pembersihan total font *Amiri* & *Tajawal*).
+     - **Outfit**: Label navigasi, tombol, dan teks fungsional.
+6. **Fasa 6: Overhaul Copywriting Adab Turats (`a471023`, `0941a92`, `6f6e0ae`)**
+   - Unifikasi kamus resmi pada `app_copy.dart` dan `legal_copy.dart`:
+     - *Prompt / Pertanyaan* $\rightarrow$ *Ibarah / Mas'alah*
+     - *Sumber Referensi* $\rightarrow$ *Marja' Mu'tamad*
+     - *Ruang Chat* $\rightarrow$ *Ruang Telaah Ilmiah*
+     - *Asisten AI* $\rightarrow$ *Khadim Turats / Muhaqqiq*
+7. **Fasa 7: Pembersihan UI Tacky & Penyederhanaan Beranda (`780e037`, `9947497`, `ef185a4`)**
+   - Penghapusan linear gradient gelap dan box shadow norak pada `dashboard_screen.dart`.
+   - Penyatuan indikator navigasi shell secara hening.
+   - Transformasi pengalih korpus pada `corpus_kind_control.dart` dari kartu tebal/segmented button menjadi tab datar bergaris bawah (*flat underline tabs*).
+8. **Fasa 8: Overhaul Konsistensi UI Monokrom Editorial & Audit Forensik (`55da31c`)**
+   - **Modul 1 (Subscription Screen)**: Pembersihan sisa `LinearGradient`, eliminasi teks kuning neon `0xFFFBBF24` dan bayangan tebal, digantikan kartu bersahaja `OTColors.borderStrong` dan `OTColors.textPrimary`.
+   - **Modul 2 (App SnackBar)**: Standarisasi latar monokrom pekat `OTColors.inverseSurface` dengan garis tepi hairline netral dan aksen galat merah bata redup `OTColors.destructiveDark` (zero neon).
+   - **Modul 3 (Dashboard Screen & Multi-Tab)**: Penyelarasan seluruh sisa kode warna Zinc liar (`0xFF27272A`, `0xFFF4F4F5`, `0xFF3F3F46`, `0xFFE4E4E7`) ke token `OTColors`.
+   - **Modul 4 (Tipografi Arab & Normalisasi Pencarian)**: Font `Scheherazade New` dengan line-height aman $\ge 1.85$ untuk matan/ibarah Arab (`OTTypography.arabicIbarah`), serta verifikasi algoritma normalisasi pencarian Arab (`ArabicUtils.normalize` & `matches`).
+   - **Verifikasi**: `flutter analyze` (0 issues), Regex Rogue Color Audit (0 matches), `flutter test` (159/159 tests passed 100%).
+
+---
+
+## 3. Konfigurasi Sistem Ramah Memori (Anti-Hang Mac 8GB)
+- **Gradle JVM Heap**: Dibatasi maksimal **2048 MB** (`-Xmx2048m -XX:MaxMetaspaceSize=512m`) pada proyek dan `~/.gradle/gradle.properties`.
+- **Idle Timeout**: Daemon otomatis mati setelah 60 detik idle (`idletimeout=60000`), mencegah penumpukan daemon zombie.
+- **Language Server Tuning**: Ekstensi Java RedHat & Gradle disetel ke mode `LightWeight` (Flutter dijalankan mandiri via CLI).
+- **Cache Pruning**: 13.000 file rekaman peramban lama (1.3 GB) telah dibersihkan.
+- **File Watcher Excludes**: Mengabaikan folder `.gradle/`, `build/`, `.dart_tool/`, dan `.gemini/` untuk meringankan I/O disk.
+
+---
+
+## 4. Status Pengujian, Rilis APK & macOS
+- **Syntax & Type Check**: `flutter analyze` $\rightarrow$ **0 issues**.
+- **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green)**.
+- **Rilis Binary APK Terbaru (Lokal)**:
+  - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
+  - Ukuran: 62.8 MB (62.814.142 bytes)
+  - Timestamp: 2026-09-19 18:09:04 WIB
+  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 116.1s).
+  - Termasuk perbaikan menyeluruh antarmuka *The Quiet Islamic Scholar (Monochrome Editorial)*, eliminasi total warna liar, standarisasi notifikasi monokrom, dan tipografi Scheherazade New & Newsreader.
+- **Rilis macOS DMG (Cloud GitHub Actions)**:
+  - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
+  - Output Artifact: `OpenTurath_AI_macOS.dmg`.
+  - Fix Google Sign-In macOS (`304a530`):
+    - Mengganti Web Client ID dengan Apple OAuth Client ID resmi (`255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com`) pada `Info.plist` dan `auth_service.dart`.
+    - Memperbaiki URL Scheme redirect `com.googleusercontent.apps.255541559800-fen41rigfp5o3fsntiieaien3v915ptd`.
+    - Menambahkan `keychain-access-groups` pada `Release.entitlements` dan `DebugProfile.entitlements`.
+    - Mengembalikan pemanggilan native `GoogleSignIn` SDK (bukan `signInWithProvider` yang unsupported di desktop macOS).
+    - Menambahkan tombol akses darurat: "Masuk sebagai Tamu (Mode Telaah)" agar riset turats tidak pernah terblokir.
+
+---
+
+## 5. Agenda & Fokus Selanjutnya
+1. **Inspeksi Estetika Layar Nyata (Android APK & macOS DMG)**:
+   - Pasang `app-release-latest.apk` pada perangkat target dan unduh `OpenTurath_AI_macOS.dmg` dari GitHub Actions untuk dipasang di folder Applications Mac.
+   - Memastikan tidak ada lagi sisa warna jenuh pada modal dan layar transaksional di desktop maupun mobile.
+2. **Katalog & Spesialis**:
+   - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
+EOF
+
+
+================================================================================
+FILE 003/127: .github/workflows/release_all_platforms.yml
+================================================================================
+name: Release Multiplatform (APK, EXE, DMG)
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  # ════════════════════════════════════════════════════════════════
+  # 1. BUILD WINDOWS EXE (Installer & Portable Zip)
+  # ════════════════════════════════════════════════════════════════
+  build-windows-exe:
+    name: Build Windows EXE
+    runs-on: windows-latest
+    env:
+      CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable Windows Desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Get dependencies
+        run: |
+          cd openturath_ai
+          flutter pub get
+
+      - name: Build Windows Release
+        env:
+          CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+        run: |
+          cd openturath_ai
+          flutter build windows --release
+
+      - name: Compress Windows Release Bundle
+        run: |
+          Compress-Archive -Path openturath_ai\build\windows\x64\runner\Release\* -DestinationPath openturath_ai\build\windows\OpenTurath_AI_Windows_x64.zip
+
+      - name: Upload Windows EXE Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenTurath-AI-Windows-x64
+          path: openturath_ai/build/windows/OpenTurath_AI_Windows_x64.zip
+
+  # ════════════════════════════════════════════════════════════════
+  # 2. BUILD MACOS DMG (Disk Image Installer)
+  # ════════════════════════════════════════════════════════════════
+  build-macos-dmg:
+    name: Build macOS DMG
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable macOS Desktop
+        run: flutter config --enable-macos-desktop
+
+      - name: Get dependencies
+        run: |
+          cd openturath_ai
+          flutter pub get
+
+      - name: Build macOS Release
+        run: |
+          cd openturath_ai
+          flutter build macos --release
+
+      - name: Package DMG Installer
+        run: |
+          cd openturath_ai/build/macos/Build/Products/Release
+          mkdir -p dmg_folder
+          cp -r openturath_ai.app dmg_folder/
+          ln -s /Applications dmg_folder/Applications
+          hdiutil create -volname "OpenTurath AI" -srcfolder dmg_folder -ov -format UDZO OpenTurath_AI_macOS.dmg
+
+      - name: Upload macOS DMG Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenTurath-AI-macOS-DMG
+          path: openturath_ai/build/macos/Build/Products/Release/OpenTurath_AI_macOS.dmg
+
+  # ════════════════════════════════════════════════════════════════
+  # 3. BUILD ANDROID APK
+  # ════════════════════════════════════════════════════════════════
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Grant Executable Permission to Gradlew
+        run: chmod +x openturath_ai/android/gradlew
+
+      - name: Get dependencies
+        run: |
+          cd openturath_ai
+          flutter pub get
+
+      - name: Build APK Release
+        run: |
+          cd openturath_ai
+          flutter build apk --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenTurath-AI-Android-APK
+          path: openturath_ai/build/app/outputs/flutter-apk/app-release.apk
+
+
+================================================================================
+FILE 004/127: openturath_ai/pubspec.yaml
 ================================================================================
 name: openturath_ai
 description: "OpenTurath AI - الذكاء الاصطناعي للعلوم الإسلامية"
@@ -193,7 +456,7 @@ flutter:
 
 
 ================================================================================
-FILE 002/124: openturath_ai/android/app/build.gradle.kts
+FILE 005/127: openturath_ai/android/app/build.gradle.kts
 ================================================================================
 import java.util.Properties
 import java.io.FileInputStream
@@ -274,7 +537,7 @@ flutter {
 
 
 ================================================================================
-FILE 003/124: openturath_ai/android/app/src/main/AndroidManifest.xml
+FILE 006/127: openturath_ai/android/app/src/main/AndroidManifest.xml
 ================================================================================
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -351,7 +614,85 @@ FILE 003/124: openturath_ai/android/app/src/main/AndroidManifest.xml
 
 
 ================================================================================
-FILE 004/124: openturath_ai/macos/Runner/Info.plist
+FILE 007/127: openturath_ai/android/app/src/main/kotlin/com/openturath/ai/MainActivity.kt
+================================================================================
+package com.openturath.ai
+
+import android.content.Intent
+import android.net.Uri
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+
+class MainActivity : FlutterActivity() {
+    private val CHANNEL = "com.openturath.ai/native_launcher"
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "isNotebookAppInstalled" -> {
+                    try {
+                        packageManager.getPackageInfo("com.google.android.apps.labs.language.tailwind", 0)
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.success(false)
+                    }
+                }
+                "openInNotebookApp" -> {
+                    val url = call.argument<String>("url")
+                    if (url.isNullOrEmpty()) {
+                        result.error("INVALID_URL", "URL is null or empty", null)
+                        return@setMethodCallHandler
+                    }
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                            setPackage("com.google.android.apps.labs.language.tailwind")
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        if (intent.resolveActivity(packageManager) != null) {
+                            startActivity(intent)
+                            result.success(true)
+                        } else {
+                            try {
+                                packageManager.getPackageInfo("com.google.android.apps.labs.language.tailwind", 0)
+                                startActivity(intent)
+                                result.success(true)
+                            } catch (e: Exception) {
+                                result.success(false)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        result.success(false)
+                    }
+                }
+                "shareText" -> {
+                    val text = call.argument<String>("text") ?: ""
+                    val title = call.argument<String>("title") ?: "Bagikan Modul"
+                    try {
+                        val sendIntent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, text)
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(sendIntent, title).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        startActivity(shareIntent)
+                        result.success(true)
+                    } catch (e: Exception) {
+                        result.error("SHARE_FAILED", e.message, null)
+                    }
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+}
+
+
+================================================================================
+FILE 008/127: openturath_ai/macos/Runner/Info.plist
 ================================================================================
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -401,7 +742,7 @@ FILE 004/124: openturath_ai/macos/Runner/Info.plist
 
 
 ================================================================================
-FILE 005/124: openturath_ai/macos/Runner/Release.entitlements
+FILE 009/127: openturath_ai/macos/Runner/Release.entitlements
 ================================================================================
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -422,7 +763,7 @@ FILE 005/124: openturath_ai/macos/Runner/Release.entitlements
 
 
 ================================================================================
-FILE 006/124: openturath_ai/macos/Runner/DebugProfile.entitlements
+FILE 010/127: openturath_ai/macos/Runner/DebugProfile.entitlements
 ================================================================================
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -445,102 +786,7 @@ FILE 006/124: openturath_ai/macos/Runner/DebugProfile.entitlements
 
 
 ================================================================================
-FILE 007/124: PROGRESS.md
-================================================================================
-# OpenTurath AI — Master Progress & Context Tracker
-
-> **Panduan Awet Konteks & Ringan Memori**:
-> File ini adalah *Single Source of Truth* status proyek OpenTurath AI. Ketika sesi chat terasa panjang (>15-20 turn), buka **Chat Baru (New Conversation)** lalu cukup instruksikan:
-> **"Baca PROGRESS.md dan lanjutkan task berikutnya."**
-> Agent akan langsung memahami 100% konteks proyek tanpa membebani RAM laptop.
-
----
-
-## 1. Identitas & Visi Produk
-- **Aplikasi**: OpenTurath AI (`openturath_ai`) — platform riset dan talaqqi khazanah turats Islam berbasis AI (Flutter Cross-Platform: Android & macOS).
-- **Filosofi Visual**: *The Quiet Islamic Scholar* — desain monokrom teduh, tipografi editorial klasik, hening, minim distraksi, tanpa gradien mencolok (*zero tacky gradients*), tanpa bayangan tebal (*zero heavy shadows*), mengedepankan adab keilmuan dan keterbacaan teks marja'.
-
----
-
-## 2. Riwayat Konteks & Master Plan (Audit Forensik Independen)
-Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan keras pengguna terhadap UI yang sempat dinilai terlalu ramai/tacky ("najis"):
-
-### Fasa 1 s.d. Fasa 7: Status Eksekusi (100% Selesai & Ter-commit)
-1. **Fasa 1: Data Katalog Kitab & Kamus Kanonikal (`a5a72e1`)**
-   - 21 berkas JSON katalog kitab keilmuan (Fikih Syafi'i s.d. Adab Akhlak) dan kamus kanonikal disinkronkan ke `assets/data/`.
-   - `metadata_training_seluruh_ai.json` terdaftar resmi di `pubspec.yaml`.
-2. **Fasa 2: Keamanan Transaksi & Zero 404 (`e0459f6`, `6f3fde8`, `79d5e2b`)**
-   - Penutupan celah validasi client-side Firestore pada `subscription_service.dart`.
-   - Restrukturisasi harga katalog GoAkal (Paket Sultan All-Access Rp 499rb, Bundle Rp 149–199rb).
-   - Smart fallback WhatsApp Admin Resmi (`[REDACTED_PHONE_NUMBER]`) untuk paket belum aktif (eliminasi total link 404).
-3. **Fasa 3: Stabilitas Memori WebView & Navigasi Mobile (`e958a39`, `73626a5`, `2abd1fb`)**
-   - Pencegahan kebocoran memori WebView dengan `disposeWebResources()` dan pembersihan controller pada `agent_session_manager.dart`.
-   - Pemisahan tombol close tab (area ketuk 44x44 px) tanpa nesting `InkWell`.
-   - Perbaikan `PopScope` tombol Back Android pada `main_shell_screen.dart` agar tidak terjebak riwayat SPA internal.
-4. **Fasa 4: Pustaka Metadata & Katalog Editorial (`4f849df`, `46cf302`, `a2fbf06`)**
-   - Pembuatan entitas `OpenTurathBook` dan repositori `OpenTurathCatalogRepository`.
-   - Integrasi `library_metadata_overview_screen.dart` dan detail kitab editorial.
-   - Pendaftaran rute riset pustaka ke dalam shell navigasi utama.
-5. **Fasa 5: Unifikasi Token Desain Monokrom Editorial (`2f2540c`, `a6d9f8c`, `3cef1ce`)**
-   - Standarisasi `OTColors` adaptif (Light Canvas `#F6F6F3`, Dark Canvas `#111110`, Border lembut, tanpa warna jenuh).
-   - Tipografi 3 Pilar di `OTTypography`:
-     - **Newsreader**: Judul dan subjudul editorial Latin.
-     - **Scheherazade New**: Seluruh teks Arab, matan, kutipan ibarah (pembersihan total font *Amiri* & *Tajawal*).
-     - **Outfit**: Label navigasi, tombol, dan teks fungsional.
-6. **Fasa 6: Overhaul Copywriting Adab Turats (`a471023`, `0941a92`, `6f6e0ae`)**
-   - Unifikasi kamus resmi pada `app_copy.dart` dan `legal_copy.dart`:
-     - *Prompt / Pertanyaan* $\rightarrow$ *Ibarah / Mas'alah*
-     - *Sumber Referensi* $\rightarrow$ *Marja' Mu'tamad*
-     - *Ruang Chat* $\rightarrow$ *Ruang Telaah Ilmiah*
-     - *Asisten AI* $\rightarrow$ *Khadim Turats / Muhaqqiq*
-7. **Fasa 7: Pembersihan UI Tacky & Penyederhanaan Beranda (`780e037`, `9947497`, `ef185a4`)**
-   - Penghapusan linear gradient gelap dan box shadow norak pada `dashboard_screen.dart`.
-   - Penyatuan indikator navigasi shell secara hening.
-   - Transformasi pengalih korpus pada `corpus_kind_control.dart` dari kartu tebal/segmented button menjadi tab datar bergaris bawah (*flat underline tabs*).
-
----
-
-## 3. Konfigurasi Sistem Ramah Memori (Anti-Hang Mac 8GB)
-- **Gradle JVM Heap**: Dibatasi maksimal **2048 MB** (`-Xmx2048m -XX:MaxMetaspaceSize=512m`) pada proyek dan `~/.gradle/gradle.properties`.
-- **Idle Timeout**: Daemon otomatis mati setelah 60 detik idle (`idletimeout=60000`), mencegah penumpukan daemon zombie.
-- **Language Server Tuning**: Ekstensi Java RedHat & Gradle disetel ke mode `LightWeight` (Flutter dijalankan mandiri via CLI).
-- **Cache Pruning**: 13.000 file rekaman peramban lama (1.3 GB) telah dibersihkan.
-- **File Watcher Excludes**: Mengabaikan folder `.gradle/`, `build/`, `.dart_tool/`, dan `.gemini/` untuk meringankan I/O disk.
-
----
-
-## 4. Status Pengujian, Rilis APK & macOS
-- **Syntax & Type Check**: `flutter analyze` $\rightarrow$ **0 issues**.
-- **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green)**.
-- **Rilis Binary APK Terbaru (Lokal)**:
-  - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-  - Ukuran: 62.4 MB (62.352.872 bytes)
-  - Timestamp: 2026-09-19 14:30:06 WIB
-  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 145.6s).
-  - Termasuk perbaikan Google Sign-In, tombol akses tamu (Mode Telaah), dan perbaikan UI monokrom.
-- **Rilis macOS DMG (Cloud GitHub Actions)**:
-  - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
-  - Output Artifact: `OpenTurath_AI_macOS.dmg`.
-  - Fix Google Sign-In macOS (`304a530`):
-    - Mengganti Web Client ID dengan Apple OAuth Client ID resmi (`255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com`) pada `Info.plist` dan `auth_service.dart`.
-    - Memperbaiki URL Scheme redirect `com.googleusercontent.apps.255541559800-fen41rigfp5o3fsntiieaien3v915ptd`.
-    - Menambahkan `keychain-access-groups` pada `Release.entitlements` dan `DebugProfile.entitlements`.
-    - Mengembalikan pemanggilan native `GoogleSignIn` SDK (bukan `signInWithProvider` yang unsupported di desktop macOS).
-    - Menambahkan tombol akses darurat: "Masuk sebagai Tamu (Mode Telaah)" agar riset turats tidak pernah terblokir.
-
----
-
-## 5. Agenda & Fokus Selanjutnya
-1. **Inspeksi Estetika Layar Nyata (Android APK & macOS DMG)**:
-   - Pasang `app-release-latest.apk` pada perangkat target dan unduh `OpenTurath_AI_macOS.dmg` dari GitHub Actions untuk dipasang di folder Applications Mac.
-   - Memastikan tidak ada lagi sisa warna jenuh pada modal dan layar transaksional di desktop maupun mobile.
-2. **Katalog & Spesialis**:
-   - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
-EOF
-
-
-================================================================================
-FILE 008/124: openturath_ai/assets/data/metadata_training_seluruh_ai.json
+FILE 011/127: openturath_ai/assets/data/metadata_training_seluruh_ai.json
 ================================================================================
 {
   "fiqh_syafii": {
@@ -548,21 +794,21 @@ FILE 008/124: openturath_ai/assets/data/metadata_training_seluruh_ai.json
     "nama_tampilan": "Super AI Fikih Syafi'i",
     "nama_arab": "الفقه الشافعي المعتمد",
     "kategori": "Fikih Madzhab",
-    "total_kitab": 103,
+    "total_kitab": 87,
     "total_jilid_fisik": "400+ Jilid",
     "total_halaman_fisik": 170391,
     "total_kata_bersih": 71627898,
     "total_partisi_notebooklm": 241,
     "rentang_masa": "150 H - 1338 H (Imam Asy-Syafi'i s.d. Syekh Mahfuzh At-Tarmasi)",
     "badge_otoritas": "100% Kitab Mu'tamad 4 Tier Syafi'iyyah",
-    "headline_aplikasi": "Dilatih dengan 103 kitab induk mu'tamad Syafi'iyyah (400+ jilid, 170.391 halaman naskah fisik), dan 71,7 juta kata berstempel 4D."
+    "headline_aplikasi": "Dilatih dengan 87 kitab induk mu'tamad Syafi'iyyah (400+ jilid, 170.391 halaman naskah fisik), dan 71,7 juta kata berstempel 4D."
   },
   "hadits": {
     "id_modul": "02_HADITS",
     "nama_tampilan": "AI Kutubus Sunnah & Matan Hadits",
     "nama_arab": "متون الحديث النبوي وكتب السنة",
     "kategori": "Hadits Nabawi",
-    "total_kitab": 1141,
+    "total_kitab": 1173,
     "total_jilid_fisik": "1.500+ Jilid",
     "total_halaman_fisik": 532640,
     "total_kata_bersih": 105700587,
@@ -633,21 +879,21 @@ FILE 008/124: openturath_ai/assets/data/metadata_training_seluruh_ai.json
     "nama_tampilan": "Super AI Tarikh, Sirah, Buldan & Ansab",
     "nama_arab": "التاريخ الإسلامي والسيرة والبلدان والرحلات والأنساب",
     "kategori": "Tarikh & Peradaban",
-    "total_kitab": 499,
+    "total_kitab": 345,
     "total_jilid_fisik": "1.374 Jilid",
     "total_halaman_fisik": 480000,
     "total_kata_bersih": 136531222,
     "total_partisi_notebooklm": 300,
     "rentang_masa": "Pra-Hijrah s.d. Abad 14 H (Ath-Thabari, Mu'jamul Buldan, Jamharatul Ansab, Adz-Dzahabi)",
     "badge_otoritas": "Tarikh Ath-Thabari, Mu'jamul Buldan Yaqut, Jamharatul Ansab & Thibb Nabawi",
-    "headline_aplikasi": "Dilatih dengan 499 kitab babon sejarah peradaban Islam, Sirah Nabawiyyah, geografi buldan, rihlah penjelajah, dan silsilah nasab kabilah (136,5 juta kata dalam tepat 300 partisi)."
+    "headline_aplikasi": "Dilatih dengan 345 kitab babon sejarah peradaban Islam, Sirah Nabawiyyah, geografi buldan, rihlah penjelajah, dan silsilah nasab kabilah (136,5 juta kata dalam tepat 300 partisi)."
   },
   "fiqh_muqaran": {
     "id_modul": "08_FIKIH_MUQARAN_DAN_UMUM",
     "nama_tampilan": "Super AI Fikih Muqaran, Siyasah & Faraidh",
     "nama_arab": "الفقه المقارن والسياسة الشرعية وقسمة الفرائض",
     "kategori": "Fikih Lintas Madzhab",
-    "total_kitab": 189,
+    "total_kitab": 61,
     "total_jilid_fisik": "329 Jilid",
     "total_halaman_fisik": 135000,
     "total_kata_bersih": 27585932,
@@ -675,14 +921,14 @@ FILE 008/124: openturath_ai/assets/data/metadata_training_seluruh_ai.json
     "nama_tampilan": "AI Syarah Hadits Nabawi",
     "nama_arab": "شروح الحديث النبوي وفقه الآثار",
     "kategori": "Hadits Nabawi",
-    "total_kitab": 202,
+    "total_kitab": 172,
     "total_jilid_fisik": "1.007 Jilid",
     "total_halaman_fisik": 420000,
     "total_kata_bersih": 122463779,
     "total_partisi_notebooklm": 300,
     "rentang_masa": "Abad 4 H - Abad 14 H (Al-Khaththabi s.d. Anwar Syah Al-Kasymiri)",
     "badge_otoritas": "Syarah Lengkap Kutubus Sittah & Kutubul Ahkam",
-    "headline_aplikasi": "Dilatih dengan 202 kitab syarah induk (1.007 jilid), Fathul Bari, Umdatul Qari, Syarah An-Nawawi, dan 122,4 juta kata fiqhul hadits."
+    "headline_aplikasi": "Dilatih dengan 172 kitab syarah induk (1.007 jilid), Fathul Bari, Umdatul Qari, Syarah An-Nawawi, dan 122,4 juta kata fiqhul hadits."
   },
   "fiqh_hanafi": {
     "id_modul": "11_FIKIH_HANAFI",
@@ -773,14 +1019,14 @@ FILE 008/124: openturath_ai/assets/data/metadata_training_seluruh_ai.json
     "nama_tampilan": "Super AI 'Ulumul Hadits, Musthalah & Takhrij",
     "nama_arab": "علوم الحديث ومصطلحه ومناهج التخريج والعلل",
     "kategori": "Hadits Nabawi",
-    "total_kitab": 393,
+    "total_kitab": 165,
     "total_jilid_fisik": "748 Jilid",
     "total_halaman_fisik": 285000,
     "total_kata_bersih": 63241925,
     "total_partisi_notebooklm": 137,
     "rentang_masa": "Abad 2 H - Abad 10 H (Ar-Ramahurmuzi, Ibnu ash-Shalah, Al-Mizzi s.d. Ibnu Hajar)",
     "badge_otoritas": "Muqaddimah Ibn ash-Shalah, Tuhfatul Asyraf, 'Ilal Ad-Daruquthni & Nasbur Rayah",
-    "headline_aplikasi": "Dilatih dengan 393 kitab babon kaidah kritik sanad, musthalah hadits, takhrij ahkam, dan 'ilal tersembunyi (748 jilid fisik, 63,2 juta kata dalam 137 partisi)."
+    "headline_aplikasi": "Dilatih dengan 165 kitab babon kaidah kritik sanad, musthalah hadits, takhrij ahkam, dan 'ilal tersembunyi (748 jilid fisik, 63,2 juta kata dalam 137 partisi)."
   },
   "aqidah": {
     "id_modul": "18_AQIDAH_DAN_USHULUDDIN",
@@ -827,7 +1073,7 @@ FILE 008/124: openturath_ai/assets/data/metadata_training_seluruh_ai.json
 }
 
 ================================================================================
-FILE 009/124: openturath_ai/assets/data/metadata_modul_lengkap.json
+FILE 012/127: openturath_ai/assets/data/metadata_modul_lengkap.json
 ================================================================================
 {
   "fiqh_syafii": {
@@ -1054,7 +1300,7 @@ FILE 009/124: openturath_ai/assets/data/metadata_modul_lengkap.json
 }
 
 ================================================================================
-FILE 010/124: openturath_ai/lib/firebase_options.dart
+FILE 013/127: openturath_ai/lib/firebase_options.dart
 ================================================================================
 // File generated by FlutterFire CLI with Desktop resilience (F19).
 // ignore_for_file: type=lint
@@ -1127,7 +1373,7 @@ class DefaultFirebaseOptions {
 
 
 ================================================================================
-FILE 011/124: openturath_ai/lib/main.dart
+FILE 014/127: openturath_ai/lib/main.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1347,7 +1593,7 @@ class OpenTurathApp extends StatelessWidget {
 
 
 ================================================================================
-FILE 012/124: openturath_ai/lib/core/app_config.dart
+FILE 015/127: openturath_ai/lib/core/app_config.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1400,7 +1646,7 @@ class AppConfig {
 
 
 ================================================================================
-FILE 013/124: openturath_ai/lib/core/app_copy.dart
+FILE 016/127: openturath_ai/lib/core/app_copy.dart
 ================================================================================
 import 'legal_copy.dart';
 
@@ -1688,7 +1934,7 @@ abstract final class AppCopy {
 
 
 ================================================================================
-FILE 014/124: openturath_ai/lib/core/app_snackbar.dart
+FILE 017/127: openturath_ai/lib/core/app_snackbar.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -1879,7 +2125,7 @@ class AppSnackBar {
 
 
 ================================================================================
-FILE 015/124: openturath_ai/lib/core/arabic_utils.dart
+FILE 018/127: openturath_ai/lib/core/arabic_utils.dart
 ================================================================================
 /// Utility Normalisasi & Pencarian Cerdas Teks Arab (Smart Arabic Search)
 /// - Menghilangkan seluruh harakat (fathah, dhommah, kasrah, tanwin, sukun, tasydid)
@@ -1927,7 +2173,7 @@ class ArabicUtils {
 
 
 ================================================================================
-FILE 016/124: openturath_ai/lib/core/bookmark_content.dart
+FILE 019/127: openturath_ai/lib/core/bookmark_content.dart
 ================================================================================
 /// A display-ready representation of an AI response saved to Catatan.
 ///
@@ -2072,7 +2318,7 @@ String aiAnswerTitle(String answer, String agentTitle) {
 
 
 ================================================================================
-FILE 017/124: openturath_ai/lib/core/catalog_card_content.dart
+FILE 020/127: openturath_ai/lib/core/catalog_card_content.dart
 ================================================================================
 /// Chooses concise, high-value facts for a catalogue card.
 /// Full bibliographic data remains available in the book dossier.
@@ -2104,7 +2350,7 @@ List<String> catalogCardFacts({
 
 
 ================================================================================
-FILE 018/124: openturath_ai/lib/core/checkout_completion.dart
+FILE 021/127: openturath_ai/lib/core/checkout_completion.dart
 ================================================================================
 class CheckoutCompletion {
   Future<void>? confirmation;
@@ -2120,7 +2366,7 @@ class CheckoutCompletion {
 
 
 ================================================================================
-FILE 019/124: openturath_ai/lib/core/constants.dart
+FILE 022/127: openturath_ai/lib/core/constants.dart
 ================================================================================
 class AppConstants {
   // ── App Info ──────────────────────────────────────────────────
@@ -2157,7 +2403,7 @@ class AppConstants {
 
 
 ================================================================================
-FILE 020/124: openturath_ai/lib/core/copied_answer.dart
+FILE 023/127: openturath_ai/lib/core/copied_answer.dart
 ================================================================================
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -2189,7 +2435,7 @@ BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
 
 
 ================================================================================
-FILE 021/124: openturath_ai/lib/core/entitlement_keys.dart
+FILE 024/127: openturath_ai/lib/core/entitlement_keys.dart
 ================================================================================
 const entitlementKeys = <String, String>{
   'fiqh_tahawwulat': 'fiqh_tahawwulat',
@@ -2241,7 +2487,7 @@ const entitlementKeys = <String, String>{
 
 
 ================================================================================
-FILE 022/124: openturath_ai/lib/core/goakal_catalog_registry.dart
+FILE 025/127: openturath_ai/lib/core/goakal_catalog_registry.dart
 ================================================================================
 // Generated automatically by OpenTurath AI GoAkal Sync.
 // DO NOT EDIT MANUALLY.
@@ -3322,7 +3568,7 @@ class GoAkalCatalogRegistry {
 
 
 ================================================================================
-FILE 023/124: openturath_ai/lib/core/hijri_date_utils.dart
+FILE 026/127: openturath_ai/lib/core/hijri_date_utils.dart
 ================================================================================
 /// Utilitas penanggalan Islam (Hijriah) dan Masehi deterministik & akurat
 /// untuk tajuk editorial OpenTurath.
@@ -3469,7 +3715,7 @@ class HijriDateUtils {
 
 
 ================================================================================
-FILE 024/124: openturath_ai/lib/core/legal_copy.dart
+FILE 027/127: openturath_ai/lib/core/legal_copy.dart
 ================================================================================
 /// LegalCopy: Sumber data dan teks kanonik hukum dan kebijakan OpenTurath.
 /// Mengintegrasikan naskah resmi dari OpenTurath_Identitas_dan_Kebijakan.md.
@@ -3882,7 +4128,7 @@ abstract final class LegalCopy {
 
 
 ================================================================================
-FILE 025/124: openturath_ai/lib/core/localization.dart
+FILE 028/127: openturath_ai/lib/core/localization.dart
 ================================================================================
 import 'app_config.dart';
 
@@ -3974,7 +4220,7 @@ class Loc {
 
 
 ================================================================================
-FILE 026/124: openturath_ai/lib/core/membership_pass_state.dart
+FILE 029/127: openturath_ai/lib/core/membership_pass_state.dart
 ================================================================================
 import 'app_copy.dart';
 import '../models/user_model.dart';
@@ -4158,7 +4404,7 @@ MembershipPassSummary _base(
 
 
 ================================================================================
-FILE 027/124: openturath_ai/lib/core/navigation_guard.dart
+FILE 030/127: openturath_ai/lib/core/navigation_guard.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -4248,7 +4494,7 @@ class NavigationGuard {
 
 
 ================================================================================
-FILE 028/124: openturath_ai/lib/core/note_clipboard_content.dart
+FILE 031/127: openturath_ai/lib/core/note_clipboard_content.dart
 ================================================================================
 import '../models/bookmark_model.dart';
 
@@ -4262,7 +4508,7 @@ String noteClipboardText(BookmarkModel item) {
 
 
 ================================================================================
-FILE 029/124: openturath_ai/lib/core/notebook_navigation.dart
+FILE 032/127: openturath_ai/lib/core/notebook_navigation.dart
 ================================================================================
 class NotebookNavigation {
   static const hosts = {
@@ -4277,7 +4523,7 @@ class NotebookNavigation {
 
 
 ================================================================================
-FILE 030/124: openturath_ai/lib/core/notebook_ui_script.dart
+FILE 033/127: openturath_ai/lib/core/notebook_ui_script.dart
 ================================================================================
 /// Conversation cleanup and explicit copy capture, restricted to NotebookLM.
 const notebookUiScript = r'''
@@ -4538,7 +4784,7 @@ const notebookUiScript = r'''
 
 
 ================================================================================
-FILE 031/124: openturath_ai/lib/core/routes.dart
+FILE 034/127: openturath_ai/lib/core/routes.dart
 ================================================================================
 class AppRoutes {
   static const String splash = '/';
@@ -4558,11 +4804,12 @@ class AppRoutes {
 
 
 ================================================================================
-FILE 032/124: openturath_ai/lib/core/theme.dart
+FILE 035/127: openturath_ai/lib/core/theme.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'design/ot_colors.dart';
+import 'design/ot_typography.dart';
 
 // OpenTurath AI: Monochrome Editorial Theme (Quiet Scholar Adaptive)
 class AppTheme {
@@ -5046,6 +5293,58 @@ class AppTheme {
     );
   }
 
+  static TextStyle _fontNewsreader({
+    required double fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    double? letterSpacing,
+    double? height,
+  }) {
+    if (OTTypography.useSystemFontFallback) {
+      return TextStyle(
+        fontFamily: 'Newsreader',
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        letterSpacing: letterSpacing,
+        height: height,
+      );
+    }
+    return GoogleFonts.newsreader(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+      letterSpacing: letterSpacing,
+      height: height,
+    );
+  }
+
+  static TextStyle _fontOutfit({
+    required double fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    double? letterSpacing,
+    double? height,
+  }) {
+    if (OTTypography.useSystemFontFallback) {
+      return TextStyle(
+        fontFamily: 'Outfit',
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        letterSpacing: letterSpacing,
+        height: height,
+      );
+    }
+    return GoogleFonts.outfit(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+      letterSpacing: letterSpacing,
+      height: height,
+    );
+  }
+
   // ── Text Theme Generator ──────────────────────────────────────────────────
   static TextTheme _buildTextTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
@@ -5054,53 +5353,53 @@ class AppTheme {
     final tertiary = isDark ? textTertiaryDark : textTertiaryLight;
 
     return TextTheme(
-      displayLarge: GoogleFonts.newsreader(
+      displayLarge: _fontNewsreader(
           fontSize: 34,
           fontWeight: FontWeight.w700,
           color: primary,
           letterSpacing: -0.6),
-      displayMedium: GoogleFonts.newsreader(
+      displayMedium: _fontNewsreader(
           fontSize: 28,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.4),
-      headlineLarge: GoogleFonts.newsreader(
+      headlineLarge: _fontNewsreader(
           fontSize: 24,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.3),
-      headlineMedium: GoogleFonts.newsreader(
+      headlineMedium: _fontNewsreader(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.2),
-      titleLarge: GoogleFonts.newsreader(
+      titleLarge: _fontNewsreader(
           fontSize: 17,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.1),
-      titleMedium: GoogleFonts.outfit(
+      titleMedium: _fontOutfit(
           fontSize: 15, fontWeight: FontWeight.w600, color: primary),
-      titleSmall: GoogleFonts.outfit(
+      titleSmall: _fontOutfit(
           fontSize: 13, fontWeight: FontWeight.w600, color: secondary),
-      bodyLarge: GoogleFonts.outfit(
+      bodyLarge: _fontOutfit(
           fontSize: 15,
           fontWeight: FontWeight.w400,
           color: primary,
           height: 1.55),
-      bodyMedium: GoogleFonts.outfit(
+      bodyMedium: _fontOutfit(
           fontSize: 13,
           fontWeight: FontWeight.w400,
           color: secondary,
           height: 1.45),
-      bodySmall: GoogleFonts.outfit(
+      bodySmall: _fontOutfit(
           fontSize: 12,
           fontWeight: FontWeight.w400,
           color: tertiary,
           height: 1.4),
-      labelLarge: GoogleFonts.outfit(
+      labelLarge: _fontOutfit(
           fontSize: 13, fontWeight: FontWeight.w600, color: primary),
-      labelSmall: GoogleFonts.outfit(
+      labelSmall: _fontOutfit(
           fontSize: 11,
           fontWeight: FontWeight.w500,
           color: tertiary,
@@ -5119,7 +5418,7 @@ class AppTheme {
 
 
 ================================================================================
-FILE 033/124: openturath_ai/lib/core/design/ot_colors.dart
+FILE 036/127: openturath_ai/lib/core/design/ot_colors.dart
 ================================================================================
 import 'package:flutter/material.dart';
 
@@ -5193,7 +5492,7 @@ class OTColors {
 
 
 ================================================================================
-FILE 034/124: openturath_ai/lib/core/design/ot_motion.dart
+FILE 037/127: openturath_ai/lib/core/design/ot_motion.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -5225,7 +5524,7 @@ class OTMotion {
 
 
 ================================================================================
-FILE 035/124: openturath_ai/lib/core/design/ot_radius.dart
+FILE 038/127: openturath_ai/lib/core/design/ot_radius.dart
 ================================================================================
 import 'package:flutter/material.dart';
 
@@ -5249,7 +5548,7 @@ class OTRadius {
 
 
 ================================================================================
-FILE 036/124: openturath_ai/lib/core/design/ot_spacing.dart
+FILE 039/127: openturath_ai/lib/core/design/ot_spacing.dart
 ================================================================================
 import 'package:flutter/material.dart';
 
@@ -5287,7 +5586,7 @@ class OTSpacing {
 
 
 ================================================================================
-FILE 037/124: openturath_ai/lib/core/design/ot_typography.dart
+FILE 040/127: openturath_ai/lib/core/design/ot_typography.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5505,38 +5804,38 @@ class OTTypography {
       );
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicDisplay({Color? color, double height = 1.5}) => _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.w700,
-        height: 1.5,
+        height: height,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicReading({Color? color, double height = 1.6}) => _scheherazadeNew(
         fontSize: 18,
         fontWeight: FontWeight.w500,
-        height: 1.6,
+        height: height,
         color: color,
       );
 
-  static TextStyle arabicIbarah({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicIbarah({Color? color, double height = 1.85}) => _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        height: 1.35,
+        height: height,
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicQuote({Color? color, double height = 1.65}) => _scheherazadeNew(
         fontSize: 15,
         fontWeight: FontWeight.w400,
-        height: 1.65,
+        height: height,
         color: color,
       );
 }
 
 
 ================================================================================
-FILE 038/124: openturath_ai/lib/models/agent_model.dart
+FILE 041/127: openturath_ai/lib/models/agent_model.dart
 ================================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'sub_agent_model.dart';
@@ -6428,7 +6727,7 @@ class AgentModel {
 
 
 ================================================================================
-FILE 039/124: openturath_ai/lib/models/book_model.dart
+FILE 042/127: openturath_ai/lib/models/book_model.dart
 ================================================================================
 import 'dart:convert';
 
@@ -6555,8 +6854,11 @@ CanonicalImport parseCanonicalCatalog(String source) {
 
 List<CanonicalBookPresentation> parseSyamilahCatalog(String source) {
   final dynamic root = jsonDecode(source);
-  if (root is List) {
-    return root
+  final dynamic list = root is List
+      ? root
+      : (root is Map<String, dynamic> ? (root['kitab'] ?? root['books']) : null);
+  if (list is List) {
+    return list
         .whereType<Map<String, dynamic>>()
         .map((item) => CanonicalBookPresentation.fromSyamilahCard(item))
         .toList();
@@ -6751,7 +7053,7 @@ class CanonicalBookPresentation {
 
 
 ================================================================================
-FILE 040/124: openturath_ai/lib/models/bookmark_model.dart
+FILE 043/127: openturath_ai/lib/models/bookmark_model.dart
 ================================================================================
 enum BookmarkDocumentKind { personalNote, aiAnswer, bookReference }
 
@@ -6942,7 +7244,7 @@ class BookmarkModel {
 
 
 ================================================================================
-FILE 041/124: openturath_ai/lib/models/field_model.dart
+FILE 044/127: openturath_ai/lib/models/field_model.dart
 ================================================================================
 import 'package:flutter/material.dart';
 
@@ -7100,7 +7402,7 @@ class FieldModel {
 
 
 ================================================================================
-FILE 042/124: openturath_ai/lib/models/open_turath_book.dart
+FILE 045/127: openturath_ai/lib/models/open_turath_book.dart
 ================================================================================
 import 'dart:convert';
 
@@ -7154,9 +7456,14 @@ class OpenTurathBook {
   static List<OpenTurathBook> decodeList(String source) {
     try {
       final decoded = jsonDecode(source);
-      if (decoded is! List) return const [];
+      final dynamic list = decoded is List
+          ? decoded
+          : (decoded is Map<String, dynamic>
+              ? (decoded['kitab'] ?? decoded['books'] ?? const [])
+              : const []);
+      if (list is! List) return const [];
 
-      return decoded
+      return list
           .whereType<Map>()
           .map(
             (item) => OpenTurathBook.fromJson(
@@ -7207,7 +7514,7 @@ class OpenTurathBook {
 
 
 ================================================================================
-FILE 043/124: openturath_ai/lib/models/sub_agent_model.dart
+FILE 046/127: openturath_ai/lib/models/sub_agent_model.dart
 ================================================================================
 class SubAgentModel {
   final String id;
@@ -7231,7 +7538,7 @@ class SubAgentModel {
 
 
 ================================================================================
-FILE 044/124: openturath_ai/lib/models/user_model.dart
+FILE 047/127: openturath_ai/lib/models/user_model.dart
 ================================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../core/constants.dart';
@@ -7550,7 +7857,7 @@ class UserModel {
 
 
 ================================================================================
-FILE 045/124: openturath_ai/lib/screens/agent_webview_screen.dart
+FILE 048/127: openturath_ai/lib/screens/agent_webview_screen.dart
 ================================================================================
 import 'dart:async';
 import 'dart:collection';
@@ -8795,7 +9102,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
 
 ================================================================================
-FILE 046/124: openturath_ai/lib/screens/book_catalog_screen.dart
+FILE 049/127: openturath_ai/lib/screens/book_catalog_screen.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -9703,7 +10010,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
 
 ================================================================================
-FILE 047/124: openturath_ai/lib/screens/book_detail_screen.dart
+FILE 050/127: openturath_ai/lib/screens/book_detail_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10353,7 +10660,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
 
 ================================================================================
-FILE 048/124: openturath_ai/lib/screens/book_library_editorial_screen.dart
+FILE 051/127: openturath_ai/lib/screens/book_library_editorial_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11134,7 +11441,7 @@ class _DetailRow extends StatelessWidget {
 
 
 ================================================================================
-FILE 049/124: openturath_ai/lib/screens/bookmark_screen.dart
+FILE 052/127: openturath_ai/lib/screens/bookmark_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12245,7 +12552,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
 
 
 ================================================================================
-FILE 050/124: openturath_ai/lib/screens/dashboard_screen.dart
+FILE 053/127: openturath_ai/lib/screens/dashboard_screen.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -12924,7 +13231,6 @@ class _StudyEntryCard extends StatelessWidget {
   }
 }
 
-
 class _ScholarlyDatePanel extends StatelessWidget {
   const _ScholarlyDatePanel({
     required this.masehiDate,
@@ -13171,14 +13477,10 @@ class _DashboardAnnouncementCarouselState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.isDark
-                      ? const Color(0xFF27272A)
-                      : const Color(0xFFF4F4F5),
+                  color: OTColors.surfaceSubtle(widget.isDark),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
-                    color: widget.isDark
-                        ? const Color(0xFF3F3F46)
-                        : const Color(0xFFE4E4E7),
+                    color: OTColors.border(widget.isDark),
                     width: 0.8,
                   ),
                 ),
@@ -13218,10 +13520,8 @@ class _DashboardAnnouncementCarouselState
                 child: FilledButton(
                   onPressed: () => Navigator.pop(ctx),
                   style: FilledButton.styleFrom(
-                    backgroundColor:
-                        widget.isDark ? Colors.white : const Color(0xFF18181B),
-                    foregroundColor:
-                        widget.isDark ? const Color(0xFF18181B) : Colors.white,
+                    backgroundColor: OTColors.textPrimary(widget.isDark),
+                    foregroundColor: OTColors.surface(widget.isDark),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
                     ),
@@ -13291,14 +13591,10 @@ class _DashboardAnnouncementCarouselState
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
-                                color: widget.isDark
-                                    ? const Color(0xFF27272A)
-                                    : const Color(0xFFF4F4F5),
+                                color: OTColors.surfaceSubtle(widget.isDark),
                                 borderRadius: BorderRadius.circular(100),
                                 border: Border.all(
-                                  color: widget.isDark
-                                      ? const Color(0xFF3F3F46)
-                                      : const Color(0xFFE4E4E7),
+                                  color: OTColors.border(widget.isDark),
                                   width: 0.8,
                                 ),
                               ),
@@ -13374,7 +13670,7 @@ class _DashboardAnnouncementCarouselState
               height: 5,
               decoration: BoxDecoration(
                 color: _currentPage == i
-                    ? (widget.isDark ? Colors.white : const Color(0xFF18181B))
+                    ? OTColors.textPrimary(widget.isDark)
                     : widget.border,
                 borderRadius: BorderRadius.circular(100),
               ),
@@ -13402,7 +13698,7 @@ class _AnnouncementSlide {
 
 
 ================================================================================
-FILE 051/124: openturath_ai/lib/screens/google_session_auth_screen.dart
+FILE 054/127: openturath_ai/lib/screens/google_session_auth_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -13691,7 +13987,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
 
 ================================================================================
-FILE 052/124: openturath_ai/lib/screens/library_metadata_overview_screen.dart
+FILE 055/127: openturath_ai/lib/screens/library_metadata_overview_screen.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -14251,7 +14547,7 @@ class _StatCard extends StatelessWidget {
 
 
 ================================================================================
-FILE 053/124: openturath_ai/lib/screens/library_screen.dart
+FILE 056/127: openturath_ai/lib/screens/library_screen.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -14319,7 +14615,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     });
 
     try {
-      final books = await _service.loadSyafiiCatalog();
+      final books = widget.agent != null ? await _service.loadCatalogForAgent(widget.agent!) : await _service.loadSyafiiCatalog();
       if (!mounted) return;
       setState(() {
         _allBooks = books;
@@ -14556,7 +14852,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
 
 ================================================================================
-FILE 054/124: openturath_ai/lib/screens/login_screen.dart
+FILE 057/127: openturath_ai/lib/screens/login_screen.dart
 ================================================================================
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -14915,7 +15211,7 @@ class _GoogleGVector extends StatelessWidget {
 
 
 ================================================================================
-FILE 055/124: openturath_ai/lib/screens/main_shell_screen.dart
+FILE 058/127: openturath_ai/lib/screens/main_shell_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15374,7 +15670,7 @@ class _RailItem extends StatelessWidget {
 
 
 ================================================================================
-FILE 056/124: openturath_ai/lib/screens/note_reader_screen.dart
+FILE 059/127: openturath_ai/lib/screens/note_reader_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15552,7 +15848,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
 
 
 ================================================================================
-FILE 057/124: openturath_ai/lib/screens/profile_screen.dart
+FILE 060/127: openturath_ai/lib/screens/profile_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15930,9 +16226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? const Color(0xFF27272A)
-                                        : const Color(0xFFF4F4F5),
+                                    color: OTColors.surfaceSubtle(isDark),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(
@@ -16046,9 +16340,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             horizontal: 18, vertical: 15),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.logout_rounded,
-                              color: Color(0xFFF87171),
+                              color: OTColors.destructive(isDark),
                               size: 20,
                             ),
                             const SizedBox(width: 14),
@@ -16059,7 +16353,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFFF87171),
+                                color: OTColors.destructive(isDark),
                               ),
                             ),
                           ],
@@ -16090,9 +16384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
-                              color: isDark
-                                  ? const Color(0xFFF87171)
-                                  : const Color(0xFFDC2626),
+                              color: OTColors.destructive(isDark),
                             ),
                           ),
                   ),
@@ -16747,7 +17039,7 @@ class _SettingsTile extends StatelessWidget {
 
 
 ================================================================================
-FILE 058/124: openturath_ai/lib/screens/specialist_list_screen.dart
+FILE 061/127: openturath_ai/lib/screens/specialist_list_screen.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -17234,7 +17526,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
 
 ================================================================================
-FILE 059/124: openturath_ai/lib/screens/splash_screen.dart
+FILE 062/127: openturath_ai/lib/screens/splash_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17357,7 +17649,7 @@ class _SplashScreenState extends State<SplashScreen>
 
 
 ================================================================================
-FILE 060/124: openturath_ai/lib/screens/subscription_screen.dart
+FILE 063/127: openturath_ai/lib/screens/subscription_screen.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17577,8 +17869,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               },
               style: FilledButton.styleFrom(
                 backgroundColor: textPrimary,
-                foregroundColor:
-                    isDark ? const Color(0xFF18181B) : Colors.white,
+                foregroundColor: OTColors.surface(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
@@ -17701,14 +17992,10 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
-        final canvasColor =
-            isDark ? const Color(0xFF181817) : const Color(0xFFFFFFFF);
-        final textColor =
-            isDark ? const Color(0xFFF4F4F0) : const Color(0xFF171717);
-        final subTextColor =
-            isDark ? const Color(0xFFB2B2AA) : const Color(0xFF656560);
-        final borderColor =
-            isDark ? const Color(0xFF30302E) : const Color(0xFFDDDDD8);
+        final canvasColor = OTColors.surface(isDark);
+        final textColor = OTColors.textPrimary(isDark);
+        final subTextColor = OTColors.textSecondary(isDark);
+        final borderColor = OTColors.border(isDark);
 
         return Container(
           decoration: BoxDecoration(
@@ -17743,9 +18030,7 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF222220)
-                          : const Color(0xFFEEEEEB),
+                      color: OTColors.surfaceSubtle(isDark),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: borderColor),
                     ),
@@ -17788,9 +18073,7 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF111110)
-                      : const Color(0xFFF6F6F3),
+                  color: OTColors.canvas(isDark),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: borderColor),
                 ),
@@ -17854,12 +18137,8 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark
-                        ? const Color(0xFFF4F4F0)
-                        : const Color(0xFF171717),
-                    foregroundColor: isDark
-                        ? const Color(0xFF171717)
-                        : const Color(0xFFFFFFFF),
+                    backgroundColor: OTColors.textPrimary(isDark),
+                    foregroundColor: OTColors.surface(isDark),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -18595,24 +18874,12 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                     // ════════════════════════════════════════════════════════
                     Container(
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF141418)
-                            : const Color(0xFFFAF9F6),
+                        color: OTColors.surface(isDark),
                         borderRadius: OTRadius.cardBorder,
                         border: Border.all(
-                          color: isDark
-                              ? const Color(0xFF383842)
-                              : const Color(0xFFD4D4D8),
-                          width: 1.3,
+                          color: OTColors.borderStrong(isDark),
+                          width: 1.0,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black
-                                .withValues(alpha: isDark ? 0.35 : 0.04),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
                       ),
                       padding: const EdgeInsets.all(OTSpacing.lg),
                       child: Column(
@@ -18625,14 +18892,10 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4.5),
                                 decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF22222A)
-                                      : const Color(0xFFEEEEF0),
+                                  color: OTColors.surfaceSubtle(isDark),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: isDark
-                                        ? const Color(0xFF40404C)
-                                        : const Color(0xFFD4D4D8),
+                                    color: OTColors.border(isDark),
                                     width: 0.8,
                                   ),
                                 ),
@@ -19291,7 +19554,7 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
 
 
 ================================================================================
-FILE 061/124: openturath_ai/lib/services/agent_service.dart
+FILE 064/127: openturath_ai/lib/services/agent_service.dart
 ================================================================================
 import 'package:cloud_functions/cloud_functions.dart';
 import '../models/agent_model.dart';
@@ -19373,7 +19636,7 @@ class AgentAccessException implements Exception {
 
 
 ================================================================================
-FILE 062/124: openturath_ai/lib/services/agent_session_manager.dart
+FILE 065/127: openturath_ai/lib/services/agent_session_manager.dart
 ================================================================================
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -19506,7 +19769,7 @@ class AgentSessionManager extends ChangeNotifier {
 
 
 ================================================================================
-FILE 063/124: openturath_ai/lib/services/auth_service.dart
+FILE 066/127: openturath_ai/lib/services/auth_service.dart
 ================================================================================
 import 'dart:async';
 import 'dart:convert';
@@ -19866,7 +20129,7 @@ class AuthService {
 
 
 ================================================================================
-FILE 064/124: openturath_ai/lib/services/bookmark_service.dart
+FILE 067/127: openturath_ai/lib/services/bookmark_service.dart
 ================================================================================
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20096,7 +20359,7 @@ class BookmarkService extends ChangeNotifier {
 
 
 ================================================================================
-FILE 065/124: openturath_ai/lib/services/canonical_library_service.dart
+FILE 068/127: openturath_ai/lib/services/canonical_library_service.dart
 ================================================================================
 import 'package:flutter/services.dart';
 import '../core/arabic_utils.dart';
@@ -20115,15 +20378,49 @@ class CanonicalLibraryService {
     'lughah': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'tarikh': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
+    'tasawwuf': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
+    'aqidah': 'assets/data/18_KATALOG_AQIDAH_DAN_USHULUDDIN.json',
+    'bibliografi': 'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
   };
 
   static const Map<String, String> _assetMapByAgentId = {
     'fiqh_syafii': 'assets/data/01_KATALOG_FIKIH_SYAFII.json',
+    'fiqh_syafii_muhaqqiq': 'assets/data/01_KATALOG_FIKIH_SYAFII.json',
     'hadits': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
+    'hadits_muhaqqiq': 'assets/data/02_KATALOG_HADITS_DAN_SYARAH.json',
     'ushul_fiqh': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
+    'ushul_muhaqqiq': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
     'nahwu_sharaf': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'nahwu_sharaf_muerib': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'nahwu_sharaf_tashrif': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
+    'tafsir_muhaqqiq': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_muhaqqiq': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_bayan': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_mukhtabir': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_habib': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'fiqh_tahawwulat_khatib': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'tarikh': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
+    'fiqh_muqaran': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
+    'fiqh_muqaran_muhaqqiq': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
+    'fatawa_masail': 'assets/data/09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json',
+    'syarah_hadits': 'assets/data/10_KATALOG_SYARAH_HADITS.json',
+    'fiqh_hanafi': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
+    'fiqh_hanafi_muhaqqiq': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
+    'fiqh_maliki': 'assets/data/12_KATALOG_FIKIH_MALIKI.json',
+    'fiqh_maliki_muhaqqiq': 'assets/data/12_KATALOG_FIKIH_MALIKI.json',
+    'fiqh_hanbali': 'assets/data/13_KATALOG_FIKIH_HANBALI.json',
+    'fiqh_hanbali_muhaqqiq': 'assets/data/13_KATALOG_FIKIH_HANBALI.json',
+    'habib_umar': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
+    'imam_ghazali': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
+    'tajwid_qiraat': 'assets/data/15_KATALOG_TAJWID_DAN_QIRAAT.json',
+    'qawaid_fiqhiyyah': 'assets/data/16_KATALOG_QAWAID_FIQHIYYAH.json',
+    'musthalah_hadits': 'assets/data/17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json',
+    'aqidah': 'assets/data/18_KATALOG_AQIDAH_DAN_USHULUDDIN.json',
+    'thabaqat_rijal': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
+    'bibliografi_faharis': 'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
   };
 
   static const Map<String, String> _assetMapByCatalogId = {
@@ -20133,6 +20430,20 @@ class CanonicalLibraryService {
     'canonical_bahasa_arab': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'canonical_tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'canonical_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'canonical_tarikh': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
+    'canonical_fiqh_muqaran': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
+    'canonical_fatawa_masail': 'assets/data/09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json',
+    'canonical_syarah_hadits': 'assets/data/10_KATALOG_SYARAH_HADITS.json',
+    'canonical_hanafi': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
+    'canonical_maliki': 'assets/data/12_KATALOG_FIKIH_MALIKI.json',
+    'canonical_hanbali': 'assets/data/13_KATALOG_FIKIH_HANBALI.json',
+    'canonical_tasawuf': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
+    'canonical_ulumul_quran': 'assets/data/15_KATALOG_TAJWID_DAN_QIRAAT.json',
+    'canonical_qawaid_fiqhiyyah': 'assets/data/16_KATALOG_QAWAID_FIQHIYYAH.json',
+    'canonical_musthalah_hadits': 'assets/data/17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json',
+    'canonical_akidah': 'assets/data/18_KATALOG_AQIDAH_DAN_USHULUDDIN.json',
+    'canonical_thabaqat_tarajim': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
+    'canonical_bibliografi': 'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
   };
 
   final Map<String, List<CanonicalBookPresentation>> _catalogCache = {};
@@ -20249,7 +20560,7 @@ class CanonicalLibraryService {
 
 
 ================================================================================
-FILE 066/124: openturath_ai/lib/services/device_service.dart
+FILE 069/127: openturath_ai/lib/services/device_service.dart
 ================================================================================
 import 'dart:convert';
 import 'dart:io' show Platform;
@@ -20390,7 +20701,7 @@ class DeviceService {
 
 
 ================================================================================
-FILE 067/124: openturath_ai/lib/services/doku_service.dart
+FILE 070/127: openturath_ai/lib/services/doku_service.dart
 ================================================================================
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
@@ -20466,7 +20777,7 @@ class DokuService {
 
 
 ================================================================================
-FILE 068/124: openturath_ai/lib/services/native_agent_launcher.dart
+FILE 071/127: openturath_ai/lib/services/native_agent_launcher.dart
 ================================================================================
 import 'dart:io';
 import 'package:flutter/services.dart';
@@ -20536,7 +20847,7 @@ class NativeAgentLauncher {
 
 
 ================================================================================
-FILE 069/124: openturath_ai/lib/services/open_turath_catalog_repository.dart
+FILE 072/127: openturath_ai/lib/services/open_turath_catalog_repository.dart
 ================================================================================
 import 'dart:convert';
 import 'package:flutter/services.dart';
@@ -20630,16 +20941,29 @@ class OpenTurathCatalogRepository {
     'ushul_fiqh': 'assets/data/03_KATALOG_USHUL_FIKIH.json',
     'bahasa_arab': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'lughah_balaghah': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
+    'nahwu_sharaf': 'assets/data/04_KATALOG_BAHASA_DAN_SASTRA_ARAB.json',
     'tafsir': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'tafsir_ulumul_quran': 'assets/data/05_KATALOG_TAFSIR_DAN_ULUMUL_QURAN.json',
     'fiqh_tahawwulat': 'assets/data/06_KATALOG_FIKIH_TAHAWWULAT.json',
+    'tarikh': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'tarikh_sirah': 'assets/data/07_KATALOG_TARIKH_DAN_SIRAH_NABAWIYYAH.json',
     'fiqh_muqaran': 'assets/data/08_KATALOG_FIKIH_MUQARAN_DAN_UMUM.json',
     'fatawa_masail': 'assets/data/09_KATALOG_FATAWA_DAN_MASAIL_FIQHIYYAH.json',
     'syarah_hadits': 'assets/data/10_KATALOG_SYARAH_HADITS.json',
+    'fiqh_hanafi': 'assets/data/11_KATALOG_FIKIH_HANAFI.json',
+    'fiqh_maliki': 'assets/data/12_KATALOG_FIKIH_MALIKI.json',
+    'fiqh_hanbali': 'assets/data/13_KATALOG_FIKIH_HANBALI.json',
+    'tasawwuf': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
+    'habib_umar': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
+    'imam_ghazali': 'assets/data/14_KATALOG_TASAWWUF_DAN_ADZKAR.json',
+    'tajwid_qiraat': 'assets/data/15_KATALOG_TAJWID_DAN_QIRAAT.json',
+    'qawaid_fiqhiyyah': 'assets/data/16_KATALOG_QAWAID_FIQHIYYAH.json',
+    'musthalah_hadits': 'assets/data/17_KATALOG_MUSTHALAH_DAN_ULUMUL_HADITS.json',
+    'aqidah': 'assets/data/18_KATALOG_AQIDAH_DAN_USHULUDDIN.json',
     'thabaqat_tarajim': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
-    'musthalah_hadits': 'assets/data/20_KATALOG_TAKHIJ_ATHRAF_DAN_ILAL.json',
+    'thabaqat_rijal': 'assets/data/19_KATALOG_THABAQAT_DAN_TARAJIM.json',
     'adab_balaghah': 'assets/data/21_KATALOG_ADAB_DAN_BALAGHAH.json',
+    'bibliografi_faharis': 'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
   };
 
   Map<String, AiLibraryMetadata>? _metadataCache;
@@ -20710,7 +21034,7 @@ class OpenTurathCatalogRepository {
 
 
 ================================================================================
-FILE 070/124: openturath_ai/lib/services/research_notes_service.dart
+FILE 073/127: openturath_ai/lib/services/research_notes_service.dart
 ================================================================================
 import 'package:firebase_auth/firebase_auth.dart';
 import 'scoped_json_store.dart';
@@ -20813,7 +21137,7 @@ class ResearchNotesService {
 
 
 ================================================================================
-FILE 071/124: openturath_ai/lib/services/scoped_json_store.dart
+FILE 074/127: openturath_ai/lib/services/scoped_json_store.dart
 ================================================================================
 import 'dart:async';
 import 'dart:convert';
@@ -20924,7 +21248,7 @@ class ScopedJsonListStore<T> {
 
 
 ================================================================================
-FILE 072/124: openturath_ai/lib/services/session_user_stream.dart
+FILE 075/127: openturath_ai/lib/services/session_user_stream.dart
 ================================================================================
 import 'dart:async';
 
@@ -20999,7 +21323,7 @@ Stream<T?> sessionUserStream<T>({
 
 
 ================================================================================
-FILE 073/124: openturath_ai/lib/services/subscription_service.dart
+FILE 076/127: openturath_ai/lib/services/subscription_service.dart
 ================================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -21213,7 +21537,7 @@ class SubscriptionService {
 
 
 ================================================================================
-FILE 074/124: openturath_ai/lib/services/telemetry_service.dart
+FILE 077/127: openturath_ai/lib/services/telemetry_service.dart
 ================================================================================
 import 'dart:async';
 import 'dart:convert';
@@ -21427,7 +21751,7 @@ class TelemetryService {
 
 
 ================================================================================
-FILE 075/124: openturath_ai/lib/services/update_service.dart
+FILE 078/127: openturath_ai/lib/services/update_service.dart
 ================================================================================
 import 'dart:async';
 import 'dart:io';
@@ -21784,7 +22108,7 @@ class UpdateService extends ChangeNotifier {
 
 
 ================================================================================
-FILE 076/124: openturath_ai/lib/widgets/agent_multi_tab_room.dart
+FILE 079/127: openturath_ai/lib/widgets/agent_multi_tab_room.dart
 ================================================================================
 import 'dart:async';
 import 'dart:collection';
@@ -21936,9 +22260,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         max: 1.6,
                         divisions: 5,
                         activeColor: textPrimary,
-                        inactiveColor: isDark
-                            ? const Color(0xFF3F3F46)
-                            : const Color(0xFFE4E4E7),
+                        inactiveColor: OTColors.border(isDark),
                         onChanged: (val) {
                           setModalState(() => session.fontScale = val);
                           session.webController?.evaluateJavascript(
@@ -22815,7 +23137,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
 
 ================================================================================
-FILE 077/124: openturath_ai/lib/widgets/app_error_state.dart
+FILE 080/127: openturath_ai/lib/widgets/app_error_state.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22982,7 +23304,7 @@ class AppErrorState extends StatelessWidget {
 
 
 ================================================================================
-FILE 078/124: openturath_ai/lib/widgets/app_loader.dart
+FILE 081/127: openturath_ai/lib/widgets/app_loader.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23154,7 +23476,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
 
 
 ================================================================================
-FILE 079/124: openturath_ai/lib/widgets/apple_interactive_wrapper.dart
+FILE 082/127: openturath_ai/lib/widgets/apple_interactive_wrapper.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23311,7 +23633,7 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
 
 
 ================================================================================
-FILE 080/124: openturath_ai/lib/widgets/book_row_item.dart
+FILE 083/127: openturath_ai/lib/widgets/book_row_item.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23529,7 +23851,7 @@ class BookRowItem extends StatelessWidget {
 
 
 ================================================================================
-FILE 081/124: openturath_ai/lib/widgets/corpus_kind_control.dart
+FILE 084/127: openturath_ai/lib/widgets/corpus_kind_control.dart
 ================================================================================
 import 'package:flutter/material.dart';
 
@@ -23636,7 +23958,7 @@ class _CorpusKindTab extends StatelessWidget {
 
 
 ================================================================================
-FILE 082/124: openturath_ai/lib/widgets/doku_checkout_sheet.dart
+FILE 085/127: openturath_ai/lib/widgets/doku_checkout_sheet.dart
 ================================================================================
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24367,7 +24689,7 @@ class _CelebratorySuccessView extends StatelessWidget {
 
 
 ================================================================================
-FILE 083/124: openturath_ai/lib/widgets/evidence_bottom_sheet.dart
+FILE 086/127: openturath_ai/lib/widgets/evidence_bottom_sheet.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24780,13 +25102,14 @@ class EvidenceBottomSheet extends StatelessWidget {
 
 
 ================================================================================
-FILE 084/124: openturath_ai/lib/widgets/legal_document_sheet.dart
+FILE 087/127: openturath_ai/lib/widgets/legal_document_sheet.dart
 ================================================================================
 library;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/design/ot_colors.dart';
 import '../core/legal_copy.dart';
 
 /// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
@@ -24877,11 +25200,11 @@ class LegalDocumentSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final canvas = isDark ? const Color(0xFF09090B) : const Color(0xFFFAFAFA);
-    final surface = isDark ? const Color(0xFF141416) : Colors.white;
-    final border = isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7);
-    final textPrimary = isDark ? const Color(0xFFF4F4F5) : const Color(0xFF18181B);
-    final textSecondary = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
@@ -25020,7 +25343,7 @@ class LegalDocumentSheet extends StatelessWidget {
 
 
 ================================================================================
-FILE 085/124: openturath_ai/lib/widgets/library_bottom_sheet.dart
+FILE 088/127: openturath_ai/lib/widgets/library_bottom_sheet.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import '../core/app_copy.dart';
@@ -25448,7 +25771,7 @@ class CanonicalBookTile extends StatelessWidget {
 
 
 ================================================================================
-FILE 086/124: openturath_ai/lib/widgets/note_editor_sheet.dart
+FILE 089/127: openturath_ai/lib/widgets/note_editor_sheet.dart
 ================================================================================
 import 'dart:async';
 import 'dart:convert';
@@ -26150,7 +26473,7 @@ class _ToolbarBtn extends StatelessWidget {
 
 
 ================================================================================
-FILE 087/124: openturath_ai/lib/widgets/openturath_brand.dart
+FILE 090/127: openturath_ai/lib/widgets/openturath_brand.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26253,7 +26576,7 @@ class OpenTurathBrand extends StatelessWidget {
 
 
 ================================================================================
-FILE 088/124: openturath_ai/lib/widgets/redeem_code_sheet.dart
+FILE 091/127: openturath_ai/lib/widgets/redeem_code_sheet.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26485,7 +26808,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
 
 
 ================================================================================
-FILE 089/124: openturath_ai/lib/widgets/specialist_card.dart
+FILE 092/127: openturath_ai/lib/widgets/specialist_card.dart
 ================================================================================
 import 'package:flutter/material.dart';
 
@@ -26606,7 +26929,7 @@ class SpecialistCard extends StatelessWidget {
 
 
 ================================================================================
-FILE 090/124: openturath_ai/lib/widgets/tahawwulat_flagship_card.dart
+FILE 093/127: openturath_ai/lib/widgets/tahawwulat_flagship_card.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27045,7 +27368,7 @@ class _ObsidianDetailPainter extends CustomPainter {
 
 
 ================================================================================
-FILE 091/124: openturath_ai/lib/widgets/tahawwulat_introduction_sheet.dart
+FILE 094/127: openturath_ai/lib/widgets/tahawwulat_introduction_sheet.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27210,14 +27533,10 @@ class _TahawwulatIntroductionSheetState
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF222228)
-                            : const Color(0xFFF4F4F5),
+                        color: OTColors.surfaceSubtle(isDark),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: isDark
-                              ? const Color(0xFF383842)
-                              : const Color(0xFFE4E4E7),
+                          color: OTColors.border(isDark),
                           width: 0.8,
                         ),
                       ),
@@ -28873,10 +29192,10 @@ class _TahawwulatIntroductionSheetState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF222228) : const Color(0xFFF4F4F5),
+            color: OTColors.surfaceSubtle(isDark),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: isDark ? const Color(0xFF383842) : const Color(0xFFE4E4E7),
+              color: OTColors.border(isDark),
               width: 0.7,
             ),
           ),
@@ -28983,7 +29302,7 @@ class _TahawwulatIntroductionSheetState
 
 
 ================================================================================
-FILE 092/124: openturath_ai/lib/widgets/update_ready_banner.dart
+FILE 095/127: openturath_ai/lib/widgets/update_ready_banner.dart
 ================================================================================
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -29101,7 +29420,7 @@ class UpdateReadyBanner extends StatelessWidget {
 
 
 ================================================================================
-FILE 093/124: openturath_ai/test/active_subscription_access_test.dart
+FILE 096/127: openturath_ai/test/active_subscription_access_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/user_model.dart';
@@ -29231,7 +29550,7 @@ void main() {
 
 
 ================================================================================
-FILE 094/124: openturath_ai/test/agent_session_manager_test.dart
+FILE 097/127: openturath_ai/test/agent_session_manager_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/agent_model.dart';
@@ -29397,7 +29716,7 @@ void main() {
 
 
 ================================================================================
-FILE 095/124: openturath_ai/test/application_states_test.dart
+FILE 098/127: openturath_ai/test/application_states_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29526,7 +29845,7 @@ void main() {
 
 
 ================================================================================
-FILE 096/124: openturath_ai/test/arabic_search_normalization_test.dart
+FILE 099/127: openturath_ai/test/arabic_search_normalization_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/arabic_utils.dart';
@@ -29622,7 +29941,7 @@ void main() {
 
 
 ================================================================================
-FILE 097/124: openturath_ai/test/audit_auth_stream_test.dart
+FILE 100/127: openturath_ai/test/audit_auth_stream_test.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
@@ -29678,7 +29997,7 @@ void main() {
 
 
 ================================================================================
-FILE 098/124: openturath_ai/test/audit_checkout_completion_test.dart
+FILE 101/127: openturath_ai/test/audit_checkout_completion_test.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
@@ -29700,7 +30019,7 @@ void main() {
 
 
 ================================================================================
-FILE 099/124: openturath_ai/test/audit_entitlement_test.dart
+FILE 102/127: openturath_ai/test/audit_entitlement_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/user_model.dart';
@@ -29729,7 +30048,7 @@ void main() {
 
 
 ================================================================================
-FILE 100/124: openturath_ai/test/audit_navigation_test.dart
+FILE 103/127: openturath_ai/test/audit_navigation_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/notebook_navigation.dart';
@@ -29751,7 +30070,7 @@ void main() {
 
 
 ================================================================================
-FILE 101/124: openturath_ai/test/audit_storage_test.dart
+FILE 104/127: openturath_ai/test/audit_storage_test.dart
 ================================================================================
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
@@ -29835,7 +30154,7 @@ void main() {
 
 
 ================================================================================
-FILE 102/124: openturath_ai/test/book_catalog_navigation_test.dart
+FILE 105/127: openturath_ai/test/book_catalog_navigation_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29941,7 +30260,7 @@ void main() {
 
 
 ================================================================================
-FILE 103/124: openturath_ai/test/bookmark_content_contract_test.dart
+FILE 106/127: openturath_ai/test/bookmark_content_contract_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/bookmark_content.dart';
@@ -30016,7 +30335,7 @@ void main() {
 
 
 ================================================================================
-FILE 104/124: openturath_ai/test/bookmark_sync_test.dart
+FILE 107/127: openturath_ai/test/bookmark_sync_test.dart
 ================================================================================
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
@@ -30240,7 +30559,7 @@ void main() {
 
 
 ================================================================================
-FILE 105/124: openturath_ai/test/canonical_catalog_test.dart
+FILE 108/127: openturath_ai/test/canonical_catalog_test.dart
 ================================================================================
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
@@ -30281,7 +30600,7 @@ void main() {
 
 
 ================================================================================
-FILE 106/124: openturath_ai/test/canonical_multi_discipline_catalog_test.dart
+FILE 109/127: openturath_ai/test/canonical_multi_discipline_catalog_test.dart
 ================================================================================
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
@@ -30423,7 +30742,7 @@ void main() {
 
 
 ================================================================================
-FILE 107/124: openturath_ai/test/catalog_card_content_test.dart
+FILE 110/127: openturath_ai/test/catalog_card_content_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/catalog_card_content.dart';
@@ -30470,7 +30789,7 @@ void main() {
 
 
 ================================================================================
-FILE 108/124: openturath_ai/test/copied_answer_test.dart
+FILE 111/127: openturath_ai/test/copied_answer_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30509,7 +30828,7 @@ void main() {
 
 
 ================================================================================
-FILE 109/124: openturath_ai/test/copywriting_test.dart
+FILE 112/127: openturath_ai/test/copywriting_test.dart
 ================================================================================
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
@@ -30671,7 +30990,7 @@ void main() {
 
 
 ================================================================================
-FILE 110/124: openturath_ai/test/dashboard_and_theme_restructure_test.dart
+FILE 113/127: openturath_ai/test/dashboard_and_theme_restructure_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30757,7 +31076,7 @@ void main() {
 
 
 ================================================================================
-FILE 111/124: openturath_ai/test/deep_test.dart
+FILE 114/127: openturath_ai/test/deep_test.dart
 ================================================================================
 import 'dart:convert';
 import 'dart:io';
@@ -30947,7 +31266,7 @@ void main() {
 
 
 ================================================================================
-FILE 112/124: openturath_ai/test/design_system_test.dart
+FILE 115/127: openturath_ai/test/design_system_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31103,7 +31422,7 @@ void main() {
 
 
 ================================================================================
-FILE 113/124: openturath_ai/test/device_service_test.dart
+FILE 116/127: openturath_ai/test/device_service_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/services/device_service.dart';
@@ -31165,7 +31484,7 @@ void main() {
 
 
 ================================================================================
-FILE 114/124: openturath_ai/test/doku_direct_test.dart
+FILE 117/127: openturath_ai/test/doku_direct_test.dart
 ================================================================================
 import 'dart:convert';
 import 'dart:io';
@@ -31262,7 +31581,7 @@ void main() {
 
 
 ================================================================================
-FILE 115/124: openturath_ai/test/fiqh_specialists_and_theme_test.dart
+FILE 118/127: openturath_ai/test/fiqh_specialists_and_theme_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31341,7 +31660,7 @@ void main() {
 
 
 ================================================================================
-FILE 116/124: openturath_ai/test/hardening_and_redeem_test.dart
+FILE 119/127: openturath_ai/test/hardening_and_redeem_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/hijri_date_utils.dart';
@@ -31514,7 +31833,7 @@ void main() {
 
 
 ================================================================================
-FILE 117/124: openturath_ai/test/legal_policy_test.dart
+FILE 120/127: openturath_ai/test/legal_policy_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31638,7 +31957,7 @@ void main() {
 
 
 ================================================================================
-FILE 118/124: openturath_ai/test/membership_pass_state_test.dart
+FILE 121/127: openturath_ai/test/membership_pass_state_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/app_copy.dart';
@@ -31716,7 +32035,7 @@ void main() {
 
 
 ================================================================================
-FILE 119/124: openturath_ai/test/navigation_guard_test.dart
+FILE 122/127: openturath_ai/test/navigation_guard_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31859,7 +32178,7 @@ void main() {
 
 
 ================================================================================
-FILE 120/124: openturath_ai/test/note_clipboard_content_test.dart
+FILE 123/127: openturath_ai/test/note_clipboard_content_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/note_clipboard_content.dart';
@@ -31890,10 +32209,11 @@ void main() {
 
 
 ================================================================================
-FILE 121/124: openturath_ai/test/resilience_and_compliance_test.dart
+FILE 124/127: openturath_ai/test/resilience_and_compliance_test.dart
 ================================================================================
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/core/theme.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/models/agent_model.dart';
@@ -31902,8 +32222,13 @@ import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/models/bookmark_model.dart';
 import 'package:openturath_ai/services/agent_service.dart';
 import 'package:openturath_ai/widgets/app_error_state.dart';
+import 'package:openturath_ai/core/design/ot_typography.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
+  OTTypography.useSystemFontFallback = true;
+
   group('Resilience & Compliance Suite', () {
     testWidgets('AppErrorState renders properly with retry and back buttons', (tester) async {
       bool retried = false;
@@ -32092,7 +32417,7 @@ void main() {
 
 
 ================================================================================
-FILE 122/124: openturath_ai/test/telemetry_service_test.dart
+FILE 125/127: openturath_ai/test/telemetry_service_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/services/telemetry_service.dart';
@@ -32190,7 +32515,7 @@ void main() {
 
 
 ================================================================================
-FILE 123/124: openturath_ai/test/ui_copy_regression_test.dart
+FILE 126/127: openturath_ai/test/ui_copy_regression_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/services/subscription_service.dart';
@@ -32219,7 +32544,7 @@ void main() {
 
 
 ================================================================================
-FILE 124/124: openturath_ai/test/widget_test.dart
+FILE 127/127: openturath_ai/test/widget_test.dart
 ================================================================================
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/arabic_utils.dart';
