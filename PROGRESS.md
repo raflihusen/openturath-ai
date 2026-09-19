@@ -1,69 +1,75 @@
-# OpenTurath AI — Progress & Context Tracker
+# OpenTurath AI — Master Progress & Context Tracker
 
 > **Panduan Awet Konteks & Ringan Memori**:
-> File ini adalah *Single Source of Truth* status proyek. Ketika sesi chat terasa panjang atau laptop mulai lambat, buat **Chat Baru (New Conversation)** lalu cukup instruksikan:
+> File ini adalah *Single Source of Truth* status proyek OpenTurath AI. Ketika sesi chat terasa panjang (>15-20 turn), buka **Chat Baru (New Conversation)** lalu cukup instruksikan:
 > **"Baca PROGRESS.md dan lanjutkan task berikutnya."**
 > Agent akan langsung memahami 100% konteks proyek tanpa membebani RAM laptop.
 
 ---
 
-## 1. Identitas & Visi Arsitektur Proyek
-- **Nama Proyek**: OpenTurath AI (`openturath_ai`)
-- **Platform**: Flutter Cross-Platform (Android APK, macOS, iOS)
-- **Filosofi & Desain**: *The Quiet Islamic Scholar* — desain monokrom teduh, tipografi editorial, minim distraksi (tidak memakai kartu warna-warni/gradien norak), mengedepankan adab talaqqi dan riset turats ilmiah.
-- **Katalog Turats**: 21 Agen Spesialis Turats terkanonisasi (Fikih Syafi'i, Ushul Fikih, Hadis, Tafsir, Balaghah, dll.) terbagi dalam era *Mutaqaddimin* dan *Muta'akhkhirin*.
+## 1. Identitas & Visi Produk
+- **Aplikasi**: OpenTurath AI (`openturath_ai`) — platform riset dan talaqqi khazanah turats Islam berbasis AI (Flutter Cross-Platform: Android & macOS).
+- **Filosofi Visual**: *The Quiet Islamic Scholar* — desain monokrom teduh, tipografi editorial klasik, hening, minim distraksi, tanpa gradien mencolok (*zero tacky gradients*), tanpa bayangan tebal (*zero heavy shadows*), mengedepankan adab keilmuan dan keterbacaan teks marja'.
 
 ---
 
-## 2. Peta Komponen Utama (`openturath_ai/lib`)
-1. **Core Design System**:
-   - `core/design/ot_colors.dart`: Palet monokrom tenang (adaptif Light/Dark mode).
-   - `core/design/ot_typography.dart`: Tipografi editorial dengan skala keterbacaan tinggi.
-   - `core/design/ot_motion.dart`: Animasi micro-interaction halus dan subtil.
-   - `core/legal_copy.dart`: Unifikasi copywriting adab kanonikal.
-2. **Widgets & Navigasi**:
-   - `widgets/corpus_kind_control.dart`: Tab navigasi datar tanpa kartu untuk beralih antara "Bidang ilmu" dan "Khazanah ulama".
-   - `screens/book_catalog_screen.dart`: Eksplorasi katalog kitab dan biografi ulama.
-3. **Services & Integrasi**:
-   - `services/native_agent_launcher.dart`: Peluncur agen native turats.
-   - `services/bookmark_service.dart`: Sinkronisasi marka rujukan kutipan kitab.
-   - `services/device_service.dart` & `telemetry_service.dart`: Telemetri dan verifikasi lisensi perangkat.
-   - Payment/Subscription: Alur checkout DOKU Direct & Midtrans dengan guard hak akses (Entitlement).
+## 2. Riwayat Konteks & Master Plan (Audit Forensik Independen)
+Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan keras pengguna terhadap UI yang sempat dinilai terlalu ramai/tacky ("najis"):
+
+### Fasa 1 s.d. Fasa 7: Status Eksekusi (100% Selesai & Ter-commit)
+1. **Fasa 1: Data Katalog Kitab & Kamus Kanonikal (`a5a72e1`)**
+   - 21 berkas JSON katalog kitab keilmuan (Fikih Syafi'i s.d. Adab Akhlak) dan kamus kanonikal disinkronkan ke `assets/data/`.
+   - `metadata_training_seluruh_ai.json` terdaftar resmi di `pubspec.yaml`.
+2. **Fasa 2: Keamanan Transaksi & Zero 404 (`e0459f6`, `6f3fde8`, `79d5e2b`)**
+   - Penutupan celah validasi client-side Firestore pada `subscription_service.dart`.
+   - Restrukturisasi harga katalog GoAkal (Paket Sultan All-Access Rp 499rb, Bundle Rp 149–199rb).
+   - Smart fallback WhatsApp Admin Resmi (`081292979189`) untuk paket belum aktif (eliminasi total link 404).
+3. **Fasa 3: Stabilitas Memori WebView & Navigasi Mobile (`e958a39`, `73626a5`, `2abd1fb`)**
+   - Pencegahan kebocoran memori WebView dengan `disposeWebResources()` dan pembersihan controller pada `agent_session_manager.dart`.
+   - Pemisahan tombol close tab (area ketuk 44x44 px) tanpa nesting `InkWell`.
+   - Perbaikan `PopScope` tombol Back Android pada `main_shell_screen.dart` agar tidak terjebak riwayat SPA internal.
+4. **Fasa 4: Pustaka Metadata & Katalog Editorial (`4f849df`, `46cf302`, `a2fbf06`)**
+   - Pembuatan entitas `OpenTurathBook` dan repositori `OpenTurathCatalogRepository`.
+   - Integrasi `library_metadata_overview_screen.dart` dan detail kitab editorial.
+   - Pendaftaran rute riset pustaka ke dalam shell navigasi utama.
+5. **Fasa 5: Unifikasi Token Desain Monokrom Editorial (`2f2540c`, `a6d9f8c`, `3cef1ce`)**
+   - Standarisasi `OTColors` adaptif (Light Canvas `#F6F6F3`, Dark Canvas `#111110`, Border lembut, tanpa warna jenuh).
+   - Tipografi 3 Pilar di `OTTypography`:
+     - **Newsreader**: Judul dan subjudul editorial Latin.
+     - **Scheherazade New**: Seluruh teks Arab, matan, kutipan ibarah (pembersihan total font *Amiri* & *Tajawal*).
+     - **Outfit**: Label navigasi, tombol, dan teks fungsional.
+6. **Fasa 6: Overhaul Copywriting Adab Turats (`a471023`, `0941a92`, `6f6e0ae`)**
+   - Unifikasi kamus resmi pada `app_copy.dart` dan `legal_copy.dart`:
+     - *Prompt / Pertanyaan* $\rightarrow$ *Ibarah / Mas'alah*
+     - *Sumber Referensi* $\rightarrow$ *Marja' Mu'tamad*
+     - *Ruang Chat* $\rightarrow$ *Ruang Telaah Ilmiah*
+     - *Asisten AI* $\rightarrow$ *Khadim Turats / Muhaqqiq*
+7. **Fasa 7: Pembersihan UI Tacky & Penyederhanaan Beranda (`780e037`, `9947497`, `ef185a4`)**
+   - Penghapusan linear gradient gelap dan box shadow norak pada `dashboard_screen.dart`.
+   - Penyatuan indikator navigasi shell secara hening.
+   - Transformasi pengalih korpus pada `corpus_kind_control.dart` dari kartu tebal/segmented button menjadi tab datar bergaris bawah (*flat underline tabs*).
 
 ---
 
-## 3. Hasil Pengujian & Standar Kualitas (Test Suite)
-- Memiliki **32+ berkas pengujian unit & widget** di `openturath_ai/test/`.
-- Pengujian utama meliputi:
-  - `test/deep_test.dart`: Audit menyeluruh integritas UI, warna, dan token desain.
-  - `test/design_system_test.dart`: Validasi kepatuhan monokrom.
-  - `test/ui_copy_regression_test.dart` & `copywriting_test.dart`: Proteksi regresi teks adab.
-  - `test/arabic_search_normalization_test.dart`: Normalisasi harakat dan huruf hijaiyah.
-- **Target Standar**: Setiap perubahan WAJIB lulus `flutter analyze` dengan 0 issues.
+## 3. Konfigurasi Sistem Ramah Memori (Anti-Hang Mac 8GB)
+- **Gradle JVM Heap**: Dibatasi maksimal **2048 MB** (`-Xmx2048m -XX:MaxMetaspaceSize=512m`) pada proyek dan `~/.gradle/gradle.properties`.
+- **Idle Timeout**: Daemon otomatis mati setelah 60 detik idle (`idletimeout=60000`), mencegah penumpukan daemon zombie.
+- **Language Server Tuning**: Ekstensi Java RedHat & Gradle disetel ke mode `LightWeight` (Flutter dijalankan mandiri via CLI).
+- **Cache Pruning**: 13.000 file rekaman peramban lama (1.3 GB) telah dibersihkan.
+- **File Watcher Excludes**: Mengabaikan folder `.gradle/`, `build/`, `.dart_tool/`, dan `.gemini/` untuk meringankan I/O disk.
 
 ---
 
-## 4. Konfigurasi Sistem Ramah Memori (Anti-Hang Mac 8GB)
-- **Gradle JVM Heap**: Dibatasi maksimal **2048 MB** (bukan 8192 MB) di `android/gradle.properties` dan `~/.gradle/gradle.properties`.
-- **Idle Timeout**: Gradle daemon otomatis mati jika idle selama 60 detik (`idletimeout=60000`).
-- **File Watchers & Indexing**: Antigravity IDE dikonfigurasi untuk tidak meng-index `.gradle`, `build/`, `.dart_tool/`, dan `.gemini/`.
-- **Language Server**: Mode lightweight untuk Java extension; Flutter berjalan independen via Flutter CLI.
+## 4. Status Pengujian Terakhir
+- **Syntax & Type Check**: `flutter analyze` $\rightarrow$ **0 issues**.
+- **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green)**.
 
 ---
 
-## 5. Changelog & Milestone Terakhir
-- `20502cc` (2026-09-19): Pembatasan JVM Gradle ke 2GB dan idle timeout 60s untuk stabilitas laptop 8GB RAM.
-- `ef185a4` (2026-09-19): Perbaruan tab navigasi datar pada `corpus_kind_control.dart`.
-- `780e037` (2026-09-18): Penyederhanaan beranda menjadi ruang kajian terfokus.
-- `9947497` (2026-09-18): Unifikasi navigasi dengan indikator editorial.
-- `6f6e0ae` (2026-09-18): Standardisasi copywriting "The Quiet Islamic Scholar".
-
----
-
-## 6. Protokol Menutup & Melanjutkan Sesi
-1. **Sebelum Tutup Sesi / Ganti Chat**:
-   - Pastikan kode sudah ter-commit (`git status` bersih).
-   - Minta agent: *"Perbarui PROGRESS.md dengan ringkasan status hari ini"*.
-2. **Saat Buka Chat Baru**:
-   - Cukup instruksikan: *"Baca PROGRESS.md dan lanjutkan [nama fitur/task]"*.
+## 5. Agenda & Fokus Selanjutnya
+1. **Inspeksi Estetika Layar Nyata (Android & macOS)**:
+   - Memastikan tidak ada lagi sisa kartu bernuansa fintech/crypto atau gradien gelap yang tertinggal.
+   - Menjaga ruang telaah tetap terasa seperti perpustakaan naskah klasik digital.
+2. **Katalog & Spesialis**:
+   - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
 EOF
