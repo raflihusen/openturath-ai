@@ -205,7 +205,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         appBar: AppBar(
           title: Text(
             title,
-            style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 20),
+            style: OTTypography.corpusTitle(color: textPrimary)
+                .copyWith(fontSize: 20),
           ),
           centerTitle: false,
           backgroundColor: canvas,
@@ -225,191 +226,215 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                   },
                 ),
         ),
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            // Search & Controls Container
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
-              child: Column(
-                children: [
-                  Container(
-                    height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: surface,
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: border, width: 1.0),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.search_rounded, size: 20, color: textSecondary),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            controller: _searchCtrl,
-                            onChanged: _onSearchChanged,
-                            style: GoogleFonts.outfit(fontSize: 13.5, color: textPrimary),
-                            decoration: InputDecoration(
-                              hintText: 'Cari asisten atau ulama…',
-                              hintStyle: GoogleFonts.outfit(fontSize: 13.5, color: textSecondary),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              errorBorder: InputBorder.none,
-                              focusedErrorBorder: InputBorder.none,
-                              filled: false,
-                              isDense: true,
-                              contentPadding: EdgeInsets.zero,
+        body: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              // Search & Controls Container
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 48,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: surface,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: border, width: 1.0),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.search_rounded,
+                              size: 20, color: textSecondary),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: TextField(
+                              controller: _searchCtrl,
+                              onChanged: _onSearchChanged,
+                              style: GoogleFonts.outfit(
+                                  fontSize: 13.5, color: textPrimary),
+                              decoration: InputDecoration(
+                                hintText: 'Cari asisten atau ulama…',
+                                hintStyle: GoogleFonts.outfit(
+                                    fontSize: 13.5, color: textSecondary),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                                filled: false,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
                             ),
                           ),
-                        ),
-                        if (_searchQuery.isNotEmpty)
-                          GestureDetector(
-                            onTap: () {
-                              _searchCtrl.clear();
-                              setState(() => _searchQuery = '');
-                            },
-                            child: Icon(Icons.close_rounded, size: 18, color: textSecondary),
-                          ),
-                      ],
+                          if (_searchQuery.isNotEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                _searchCtrl.clear();
+                                setState(() => _searchQuery = '');
+                              },
+                              child: Icon(Icons.close_rounded,
+                                  size: 18, color: textSecondary),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-
-                  if (isGeneralTab) ...[
-                    const SizedBox(height: OTSpacing.md),
-                    // Dual Taxonomy Switcher
-                    CorpusKindControl(
-                      value: _corpusKind,
-                      onChanged: (k) {
-                        setState(() {
-                          _corpusKind = k;
-                          _selectedFieldId = null;
-                        });
-                      },
-                    ),
-                  ],
-                ],
-              ),
-            ),
-
-            // Discipline Filter Chips (only in discipline mode)
-            if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
-              SizedBox(
-                height: 38,
-                child: ListView(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-                  children: [
-                    _filterChip(
-                      label: AppCopy.allCategories,
-                      isSelected: _selectedFieldId == null || _selectedFieldId == 'all',
-                      onTap: () => setState(() => _selectedFieldId = 'all'),
-                      isDark: isDark,
-                      border: border,
-                      surface: surface,
-                      textPrimary: textPrimary,
-                      textSecondary: textSecondary,
-                    ),
-                    const SizedBox(width: 8),
-                    ...FieldModel.defaultFields.map((field) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: _filterChip(
-                          label: field.name,
-                          isSelected: _selectedFieldId == field.id,
-                          onTap: () => setState(() => _selectedFieldId = field.id),
-                          isDark: isDark,
-                          border: border,
-                          surface: surface,
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                        ),
-                      );
-                    }),
+                    if (isGeneralTab) ...[
+                      const SizedBox(height: OTSpacing.md),
+                      // Dual Taxonomy Switcher
+                      CorpusKindControl(
+                        value: _corpusKind,
+                        onChanged: (k) {
+                          setState(() {
+                            _corpusKind = k;
+                            _selectedFieldId = null;
+                          });
+                        },
+                      ),
+                    ],
                   ],
                 ),
               ),
-              const SizedBox(height: OTSpacing.sm),
-            ],
 
-            // Content List
-            Expanded(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : filtered.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(OTSpacing.xl),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.search_off_rounded, size: 40, color: textSecondary),
-                                const SizedBox(height: OTSpacing.sm),
-                                Text(
-                                  _searchQuery.isNotEmpty
-                                      ? AppCopy.noAssistantsFound
-                                      : AppCopy.noAssistantsFound,
-                                  style: OTTypography.body(color: textSecondary),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+              // Discipline Filter Chips (only in discipline mode)
+              if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
+                SizedBox(
+                  height: 38,
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+                    children: [
+                      _filterChip(
+                        label: AppCopy.allCategories,
+                        isSelected: _selectedFieldId == null ||
+                            _selectedFieldId == 'all',
+                        onTap: () => setState(() => _selectedFieldId = 'all'),
+                        isDark: isDark,
+                        border: border,
+                        surface: surface,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                      ),
+                      const SizedBox(width: 8),
+                      ...FieldModel.defaultFields.map((field) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: _filterChip(
+                            label: field.name,
+                            isSelected: _selectedFieldId == field.id,
+                            onTap: () =>
+                                setState(() => _selectedFieldId = field.id),
+                            isDark: isDark,
+                            border: border,
+                            surface: surface,
+                            textPrimary: textPrimary,
+                            textSecondary: textSecondary,
                           ),
-                        )
-                      : Builder(
-                          builder: (context) {
-                            final sorted = List<AgentModel>.from(filtered);
-                            if (_searchQuery.isEmpty) {
-                              sorted.sort((a, b) {
-                                if (a.isActive && !b.isActive) return -1;
-                                if (!a.isActive && b.isActive) return 1;
-                                return 0;
-                              });
-                            }
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: OTSpacing.sm),
+              ],
 
-                            return ListView.separated(
-                              physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                              padding: const EdgeInsets.fromLTRB(OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 96),
-                              itemCount: sorted.length,
-                              separatorBuilder: (_, __) => const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final agent = sorted[index];
-                                if (agent.id == 'fiqh_tahawwulat') {
-                                  final user = _authService.cachedCurrentUser;
-                                  final isSubscribed = user != null && user.hasAccessToAgent(agent.id);
-                                  return TahawwulatFlagshipCard(
-                                    agent: agent,
-                                    isSubscribed: isSubscribed,
-                                    onOpenMain: () => _openAgent(agent),
-                                    onOpenSubAgent: (sub) => _openTahawwulatSubAgent(agent, sub),
+              // Content List
+              Expanded(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : filtered.isEmpty
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(OTSpacing.xl),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.search_off_rounded,
+                                      size: 40, color: textSecondary),
+                                  const SizedBox(height: OTSpacing.sm),
+                                  Text(
+                                    _searchQuery.isNotEmpty
+                                        ? AppCopy.noAssistantsFound
+                                        : AppCopy.noAssistantsFound,
+                                    style:
+                                        OTTypography.body(color: textSecondary),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Builder(
+                            builder: (context) {
+                              final sorted = List<AgentModel>.from(filtered);
+                              if (_searchQuery.isEmpty) {
+                                sorted.sort((a, b) {
+                                  if (a.isActive && !b.isActive) return -1;
+                                  if (!a.isActive && b.isActive) return 1;
+                                  return 0;
+                                });
+                              }
+
+                              return ListView.separated(
+                                physics: const BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics()),
+                                padding: const EdgeInsets.fromLTRB(OTSpacing.lg,
+                                    OTSpacing.xs, OTSpacing.lg, 96),
+                                itemCount: sorted.length,
+                                separatorBuilder: (_, index) {
+                                  final touchesFlagship = sorted[index].id ==
+                                          'fiqh_tahawwulat' ||
+                                      sorted[index + 1].id == 'fiqh_tahawwulat';
+                                  return SizedBox(
+                                    height: touchesFlagship ? OTSpacing.md : 0,
+                                  );
+                                },
+                                itemBuilder: (context, index) {
+                                  final agent = sorted[index];
+                                  if (agent.id == 'fiqh_tahawwulat') {
+                                    final user = _authService.cachedCurrentUser;
+                                    final isSubscribed = user != null &&
+                                        user.hasAccessToAgent(agent.id);
+                                    return TahawwulatFlagshipCard(
+                                      agent: agent,
+                                      isSubscribed: isSubscribed,
+                                      onOpenMain: () => _openAgent(agent),
+                                      onOpenSubAgent: (sub) =>
+                                          _openTahawwulatSubAgent(agent, sub),
+                                      onOpenLibrary: agent.catalogId != null
+                                          ? () => showResearchLibrary(context,
+                                              agent: agent)
+                                          : null,
+                                    );
+                                  }
+                                  return SpecialistCard(
+                                    title: agent.title,
+                                    statusLabel: agent.isComingSoon
+                                        ? AppCopy.comingSoon
+                                        : null,
+                                    onOpen: () => _openAgent(agent),
                                     onOpenLibrary: agent.catalogId != null
-                                        ? () => showResearchLibrary(context, agent: agent)
+                                        ? () => showResearchLibrary(context,
+                                            agent: agent)
                                         : null,
                                   );
-                                }
-                                return SpecialistCard(
-                                  title: agent.title,
-                                  statusLabel: agent.isComingSoon ? AppCopy.comingSoon : null,
-                                  onOpen: () => _openAgent(agent),
-                                  onOpenLibrary: agent.catalogId != null
-                                      ? () => showResearchLibrary(context, agent: agent)
-                                      : null,
-                                );
-                              },
-                            );
-                          },
-                        ),
-            ),
-          ],
+                                },
+                              );
+                            },
+                          ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _filterChip({
     required String label,
@@ -444,7 +469,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         alignment: Alignment.center,
         child: Text(
           label,
-          style: OTTypography.caption(color: isSelected ? activeFg : textSecondary).copyWith(
+          style:
+              OTTypography.caption(color: isSelected ? activeFg : textSecondary)
+                  .copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 12,
           ),
