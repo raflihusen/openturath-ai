@@ -48,6 +48,12 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
    - Penghapusan linear gradient gelap dan box shadow norak pada `dashboard_screen.dart`.
    - Penyatuan indikator navigasi shell secara hening.
    - Transformasi pengalih korpus pada `corpus_kind_control.dart` dari kartu tebal/segmented button menjadi tab datar bergaris bawah (*flat underline tabs*).
+8. **Fasa 8: Overhaul Konsistensi UI Monokrom Editorial & Audit Forensik (`55da31c`)**
+   - **Modul 1 (Subscription Screen)**: Pembersihan sisa `LinearGradient`, eliminasi teks kuning neon `0xFFFBBF24` dan bayangan tebal, digantikan kartu bersahaja `OTColors.borderStrong` dan `OTColors.textPrimary`.
+   - **Modul 2 (App SnackBar)**: Standarisasi latar monokrom pekat `OTColors.inverseSurface` dengan garis tepi hairline netral dan aksen galat merah bata redup `OTColors.destructiveDark` (zero neon).
+   - **Modul 3 (Dashboard Screen & Multi-Tab)**: Penyelarasan seluruh sisa kode warna Zinc liar (`0xFF27272A`, `0xFFF4F4F5`, `0xFF3F3F46`, `0xFFE4E4E7`) ke token `OTColors`.
+   - **Modul 4 (Tipografi Arab & Normalisasi Pencarian)**: Font `Scheherazade New` dengan line-height aman $\ge 1.85$ untuk matan/ibarah Arab (`OTTypography.arabicIbarah`), serta verifikasi algoritma normalisasi pencarian Arab (`ArabicUtils.normalize` & `matches`).
+   - **Verifikasi**: `flutter analyze` (0 issues), Regex Rogue Color Audit (0 matches), `flutter test` (159/159 tests passed 100%).
 
 ---
 
