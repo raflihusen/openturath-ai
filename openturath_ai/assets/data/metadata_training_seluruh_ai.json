@@ -4,21 +4,21 @@
     "nama_tampilan": "Super AI Fikih Syafi'i",
     "nama_arab": "الفقه الشافعي المعتمد",
     "kategori": "Fikih Madzhab",
-    "total_kitab": 103,
+    "total_kitab": 87,
     "total_jilid_fisik": "400+ Jilid",
     "total_halaman_fisik": 170391,
     "total_kata_bersih": 71627898,
     "total_partisi_notebooklm": 241,
     "rentang_masa": "150 H - 1338 H (Imam Asy-Syafi'i s.d. Syekh Mahfuzh At-Tarmasi)",
     "badge_otoritas": "100% Kitab Mu'tamad 4 Tier Syafi'iyyah",
-    "headline_aplikasi": "Dilatih dengan 103 kitab induk mu'tamad Syafi'iyyah (400+ jilid, 170.391 halaman naskah fisik), dan 71,7 juta kata berstempel 4D."
+    "headline_aplikasi": "Dilatih dengan 87 kitab induk mu'tamad Syafi'iyyah (400+ jilid, 170.391 halaman naskah fisik), dan 71,7 juta kata berstempel 4D."
   },
   "hadits": {
     "id_modul": "02_HADITS",
     "nama_tampilan": "AI Kutubus Sunnah & Matan Hadits",
     "nama_arab": "متون الحديث النبوي وكتب السنة",
     "kategori": "Hadits Nabawi",
-    "total_kitab": 1141,
+    "total_kitab": 1173,
     "total_jilid_fisik": "1.500+ Jilid",
     "total_halaman_fisik": 532640,
     "total_kata_bersih": 105700587,
@@ -89,21 +89,21 @@
     "nama_tampilan": "Super AI Tarikh, Sirah, Buldan & Ansab",
     "nama_arab": "التاريخ الإسلامي والسيرة والبلدان والرحلات والأنساب",
     "kategori": "Tarikh & Peradaban",
-    "total_kitab": 499,
+    "total_kitab": 345,
     "total_jilid_fisik": "1.374 Jilid",
     "total_halaman_fisik": 480000,
     "total_kata_bersih": 136531222,
     "total_partisi_notebooklm": 300,
     "rentang_masa": "Pra-Hijrah s.d. Abad 14 H (Ath-Thabari, Mu'jamul Buldan, Jamharatul Ansab, Adz-Dzahabi)",
     "badge_otoritas": "Tarikh Ath-Thabari, Mu'jamul Buldan Yaqut, Jamharatul Ansab & Thibb Nabawi",
-    "headline_aplikasi": "Dilatih dengan 499 kitab babon sejarah peradaban Islam, Sirah Nabawiyyah, geografi buldan, rihlah penjelajah, dan silsilah nasab kabilah (136,5 juta kata dalam tepat 300 partisi)."
+    "headline_aplikasi": "Dilatih dengan 345 kitab babon sejarah peradaban Islam, Sirah Nabawiyyah, geografi buldan, rihlah penjelajah, dan silsilah nasab kabilah (136,5 juta kata dalam tepat 300 partisi)."
   },
   "fiqh_muqaran": {
     "id_modul": "08_FIKIH_MUQARAN_DAN_UMUM",
     "nama_tampilan": "Super AI Fikih Muqaran, Siyasah & Faraidh",
     "nama_arab": "الفقه المقارن والسياسة الشرعية وقسمة الفرائض",
     "kategori": "Fikih Lintas Madzhab",
-    "total_kitab": 189,
+    "total_kitab": 61,
     "total_jilid_fisik": "329 Jilid",
     "total_halaman_fisik": 135000,
     "total_kata_bersih": 27585932,
@@ -131,14 +131,14 @@
     "nama_tampilan": "AI Syarah Hadits Nabawi",
     "nama_arab": "شروح الحديث النبوي وفقه الآثار",
     "kategori": "Hadits Nabawi",
-    "total_kitab": 202,
+    "total_kitab": 172,
     "total_jilid_fisik": "1.007 Jilid",
     "total_halaman_fisik": 420000,
     "total_kata_bersih": 122463779,
     "total_partisi_notebooklm": 300,
     "rentang_masa": "Abad 4 H - Abad 14 H (Al-Khaththabi s.d. Anwar Syah Al-Kasymiri)",
     "badge_otoritas": "Syarah Lengkap Kutubus Sittah & Kutubul Ahkam",
-    "headline_aplikasi": "Dilatih dengan 202 kitab syarah induk (1.007 jilid), Fathul Bari, Umdatul Qari, Syarah An-Nawawi, dan 122,4 juta kata fiqhul hadits."
+    "headline_aplikasi": "Dilatih dengan 172 kitab syarah induk (1.007 jilid), Fathul Bari, Umdatul Qari, Syarah An-Nawawi, dan 122,4 juta kata fiqhul hadits."
   },
   "fiqh_hanafi": {
     "id_modul": "11_FIKIH_HANAFI",
@@ -229,14 +229,14 @@
     "nama_tampilan": "Super AI 'Ulumul Hadits, Musthalah & Takhrij",
     "nama_arab": "علوم الحديث ومصطلحه ومناهج التخريج والعلل",
     "kategori": "Hadits Nabawi",
-    "total_kitab": 393,
+    "total_kitab": 165,
     "total_jilid_fisik": "748 Jilid",
     "total_halaman_fisik": 285000,
     "total_kata_bersih": 63241925,
     "total_partisi_notebooklm": 137,
     "rentang_masa": "Abad 2 H - Abad 10 H (Ar-Ramahurmuzi, Ibnu ash-Shalah, Al-Mizzi s.d. Ibnu Hajar)",
     "badge_otoritas": "Muqaddimah Ibn ash-Shalah, Tuhfatul Asyraf, 'Ilal Ad-Daruquthni & Nasbur Rayah",
-    "headline_aplikasi": "Dilatih dengan 393 kitab babon kaidah kritik sanad, musthalah hadits, takhrij ahkam, dan 'ilal tersembunyi (748 jilid fisik, 63,2 juta kata dalam 137 partisi)."
+    "headline_aplikasi": "Dilatih dengan 165 kitab babon kaidah kritik sanad, musthalah hadits, takhrij ahkam, dan 'ilal tersembunyi (748 jilid fisik, 63,2 juta kata dalam 137 partisi)."
   },
   "aqidah": {
     "id_modul": "18_AQIDAH_DAN_USHULUDDIN",
