@@ -5,125 +5,125 @@ import 'design/ot_colors.dart';
 // OpenTurath AI: Monochrome Editorial Theme (Quiet Scholar Adaptive)
 class AppTheme {
   // ── 1. Light Mode Tokens (Warm Archival Paper) ───────────────────────────
-  static const Color canvasLight          = OTColors.canvasLight;
-  static const Color groupedCanvasLight   = OTColors.canvasLight;
-  static const Color surfaceCardLight     = OTColors.surfaceLight;
-  static const Color surfaceHeaderLight   = OTColors.surfaceLight;
-  static const Color borderLight          = OTColors.borderLight;
-  static const Color borderSubtleLight    = OTColors.borderSubtleLight; 
-  static const Color textPrimaryLight     = OTColors.textPrimaryLight;
-  static const Color textSecondaryLight   = OTColors.textSecondaryLight;
-  static const Color textTertiaryLight    = OTColors.textTertiaryLight;
-  static const Color accentLight          = OTColors.accentLight;
-  static const Color pillActionBgLight    = OTColors.textPrimaryLight;
-  static const Color pillActionTextLight  = OTColors.surfaceLight;
+  static const Color canvasLight = OTColors.canvasLight;
+  static const Color groupedCanvasLight = OTColors.canvasLight;
+  static const Color surfaceCardLight = OTColors.surfaceLight;
+  static const Color surfaceHeaderLight = OTColors.surfaceLight;
+  static const Color borderLight = OTColors.borderLight;
+  static const Color borderSubtleLight = OTColors.borderSubtleLight;
+  static const Color textPrimaryLight = OTColors.textPrimaryLight;
+  static const Color textSecondaryLight = OTColors.textSecondaryLight;
+  static const Color textTertiaryLight = OTColors.textTertiaryLight;
+  static const Color accentLight = OTColors.accentLight;
+  static const Color pillActionBgLight = OTColors.textPrimaryLight;
+  static const Color pillActionTextLight = OTColors.surfaceLight;
   static const Color pillSecondaryBgLight = OTColors.surfaceSubtleLight;
-  static const Color citationBgLight      = OTColors.surfaceSubtleLight;
-  static const Color citationTextLight    = OTColors.textPrimaryLight;
-  static const Color queryBoxBgLight      = OTColors.surfaceLight;
-  static const Color queryBoxBorderLight  = OTColors.borderLight;
+  static const Color citationBgLight = OTColors.surfaceSubtleLight;
+  static const Color citationTextLight = OTColors.textPrimaryLight;
+  static const Color queryBoxBgLight = OTColors.surfaceLight;
+  static const Color queryBoxBorderLight = OTColors.borderLight;
 
   // ── 1b. Token Navigasi & Status ───────────────────────────────────────────
   // Status kritis memakai merah bata redup dari OTColors, bukan merah neon iOS.
-  static const Color navBarDark          = Color(0xCC111110);
-  static const Color navBarLight         = Color(0xD9F6F6F3);
-  static const Color navBarBorderDark    = OTColors.borderDark;
-  static const Color navBarBorderLight   = OTColors.borderLight;
-  static const double dividerIndent      = 54.0;
+  static const Color navBarDark = Color(0xCC111110);
+  static const Color navBarLight = Color(0xD9F6F6F3);
+  static const Color navBarBorderDark = OTColors.borderDark;
+  static const Color navBarBorderLight = OTColors.borderLight;
+  static const double dividerIndent = 54.0;
 
   // ── 2. Dark Mode Tokens (Quiet Obsidian Scholar) ─────────────────────────
-  static const Color canvasDark           = OTColors.canvasDark;
-  static const Color groupedCanvasDark    = OTColors.canvasDark;
-  static const Color surfaceCardDark      = OTColors.surfaceDark;
-  static const Color surfaceHeaderDark    = OTColors.surfaceDark;
-  static const Color borderDark           = OTColors.borderDark;
-  static const Color borderSubtleDark     = OTColors.borderSubtleDark;
-  static const Color textPrimaryDark      = OTColors.textPrimaryDark;
-  static const Color textSecondaryDark    = OTColors.textSecondaryDark;
-  static const Color textTertiaryDark     = OTColors.textTertiaryDark;
-  static const Color accentDark           = OTColors.accentDark;
-  static const Color pillActionBgDark     = OTColors.textPrimaryDark;
-  static const Color pillActionTextDark   = OTColors.surfaceDark;
-  static const Color pillSecondaryBgDark  = OTColors.surfaceSubtleDark;
-  static const Color citationBgDark       = OTColors.surfaceSubtleDark;
-  static const Color citationTextDark     = OTColors.textPrimaryDark;
-  static const Color queryBoxBgDark       = OTColors.surfaceDark;
-  static const Color queryBoxBorderDark   = OTColors.borderDark;
-  static const Color surfaceElevated      = OTColors.surfaceSubtleDark;
-  static const Color scholarlyIndigo      = OTColors.textPrimaryDark;
+  static const Color canvasDark = OTColors.canvasDark;
+  static const Color groupedCanvasDark = OTColors.canvasDark;
+  static const Color surfaceCardDark = OTColors.surfaceDark;
+  static const Color surfaceHeaderDark = OTColors.surfaceDark;
+  static const Color borderDark = OTColors.borderDark;
+  static const Color borderSubtleDark = OTColors.borderSubtleDark;
+  static const Color textPrimaryDark = OTColors.textPrimaryDark;
+  static const Color textSecondaryDark = OTColors.textSecondaryDark;
+  static const Color textTertiaryDark = OTColors.textTertiaryDark;
+  static const Color accentDark = OTColors.accentDark;
+  static const Color pillActionBgDark = OTColors.textPrimaryDark;
+  static const Color pillActionTextDark = OTColors.surfaceDark;
+  static const Color pillSecondaryBgDark = OTColors.surfaceSubtleDark;
+  static const Color citationBgDark = OTColors.surfaceSubtleDark;
+  static const Color citationTextDark = OTColors.textPrimaryDark;
+  static const Color queryBoxBgDark = OTColors.surfaceDark;
+  static const Color queryBoxBorderDark = OTColors.borderDark;
+  static const Color surfaceElevated = OTColors.surfaceSubtleDark;
+  static const Color scholarlyIndigo = OTColors.textPrimaryDark;
   static const Color readingCanvasParchmentLight = Color(0xFFF6F6F3);
-  static const Color readingCanvasParchmentDark  = Color(0xFF181817);
+  static const Color readingCanvasParchmentDark = Color(0xFF181817);
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
-  static const Color lmLightCanvas        = canvasLight;
-  static const Color lmLightSurface       = surfaceCardLight;
-  static const Color lmLightHeader        = surfaceHeaderLight;
-  static const Color lmLightInput         = queryBoxBgLight;
-  static const Color lmLightBorder        = borderLight;
-  static const Color lmLightDivider       = borderSubtleLight;
-  static const Color lmLightTextPrimary   = textPrimaryLight;
+  static const Color lmLightCanvas = canvasLight;
+  static const Color lmLightSurface = surfaceCardLight;
+  static const Color lmLightHeader = surfaceHeaderLight;
+  static const Color lmLightInput = queryBoxBgLight;
+  static const Color lmLightBorder = borderLight;
+  static const Color lmLightDivider = borderSubtleLight;
+  static const Color lmLightTextPrimary = textPrimaryLight;
   static const Color lmLightTextSecondary = textSecondaryLight;
-  static const Color lmLightTextTertiary  = textTertiaryLight;
-  static const Color lmLightAccent        = accentLight;
-  static const Color lmLightCitationBg    = citationBgLight;
-  static const Color lmLightCitationText  = citationTextLight;
-  static const Color lmLightPillAction    = pillActionBgLight;
+  static const Color lmLightTextTertiary = textTertiaryLight;
+  static const Color lmLightAccent = accentLight;
+  static const Color lmLightCitationBg = citationBgLight;
+  static const Color lmLightCitationText = citationTextLight;
+  static const Color lmLightPillAction = pillActionBgLight;
 
-  static const Color lmDarkCanvas         = canvasDark;
-  static const Color lmDarkSurface        = surfaceCardDark;
-  static const Color lmDarkHeader         = surfaceHeaderDark;
-  static const Color lmDarkInput          = queryBoxBgDark;
-  static const Color lmDarkBorder         = borderDark;
-  static const Color lmDarkDivider        = borderSubtleDark;
-  static const Color lmDarkTextPrimary    = textPrimaryDark;
-  static const Color lmDarkTextSecondary  = textSecondaryDark;
-  static const Color lmDarkTextTertiary   = textTertiaryDark;
-  static const Color lmDarkAccent         = accentDark;
-  static const Color lmDarkCitationBg     = citationBgDark;
-  static const Color lmDarkCitationText   = citationTextDark;
-  static const Color lmDarkPillAction     = pillActionBgDark;
+  static const Color lmDarkCanvas = canvasDark;
+  static const Color lmDarkSurface = surfaceCardDark;
+  static const Color lmDarkHeader = surfaceHeaderDark;
+  static const Color lmDarkInput = queryBoxBgDark;
+  static const Color lmDarkBorder = borderDark;
+  static const Color lmDarkDivider = borderSubtleDark;
+  static const Color lmDarkTextPrimary = textPrimaryDark;
+  static const Color lmDarkTextSecondary = textSecondaryDark;
+  static const Color lmDarkTextTertiary = textTertiaryDark;
+  static const Color lmDarkAccent = accentDark;
+  static const Color lmDarkCitationBg = citationBgDark;
+  static const Color lmDarkCitationText = citationTextDark;
+  static const Color lmDarkPillAction = pillActionBgDark;
 
-  static const Color brandRed             = Color(0xFFBA1A1A);
-  static const Color brandGreen           = Color(0xFF137333);
-  static const Color brandBlue            = accentLight;
+  static const Color brandRed = Color(0xFFBA1A1A);
+  static const Color brandGreen = OTColors.textSecondaryLight;
+  static const Color brandBlue = accentLight;
 
-  static const Color bgBase               = canvasDark;
-  static const Color bgDeep               = Color(0xFF0E0E0F);
-  static const Color bgCanvas             = canvasDark;
-  static const Color surfaceL1            = surfaceCardDark;
-  static const Color surfaceL2            = surfaceHeaderDark;
-  static const Color surfaceL3            = borderDark;
+  static const Color bgBase = canvasDark;
+  static const Color bgDeep = Color(0xFF0E0E0F);
+  static const Color bgCanvas = canvasDark;
+  static const Color surfaceL1 = surfaceCardDark;
+  static const Color surfaceL2 = surfaceHeaderDark;
+  static const Color surfaceL3 = borderDark;
 
-  static const Color textPrimary          = textPrimaryDark;
-  static const Color textSecondary        = textSecondaryDark;
-  static const Color textTertiary         = textTertiaryDark;
+  static const Color textPrimary = textPrimaryDark;
+  static const Color textSecondary = textSecondaryDark;
+  static const Color textTertiary = textTertiaryDark;
 
-  static const Color gold                 = accentLight;
-  static const Color goldBright           = accentDark;
-  static const Color goldMuted            = citationBgDark;
+  static const Color gold = accentLight;
+  static const Color goldBright = accentDark;
+  static const Color goldMuted = citationBgDark;
 
-  static const Color success              = Color(0xFF34A353);
-  static const Color error                = Color(0xFFE54335);
-  static const Color warning              = Color(0xFFF6B704);
-  static const Color info                 = Color(0xFF4280EF);
+  static const Color success = OTColors.textPrimaryLight;
+  static const Color error = OTColors.destructiveLight;
+  static const Color warning = OTColors.textSecondaryLight;
+  static const Color info = OTColors.textPrimaryLight;
 
-  static const Color lightBg              = canvasLight;
-  static const Color lightSurface         = surfaceCardLight;
-  static const Color lightSurfaceL2       = surfaceHeaderLight;
-  static const Color lightBorder          = borderLight;
-  static const Color lightTextPrimary     = textPrimaryLight;
-  static const Color lightTextSecondary   = textSecondaryLight;
+  static const Color lightBg = canvasLight;
+  static const Color lightSurface = surfaceCardLight;
+  static const Color lightSurfaceL2 = surfaceHeaderLight;
+  static const Color lightBorder = borderLight;
+  static const Color lightTextPrimary = textPrimaryLight;
+  static const Color lightTextSecondary = textSecondaryLight;
 
   // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
-  static const double radiusXS   = 8.0;   // Kecil: chip / badge / tag
-  static const double radiusCard = 16.0;  // Sedang: card / dialog / bottom sheet
-  static const double radiusM    = 16.0;  // Alias untuk kompatibilitas
-  static const double radiusS    = 8.0;   // Diharmonisasi ke 8.0
-  static const double radiusL    = 16.0;  // Diharmonisasi ke 16.0
-  static const double radiusXL   = 16.0;  // Diharmonisasi ke 16.0
+  static const double radiusXS = 8.0; // Kecil: chip / badge / tag
+  static const double radiusCard = 16.0; // Sedang: card / dialog / bottom sheet
+  static const double radiusM = 16.0; // Alias untuk kompatibilitas
+  static const double radiusS = 8.0; // Diharmonisasi ke 8.0
+  static const double radiusL = 16.0; // Diharmonisasi ke 16.0
+  static const double radiusXL = 16.0; // Diharmonisasi ke 16.0
   static const double radiusFull = 100.0; // Bulat: pill / button / avatar
   static const double radiusPill = 100.0; // Stadium Pills & Buttons
-  static const double radiusQuery= 100.0; // Chat Query Stadium Pill
+  static const double radiusQuery = 100.0; // Chat Query Stadium Pill
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
   static const LinearGradient bgGradient = LinearGradient(
@@ -159,18 +159,18 @@ class AppTheme {
         onSecondary: canvasDark,
         secondaryContainer: pillSecondaryBgDark,
         onSecondaryContainer: textPrimaryDark,
-        tertiary: brandGreen,
-        onTertiary: Colors.white,
-        tertiaryContainer: Color(0xFF0A2914),
-        onTertiaryContainer: Color(0xFF7FECA0),
+        tertiary: textSecondaryDark,
+        onTertiary: canvasDark,
+        tertiaryContainer: pillSecondaryBgDark,
+        onTertiaryContainer: textPrimaryDark,
         error: error,
         onError: Colors.white,
-        errorContainer: Color(0xFF3B0A07),
-        onErrorContainer: Color(0xFFFFB3AC),
+        errorContainer: pillSecondaryBgDark,
+        onErrorContainer: OTColors.destructiveDark,
         surface: canvasDark,
         onSurface: textPrimaryDark,
-        surfaceContainerLowest: Color(0xFF070C11),
-        surfaceContainerLow: Color(0xFF0E1620),
+        surfaceContainerLowest: canvasDark,
+        surfaceContainerLow: canvasDark,
         surfaceContainer: surfaceCardDark,
         surfaceContainerHigh: surfaceElevated,
         surfaceContainerHighest: pillSecondaryBgDark,
@@ -195,7 +195,8 @@ class AppTheme {
           letterSpacing: -0.3,
         ),
         iconTheme: const IconThemeData(color: textPrimaryDark, size: 22),
-        actionsIconTheme: const IconThemeData(color: textSecondaryDark, size: 22),
+        actionsIconTheme:
+            const IconThemeData(color: textSecondaryDark, size: 22),
       ),
       cardTheme: CardThemeData(
         color: surfaceCardDark,
@@ -213,7 +214,8 @@ class AppTheme {
           foregroundColor: pillActionTextDark,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusPill)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: GoogleFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -226,7 +228,8 @@ class AppTheme {
           foregroundColor: textPrimaryDark,
           side: const BorderSide(color: borderDark, width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusPill)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: GoogleFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -266,7 +269,8 @@ class AppTheme {
           color: textTertiaryDark,
           fontSize: 14,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderDark, width: 1),
@@ -326,20 +330,20 @@ class AppTheme {
         onSecondary: Colors.white,
         secondaryContainer: pillSecondaryBgLight,
         onSecondaryContainer: textPrimaryLight,
-        tertiary: brandGreen,
-        onTertiary: Colors.white,
-        tertiaryContainer: Color(0xFFC7EBD1),
-        onTertiaryContainer: Color(0xFF00210B),
+        tertiary: textSecondaryLight,
+        onTertiary: surfaceCardLight,
+        tertiaryContainer: pillSecondaryBgLight,
+        onTertiaryContainer: textPrimaryLight,
         error: error,
         onError: Colors.white,
-        errorContainer: Color(0xFFFFDAD6),
-        onErrorContainer: Color(0xFF410002),
+        errorContainer: pillSecondaryBgLight,
+        onErrorContainer: OTColors.destructiveLight,
         surface: canvasLight,
         onSurface: textPrimaryLight,
         surfaceContainerLowest: Color(0xFFFFFFFF),
-        surfaceContainerLow: Color(0xFFF7FAFD),
+        surfaceContainerLow: canvasLight,
         surfaceContainer: surfaceCardLight,
-        surfaceContainerHigh: Color(0xFFE8EEF5),
+        surfaceContainerHigh: pillSecondaryBgLight,
         surfaceContainerHighest: pillSecondaryBgLight,
         outline: borderLight,
         outlineVariant: borderSubtleLight,
@@ -362,7 +366,8 @@ class AppTheme {
           letterSpacing: -0.3,
         ),
         iconTheme: const IconThemeData(color: textPrimaryLight, size: 22),
-        actionsIconTheme: const IconThemeData(color: textSecondaryLight, size: 22),
+        actionsIconTheme:
+            const IconThemeData(color: textSecondaryLight, size: 22),
       ),
       cardTheme: CardThemeData(
         color: surfaceCardLight,
@@ -380,7 +385,8 @@ class AppTheme {
           foregroundColor: pillActionTextLight,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusPill)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: GoogleFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -393,7 +399,8 @@ class AppTheme {
           foregroundColor: textPrimaryLight,
           side: const BorderSide(color: borderLight, width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusPill)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: GoogleFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -432,7 +439,8 @@ class AppTheme {
           color: textTertiaryLight,
           fontSize: 14,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderLight, width: 1),
@@ -484,18 +492,57 @@ class AppTheme {
     final tertiary = isDark ? textTertiaryDark : textTertiaryLight;
 
     return TextTheme(
-      displayLarge: GoogleFonts.outfit(fontSize: 34, fontWeight: FontWeight.w700, color: primary, letterSpacing: -0.6),
-      displayMedium: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.4),
-      headlineLarge: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.3),
-      headlineMedium: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.2),
-      titleLarge: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.w600, color: primary, letterSpacing: -0.1),
-      titleMedium: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w600, color: primary),
-      titleSmall: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: secondary),
-      bodyLarge: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.w400, color: primary, height: 1.55),
-      bodyMedium: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w400, color: secondary, height: 1.45),
-      bodySmall: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w400, color: tertiary, height: 1.4),
-      labelLarge: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: primary),
-      labelSmall: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w500, color: tertiary, letterSpacing: 0.2),
+      displayLarge: GoogleFonts.newsreader(
+          fontSize: 34,
+          fontWeight: FontWeight.w700,
+          color: primary,
+          letterSpacing: -0.6),
+      displayMedium: GoogleFonts.newsreader(
+          fontSize: 28,
+          fontWeight: FontWeight.w600,
+          color: primary,
+          letterSpacing: -0.4),
+      headlineLarge: GoogleFonts.newsreader(
+          fontSize: 24,
+          fontWeight: FontWeight.w600,
+          color: primary,
+          letterSpacing: -0.3),
+      headlineMedium: GoogleFonts.newsreader(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: primary,
+          letterSpacing: -0.2),
+      titleLarge: GoogleFonts.newsreader(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: primary,
+          letterSpacing: -0.1),
+      titleMedium: GoogleFonts.outfit(
+          fontSize: 15, fontWeight: FontWeight.w600, color: primary),
+      titleSmall: GoogleFonts.outfit(
+          fontSize: 13, fontWeight: FontWeight.w600, color: secondary),
+      bodyLarge: GoogleFonts.outfit(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: primary,
+          height: 1.55),
+      bodyMedium: GoogleFonts.outfit(
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+          color: secondary,
+          height: 1.45),
+      bodySmall: GoogleFonts.outfit(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: tertiary,
+          height: 1.4),
+      labelLarge: GoogleFonts.outfit(
+          fontSize: 13, fontWeight: FontWeight.w600, color: primary),
+      labelSmall: GoogleFonts.outfit(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: tertiary,
+          letterSpacing: 0.2),
     );
   }
 
