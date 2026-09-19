@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_typography.dart';
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
@@ -85,7 +87,9 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
         case _BookVolumeFilter.multiVolume:
           final vols = book.volumes.trim();
           final numVol = int.tryParse(vols);
-          return (numVol != null && numVol > 1) || vols.contains('+') || vols.contains('-');
+          return (numVol != null && numVol > 1) ||
+              vols.contains('+') ||
+              vols.contains('-');
       }
     }).toList();
   }
@@ -116,32 +120,16 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.arrow_back_rounded, color: ink, size: 22),
+                          icon: Icon(Icons.arrow_back_rounded,
+                              color: ink, size: 22),
                           tooltip: 'Kembali',
                           onPressed: () => Navigator.of(context).maybePop(),
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: border),
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            '${widget.books.length} KITAB RUJUKAN',
-                            style: GoogleFonts.outfit(
-                              color: textSecondary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Pustaka Kitab Rujukan',
+                      'Katalog kitab',
                       style: GoogleFonts.newsreader(
                         color: ink,
                         fontSize: 28,
@@ -164,12 +152,16 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       focusNode: _searchFocusNode,
                       style: GoogleFonts.outfit(color: ink, fontSize: 14),
                       decoration: InputDecoration(
-                        hintText: 'Cari judul kitab, pengarang, muhaqqiq, atau bidang...',
-                        hintStyle: GoogleFonts.outfit(color: textSecondary, fontSize: 13),
-                        prefixIcon: Icon(Icons.search_rounded, color: textSecondary, size: 20),
+                        hintText:
+                            'Cari judul kitab, pengarang, muhaqqiq, atau bidang...',
+                        hintStyle: GoogleFonts.outfit(
+                            color: textSecondary, fontSize: 13),
+                        prefixIcon: Icon(Icons.search_rounded,
+                            color: textSecondary, size: 20),
                         suffixIcon: _query.isNotEmpty
                             ? IconButton(
-                                icon: Icon(Icons.clear_rounded, color: textSecondary, size: 18),
+                                icon: Icon(Icons.clear_rounded,
+                                    color: textSecondary, size: 18),
                                 onPressed: () {
                                   _searchController.clear();
                                   _searchFocusNode.unfocus();
@@ -178,17 +170,18 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             : null,
                         filled: true,
                         fillColor: surface,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: OTRadius.inputBorder,
                           borderSide: BorderSide(color: border),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: OTRadius.inputBorder,
                           borderSide: BorderSide(color: border),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: OTRadius.inputBorder,
                           borderSide: BorderSide(color: ink, width: 1.2),
                         ),
                       ),
@@ -202,19 +195,24 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           _FilterChip(
                             label: 'Semua Kitab',
                             isSelected: _filter == _BookVolumeFilter.all,
-                            onTap: () => setState(() => _filter = _BookVolumeFilter.all),
+                            onTap: () =>
+                                setState(() => _filter = _BookVolumeFilter.all),
                           ),
                           const SizedBox(width: 8),
                           _FilterChip(
-                            label: '1 Jilid Tunggal',
-                            isSelected: _filter == _BookVolumeFilter.singleVolume,
-                            onTap: () => setState(() => _filter = _BookVolumeFilter.singleVolume),
+                            label: 'Satu jilid',
+                            isSelected:
+                                _filter == _BookVolumeFilter.singleVolume,
+                            onTap: () => setState(
+                                () => _filter = _BookVolumeFilter.singleVolume),
                           ),
                           const SizedBox(width: 8),
                           _FilterChip(
-                            label: 'Multi Jilid (Babon)',
-                            isSelected: _filter == _BookVolumeFilter.multiVolume,
-                            onTap: () => setState(() => _filter = _BookVolumeFilter.multiVolume),
+                            label: 'Beberapa jilid',
+                            isSelected:
+                                _filter == _BookVolumeFilter.multiVolume,
+                            onTap: () => setState(
+                                () => _filter = _BookVolumeFilter.multiVolume),
                           ),
                         ],
                       ),
@@ -244,7 +242,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.search_off_rounded, size: 48, color: textSecondary),
+                      Icon(Icons.search_off_rounded,
+                          size: 48, color: textSecondary),
                       const SizedBox(height: 12),
                       Text(
                         'Tidak ditemukan kitab yang sesuai',
@@ -283,7 +282,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           }
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
-                              builder: (_) => OpenTurathBookDetailPage(book: book),
+                              builder: (_) =>
+                                  OpenTurathBookDetailPage(book: book),
                             ),
                           );
                         },
@@ -386,30 +386,16 @@ class _BookEditorialItem extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF222220) : const Color(0xFFEEEEEB),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          book.section.toUpperCase(),
-                          style: GoogleFonts.outfit(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.6,
-                            color: textSecondary,
-                          ),
-                        ),
+                      Text(
+                        book.deathLabel,
+                        style: OTTypography.caption(color: textSecondary),
                       ),
                       const Spacer(),
                       Text(
-                        book.deathLabel,
-                        style: GoogleFonts.outfit(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: textSecondary,
-                        ),
+                        book.section,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: OTTypography.caption(color: textSecondary),
                       ),
                     ],
                   ),
@@ -433,11 +419,11 @@ class _BookEditorialItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Pengarang: ${book.author}',
+                    'Karya ${book.author}',
                     style: GoogleFonts.outfit(
                       fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: ink,
+                      fontWeight: FontWeight.w400,
+                      color: textSecondary,
                     ),
                   ),
                   if (book.editor.isNotEmpty && book.editor != '-') ...[
@@ -453,18 +439,22 @@ class _BookEditorialItem extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(Icons.layers_outlined, size: 13, color: textSecondary),
+                      Icon(Icons.layers_outlined,
+                          size: 13, color: textSecondary),
                       const SizedBox(width: 4),
                       Text(
                         book.volumeLabel,
-                        style: GoogleFonts.outfit(fontSize: 11, color: textSecondary),
+                        style: GoogleFonts.outfit(
+                            fontSize: 11, color: textSecondary),
                       ),
                       const SizedBox(width: 14),
-                      Icon(Icons.format_list_numbered_rounded, size: 13, color: textSecondary),
+                      Icon(Icons.format_list_numbered_rounded,
+                          size: 13, color: textSecondary),
                       const SizedBox(width: 4),
                       Text(
                         book.pagesLabel,
-                        style: GoogleFonts.outfit(fontSize: 11, color: textSecondary),
+                        style: GoogleFonts.outfit(
+                            fontSize: 11, color: textSecondary),
                       ),
                     ],
                   ),
@@ -499,7 +489,8 @@ class OpenTurathBookDetailPage extends StatelessWidget {
       fieldName: book.section,
       fieldId: 'pustaka',
       arabicExcerpt: book.title,
-      fullAnswer: 'Kitab ${book.title} karya ${book.author} (${book.deathLabel}). Tahqiq: ${book.editor}. Penerbit: ${book.publisher} (${book.edition}). Jilid: ${book.volumeLabel} (${book.pagesLabel}).',
+      fullAnswer:
+          'Kitab ${book.title} karya ${book.author} (${book.deathLabel}). Tahqiq: ${book.editor}. Penerbit: ${book.publisher} (${book.edition}). Jilid: ${book.volumeLabel} (${book.pagesLabel}).',
       bookReference: '${book.title} - ${book.author}',
       pageNumber: book.pagesLabel,
       author: book.author,
@@ -550,7 +541,8 @@ Bidang: ${book.section}''';
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back_rounded, color: ink, size: 22),
+                      icon:
+                          Icon(Icons.arrow_back_rounded, color: ink, size: 22),
                       tooltip: 'Kembali',
                       onPressed: () => Navigator.of(context).maybePop(),
                     ),
@@ -570,7 +562,8 @@ Bidang: ${book.section}''';
                       onPressed: () => _handleCopyCitation(context),
                     ),
                     IconButton(
-                      icon: Icon(Icons.bookmark_add_outlined, color: ink, size: 20),
+                      icon: Icon(Icons.bookmark_add_outlined,
+                          color: ink, size: 20),
                       tooltip: 'Simpan ke Catatan',
                       onPressed: () => _handleBookmark(context),
                     ),
@@ -599,9 +592,12 @@ Bidang: ${book.section}''';
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF222220) : const Color(0xFFEEEEEB),
+                                  color: isDark
+                                      ? const Color(0xFF222220)
+                                      : const Color(0xFFEEEEEB),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -672,12 +668,20 @@ Bidang: ${book.section}''';
                       ),
                       child: Column(
                         children: [
-                          _DetailRow(label: 'Muhaqqiq / Editor', value: book.editor),
-                          _DetailRow(label: 'Penerbit Naskah', value: book.publisher),
-                          _DetailRow(label: 'Tahun / Cetakan', value: book.edition),
-                          _DetailRow(label: 'Jumlah Jilid', value: book.volumeLabel),
-                          _DetailRow(label: 'Jumlah Halaman', value: book.pagesLabel),
-                          _DetailRow(label: 'Folder Korpus', value: book.sourceFolder, isLast: true),
+                          _DetailRow(
+                              label: 'Muhaqqiq / Editor', value: book.editor),
+                          _DetailRow(
+                              label: 'Penerbit Naskah', value: book.publisher),
+                          _DetailRow(
+                              label: 'Tahun / Cetakan', value: book.edition),
+                          _DetailRow(
+                              label: 'Jumlah Jilid', value: book.volumeLabel),
+                          _DetailRow(
+                              label: 'Jumlah Halaman', value: book.pagesLabel),
+                          _DetailRow(
+                              label: 'Folder Korpus',
+                              value: book.sourceFolder,
+                              isLast: true),
                         ],
                       ),
                     ),
@@ -738,7 +742,9 @@ class _DetailRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        border: isLast ? null : Border(bottom: BorderSide(color: border, width: 0.8)),
+        border: isLast
+            ? null
+            : Border(bottom: BorderSide(color: border, width: 0.8)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
