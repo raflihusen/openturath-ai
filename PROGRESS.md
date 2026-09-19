@@ -66,8 +66,8 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 - **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
   - Ukuran: 62.4 MB (62.352.872 bytes)
-  - Timestamp: 2026-09-19 14:30:06 WIB
-  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 145.6s).
+  - Timestamp: 2026-09-19 15:52:22 WIB
+  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 136.3s).
   - Termasuk perbaikan Google Sign-In, tombol akses tamu (Mode Telaah), dan perbaikan UI monokrom.
 - **Rilis macOS DMG (Cloud GitHub Actions)**:
   - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
