@@ -14,7 +14,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS))
-        ? '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com'
+        ? '255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com'
         : null,
     serverClientId: '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
   );
@@ -78,18 +78,15 @@ class AuthService {
     try {
       User? firebaseUser;
 
-      if (!kIsWeb &&
-          (defaultTargetPlatform == TargetPlatform.macOS ||
-              defaultTargetPlatform == TargetPlatform.windows)) {
-        // Desktop (macOS / Windows): Gunakan FirebaseAuth OAuth Provider resmi
-        // Ini menghindari NSException / crash dari native GoogleSignIn plugin pada desktop
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+        // Windows Desktop: Gunakan FirebaseAuth OAuth Provider
         final provider = GoogleAuthProvider();
         provider.addScope('email');
         provider.addScope('profile');
         final userCredential = await _auth.signInWithProvider(provider);
         firebaseUser = userCredential.user;
       } else {
-        // Mobile (Android / iOS) & Web: Gunakan native GoogleSignIn SDK
+        // Mobile (Android / iOS), macOS & Web: Gunakan GoogleSignIn SDK resmi
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return null; // User membatalkan login
 
@@ -101,7 +98,7 @@ class AuthService {
           idToken: googleAuth.idToken,
         );
 
-        final UserCredential userCredential =
+        final userCredential =
             await _auth.signInWithCredential(credential);
         firebaseUser = userCredential.user;
       }

@@ -82,6 +82,20 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _signInAsGuest() async {
+    setState(() => _isLoading = true);
+    try {
+      final user = await _authService.signInAnonymously();
+      if (!mounted || user == null) return;
+      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackBar.error(context, 'Gagal masuk sebagai tamu. Coba lagi.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   Widget _stagger({required int delayMs, required Widget child}) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
@@ -237,7 +251,37 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 14),
+
+                  // ── 4b. Quiet Guest Research Access ──
+                  _stagger(
+                    delayMs: 230,
+                    child: AppleInteractiveWrapper(
+                      onTap: _isLoading ? null : _signInAsGuest,
+                      child: TextButton(
+                        onPressed: _isLoading ? null : _signInAsGuest,
+                        style: TextButton.styleFrom(
+                          foregroundColor: textMuted,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                        ),
+                        child: Text(
+                          'Masuk sebagai Tamu (Mode Telaah)',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: -0.1,
+                            color: textMuted,
+                            decoration: TextDecoration.underline,
+                            decorationColor: textMuted.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
 
                   // ── 5. Minimalist Legal Disclaimer (Proporsional 2-Baris Seimbang) ──
                   _stagger(

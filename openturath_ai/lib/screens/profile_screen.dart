@@ -196,7 +196,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final surface = OTColors.surface(isDark);
-    final entries = (user?.entitlements.entries ?? const <MapEntry<String, ModuleEntitlement>>[])
+    final entries = (user?.entitlements.entries ??
+            const <MapEntry<String, ModuleEntitlement>>[])
         .where((entry) => summary.agentIds.contains(entry.key))
         .toList();
     showModalBottomSheet<void>(
@@ -208,29 +209,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
           color: surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Center(child: Container(width: 36, height: 4, decoration: BoxDecoration(color: textSecondary.withValues(alpha: .35), borderRadius: BorderRadius.circular(99)))),
-          const SizedBox(height: 18),
-          Text('Rincian akses Pro', style: OTTypography.cardTitle(color: textPrimary).copyWith(fontSize: 19)),
-          const SizedBox(height: 5),
-          Text('Akses yang aktif di akun ini.', style: OTTypography.caption(color: textSecondary)),
-          const SizedBox(height: 16),
-          if (summary.agentIds.contains('all_access') || summary.agentIds.contains('all_ai'))
-            _AccessPortfolioRow(title: 'Seluruh asisten OpenTurath', subtitle: summary.supportingLabel, color: textPrimary, muted: textSecondary)
-          else
-            ...entries.map((entry) => _AccessPortfolioRow(
-              title: _entitlementTitle(entry.key),
-              subtitle: entry.value.expiry == null ? 'Akses aktif' : 'Berakhir ${_formatAccessDate(entry.value.expiry!)}',
-              color: textPrimary,
-              muted: textSecondary,
-            )),
-        ]),
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                  child: Container(
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                          color: textSecondary.withValues(alpha: .35),
+                          borderRadius: BorderRadius.circular(99)))),
+              const SizedBox(height: 18),
+              Text('Rincian akses Pro',
+                  style: OTTypography.cardTitle(color: textPrimary)
+                      .copyWith(fontSize: 19)),
+              const SizedBox(height: 5),
+              Text('Akses yang aktif di akun ini.',
+                  style: OTTypography.caption(color: textSecondary)),
+              const SizedBox(height: 16),
+              if (summary.agentIds.contains('all_access') ||
+                  summary.agentIds.contains('all_ai'))
+                _AccessPortfolioRow(
+                    title: 'Seluruh asisten OpenTurath',
+                    subtitle: summary.supportingLabel,
+                    color: textPrimary,
+                    muted: textSecondary)
+              else
+                ...entries.map((entry) => _AccessPortfolioRow(
+                      title: _entitlementTitle(entry.key),
+                      subtitle: entry.value.expiry == null
+                          ? 'Akses aktif'
+                          : 'Berakhir ${_formatAccessDate(entry.value.expiry!)}',
+                      color: textPrimary,
+                      muted: textSecondary,
+                    )),
+            ]),
       ),
     );
   }
 
   static String _formatAccessDate(DateTime value) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des'
+    ];
     return '${value.day} ${months[value.month - 1]} ${value.year}';
   }
 
@@ -297,9 +330,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   summary: membership,
                   isDark: isDark,
                   onManage: () => _openSubscription(userModel),
-                  onViewAccess: membership.isOpen && membership.agentIds.isNotEmpty
-                      ? () => _showAccessPortfolio(userModel, membership)
-                      : null,
+                  onViewAccess:
+                      membership.isOpen && membership.agentIds.isNotEmpty
+                          ? () => _showAccessPortfolio(userModel, membership)
+                          : null,
                 ),
 
                 const SizedBox(height: 16),
@@ -808,9 +842,8 @@ class _MembershipPass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardStart =
-        isDark ? const Color(0xFF303036) : const Color(0xFF25252A);
-    final cardEnd = isDark ? const Color(0xFF17171A) : const Color(0xFF111114);
+    final cardColor =
+        isDark ? OTColors.surfaceDark : OTColors.inverseSurfaceLight;
     const foreground = Color(0xFFF8F8F8);
     const muted = Color(0xFFC7C7CC);
     final isOpen = summary.isOpen;
@@ -824,32 +857,20 @@ class _MembershipPass extends StatelessWidget {
               'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
           child: Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(16),
             child: InkWell(
               onTap: onViewAccess ?? onManage,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(16),
               child: Ink(
-                height: 206,
+                height: 198,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [cardStart, cardEnd],
-                  ),
-                  border:
-                      Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                  boxShadow: [
-                    BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.26 : 0.18),
-                      blurRadius: 22,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.14), width: 0.8),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(23),
+                  borderRadius: BorderRadius.circular(15),
                   child: Stack(
                     children: [
                       // Ornamen geometris halus: memberi karakter tanpa
@@ -951,7 +972,7 @@ class _MembershipPass extends StatelessWidget {
                             ),
                             const Spacer(),
                             Text(
-                              'Pemilik',
+                              'Untuk',
                               style: GoogleFonts.outfit(
                                 color: muted,
                                 fontSize: 9.5,
@@ -1107,11 +1128,14 @@ class _AccessPortfolioRow extends StatelessWidget {
             child: Icon(Icons.auto_awesome_rounded, color: color, size: 18),
           ),
           const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(title, style: OTTypography.bodyMedium(color: color)),
-            const SizedBox(height: 2),
-            Text(subtitle, style: OTTypography.caption(color: muted)),
-          ])),
+          Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(title, style: OTTypography.bodyMedium(color: color)),
+                const SizedBox(height: 2),
+                Text(subtitle, style: OTTypography.caption(color: muted)),
+              ])),
         ]),
       );
 }
