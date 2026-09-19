@@ -96,7 +96,9 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Pustaka adalah ruang baca obsidian yang disengaja pada kedua mode.
+    // Ini menjaga karakter koleksi tetap konsisten, seperti referensi visual.
+    const isDark = true;
     final canvas = OTColors.canvas(isDark);
 
     return Scaffold(
@@ -144,7 +146,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const isDark = true;
     final ink = OTColors.textPrimary(isDark);
 
     return Row(
@@ -234,7 +236,7 @@ class _HeroLibraryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const isDark = true;
     final surface = OTColors.surface(isDark);
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
@@ -257,9 +259,7 @@ class _HeroLibraryCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF222220)
-                      : const Color(0xFFEEEEEB),
+                  color: OTColors.surfaceSubtleDark,
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -323,7 +323,7 @@ class _HeroLibraryCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const Divider(height: 1, thickness: 0.8),
+          Divider(color: border, height: 1, thickness: 0.8),
           const SizedBox(height: 20),
           _MetaRow(
             label: 'Rentang Masa',
@@ -382,7 +382,7 @@ class _MetaRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const isDark = true;
     final textSecondary = OTColors.textSecondary(isDark);
     final ink = OTColors.textPrimary(isDark);
 
@@ -499,7 +499,7 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const isDark = true;
     final surface = OTColors.surface(isDark);
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
