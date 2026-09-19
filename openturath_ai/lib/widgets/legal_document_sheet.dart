@@ -3,6 +3,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/design/ot_colors.dart';
 import '../core/legal_copy.dart';
 
 /// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
@@ -93,11 +94,11 @@ class LegalDocumentSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final canvas = isDark ? const Color(0xFF09090B) : const Color(0xFFFAFAFA);
-    final surface = isDark ? const Color(0xFF141416) : Colors.white;
-    final border = isDark ? const Color(0xFF27272A) : const Color(0xFFE4E4E7);
-    final textPrimary = isDark ? const Color(0xFFF4F4F5) : const Color(0xFF18181B);
-    final textSecondary = isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A);
+    final canvas = OTColors.canvas(isDark);
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,

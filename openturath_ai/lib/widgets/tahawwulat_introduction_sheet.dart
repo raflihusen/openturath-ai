@@ -161,14 +161,10 @@ class _TahawwulatIntroductionSheetState
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF222228)
-                            : const Color(0xFFF4F4F5),
+                        color: OTColors.surfaceSubtle(isDark),
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
-                          color: isDark
-                              ? const Color(0xFF383842)
-                              : const Color(0xFFE4E4E7),
+                          color: OTColors.border(isDark),
                           width: 0.8,
                         ),
                       ),
@@ -1824,10 +1820,10 @@ class _TahawwulatIntroductionSheetState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF222228) : const Color(0xFFF4F4F5),
+            color: OTColors.surfaceSubtle(isDark),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: isDark ? const Color(0xFF383842) : const Color(0xFFE4E4E7),
+              color: OTColors.border(isDark),
               width: 0.7,
             ),
           ),

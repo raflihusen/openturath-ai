@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'design/ot_colors.dart';
+import 'design/ot_typography.dart';
 
 // OpenTurath AI: Monochrome Editorial Theme (Quiet Scholar Adaptive)
 class AppTheme {
@@ -484,6 +485,58 @@ class AppTheme {
     );
   }
 
+  static TextStyle _fontNewsreader({
+    required double fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    double? letterSpacing,
+    double? height,
+  }) {
+    if (OTTypography.useSystemFontFallback) {
+      return TextStyle(
+        fontFamily: 'Newsreader',
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        letterSpacing: letterSpacing,
+        height: height,
+      );
+    }
+    return GoogleFonts.newsreader(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+      letterSpacing: letterSpacing,
+      height: height,
+    );
+  }
+
+  static TextStyle _fontOutfit({
+    required double fontSize,
+    FontWeight? fontWeight,
+    Color? color,
+    double? letterSpacing,
+    double? height,
+  }) {
+    if (OTTypography.useSystemFontFallback) {
+      return TextStyle(
+        fontFamily: 'Outfit',
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        color: color,
+        letterSpacing: letterSpacing,
+        height: height,
+      );
+    }
+    return GoogleFonts.outfit(
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      color: color,
+      letterSpacing: letterSpacing,
+      height: height,
+    );
+  }
+
   // ── Text Theme Generator ──────────────────────────────────────────────────
   static TextTheme _buildTextTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
@@ -492,53 +545,53 @@ class AppTheme {
     final tertiary = isDark ? textTertiaryDark : textTertiaryLight;
 
     return TextTheme(
-      displayLarge: GoogleFonts.newsreader(
+      displayLarge: _fontNewsreader(
           fontSize: 34,
           fontWeight: FontWeight.w700,
           color: primary,
           letterSpacing: -0.6),
-      displayMedium: GoogleFonts.newsreader(
+      displayMedium: _fontNewsreader(
           fontSize: 28,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.4),
-      headlineLarge: GoogleFonts.newsreader(
+      headlineLarge: _fontNewsreader(
           fontSize: 24,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.3),
-      headlineMedium: GoogleFonts.newsreader(
+      headlineMedium: _fontNewsreader(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.2),
-      titleLarge: GoogleFonts.newsreader(
+      titleLarge: _fontNewsreader(
           fontSize: 17,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.1),
-      titleMedium: GoogleFonts.outfit(
+      titleMedium: _fontOutfit(
           fontSize: 15, fontWeight: FontWeight.w600, color: primary),
-      titleSmall: GoogleFonts.outfit(
+      titleSmall: _fontOutfit(
           fontSize: 13, fontWeight: FontWeight.w600, color: secondary),
-      bodyLarge: GoogleFonts.outfit(
+      bodyLarge: _fontOutfit(
           fontSize: 15,
           fontWeight: FontWeight.w400,
           color: primary,
           height: 1.55),
-      bodyMedium: GoogleFonts.outfit(
+      bodyMedium: _fontOutfit(
           fontSize: 13,
           fontWeight: FontWeight.w400,
           color: secondary,
           height: 1.45),
-      bodySmall: GoogleFonts.outfit(
+      bodySmall: _fontOutfit(
           fontSize: 12,
           fontWeight: FontWeight.w400,
           color: tertiary,
           height: 1.4),
-      labelLarge: GoogleFonts.outfit(
+      labelLarge: _fontOutfit(
           fontSize: 13, fontWeight: FontWeight.w600, color: primary),
-      labelSmall: GoogleFonts.outfit(
+      labelSmall: _fontOutfit(
           fontSize: 11,
           fontWeight: FontWeight.w500,
           color: tertiary,

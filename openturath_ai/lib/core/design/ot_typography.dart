@@ -214,31 +214,31 @@ class OTTypography {
       );
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicDisplay({Color? color, double height = 1.5}) => _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.w700,
-        height: 1.5,
+        height: height,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicReading({Color? color, double height = 1.6}) => _scheherazadeNew(
         fontSize: 18,
         fontWeight: FontWeight.w500,
-        height: 1.6,
+        height: height,
         color: color,
       );
 
-  static TextStyle arabicIbarah({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicIbarah({Color? color, double height = 1.85}) => _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        height: 1.35,
+        height: height,
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color}) => _scheherazadeNew(
+  static TextStyle arabicQuote({Color? color, double height = 1.65}) => _scheherazadeNew(
         fontSize: 15,
         fontWeight: FontWeight.w400,
-        height: 1.65,
+        height: height,
         color: color,
       );
 }

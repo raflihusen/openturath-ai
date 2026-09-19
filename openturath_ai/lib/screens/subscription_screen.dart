@@ -216,8 +216,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               },
               style: FilledButton.styleFrom(
                 backgroundColor: textPrimary,
-                foregroundColor:
-                    isDark ? const Color(0xFF18181B) : Colors.white,
+                foregroundColor: OTColors.surface(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
@@ -340,14 +339,10 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
-        final canvasColor =
-            isDark ? const Color(0xFF181817) : const Color(0xFFFFFFFF);
-        final textColor =
-            isDark ? const Color(0xFFF4F4F0) : const Color(0xFF171717);
-        final subTextColor =
-            isDark ? const Color(0xFFB2B2AA) : const Color(0xFF656560);
-        final borderColor =
-            isDark ? const Color(0xFF30302E) : const Color(0xFFDDDDD8);
+        final canvasColor = OTColors.surface(isDark);
+        final textColor = OTColors.textPrimary(isDark);
+        final subTextColor = OTColors.textSecondary(isDark);
+        final borderColor = OTColors.border(isDark);
 
         return Container(
           decoration: BoxDecoration(
@@ -382,9 +377,7 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF222220)
-                          : const Color(0xFFEEEEEB),
+                      color: OTColors.surfaceSubtle(isDark),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: borderColor),
                     ),
@@ -427,9 +420,7 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF111110)
-                      : const Color(0xFFF6F6F3),
+                  color: OTColors.canvas(isDark),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: borderColor),
                 ),
@@ -493,12 +484,8 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark
-                        ? const Color(0xFFF4F4F0)
-                        : const Color(0xFF171717),
-                    foregroundColor: isDark
-                        ? const Color(0xFF171717)
-                        : const Color(0xFFFFFFFF),
+                    backgroundColor: OTColors.textPrimary(isDark),
+                    foregroundColor: OTColors.surface(isDark),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -1234,24 +1221,12 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                     // ════════════════════════════════════════════════════════
                     Container(
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF141418)
-                            : const Color(0xFFFAF9F6),
+                        color: OTColors.surface(isDark),
                         borderRadius: OTRadius.cardBorder,
                         border: Border.all(
-                          color: isDark
-                              ? const Color(0xFF383842)
-                              : const Color(0xFFD4D4D8),
-                          width: 1.3,
+                          color: OTColors.borderStrong(isDark),
+                          width: 1.0,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black
-                                .withValues(alpha: isDark ? 0.35 : 0.04),
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
                       ),
                       padding: const EdgeInsets.all(OTSpacing.lg),
                       child: Column(
@@ -1264,14 +1239,10 @@ Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4.5),
                                 decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF22222A)
-                                      : const Color(0xFFEEEEF0),
+                                  color: OTColors.surfaceSubtle(isDark),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: isDark
-                                        ? const Color(0xFF40404C)
-                                        : const Color(0xFFD4D4D8),
+                                    color: OTColors.border(isDark),
                                     width: 0.8,
                                   ),
                                 ),

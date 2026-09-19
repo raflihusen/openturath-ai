@@ -964,10 +964,8 @@ class _DashboardAnnouncementCarouselState
                 child: FilledButton(
                   onPressed: () => Navigator.pop(ctx),
                   style: FilledButton.styleFrom(
-                    backgroundColor:
-                        widget.isDark ? Colors.white : const Color(0xFF18181B),
-                    foregroundColor:
-                        widget.isDark ? const Color(0xFF18181B) : Colors.white,
+                    backgroundColor: OTColors.textPrimary(widget.isDark),
+                    foregroundColor: OTColors.surface(widget.isDark),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
                     ),
@@ -1116,7 +1114,7 @@ class _DashboardAnnouncementCarouselState
               height: 5,
               decoration: BoxDecoration(
                 color: _currentPage == i
-                    ? (widget.isDark ? Colors.white : const Color(0xFF18181B))
+                    ? OTColors.textPrimary(widget.isDark)
                     : widget.border,
                 borderRadius: BorderRadius.circular(100),
               ),

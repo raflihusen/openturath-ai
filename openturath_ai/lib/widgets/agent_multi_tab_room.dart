@@ -148,9 +148,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         max: 1.6,
                         divisions: 5,
                         activeColor: textPrimary,
-                        inactiveColor: isDark
-                            ? const Color(0xFF3F3F46)
-                            : const Color(0xFFE4E4E7),
+                        inactiveColor: OTColors.border(isDark),
                         onChanged: (val) {
                           setModalState(() => session.fontScale = val);
                           session.webController?.evaluateJavascript(
