@@ -55,7 +55,8 @@ class ThematicBundleMeta {
     required this.includedItems,
   });
 
-  List<GoAkalTierLink> get tiers => GoAkalCatalogRegistry.getTierLinksForSlug(slug);
+  List<GoAkalTierLink> get tiers =>
+      GoAkalCatalogRegistry.getTierLinksForSlug(slug);
 }
 
 class GoAkalCatalogRegistry {
@@ -159,7 +160,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.000.000',
         periodLabel: '/ bulan',
         planId: 'ai-fikih-tahawwulat_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/1js2e/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/1js2e/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -168,7 +170,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 2.995.000',
         periodLabel: '/ 6 bulan',
         planId: 'ai-fikih-tahawwulat_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/sp6zh/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/sp6zh/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -177,7 +180,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 4.995.000',
         periodLabel: '/ tahun',
         planId: 'ai-fikih-tahawwulat_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/8yt9m/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/ai-fikih-tahawwulat/8yt9m/apply',
       ),
     },
     'aqidah-ushuluddin': {
@@ -188,7 +192,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 299.000',
         periodLabel: '/ bulan',
         planId: 'aqidah-ushuluddin_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/aqidah-ushuluddin/an70o/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/aqidah-ushuluddin/an70o/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -197,7 +202,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'aqidah-ushuluddin_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/aqidah-ushuluddin/7n761/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/aqidah-ushuluddin/7n761/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -206,7 +212,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'aqidah-ushuluddin_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/aqidah-ushuluddin/fvnxh/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/aqidah-ushuluddin/fvnxh/apply',
       ),
     },
     'bibliografi-faharis': {
@@ -217,7 +224,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 299.000',
         periodLabel: '/ bulan',
         planId: 'bibliografi-faharis_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/bibliografi-faharis/fvf9n/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/bibliografi-faharis/fvf9n/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -226,7 +234,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'bibliografi-faharis_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/bibliografi-faharis/idjz2/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/bibliografi-faharis/idjz2/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -235,7 +244,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'bibliografi-faharis_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/bibliografi-faharis/4rqws/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/bibliografi-faharis/4rqws/apply',
       ),
     },
     'fatawa-masail': {
@@ -449,7 +459,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 299.000',
         periodLabel: '/ bulan',
         planId: 'musthalah-hadits_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/musthalah-hadits/7349m/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/musthalah-hadits/7349m/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -458,7 +469,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'musthalah-hadits_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/musthalah-hadits/2ikma/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/musthalah-hadits/2ikma/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -467,7 +479,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'musthalah-hadits_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/musthalah-hadits/8nfa7/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/musthalah-hadits/8nfa7/apply',
       ),
     },
     'paket-fikih-pesantren': {
@@ -652,7 +665,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 299.000',
         periodLabel: '/ bulan',
         planId: 'qawaid-fiqhiyyah_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/qawaid-fiqhiyyah/9n3df/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/qawaid-fiqhiyyah/9n3df/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -661,7 +675,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'qawaid-fiqhiyyah_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/qawaid-fiqhiyyah/0a4bb/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/qawaid-fiqhiyyah/0a4bb/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -670,7 +685,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'qawaid-fiqhiyyah_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/qawaid-fiqhiyyah/1fnnl/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/qawaid-fiqhiyyah/1fnnl/apply',
       ),
     },
     'syarah-hadits': {
@@ -710,7 +726,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 299.000',
         periodLabel: '/ bulan',
         planId: 'tafsir-ulumul-quran_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/tafsir-ulumul-quran/v00h9/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/tafsir-ulumul-quran/v00h9/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -719,7 +736,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'tafsir-ulumul-quran_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/tafsir-ulumul-quran/hpisf/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/tafsir-ulumul-quran/hpisf/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -728,7 +746,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'tafsir-ulumul-quran_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/tafsir-ulumul-quran/sfpsx/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/tafsir-ulumul-quran/sfpsx/apply',
       ),
     },
     'tajwid-qiraat': {
@@ -797,7 +816,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 299.000',
         periodLabel: '/ bulan',
         planId: 'tasawwuf-adzkar_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/tasawwuf-adzkar/9745y/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/tasawwuf-adzkar/9745y/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -806,7 +826,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'tasawwuf-adzkar_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/tasawwuf-adzkar/8a3lo/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/tasawwuf-adzkar/8a3lo/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -815,7 +836,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'tasawwuf-adzkar_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/tasawwuf-adzkar/tqlj2/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/tasawwuf-adzkar/tqlj2/apply',
       ),
     },
     'thabaqat-tarajim': {
@@ -826,7 +848,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 299.000',
         periodLabel: '/ bulan',
         planId: 'thabaqat-tarajim_1_month',
-        applyUrl: 'https://goakal.com/openturath-ai/thabaqat-tarajim/bapyj/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/thabaqat-tarajim/bapyj/apply',
       ),
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
@@ -835,7 +858,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'thabaqat-tarajim_6_months',
-        applyUrl: 'https://goakal.com/openturath-ai/thabaqat-tarajim/slria/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/thabaqat-tarajim/slria/apply',
       ),
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
@@ -844,7 +868,8 @@ class GoAkalCatalogRegistry {
         priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'thabaqat-tarajim_1_year',
-        applyUrl: 'https://goakal.com/openturath-ai/thabaqat-tarajim/d7yc4/apply',
+        applyUrl:
+            'https://goakal.com/openturath-ai/thabaqat-tarajim/d7yc4/apply',
       ),
     },
     'ushul-fikih': {
@@ -878,46 +903,46 @@ class GoAkalCatalogRegistry {
     },
   };
 
-  /// Metadata 6 Paket Tematik Khusus Launching
+  /// Metadata paket tematik OpenTurath.
   static const List<ThematicBundleMeta> thematicBundles = [
     ThematicBundleMeta(
       slug: "paket-fikih-pesantren",
       title: "Paket Fikih Pesantren & Santri Salaf",
-      subtitle: "The Syafi'i & Bahtsul Masail Suite",
-      badgeText: "\u2605 BEST SELLER NO. 1",
-      iconEmoji: "\ud83d\udfe2",
+      subtitle: "Kajian Syafi'iyyah dan bahtsul masail",
+      badgeText: "Pilihan kajian fikih",
+      iconEmoji: "",
       originalPrice1m: 245000,
       launchPrice1m: 149000,
       includedItems: [
-        "Super AI Fikih Syafi'i (Al-Umm, Minhaj, Fathul Mu'in)",
-        "Super AI Ushul Fikih (Kaidah Dalil & Metodologi Istinbath)",
-        "Super AI Qawaid Fiqhiyyah (Kaidah Asasiyyah & Furu')",
-        "Super AI Fatawa & Masail (Fatwa Nawawi, Ibnu Hajar, Ba'alawi)",
-        "Super AI Tasawwuf & Adzkar (Pembersih Hati & Adab Syar'i)",
+        "Fikih Syafi'i (Al-Umm, Minhaj, Fathul Mu'in)",
+        "Ushul fikih (kaidah dalil dan metodologi istinbath)",
+        "Qawaid fiqhiyyah (kaidah asasiyyah dan furu')",
+        "Fatawa dan masail (Nawawi, Ibnu Hajar, Ba'alawi)",
+        "Tasawwuf dan adzkar (adab syar'i)",
       ],
     ),
     ThematicBundleMeta(
       slug: "paket-samudra-hadits",
       title: "Paket Samudra Hadits & Sirah Nabawiyyah",
-      subtitle: "The Hadith Master Suite",
-      badgeText: "\u2605 PILIHAN PENGKAJI HADIS",
-      iconEmoji: "\ud83d\udcdc",
+      subtitle: "Telaah hadis, syarah, dan sirah",
+      badgeText: "Kajian hadis dan sirah",
+      iconEmoji: "",
       originalPrice1m: 245000,
       launchPrice1m: 149000,
       includedItems: [
-        "Super AI Hadits Nabawi (Kutubus Sittah & Kutubut Tis'ah)",
-        "Super AI Syarah Hadits (Fathul Bari, Syarah Nawawi, Umdah)",
-        "Super AI Musthalah & Ulumul Hadits (Takhrij & 'Ilal Hadits)",
-        "Super AI Thabaqat & Tarajim Rijal (20.000+ Biografi Rawi)",
-        "Super AI Tarikh & Sirah Nabawiyyah (Konteks Asbabul Wurud)",
+        "Hadis Nabawi (Kutubus Sittah dan Kutubut Tis'ah)",
+        "Syarah hadis (Fathul Bari, Syarah Nawawi, Umdah)",
+        "Musthalah dan ulumul hadis (takhrij dan 'ilal)",
+        "Thabaqat dan tarajim rijal",
+        "Tarikh dan sirah Nabawiyyah",
       ],
     ),
     ThematicBundleMeta(
       slug: "paket-tafsir-bahasa-arab",
       title: "Paket Mufassir & Khazanah Bahasa Arab",
-      subtitle: "The Qur'an & Arabic Suite",
-      badgeText: "\u2605 FAVORIT ILMU ALAT & TAFSIR",
-      iconEmoji: "\ud83d\udcd6",
+      subtitle: "Tafsir, qira'at, dan khazanah bahasa Arab",
+      badgeText: "Tafsir dan bahasa Arab",
+      iconEmoji: "",
       originalPrice1m: 196000,
       launchPrice1m: 129000,
       includedItems: [
@@ -930,9 +955,9 @@ class GoAkalCatalogRegistry {
     ThematicBundleMeta(
       slug: "paket-mazhab-akbar",
       title: "Paket Mufti, Mazhab Akbar & Pemikiran",
-      subtitle: "The Grand Comparative Suite",
-      badgeText: "\u2605 RISET AKADEMIK & MAZHAB",
-      iconEmoji: "\u2696\ufe0f",
+      subtitle: "Telaah mazhab dan pemikiran Islam",
+      badgeText: "Mazhab dan pemikiran",
+      iconEmoji: "",
       originalPrice1m: 294000,
       launchPrice1m: 179000,
       includedItems: [
@@ -947,9 +972,9 @@ class GoAkalCatalogRegistry {
     ThematicBundleMeta(
       slug: "paket-fikih-tahawwulat",
       title: "Paket Khusus Fikih Tahawwulat",
-      subtitle: "The Eschatology & Prophetic Sign Suite",
-      badgeText: "\u2605 KORPUS MASTER KHUSUS",
-      iconEmoji: "\ud83c\udf1f",
+      subtitle: "Telaah perubahan zaman dan tanda akhir masa",
+      badgeText: "Koleksi khusus",
+      iconEmoji: "",
       originalPrice1m: 245000,
       launchPrice1m: 149000,
       includedItems: [
@@ -962,10 +987,10 @@ class GoAkalCatalogRegistry {
     ),
     ThematicBundleMeta(
       slug: "paket-sultan-all-access",
-      title: "Paket Lengkap All-Access (Seluruh AI)",
-      subtitle: "Akses Seluruh Ekosistem Riset Turats",
-      badgeText: "🏛️ AKSES LENGKAP",
-      iconEmoji: "🏛️",
+      title: "Paket lengkap seluruh bidang",
+      subtitle: "Akses ke seluruh ruang kajian OpenTurath",
+      badgeText: "Akses seluruh bidang",
+      iconEmoji: "",
       originalPrice1m: 1176000,
       launchPrice1m: 499000,
       includedItems: [
