@@ -65,8 +65,10 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 - **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green)**.
 - **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-  - Ukuran: 62.4 MB (62.352.956 bytes)
-  - Status: Kompilasi Gradle selesai 100% (Incremental assembleRelease 18.5s).
+  - Ukuran: 62.4 MB (62.352.872 bytes)
+  - Timestamp: 2026-09-19 14:30:06 WIB
+  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 145.6s).
+  - Termasuk perbaikan Google Sign-In, tombol akses tamu (Mode Telaah), dan perbaikan UI monokrom.
 - **Rilis macOS DMG (Cloud GitHub Actions)**:
   - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
   - Output Artifact: `OpenTurath_AI_macOS.dmg`.
