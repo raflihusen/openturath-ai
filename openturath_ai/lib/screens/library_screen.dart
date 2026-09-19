@@ -64,7 +64,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     });
 
     try {
-      final books = await _service.loadSyafiiCatalog();
+      final books = widget.agent != null ? await _service.loadCatalogForAgent(widget.agent!) : await _service.loadSyafiiCatalog();
       if (!mounted) return;
       setState(() {
         _allBooks = books;

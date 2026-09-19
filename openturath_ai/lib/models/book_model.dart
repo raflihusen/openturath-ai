@@ -123,8 +123,11 @@ CanonicalImport parseCanonicalCatalog(String source) {
 
 List<CanonicalBookPresentation> parseSyamilahCatalog(String source) {
   final dynamic root = jsonDecode(source);
-  if (root is List) {
-    return root
+  final dynamic list = root is List
+      ? root
+      : (root is Map<String, dynamic> ? (root['kitab'] ?? root['books']) : null);
+  if (list is List) {
+    return list
         .whereType<Map<String, dynamic>>()
         .map((item) => CanonicalBookPresentation.fromSyamilahCard(item))
         .toList();

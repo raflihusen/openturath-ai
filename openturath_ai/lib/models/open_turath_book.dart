@@ -50,9 +50,14 @@ class OpenTurathBook {
   static List<OpenTurathBook> decodeList(String source) {
     try {
       final decoded = jsonDecode(source);
-      if (decoded is! List) return const [];
+      final dynamic list = decoded is List
+          ? decoded
+          : (decoded is Map<String, dynamic>
+              ? (decoded['kitab'] ?? decoded['books'] ?? const [])
+              : const []);
+      if (list is! List) return const [];
 
-      return decoded
+      return list
           .whereType<Map>()
           .map(
             (item) => OpenTurathBook.fromJson(
