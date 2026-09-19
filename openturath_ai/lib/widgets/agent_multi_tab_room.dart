@@ -936,7 +936,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                           duration: const Duration(milliseconds: 2500),
                           action: SnackBarAction(
                             label: 'Simpan',
-                            textColor: const Color(0xFF34D399),
+                            textColor: OTColors.onInverseSurface,
                             onPressed: () {
                               final uid = _authService.currentUser?.uid;
                               if (uid != null) {

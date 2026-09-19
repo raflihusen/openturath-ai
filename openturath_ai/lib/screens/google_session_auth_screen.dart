@@ -7,6 +7,7 @@ import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/notebook_navigation.dart';
 import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
 import '../services/auth_service.dart';
 import '../widgets/app_loader.dart';
 
@@ -88,7 +89,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(
-              backgroundColor: AppTheme.appleRed,
+              backgroundColor: OTColors.destructive(isDark),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text(

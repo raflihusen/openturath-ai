@@ -743,7 +743,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                           duration: const Duration(milliseconds: 2500),
                           action: SnackBarAction(
                             label: 'Simpan',
-                            textColor: const Color(0xFF34D399),
+                            textColor: OTColors.onInverseSurface,
                             onPressed: () => unawaited(_saveCopiedAnswer(text, ownerUid)),
                           ),
                         );
@@ -1115,7 +1115,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ),
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
-              leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.success : textPrimary, size: 20),
+              leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.marja(isDark) : textPrimary, size: 20),
               title: Text(AppCopy.copyAnswerAction, style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null

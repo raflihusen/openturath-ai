@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'theme.dart';
+import 'design/ot_colors.dart';
 
 enum SnackType { info, success, warning, error }
 
@@ -16,33 +17,38 @@ class AppSnackBar {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Sesuai DESIGN.md (The Quiet Scholar):
-    // Gunakan elevated surface gelap monokromatis yang berwibawa di kedua tema,
-    // teks putih tajam, dan aksen warna HANYA pada ikon 20dp & border hairline 0.8dp.
-    final backgroundColor = isDark ? const Color(0xFF1E1E22) : const Color(0xFF18181B);
-    const textColor = Colors.white;
+    // Notifikasi monokrom editorial: status dibedakan lewat BENTUK IKON dan
+    // kalimat, bukan lewat warna jenuh. Hanya status kritis yang diberi
+    // isyarat merah bata redup agar tetap terbaca tanpa merusak ketenangan.
+    final backgroundColor = OTColors.inverseSurface(isDark);
+    const textColor = OTColors.onInverseSurface;
 
-    Color accentColor;
-    IconData icon;
+    final Color accentColor;
+    final IconData icon;
 
     switch (type) {
       case SnackType.success:
-        accentColor = const Color(0xFF34D399); // Emerald lembut
-        icon = Icons.check_circle_rounded;
+        accentColor = textColor;
+        icon = Icons.check_circle_outline;
         break;
       case SnackType.warning:
-        accentColor = const Color(0xFFFBBF24); // Amber tenang
-        icon = Icons.info_outline_rounded;
+        accentColor = textColor;
+        icon = Icons.warning_amber_rounded;
         break;
       case SnackType.error:
-        accentColor = const Color(0xFFF87171); // Rose lembut
-        icon = Icons.error_outline_rounded;
+        accentColor = OTColors.destructiveDark; // Merah bata redup, bukan neon
+        icon = Icons.error_outline;
         break;
       case SnackType.info:
-        accentColor = const Color(0xFF94A3B8); // Slate monokrom
-        icon = Icons.info_outline_rounded;
+        accentColor = textColor;
+        icon = Icons.info_outline;
         break;
     }
+
+    // Garis batas tetap hairline netral; hanya galat yang meninggalkan jejak warna.
+    final borderColor = type == SnackType.error
+        ? accentColor.withValues(alpha: 0.45)
+        : OTColors.onInverseSurface.withValues(alpha: 0.18);
 
     final effectiveDuration = duration ??
         (type == SnackType.error
@@ -79,7 +85,7 @@ class AppSnackBar {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           side: BorderSide(
-            color: accentColor.withValues(alpha: 0.35),
+            color: borderColor,
             width: 0.8,
           ),
         ),

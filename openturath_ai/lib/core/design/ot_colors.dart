@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 /// Prinsip Karakter Visual: Perpustakaan digital turath, ruang telaah akademik, dan katalog kitab modern.
 /// Bukan: SaaS generik, fintech, AI neon/gradient, ataupun kartu warna-warni.
 /// Kedalaman dibangun melalui kontras, tipografi, ruang kosong, hairline border, dan tekstur kertas arsip.
+///
+/// KONTRAK: berkas ini adalah SATU-SATUNYA tempat nilai warna mentah boleh ditulis.
+/// Seluruh `screens/` dan `widgets/` wajib mengambil warna dari sini.
 class OTColors {
   // ── 1. Light Mode (Warm Archival Paper) ──
   static const Color canvasLight = Color(0xFFF6F6F3); // Latar utama aplikasi (tekstur kertas arsip hangat)
@@ -29,15 +32,27 @@ class OTColors {
   static const Color borderStrongDark = Color(0xFF4B4B47); // Garis aktif, pemisah seksi
   static const Color accentDark = Color(0xFFF4F4F0); // Clean white
 
-  // ── 3. Sovereign Amber (Khusus Penanda Khazanah Tahawwulat) ──
-  static const Color sovereignAmber = Color(0xFFD97706);
-  static const Color sovereignAmberBg = Color(0x1AD97706);
+  // ── 3. Tinta Balik (Foreground di atas permukaan ber-accent) ──
+  // Tombol primer diisi `accent`, sehingga labelnya wajib memakai `onAccent`.
+  // Token inilah pengganti resmi `Colors.white` / `Colors.black` di seluruh UI.
+  static const Color onAccentLight = surfaceLight; // Tinta putih di atas ink hitam
+  static const Color onAccentDark = canvasDark; // Tinta obsidian di atas krem naskah
 
-  // ── 4. Semantic Status Fungsional (Bukan Dekorasi) ──
-  static const Color success = Color(0xFF10B981); // Hijau status fungsional
-  static const Color destructive = Color(0xFFDC2626); // Merah peringatan/hapus/error
+  // ── 4. Permukaan Terbalik (Snackbar, tooltip, pil gelap di mode terang) ──
+  static const Color inverseSurfaceLight = Color(0xFF171717);
+  static const Color inverseSurfaceDark = Color(0xFF181817);
+  static const Color onInverseSurface = Color(0xFFF4F4F0); // Krem naskah, sama di dua mode
 
-  // ── 5. Context-Aware Adaptive Helpers ──
+  // ── 5. Sage Zaitun — satu-satunya warna non-monokrom ──
+  // Dipakai HANYA sebagai penanda status marja' / terverifikasi, tidak pernah dekoratif.
+  static const Color marjaLight = Color(0xFF3D4A3E); // Hijau zaitun sangat tua
+  static const Color marjaDark = Color(0xFF9CAF9E); // Sage terang agar terbaca di obsidian
+
+  // ── 6. Merah Bata Redup (Status kritis, bukan merah neon) ──
+  static const Color destructiveLight = Color(0xFF8C2F2F);
+  static const Color destructiveDark = Color(0xFFC97B74);
+
+  // ── 7. Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
   static Color surface(bool isDark) => isDark ? surfaceDark : surfaceLight;
   static Color surfaceSubtle(bool isDark) => isDark ? surfaceSubtleDark : surfaceSubtleLight;
@@ -47,4 +62,8 @@ class OTColors {
   static Color textSecondary(bool isDark) => isDark ? textSecondaryDark : textSecondaryLight;
   static Color textTertiary(bool isDark) => isDark ? textTertiaryDark : textTertiaryLight;
   static Color accent(bool isDark) => isDark ? accentDark : accentLight;
+  static Color onAccent(bool isDark) => isDark ? onAccentDark : onAccentLight;
+  static Color inverseSurface(bool isDark) => isDark ? inverseSurfaceDark : inverseSurfaceLight;
+  static Color marja(bool isDark) => isDark ? marjaDark : marjaLight;
+  static Color destructive(bool isDark) => isDark ? destructiveDark : destructiveLight;
 }

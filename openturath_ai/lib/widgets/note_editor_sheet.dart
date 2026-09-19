@@ -658,7 +658,7 @@ class _ToolbarBtn extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textSecondary = OTColors.textSecondary(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
-    const accent = OTColors.sovereignAmber;
+    final accent = OTColors.marja(isDark);
 
     return Tooltip(
       message: tooltip,

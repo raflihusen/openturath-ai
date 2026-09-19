@@ -78,12 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive,
+                backgroundColor: OTColors.destructive(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.logoutButton,
-                  style: OTTypography.button(color: Colors.white)),
+                  style: OTTypography.button(color: OTColors.onAccent(isDark))),
             ),
           ],
         );
@@ -116,13 +116,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Row(
             children: [
-              const Icon(Icons.warning_amber_rounded,
-                  color: OTColors.destructive, size: 24),
+              Icon(Icons.warning_amber_rounded,
+                  color: OTColors.destructive(isDark), size: 24),
               const SizedBox(width: OTSpacing.sm),
               Expanded(
                 child: Text(
                   AppCopy.deleteAccountTitle,
-                  style: OTTypography.cardTitle(color: OTColors.destructive)
+                  style: OTTypography.cardTitle(
+                          color: OTColors.destructive(isDark))
                       .copyWith(fontSize: 18),
                 ),
               ),
@@ -142,12 +143,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive,
+                backgroundColor: OTColors.destructive(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.deleteAccountButton,
-                  style: OTTypography.button(color: Colors.white)),
+                  style: OTTypography.button(color: OTColors.onAccent(isDark))),
             ),
           ],
         );
@@ -487,11 +488,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? null
                         : _deleteAccount,
                     child: _isDeletingAccount
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: OTColors.destructive),
+                                strokeWidth: 2,
+                                color: OTColors.destructive(isDark)),
                           )
                         : Text(
                             AppCopy.deleteAccountButton,

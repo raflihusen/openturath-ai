@@ -23,9 +23,8 @@ class AppTheme {
   static const Color queryBoxBgLight      = OTColors.surfaceLight;
   static const Color queryBoxBorderLight  = OTColors.borderLight;
 
-  // ── 1b. Apple HIG Specific Tokens ─────────────────────────────────────────
-  static const Color appleGreen          = Color(0xFF34C759);
-  static const Color appleRed            = Color(0xFFFF3B30);
+  // ── 1b. Token Navigasi & Status ───────────────────────────────────────────
+  // Status kritis memakai merah bata redup dari OTColors, bukan merah neon iOS.
   static const Color navBarDark          = Color(0xCC111110);
   static const Color navBarLight         = Color(0xD9F6F6F3);
   static const Color navBarBorderDark    = OTColors.borderDark;

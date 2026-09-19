@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/constants.dart';
 import '../core/checkout_completion.dart';
 import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
 
@@ -221,7 +222,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
               child: Text(
                 'Tutup',
                 style: GoogleFonts.outfit(
-                  color: AppTheme.appleRed,
+                  color: OTColors.destructive(isDark),
                 ),
               ),
             ),

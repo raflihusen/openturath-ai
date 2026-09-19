@@ -168,13 +168,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive,
+                backgroundColor: OTColors.destructive(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(
                 AppCopy.delete,
-                style: OTTypography.button(color: Colors.white),
+                style: OTTypography.button(color: OTColors.onAccent(isDark)),
               ),
             ),
           ],
