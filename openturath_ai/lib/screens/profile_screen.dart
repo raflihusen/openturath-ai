@@ -374,9 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? const Color(0xFF27272A)
-                                        : const Color(0xFFF4F4F5),
+                                    color: OTColors.surfaceSubtle(isDark),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(
@@ -490,9 +488,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             horizontal: 18, vertical: 15),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.logout_rounded,
-                              color: Color(0xFFF87171),
+                              color: OTColors.destructive(isDark),
                               size: 20,
                             ),
                             const SizedBox(width: 14),
@@ -503,7 +501,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFFF87171),
+                                color: OTColors.destructive(isDark),
                               ),
                             ),
                           ],
@@ -534,9 +532,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
-                              color: isDark
-                                  ? const Color(0xFFF87171)
-                                  : const Color(0xFFDC2626),
+                              color: OTColors.destructive(isDark),
                             ),
                           ),
                   ),

@@ -675,7 +675,6 @@ class _StudyEntryCard extends StatelessWidget {
   }
 }
 
-
 class _ScholarlyDatePanel extends StatelessWidget {
   const _ScholarlyDatePanel({
     required this.masehiDate,
@@ -922,14 +921,10 @@ class _DashboardAnnouncementCarouselState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.isDark
-                      ? const Color(0xFF27272A)
-                      : const Color(0xFFF4F4F5),
+                  color: OTColors.surfaceSubtle(widget.isDark),
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(
-                    color: widget.isDark
-                        ? const Color(0xFF3F3F46)
-                        : const Color(0xFFE4E4E7),
+                    color: OTColors.border(widget.isDark),
                     width: 0.8,
                   ),
                 ),
@@ -1042,14 +1037,10 @@ class _DashboardAnnouncementCarouselState
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
-                                color: widget.isDark
-                                    ? const Color(0xFF27272A)
-                                    : const Color(0xFFF4F4F5),
+                                color: OTColors.surfaceSubtle(widget.isDark),
                                 borderRadius: BorderRadius.circular(100),
                                 border: Border.all(
-                                  color: widget.isDark
-                                      ? const Color(0xFF3F3F46)
-                                      : const Color(0xFFE4E4E7),
+                                  color: OTColors.border(widget.isDark),
                                   width: 0.8,
                                 ),
                               ),
