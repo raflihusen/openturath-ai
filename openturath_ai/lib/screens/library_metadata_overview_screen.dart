@@ -4,8 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../core/design/ot_colors.dart';
 import '../services/open_turath_catalog_repository.dart';
-import '../widgets/openturath_brand.dart';
 import 'book_library_editorial_screen.dart';
+
+String _readerTitle(String value) {
+  return value
+      .replaceFirst(RegExp(r'^AI\\s+', caseSensitive: false), '')
+      .replaceAll(RegExp(r'\\s*\\([^)]*\\)'), '')
+      .trim();
+}
 
 /// Halaman Ringkasan Pustaka & Pelatihan AI (Monochrome Editorial)
 class AiLibraryOverviewPage extends StatefulWidget {
@@ -98,8 +104,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final horizontalPadding =
-                constraints.maxWidth >= 900 ? 44.0 : 20.0;
+            final horizontalPadding = constraints.maxWidth >= 900 ? 44.0 : 20.0;
 
             return SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -141,8 +146,6 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
 
     return Row(
       children: [
@@ -151,33 +154,13 @@ class _TopBar extends StatelessWidget {
           tooltip: 'Kembali',
           onPressed: () => Navigator.of(context).maybePop(),
         ),
-        const SizedBox(width: 10),
-        OpenTurathMark(size: 28, color: ink),
-        const SizedBox(width: 10),
         Text(
-          'OpenTurath',
-          style: GoogleFonts.outfit(
+          'Pustaka rujukan',
+          style: GoogleFonts.newsreader(
             color: ink,
-            fontSize: 18,
+            fontSize: 22,
             fontWeight: FontWeight.w600,
-            letterSpacing: -0.3,
-          ),
-        ),
-        const Spacer(),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-          decoration: BoxDecoration(
-            border: Border.all(color: border, width: 1.0),
-            borderRadius: BorderRadius.circular(999),
-          ),
-          child: Text(
-            'KORPUS / ${metadata.idModul}',
-            style: GoogleFonts.outfit(
-              color: textSecondary,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.1,
-            ),
+            letterSpacing: -0.5,
           ),
         ),
       ],
@@ -271,9 +254,12 @@ class _HeroLibraryCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF222220) : const Color(0xFFEEEEEB),
+                  color: isDark
+                      ? const Color(0xFF222220)
+                      : const Color(0xFFEEEEEB),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -288,12 +274,11 @@ class _HeroLibraryCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'KORPUS TERVALIDASI',
+                '${metadata.totalKitab} kitab',
                 style: GoogleFonts.outfit(
                   color: textSecondary,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.0,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -317,7 +302,7 @@ class _HeroLibraryCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            metadata.nama,
+            _readerTitle(metadata.nama),
             style: GoogleFonts.newsreader(
               color: ink,
               fontSize: 24,
@@ -365,8 +350,8 @@ class _HeroLibraryCard extends StatelessWidget {
                   : const Icon(Icons.menu_book_outlined, size: 18),
               label: Text(
                 isLoadingBooks
-                    ? 'Memuat Naskah Pustaka...'
-                    : 'Buka Katalog Kitab Rujukan (${metadata.totalKitab} Kitab)',
+                    ? 'Membuka katalog…'
+                    : 'Telusuri ${metadata.totalKitab} kitab',
                 style: GoogleFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -454,18 +439,18 @@ class _StatsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _StatCard(
-                label: 'TOTAL KITAB INDUK',
+                label: 'KITAB RUJUKAN',
                 value: _formatNumber(metadata.totalKitab),
-                unit: 'Karya Mu\'tamad',
+                unit: 'Karya pilihan',
                 icon: Icons.auto_stories_outlined,
               ),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: _StatCard(
-                label: 'VOLUME & JILID',
+                label: 'JILID',
                 value: metadata.totalJilid,
-                unit: 'Jilid Naskah Cetak',
+                unit: 'Naskah cetak',
                 icon: Icons.library_books_outlined,
               ),
             ),
@@ -476,18 +461,19 @@ class _StatsGrid extends StatelessWidget {
           children: [
             Expanded(
               child: _StatCard(
-                label: 'TOTAL HALAMAN',
+                label: 'HALAMAN',
                 value: _formatNumber(metadata.totalHalaman),
-                unit: 'Halaman Fisik Bersanad',
+                unit: 'Edisi katalog',
                 icon: Icons.article_outlined,
               ),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: _StatCard(
-                label: 'KORPUS BERSIH',
-                value: '${(metadata.totalKata / 1000000).toStringAsFixed(1)} Jt',
-                unit: 'Kata Arab Terverifikasi',
+                label: 'KATA',
+                value:
+                    '${(metadata.totalKata / 1000000).toStringAsFixed(1)} Jt',
+                unit: 'Teks rujukan',
                 icon: Icons.text_fields_outlined,
               ),
             ),
