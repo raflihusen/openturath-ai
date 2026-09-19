@@ -60,21 +60,25 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 
 ---
 
-## 4. Status Pengujian & Rilis APK
+## 4. Status Pengujian, Rilis APK & macOS
 - **Syntax & Type Check**: `flutter analyze` $\rightarrow$ **0 issues**.
 - **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green)**.
-- **Rilis Binary APK Terbaru**:
+- **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
   - Ukuran: 62.4 MB (62.352.956 bytes)
   - Status: Kompilasi Gradle selesai 100% (Incremental assembleRelease 18.5s).
-  - Termasuk perbaikan UI monokrom snackbar & sheet (`61c15bb`) dan pembersihan kode dashboard (`ef1e067`).
+- **Rilis macOS DMG (Cloud GitHub Actions)**:
+  - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
+  - Output Artifact: `OpenTurath_AI_macOS.dmg`.
+  - Status Push: 52 commit (termasuk audit UI, perbaikan monokrom, dan sanitasi memori) telah berhasil didorong ke `origin main`.
+  - Runner: `macos-latest` (Cloud Apple Silicon) menyusun binary `.app` dan membungkusnya menjadi `.dmg` tanpa membebani disk lokal.
 
 ---
 
 ## 5. Agenda & Fokus Selanjutnya
-1. **Inspeksi Estetika Layar Nyata (Android APK & macOS)**:
-   - Pasang `app-release-latest.apk` pada perangkat target dan uji langsung nuansa visual di tangan pengguna.
-   - Memastikan tidak ada lagi sisa warna jenuh pada modal dan layar transaksional.
+1. **Inspeksi Estetika Layar Nyata (Android APK & macOS DMG)**:
+   - Pasang `app-release-latest.apk` pada perangkat target dan unduh `OpenTurath_AI_macOS.dmg` dari GitHub Actions untuk dipasang di folder Applications Mac.
+   - Memastikan tidak ada lagi sisa warna jenuh pada modal dan layar transaksional di desktop maupun mobile.
 2. **Katalog & Spesialis**:
    - Memastikan ke-21 spesialis memiliki keterhubungan yang mulus antara ruang dialog telaah dengan pustaka kitab referensinya.
 EOF
