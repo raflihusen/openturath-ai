@@ -1,12 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'l10n/language_notifier.dart';
 
 class AppConfig {
   static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
-  static final ValueNotifier<String> localeNotifier = ValueNotifier('id'); // 'id', 'en', 'ar'
+  static ValueListenable<String> get localeNotifier => LocaleService.instance.languageCodeListenable;
 
   static const String _themeKey = 'app_theme_mode';
-  static const String _localeKey = 'app_locale';
 
   static Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
@@ -21,11 +22,7 @@ class AppConfig {
       themeNotifier.value = ThemeMode.system;
     }
 
-    // Load Locale
-    final localeStr = prefs.getString(_localeKey);
-    if (localeStr != null) {
-      localeNotifier.value = localeStr;
-    }
+    await LocaleService.instance.initialize();
   }
 
   static Future<void> setThemeMode(ThemeMode mode) async {
@@ -41,8 +38,7 @@ class AppConfig {
   }
 
   static Future<void> setLocale(String langCode) async {
-    localeNotifier.value = langCode;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_localeKey, langCode);
+    final language = AppLanguage.values.where((v) => v.name == langCode).firstOrNull;
+    if (language != null) await LocaleService.instance.update(language: language);
   }
 }

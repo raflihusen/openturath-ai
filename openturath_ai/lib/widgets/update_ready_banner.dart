@@ -1,7 +1,8 @@
+import '../core/l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:openturath_ai/core/design/ot_fonts.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
@@ -61,8 +62,8 @@ class UpdateReadyBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isDesktop ? 'Pembaruan v$version Tersedia' : 'Pembaruan v$version Siap Dipasang',
-                      style: GoogleFonts.outfit(
+                      context.tr(isDesktop ? 'room.updateAvailable' : 'room.updateReady', args: {'version': version}),
+                      style: OTFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
@@ -71,14 +72,12 @@ class UpdateReadyBanner extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       isDesktop
-                          ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
-                          : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
-                      style: GoogleFonts.outfit(
+                          ? context.tr('Ketuk untuk membuka tautan pembaruan versi desktop terbaru.')
+                          : context.tr('Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.'),
+                      style: OTFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
@@ -90,15 +89,15 @@ class UpdateReadyBanner extends StatelessWidget {
                   backgroundColor: OTColors.accent(isDark),
                   foregroundColor: OTColors.onAccent(isDark),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  minimumSize: const Size(64, 36),
+                  minimumSize: const Size(64, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                   ),
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop ? 'Perbarui' : 'Pasang',
-                  style: GoogleFonts.outfit(
+                  isDesktop ? context.tr('Perbarui') : context.tr('Pasang'),
+                  style: OTFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
@@ -111,3 +110,5 @@ class UpdateReadyBanner extends StatelessWidget {
     );
   }
 }
+
+

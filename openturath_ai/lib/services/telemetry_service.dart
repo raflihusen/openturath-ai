@@ -10,23 +10,19 @@ import 'package:flutter/foundation.dart';
 /// TelemetryService: Sistem Pemantauan Crash & Error Senyap (Silent Telemetry)
 /// ─────────────────────────────────────────────────────────────────────────────
 class TelemetryService {
-  TelemetryService._({FirebaseFirestore? firestore, FirebaseAuth? auth})
-      : _firestore = firestore,
-        _auth = auth;
+  TelemetryService._({FirebaseFirestore? firestore})
+      : _firestore = firestore;
 
   static final TelemetryService instance = TelemetryService._();
 
   FirebaseFirestore? _firestore;
-  FirebaseAuth? _auth;
 
   FirebaseFirestore get _db => _firestore ?? FirebaseFirestore.instance;
-  FirebaseAuth get _firebaseAuth => _auth ?? FirebaseAuth.instance;
 
   /// Visible for testing to inject mock instances
   @visibleForTesting
   void setMockInstances({FirebaseFirestore? firestore, FirebaseAuth? auth}) {
     _firestore = firestore;
-    _auth = auth;
   }
 
   /// Ring buffer untuk breadcrumbs (maksimal 20 peristiwa terakhir)
@@ -54,13 +50,13 @@ class TelemetryService {
         severity: 'error',
         extra: {
           'library': details.library,
-          'summary': details.summary.toString(),
+          if (kDebugMode) 'summary': details.summary.toString(),
         },
       );
-      if (originalOnError != null) {
-        originalOnError(details);
-      } else {
-        FlutterError.presentError(details);
+      // Production handlers must not echo raw exceptions to device logs.
+      if (kDebugMode) {
+        if (originalOnError != null) originalOnError(details);
+        else FlutterError.presentError(details);
       }
     };
 
@@ -72,7 +68,7 @@ class TelemetryService {
         context: 'unhandled_async_error',
         severity: 'critical',
       );
-      return false; // biarkan default handling berjalan
+      return !kDebugMode; // Suppress raw platform error logging in production.
     };
 
     leaveBreadcrumb('Aplikasi dimulai (Telemetry aktif)', category: 'lifecycle');
@@ -84,7 +80,7 @@ class TelemetryService {
       final sanitized = sanitizeData(message);
       _breadcrumbs.add({
         'message': sanitized,
-        'category': category,
+        'category': sanitizeData(category),
         'timestamp': DateTime.now().toIso8601String(),
       });
       if (_breadcrumbs.length > maxBreadcrumbs) {
@@ -93,49 +89,55 @@ class TelemetryService {
     } catch (_) {}
   }
 
-  /// Masking data sensitif (password, authorization token, voucher, email)
+  /// Free-text fallback. Structured values must use sanitizeValue so a key
+  /// such as accessToken redacts its entire value, including nested objects.
   String sanitizeData(String input) {
     if (input.isEmpty) return input;
-    var sanitized = input;
-
-    // 1. Mask Bearer / Token
-    sanitized = sanitized.replaceAll(
-      RegExp(r'bearer\s+[a-zA-Z0-9_\-\.]+', caseSensitive: false),
-      'Bearer [REDACTED_TOKEN]',
+    var text = input.replaceAllMapped(
+      RegExp(r"""(?:https?|wss?)://[^\s<>"']+""", caseSensitive: false),
+      (match) {
+        final uri = Uri.tryParse(match.group(0)!);
+        return uri != null && uri.host.isNotEmpty
+          ? '${uri.scheme}://${uri.host}/[REDACTED_URL]' : '[REDACTED_URL]';
+      },
     );
-
-    // 2. Mask password / apikey / secret / auth
-    sanitized = sanitized.replaceAllMapped(
-      RegExp(r'''(password|secret|apiKey|api_key|token|access_token|refreshToken)["':\s=]+[^,\s\n}]+''', caseSensitive: false),
-      (match) => '${match.group(1)}: "[REDACTED]"',
+    text = text.replaceAll(RegExp(r'[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}', caseSensitive: false), '[REDACTED_EMAIL]');
+    text = text.replaceAll(RegExp(r'bearer\s+[^\s,;]+', caseSensitive: false), 'Bearer [REDACTED_TOKEN]');
+    text = text.replaceAllMapped(
+      RegExp(r"""(password|passwd|secret|api[_-]?key|access[_-]?token|refresh[_-]?token|id[_-]?token|token|authorization|cookie|session|voucher|code)["']?\s*[:=]\s*(?:"[^"]*"|'[^']*'|[^,\s\n}]+)""", caseSensitive: false),
+      (match) => '${match.group(1)}: [REDACTED]',
     );
-
-    // 3. Mask Google SID/HSID/SSID cookies
-    sanitized = sanitized.replaceAllMapped(
+    text = text.replaceAllMapped(
       RegExp(r'(SID|HSID|SSID|APISID|SAPISID)=[^;\s]+', caseSensitive: false),
       (match) => '${match.group(1)}=[REDACTED_COOKIE]',
     );
-
-    // 4. Mask voucher codes bila ada
-    sanitized = sanitized.replaceAllMapped(
-      RegExp(r'''(voucher|code)["':\s=]+[a-zA-Z0-9\-_]{5,20}''', caseSensitive: false),
-      (match) => '${match.group(1)}: "[REDACTED_CODE]"',
-    );
-
-    return sanitized;
+    text = text.replaceAll(RegExp(r'[^\s<>]+\?[^\s<>]+'), '[REDACTED_URL]');
+    return text.length > 2000 ? '${text.substring(0, 2000)}…' : text;
   }
 
-  /// Mask email pengguna untuk kepatuhan privasi (cth: a***@domain.com)
-  String maskEmail(String email) {
-    if (email.isEmpty || !email.contains('@')) return '';
-    final parts = email.split('@');
-    final name = parts[0];
-    final domain = parts[1];
-    if (name.length <= 2) {
-      return '*@$domain';
+  bool _sensitiveKey(String key) {
+    final normalized = key.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+    return RegExp(r'password|passwd|secret|apikey|token|authorization|cookie|session|voucher|redeem|email|phone|credential|privatekey|prompt|question|answer|excerpt|clipboard|note|body|content|html|error|exception|stacktrace|summary').hasMatch(normalized) ||
+      normalized == 'auth' || normalized == 'code' || normalized == 'query' || normalized == 'uid' || normalized == 'userid';
+  }
+
+  dynamic sanitizeValue(dynamic value, {String? key, int depth = 0}) {
+    if (key != null && _sensitiveKey(key)) return '[REDACTED]';
+    if (depth >= 8) return '[TRUNCATED]';
+    if (value == null || value is bool || value is num) return value;
+    if (value is Map) {
+      return <String, dynamic>{
+        for (final entry in value.entries.take(100))
+          sanitizeData(entry.key.toString()): sanitizeValue(entry.value, key: entry.key.toString(), depth: depth + 1),
+      };
     }
-    return '${name[0]}***${name[name.length - 1]}@$domain';
+    if (value is Iterable) return value.take(100).map((item) => sanitizeValue(item, depth: depth + 1)).toList();
+    if (value is String) return sanitizeData(value);
+    return '[${value.runtimeType}]';
   }
+
+  /// Preserve the public helper without retaining the address or its domain.
+  String maskEmail(String email) => email.contains('@') ? '[REDACTED_EMAIL]' : '';
 
   /// Buat signature unik untuk deduplikasi error
   String _computeErrorSignature(String errorStr, String? context, String? stackTraceStr) {
@@ -157,11 +159,13 @@ class TelemetryService {
     Map<String, dynamic>? extra,
   }) async {
     try {
-      final errorStr = sanitizeData(error?.toString() ?? 'Unknown Error');
-      final stackStr = sanitizeData(stackTrace?.toString() ?? '');
+      final errorStr = kDebugMode ? sanitizeData(error?.toString() ?? 'Unknown Error')
+        : (error == null ? 'UnknownError' : error.runtimeType.toString());
+      final stackStr = kDebugMode ? sanitizeData(stackTrace?.toString() ?? '') : '';
+      final safeContext = sanitizeData(context ?? 'general');
 
       // Cek deduplikasi
-      final signature = _computeErrorSignature(errorStr, context, stackStr);
+      final signature = _computeErrorSignature(errorStr, safeContext, stackStr);
       final now = DateTime.now();
       final lastReported = _reportedSignatures[signature];
       if (lastReported != null && now.difference(lastReported) < _dedupWindow) {
@@ -172,25 +176,15 @@ class TelemetryService {
       // Bersihkan signature lama yang sudah lewat window
       _reportedSignatures.removeWhere((_, time) => now.difference(time) > _dedupWindow);
 
-      final user = _firebaseAuth.currentUser;
-      final maskedUserEmail = user?.email != null ? maskEmail(user!.email!) : '';
-
-      final sanitizedExtra = <String, dynamic>{};
-      if (extra != null) {
-        for (final entry in extra.entries) {
-          sanitizedExtra[entry.key] = sanitizeData(entry.value?.toString() ?? '');
-        }
-      }
+      final sanitizedExtra = sanitizeValue(extra ?? const <String, dynamic>{});
 
       final payload = {
         'error': errorStr.length > 2000 ? errorStr.substring(0, 2000) : errorStr,
-        'context': context ?? 'general',
-        'severity': severity,
+        'context': safeContext,
+        'severity': sanitizeData(severity),
         'stackTrace': stackStr.length > 5000 ? stackStr.substring(0, 5000) : stackStr,
         'breadcrumbs': List<Map<String, dynamic>>.from(_breadcrumbs),
         'extra': sanitizedExtra,
-        'userId': user?.uid ?? 'unauthenticated',
-        'userEmail': maskedUserEmail,
         'platform': kIsWeb ? 'web' : Platform.operatingSystem,
         'deviceTimestamp': now.toIso8601String(),
         'createdAt': FieldValue.serverTimestamp(),
@@ -207,3 +201,5 @@ class TelemetryService {
     }
   }
 }
+
+

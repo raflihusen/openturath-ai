@@ -25,14 +25,16 @@ class ModuleEntitlement {
   });
 
   bool get isPremium => RegExp(
-          r'^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai.*|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
-      .hasMatch(plan);
+          r'^(trial|tholib(?:_1m|_6m)?|bahits(?:_1y)?|premium|all_access|all_ai(?:_1m|_6m|_1y)?|permanent|single|sultan|pro|voucher(?:_.*)?|redeem(?:_.*)?|custom|full)$')
+      .hasMatch(plan) || entitlementKeys.values.any((key) =>
+          plan == key || const ['1m', '6m', '1y'].any((suffix) => plan == '${key}_$suffix'));
 
-  bool get isActive =>
-      status != 'revoked' &&
-      status != 'expired' &&
-      expiry != null &&
-      expiry!.isAfter(DateTime.now());
+  // Presentation guard only. The backend must authorize every protected request.
+  bool isActiveAt(DateTime now) =>
+      const {'active', 'trial'}.contains(status) &&
+      (plan == 'permanent' || (expiry != null && expiry!.isAfter(now)));
+
+  bool get isActive => isActiveAt(DateTime.now());
 
   factory ModuleEntitlement.fromMap(Map<String, dynamic> map) {
     return ModuleEntitlement(
@@ -42,7 +44,7 @@ class ModuleEntitlement {
               ? (map['expiry'] as Timestamp).toDate()
               : DateTime.tryParse(map['expiry'].toString()))
           : null,
-      status: map['status'] ?? 'active',
+      status: map['status'] ?? 'unknown',
       sourceTransactionId: map['source_transaction_id'] ?? map['trx_id'],
       updatedAt: map['updated_at'] != null
           ? (map['updated_at'] is Timestamp
@@ -137,7 +139,7 @@ class UserModel {
 
   /// Trial is an entitlement with an expiry supplied by the server voucher.
   /// A local question counter must never grant or revoke access.
-  bool get hasAccess => isSubscriptionActive ||
+  bool get hasAccess => (entitlements.isEmpty && isSubscriptionActive) ||
       entitlements.values.any((entitlement) =>
           entitlement.isActive && entitlement.isPremium);
 
@@ -153,8 +155,9 @@ class UserModel {
   bool isAgentSubscriptionActive(String agentId) {
     final mappedKey = entitlementKeys[agentId] ?? agentId;
 
-    // 1. Specific module entitlement check FIRST
+    // An explicit module revocation takes precedence over an all-access grant.
     final specific = entitlements[mappedKey];
+    if (specific?.status == 'revoked' || specific?.status == 'suspended') return false;
     if (specific != null && specific.isActive && specific.isPremium) {
       return true;
     }
@@ -175,6 +178,9 @@ class UserModel {
       return false;
     }
 
+    // Once canonical entitlements exist, do not resurrect grants from legacy fields.
+    if (entitlements.isNotEmpty) return false;
+
     // 3. Explicit global all-access plan check (ONLY truly global all-access plans)
     const globalAllPlans = [
       'all_access',
@@ -185,8 +191,7 @@ class UserModel {
       'full',
       'sultan',
     ];
-    final isGlobalPlan = (globalAllPlans.contains(plan) ||
-            plan.startsWith('all_ai')) &&
+    final isGlobalPlan = globalAllPlans.contains(plan) &&
         isSubscriptionActive;
     if (isGlobalPlan) {
       return true;
@@ -197,8 +202,7 @@ class UserModel {
       final cleanPlan = plan.toLowerCase();
       final cleanKey = mappedKey.toLowerCase();
       if (cleanPlan == cleanKey ||
-          cleanPlan.startsWith('${cleanKey}_') ||
-          cleanPlan.contains(cleanKey)) {
+          const ['1m', '6m', '1y'].any((suffix) => cleanPlan == '${cleanKey}_$suffix')) {
         return true;
       }
     }
@@ -312,3 +316,5 @@ class UserModel {
     );
   }
 }
+
+

@@ -1,5 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/l10n/app_dictionary.dart';
+import 'core/l10n/language_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
@@ -15,88 +19,96 @@ import 'screens/book_catalog_screen.dart';
 import 'screens/book_detail_screen.dart';
 import 'models/book_model.dart';
 import 'models/agent_model.dart';
+import 'models/field_model.dart';
+import 'widgets/editorial.dart';
 import 'firebase_options.dart';
 
 import 'core/app_config.dart';
 import 'core/app_copy.dart';
-import 'core/localization.dart';
 import 'services/telemetry_service.dart';
-import 'widgets/app_error_state.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: _Bootstrap()));
+}
 
-  // ── Kunci orientasi: hanya portrait ──
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-
-  // Load configuration
-  try {
-    await AppConfig.init();
-  } catch (_) {}
-
-  // ── Status bar transparan awal ──
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
-
-  try {
-    // ── Inisialisasi Firebase ──
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    // ── Inisialisasi Silent Telemetry ──
-    TelemetryService.instance.init();
-    runApp(const OpenTurathApp());
-  } catch (error, stackTrace) {
-    debugPrint('[OpenTurath] Firebase initialization error: $error\n$stackTrace');
-    TelemetryService.instance.reportError(
-      error,
-      stackTrace,
-      context: 'firebase_init_failure',
-      severity: 'critical',
-    );
-    final isUnsupportedPlatform = error is UnsupportedError;
-    final title = isUnsupportedPlatform
-        ? AppCopy.deviceNotSupportedTitle
-        : AppCopy.cannotConnectTitle;
-    final message = isUnsupportedPlatform
-        ? AppCopy.deviceNotSupportedMessage
-        : AppCopy.cannotConnectMessage;
-
-    runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
-      home: Scaffold(
-        backgroundColor: AppTheme.canvasDark,
-        body: SafeArea(
-          child: AppErrorState(
-            title: title,
-            message: message,
-            onRetry: () => main(),
-          ),
+/// Paint the first frame before network or platform initialization starts.
+class _Bootstrap extends StatefulWidget {
+  const _Bootstrap();
+  @override
+  State<_Bootstrap> createState() => _BootstrapState();
+}
+class _BootstrapState extends State<_Bootstrap> {
+  bool _ready = false;
+  bool _busy = false;
+  String? _error;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _start());
+  }
+  Future<void> _start() async {
+    if (_busy || !mounted) return;
+    setState(() { _busy = true; _error = null; });
+    try {
+      await AppConfig.init();
+      // Firebase initialization isn't wrapped in a timeout: a timed-out native
+      // initialization could otherwise race a second initialization on retry.
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+      }
+      TelemetryService.instance.init();
+      if (mounted) setState(() => _ready = true);
+    } catch (error, stack) {
+      TelemetryService.instance.reportError(error, stack, context: 'bootstrap');
+      if (mounted) setState(() => _error = error is UnsupportedError
+          ? AppCopy.deviceNotSupportedMessage : AppCopy.cannotConnectMessage);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    if (_ready) return const OpenTurathApp();
+    return MaterialApp(debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme, darkTheme: AppTheme.darkTheme,
+      themeMode: AppConfig.themeNotifier.value,
+      locale: Locale(LocaleService.instance.current.languageCode),
+      supportedLocales: const [Locale('id'), Locale('en'), Locale('ar')],
+      localizationsDelegates: const [GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
+      home: Scaffold(body: SafeArea(child: Center(child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 360),
+          child: Builder(builder: (context) => Column(mainAxisSize: MainAxisSize.min, children: [
+            const Icon(Icons.menu_book_outlined, size: 38),
+            const SizedBox(height: 24),
+            Text('OpenTurath', style: Theme.of(context).textTheme.headlineLarge),
+            const SizedBox(height: 20),
+            if (_error == null) Semantics(liveRegion: true,
+              child: Text(context.tr('Menyiapkan ruang kajian…'))),
+            if (_error != null) ...[
+              Text(context.tr(_error!), textAlign: TextAlign.center),
+              const SizedBox(height: 20),
+              EditorialButton(label: context.tr('Coba lagi'), onPressed: _busy ? null : _start),
+            ],
+          ])),
         ),
-      ),
-    ));
+      )))),
+    );
   }
 }
 
-class OpenTurathApp extends StatelessWidget {
+class OpenTurathApp extends ConsumerWidget {
   const OpenTurathApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(languageProvider);
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: AppConfig.themeNotifier,
       builder: (context, currentTheme, _) {
-        return ValueListenableBuilder<String>(
-          valueListenable: AppConfig.localeNotifier,
-          builder: (context, currentLocale, _) {
+        return Builder(builder: (context) {
             final platformBrightness = MediaQuery.maybePlatformBrightnessOf(context) ??
                 WidgetsBinding.instance.platformDispatcher.platformBrightness;
             final isDark = currentTheme == ThemeMode.dark || 
@@ -113,18 +125,23 @@ class OpenTurathApp extends StatelessWidget {
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: overlayStyle,
               child: MaterialApp(
-                title: Loc.tr('app_name'),
+                title: 'OpenTurath',
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.lightTheme,
                 darkTheme: AppTheme.darkTheme,
                 themeMode: currentTheme,
-                locale: Locale(currentLocale),
-                builder: (context, child) => Directionality(
-                  textDirection: currentLocale == 'ar'
-                      ? TextDirection.rtl
-                      : TextDirection.ltr,
-                  child: child ?? const SizedBox.shrink(),
-                ),
+                locale: Locale(locale.languageCode),
+                supportedLocales: const [Locale('id'), Locale('en'), Locale('ar')],
+                localizationsDelegates: const [
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                builder: (context, child) => AppLocaleScope(locale: locale,
+                  child: Directionality(
+                    textDirection: locale.isArabic ? TextDirection.rtl : TextDirection.ltr,
+                    child: child ?? const SizedBox.shrink(),
+                  )),
 
               // ── Initial Route ──
               initialRoute: AppRoutes.splash,
@@ -143,7 +160,8 @@ class OpenTurathApp extends StatelessWidget {
                     page = const MainShellScreen();
                     break;
                   case AppRoutes.specialistList:
-                    page = const SpecialistListScreen();
+                    page = SpecialistListScreen(
+                      field: settings.arguments is FieldModel ? settings.arguments as FieldModel : null);
                     break;
                   case AppRoutes.bookmark:
                     page = const BookmarkScreen();
@@ -172,37 +190,19 @@ class OpenTurathApp extends StatelessWidget {
                     );
                     break;
                   case AppRoutes.bookDetail:
-                    final book = settings.arguments as CanonicalBookPresentation;
-                    page = BookDetailScreen(book: book);
+                    final book = settings.arguments;
+                    page = book is CanonicalBookPresentation
+                        ? BookDetailScreen(book: book)
+                        : const MainShellScreen();
                     break;
                   default:
                     page = const SplashScreen();
                     break;
                 }
 
-                // Default Material 3 Expressive transition: FadeUpTransition (fade + subtle 30px slide-up)
-                return PageRouteBuilder(
+                return MaterialPageRoute<void>(
                   settings: settings,
-                  pageBuilder: (context, animation, secondaryAnimation) => page,
-                  transitionDuration: const Duration(milliseconds: 320),
-                  reverseTransitionDuration: const Duration(milliseconds: 240),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    final curvedAnimation = CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOutCubic,
-                      reverseCurve: Curves.easeInCubic,
-                    );
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0.0, 0.04),
-                        end: Offset.zero,
-                      ).animate(curvedAnimation),
-                      child: FadeTransition(
-                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
-                        child: child,
-                      ),
-                    );
-                  },
+                  builder: (context) => page,
                 );
               },
             ),
@@ -213,3 +213,5 @@ class OpenTurathApp extends StatelessWidget {
   );
 }
 }
+
+

@@ -19,6 +19,10 @@ class BookmarkModel {
   final String bookReference;
   final String pageNumber;
   final String? author;
+  /// Supplied citation volume, not the catalogue volume count.
+  final String? volume;
+  /// Optional supplied app/source URL; never inferred from a title.
+  final String? appUrl;
   final DateTime createdAt;
   final DateTime? updatedAt;
   /// Tombstone for conflict-safe offline deletion. It is synchronized so an
@@ -39,6 +43,8 @@ class BookmarkModel {
     required this.bookReference,
     required this.pageNumber,
     this.author,
+    this.volume,
+    this.appUrl,
     required this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -63,6 +69,8 @@ class BookmarkModel {
       'bookReference': bookReference,
       'pageNumber': pageNumber,
       'author': author,
+      'volume': volume,
+      'appUrl': appUrl,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': (updatedAt ?? createdAt).toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
@@ -93,6 +101,8 @@ class BookmarkModel {
       bookReference: json['bookReference'] as String? ?? '',
       pageNumber: json['pageNumber'] as String? ?? '',
       author: json['author'] as String?,
+      volume: json['volume'] as String?,
+      appUrl: json['appUrl'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now()
           : DateTime.now(),
@@ -122,6 +132,8 @@ class BookmarkModel {
     String? bookReference,
     String? pageNumber,
     String? author,
+    String? volume,
+    String? appUrl,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
@@ -140,6 +152,8 @@ class BookmarkModel {
       bookReference: bookReference ?? this.bookReference,
       pageNumber: pageNumber ?? this.pageNumber,
       author: author ?? this.author,
+      volume: volume ?? this.volume,
+      appUrl: appUrl ?? this.appUrl,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -184,3 +198,5 @@ class BookmarkModel {
     );
   }
 }
+
+

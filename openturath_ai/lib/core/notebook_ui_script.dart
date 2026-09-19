@@ -1,7 +1,7 @@
 /// Conversation cleanup and explicit copy capture, restricted to NotebookLM.
 const notebookUiScript = r'''
 (function () {
-  if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
+  if (window.top !== window || location.protocol !== 'https:' || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
   if (window.otNotebook) { window.otNotebook.clean(); return; }
   const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
@@ -48,15 +48,15 @@ const notebookUiScript = r'''
   let lastCopyAt = 0;
   function sendCopy(value) {
     if (typeof value !== 'string' || !value.trim() || value.length > 200000) return;
-    if (Date.now() - lastCopyAt < 3500) return;
+    if (value.trim() === lastCopy && Date.now() - lastCopyAt < 3500) return;
     lastCopy = value.trim(); lastCopyAt = Date.now();
-    if (window.flutter_inappwebview?.callHandler) window.flutter_inappwebview.callHandler('otCopiedAnswer', value.trim());
+    if (window.flutter_inappwebview?.callHandler) window.flutter_inappwebview.callHandler('otCopiedAnswer', value.trim(), window.__otCopyNonce);
   }
   // Tangkap klik pada tombol copy NotebookLM maupun seleksi copy biasa
   let copyUntil = 0;
   let selectedAnswer = '';
   document.addEventListener('click', event => {
-    const copyTarget = event.target.closest?.('button, [role="button"], [data-action*="copy" i], [aria-label*="copy" i], [aria-label*="salin" i], .copy-button');
+    const copyTarget = event.target.closest?.('button, [role="button"], [data-action*="copy" i], [aria-label*="copy" i], [aria-label*="salin" i], [aria-label*="نسخ"], .copy-button');
     if (!copyTarget) return;
     const label = [
       copyTarget.getAttribute('aria-label'),
@@ -119,127 +119,42 @@ const notebookUiScript = r'''
   }
   window.otSetTheme = syncTheme;
 
-  function hide(el) { if (el && !el.hasAttribute('data-ot-hidden')) el.setAttribute('data-ot-hidden', ''); }
+  // Style only the reading surface. Do not hide source panels, errors,
+  // provider disclosures or dialogs, and never accept a dialog automatically.
   function clean() {
     if (!document.documentElement) return;
-    syncTheme();
     if (!document.getElementById('ot-conversation-ui')) {
-      const style = document.createElement('style'); style.id = 'ot-conversation-ui';
+      const style = document.createElement('style');
+      style.id = 'ot-conversation-ui';
       style.textContent = `
-        [data-ot-hidden],
-        .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab"], div[class*="tab-bar"],
-        [role="tablist"], mat-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
-        mat-progress-spinner, mat-spinner, .mdc-circular-progress, [role="progressbar"],
-        svg.spinner, div[class*="spinner" i], div[class*="skeleton" i], div[class*="shimmer" i],
-        div[class*="placeholder-bar" i],
-        button[aria-label*="More" i], button[aria-label*="Opsi" i],
-        button[aria-label*="options" i], button[aria-label*="Notebook options" i],
-        div.chat-input-container + div,
-        div[class*="input-container" i] + div,
-        div[class*="query-container" i] + div,
-        .notebook-guide, notebook-guide, .notebook-overview, notebook-overview,
-        .notebook-cover, .notebook-cover-container, .notebook-title-card,
-        .notebook-header, .project-header, .chat-header, .chat-panel-header,
-        .header-content, .title-card, mat-card.title-card,
-        .loading-notebook, [class*="skeleton"],
-        .chat-disclaimer, .query-disclaimer, .model-disclaimer,
-        [class*="disclaimer" i], [aria-label*="disclaimer" i],
-        [data-testid*="disclaimer" i] {
-          display:none!important;
-          visibility:hidden!important;
-          height:0px!important;
-          max-height:0px!important;
-          overflow:hidden!important;
-          margin:0px!important;
-          padding:0px!important;
-          opacity:0!important;
-          pointer-events:none!important;
-          border:none!important;
+        .rendered-markdown, .chat-response, [data-message-author-role="assistant"] {
+          line-height:1.75; overflow-wrap:anywhere;
+        }
+        .rendered-markdown [lang="ar"], .rendered-markdown [dir="rtl"] {
+          font-family:'Scheherazade New','Traditional Arabic',serif;
+          font-style:normal; line-height:1.9; text-align:start;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .rendered-markdown { scroll-behavior:auto; }
         }
       `;
       (document.head || document.documentElement).appendChild(style);
     }
-    // Sembunyikan tab strip Sources | Chat | Studio
-    document.querySelectorAll('nav, div, [role="tablist"], ul').forEach(el => {
-      const t = (el.innerText || '').toLowerCase();
-      if ((t.includes('sources') || t.includes('sumber')) && (t.includes('studio') || t.includes('chat'))) {
-        if (!el.closest(answerSelector) && el.children.length <= 6) hide(el);
-      }
-    });
-    // Sembunyikan card overview / cover di awal percakapan
-    document.querySelectorAll('h1, h2, h3, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
-      if (el.closest(answerSelector)) return;
-      let card = el;
-      for (let i = 0; card && i < 6; i++, card = card.parentElement) {
-        if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
-        if (/\b\d+\s+(sources|sumber)\b/i.test(text(card)) && text(card).length < 2000) { hide(card); break; }
-      }
-    });
-    // Auto-dismiss dialog pengumuman Google
-    document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane, [class*="announcement"]').forEach(dialog => {
-      const t = text(dialog).toLowerCase();
-      if (!t.includes('more flexibility and control') && !t.includes('limits refresh every 5 hours') && !t.includes('gemini notebook')) return;
-      if (!dialog.hasAttribute('data-ot-dismissed')) {
-        dialog.setAttribute('data-ot-dismissed', '');
-        const close = [...dialog.querySelectorAll('button, [role="button"]')].find(b => /^(close|dismiss|got it|tutup|mengerti|done|ok)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
-        if (close) { close.click(); return; }
-      }
-      const pane = dialog.closest('.cdk-overlay-pane') || dialog;
-      hide(pane);
-      const wrapper = pane.parentElement;
-      if (wrapper?.classList.contains('cdk-global-overlay-wrapper')) {
-        hide(wrapper);
-        const backdrop = wrapper.previousElementSibling;
-        if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
-      }
-    });
-    // Perbarui placeholder input ke bahasa santri alami
-    const targetPlaceholder = 'Ajukan pertanyaan atau masalah';
-    document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]').forEach(input => {
-      if (input.placeholder && input.placeholder !== targetPlaceholder) {
-        input.placeholder = targetPlaceholder;
-      }
-      if (input.getAttribute('data-placeholder') && input.getAttribute('data-placeholder') !== targetPlaceholder) {
-        input.setAttribute('data-placeholder', targetPlaceholder);
-      }
-      if (input.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(input.getAttribute('aria-label'))) {
-        input.setAttribute('aria-label', targetPlaceholder);
-      }
-    });
-    document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {
-      if (el.closest(answerSelector)) return;
-      const t = text(el).toLowerCase();
-      if (t.includes('start typing') || t.includes('ask a question') || t.includes('tanyakan') || t.includes('ketik pesan') || t.includes('ajukan')) {
-        if (el.innerText !== targetPlaceholder && el.children.length === 0) {
-          el.innerText = targetPlaceholder;
-        }
-      }
-    });
-    // Peringatan bawaan Gemini tidak termasuk antarmuka OpenTurath. Batasan
-    // penggunaan sudah disampaikan di dalam aplikasi, jadi jangan sisakan
-    // satu baris pun di bawah kolom pertanyaan.
-    document.querySelectorAll('div, p, span, small').forEach(el => {
-      if (el.closest(answerSelector)) return;
-      const t = text(el).toLowerCase();
-      if (t.length < 300 && (/gemini notebook.*(mungkin|may).*(tidak akurat|inaccurate)/i.test(t) || /responses? may be inaccurate/i.test(t) || (/tidak akurat/i.test(t) && /gemini/i.test(t)))) {
-        hide(el);
-      }
-    });
   }
   function ready() {
     clean();
     if (accessDenied()) return false;
-    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
+    const input = [...document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"]')]
+      .find(el => visible(el) && !el.disabled && el.getAttribute('aria-disabled') !== 'true');
     if (input) return true;
-    if (document.querySelector(answerSelector) || document.querySelector('.chat-message, .chat-response')) return true;
-    const bodyText = (document.body?.innerText || '').toLowerCase();
-    return bodyText.length > 50 && !/loading notebook|memuat notebook/i.test(bodyText);
+    return [...document.querySelectorAll(answerSelector)].some(el => visible(el) && text(el).length > 0);
   }
+
   function accessDenied() {
     const body = (document.body?.innerText || '').toLowerCase();
     const title = (document.title || '').toLowerCase();
-    const hasTextMatch = /anda memerlukan akses|minta akses|you need access|request access|tidak memiliki izin/.test(body) ||
-      /anda memerlukan akses|you need access/.test(title);
+    const hasTextMatch = /anda memerlukan akses|minta akses|you need access|request access|tidak memiliki izin|تحتاج إلى إذن|طلب الوصول|ليس لديك إذن|تم رفض الوصول/.test(body) ||
+      /anda memerlukan akses|you need access|تحتاج إلى إذن|طلب الوصول/.test(title);
     const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="access-denied" i]');
     return hasTextMatch || hasElementMatch;
   }
@@ -250,7 +165,10 @@ const notebookUiScript = r'''
     scheduled = true;
     requestAnimationFrame(() => { scheduled = false; clean(); });
   });
-  observer.observe(document, {subtree:true, childList:true, characterData:true});
+  observer.observe(document, {subtree:true, childList:true});
+  window.addEventListener('pagehide', () => observer.disconnect(), {once:true});
   clean();
 })();
 ''';
+
+

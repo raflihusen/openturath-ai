@@ -1,102 +1,42 @@
+import '../core/l10n/app_dictionary.dart';
 import 'package:flutter/material.dart';
-
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
+import 'apple_interactive_wrapper.dart';
 
-/// Pengalih direktori yang sengaja datar: ini navigasi, bukan kartu.
+/// Two quiet, keyboard-accessible views of the same research directory.
 class CorpusKindControl extends StatelessWidget {
-  const CorpusKindControl({
-    super.key,
-    required this.value,
-    required this.onChanged,
-  });
-
+  const CorpusKindControl({super.key, required this.value, required this.onChanged});
   final CorpusKind value;
   final ValueChanged<CorpusKind> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
-
-    return Container(
-      height: 44,
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: border, width: 0.8)),
-      ),
-      child: Row(
-        children: [
-          _CorpusKindTab(
-            label: 'Bidang ilmu',
-            selected: value == CorpusKind.discipline,
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            onTap: () => onChanged(CorpusKind.discipline),
-          ),
-          const SizedBox(width: 24),
-          _CorpusKindTab(
-            label: 'Khazanah ulama',
-            selected: value == CorpusKind.scholar,
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-            onTap: () => onChanged(CorpusKind.scholar),
-          ),
-        ],
-      ),
-    );
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Row(children: [
+      _tab(context, context.tr('membership.discipline'), CorpusKind.discipline, dark),
+      const SizedBox(width: 16),
+      _tab(context, context.tr('membership.scholar_heritage'), CorpusKind.scholar, dark),
+    ]);
   }
-}
 
-class _CorpusKindTab extends StatelessWidget {
-  const _CorpusKindTab({
-    required this.label,
-    required this.selected,
-    required this.textPrimary,
-    required this.textSecondary,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final Color textPrimary;
-  final Color textSecondary;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          OTMotion.selection();
-          onTap();
-        },
-        borderRadius: BorderRadius.circular(8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: OTTypography.bodyMedium(
-                color: selected ? textPrimary : textSecondary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            AnimatedContainer(
-              duration: OTMotion.fast,
-              curve: OTMotion.curve,
-              height: 2,
-              width: selected ? 28 : 0,
-              color: selected ? textPrimary : Colors.transparent,
-            ),
-          ],
+  Widget _tab(BuildContext context, String label, CorpusKind kind, bool dark) {
+    final selected = value == kind;
+    return Expanded(child: Semantics(selected: selected,
+      child: AppleInteractiveWrapper(onTap: () => onChanged(kind),
+        hapticType: HapticFeedbackType.light,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 52),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(
+            color: selected ? OTColors.textPrimary(dark) : OTColors.border(dark),
+            width: selected ? 2 : 1))),
+          child: Text(label, textAlign: TextAlign.center,
+            style: OTTypography.bodyMedium(color: selected
+                ? OTColors.textPrimary(dark) : OTColors.textSecondary(dark))),
         ),
       ),
-    );
+    ));
   }
 }

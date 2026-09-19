@@ -78,35 +78,35 @@ void main() {
       expect(button.fontSize, 14);
       expect(button.fontWeight, FontWeight.w600);
 
-      // 3. Arabic Scholarly layer (Tajawal)
+      // 3. Arabic Scholarly layer (Scheherazade New)
       final arDisplay = OTTypography.arabicDisplay();
       expect(arDisplay.fontSize, 24);
       expect(arDisplay.fontWeight, FontWeight.w700);
-      expect(arDisplay.height, 1.5);
+      expect(arDisplay.height, greaterThanOrEqualTo(1.85));
 
       final arReading = OTTypography.arabicReading();
       expect(arReading.fontSize, 18);
       expect(arReading.fontWeight, FontWeight.w500);
-      expect(arReading.height, 1.6);
+      expect(arReading.height, greaterThanOrEqualTo(1.85));
 
       final arQuote = OTTypography.arabicQuote();
       expect(arQuote.fontSize, 15);
-      expect(arQuote.height, 1.65);
+      expect(arQuote.height, greaterThanOrEqualTo(1.85));
     });
 
     test('OTRadius enforces disciplined curvature without bubble-boxing', () {
-      expect(OTRadius.input, 14.0);
-      expect(OTRadius.card, 16.0);
-      expect(OTRadius.sheet, 24.0);
+      expect(OTRadius.input, 12.0);
+      expect(OTRadius.card, 12.0);
+      expect(OTRadius.sheet, 20.0);
       expect(OTRadius.dialog, 20.0);
       expect(OTRadius.chip, 999.0);
-      expect(OTRadius.button, 999.0);
+      expect(OTRadius.button, 12.0);
 
-      expect(OTRadius.inputBorder, BorderRadius.circular(14.0));
-      expect(OTRadius.cardBorder, BorderRadius.circular(16.0));
+      expect(OTRadius.inputBorder, BorderRadius.circular(12.0));
+      expect(OTRadius.cardBorder, BorderRadius.circular(12.0));
       expect(OTRadius.dialogBorder, BorderRadius.circular(20.0));
       expect(OTRadius.chipBorder, BorderRadius.circular(999.0));
-      expect(OTRadius.buttonBorder, BorderRadius.circular(999.0));
+      expect(OTRadius.buttonBorder, BorderRadius.circular(12.0));
     });
 
     test('OTMotion provides quiet, restrained animations and easing', () {
@@ -149,3 +149,5 @@ void main() {
     });
   });
 }
+
+

@@ -1,1186 +1,191 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../core/l10n/app_dictionary.dart';
+import '../widgets/language_switcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
-import '../core/routes.dart';
 import '../core/app_config.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
-import '../core/design/ot_radius.dart';
-import '../core/design/ot_spacing.dart';
-import '../models/user_model.dart';
-import '../models/agent_model.dart';
-import '../services/auth_service.dart';
-import '../core/navigation_guard.dart';
 import '../core/membership_pass_state.dart';
-import '../widgets/apple_interactive_wrapper.dart';
+import '../core/navigation_guard.dart';
+import '../core/routes.dart';
+import '../models/agent_model.dart';
+import '../models/user_model.dart';
+import '../services/auth_service.dart';
+import '../widgets/editorial.dart';
 import '../widgets/legal_document_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
-
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
-  bool _isLoggingOut = false;
-  bool _isDeletingAccount = false;
-  String _appVersion = '1.0.9';
+  late final Stream<UserModel?> _users;
+  bool _busy = false;
+  String? _appVersion;
 
   @override
   void initState() {
     super.initState();
-    _loadAppVersion();
+    _users = _authService.userStream;
+    _loadVersion();
   }
 
-  Future<void> _loadAppVersion() async {
+  Future<void> _loadVersion() async {
     try {
       final info = await PackageInfo.fromPlatform();
-      if (mounted) {
-        setState(() => _appVersion = '${info.version}+${info.buildNumber}');
-      }
-    } catch (_) {}
+      if (mounted) setState(() => _appVersion = '${info.version}+${info.buildNumber}');
+    } catch (_) { /* Do not display an invented version. */ }
   }
 
-  Future<void> _logout() async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: surface,
-          shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
-          title: Text(
-            AppCopy.logoutDialogTitle,
-            style: OTTypography.cardTitle(color: textPrimary)
-                .copyWith(fontSize: 18),
-          ),
-          content: Text(
-            AppCopy.logoutDialogBody,
-            style: OTTypography.body(color: textSecondary),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(AppCopy.cancel,
-                  style: OTTypography.button(color: textSecondary)),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
-                shape:
-                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-              ),
-              child: Text(AppCopy.logoutButton,
-                  style: OTTypography.button(color: OTColors.onAccent(isDark))),
-            ),
-          ],
-        );
-      },
-    );
-
+  Future<void> _accountAction({required bool delete}) async {
+    if (_busy) return;
+    final confirm = await showDialog<bool>(context: context, builder: (context) => AlertDialog(
+      title: Text(context.tr(delete ? AppCopy.deleteAccountTitle : AppCopy.logoutDialogTitle)),
+      content: Text(context.tr(delete ? AppCopy.deleteAccountBody : AppCopy.logoutDialogBody)),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.tr('shell.cancel'))),
+        FilledButton(onPressed: () => Navigator.pop(context, true),
+          child: Text(context.tr(delete ? AppCopy.deleteAccountButton : AppCopy.logoutButton))),
+      ],
+    ));
     if (!mounted || confirm != true) return;
-
-    setState(() => _isLoggingOut = true);
+    setState(() => _busy = true);
     try {
-      await _authService.signOut();
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.login, (r) => false);
-      }
-    } catch (_) {
-      if (mounted) setState(() => _isLoggingOut = false);
+      if (delete) { await _authService.deleteAccount(); } else { await _authService.signOut(); }
+      if (!mounted) return;
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _busy = false);
+      AppSnackBar.error(context, error.toString().contains('requires-recent-login')
+        ? context.tr(AppCopy.recentLoginRequired)
+        : context.tr(delete ? 'shell.delete_failed' : 'shell.logout_failed'));
     }
   }
 
-  Future<void> _deleteAccount() async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: surface,
-          shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
-          title: Row(
-            children: [
-              Icon(Icons.warning_amber_rounded,
-                  color: OTColors.destructive(isDark), size: 24),
-              const SizedBox(width: OTSpacing.sm),
-              Expanded(
-                child: Text(
-                  AppCopy.deleteAccountTitle,
-                  style: OTTypography.cardTitle(
-                          color: OTColors.destructive(isDark))
-                      .copyWith(fontSize: 18),
-                ),
-              ),
-            ],
-          ),
-          content: Text(
-            AppCopy.deleteAccountBody,
-            style: OTTypography.body(color: OTColors.textSecondary(isDark)),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(AppCopy.cancel,
-                  style: OTTypography.button(
-                      color: OTColors.textSecondary(isDark))),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
-                shape:
-                    RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-              ),
-              child: Text(AppCopy.deleteAccountButton,
-                  style: OTTypography.button(color: OTColors.onAccent(isDark))),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (!mounted || confirm != true) return;
-
-    setState(() => _isDeletingAccount = true);
-    try {
-      await _authService.deleteAccount();
-      if (mounted) {
-        AppSnackBar.success(context, AppCopy.deleteAccountSuccess);
-        Navigator.pushNamedAndRemoveUntil(
-            context, AppRoutes.login, (r) => false);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isDeletingAccount = false);
-        final errText = e.toString().contains('requires-recent-login')
-            ? AppCopy.recentLoginRequired
-            : AppCopy.networkError;
-        AppSnackBar.error(context, errText);
-      }
-    }
+  void _openSubscription(UserModel? user) {
+    NavigationGuard.safePushNamed(context, AppRoutes.subscription, arguments: {
+      'user': user,
+      'agent': AgentModel.defaultAgents.firstWhere((agent) => agent.id == 'fiqh_tahawwulat'),
+    });
   }
 
-  void _openSubscription([UserModel? userModel]) {
-    final user = userModel ?? _authService.cachedCurrentUser;
-    NavigationGuard.safePushNamed(
-      context,
-      AppRoutes.subscription,
-      arguments: {
-        'user': user,
-        'agent': AgentModel.defaultAgents.firstWhere(
-          (a) => a.id == 'fiqh_tahawwulat',
-          orElse: () => AgentModel.defaultAgents.first,
-        ),
-      },
-    );
+  Future<void> _chooseAppearance() async {
+    await showModalBottomSheet<void>(context: context, showDragHandle: true,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(child: SingleChildScrollView(child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 24),
+        child: ValueListenableBuilder<ThemeMode>(valueListenable: AppConfig.themeNotifier,
+          builder: (context, selected, _) => Column(mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(context.tr('shell.appearance'), style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 16),
+            for (final option in const [
+              (ThemeMode.system, 'shell.theme_system', Icons.brightness_auto_outlined),
+              (ThemeMode.light, 'shell.theme_light', Icons.light_mode_outlined),
+              (ThemeMode.dark, 'shell.theme_dark', Icons.dark_mode_outlined),
+            ]) EditorialRow(title: context.tr(option.$2), leading: Icon(option.$3),
+              selected: selected == option.$1,
+              trailing: selected == option.$1 ? const Icon(Icons.check_rounded) : null,
+              onTap: () async {
+                try { await AppConfig.setThemeMode(option.$1); }
+                catch (_) { if (mounted) AppSnackBar.error(this.context, this.context.tr('shell.preference_failed')); }
+                if (sheetContext.mounted) Navigator.pop(sheetContext);
+              }),
+          ])),
+      ))));
   }
 
-  void _showAccessPortfolio(UserModel? user, MembershipPassSummary summary) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final surface = OTColors.surface(isDark);
-    final entries = (user?.entitlements.entries ??
-            const <MapEntry<String, ModuleEntitlement>>[])
-        .where((entry) => summary.agentIds.contains(entry.key))
-        .toList();
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => Container(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                  child: Container(
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                          color: textSecondary.withValues(alpha: .35),
-                          borderRadius: BorderRadius.circular(99)))),
-              const SizedBox(height: 18),
-              Text('Rincian akses Pro',
-                  style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: 19)),
-              const SizedBox(height: 5),
-              Text('Akses yang aktif di akun ini.',
-                  style: OTTypography.caption(color: textSecondary)),
-              const SizedBox(height: 16),
-              if (summary.agentIds.contains('all_access') ||
-                  summary.agentIds.contains('all_ai'))
-                _AccessPortfolioRow(
-                    title: 'Seluruh asisten OpenTurath',
-                    subtitle: summary.supportingLabel,
-                    color: textPrimary,
-                    muted: textSecondary)
-              else
-                ...entries.map((entry) => _AccessPortfolioRow(
-                      title: _entitlementTitle(entry.key),
-                      subtitle: entry.value.expiry == null
-                          ? 'Akses aktif'
-                          : 'Berakhir ${_formatAccessDate(entry.value.expiry!)}',
-                      color: textPrimary,
-                      muted: textSecondary,
-                    )),
-            ]),
-      ),
-    );
-  }
-
-  static String _formatAccessDate(DateTime value) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des'
-    ];
-    return '${value.day} ${months[value.month - 1]} ${value.year}';
-  }
-
-  static String _entitlementTitle(String key) => switch (key) {
-        'fiqh_tahawwulat' => 'AI Fikih Tahawwulat',
-        'fiqh_syafii' => "AI Fikih Syafi'i",
-        'nahwu' => 'AI Bahasa Arab',
-        'ushul_fiqh' => 'AI Usul Fikih',
-        'tafsir' => 'AI Tafsir',
-        'hadits' => 'AI Hadis',
-        'aqidah' => 'AI Akidah',
-        _ => 'Asisten kajian',
-      };
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-
-    return Scaffold(
-      backgroundColor: canvas,
-      appBar: AppBar(
-        backgroundColor: canvas,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: true,
-        title: Text(
-          AppCopy.navSettings,
-          style: GoogleFonts.newsreader(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.4,
-            color: textPrimary,
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: StreamBuilder<UserModel?>(
-          stream: _authService.userStream,
-          initialData: _authService.cachedCurrentUser,
-          builder: (context, snapshot) {
-            final userModel = snapshot.data ?? _authService.cachedCurrentUser;
-            final fbUser = FirebaseAuth.instance.currentUser;
-
-            final displayName = userModel?.name.isNotEmpty == true
-                ? userModel!.name
-                : (fbUser?.displayName ?? 'Pengguna');
-            final email = userModel?.email.isNotEmpty == true
-                ? userModel!.email
-                : (fbUser?.email ?? 'pengguna@openturath.id');
-            final membership = resolveMembershipPass(userModel);
-
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
-              physics: const BouncingScrollPhysics(),
-              children: [
-                _MembershipPass(
-                  holderName: displayName,
-                  email: email,
-                  summary: membership,
-                  isDark: isDark,
-                  onManage: () => _openSubscription(userModel),
-                  onViewAccess:
-                      membership.isOpen && membership.agentIds.isNotEmpty
-                          ? () => _showAccessPortfolio(userModel, membership)
-                          : null,
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Column(
-                    children: [
-                      ValueListenableBuilder<ThemeMode>(
-                        valueListenable: AppConfig.themeNotifier,
-                        builder: (context, currentMode, _) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.palette_outlined,
-                                        size: 20, color: textSecondary),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      AppCopy.appearance,
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Container(
-                                  padding: const EdgeInsets.all(3),
-                                  decoration: BoxDecoration(
-                                    color: OTColors.surfaceSubtle(isDark),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      _buildThemeOption(
-                                        title: AppCopy.modeSystem,
-                                        icon: Icons.brightness_auto_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.system,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.system),
-                                      ),
-                                      _buildThemeOption(
-                                        title: AppCopy.modeLight,
-                                        icon: Icons.light_mode_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.light,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.light),
-                                      ),
-                                      _buildThemeOption(
-                                        title: AppCopy.modeDark,
-                                        icon: Icons.dark_mode_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.dark,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.dark),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.translate_rounded,
-                        title: AppCopy.language,
-                        subtitle: AppCopy.languageIndonesian,
-                        trailing: Icon(Icons.chevron_right_rounded,
-                            color: textSecondary, size: 20),
-                        onTap: () => _showLanguageModal(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 4: Tentang OpenTurath ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: _SettingsTile(
-                    icon: Icons.info_outline_rounded,
-                    title: AppCopy.aboutTitle,
-                    subtitle: AppCopy.versionWithTagline(_appVersion),
-                    trailing: Icon(Icons.chevron_right_rounded,
-                        color: textSecondary, size: 20),
-                    onTap: () => _showAboutModal(
-                      context,
-                      isDark,
-                      textPrimary,
-                      textSecondary,
-                      surface,
-                      border,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 5: Log out ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: (_isLoggingOut || _isDeletingAccount)
-                          ? null
-                          : _logout,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 15),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.logout_rounded,
-                              color: OTColors.destructive(isDark),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 14),
-                            Text(
-                              _isLoggingOut
-                                  ? AppCopy.loggingOut
-                                  : AppCopy.logoutButton,
-                              style: GoogleFonts.outfit(
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w600,
-                                color: OTColors.destructive(isDark),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // ── Quiet Google Play Compliance: Delete Account ──
-                Center(
-                  child: TextButton(
-                    onPressed: (_isLoggingOut || _isDeletingAccount)
-                        ? null
-                        : _deleteAccount,
-                    child: _isDeletingAccount
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: OTColors.destructive(isDark)),
-                          )
-                        : Text(
-                            AppCopy.deleteAccountButton,
-                            style: GoogleFonts.outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              color: OTColors.destructive(isDark),
-                            ),
-                          ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  void _showAboutModal(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-    Color surface,
-    Color border,
-  ) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: OTRadius.dialogBorder,
-          side: BorderSide(color: border, width: 0.8),
-        ),
-        title: Text(
-          AppCopy.aboutTitle,
-          style: OTTypography.corpusTitle(color: textPrimary)
-              .copyWith(fontSize: 20),
-        ),
-        content: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppCopy.versionWithTagline(_appVersion),
-                style: OTTypography.captionMedium(color: textSecondary),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                AppCopy.aboutDescription,
-                style: OTTypography.body(color: textPrimary),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                AppCopy.aboutScholarlyPrinciple,
-                style: OTTypography.caption(color: textSecondary),
-              ),
-              const SizedBox(height: 16),
-              Divider(height: 1, color: border),
-              const SizedBox(height: 8),
-              _buildAboutDocTile(
-                icon: Icons.article_outlined,
-                title: AppCopy.termsOfService,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showTermsOfService(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.security_outlined,
-                title: AppCopy.privacyPolicy,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showPrivacyPolicy(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.payment_outlined,
-                title: AppCopy.paymentAndRefund,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showRefundPolicy(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.menu_book_outlined,
-                title: AppCopy.aiGuideline,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showAiGuideline(context);
-                },
-              ),
-              _buildAboutDocTile(
-                icon: Icons.headset_mic_outlined,
-                title: AppCopy.supportAndContact,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  LegalDocumentSheet.showContactSupport(context);
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx),
-            style: FilledButton.styleFrom(
-              backgroundColor: textPrimary,
-              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape:
-                  RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-            ),
-            child: Text(AppCopy.close, style: OTTypography.button()),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAboutDocTile({
-    required IconData icon,
-    required String title,
-    required Color textPrimary,
-    required Color textSecondary,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: textSecondary),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                title,
-                style: OTTypography.captionMedium(color: textPrimary),
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showLanguageModal(
-    BuildContext context,
-    bool isDark,
-    Color textPrimary,
-    Color textSecondary,
-    Color surface,
-    Color border,
-  ) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: OTRadius.dialogBorder,
-          side: BorderSide(color: border, width: 0.8),
-        ),
-        title: Text(
-          'Bahasa',
-          style: OTTypography.corpusTitle(color: textPrimary)
-              .copyWith(fontSize: 20),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Antarmuka saat ini tersedia dalam Bahasa Indonesia.',
-              style: OTTypography.body(color: textPrimary),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Bahasa Arab dan Inggris sedang disiapkan.',
-              style: OTTypography.caption(color: textSecondary),
-            ),
-          ],
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx),
-            style: FilledButton.styleFrom(
-              backgroundColor: textPrimary,
-              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-              shape:
-                  RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
-            ),
-            child: Text(AppCopy.close, style: OTTypography.button()),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildThemeOption({
-    required String title,
-    required IconData icon,
-    required bool isSelected,
-    required bool isDark,
-    required Color textPrimary,
-    required Color textSecondary,
-    required VoidCallback onTap,
-  }) {
-    final activeBg = isDark ? const Color(0xFF18181B) : Colors.white;
-    final activeFg = isDark ? Colors.white : const Color(0xFF18181B);
-    final inactiveFg = textSecondary;
-
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          HapticFeedback.selectionClick();
-          onTap();
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(9),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 15, color: isSelected ? activeFg : inactiveFg),
-              const SizedBox(width: 6),
-              Text(
-                title,
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? activeFg : inactiveFg,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
-/// dipakai tanpa menyamarkan halaman pengaturan sebagai layar perbankan.
-class _MembershipPass extends StatelessWidget {
-  final String holderName;
-  final String email;
-  final MembershipPassSummary summary;
-  final bool isDark;
-  final VoidCallback onManage;
-  final VoidCallback? onViewAccess;
-
-  const _MembershipPass({
-    required this.holderName,
-    required this.email,
-    required this.summary,
-    required this.isDark,
-    required this.onManage,
-    this.onViewAccess,
-  });
-
-  String _expiryLabel() {
-    if (summary.expiresAt == null) return '—';
-    const shortMonths = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MEI',
-      'JUN',
-      'JUL',
-      'AGU',
-      'SEP',
-      'OKT',
-      'NOV',
-      'DES',
-    ];
-    return '${summary.expiresAt!.day.toString().padLeft(2, '0')} ${shortMonths[summary.expiresAt!.month - 1]} ${summary.expiresAt!.year}';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final cardColor =
-        isDark ? OTColors.surfaceDark : OTColors.inverseSurfaceLight;
-    const foreground = Color(0xFFF8F8F8);
-    const muted = Color(0xFFC7C7CC);
-    final isOpen = summary.isOpen;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Semantics(
-          button: true,
-          label:
-              'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            child: InkWell(
-              onTap: onViewAccess ?? onManage,
-              borderRadius: BorderRadius.circular(16),
-              child: Ink(
-                height: 198,
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.14), width: 0.8),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Stack(
-                    children: [
-                      // Ornamen geometris halus: memberi karakter tanpa
-                      // menyamai visual kartu bank atau mengganggu teks.
-                      Positioned(
-                        right: -52,
-                        top: -76,
-                        child: Container(
-                          width: 190,
-                          height: 190,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.12),
-                              width: 1.2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 20,
-                        top: 30,
-                        child: Container(
-                          width: 74,
-                          height: 74,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.08),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: -36,
-                        bottom: -56,
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.035),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'OpenTurath',
-                                  style: GoogleFonts.newsreader(
-                                    color: foreground,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 21,
-                                    letterSpacing: -0.4,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: isOpen
-                                        ? Colors.white.withValues(alpha: 0.16)
-                                        : Colors.white.withValues(alpha: 0.08),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.14)),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        isOpen
-                                            ? Icons.workspace_premium_rounded
-                                            : Icons.lock_outline_rounded,
-                                        color: foreground,
-                                        size: 13,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        summary.badge,
-                                        style: GoogleFonts.outfit(
-                                          color: foreground,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            Text(
-                              'Untuk',
-                              style: GoogleFonts.outfit(
-                                color: muted,
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              holderName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
-                                color: foreground,
-                                fontSize: 19,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.3,
-                              ),
-                            ),
-                            const SizedBox(height: 1),
-                            Text(
-                              email,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.outfit(
-                                  color: muted, fontSize: 11.5),
-                            ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: _PassMeta(
-                                    label: AppCopy.navStudies,
-                                    value: summary.accessLabel,
-                                    valueColor: foreground,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  flex: 2,
-                                  child: _PassMeta(
-                                    label: summary.expiryLabel.isEmpty
-                                        ? AppCopy.validUntil
-                                        : summary.expiryLabel,
-                                    value: summary.expiresAt == null
-                                        ? '—'
-                                        : _expiryLabel(),
-                                    valueColor: foreground,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        FilledButton.icon(
-          onPressed: onManage,
-          style: FilledButton.styleFrom(
-            backgroundColor: OTColors.accent(isDark),
-            foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-            minimumSize: const Size.fromHeight(48),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          ),
-          icon: const Icon(Icons.tune_rounded, size: 18),
-          label: Text(
-            summary.ctaLabel,
-            style: OTTypography.button(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PassMeta extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color valueColor;
-
-  const _PassMeta({
-    required this.label,
-    required this.value,
-    required this.valueColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.outfit(
-            color: const Color(0xFFC7C7CC),
-            fontSize: 8.5,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.65,
-          ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          value,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.outfit(
-            color: valueColor,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.1,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _AccessPortfolioRow extends StatelessWidget {
-  const _AccessPortfolioRow({
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.muted,
-  });
-
-  final String title;
-  final String subtitle;
-  final Color color;
-  final Color muted;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Row(children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: muted.withValues(alpha: .10),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.auto_awesome_rounded, color: color, size: 18),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(title, style: OTTypography.bodyMedium(color: color)),
-                const SizedBox(height: 2),
-                Text(subtitle, style: OTTypography.caption(color: muted)),
-              ])),
+  void _showAccess(UserModel user, MembershipPassSummary summary) {
+    showModalBottomSheet<void>(context: context, showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => SafeArea(child: SingleChildScrollView(child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 24),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(context.tr('shell.access_details'), style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 16),
+          for (final id in summary.agentIds)
+            EditorialRow(title: _agentTitle(id), subtitle:
+              user.entitlements[id]?.expiry == null ? context.tr('shell.access_active') :
+              context.tr('shell.expires', args: {'date': _date(user.entitlements[id]!.expiry!)})),
         ]),
-      );
-}
+      ))));
+  }
 
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Widget? trailing;
-  final VoidCallback? onTap;
+  String _agentTitle(String id) {
+    if (id == 'all_access' || id == 'all_ai') return context.tr('shell.all_assistants');
+    for (final agent in AgentModel.defaultAgents) {
+      if (agent.id == id) return context.tr(agent.title);
+    }
+    return id;
+  }
 
-  const _SettingsTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    this.trailing,
-    this.onTap,
-  });
+  String _date(DateTime date) => MaterialLocalizations.of(context).formatMediumDate(date);
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-
-    return AppleInteractiveWrapper(
-      onTap: onTap,
-      pressedScale: 0.985,
-      hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(10),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: OTSpacing.base, vertical: 2),
-        leading: Icon(
-          icon,
-          size: 21,
-          color: textPrimary,
-        ),
-        title: Text(
-          title,
-          style: OTTypography.bodyMedium(color: textPrimary),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: OTTypography.caption(color: textSecondary),
-        ),
-        trailing: trailing,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => StreamBuilder<UserModel?>(
+    stream: _users, initialData: _authService.cachedCurrentUser,
+    builder: (context, snapshot) {
+      final firebaseUser = _authService.currentUser;
+      final user = snapshot.data?.uid == firebaseUser?.uid ? snapshot.data : null;
+      final name = user?.name.isNotEmpty == true ? user!.name :
+        firebaseUser?.isAnonymous == true ? context.tr('shell.guest') : firebaseUser?.displayName ?? context.tr('shell.your_account');
+      final email = user?.email.isNotEmpty == true ? user!.email : firebaseUser?.email;
+      final access = resolveMembershipPass(user);
+      return EditorialPage(title: context.tr('shell.settings'), subtitle: context.tr('shell.settings_subtitle'), maxWidth: 760,
+        children: [
+          EditorialRow(title: name, subtitle: email?.isNotEmpty == true ? email : context.tr('shell.guest_mode'),
+            leading: const Icon(Icons.person_outline_rounded, size: 28)),
+          const SizedBox(height: 32),
+          EditorialSection(title: context.tr('shell.study_access'), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            if (user == null && firebaseUser?.isAnonymous != true)
+              Text(context.tr('shell.access_unavailable'))
+            else ...[
+              Text(context.tr(access.accessLabel), style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Text(context.tr(access.supportingLabel)),
+              if (access.expiresAt != null) Padding(padding: const EdgeInsets.only(top: 8),
+                child: Text(context.tr('shell.valid_until', args: {'date': _date(access.expiresAt!)}), style: Theme.of(context).textTheme.bodySmall)),
+            ],
+            const SizedBox(height: 20),
+            Wrap(spacing: 12, runSpacing: 12, children: [
+              EditorialButton(label: user == null ? context.tr('shell.access_options') : context.tr(access.ctaLabel),
+                secondary: true, onPressed: () => _openSubscription(user)),
+              if (user != null && access.isOpen && access.agentIds.isNotEmpty)
+                EditorialButton(label: context.tr('shell.access_details'), secondary: true, onPressed: () => _showAccess(user, access)),
+            ]),
+          ])),
+          const SizedBox(height: 40),
+          EditorialSection(title: context.tr('shell.preferences'), child: Column(children: [
+            ValueListenableBuilder<ThemeMode>(valueListenable: AppConfig.themeNotifier,
+              builder: (context, mode, _) => EditorialRow(title: context.tr('shell.appearance'),
+                subtitle: switch (mode) { ThemeMode.system => context.tr('shell.theme_system'), ThemeMode.light => context.tr('shell.theme_light'), ThemeMode.dark => context.tr('shell.theme_dark') },
+                leading: const Icon(Icons.contrast_rounded), trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: _chooseAppearance)),
+            EditorialRow(title: context.tr('shell.language'),
+              subtitle: switch (context.languageCode) { 'en' => 'English', 'ar' => 'العربية', _ => 'Bahasa Indonesia' },
+              leading: const Icon(Icons.translate_rounded), trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => LanguageSwitcher.show(context)),
+          ])),
+          const SizedBox(height: 40),
+          EditorialSection(title: context.tr('shell.about'), child: Column(children: [
+            EditorialRow(title: 'OpenTurath', subtitle: _appVersion == null ? context.tr(AppCopy.academicSlogan) : context.tr('shell.version', args: {'version': _appVersion!})),
+            EditorialRow(title: context.tr(AppCopy.termsOfService), onTap: () => LegalDocumentSheet.showTermsOfService(context)),
+            EditorialRow(title: context.tr(AppCopy.privacyPolicy), onTap: () => LegalDocumentSheet.showPrivacyPolicy(context)),
+            EditorialRow(title: context.tr(AppCopy.paymentAndRefund), onTap: () => LegalDocumentSheet.showRefundPolicy(context)),
+            EditorialRow(title: context.tr(AppCopy.aiGuideline), onTap: () => LegalDocumentSheet.showAiGuideline(context)),
+            EditorialRow(title: context.tr(AppCopy.supportAndContact), onTap: () => LegalDocumentSheet.showContactSupport(context)),
+          ])),
+          const SizedBox(height: 40),
+          EditorialRow(title: _busy ? context.tr('shell.processing') : context.tr('shell.logout'), leading: const Icon(Icons.logout_rounded),
+            onTap: _busy ? null : () => _accountAction(delete: false)),
+          EditorialRow(title: context.tr('shell.delete_account'), subtitle: context.tr('shell.delete_review'),
+            leading: const Icon(Icons.delete_outline_rounded), onTap: _busy ? null : () => _accountAction(delete: true)),
+        ]);
+    },
+  );
 }

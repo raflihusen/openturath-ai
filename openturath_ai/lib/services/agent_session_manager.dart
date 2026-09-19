@@ -1,11 +1,19 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 
-/// Represents a single active AI specialist tab in memory.
+/// One notebook belongs to one Firebase identity for its entire lifetime.
 class AgentSessionTab {
   final AgentModel agent;
+  final String ownerUid;
+  final String bridgeNonce = base64UrlEncode(
+    List<int>.generate(32, (_) => Random.secure().nextInt(256)),
+  );
   String? resolvedUrl;
   InAppWebViewController? webController;
   final InAppWebViewKeepAlive keepAlive = InAppWebViewKeepAlive();
@@ -18,36 +26,77 @@ class AgentSessionTab {
   bool isGooglePermissionError = false;
   double fontScale = 1.0;
   bool hasAcknowledgedAdab = false;
-
   bool hasInjectedEarlyScript = false;
+  bool isDisposed = false;
+  bool isRetired = false;
 
-  AgentSessionTab({
-    required this.agent,
-    this.resolvedUrl,
-  });
+  AgentSessionTab({required this.agent, required this.ownerUid, this.resolvedUrl});
 
-  /// Lepaskan seluruh resource WebView dan handler JavaScript untuk mencegah kebocoran memori.
   Future<void> disposeWebResources() async {
-    try {
-      await webController?.stopLoading();
-      webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
-    } catch (_) {}
+    if (isDisposed) return;
+    isDisposed = true;
+    final controller = webController;
     webController = null;
+    resolvedUrl = null;
     isSessionReady = false;
     isWebLoading = false;
     hasInjectedEarlyScript = false;
+    try { controller?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer'); } catch (_) {}
+    try { await controller?.stopLoading(); } catch (_) {}
+    // Dropping the Dart controller alone does not release a kept-alive native view.
+    try { await InAppWebViewController.disposeKeepAlive(keepAlive); } catch (_) {}
   }
 }
 
-/// AgentSessionManager: Singleton state manager for multi-tab AI study sessions.
-/// Keeps up to 7 specialists loaded in background memory like Google Chrome tabs.
 class AgentSessionManager extends ChangeNotifier {
   static final AgentSessionManager instance = AgentSessionManager._();
-  AgentSessionManager._();
+  AgentSessionManager._()
+      : _currentUid = (() => FirebaseAuth.instance.currentUser?.uid),
+        _disposeTab = ((tab) => tab.disposeWebResources()),
+        _clearBrowser = _clearBrowserStorage {
+    try {
+      _ownerUid = _currentUid();
+      _watchIdentity(FirebaseAuth.instance.authStateChanges().map((user) => user?.uid));
+    } catch (_) { /* Firebase bootstrap may not be available in preview/tests. */ }
+  }
+
+  /// Dependency injection for ownership/lifecycle tests; production uses [instance].
+  @visibleForTesting
+  AgentSessionManager.testing({
+    required String? Function() currentUid,
+    required Future<void> Function(AgentSessionTab) disposeTab,
+    required Future<void> Function() clearBrowserData,
+    Stream<String?>? identityChanges,
+  }) : _currentUid = currentUid, _disposeTab = disposeTab, _clearBrowser = clearBrowserData {
+    _ownerUid = _currentUid();
+    if (identityChanges != null) _watchIdentity(identityChanges);
+  }
+
+  final String? Function() _currentUid;
+  final Future<void> Function(AgentSessionTab) _disposeTab;
+  final Future<void> Function() _clearBrowser;
+
+  void _watchIdentity(Stream<String?> identities) {
+    _authSubscription = identities.listen((uid) {
+      if (uid == _ownerUid) return;
+      _ownerUid = uid;
+      unawaited(closeAll(clearBrowserData: true));
+    });
+  }
+
+  static Future<void> _clearBrowserStorage() async {
+    try { await CookieManager.instance().deleteAllCookies(); } catch (_) {}
+    try { await InAppWebViewController.clearAllCache(); } catch (_) {}
+    try { await WebStorageManager.instance().deleteAllData(); } catch (_) {}
+  }
 
   static const int maxTabs = 3;
-
   final List<AgentSessionTab> _tabs = [];
+  StreamSubscription<String?>? _authSubscription;
+  String? _ownerUid;
+  Future<void> _cleanup = Future<void>.value();
+  Future<void> _openTail = Future<void>.value();
+  int _generation = 0;
   int _activeIndex = 0;
   bool _isOpen = false;
 
@@ -55,33 +104,41 @@ class AgentSessionManager extends ChangeNotifier {
   int get activeIndex => _activeIndex;
   bool get isOpen => _isOpen;
   bool get hasSessions => _tabs.isNotEmpty;
+  AgentSessionTab? get activeTab => _tabs.isEmpty || _activeIndex >= _tabs.length
+      ? null : _tabs[_activeIndex];
 
-  AgentSessionTab? get activeTab {
-    if (_tabs.isEmpty || _activeIndex < 0 || _activeIndex >= _tabs.length) {
-      return null;
-    }
-    return _tabs[_activeIndex];
+  Future<void> openAgent(AgentModel agent, {UserModel? user}) {
+    final generation = _generation;
+    final operation = _openTail.then((_) async {
+      if (generation == _generation) await _openAgent(agent, user: user);
+    });
+    _openTail = operation.catchError((Object _) {});
+    return operation;
   }
 
-  /// Open an agent or switch to its existing active tab with zero reload.
-  void openAgent(AgentModel agent, {UserModel? user}) {
-    final existingIndex = _tabs.indexWhere((t) => t.agent.id == agent.id);
-    if (existingIndex != -1) {
-      _activeIndex = existingIndex;
+  Future<void> _openAgent(AgentModel agent, {UserModel? user}) async {
+    final uid = _currentUid();
+    if (uid == null || (user != null && user.uid != uid)) return;
+    if (_ownerUid != uid) {
+      _ownerUid = uid;
+      await closeAll(clearBrowserData: true);
+    }
+    final generation = _generation;
+    await _cleanup;
+    if (generation != _generation || _currentUid() != uid) return;
+    final existing = _tabs.indexWhere((tab) => tab.agent.id == agent.id && tab.ownerUid == uid);
+    if (existing >= 0) {
+      _activeIndex = existing;
     } else {
-      if (_tabs.length >= maxTabs) {
-        // Tab limit reached: close oldest non-active tab to preserve WebView memory
-        final evictIndex = _activeIndex == 0 ? 1 : 0;
-        closeTab(evictIndex);
-      }
-      _tabs.add(AgentSessionTab(agent: agent));
+      if (_tabs.length >= maxTabs) await closeTab(_activeIndex == 0 ? 1 : 0);
+      if (generation != _generation || _currentUid() != uid) return;
+      _tabs.add(AgentSessionTab(agent: agent, ownerUid: uid));
       _activeIndex = _tabs.length - 1;
     }
     _isOpen = true;
     notifyListeners();
   }
 
-  /// Switch active tab (like clicking a Chrome tab).
   void selectTab(int index) {
     if (index >= 0 && index < _tabs.length && _activeIndex != index) {
       _activeIndex = index;
@@ -89,40 +146,39 @@ class AgentSessionManager extends ChangeNotifier {
     }
   }
 
-  /// Close a specific tab with the 'x' button.
-  void closeTab(int index) {
+  Future<void> closeTab(int index) async {
     if (index < 0 || index >= _tabs.length) return;
-
-    final tabToClose = _tabs[index];
-    tabToClose.disposeWebResources();
-
-    _tabs.removeAt(index);
-
-    if (_tabs.isEmpty) {
-      _isOpen = false;
-      _activeIndex = 0;
-    } else if (index < _activeIndex) {
-      _activeIndex--;
-    } else if (_activeIndex >= _tabs.length) {
-      _activeIndex = _tabs.length - 1;
-    }
+    final tab = _tabs.removeAt(index);
+    tab.isRetired = true;
+    if (_tabs.isEmpty) { _isOpen = false; _activeIndex = 0; }
+    else if (index < _activeIndex) { _activeIndex--; }
+    else if (_activeIndex >= _tabs.length) { _activeIndex = _tabs.length - 1; }
     notifyListeners();
+    await _disposeTab(tab);
   }
 
-  /// Hide the AI study room to return to the Dashboard while keeping all WebViews alive.
-  void closeRoom() {
-    _isOpen = false;
-    notifyListeners();
-  }
+  void closeRoom() { _isOpen = false; notifyListeners(); }
 
-  /// Reset all sessions (e.g. on user logout).
-  void closeAll() {
-    for (final tab in _tabs) {
-      tab.disposeWebResources();
-    }
+  Future<void> closeAll({bool clearBrowserData = false}) {
+    _generation++;
+    final retired = List<AgentSessionTab>.of(_tabs);
+    for (final tab in retired) { tab.isRetired = true; }
     _tabs.clear();
     _activeIndex = 0;
     _isOpen = false;
     notifyListeners();
+    _cleanup = _cleanup.then((_) async {
+      for (final tab in retired) { await _disposeTab(tab); }
+      if (clearBrowserData) await _clearBrowser();
+    });
+    return _cleanup;
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    for (final tab in _tabs) { tab.isRetired = true; unawaited(_disposeTab(tab)); }
+    _tabs.clear();
+    super.dispose();
   }
 }

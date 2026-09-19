@@ -1,726 +1,316 @@
+import '../core/l10n/app_dictionary.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../core/constants.dart';
 import '../core/checkout_completion.dart';
-import '../core/theme.dart';
+import '../core/constants.dart';
 import '../core/design/ot_colors.dart';
+import '../core/payment_status.dart';
 import '../services/subscription_service.dart';
-import 'app_loader.dart';
+import 'editorial.dart';
 
-/// DokuCheckoutSheet: In-App Modal Pembayaran DOKU dengan Deteksi Otomatis
-/// Menampilkan halaman DOKU di dalam modal aplikasi tanpa perlu terlempar ke Chrome.
-/// Dilengkapi background status synchronization (inquiry real-time) yang otomatis
-/// mendeteksi keberhasilan pembayaran dan menutup pop-up seketika transaksi tuntas.
+/// Checkout completion reports payment only. The caller must refresh the
+/// authenticated server entitlement before presenting access as active.
 class DokuCheckoutSheet extends StatefulWidget {
   final String paymentUrl;
   final String invoiceNumber;
   final String? trxId;
   final String? planTitle;
   final int? amount;
+  const DokuCheckoutSheet({super.key, required this.paymentUrl,
+    required this.invoiceNumber, this.trxId, this.planTitle, this.amount});
 
-  const DokuCheckoutSheet({
-    super.key,
-    required this.paymentUrl,
-    required this.invoiceNumber,
-    this.trxId,
-    this.planTitle,
-    this.amount,
-  });
-
-  /// Helper untuk membuka modal secara elegan dari layar manapun
-  static Future<bool?> show(
-    BuildContext context, {
-    required String paymentUrl,
-    required String invoiceNumber,
-    String? trxId,
-    String? planTitle,
-    int? amount,
-  }) {
-    return showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      enableDrag: false,
-      isDismissible: false,
-      builder: (context) => DokuCheckoutSheet(
-        paymentUrl: paymentUrl,
-        invoiceNumber: invoiceNumber,
-        trxId: trxId,
-        planTitle: planTitle,
-        amount: amount,
-      ),
-    );
-  }
+  static Future<bool?> show(BuildContext context, {required String paymentUrl,
+    required String invoiceNumber, String? trxId, String? planTitle, int? amount}) =>
+    showModalBottomSheet<bool>(context: context, isScrollControlled: true,
+      backgroundColor: Colors.transparent, enableDrag: false, isDismissible: false,
+      builder: (context) => DokuCheckoutSheet(paymentUrl: paymentUrl,
+        invoiceNumber: invoiceNumber, trxId: trxId, planTitle: planTitle, amount: amount));
 
   @override
   State<DokuCheckoutSheet> createState() => _DokuCheckoutSheetState();
 }
 
-class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
-  final SubscriptionService _subService = SubscriptionService();
-
+class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> with WidgetsBindingObserver {
+  final SubscriptionService _service = SubscriptionService();
+  final CheckoutCompletion _completion = CheckoutCompletion();
   InAppWebViewController? _webController;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _transactions;
+  StreamSubscription<User?>? _authChanges;
   Timer? _pollTimer;
-  StreamSubscription<QuerySnapshot>? _txSubscription;
-  double _loadProgress = 0.0;
-  bool _isChecking = false;
-  bool _isSuccess = false;
-  int _pollAttempts = 0;
-  bool _isShowingConfirmDialog = false;
-  bool _hasPopped = false;
-  final _completion = CheckoutCompletion();
+  late final String? _ownerUid;
+  late final bool _validInitialUrl;
+  bool _ownerInvalid = false;
+  bool _checking = false;
+  bool _paid = false;
+  bool _popped = false;
+  bool _showingConfirmation = false;
+  bool _foreground = true;
+  int _automaticAttempts = 0;
+  int _webGeneration = 0;
+  double _progress = 0;
+  String? _pageError;
+  String _statusMessage = 'membership.awaiting_payment';
   BuildContext? _confirmationContext;
+  bool get _ownsCheckout => !_ownerInvalid && _ownerUid != null &&
+      FirebaseAuth.instance.currentUser?.uid == _ownerUid;
 
   @override
   void initState() {
     super.initState();
-
-    // 1. Real-time Firestore Listener: mendeteksi instan saat status berubah jadi 'success' (< 1s)
-    final currentUid = FirebaseAuth.instance.currentUser?.uid;
-    if (widget.invoiceNumber.isNotEmpty && currentUid != null) {
-      _txSubscription = FirebaseFirestore.instance
-          .collection(AppConstants.colTransactions)
-          .where('uid', isEqualTo: currentUid)
-          .where('invoice_number', isEqualTo: widget.invoiceNumber)
-          .limit(1)
-          .snapshots()
-          .listen(
-            (snap) {
-              if (snap.docs.isNotEmpty) {
-                final data = snap.docs.first.data() as Map<String, dynamic>?;
-                final status = (data?['status'] ?? '').toString().toLowerCase();
-                if (status == 'paid' || status == 'success') {
-                  _triggerSuccess();
-                }
-              }
-            },
-            onError: (_) {
-              // Jika query ditolak atau gagal, biarkan fail-safe polling tetap berjalan
-            },
-          );
+    WidgetsBinding.instance.addObserver(this);
+    _ownerUid = FirebaseAuth.instance.currentUser?.uid;
+    _validInitialUrl = isAllowedPaymentUrl(widget.paymentUrl, initial: true);
+    if (!_validInitialUrl) _pageError = 'membership.payment_link_invalid';
+    if (_ownerUid == null) {
+      _ownerInvalid = true;
+      _pageError = 'membership.login_checkout';
+      return;
     }
-
-    // 2. Active inquiry polling setiap 2 detik sebagai fail-safe
-    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      _checkPaymentStatus();
+    _authChanges = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user?.uid != _ownerUid) _invalidateOwner();
     });
+    if (!_validInitialUrl || widget.invoiceNumber.trim().isEmpty) return;
+    _transactions = FirebaseFirestore.instance.collection(AppConstants.colTransactions)
+      .where('uid', isEqualTo: _ownerUid)
+      .where('invoice_number', isEqualTo: widget.invoiceNumber.trim()).limit(1)
+      .snapshots(includeMetadataChanges: true).listen((snapshot) {
+        if (!_ownsCheckout || !mounted || snapshot.metadata.isFromCache || snapshot.docs.isEmpty) return;
+        final data = snapshot.docs.first.data();
+        if (data['uid'] != _ownerUid || data['invoice_number'] != widget.invoiceNumber.trim()) return;
+        if (isConfirmedPayment(data)) _confirmPayment();
+      }, onError: (_) { /* Server inquiry remains available. */ });
+    _startPolling();
+  }
+
+  void _startPolling() {
+    _pollTimer?.cancel();
+    if (!_ownsCheckout || !_validInitialUrl || !_foreground || _paid ||
+        widget.invoiceNumber.trim().isEmpty || _automaticAttempts >= 60) return;
+    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (_checking) return;
+      if (_automaticAttempts >= 60) {
+        _pollTimer?.cancel();
+        if (mounted) setState(() => _statusMessage = 'membership.polling_paused');
+        return;
+      }
+      _automaticAttempts++;
+      _checkStatus();
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _foreground = state == AppLifecycleState.resumed;
+    if (_foreground) { _startPolling(); } else { _pollTimer?.cancel(); }
+  }
+
+  Future<void> _invalidateOwner() async {
+    if (_ownerInvalid || !mounted) return;
+    _pollTimer?.cancel();
+    _transactions?.cancel();
+    final controller = _webController;
+    _webController = null;
+    setState(() { _ownerInvalid = true; _pageError = 'membership.account_changed'; });
+    try { await controller?.stopLoading(); } catch (_) {}
+    await _finish(false);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pollTimer?.cancel();
-    _txSubscription?.cancel();
+    _transactions?.cancel();
+    _authChanges?.cancel();
+    _stopWebLoading();
     _webController = null;
     super.dispose();
   }
 
-  void _triggerSuccess() async {
-    if (_isSuccess || _hasPopped || !mounted) return;
-    _pollTimer?.cancel();
-    _txSubscription?.cancel();
-    setState(() {
-      _isSuccess = true;
-    });
-
-    // Beri jeda 2.2 detik agar pengguna menikmati animasi sukses
-    await Future.delayed(const Duration(milliseconds: 2200));
-    await _completion.finish(
-      dismissConfirmation: () {
-        final dialogContext = _confirmationContext;
-        if (dialogContext != null && dialogContext.mounted && ModalRoute.of(dialogContext)?.isCurrent == true) {
-          Navigator.of(dialogContext).pop(false);
-        }
-      },
-      closeCheckout: () {
-        if (mounted && !_hasPopped && ModalRoute.of(context)?.isCurrent == true) {
-          _hasPopped = true;
-          Navigator.of(context).pop(true);
-        }
-      },
-    );
+  Future<void> _stopWebLoading() async {
+    try { await _webController?.stopLoading(); } catch (_) {}
   }
 
-  Future<void> _checkPaymentStatus() async {
-    if (_isChecking || _isSuccess || _hasPopped || !mounted) return;
-    if (widget.invoiceNumber.isEmpty) return;
-
-    _pollAttempts++;
-    // F33: Batas maksimal polling 150 kali (5 menit) agar tidak memboroskan sumber daya
-    if (_pollAttempts > 60) {
-      _pollTimer?.cancel();
-      return;
+  void _confirmPayment() {
+    if (!_ownsCheckout || _paid || _popped || !mounted) return;
+    _pollTimer?.cancel();
+    _transactions?.cancel();
+    _stopWebLoading();
+    setState(() { _paid = true; _checking = false; });
+    final dialog = _confirmationContext;
+    if (dialog != null && dialog.mounted && ModalRoute.of(dialog)?.isCurrent == true) {
+      Navigator.of(dialog).pop(false);
     }
+  }
 
-    _isChecking = true;
+  Future<void> _checkStatus() async {
+    if (_checking || _paid || _popped || !mounted || !_ownsCheckout ||
+        widget.invoiceNumber.trim().isEmpty) return;
+    setState(() => _checking = true);
     try {
-      final res = await _subService.verifyPaymentStatus(
-        invoiceNumber: widget.invoiceNumber,
-        trxId: widget.trxId,
-      );
-
-      if (res['status'] == 'SUCCESS' || res['success'] == true) {
-        _triggerSuccess();
+      final response = await _service.verifyPaymentStatus(
+        invoiceNumber: widget.invoiceNumber, trxId: widget.trxId);
+      if (!mounted || !_ownsCheckout || _popped) return;
+      if (isConfirmedPayment(response)) {
+        _confirmPayment();
+      } else {
+        setState(() => _statusMessage = isFailedPayment(response)
+          ? 'membership.payment_failed'
+          : paymentStatus(response['status']) == 'ERROR'
+            ? 'membership.status_connection_failed'
+            : 'membership.payment_unconfirmed');
       }
     } catch (_) {
-      // Polling background gagal sementara, lanjut ke tick berikutnya
+      if (mounted && _ownsCheckout) setState(() => _statusMessage = 'membership.status_retry');
     } finally {
-      if (mounted) {
-        _isChecking = false;
-      }
+      if (mounted) setState(() => _checking = false);
     }
   }
 
-  Future<bool> _handleWillPop() async {
-    if (_isSuccess || _hasPopped) return false;
-    if (_isShowingConfirmDialog) return false;
+  Future<void> _finish(bool result) => _completion.finish(
+    dismissConfirmation: () {
+      final dialog = _confirmationContext;
+      if (dialog != null && dialog.mounted && ModalRoute.of(dialog)?.isCurrent == true) Navigator.of(dialog).pop(false);
+    },
+    closeCheckout: () {
+      if (mounted && !_popped && ModalRoute.of(context)?.isCurrent == true) {
+        _popped = true;
+        Navigator.of(context).pop(result && _paid && _ownsCheckout);
+      }
+    },
+  );
 
-    _isShowingConfirmDialog = true;
-    final confirmationDone = Completer<void>();
-    _completion.confirmation = confirmationDone.future;
+  Future<void> _requestClose() async {
+    if (_popped || _showingConfirmation) return;
+    if (_paid) { await _finish(true); return; }
+    if (!_ownsCheckout || !_validInitialUrl) { await _finish(false); return; }
+    _showingConfirmation = true;
+    final done = Completer<void>();
+    _completion.confirmation = done.future;
+    bool close = false;
     try {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      final confirm = await showDialog<bool>(
-        context: context,
-        builder: (ctx) {
-          _confirmationContext = ctx;
-          return AlertDialog(
-          backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
-          title: Text(
-            'Tutup halaman pembayaran?',
-            style: GoogleFonts.outfit(
-              fontWeight: FontWeight.w600,
-              color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
-            ),
-          ),
-          content: Text(
-            'Menutup halaman ini tidak otomatis membatalkan transaksi jika pembayaran telah diproses. Transaksi Anda tetap tercatat di sistem.',
-            style: GoogleFonts.outfit(
-              fontSize: 13,
-              color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
-            ),
-          ),
+      close = await showDialog<bool>(context: context, builder: (context) {
+        _confirmationContext = context;
+        return AlertDialog(title: Text(context.tr('membership.close_checkout_question')),
+          content: Text(context.tr('membership.close_checkout_explanation')),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(
-                'Lanjutkan',
-                style: GoogleFonts.outfit(
-                  color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(
-                'Tutup',
-                style: GoogleFonts.outfit(
-                  color: OTColors.destructive(isDark),
-                ),
-              ),
-            ),
-          ],
-          );
-        },
-      );
-
-      return !_isSuccess && (confirm ?? false);
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.tr('membership.continue'))),
+            TextButton(onPressed: () => Navigator.pop(context, true), child: Text(context.tr('membership.close'))),
+          ]);
+      }) ?? false;
     } finally {
       _confirmationContext = null;
-      _isShowingConfirmDialog = false;
-      confirmationDone.complete();
+      _showingConfirmation = false;
+      done.complete();
       _completion.confirmation = null;
     }
+    if (close && mounted && !_paid) await _finish(false);
   }
 
-  /// OT-F005: Destination allowlist ketat untuk WebView transaksi pembayaran
-  bool _isAllowedPaymentDestination(Uri uri) {
-    if (uri.scheme != 'https') return false;
-
-    final host = uri.host.toLowerCase();
-    
-    // Domain aplikasi OpenTurath
-    if (host == 'openturath-ai.web.app' ||
-        host == 'openturath.ai' ||
-        host.endsWith('.openturath.ai')) {
-      return true;
-    }
-
-    // Domain resmi payment gateway DOKU & sandbox
-    if (host == 'doku.com' ||
-        host.endsWith('.doku.com') ||
-        host == 'doku.id' ||
-        host.endsWith('.doku.id')) {
-      return true;
-    }
-
-    // Platform checkout resmi GoAkal & Midtrans
-    if (host == 'goakal.com' ||
-        host.endsWith('.goakal.com') ||
-        host == 'midtrans.com' ||
-        host.endsWith('.midtrans.com') ||
-        host == 'veritrans.co.id' ||
-        host.endsWith('.veritrans.co.id')) {
-      return true;
-    }
-
-    // Partner perbankan & e-wallet resmi untuk pembayaran QRIS / VA / Direct Debit
-    if (host.endsWith('.bca.co.id') ||
-        host.endsWith('.mandiri.co.id') ||
-        host.endsWith('.bri.co.id') ||
-        host.endsWith('.bni.co.id') ||
-        host.endsWith('.cimbniaga.co.id') ||
-        host.endsWith('.permata.co.id') ||
-        host.endsWith('.gopay.co.id') ||
-        host.endsWith('.shopeepay.co.id') ||
-        host.endsWith('.ovo.id') ||
-        host.endsWith('.dana.id') ||
-        host.endsWith('.linkaja.id')) {
-      return true;
-    }
-
-    return false;
+  void _blockDestination() {
+    if (!mounted) return;
+    setState(() => _statusMessage = 'membership.unsupported_destination');
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
-
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        final shouldPop = await _handleWillPop();
-        if (shouldPop && context.mounted && !_hasPopped) {
-          _hasPopped = true;
-          Navigator.of(context).pop(false);
-        }
-      },
-      child: Container(
-        height: screenHeight * 0.92,
-        decoration: BoxDecoration(
-          color: surfaceColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(isDark ? 100 : 40),
-              blurRadius: 24,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
-          child: Stack(
-            children: [
-              // ── 1. Main Sheet Content (Header + WebView) ──
-              Column(
-                children: [
-                  // Top Drag Handle & Title Bar
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: surfaceColor,
-                      border: Border(bottom: BorderSide(color: border, width: 1)),
-                    ),
-                    child: Column(
-                      children: [
-                        // Drag Indicator
-                        Center(
-                          child: Container(
-                            width: 36,
-                            height: 4,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: border,
-                              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withAlpha(30),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusXS),
-                              ),
-                              child: const Icon(
-                                Icons.lock_rounded,
-                                size: 18,
-                                color: Color(0xFF10B981),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    widget.planTitle != null && widget.planTitle!.isNotEmpty
-                                        ? widget.planTitle!
-                                        : 'Pembayaran',
-                                    style: GoogleFonts.outfit(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 15,
-                                      color: textPrimary,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  if (widget.invoiceNumber.isNotEmpty)
-                                    Text(
-                                      widget.invoiceNumber,
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 12,
-                                        letterSpacing: 0.3,
-                                        color: textSecondary,
-                                      ),
-                                    )
-                                  else if (widget.amount != null && widget.amount! > 0)
-                                    Text(
-                                      'Rp ${widget.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 12,
-                                        letterSpacing: 0.3,
-                                        color: textSecondary,
-                                      ),
-                                    )
-                                  else
-                                    Text(
-                                      'Koneksi Aman Terenkripsi',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 12,
-                                        letterSpacing: 0.3,
-                                        color: textSecondary,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                            // Tombol Cek Manual / Refresh
-                            IconButton(
-                              onPressed: _isChecking
-                                  ? null
-                                  : () {
-                                      _webController?.reload();
-                                      _checkPaymentStatus();
-                                    },
-                              icon: _isChecking
-                                  ? const SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
-                                    )
-                                  : Icon(Icons.sync_rounded, size: 20, color: textSecondary),
-                              tooltip: 'Muat ulang status',
-                            ),
-                            // Close Button
-                            IconButton(
-                              onPressed: () async {
-                                final shouldPop = await _handleWillPop();
-                                if (shouldPop && context.mounted && !_hasPopped) {
-                                  _hasPopped = true;
-                                  Navigator.of(context).pop(false);
-                                }
-                              },
-                              icon: Icon(Icons.close_rounded, size: 22, color: textSecondary),
-                              tooltip: 'Tutup',
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Linear Progress Bar saat memuat halaman WebView
-                  if (_loadProgress < 1.0)
-                    LinearProgressIndicator(
-                      value: _loadProgress,
-                      backgroundColor: Colors.transparent,
-                      color: accent,
-                      minHeight: 2.5,
-                    ),
-
-                  // WebView DOKU
-                  Expanded(
-                    child: InAppWebView(
-                      initialUrlRequest: URLRequest(url: WebUri(widget.paymentUrl)),
-                      initialSettings: InAppWebViewSettings(
-                        javaScriptEnabled: true,
-                        domStorageEnabled: true,
-                        databaseEnabled: true,
-                        sharedCookiesEnabled: true,
-                        thirdPartyCookiesEnabled: true,
-                        useHybridComposition: true,
-                        mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-                        allowFileAccess: false,
-                        allowContentAccess: true,
-                        javaScriptCanOpenWindowsAutomatically: true,
-                        supportZoom: true,
-                        builtInZoomControls: true,
-                        displayZoomControls: false,
-                        forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                        transparentBackground: false,
-                      ),
-                      onWebViewCreated: (controller) {
-                        _webController = controller;
-                      },
-                      onProgressChanged: (controller, progress) {
-                        if (mounted) {
-                          setState(() {
-                            _loadProgress = progress / 100.0;
-                          });
-                        }
-                      },
-                      shouldOverrideUrlLoading: (controller, navigationAction) async {
-                        final webUri = navigationAction.request.url;
-                        if (webUri == null) return NavigationActionPolicy.CANCEL;
-
-                        final uri = Uri.tryParse(webUri.toString());
-                        if (uri == null) return NavigationActionPolicy.CANCEL;
-
-                        // Deep links untuk aplikasi perbankan atau e-wallet (GoPay, ShopeePay, dsb.)
-                        if (uri.scheme != 'http' && uri.scheme != 'https') {
-                          try {
-                            await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
-                          } catch (_) {}
-                          return NavigationActionPolicy.CANCEL;
-                        }
-
-                        if (!_isAllowedPaymentDestination(uri)) {
-                          debugPrint('[DokuCheckout] Navigation to untrusted destination rejected: $webUri');
-                          return NavigationActionPolicy.CANCEL;
-                        }
-
-                        final urlStr = uri.toString().toLowerCase();
-
-                        // Intersep jika gateway mengarah ke callback URL sukses
-                        if (urlStr.contains('openturath-ai.web.app') ||
-                            urlStr.contains('callback') ||
-                            urlStr.contains('finish') ||
-                            urlStr.contains('checkout-success') ||
-                            urlStr.contains('success')) {
-                          _checkPaymentStatus();
-                          return NavigationActionPolicy.ALLOW;
-                        }
-
-                        return NavigationActionPolicy.ALLOW;
-                      },
-                      onLoadStop: (controller, url) async {
-                        if (mounted) {
-                          setState(() => _loadProgress = 1.0);
-                        }
-
-                        final urlStr = url?.toString().toLowerCase() ?? '';
-                        if (urlStr.contains('openturath-ai.web.app') ||
-                            urlStr.contains('checkout-link') ||
-                            urlStr.contains('success')) {
-                          _checkPaymentStatus();
-                        }
-
-                        // Deteksi instan jika DOM DOKU menampilkan halaman Payment Successful
-                        try {
-                          final isPaidDom = await controller.evaluateJavascript(source: """
-                            (function() {
-                              var text = (document.body ? document.body.innerText : '') || '';
-                              if (text.includes('Payment Successful') || 
-                                  text.includes('Pembayaran Berhasil') || 
-                                  text.includes('Berhasil!')) {
-                                return true;
-                              }
-                              return false;
-                            })();
-                          """);
-                          if (isPaidDom == true) {
-                            _checkPaymentStatus();
-                          }
-                        } catch (_) {}
-                      },
-                    ),
-                  ),
-                ],
-              ),
-
-              // ── 2. Celebratory Success Overlay ──
-              if (_isSuccess)
-                _CelebratorySuccessView(
-                  surfaceColor: surfaceColor,
-                  textPrimary: textPrimary,
-                  textSecondary: textSecondary,
-                  accent: accent,
-                ),
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return PopScope(canPop: false,
+      onPopInvokedWithResult: (didPop, result) { if (!didPop) _requestClose(); },
+      child: Container(height: MediaQuery.sizeOf(context).height * .92,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(color: OTColors.canvas(dark),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+        child: SafeArea(top: false, child: _paid ? _paidView() : Column(children: [
+          Padding(padding: const EdgeInsetsDirectional.fromSTEB(20, 16, 8, 12), child: Row(children: [
+            const Icon(Icons.lock_outline_rounded, size: 20),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(widget.planTitle?.isNotEmpty == true ? widget.planTitle! : context.tr('membership.payment'),
+                style: Theme.of(context).textTheme.titleMedium),
+              if (widget.invoiceNumber.isNotEmpty) Text(widget.invoiceNumber, textDirection: TextDirection.ltr,
+                style: Theme.of(context).textTheme.bodySmall),
+            ])),
+            IconButton(tooltip: context.tr('membership.close_payment'), onPressed: _requestClose,
+              icon: const Icon(Icons.close_rounded)),
+          ])),
+          const Divider(height: 1),
+          if (_progress < 1 && _pageError == null)
+            LinearProgressIndicator(value: _progress, minHeight: 1),
+          Expanded(child: _pageError != null || !_ownsCheckout
+            ? SingleChildScrollView(child: EditorialEmptyState(title: context.tr('membership.page_unavailable'),
+                description: _pageError == null ? null : context.tr(_pageError!),
+                action: _validInitialUrl && _ownsCheckout ? EditorialButton(label: context.tr('membership.reload'), secondary: true,
+                  onPressed: () => setState(() { _pageError = null; _progress = 0; _webGeneration++; })) : null))
+            : InAppWebView(key: ValueKey(_webGeneration),
+                initialUrlRequest: URLRequest(url: WebUri(widget.paymentUrl)),
+                initialSettings: InAppWebViewSettings(javaScriptEnabled: true, domStorageEnabled: true,
+                  incognito: true, cacheEnabled: false, sharedCookiesEnabled: false,
+                  useShouldOverrideUrlLoading: true, mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                  allowFileAccess: false, allowContentAccess: false,
+                  javaScriptCanOpenWindowsAutomatically: false, supportMultipleWindows: false,
+                  supportZoom: true, builtInZoomControls: true, displayZoomControls: false),
+                onWebViewCreated: (controller) => _webController = controller,
+                onCreateWindow: (controller, request) async => false,
+                onProgressChanged: (controller, progress) {
+                  if (mounted && _ownsCheckout) setState(() => _progress = progress / 100);
+                },
+                shouldOverrideUrlLoading: (controller, action) async {
+                  final url = action.request.url?.toString();
+                  if (!_ownsCheckout || url == null || !isAllowedPaymentUrl(url)) {
+                    _blockDestination();
+                    return NavigationActionPolicy.CANCEL;
+                  }
+                  return NavigationActionPolicy.ALLOW;
+                },
+                onLoadStart: (controller, url) async {
+                  if (!_ownsCheckout || url == null || !isAllowedPaymentUrl(url.toString())) {
+                    await controller.stopLoading();
+                    _blockDestination();
+                  }
+                },
+                onLoadStop: (controller, url) {
+                  if (mounted && _ownsCheckout) {
+                    setState(() => _progress = 1);
+                    if (url != null && isAllowedPaymentUrl(url.toString()) &&
+                        const {'openturath.ai', 'www.openturath.ai', 'openturath-ai.web.app'}.contains(url.host)) {
+                      _checkStatus();
+                    }
+                  }
+                },
+                onReceivedError: (controller, request, error) {
+                  if (mounted && request.isForMainFrame == true) {
+                    setState(() => _pageError = 'membership.payment_load_failed');
+                  }
+                },
+              )),
+          const Divider(height: 1),
+          Padding(padding: const EdgeInsets.all(16), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Semantics(liveRegion: true, child: Text(widget.invoiceNumber.trim().isEmpty
+              ? context.tr('membership.goakal_after_payment') : context.tr(_statusMessage),
+              style: Theme.of(context).textTheme.bodySmall)),
+            if (widget.invoiceNumber.trim().isNotEmpty && _ownsCheckout && _validInitialUrl) ...[
+              const SizedBox(height: 12),
+              EditorialButton(label: context.tr('membership.check_status'), secondary: true, busy: _checking, onPressed: _checkStatus),
             ],
-          ),
-        ),
+          ])),
+        ])),
       ),
     );
   }
+
+  Widget _paidView() => Center(child: SingleChildScrollView(padding: const EdgeInsets.all(32),
+    child: EditorialReveal(child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.check_circle_outline_rounded, size: 44),
+      const SizedBox(height: 24),
+      Text(context.tr('membership.payment_verified'), textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.headlineSmall),
+      const SizedBox(height: 12),
+      Text(context.tr('membership.access_after_continue'), textAlign: TextAlign.center),
+      const SizedBox(height: 28),
+      EditorialButton(label: context.tr('membership.continue'), onPressed: () => _finish(true)),
+    ])),
+  ));
 }
-
-class _CelebratorySuccessView extends StatelessWidget {
-  final Color surfaceColor;
-  final Color textPrimary;
-  final Color textSecondary;
-  final Color accent;
-
-  const _CelebratorySuccessView({
-    required this.surfaceColor,
-    required this.textPrimary,
-    required this.textSecondary,
-    required this.accent,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0.0, end: 1.0),
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOutCubic,
-      builder: (context, opacity, child) {
-        return Opacity(
-          opacity: opacity,
-          child: Container(
-            color: surfaceColor,
-            width: double.infinity,
-            height: double.infinity,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Spring bounce scale for the checkmark badge
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 750),
-                      curve: Curves.elasticOut,
-                      builder: (context, scale, _) {
-                        return Transform.scale(
-                          scale: scale,
-                          child: Container(
-                            width: 88,
-                            height: 88,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFF10B981).withValues(alpha: 0.16),
-                              border: Border.all(
-                                color: const Color(0xFF10B981),
-                                width: 3,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                                  blurRadius: 28,
-                                  spreadRadius: 4,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.check_rounded,
-                              size: 50,
-                              color: Color(0xFF10B981),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 28),
-                    // "Alhamdulillah!" with fade-up
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return Opacity(
-                          opacity: value.clamp(0.0, 1.0),
-                          child: Transform.translate(
-                            offset: Offset(0, (1.0 - value) * 16),
-                            child: Text(
-                              'Alhamdulillah',
-                              style: GoogleFonts.outfit(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 26,
-                                letterSpacing: -0.5,
-                                color: textPrimary,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    // "Pembayaran Berhasil Diverifikasi"
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 600),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return Opacity(
-                          opacity: value.clamp(0.0, 1.0),
-                          child: Transform.translate(
-                            offset: Offset(0, (1.0 - value) * 14),
-                            child: Text(
-                              'Pembayaran berhasil',
-                              style: GoogleFonts.outfit(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: const Color(0xFF10B981),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    // Description
-                    TweenAnimationBuilder<double>(
-                      tween: Tween<double>(begin: 0.0, end: 1.0),
-                      duration: const Duration(milliseconds: 700),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, _) {
-                        return Opacity(
-                          opacity: value.clamp(0.0, 1.0),
-                          child: Transform.translate(
-                            offset: Offset(0, (1.0 - value) * 12),
-                            child: Text(
-                              'Akses modul telah aktif. Mengalihkan…',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.outfit(
-                                fontSize: 13,
-                                color: textSecondary,
-                                height: 1.45,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 32),
-                    // Unified AppLoader
-                    AppLoader(color: accent, dotSize: 8, spacing: 4),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-

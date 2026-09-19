@@ -102,7 +102,7 @@ void main() {
 
     test('Dynamic interpolation helpers produce serene, well-formed phrases', () {
       expect(AppCopy.preparingModule('Fikih Syafi\'i'),
-          equals('Fikih Syafi\'i sedang disiapkan.'));
+          equals('Ruang telaah Fikih Syafi\'i sedang disiapkan.'));
       expect(AppCopy.subscriptionRequiredFor('Fikih Syafi\'i'),
           equals('Berlangganan untuk membuka Fikih Syafi\'i.'));
       expect(AppCopy.accessUnavailableFor('Fikih Syafi\'i'),

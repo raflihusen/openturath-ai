@@ -22,6 +22,8 @@ class OTMotion {
   }
 
   static void success() {
-    HapticFeedback.mediumImpact();
+    HapticFeedback.selectionClick();
   }
 }
+
+

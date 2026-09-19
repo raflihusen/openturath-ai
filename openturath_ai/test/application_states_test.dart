@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/widgets/app_loader.dart';
 import 'package:openturath_ai/widgets/app_error_state.dart';
@@ -12,6 +13,8 @@ void main() {
     testWidgets('State 2 & 3: AppLoader renders inline and fullscreen pulse states', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
+          locale: Locale('id'), supportedLocales: [Locale('id')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           home: Scaffold(
             body: AppLoader(
               title: 'Menelaah Naskah...',
@@ -29,6 +32,8 @@ void main() {
       bool retried = false;
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('id'), supportedLocales: const [Locale('id')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           home: Scaffold(
             body: AppErrorState.network(
               onRetry: () => retried = true,
@@ -40,46 +45,52 @@ void main() {
       expect(find.text('Koneksi terputus'), findsOneWidget);
       expect(find.byIcon(Icons.wifi_off_rounded), findsOneWidget);
 
-      await tester.tap(find.text('Coba lagi'));
+      await tester.tap(find.text('Coba kembali'));
       expect(retried, isTrue);
     });
 
     testWidgets('State 10: AppErrorState.unauthorized renders locked module state', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
+          locale: Locale('id'), supportedLocales: [Locale('id')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           home: Scaffold(
             body: AppErrorState.unauthorized(),
           ),
         ),
       );
 
-      expect(find.text('Langganan diperlukan'), findsOneWidget);
+      expect(find.text('Akses kajian diperlukan'), findsOneWidget);
       expect(find.byIcon(Icons.lock_outline_rounded), findsOneWidget);
     });
 
     testWidgets('State 7 & 8: AppErrorState.empty renders scholarly empty state', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
+          locale: Locale('id'), supportedLocales: [Locale('id')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           home: Scaffold(
             body: AppErrorState.empty(),
           ),
         ),
       );
 
-      expect(find.text('Rujukan tidak ditemukan'), findsOneWidget);
+      expect(find.text('Rujukan belum ditemukan'), findsOneWidget);
       expect(find.byIcon(Icons.find_in_page_outlined), findsOneWidget);
     });
 
     testWidgets('State 11: AppErrorState.generic renders serene fallback state', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
+          locale: Locale('id'), supportedLocales: [Locale('id')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           home: Scaffold(
             body: AppErrorState.generic(),
           ),
         ),
       );
 
-      expect(find.text('Terjadi kendala teknis'), findsOneWidget);
+      expect(find.text('Ruang kajian belum tersedia'), findsOneWidget);
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
     });
 
@@ -122,3 +133,5 @@ void main() {
     });
   });
 }
+
+

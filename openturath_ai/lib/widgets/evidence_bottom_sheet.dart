@@ -1,21 +1,19 @@
+import '../core/l10n/app_dictionary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../core/theme.dart';
+
 import '../core/app_snackbar.dart';
-import '../core/app_copy.dart';
+import '../core/scholarly_citation.dart';
+import 'parallel_scholarly_view.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import 'editorial.dart';
+import 'scholarly_markdown.dart';
 
+/// Renders supplied evidence without claiming a verification step took place.
+/// Missing edition metadata is left missing; external fallback is a book search.
 class EvidenceBottomSheet extends StatelessWidget {
-  final int citationNumber;
-  final String bookName;
-  final String author;
-  final String pageNumber;
-  final String category;
-  final String arabicExcerpt;
-  final String explanation;
-  final String? externalUrl;
-
   const EvidenceBottomSheet({
     super.key,
     required this.citationNumber,
@@ -26,383 +24,191 @@ class EvidenceBottomSheet extends StatelessWidget {
     required this.arabicExcerpt,
     required this.explanation,
     this.externalUrl,
+    this.volume,
+    this.verified = false,
+    this.isAiExplanation = false,
   });
 
+  final int citationNumber;
+  final String bookName;
+  final String author;
+  final String pageNumber;
+  final String category;
+  final String arabicExcerpt;
+  final String explanation;
+  final String? externalUrl;
+  final String? volume;
+  final bool verified, isAiExplanation;
+
+  Uri? get _externalTarget {
+    final supplied = externalUrl?.trim() ?? '';
+    final uri = supplied.isNotEmpty
+        ? Uri.tryParse(supplied)
+        : bookName.trim().isNotEmpty
+            ? Uri.https('shamela.ws', '/search', {'q': bookName.trim()})
+            : null;
+    if (uri == null || uri.scheme != 'https' || uri.host.isEmpty ||
+        uri.userInfo.isNotEmpty || (uri.hasPort && uri.port != 443)) return null;
+    return uri;
+  }
+
   Future<void> _launchExternal(BuildContext context) async {
-    final query = Uri.encodeComponent(bookName);
-    final url = externalUrl != null && externalUrl!.isNotEmpty
-        ? Uri.parse(externalUrl!)
-        : Uri.parse('https://shamela.ws/search?q=$query');
-
-    try {
-      final canLaunch = await canLaunchUrl(url);
-      if (canLaunch) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        if (context.mounted) {
-          AppSnackBar.error(context, 'Tidak dapat membuka rujukan eksternal: $url');
-        }
-      }
-    } catch (_) {}
-  }
-
-  void _copyIbarah(BuildContext context) {
-    Clipboard.setData(ClipboardData(text: arabicExcerpt));
-    AppSnackBar.success(context, 'Ibarah tersalin.');
-  }
-
-  void _shareEvidence(BuildContext context) {
-    final buffer = StringBuffer();
-    buffer.writeln('📖 *Rujukan Ilmiah: $bookName*');
-    buffer.writeln('Pengarang: $author');
-    buffer.writeln('Disiplin: $category | Halaman: $pageNumber');
-    buffer.writeln();
-    if (arabicExcerpt.isNotEmpty) {
-      buffer.writeln('نص العبارة:');
-      buffer.writeln('« $arabicExcerpt »');
-      buffer.writeln();
-    }
-    if (explanation.isNotEmpty) {
-      buffer.writeln('Taqrir & Syarah:');
-      buffer.writeln(explanation);
-    }
-
-    Clipboard.setData(ClipboardData(text: buffer.toString()));
-    AppSnackBar.success(context, AppCopy.referenceCopied);
-  }
-
-  Widget _stagger(int index, Widget child) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 260 + (index * 60)),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, animChild) {
-        return Transform.translate(
-          offset: Offset(0, 16 * (1 - value)),
-          child: Opacity(
-            opacity: value.clamp(0.0, 1.0),
-            child: animChild,
-          ),
-        );
-      },
-      child: child,
+    final uri = _externalTarget;
+    if (uri == null) return;
+    final confirmed = await showDialog<bool>(context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(dialogContext.tr('notes.openTitle')),
+        content: SelectableText(uri.toString()),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(dialogContext.tr('notes.cancel'))),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, true),
+              child: Text(dialogContext.tr('notes.openLink'))),
+        ],
+      ),
     );
+    if (confirmed != true || !context.mounted) return;
+    try {
+      final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!opened && context.mounted) {
+        AppSnackBar.show(context, message: context.tr('notes.referenceFailed'));
+      }
+    } catch (_) {
+      if (context.mounted) {
+        AppSnackBar.show(context, message: context.tr('notes.referenceFailed'));
+      }
+    }
+  }
+
+  String _clipboardText(BuildContext context, {required bool includeExplanation}) {
+    final citation = ScholarlyCitation(book: bookName, author: author,
+      volume: volume, page: pageNumber, appUrl: externalUrl, verified: verified)
+        .format(languageCode: context.languageCode);
+    return <String>[
+      if (arabicExcerpt.trim().isNotEmpty) arabicExcerpt.trim(),
+      if (citation.isNotEmpty) citation,
+      if (includeExplanation && category.trim().isNotEmpty)
+        '${context.tr('notes.field')}: ${category.trim()}',
+      if (includeExplanation && explanation.trim().isNotEmpty)
+        '${context.tr(isAiExplanation ? 'notes.aiCommentary' : 'notes.commentary')}:\n${explanation.trim()}',
+    ].join('\n\n');
+  }
+
+  Future<void> _copy(BuildContext context, {required bool full}) async {
+    final text = _clipboardText(context, includeExplanation: full);
+    if (text.isEmpty) return;
+    try {
+      await Clipboard.setData(ClipboardData(text: text));
+      if (context.mounted) {
+        AppSnackBar.success(context, full ? context.tr('notes.referenceCopied') : context.tr('notes.excerptCopied'));
+      }
+    } catch (_) {
+      if (context.mounted) {
+        AppSnackBar.show(context, message: context.tr('notes.textCopyFailed'));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
-
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final secondary = OTColors.textSecondary(dark);
+    final target = _externalTarget;
+    final hasExcerpt = arabicExcerpt.trim().isNotEmpty;
+    final hasContent = _clipboardText(context, includeExplanation: true).isNotEmpty;
     return DraggableScrollableSheet(
-      initialChildSize: 0.72,
-      minChildSize: 0.45,
-      maxChildSize: 0.94,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
-            border: Border.all(color: border, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.4),
-                blurRadius: 30,
-                offset: const Offset(0, -4),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // ── Drag Handle ──
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: border,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                  ),
-                ),
-              ),
-
-              // ── Header Bar (Figma Screen 10) ──
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.menu_book_rounded, size: 20, color: accent),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Ibarah & rujukan',
-                          style: GoogleFonts.outfit(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close_rounded, color: textSecondary, size: 22),
+      initialChildSize: .72, minChildSize: .40, maxChildSize: .94,
+      builder: (context, scrollController) => Align(
+        alignment: Alignment.bottomCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1120),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: OTColors.canvas(dark),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              border: Border.all(color: OTColors.border(dark), width: .8),
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: SafeArea(top: false, child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 12, 24, 28),
+                children: [
+                  Center(child: Container(width: 32, height: 3,
+                      decoration: BoxDecoration(color: OTColors.border(dark),
+                          borderRadius: BorderRadius.circular(3)))),
+                  const SizedBox(height: 8),
+                  Row(children: [
+                    Expanded(child: Semantics(header: true, child: Text(context.tr('notes.evidenceTitle'),
+                        style: OTTypography.screenTitle()))),
+                    IconButton(tooltip: context.tr('notes.closeReference'),
+                      constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
                       onPressed: () => Navigator.pop(context),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
+                      icon: const Icon(Icons.close_rounded, size: 22)),
+                  ]),
+                  const SizedBox(height: 8),
+                  const Divider(height: 1),
+                  const SizedBox(height: 24),
+                  Text(citationNumber > 0 ? context.tr('notes.referenceNumber', args: {'number': citationNumber}) : context.tr('notes.reference'),
+                      style: OTTypography.sectionHeading(color: secondary)),
+                  const SizedBox(height: 12),
+                  if (bookName.trim().isNotEmpty)
+                    _scholarlyText(bookName, heading: true)
+                  else
+                    Text(context.tr('notes.bookMissing'), style: OTTypography.bookTitle()),
+                  const SizedBox(height: 20),
+                  if (author.trim().isNotEmpty) _metadata(context.tr('notes.author'), author, secondary),
+                  if (pageNumber.trim().isNotEmpty) _metadata(context.tr('notes.page'), pageNumber, secondary),
+                  if (category.trim().isNotEmpty) _metadata(context.tr('notes.field'), category, secondary),
+                  const SizedBox(height: 12),
+                  const Divider(height: 1),
+                  const SizedBox(height: 24),
+                  if (hasExcerpt || explanation.trim().isNotEmpty)
+                    ParallelScholarlyView(arabicExcerpt: arabicExcerpt,
+                      commentary: explanation, isAiCommentary: isAiExplanation),
+                  if (!hasExcerpt && explanation.trim().isEmpty)
+                    EditorialEmptyState(title: context.tr('notes.excerptMissing'),
+                        description: context.tr('notes.metadataNotice')),
+                  const SizedBox(height: 20),
+                  if (hasExcerpt) ...[
+                    EditorialButton(label: context.tr('notes.copyExcerpt'), icon: Icons.copy_outlined,
+                        expanded: true, onPressed: () => _copy(context, full: false)),
+                    const SizedBox(height: 10),
                   ],
-                ),
-              ),
-
-              const Divider(height: 1),
-
-              // ── Scrollable Body with Stagger Reveal ──
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                  children: [
-                    // 1. Book Name (Arabic / Latin)
-                    _stagger(
-                      0,
-                      Text(
-                        bookName,
-                        style: GoogleFonts.newsreader(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: textPrimary,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    // 2. Metadata Grid (Penulis, Halaman, Kategori)
-                    _stagger(
-                      1,
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: isDark ? AppTheme.surfaceElevated : AppTheme.surfaceCardLight,
-                          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                          border: Border.all(color: border),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Pengarang', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    author,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(width: 1, height: 28, color: border, margin: const EdgeInsets.symmetric(horizontal: 12)),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Halaman', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    pageNumber,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(width: 1, height: 28, color: border, margin: const EdgeInsets.symmetric(horizontal: 12)),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Disiplin', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    category,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // 3. Section: Teks Asli Kitab (Ibarah) with subtle border glow
-                    _stagger(
-                      2,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.format_quote_rounded, size: 18, color: accent),
-                              const SizedBox(width: 6),
-                              Text(
-                                'Naskah ibarah asli',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: textPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: isDark ? AppTheme.surfaceElevated : AppTheme.citationBgLight,
-                              borderRadius: BorderRadius.circular(AppTheme.radiusCard),
-                              border: Border.all(
-                                color: accent.withValues(alpha: isDark ? 0.35 : 0.25),
-                                width: 1.2,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: accent.withValues(alpha: isDark ? 0.08 : 0.04),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: SelectableText(
-                              arabicExcerpt,
-                              textDirection: TextDirection.rtl,
-                              style: GoogleFonts.scheherazadeNew(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                height: 1.8,
-                                color: textPrimary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // 4. Section: Intisari & Penjelasan Kontekstual
-                    _stagger(
-                      3,
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Intisari & penjelasan',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            explanation,
-                            style: GoogleFonts.outfit(
-                              fontSize: 13,
-                              color: textSecondary,
-                              height: 1.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 28),
-
-                    // 5. Action Buttons
-                    _stagger(
-                      4,
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: () => _copyIbarah(context),
-                              icon: const Icon(Icons.copy_rounded, size: 16),
-                              label: const Text('Salin ibarah'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: accent,
-                                side: BorderSide(color: accent.withValues(alpha: 0.6)),
-                                padding: const EdgeInsets.symmetric(vertical: 13),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                                ),
-                                textStyle: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: FilledButton.icon(
-                              onPressed: () => _launchExternal(context),
-                              icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                              label: const Text('Buka di Maktabah Syamilah'),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: accent,
-                                foregroundColor: isDark
-                                    ? AppTheme.canvasDark
-                                    : Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 13),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                                ),
-                                textStyle: GoogleFonts.outfit(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton.filledTonal(
-                            onPressed: () => _shareEvidence(context),
-                            icon: const Icon(Icons.share_outlined, size: 18),
-                            tooltip: 'Salin rujukan ilmiah',
-                            style: IconButton.styleFrom(
-                              padding: const EdgeInsets.all(13),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  if (hasContent && (explanation.trim().isNotEmpty || !hasExcerpt)) ...[
+                    EditorialButton(label: context.tr('notes.copyFull'), secondary: true,
+                        expanded: true, onPressed: () => _copy(context, full: true)),
+                    const SizedBox(height: 10),
                   ],
-                ),
-              ),
-            ],
+                  if (target != null)
+                    EditorialButton(label: externalUrl?.trim().isNotEmpty == true
+                        ? context.tr('notes.openReference') : context.tr('notes.searchShamela'),
+                      secondary: true, expanded: true, icon: Icons.open_in_new_rounded,
+                      onPressed: () => _launchExternal(context)),
+                ],
+              )),
+            ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+
+  Widget _metadata(String label, String value, Color secondary) => Padding(
+    padding: const EdgeInsets.only(bottom: 16),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Text(label, style: OTTypography.caption(color: secondary)),
+      const SizedBox(height: 4),
+      _scholarlyText(value),
+    ]),
+  );
+
+  Widget _scholarlyText(String value, {bool heading = false}) => SelectableText(
+    value,
+    textDirection: ScholarlyMarkdown.directionOf(value),
+    style: ScholarlyMarkdown.containsArabic(value)
+        ? OTTypography.arabicReading(height: 1.95).copyWith(fontSize: heading ? 28 : 22)
+        : heading ? OTTypography.pageTitle().copyWith(height: 1.35)
+            : OTTypography.body().copyWith(fontSize: 15, height: 1.6),
+  );
 }

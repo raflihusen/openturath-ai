@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:openturath_ai/core/design/ot_fonts.dart';
 import 'design/ot_colors.dart';
 import 'design/ot_typography.dart';
 
@@ -84,7 +84,7 @@ class AppTheme {
   static const Color lmDarkCitationText = citationTextDark;
   static const Color lmDarkPillAction = pillActionBgDark;
 
-  static const Color brandRed = Color(0xFFBA1A1A);
+  static const Color brandRed = OTColors.destructiveLight;
   static const Color brandGreen = OTColors.textSecondaryLight;
   static const Color brandBlue = accentLight;
 
@@ -121,7 +121,7 @@ class AppTheme {
   static const double radiusM = 16.0; // Alias untuk kompatibilitas
   static const double radiusS = 8.0; // Diharmonisasi ke 8.0
   static const double radiusL = 16.0; // Diharmonisasi ke 16.0
-  static const double radiusXL = 16.0; // Diharmonisasi ke 16.0
+  static const double radiusXL = 20.0; // Diharmonisasi ke 16.0
   static const double radiusFull = 100.0; // Bulat: pill / button / avatar
   static const double radiusPill = 100.0; // Stadium Pills & Buttons
   static const double radiusQuery = 100.0; // Chat Query Stadium Pill
@@ -141,347 +141,106 @@ class AppTheme {
 
   static const LinearGradient geminiSparkleGradient = LinearGradient(
     colors: [accentDark, accentDark],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    begin: AlignmentDirectional.topStart,
+    end: AlignmentDirectional.bottomEnd,
   );
 
-  // Dark Theme
-  static ThemeData get darkTheme {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      colorScheme: const ColorScheme(
-        brightness: Brightness.dark,
-        primary: accentDark,
-        onPrimary: canvasDark,
-        primaryContainer: citationBgDark,
-        onPrimaryContainer: citationTextDark,
-        secondary: pillActionBgDark,
-        onSecondary: canvasDark,
-        secondaryContainer: pillSecondaryBgDark,
-        onSecondaryContainer: textPrimaryDark,
-        tertiary: textSecondaryDark,
-        onTertiary: canvasDark,
-        tertiaryContainer: pillSecondaryBgDark,
-        onTertiaryContainer: textPrimaryDark,
-        error: error,
-        onError: Colors.white,
-        errorContainer: pillSecondaryBgDark,
-        onErrorContainer: OTColors.destructiveDark,
-        surface: canvasDark,
-        onSurface: textPrimaryDark,
-        surfaceContainerLowest: canvasDark,
-        surfaceContainerLow: canvasDark,
-        surfaceContainer: surfaceCardDark,
-        surfaceContainerHigh: surfaceElevated,
-        surfaceContainerHighest: pillSecondaryBgDark,
-        outline: borderDark,
-        outlineVariant: borderSubtleDark,
-        inverseSurface: surfaceCardLight,
-        inversePrimary: accentLight,
-        scrim: Colors.black,
-        shadow: Colors.black,
-      ),
-      scaffoldBackgroundColor: canvasDark,
-      textTheme: _buildTextTheme(Brightness.dark),
-      appBarTheme: AppBarTheme(
-        backgroundColor: canvasDark,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleTextStyle: GoogleFonts.outfit(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: textPrimaryDark,
-          letterSpacing: -0.3,
-        ),
-        iconTheme: const IconThemeData(color: textPrimaryDark, size: 22),
-        actionsIconTheme:
-            const IconThemeData(color: textSecondaryDark, size: 22),
-      ),
-      cardTheme: CardThemeData(
-        color: surfaceCardDark,
-        elevation: 0,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusL),
-          side: const BorderSide(color: borderDark, width: 1),
-        ),
-        clipBehavior: Clip.antiAlias,
-      ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          backgroundColor: pillActionBgDark,
-          foregroundColor: pillActionTextDark,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.2,
-          ),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: textPrimaryDark,
-          side: const BorderSide(color: borderDark, width: 1),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      dividerTheme: const DividerThemeData(
-        color: borderDark,
-        thickness: 1,
-        space: 1,
-      ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: surfaceCardDark,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
-        ),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: surfaceElevated,
-        contentTextStyle: GoogleFonts.outfit(
-          color: textPrimaryDark,
-          fontSize: 13,
-          fontWeight: FontWeight.w400,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-          side: const BorderSide(color: borderDark, width: 1),
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: queryBoxBgDark,
-        hintStyle: GoogleFonts.outfit(
-          color: textTertiaryDark,
-          fontSize: 14,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderDark, width: 1),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderDark, width: 1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: accentDark, width: 1.5),
-        ),
-      ),
-      tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(
-          color: surfaceElevated,
-          borderRadius: BorderRadius.circular(radiusXS),
-          border: Border.all(color: borderDark, width: 1),
-        ),
-        textStyle: GoogleFonts.outfit(
-          color: textPrimaryDark,
-          fontSize: 12,
-        ),
-      ),
-      dialogTheme: DialogThemeData(
-        backgroundColor: surfaceCardDark,
-        surfaceTintColor: Colors.transparent,
-        titleTextStyle: GoogleFonts.outfit(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: textPrimaryDark,
-        ),
-        contentTextStyle: GoogleFonts.outfit(
-          fontSize: 14,
-          color: textSecondaryDark,
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(radiusCard)),
-          side: BorderSide(color: borderDark, width: 1),
-        ),
-      ),
-    );
-  }
+  static ThemeData get darkTheme => _theme(true);
+  static ThemeData get lightTheme => _theme(false);
 
-  // Light Theme
-  static ThemeData get lightTheme {
+  static ThemeData _theme(bool dark) {
+    final ink = OTColors.textPrimary(dark);
+    final paper = OTColors.canvas(dark);
+    final surface = OTColors.surface(dark);
+    final border = OTColors.border(dark);
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
+    final button = ButtonStyle(
+      minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+      padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 18, vertical: 14)),
+      shape: WidgetStatePropertyAll(shape),
+      elevation: const WidgetStatePropertyAll(0),
+      textStyle: WidgetStatePropertyAll(OTTypography.button()),
+      animationDuration: const Duration(milliseconds: 160),
+    );
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: const ColorScheme(
-        brightness: Brightness.light,
-        primary: accentLight,
-        onPrimary: Colors.white,
-        primaryContainer: citationBgLight,
-        onPrimaryContainer: citationTextLight,
-        secondary: pillActionBgLight,
-        onSecondary: Colors.white,
-        secondaryContainer: pillSecondaryBgLight,
-        onSecondaryContainer: textPrimaryLight,
-        tertiary: textSecondaryLight,
-        onTertiary: surfaceCardLight,
-        tertiaryContainer: pillSecondaryBgLight,
-        onTertiaryContainer: textPrimaryLight,
-        error: error,
-        onError: Colors.white,
-        errorContainer: pillSecondaryBgLight,
-        onErrorContainer: OTColors.destructiveLight,
-        surface: canvasLight,
-        onSurface: textPrimaryLight,
-        surfaceContainerLowest: Color(0xFFFFFFFF),
-        surfaceContainerLow: canvasLight,
-        surfaceContainer: surfaceCardLight,
-        surfaceContainerHigh: pillSecondaryBgLight,
-        surfaceContainerHighest: pillSecondaryBgLight,
-        outline: borderLight,
-        outlineVariant: borderSubtleLight,
-        inverseSurface: surfaceCardDark,
-        inversePrimary: accentDark,
-        scrim: Colors.black,
-        shadow: Colors.black,
-      ),
-      scaffoldBackgroundColor: canvasLight,
-      textTheme: _buildTextTheme(Brightness.light),
-      appBarTheme: AppBarTheme(
-        backgroundColor: canvasLight,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        titleTextStyle: GoogleFonts.outfit(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: textPrimaryLight,
-          letterSpacing: -0.3,
-        ),
-        iconTheme: const IconThemeData(color: textPrimaryLight, size: 22),
-        actionsIconTheme:
-            const IconThemeData(color: textSecondaryLight, size: 22),
-      ),
-      cardTheme: CardThemeData(
-        color: surfaceCardLight,
-        elevation: 0,
-        margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusL),
-          side: const BorderSide(color: borderLight, width: 1),
-        ),
-        clipBehavior: Clip.antiAlias,
-      ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          backgroundColor: pillActionBgLight,
-          foregroundColor: pillActionTextLight,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.2,
-          ),
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: textPrimaryLight,
-          side: const BorderSide(color: borderLight, width: 1),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      dividerTheme: const DividerThemeData(
-        color: borderLight,
-        thickness: 1,
-        space: 1,
-      ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: surfaceCardLight,
+      fontFamily: OTFonts.outfit().fontFamily,
+      fontFamilyFallback: const ['Scheherazade New'],
+      brightness: dark ? Brightness.dark : Brightness.light,
+      scaffoldBackgroundColor: paper,
+      colorScheme: ColorScheme.fromSeed(seedColor: ink,
+        brightness: dark ? Brightness.dark : Brightness.light).copyWith(
+        primary: ink, onPrimary: OTColors.onAccent(dark),
+        primaryContainer: OTColors.surfaceSubtle(dark), onPrimaryContainer: ink,
+        secondary: ink, onSecondary: OTColors.onAccent(dark),
+        secondaryContainer: OTColors.surfaceSubtle(dark), onSecondaryContainer: ink,
+        tertiary: ink, onTertiary: OTColors.onAccent(dark),
+        tertiaryContainer: OTColors.surfaceSubtle(dark), onTertiaryContainer: ink,
+        error: ink, onError: OTColors.onAccent(dark),
+        errorContainer: OTColors.surfaceSubtle(dark), onErrorContainer: ink,
+        surface: surface, onSurface: ink,
+        surfaceContainerLowest: paper, surfaceContainerLow: paper,
+        surfaceContainer: surface, surfaceContainerHigh: OTColors.surfaceSubtle(dark),
+        surfaceContainerHighest: OTColors.surfaceSubtle(dark),
+        onSurfaceVariant: OTColors.textSecondary(dark),
+        outline: border, outlineVariant: border,
+        surfaceTint: Colors.transparent,
+        inverseSurface: ink, onInverseSurface: OTColors.onAccent(dark), inversePrimary: paper),
+      textTheme: _buildTextTheme(dark ? Brightness.dark : Brightness.light),
+      visualDensity: VisualDensity.standard,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      splashFactory: NoSplash.splashFactory,
+      highlightColor: ink.withValues(alpha: .04),
+      hoverColor: ink.withValues(alpha: .035),
+      focusColor: ink.withValues(alpha: .1),
+      iconTheme: IconThemeData(color: ink, size: 22),
+      iconButtonTheme: IconButtonThemeData(style: ButtonStyle(
+        minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+        foregroundColor: WidgetStatePropertyAll(ink))),
+      appBarTheme: AppBarTheme(backgroundColor: paper, foregroundColor: ink,
+        surfaceTintColor: Colors.transparent, elevation: 0, scrolledUnderElevation: 0,
+        centerTitle: false, titleTextStyle: OTTypography.screenTitle(color: ink)),
+      cardTheme: CardThemeData(color: surface, surfaceTintColor: Colors.transparent,
+        elevation: 0, margin: EdgeInsets.zero,
+        shape: shape.copyWith(side: BorderSide(color: border, width: .8))),
+      filledButtonTheme: FilledButtonThemeData(style: button.copyWith(
+        backgroundColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.disabled) ? ink.withValues(alpha: .12) : ink),
+        foregroundColor: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.disabled) ? ink.withValues(alpha: .4) : OTColors.onAccent(dark)))),
+      outlinedButtonTheme: OutlinedButtonThemeData(style: button.copyWith(
+        foregroundColor: WidgetStatePropertyAll(ink),
+        side: WidgetStatePropertyAll(BorderSide(color: OTColors.borderStrong(dark), width: .8)))),
+      textButtonTheme: TextButtonThemeData(style: button.copyWith(foregroundColor: WidgetStatePropertyAll(ink))),
+      dividerTheme: DividerThemeData(color: border, thickness: .8, space: 1),
+      bottomSheetTheme: BottomSheetThemeData(backgroundColor: surface,
+        surfaceTintColor: Colors.transparent, elevation: 0, showDragHandle: true,
+        dragHandleColor: OTColors.borderStrong(dark),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20)))),
+      dialogTheme: DialogThemeData(backgroundColor: surface, elevation: 0,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
-        ),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: textPrimaryLight,
-        contentTextStyle: GoogleFonts.outfit(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.w400,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: queryBoxBgLight,
-        hintStyle: GoogleFonts.outfit(
-          color: textTertiaryLight,
-          fontSize: 14,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderLight, width: 1),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderLight, width: 1),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: accentLight, width: 1.5),
-        ),
-      ),
-      tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(
-          color: textPrimaryLight,
-          borderRadius: BorderRadius.circular(radiusXS),
-        ),
-        textStyle: GoogleFonts.outfit(
-          color: Colors.white,
-          fontSize: 12,
-        ),
-      ),
-      dialogTheme: DialogThemeData(
-        backgroundColor: surfaceCardLight,
-        surfaceTintColor: Colors.transparent,
-        titleTextStyle: GoogleFonts.outfit(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: textPrimaryLight,
-        ),
-        contentTextStyle: GoogleFonts.outfit(
-          fontSize: 14,
-          color: textSecondaryLight,
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(radiusCard)),
-          side: BorderSide(color: borderLight, width: 1),
-        ),
-      ),
+        titleTextStyle: OTTypography.bookTitle(color: ink),
+        contentTextStyle: OTTypography.body(color: OTColors.textSecondary(dark)),
+        shape: shape.copyWith(side: BorderSide(color: border))),
+      snackBarTheme: SnackBarThemeData(backgroundColor: ink,
+        contentTextStyle: OTTypography.body(color: OTColors.onAccent(dark)),
+        shape: shape, behavior: SnackBarBehavior.floating, elevation: 0),
+      inputDecorationTheme: InputDecorationTheme(filled: true, fillColor: surface,
+        hintStyle: OTTypography.body(color: OTColors.textTertiary(dark)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: border, width: .8)),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: border, width: .8)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: ink, width: 1.5))),
+      tooltipTheme: TooltipThemeData(decoration: BoxDecoration(color: ink,
+        borderRadius: BorderRadius.circular(8)), textStyle: OTTypography.caption(color: OTColors.onAccent(dark))),
+      pageTransitionsTheme: const PageTransitionsTheme(builders: {
+        TargetPlatform.android: QuietPageTransitionsBuilder(),
+        TargetPlatform.iOS: QuietPageTransitionsBuilder(),
+        TargetPlatform.macOS: QuietPageTransitionsBuilder(),
+        TargetPlatform.windows: QuietPageTransitionsBuilder(),
+        TargetPlatform.linux: QuietPageTransitionsBuilder(),
+        TargetPlatform.fuchsia: QuietPageTransitionsBuilder(),
+      }),
     );
   }
 
@@ -492,17 +251,7 @@ class AppTheme {
     double? letterSpacing,
     double? height,
   }) {
-    if (OTTypography.useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Newsreader',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: color,
-        letterSpacing: letterSpacing,
-        height: height,
-      );
-    }
-    return GoogleFonts.newsreader(
+    return OTFonts.newsreader(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -518,17 +267,7 @@ class AppTheme {
     double? letterSpacing,
     double? height,
   }) {
-    if (OTTypography.useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Outfit',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: color,
-        letterSpacing: letterSpacing,
-        height: height,
-      );
-    }
-    return GoogleFonts.outfit(
+    return OTFonts.outfit(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -555,6 +294,11 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.4),
+      displaySmall: _fontNewsreader(fontSize: 32, fontWeight: FontWeight.w500,
+          color: primary, letterSpacing: -0.5, height: 1.18),
+      headlineSmall: _fontNewsreader(fontSize: 24, fontWeight: FontWeight.w500,
+          color: primary, letterSpacing: -0.3, height: 1.25),
+      labelMedium: _fontOutfit(fontSize: 12, fontWeight: FontWeight.w500, color: secondary),
       headlineLarge: _fontNewsreader(
           fontSize: 24,
           fontWeight: FontWeight.w600,
@@ -602,8 +346,22 @@ class AppTheme {
   static LinearGradient agentGradient(String agentId) {
     return const LinearGradient(
       colors: [accentDark, accentDark],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+      begin: AlignmentDirectional.topStart,
+      end: AlignmentDirectional.bottomEnd,
     );
+  }
+}
+
+
+
+/// Native iOS-style back swipe remains available through MaterialPageRoute.
+class QuietPageTransitionsBuilder extends PageTransitionsBuilder {
+  const QuietPageTransitionsBuilder();
+  @override
+  Widget buildTransitions<T>(PageRoute<T> route, BuildContext context,
+      Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    if (MediaQuery.disableAnimationsOf(context)) return child;
+    return const CupertinoPageTransitionsBuilder().buildTransitions(
+      route, context, animation, secondaryAnimation, child);
   }
 }

@@ -1,7 +1,8 @@
 /// LegalCopy: Sumber data dan teks kanonik hukum dan kebijakan OpenTurath.
 /// Mengintegrasikan naskah resmi dari OpenTurath_Identitas_dan_Kebijakan.md.
-/// Seluruh penanda placeholder [[...]] telah diselesaikan dengan nilai kanonik
-/// dan mematuhi etika "The Quiet Scholar" (tanpa tanda seru, jujur, dan bersahaja).
+/// Teks Indonesia menjadi naskah kanonik; terjemahan ada di l10n/legal_dictionary.dart.
+/// Nilai kontak tetap berupa konfigurasi dan harus diisi untuk instalasi tujuan.
+/// Terjemahan tidak menambah janji layanan atau memperluas kewajiban pengelola.
 library;
 
 class LegalSection {
@@ -110,7 +111,7 @@ abstract final class LegalCopy {
       content:
           'Hak atas tulisan atau catatan yang Anda buat tetap berada pada Anda. Anda memberi izin terbatas kepada kami untuk memproses dan menyimpan materi tersebut semata-mata untuk menjalankan fitur yang Anda pilih. '
           'Izin ini tidak memindahkan kepemilikan dan kami tidak menjual atau menerbitkan catatan pribadi Anda.\n\n'
-          'Catatan disimpan secara lokal pada perangkat Anda melalui penyimpanan aplikasi. Gunakan fitur salin atau berbagi yang tersedia untuk mencadangkan materi penting.',
+          'Catatan disimpan pada perangkat. Catatan dan penanda rujukan yang terhubung ke akun juga disinkronkan melalui Firebase saat layanan tersedia. Gunakan fitur salin atau berbagi untuk mencadangkan materi penting.',
     ),
     LegalSection(
       title: '9. Hak atas Aplikasi dan Kitab',
@@ -182,9 +183,11 @@ abstract final class LegalCopy {
           '• Pembayaran: Nomor transaksi, jumlah pembayaran, metode, waktu, dan status dari penyedia DOKU.\n'
           '• Kontak Transaksi: Nomor WhatsApp/telepon yang Anda berikan saat pembayaran untuk pengiriman informasi aktivasi.\n'
           '• Percakapan: Pertanyaan, jawaban, dan konteks percakapan yang diproses melalui sesi Google NotebookLM.\n'
-          '• Catatan: Catatan, kutipan, dan rujukan yang Anda simpan pada penyimpanan lokal perangkat.\n'
+          '• Catatan: Isi catatan, kutipan, dan rujukan pada perangkat serta salinan yang disinkronkan melalui Firebase untuk akun yang masuk.\n'
           '• Bantuan: Alamat kontak, isi pengaduan, nomor transaksi, dan lampiran tangkapan layar untuk penanganan masalah.\n'
-          '• Sesi Teknis: Token sesi autentikasi yang aman untuk mempertahankan login di perangkat.',
+          '• Sesi Teknis: Token dan cookie untuk mempertahankan sesi autentikasi.\n'
+          '• Identitas Instalasi: Pengenal acak yang disimpan pada aplikasi, merek dan model perangkat, serta hasil pemeriksaan perangkat jika tersedia. Pengenal ini bukan bukti identitas perangkat keras.\n'
+          '• Diagnostik: Jenis kesalahan, konteks fitur, waktu, platform, dan jejak kejadian terbatas yang dikirim ke Firebase. Nilai rahasia dan alamat email disamarkan.',
     ),
     LegalSection(
       title: '3. Tujuan dan Dasar Pemrosesan',
@@ -202,11 +205,12 @@ abstract final class LegalCopy {
           'Hindari memasukkan informasi pribadi sensitif atau rahasia ke dalam percakapan.',
     ),
     LegalSection(
-      title: '5. Catatan dan Penyimpanan Perangkat',
+      title: '5. Catatan, Penyimpanan, dan Sinkronisasi',
       content:
-          'Catatan, kutipan ibarah, dan penanda rujukan disimpan secara lokal di perangkat Anda menggunakan penyimpanan aplikasi. '
-          'Jika Anda membersihkan data aplikasi atau mencopot pemasangan aplikasi, catatan lokal dapat terhapus. '
-          'Gunakan fitur salin teks atau bagikan catatan untuk mencadangkan catatan penting Anda ke tempat penyimpanan lain.',
+          'Catatan, kutipan ibarah, dan penanda rujukan disimpan pada perangkat. Catatan yang terhubung ke akun juga disinkronkan ke Firebase dan dapat dimuat pada perangkat lain yang masuk dengan akun tersebut. '
+          'Sinkronisasi memerlukan koneksi dan dapat tertunda. Sebagian catatan lokal tidak memiliki salinan cloud.\n\n'
+          'Menghapus data aplikasi atau mencopot aplikasi dapat menghapus salinan lokal, tetapi tidak otomatis menghapus salinan cloud. '
+          'Penghapusan catatan melalui aplikasi diteruskan saat sinkronisasi tersedia; penanda penghapusan dapat tetap disimpan untuk mencegah catatan lama muncul kembali. Cadangkan catatan penting dengan fitur salin atau bagikan.',
     ),
     LegalSection(
       title: '6. Penerima dan Penyedia Layanan',
@@ -214,33 +218,32 @@ abstract final class LegalCopy {
           'Data dibagikan hanya sebatas yang diperlukan untuk menjalankan layanan:\n'
           '• Google: Untuk proses masuk autentikasi dan pemrosesan sesi percakapan NotebookLM.\n'
           '• DOKU: Lembaga pembayaran resmi untuk memproses transaksi perbankan, dompet digital, atau QRIS.\n'
-          '• Firebase / Google Cloud: Pengelolaan database transaksi dan status hak akses akun yang aman.\n\n'
-          'Seluruh penyedia bekerja berdasarkan standar keamanan dan enkripsi industri.',
+          '• Firebase / Google Cloud: Autentikasi, data akun dan hak akses, data transaksi, sinkronisasi catatan, dan laporan diagnostik.\n\n'
+          'Pemrosesan oleh masing-masing penyedia mengikuti layanan yang digunakan dan ketentuan penyedia tersebut.',
     ),
     LegalSection(
       title: '7. Kebijakan Iklan, Analitik, dan Promosi',
       content:
-          'OpenTurath bebas dari iklan pihak ketiga dan tidak menjual data pribadi Anda. '
-          'Pemberitahuan transaksi dan pembaruan layanan dikirimkan semata-mata untuk keperluan operasional akun Anda.',
+          'Laporan diagnostik digunakan untuk menelusuri gangguan aplikasi. Laporan produksi memuat jenis kesalahan, bukan teks lengkap kesalahan atau alamat email akun. '
+          'Pemberitahuan transaksi dan pembaruan layanan berkaitan dengan pengoperasian akun Anda.',
     ),
     LegalSection(
       title: '8. Pemrosesan Data Lintas Wilayah',
       content:
-          'Infrastruktur autentikasi Google dan basis data cloud dapat memproses sebagian data teknis di pusat data yang aman di dalam maupun luar wilayah Indonesia, dengan perlindungan enkripsi transit dan at-rest berstandar global.',
+          'Layanan Google, Firebase, dan penyedia pembayaran dapat memproses data di luar perangkat Anda. Lokasi pemrosesan mengikuti konfigurasi layanan dan ketentuan penyedia; lokasi penyimpanan setiap jenis data belum dirinci dalam dokumen ini.',
     ),
     LegalSection(
       title: '9. Masa Penyimpanan Data (Retensi)',
       content:
-          '• Data Akun: Disimpan selama akun aktif, dan dihapus setelah permohonan penutupan akun disetujui.\n'
-          '• Data Transaksi: Disimpan selama batas waktu yang diwajibkan oleh ketentuan perpajakan dan hukum transaksi keuangan Republik Indonesia.\n'
-          '• Catatan Pengguna: Disimpan di perangkat Anda hingga Anda menghapusnya sendiri atau mencopot aplikasi.\n'
-          '• Pengaduan Bantuan: Disimpan selama proses penyelesaian masalah dan pengarsipan layanan.',
+          'Catatan lokal tersimpan sampai Anda menghapusnya atau membersihkan data aplikasi. Salinan cloud dan penanda penghapusan memiliki siklus penyimpanan tersendiri. '
+          'Jangka waktu retensi data akun, transaksi, diagnostik, bantuan, serta salinan cloud belum dirinci dalam dokumen ini. '
+          'Hubungi pengelola untuk informasi retensi dan cakupan penghapusan data; penghapusan akun tidak dengan sendirinya membuktikan penghapusan seluruh salinan pada penyedia layanan.',
     ),
     LegalSection(
       title: '10. Keamanan dan Perlindungan Data',
       content:
-          'Kami menerapkan langkah-langkah pengamanan teknis, termasuk komunikasi terenkripsi SSL/TLS, pembatasan akses data, dan perlindungan token sesi. '
-          'Kata sandi akun Google Anda tidak pernah disimpan di server OpenTurath.',
+          'Aplikasi menggunakan autentikasi Google dan koneksi layanan melalui HTTPS. Anda memasukkan kata sandi pada halaman Google, bukan formulir kata sandi OpenTurath. '
+          'Jangan membagikan token sesi, kode verifikasi, atau data rahasia. Keamanan layanan cloud juga bergantung pada pengaturan akses dan pengoperasian layanan tersebut.',
     ),
     LegalSection(
       title: '11. Hak Subjek Data Pengguna',
@@ -400,9 +403,11 @@ abstract final class LegalCopy {
   // ── Bab 6 & 10.5: Teks Konfirmasi Penghapusan Akun Kanonik ─────
   static const deleteAccountConfirmationBody =
       'Akun OpenTurath akan dihapus dan akses akun berakhir. '
-      'Data yang masih perlu disimpan untuk kewajiban hukum mengikuti Kebijakan Privasi. '
+      'Salinan lokal yang terkait akun akan dibersihkan. Cakupan penghapusan salinan cloud dan data pada penyedia layanan mengikuti proses pengelola; penghapusan akun tidak menjamin seluruh salinan langsung terhapus. '
       'Simpan catatan penting sebelum melanjutkan.';
 
   static const deleteAccountConfirmationCancel = 'Batal';
   static const deleteAccountConfirmationConfirm = 'Hapus akun';
 }
+
+

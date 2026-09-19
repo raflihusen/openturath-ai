@@ -1,4 +1,6 @@
+import 'app_config.dart';
 import 'legal_copy.dart';
+import 'l10n/app_dictionary.dart';
 
 /// AppCopy: Sumber teks kanonik terpusat untuk OpenTurath.
 /// Menjaga nada bahasa tetap tenang, ringkas, jelas, dan wajar untuk kajian keislaman (The Quiet Scholar).
@@ -258,26 +260,45 @@ abstract final class AppCopy {
       'Langganan tidak diperpanjang otomatis. Anda dapat memperpanjangnya saat masa akses berakhir.';
 
   // ── Helper Interpolasi Dinamis ─────────────────────────────────
-  static String preparingModule(String module) => '$module sedang disiapkan.';
+  static String _translated(String key, {Map<String, Object> args = const {}}) =>
+      AppDictionary.translate(key, AppConfig.localeNotifier.value, args: args);
+
+  static String preparingModule(String module) =>
+      _translated('core.module.preparing', args: {'module': _translated(module)});
 
   static String subscriptionRequiredFor(String module) =>
-      'Berlangganan untuk membuka $module.';
+      _translated('core.module.subscription', args: {'module': _translated(module)});
 
   static String accessUnavailableFor(String module) =>
-      'Akses ke $module belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.';
+      _translated('core.module.unavailable', args: {'module': _translated(module)});
 
   static String planWithAgent(String agentTitle, String duration) =>
-      '$agentTitle — $duration';
+      _translated('core.plan.summary', args: {
+        'agent': _translated(agentTitle),
+        'duration': _translated(duration),
+      });
 
-  static String trialDaysLeft(int days) => 'Masa coba · $days hari';
+  static String trialDaysLeft(int days) => _translated(
+        days == 1 ? 'core.trial.remaining.one' : 'core.trial.remaining',
+        args: {'days': days},
+      );
 
-  static String assistantsAvailableCount(int count) =>
-      count == 1 ? '1 asisten tersedia' : '$count asisten tersedia';
+  static String assistantsAvailableCount(int count) => _translated(
+        count == 1 ? 'core.assistants.count.one' : 'core.assistants.count',
+        args: {'count': count},
+      );
 
-  static String savedNotesCount(int count) => '$count catatan tersimpan';
+  static String savedNotesCount(int count) => _translated(
+        count == 1 ? 'core.notes.count.one' : 'core.notes.count',
+        args: {'count': count},
+      );
 
   static String versionWithTagline(String version) =>
-      'Versi $version · $appTagline';
+      _translated('core.version', args: {
+        'version': version,
+        'tagline': _translated(appTagline),
+      });
 
-  static String ahlanWithName(String name) => 'Ahlan, $name';
+  static String ahlanWithName(String name) =>
+      _translated('core.welcome.name', args: {'name': name});
 }

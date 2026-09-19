@@ -1,93 +1,59 @@
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/services/telemetry_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  final telemetry = TelemetryService.instance;
 
-  group('TelemetryService Tests', () {
-    final telemetry = TelemetryService.instance;
+  test('free text removes credentials, quoted secrets, emails and URL query data', () {
+    final safe = telemetry.sanitizeData(
+      'Bearer abc123.456 password="two secret words" apiKey=key123 '
+      'Cookie: SID=cookie123; HSID=secondCookie '
+      'ahmad@example.com https://user:pass@example.com/private/path?q=private-query#fragment '
+      '/relative?search=private-search');
+    for (final secret in ['abc123.456', 'two secret words', 'key123', 'cookie123',
+      'secondCookie', 'ahmad@example.com', 'user:pass', '/private/path', 'private-query', 'fragment', 'private-search']) {
+      expect(safe, isNot(contains(secret)), reason: secret);
+    }
+  });
 
-    test('sanitizeData masks sensitive tokens, passwords, and cookies', () {
-      // 1. Bearer Token
-      const withToken = 'Request header: Bearer ya29.a0AfH6SMD123456';
-      expect(
-        telemetry.sanitizeData(withToken),
-        contains('Bearer [REDACTED_TOKEN]'),
-      );
+  test('structured secrets are redacted by key through nested maps and lists', () {
+    final safe = telemetry.sanitizeValue({
+      'headers': {'Authorization': 'unprefixed-secret', 'Set-Cookie': ['secret-cookie']},
+      'details': [
+        {'access_token': 'token-value', 'refreshToken': {'value': 'nested-secret'}},
+        {'userEmail': 'name@example.com', 'noteBody': 'private scholarly note', 'attempt': 2},
+      ],
+      'link': 'https://example.com/path?value=private',
+      'summary': 'raw exception containing arbitrary private data',
+    }) as Map<String, dynamic>;
+    final encoded = jsonEncode(safe);
+    for (final secret in ['unprefixed-secret', 'secret-cookie', 'token-value',
+      'nested-secret', 'name@example.com', 'private scholarly note', 'value=private', 'arbitrary private data']) {
+      expect(encoded, isNot(contains(secret)), reason: secret);
+    }
+    expect(safe['details'][1]['attempt'], 2);
+  });
 
-      // 2. Passwords and secrets
-      const withPassword = '{"user": "admin", "password": "supersecret123"}';
-      expect(
-        telemetry.sanitizeData(withPassword),
-        contains('password: "[REDACTED]"'),
-      );
+  test('email helper retains neither address nor domain', () {
+    expect(telemetry.maskEmail('ahmad@example.com'), '[REDACTED_EMAIL]');
+    expect(telemetry.maskEmail(''), '');
+    expect(telemetry.maskEmail('invalid-email'), '');
+  });
 
-      // 3. API Key
-      const withApiKey = 'key apiKey="AIzaSyA123456789"';
-      expect(
-        telemetry.sanitizeData(withApiKey),
-        contains('apiKey: "[REDACTED]"'),
-      );
+  test('recursive structures are bounded', () {
+    final recursive = <String, dynamic>{};
+    recursive['next'] = recursive;
+    expect(jsonEncode(telemetry.sanitizeValue(recursive)), contains('[TRUNCATED]'));
+    expect((telemetry.sanitizeValue(List.filled(200, 1)) as List).length, 100);
+  });
 
-      // 4. Google Cookies (SID / HSID)
-      const withCookie = 'Cookie: SID=abc123xyz; HSID=def456; other=123';
-      expect(
-        telemetry.sanitizeData(withCookie),
-        contains('SID=[REDACTED_COOKIE]'),
-      );
-      expect(
-        telemetry.sanitizeData(withCookie),
-        contains('HSID=[REDACTED_COOKIE]'),
-      );
-
-      // 5. Voucher code
-      const withVoucher = 'Redeem attempt voucher="PERDANA7HARI"';
-      expect(
-        telemetry.sanitizeData(withVoucher),
-        contains('voucher: "[REDACTED_CODE]"'),
-      );
-    });
-
-    test('maskEmail obfuscates email addresses for privacy', () {
-      expect(telemetry.maskEmail('ahmad@example.com'), 'a***d@example.com');
-      expect(telemetry.maskEmail('ab@domain.com'), '*@domain.com');
-      expect(telemetry.maskEmail(''), '');
-      expect(telemetry.maskEmail('invalid-email'), '');
-    });
-
-    test('leaveBreadcrumb adds breadcrumbs and respects ring buffer limit', () {
-      for (int i = 1; i <= 25; i++) {
-        telemetry.leaveBreadcrumb('Langkah navigasi $i', category: 'navigation');
-      }
-
-      // Pastikan reporting tidak melempar exception saat dipanggil tanpa firebase
-      expect(
-        () async => await telemetry.reportError(
-          'Simulated error',
-          StackTrace.current,
-          context: 'unit_test',
-        ),
-        returnsNormally,
-      );
-    });
-
-    test('Deduplication prevents immediate duplicate error reporting', () async {
-      // Panggilan pertama
-      await telemetry.reportError(
-        'Duplicate error message',
-        StackTrace.fromString('line 1\nline 2\nline 3'),
-        context: 'dedup_test',
-      );
-
-      // Panggilan kedua yang identik harus ter-deduplikasi tanpa melempar error
-      expect(
-        () async => await telemetry.reportError(
-          'Duplicate error message',
-          StackTrace.fromString('line 1\nline 2\nline 3'),
-          context: 'dedup_test',
-        ),
-        returnsNormally,
-      );
-    });
+  test('reporting and breadcrumbs remain safe without Firebase', () async {
+    for (var i = 0; i < 25; i++) {
+      telemetry.leaveBreadcrumb('Navigation $i', category: 'navigation');
+    }
+    await expectLater(telemetry.reportError(StateError('test'), StackTrace.current,
+      context: 'unit_test'), completes);
   });
 }

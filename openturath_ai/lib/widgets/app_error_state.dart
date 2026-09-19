@@ -1,5 +1,6 @@
+import '../core/l10n/app_dictionary.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:openturath_ai/core/design/ot_fonts.dart';
 import '../core/theme.dart';
 
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
@@ -98,9 +99,9 @@ class AppErrorState extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                title,
+                context.tr(title),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: OTFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -108,9 +109,9 @@ class AppErrorState extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                message,
+                context.tr(message),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: OTFonts.outfit(
                   fontSize: 13,
                   height: 1.45,
                   color: textSecondary,
@@ -118,15 +119,14 @@ class AppErrorState extends StatelessWidget {
               ),
               if (onRetry != null) ...[
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 46,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: double.infinity, minHeight: 48),
                   child: FilledButton.icon(
                     onPressed: onRetry,
                     icon: const Icon(Icons.refresh_rounded, size: 18),
                     label: Text(
-                      retryLabel,
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                      context.tr(retryLabel),
+                      style: OTFonts.outfit(fontWeight: FontWeight.w600),
                     ),
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -138,14 +138,13 @@ class AppErrorState extends StatelessWidget {
               ],
               if (onBack != null) ...[
                 const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: double.infinity, minHeight: 48),
                   child: TextButton(
                     onPressed: onBack,
                     child: Text(
-                      backLabel,
-                      style: GoogleFonts.outfit(
+                      context.tr(backLabel),
+                      style: OTFonts.outfit(
                         fontWeight: FontWeight.w500,
                         color: textSecondary,
                       ),
@@ -160,3 +159,5 @@ class AppErrorState extends StatelessWidget {
     );
   }
 }
+
+

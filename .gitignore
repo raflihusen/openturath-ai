@@ -71,5 +71,5 @@ lib-cov/
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
-*.sw?
+# Backups & Migration Overlays
+.editorial-backup*/

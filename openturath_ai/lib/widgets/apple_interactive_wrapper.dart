@@ -1,152 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Wrapper interaktif bergaya Apple iOS dengan animasi kompresi mikro
-/// (press-down scale), pantulan pegas halus, dan getaran haptic feedback taktil.
+/// Pointer, keyboard and assistive actions share exactly one activation path.
 class AppleInteractiveWrapper extends StatefulWidget {
+  const AppleInteractiveWrapper({super.key, required this.child, this.onTap,
+    this.onLongPress, this.pressedScale = .985,
+    this.duration = const Duration(milliseconds: 140), this.enableHaptic = true,
+    this.hapticType = HapticFeedbackType.selection, this.borderRadius, this.semanticLabel});
   final Widget child;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
+  final VoidCallback? onTap, onLongPress;
   final double pressedScale;
   final Duration duration;
   final bool enableHaptic;
   final HapticFeedbackType hapticType;
   final BorderRadius? borderRadius;
   final String? semanticLabel;
-
-  const AppleInteractiveWrapper({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.onLongPress,
-    this.pressedScale = 0.975,
-    this.duration = const Duration(milliseconds: 110),
-    this.enableHaptic = true,
-    this.hapticType = HapticFeedbackType.light,
-    this.borderRadius,
-    this.semanticLabel,
-  });
-
   @override
   State<AppleInteractiveWrapper> createState() => _AppleInteractiveWrapperState();
 }
-
-enum HapticFeedbackType {
-  light,
-  medium,
-  selection,
-  none,
-}
-
-class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-      reverseDuration: const Duration(milliseconds: 140),
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: widget.pressedScale,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutCubic,
-        reverseCurve: Curves.easeOutBack,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _triggerHaptic() {
-    if (!widget.enableHaptic) return;
-    switch (widget.hapticType) {
-      case HapticFeedbackType.light:
-        HapticFeedback.lightImpact();
-        break;
-      case HapticFeedbackType.medium:
-        HapticFeedback.mediumImpact();
-        break;
-      case HapticFeedbackType.selection:
-        HapticFeedback.selectionClick();
-        break;
-      case HapticFeedbackType.none:
-        break;
+enum HapticFeedbackType { light, medium, selection, none }
+class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper> {
+  bool _pressed = false, _focused = false, _hovered = false;
+  bool get _enabled => widget.onTap != null || widget.onLongPress != null;
+  void _activate([bool long = false]) {
+    final action = long ? widget.onLongPress : widget.onTap;
+    if (action == null) return;
+    if (widget.enableHaptic) {
+      switch (widget.hapticType) {
+        case HapticFeedbackType.light: HapticFeedback.lightImpact(); break;
+        case HapticFeedbackType.medium: HapticFeedback.lightImpact(); break;
+        case HapticFeedbackType.selection: HapticFeedback.selectionClick(); break;
+        case HapticFeedbackType.none: break;
+      }
     }
+    action();
   }
-
-  void _handleTapDown(TapDownDetails details) {
-    if (widget.onTap != null || widget.onLongPress != null) {
-      _controller.forward();
-    }
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    if (widget.onTap != null || widget.onLongPress != null) {
-      _controller.reverse();
-    }
-  }
-
-  void _handleTapCancel() {
-    if (widget.onTap != null || widget.onLongPress != null) {
-      _controller.reverse();
-    }
-  }
-
+  void _press(bool value) { if (_pressed != value && mounted) setState(() => _pressed = value); }
   @override
   Widget build(BuildContext context) {
-    final hasAction = widget.onTap != null || widget.onLongPress != null;
-    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-
-    Widget result = reduceMotion
-        ? widget.child
-        : AnimatedBuilder(
-            animation: _scaleAnimation,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _scaleAnimation.value,
-                child: child,
-              );
-            },
-            child: widget.child,
-          );
-
-    if (hasAction) {
-      result = Semantics(
-        button: true,
-        enabled: true,
-        label: widget.semanticLabel,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: reduceMotion ? null : _handleTapDown,
-          onTapUp: reduceMotion ? null : _handleTapUp,
-          onTapCancel: reduceMotion ? null : _handleTapCancel,
-          onTap: () {
-            _triggerHaptic();
-            widget.onTap?.call();
-          },
-          onLongPress: widget.onLongPress != null
-              ? () {
-                  HapticFeedback.mediumImpact();
-                  widget.onLongPress?.call();
-                }
-              : null,
-          child: result,
-        ),
-      );
-    }
-
-    return result;
+    if (!_enabled) return widget.child;
+    final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final ink = Theme.of(context).colorScheme.onSurface;
+    return FocusableActionDetector(
+      mouseCursor: SystemMouseCursors.click,
+      onShowFocusHighlight: (v) => setState(() => _focused = v),
+      onShowHoverHighlight: (v) => setState(() => _hovered = v),
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+      },
+      actions: <Type, Action<Intent>>{ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) {
+        _activate(widget.onTap == null); return null;
+      })},
+      child: Semantics(button: true, enabled: true, label: widget.semanticLabel,
+        onTap: widget.onTap == null ? null : () => _activate(),
+        onLongPress: widget.onLongPress == null ? null : () => _activate(true),
+        child: GestureDetector(behavior: HitTestBehavior.opaque, excludeFromSemantics: true,
+          onTapDown: (_) => _press(true), onTapUp: (_) => _press(false), onTapCancel: () => _press(false),
+          onTap: widget.onTap == null ? null : () => _activate(),
+          onLongPress: widget.onLongPress == null ? null : () { _press(false); _activate(true); },
+          child: AnimatedScale(scale: !reduce && _pressed ? widget.pressedScale : 1,
+            duration: reduce ? Duration.zero : (_pressed ? widget.duration : const Duration(milliseconds: 220)),
+            curve: Curves.easeOutCubic,
+            child: AnimatedContainer(duration: reduce ? Duration.zero : const Duration(milliseconds: 140),
+              foregroundDecoration: BoxDecoration(
+                color: _hovered ? ink.withValues(alpha: .035) : Colors.transparent,
+                borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
+                border: _focused ? Border.all(color: ink, width: 2) : null),
+              child: widget.child)),
+        )),
+    );
   }
 }

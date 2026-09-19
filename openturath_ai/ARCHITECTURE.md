@@ -121,7 +121,7 @@ openturath_ai/
 | Database | cloud_firestore | `^5.2.0` |
 | Backend | cloud_functions (Node/TypeScript) | `^5.0.3` |
 | WebView | flutter_inappwebview | `^6.0.0` |
-| Tipografi | google_fonts (Outfit, Amiri) | `^6.2.1` |
+| Tipografi | Local bundled fonts (Outfit, Newsreader, Scheherazade New) | — |
 | Lain-lain | shared_preferences, url_launcher, lottie, shimmer, cached_network_image | — |
 
 **Firebase project:** `open-turath`
@@ -456,7 +456,7 @@ Bahasa visual diambil dari **Google AI Edge Gallery** (lihat `scratch/apk_extrac
 
 | Elemen | Penerapan |
 |---|---|
-| Tipografi | Outfit (UI, `w400`–`w800`, letter-spacing negatif untuk judul) + Amiri (Arab) |
+| Tipografi | Outfit (UI, `w400`–`w800`, letter-spacing negatif untuk judul) + Scheherazade New (Arab Naskh) |
 | Permukaan | `bgCanvas` → `surfaceL1` → `surfaceL2` → `surfaceL3` berjenjang |
 | Aksen | Empat warna merek: emas, merah, hijau, biru |
 | Glassmorphism | `BackdropFilter` blur 12–16 px pada AppBar, paywall, menu |

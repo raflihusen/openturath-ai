@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:openturath_ai/core/legal_copy.dart';
 import 'package:openturath_ai/widgets/legal_document_sheet.dart';
 
@@ -95,9 +96,21 @@ void main() {
       expect(manualRenewalText.toLowerCase(), contains('tanpa'));
     });
 
+    test('Privacy discloses cloud notes, diagnostics and uncertain retention', () {
+      final text = LegalCopy.privacySections.map((section) => section.content).join(' ');
+      expect(text, contains('disinkronkan ke Firebase'));
+      expect(text, contains('Diagnostik'));
+      expect(text, contains('Jangka waktu retensi'));
+      expect(text, contains('belum dirinci'));
+      expect(LegalCopy.deleteAccountConfirmationBody, contains('tidak menjamin'));
+    });
+
     testWidgets('LegalDocumentSheet dapat ditampilkan tanpa crash untuk setiap dokumen', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          locale: const Locale('id'),
+          supportedLocales: const [Locale('id')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
@@ -117,3 +130,5 @@ void main() {
     });
   });
 }
+
+

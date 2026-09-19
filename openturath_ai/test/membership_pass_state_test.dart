@@ -70,4 +70,15 @@ void main() {
     );
     expect(resolveMembershipPass(legacy).state, MembershipPassState.activePro);
   });
+  test('pending payment with future expiry never appears active', () {
+    final summary = resolveMembershipPass(user({
+      'hadits': ModuleEntitlement(plan: 'pro', status: 'pending',
+        expiry: DateTime(2099, 1, 1), paymentStatus: 'pending'),
+    }), now: DateTime(2026, 1, 1));
+    expect(summary.state, MembershipPassState.paymentPending);
+    expect(summary.isOpen, isFalse);
+  });
+
 }
+
+

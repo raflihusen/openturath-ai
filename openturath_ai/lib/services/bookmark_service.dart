@@ -5,48 +5,44 @@ import 'package:flutter/foundation.dart';
 import '../models/bookmark_model.dart';
 import 'scoped_json_store.dart';
 
+/// Account-scoped offline data. Legacy unowned notes are deliberately not imported.
 class BookmarkService extends ChangeNotifier {
   static final BookmarkService _instance = BookmarkService._internal();
   factory BookmarkService({FirebaseFirestore? firestore, FirebaseAuth? auth}) {
     if (firestore != null) _instance._firestore = firestore;
-    if (auth != null) _instance._auth = auth;
+    if (auth != null && !identical(auth, _instance._auth)) {
+      _instance._auth = auth;
+      _instance._listenToAuth();
+    } else if (_instance._authListener == null) {
+      _instance._listenToAuth();
+    }
     return _instance;
   }
-  BookmarkService._internal() {
-    _initAuthListener();
-  }
+  BookmarkService._internal();
 
   FirebaseFirestore? _firestore;
   FirebaseAuth? _auth;
-  bool _isSyncing = false;
-  bool get isSyncing => _isSyncing;
+  StreamSubscription<User?>? _authListener;
+  final Map<String, Future<void>> _syncs = {};
+  int _generation = 0;
+  String? _observedUid;
+  bool get isSyncing => _syncs.containsKey(_activeAuth?.currentUser?.uid);
 
   FirebaseAuth? get _activeAuth {
-    if (_auth != null) return _auth;
-    try {
-      return FirebaseAuth.instance;
-    } catch (_) {
-      return null;
-    }
+    try { return _auth ?? FirebaseAuth.instance; } catch (_) { return null; }
   }
-
   FirebaseFirestore? get _db {
-    if (_firestore != null) return _firestore;
-    try {
-      return FirebaseFirestore.instance;
-    } catch (_) {
-      return null;
-    }
+    try { return _firestore ?? FirebaseFirestore.instance; } catch (_) { return null; }
   }
 
-  void _initAuthListener() {
-    try {
-      _activeAuth?.authStateChanges().listen((user) {
-        if (user != null && user.uid.isNotEmpty) {
-          syncWithCloud(userId: user.uid);
-        }
-      });
-    } catch (_) {}
+  void _listenToAuth() {
+    _authListener?.cancel();
+    _observedUid = _activeAuth?.currentUser?.uid;
+    _authListener = _activeAuth?.authStateChanges().listen((user) {
+      if (_observedUid != user?.uid) { _generation++; _observedUid = user?.uid; }
+      notifyListeners();
+      if (user != null) unawaited(syncWithCloud(userId: user.uid));
+    });
   }
 
   final _store = ScopedJsonListStore<BookmarkModel>(
@@ -55,171 +51,159 @@ class BookmarkService extends ChangeNotifier {
     encode: (bookmark) => bookmark.toJson(),
   );
 
-  static const String _legacyKey = 'openturath_saved_bookmarks';
-
-  String _key(String? userId) {
-    final uid = userId ?? _activeAuth?.currentUser?.uid;
-    return uid == null || uid.isEmpty ? _legacyKey : 'openturath_${uid}_saved_bookmarks';
+  String _scope(String? requested) => requested ?? _activeAuth?.currentUser?.uid ?? 'guest_local';
+  String _key(String scope) => 'openturath_${scope}_saved_bookmarks';
+  bool _owns(String scope) {
+    final uid = _activeAuth?.currentUser?.uid;
+    return uid == null ? scope.startsWith('guest_') : uid == scope;
+  }
+  void _requireOwner(String scope) {
+    if (!_owns(scope)) throw StateError('Sesi berubah. Buka kembali catatan dari akun aktif.');
   }
 
-  Future<List<BookmarkModel>> getBookmarks({String? userId}) async =>
-      (await _store.read(_key(userId)))
-          .where((bookmark) => !bookmark.isDeleted)
-          .toList();
+  Future<List<BookmarkModel>> getBookmarks({String? userId}) async {
+    final scope = _scope(userId);
+    _requireOwner(scope);
+    final items = await _store.read(_key(scope));
+    _requireOwner(scope);
+    return items.where((bookmark) => !bookmark.isDeleted).toList();
+  }
 
+  /// Merge export/import snapshots atomically; never erase concurrent edits.
   Future<void> saveAll(List<BookmarkModel> bookmarks, {String? userId}) async {
-    final key = _key(userId);
-    final existing = await _store.read(key);
-    final tombstones = existing.where((bookmark) => bookmark.isDeleted);
-    await _store.replace(key, [...bookmarks, ...tombstones]);
+    final scope = _scope(userId);
+    _requireOwner(scope);
+    await _store.update(_key(scope), (items) {
+      _requireOwner(scope);
+      return _merge(items, bookmarks);
+    });
     notifyListeners();
+    if (_activeAuth?.currentUser?.uid == scope) unawaited(syncWithCloud(userId: scope));
   }
 
   Future<void> addBookmark(BookmarkModel bookmark, {String? userId}) async {
-    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
-    final key = _key(effectiveUid);
-
-    // 1. Instant local offline-first update
-    await _store.update(key, (items) {
-      items.removeWhere((item) => item.id == bookmark.id);
-      items.insert(0, bookmark);
-      return items;
+    final scope = _scope(userId);
+    _requireOwner(scope);
+    await _store.update(_key(scope), (items) {
+      _requireOwner(scope);
+      return _merge(items, [bookmark]);
     });
+    if (!_owns(scope)) return;
     notifyListeners();
-
-    // 2. Asynchronous cloud push if logged in
-    if (effectiveUid != null && effectiveUid.isNotEmpty) {
-      unawaited(_pushToCloud(bookmark, effectiveUid));
-    }
+    if (_activeAuth?.currentUser?.uid == scope) unawaited(_pushToCloud(bookmark, scope));
   }
 
   Future<void> deleteBookmark(String id, {String? userId}) async {
-    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
-    final key = _key(effectiveUid);
-
-    // 1. Instant local update
-    BookmarkModel? deleted;
-    await _store.update(key, (items) {
+    final scope = _scope(userId);
+    _requireOwner(scope);
+    BookmarkModel? tombstone;
+    await _store.update(_key(scope), (items) {
+      _requireOwner(scope);
       final index = items.indexWhere((item) => item.id == id);
-      if (index == -1) return items;
-      deleted = items[index].copyWith(
-        deletedAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+      if (index < 0) return items;
+      final now = DateTime.now();
+      // Keep only synchronization metadata; erase the deleted note's content.
+      tombstone = BookmarkModel(
+        id: id, title: '', agentId: '', agentTitle: '', fieldName: '', fieldId: '',
+        arabicExcerpt: '', fullAnswer: '', bookReference: '', pageNumber: '',
+        createdAt: items[index].createdAt, updatedAt: now, deletedAt: now,
       );
-      items[index] = deleted!;
+      items[index] = tombstone!;
       return items;
     });
+    if (!_owns(scope)) return;
     notifyListeners();
-
-    // 2. Sync a tombstone instead of deleting remotely. An offline older
-    // device will then receive the deletion rather than restoring stale data.
-    if (effectiveUid != null && effectiveUid.isNotEmpty && deleted != null) {
-      unawaited(_pushToCloud(deleted!, effectiveUid));
+    if (_activeAuth?.currentUser?.uid == scope && tombstone != null) {
+      unawaited(_pushToCloud(tombstone!, scope));
     }
   }
 
   Future<bool> isBookmarked(String id, {String? userId}) async =>
       (await getBookmarks(userId: userId)).any((item) => item.id == id);
 
+  static bool _wins(BookmarkModel incoming, BookmarkModel existing) =>
+      incoming.syncTime.isAfter(existing.syncTime) ||
+      (incoming.syncTime == existing.syncTime && incoming.isDeleted && !existing.isDeleted);
+
+  static List<BookmarkModel> _merge(List<BookmarkModel> current, Iterable<BookmarkModel> incoming) {
+    final merged = {for (final item in current) item.id: item};
+    for (final item in incoming) {
+      final previous = merged[item.id];
+      if (previous == null || _wins(item, previous)) merged[item.id] = item;
+    }
+    return merged.values.toList()..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));
+  }
+
   Future<void> _pushToCloud(BookmarkModel bookmark, String uid) async {
     final db = _db;
-    if (db == null) return;
+    if (db == null || _activeAuth?.currentUser?.uid != uid) return;
     try {
-      await db
-          .collection('users')
-          .doc(uid)
-          .collection('bookmarks')
-          .doc(bookmark.id)
-          .set(bookmark.toJson(), SetOptions(merge: true));
-    } catch (e) {
-      // Offline or network glitch; will be reconciled during next sync
-      debugPrint('[BookmarkService] Cloud push skipped/failed: $e');
+      final ref = db.collection('users').doc(uid).collection('bookmarks').doc(bookmark.id);
+      await db.runTransaction((transaction) async {
+        if (_activeAuth?.currentUser?.uid != uid) throw StateError('Session changed');
+        final existing = await transaction.get(ref);
+        if (_activeAuth?.currentUser?.uid != uid) throw StateError('Session changed');
+        if (existing.exists) {
+          final remote = BookmarkModel.fromJson(existing.data()!);
+          if (!_wins(bookmark, remote)) return;
+        }
+        // Replace to ensure tombstones also remove historical content fields.
+        transaction.set(ref, bookmark.toJson());
+      });
+    } catch (_) {
+      // Retained locally for the next explicit sync; never log private note data.
     }
   }
 
-  /// Bidirectional smart synchronization between local storage and Firestore.
-  /// Reconciles differences, migrates legacy offline notes, and ensures zero data loss.
-  Future<void> syncWithCloud({String? userId}) async {
-    final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
-    if (effectiveUid == null || effectiveUid.isEmpty) return;
+  Future<void> syncWithCloud({String? userId}) {
+    final uid = userId ?? _activeAuth?.currentUser?.uid;
+    if (uid == null || _activeAuth?.currentUser?.uid != uid) return Future<void>.value();
+    final running = _syncs[uid];
+    if (running != null) return running;
+    final operation = _sync(uid, _generation);
+    _syncs[uid] = operation;
+    notifyListeners();
+    return operation.whenComplete(() {
+      if (identical(_syncs[uid], operation)) _syncs.remove(uid);
+      notifyListeners();
+    });
+  }
 
-    if (_isSyncing) return;
-    _isSyncing = true;
-
+  Future<void> _sync(String uid, int generation) async {
+    bool valid() => _activeAuth?.currentUser?.uid == uid && _generation == generation;
+    final db = _db;
+    if (db == null || !valid()) return;
     try {
-      final userKey = _key(effectiveUid);
-
-      // Step 1: Migrate legacy anonymous notes if any exist
-      final legacyNotes = await _store.read(_legacyKey);
-      if (legacyNotes.isNotEmpty) {
-        final current = await _store.read(userKey);
-        final mergedLocal = <String, BookmarkModel>{
-          for (final b in current) b.id: b,
-        };
-        for (final b in legacyNotes) {
-          mergedLocal.putIfAbsent(b.id, () => b);
-        }
-        await _store.replace(userKey, mergedLocal.values.toList());
-        await _store.replace(_legacyKey, <BookmarkModel>[]);
-        notifyListeners();
-      }
-
-      final db = _db;
-      if (db == null) {
-        return;
-      }
-
-      // Step 2: Read current local items
-      final localItems = await _store.read(userKey);
-      final localMap = <String, BookmarkModel>{
-        for (final b in localItems) b.id: b,
-      };
-
-      // Step 3: Fetch cloud bookmarks
-      final snapshot = await db
-          .collection('users')
-          .doc(effectiveUid)
-          .collection('bookmarks')
-          .get();
-
-      final cloudMap = <String, BookmarkModel>{};
+      final snapshot = await db.collection('users').doc(uid).collection('bookmarks').get();
+      if (!valid()) return;
+      final remote = <BookmarkModel>[];
       for (final doc in snapshot.docs) {
         try {
-          final data = doc.data();
-          if (!data.containsKey('id') || (data['id'] as String).isEmpty) {
-            data['id'] = doc.id;
-          }
-          final model = BookmarkModel.fromJson(data);
-          cloudMap[model.id] = model;
-        } catch (_) {}
+          remote.add(BookmarkModel.fromJson({...doc.data(), 'id': doc.id}));
+        } catch (_) { /* A malformed document cannot hide the remaining notes. */ }
       }
-
-      // Step 4: Two-way reconciliation
-      // - Push any local notes not yet on cloud
-      for (final entry in localMap.entries) {
-        if (!cloudMap.containsKey(entry.key)) {
-          unawaited(_pushToCloud(entry.value, effectiveUid));
-        }
-      }
-
-      // - Merge cloud into local
-      final merged = <String, BookmarkModel>{...localMap};
-      for (final entry in cloudMap.entries) {
-        final existing = merged[entry.key];
-        if (existing == null || entry.value.syncTime.isAfter(existing.syncTime)) {
-          merged[entry.key] = entry.value;
-        }
-      }
-
-      final finalList = merged.values.toList()
-        ..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));
-
-      await _store.replace(userKey, finalList);
+      // Read local data under the same lock as the final merge: edits made while
+      // the network request was in flight survive reconciliation.
+      List<BookmarkModel> merged = [];
+      await _store.update(_key(uid), (current) {
+        if (!valid()) return current;
+        merged = _merge(current, remote);
+        return merged;
+      });
+      if (!valid()) return;
       notifyListeners();
-    } catch (e) {
-      debugPrint('[BookmarkService] syncWithCloud failed: $e');
-    } finally {
-      _isSyncing = false;
-    }
+      for (final item in merged) {
+        if (!valid()) return;
+        await _pushToCloud(item, uid);
+      }
+    } catch (_) { /* Offline: preserve all local changes for retry. */ }
+  }
+
+  @override
+  void dispose() {
+    _generation++;
+    _authListener?.cancel();
+    _authListener = null;
+    super.dispose();
   }
 }

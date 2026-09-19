@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/core/theme.dart';
@@ -9,44 +11,13 @@ import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/models/bookmark_model.dart';
 import 'package:openturath_ai/services/agent_service.dart';
 import 'package:openturath_ai/widgets/app_error_state.dart';
-import 'package:openturath_ai/core/design/ot_typography.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   GoogleFonts.config.allowRuntimeFetching = false;
-  OTTypography.useSystemFontFallback = true;
+  setUp(() => SharedPreferences.setMockInitialValues({}));
 
   group('Resilience & Compliance Suite', () {
-    testWidgets('AppErrorState renders properly with retry and back buttons', (tester) async {
-      bool retried = false;
-      bool backPressed = false;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.dark(),
-          home: Scaffold(
-            body: AppErrorState(
-              title: 'Gagal Memuat Korpus',
-              message: 'Terjadi kendala koneksi saat menghubungi server.',
-              onRetry: () => retried = true,
-              onBack: () => backPressed = true,
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Gagal Memuat Korpus'), findsOneWidget);
-      expect(find.text('Terjadi kendala koneksi saat menghubungi server.'), findsOneWidget);
-      expect(find.text('Coba lagi'), findsOneWidget);
-      expect(find.text('Kembali'), findsOneWidget);
-
-      await tester.tap(find.text('Coba lagi'));
-      expect(retried, isTrue);
-
-      await tester.tap(find.text('Kembali'));
-      expect(backPressed, isTrue);
-    });
-
     test('AgentModel defaultAgents have complete Arabic metadata and no null pointer risks', () {
       for (final agent in AgentModel.defaultAgents) {
         expect(agent.id, isNotEmpty);
@@ -161,18 +132,18 @@ void main() {
       expect(lightTheme.dialogTheme.backgroundColor, equals(AppTheme.surfaceCardLight));
     });
 
-    test('Localization contains valid cancel key in all three languages', () {
-      AppConfig.localeNotifier.value = 'id';
+    test('Localization contains valid cancel key in all three languages', () async {
+      await AppConfig.setLocale('id');
       expect(Loc.tr('cancel'), equals('Batal'));
 
-      AppConfig.localeNotifier.value = 'en';
+      await AppConfig.setLocale('en');
       expect(Loc.tr('cancel'), equals('Cancel'));
 
-      AppConfig.localeNotifier.value = 'ar';
+      await AppConfig.setLocale('ar');
       expect(Loc.tr('cancel'), equals('إلغاء'));
 
       // Restore default
-      AppConfig.localeNotifier.value = 'id';
+      await AppConfig.setLocale('id');
     });
 
     test('BookmarkModel serializes and deserializes correctly', () {
@@ -199,5 +170,40 @@ void main() {
       expect(restored.arabicExcerpt, equals('الْأُمُورُ بِمَقَاصِدِهَا'));
       expect(restored.fieldId, equals('fiqh'));
     });
+
+    testWidgets('AppErrorState renders properly with retry and back buttons', (tester) async {
+      bool retried = false;
+      bool backPressed = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('id'), supportedLocales: const [Locale('id')],
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          theme: ThemeData.dark(),
+          home: Scaffold(
+            body: AppErrorState(
+              title: 'Gagal Memuat Korpus',
+              message: 'Terjadi kendala koneksi saat menghubungi server.',
+              onRetry: () => retried = true,
+              onBack: () => backPressed = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Gagal Memuat Korpus'), findsOneWidget);
+      expect(find.text('Terjadi kendala koneksi saat menghubungi server.'), findsOneWidget);
+      expect(find.text('Coba kembali'), findsOneWidget);
+      expect(find.text('Kembali'), findsOneWidget);
+
+      await tester.tap(find.text('Coba kembali'));
+      expect(retried, isTrue);
+
+      await tester.tap(find.text('Kembali'));
+      expect(backPressed, isTrue);
+      await tester.pumpAndSettle();
+    });
   });
 }
+
+

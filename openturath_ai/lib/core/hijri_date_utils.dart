@@ -1,40 +1,22 @@
-/// Utilitas penanggalan Islam (Hijriah) dan Masehi deterministik & akurat
-/// untuk tajuk editorial OpenTurath.
+import 'l10n/language_notifier.dart';
+
+/// Tabular civil Hijri estimate, not an Umm al-Qura or local moon-sighting decree.
+/// A supplied authoritative date may override the arithmetic for that day.
 class HijriDateUtils {
-  static const List<String> _hijriMonths = [
-    'Muharram',
-    'Shafar',
-    'Rabi\'ul Awwal',
-    'Rabi\'uts Tsani',
-    'Jumadil Ula',
-    'Jumadil Akhir',
-    'Rajab',
-    'Sya\'ban',
-    'Ramadhan',
-    'Syawwal',
-    'Dzulqa\'dah',
-    'Dzulhijjah',
-  ];
-
-  static const List<String> _masehiMonths = [
-    'Januari',
-    'Februari',
-    'Maret',
-    'April',
-    'Mei',
-    'Juni',
-    'Juli',
-    'Agustus',
-    'September',
-    'Oktober',
-    'November',
-    'Desember',
-  ];
-
+  static const _months = <String, List<String>>{
+    'id': ['Muharram', 'Safar', 'Rabiulawal', 'Rabiulakhir', 'Jumadilawal', 'Jumadilakhir', 'Rajab', 'Syakban', 'Ramadan', 'Syawal', 'Zulkaidah', 'Zulhijah'],
+    'en': ['Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani', 'Jumada al-Ula', 'Jumada al-Akhirah', 'Rajab', "Sha'ban", 'Ramadan', 'Shawwal', 'Dhu al-Qadah', 'Dhu al-Hijjah'],
+    'ar': ['محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'],
+  };
+  static const _solarMonths = <String, List<String>>{
+    'id': ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'],
+    'en': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    'ar': ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+  };
   static final Map<String, ({int day, int month, int year})> _apiCache = {};
 
   /// Mengonversi DateTime Masehi ke representasi Hijriah (Tahun, Bulan, Hari).
-  /// Memanfaatkan cache API AlAdhan jika tersedia, atau perhitungan deterministik Umm al-Qura.
+  /// Uses supplied date overrides, otherwise a tabular civil calculation.
   static ({int day, int month, int year}) gregorianToHijri(DateTime date) {
     final key = '${date.year}-${date.month}-${date.day}';
     if (_apiCache.containsKey(key)) {
@@ -69,47 +51,43 @@ class HijriDateUtils {
     return (day: hDay.clamp(1, 30), month: hMonth.clamp(1, 12), year: hYear);
   }
 
-  /// Sinkronisasi tanggal Hijriyah dari AlAdhan API resmi secara senyap di latar belakang.
+  /// Registers a date supplied by an external verified source; performs no API call.
   static void registerVerifiedHijriDate({required DateTime date, required int day, required int month, required int year}) {
+    if (day < 1 || day > 30 || month < 1 || month > 12 || year < 1) {
+      throw ArgumentError('Invalid Hijri date');
+    }
     final key = '${date.year}-${date.month}-${date.day}';
     _apiCache[key] = (day: day, month: month, year: year);
   }
 
-  /// Menghasilkan format tanggal ganda yang anggun dan editorial:
-  /// Contoh: "26 Shafar 1448 H • 9 September 2026 M"
-  static String formatDualDate([DateTime? date]) {
-    final now = date ?? DateTime.now();
-    final h = gregorianToHijri(now);
-
-    final hMonthName = (h.month >= 1 && h.month <= 12)
-        ? _hijriMonths[h.month - 1]
-        : 'Bulan';
-    final mMonthName = (now.month >= 1 && now.month <= 12)
-        ? _masehiMonths[now.month - 1]
-        : '';
-
-    return '${h.day} $hMonthName ${h.year} H • ${now.day} $mMonthName ${now.year} M';
+  static String formatHijri({required int day, required int month, required int year,
+    String? languageCode, bool? easternArabicDigits}) {
+    if (day < 1 || day > 30 || month < 1 || month > 12 || year < 1) {
+      throw ArgumentError('Invalid Hijri date');
+    }
+    final code = languageCode ?? LocaleService.instance.current.languageCode;
+    final months = _months[code] ?? _months['id']!;
+    final suffix = switch (code) { 'ar' => 'هـ', 'en' => 'AH', _ => 'H' };
+    final dayLabel = code == 'en' ? '$day${_ordinal(day)}' : '$day';
+    return formatUiNumber('$dayLabel ${months[month - 1]} $year $suffix',
+      languageCode: code, easternArabicDigits: easternArabicDigits);
   }
-
-  /// Menghasilkan hanya tanggal Hijriah pendek:
-  /// Contoh: "26 Shafar 1448 H"
+  static String _ordinal(int value) {
+    if (value % 100 >= 11 && value % 100 <= 13) return 'th';
+    return switch (value % 10) { 1 => 'st', 2 => 'nd', 3 => 'rd', _ => 'th' };
+  }
+  static String formatDualDate([DateTime? date]) =>
+    '${formatHijriOnly(date)} • ${formatMasehiOnly(date)}';
   static String formatHijriOnly([DateTime? date]) {
-    final now = date ?? DateTime.now();
-    final h = gregorianToHijri(now);
-    final hMonthName = (h.month >= 1 && h.month <= 12)
-        ? _hijriMonths[h.month - 1]
-        : 'Bulan';
-    return '${h.day} $hMonthName ${h.year} H';
+    final h = gregorianToHijri(date ?? DateTime.now());
+    return formatHijri(day: h.day, month: h.month, year: h.year);
   }
-
-  /// Menghasilkan hanya tanggal Masehi pendek:
-  /// Contoh: "12 September 2026 M"
   static String formatMasehiOnly([DateTime? date]) {
     final now = date ?? DateTime.now();
-    final mMonthName = (now.month >= 1 && now.month <= 12)
-        ? _masehiMonths[now.month - 1]
-        : '';
-    return '${now.day} $mMonthName ${now.year} M';
+    final code = LocaleService.instance.current.languageCode;
+    final months = _solarMonths[code] ?? _solarMonths['id']!;
+    final suffix = switch (code) { 'ar' => 'م', 'en' => 'CE', _ => 'M' };
+    return formatUiNumber('${now.day} ${months[now.month - 1]} ${now.year} $suffix');
   }
 
   /// Menambahkan durasi bulan kalender dengan month-end clamping deterministik.
@@ -140,3 +118,5 @@ class HijriDateUtils {
     );
   }
 }
+
+

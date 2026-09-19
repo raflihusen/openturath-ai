@@ -1,9 +1,10 @@
+import '../core/l10n/app_dictionary.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../core/theme.dart';
+import 'package:openturath_ai/core/design/ot_fonts.dart';
+import '../core/design/ot_colors.dart';
 
-/// AppLoader: Komponen visual baku tiga titik berdenyut (Three-Dots Pulse Loader).
-/// Menyatukan 4 implementasi loader berbeda menjadi satu komponen berstandar Apple HIG.
+/// Quiet shared loading state. Reduced-motion users see a static indicator;
+/// offstage destinations stop the animation instead of spending background frames.
 class AppLoader extends StatefulWidget {
   final double dotSize;
   final double spacing;
@@ -43,14 +44,29 @@ class AppLoader extends StatefulWidget {
 
 class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
+  bool _animate = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat();
+      duration: const Duration(milliseconds: 1500),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final animate = !MediaQuery.disableAnimationsOf(context) && TickerMode.of(context);
+    if (animate == _animate) return;
+    _animate = animate;
+    if (_animate) {
+      _controller.repeat();
+    } else {
+      _controller.stop();
+      _controller.value = .5;
+    }
   }
 
   @override
@@ -62,17 +78,18 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final defaultAccent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
+    final defaultAccent = OTColors.textPrimary(isDark);
     final dotColor = widget.color ?? defaultAccent;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final canvas = OTColors.canvas(isDark);
 
     Widget content = Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        AnimatedBuilder(
+        Semantics(label: context.tr('Sedang memuat'), liveRegion: true,
+          child: ExcludeSemantics(child: AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
             return Row(
@@ -81,8 +98,10 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
                 final delay = index * 0.2;
                 final t = (_controller.value - delay) % 1.0;
                 final curveVal = Curves.easeInOutSine.transform(t < 0 ? t + 1.0 : t);
-                final scale = 0.75 + (0.45 * (1.0 - (curveVal - 0.5).abs() * 2));
-                final opacity = 0.3 + (0.7 * (1.0 - (curveVal - 0.5).abs() * 2));
+                final scale = _animate
+                    ? .92 + (.08 * (1.0 - (curveVal - .5).abs() * 2)) : 1.0;
+                final opacity = _animate
+                    ? .4 + (.55 * (1.0 - (curveVal - .5).abs() * 2)) : .65;
 
                 return Container(
                   margin: EdgeInsets.symmetric(horizontal: widget.spacing),
@@ -104,13 +123,13 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
               }),
             );
           },
-        ),
+        ))),
         if (widget.title != null) ...[
           const SizedBox(height: 20),
           Text(
-            widget.title!,
+            context.tr(widget.title!),
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: OTFonts.outfit(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: textPrimary,
@@ -120,9 +139,9 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
         if (widget.subtitle != null) ...[
           const SizedBox(height: 6),
           Text(
-            widget.subtitle!,
+            context.tr(widget.subtitle!),
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: OTFonts.outfit(
               fontSize: 12,
               color: textSecondary,
             ),
@@ -133,14 +152,14 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
           TextButton(
             onPressed: widget.onCancel,
             style: TextButton.styleFrom(
-              minimumSize: const Size(80, 44),
+              minimumSize: const Size(96, 48),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
               widget.cancelLabel,
-              style: GoogleFonts.outfit(
+              style: OTFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: textSecondary,
@@ -157,7 +176,11 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
         height: double.infinity,
         color: canvas,
         child: SafeArea(
-          child: Center(child: content),
+          child: Center(child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 420),
+                child: content),
+          )),
         ),
       );
     }
@@ -165,3 +188,5 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
     return Center(child: content);
   }
 }
+
+

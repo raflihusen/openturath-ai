@@ -1,15 +1,10 @@
+import '../core/l10n/app_dictionary.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
-import '../core/design/ot_spacing.dart';
-import '../core/design/ot_motion.dart';
 import '../models/field_model.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
@@ -22,13 +17,14 @@ import '../widgets/specialist_card.dart';
 import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
-import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
+import '../widgets/editorial.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final FieldModel? field; // Nullable if opened as general Specialist tab
+  final CorpusKind initialKind;
 
-  const SpecialistListScreen({super.key, this.field});
+  const SpecialistListScreen({super.key, this.field, this.initialKind = CorpusKind.discipline});
 
   @override
   State<SpecialistListScreen> createState() => _SpecialistListScreenState();
@@ -39,6 +35,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   final AuthService _authService = AuthService();
   final TextEditingController _searchCtrl = TextEditingController();
   Timer? _debounce;
+  StreamSubscription<UserModel?>? _userChanges;
+  String? _loadError;
+  String? _accessError;
+  bool _openingAgent = false;
 
   List<AgentModel> _allAgents = [];
   String? _selectedFieldId;
@@ -50,17 +50,25 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   void initState() {
     super.initState();
     _selectedFieldId = widget.field?.id;
+    _corpusKind = widget.initialKind;
     _loadAgents();
+    _userChanges = _authService.userStream.listen((_) {
+      if (mounted) setState(() => _accessError = null);
+    }, onError: (Object error, StackTrace stack) {
+      if (mounted) setState(() => _accessError = 'membership.access_update_failed');
+    });
   }
 
   @override
   void dispose() {
     _searchCtrl.dispose();
     _debounce?.cancel();
+    _userChanges?.cancel();
     super.dispose();
   }
 
   Future<void> _loadAgents() async {
+    setState(() { _isLoading = true; _loadError = null; });
     try {
       final agents = await _agentService.getAgents();
       if (mounted) {
@@ -72,7 +80,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     } catch (_) {
       if (mounted) {
         setState(() {
-          _allAgents = AgentModel.defaultAgents;
+          _loadError = 'membership.directory_load_failed';
           _isLoading = false;
         });
       }
@@ -106,7 +114,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       // 3. Filter by search query
       if (_searchQuery.isEmpty) return true;
 
-      return ArabicUtils.matches(agent.title, _searchQuery) ||
+      return ArabicUtils.matches(context.tr(agent.title), _searchQuery) ||
+          ArabicUtils.matches(context.tr(agent.subtitleAcademic), _searchQuery) ||
+          ArabicUtils.matches(context.tr(agent.description), _searchQuery) ||
+          ArabicUtils.matches(agent.title, _searchQuery) ||
           ArabicUtils.matches(agent.titleArabic, _searchQuery) ||
           ArabicUtils.matches(agent.subtitleAcademic, _searchQuery) ||
           ArabicUtils.matches(agent.description, _searchQuery);
@@ -114,11 +125,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   }
 
   void _openAgent(AgentModel agent) {
-    OTMotion.light();
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        AppCopy.preparingModule(agent.title),
+        context.tr('membership.preparing', args: {'title': context.tr(agent.title)}),
       );
       return;
     }
@@ -129,11 +139,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       return;
     }
 
-    AgentSessionManager.instance.openAgent(agent, user: user);
+    unawaited(_launchAgent(agent, user));
   }
 
   void _openTahawwulatSubAgent(AgentModel parentAgent, SubAgentModel subAgent) {
-    OTMotion.light();
     final user = _authService.cachedCurrentUser;
     if (user == null || !user.hasAccessToAgent(parentAgent.id)) {
       _openSubscriptionForAgent(parentAgent, user: user);
@@ -142,7 +151,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
     final personaAgent = AgentModel(
       id: subAgent.id,
-      title: 'Fikih Tahawwulat: ${subAgent.name}',
+      title: context.tr('membership.persona_title', args: {'name': context.tr(subAgent.name)}),
       titleArabic: subAgent.nameArabic,
       description: subAgent.description,
       emoji: subAgent.emoji,
@@ -159,7 +168,26 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       scholarIds: parentAgent.scholarIds,
     );
 
-    AgentSessionManager.instance.openAgent(personaAgent, user: user);
+    unawaited(_launchAgent(personaAgent, user));
+  }
+
+  Future<void> _launchAgent(AgentModel agent, UserModel user) async {
+    if (_openingAgent) return;
+    _openingAgent = true;
+    try {
+      await AgentSessionManager.instance.openAgent(agent, user: user);
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, context.tr('membership.study_open_failed'));
+    } finally { _openingAgent = false; }
+  }
+
+  Future<void> _refreshAccess() async {
+    try {
+      await _authService.getFreshCurrentUserModel();
+      if (mounted) setState(() => _accessError = null);
+    } catch (_) {
+      if (mounted) AppSnackBar.error(context, context.tr('membership.access_retry'));
+    }
   }
 
   void _openSubscriptionForAgent(AgentModel agent, {UserModel? user}) {
@@ -173,309 +201,92 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-
-    final isGeneralTab = widget.field == null;
-    final title = isGeneralTab ? AppCopy.navStudies : widget.field!.name;
-    final filtered = _computeFilteredAgents();
+    final general = widget.field == null;
     final shell = MainShellController.of(context);
-
+    final filtered = _computeFilteredAgents()
+      ..sort((a, b) {
+        if (a.isActive != b.isActive) return a.isActive ? -1 : 1;
+        return a.sortOrder.compareTo(b.sortOrder);
+      });
     return PopScope(
-      canPop: isGeneralTab && (shell == null || !Navigator.canPop(context)),
+      canPop: general || shell == null,
       onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        if (!isGeneralTab) {
-          if (shell != null) {
-            shell.switchTab(0);
-          } else if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-        } else if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
+        if (!didPop && !general) shell?.switchTab(0);
       },
-      child: Scaffold(
-        backgroundColor: canvas,
-        appBar: AppBar(
-          title: Text(
-            title,
-            style: OTTypography.corpusTitle(color: textPrimary)
-                .copyWith(fontSize: 20),
-          ),
-          centerTitle: false,
-          backgroundColor: canvas,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: isGeneralTab
-              ? null
-              : IconButton(
-                  icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-                  onPressed: () {
-                    final shell = MainShellController.of(context);
-                    if (shell != null) {
-                      shell.switchTab(0);
-                    } else if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-        ),
-        body: SafeArea(
-          top: false,
-          child: Column(
-            children: [
-              // Search & Controls Container
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: border, width: 1.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search_rounded,
-                              size: 20, color: textSecondary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchCtrl,
-                              onChanged: _onSearchChanged,
-                              style: GoogleFonts.outfit(
-                                  fontSize: 13.5, color: textPrimary),
-                              decoration: InputDecoration(
-                                hintText: 'Cari asisten atau ulama…',
-                                hintStyle: GoogleFonts.outfit(
-                                    fontSize: 13.5, color: textSecondary),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                filled: false,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                          ),
-                          if (_searchQuery.isNotEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                _searchCtrl.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                              child: Icon(Icons.close_rounded,
-                                  size: 18, color: textSecondary),
-                            ),
-                        ],
-                      ),
-                    ),
-                    if (isGeneralTab) ...[
-                      const SizedBox(height: OTSpacing.md),
-                      // Dual Taxonomy Switcher
-                      CorpusKindControl(
-                        value: _corpusKind,
-                        onChanged: (k) {
-                          setState(() {
-                            _corpusKind = k;
-                            _selectedFieldId = null;
-                          });
-                        },
-                      ),
-                    ],
-                  ],
-                ),
+      child: EditorialPage(
+        eyebrow: context.tr('membership.directory'),
+        title: general ? context.tr('membership.assistants') : context.tr(widget.field!.name),
+        subtitle: context.tr('membership.choose_companion'),
+        trailing: general ? null : IconButton(
+          tooltip: context.tr('membership.home'),
+          onPressed: () {
+            if (shell != null) { shell.switchTab(0); }
+            else { Navigator.maybePop(context); }
+          }, icon: const BackButtonIcon()),
+        children: [
+          if (_accessError != null) ...[
+            Text(context.tr(_accessError!)),
+            const SizedBox(height: 12),
+            EditorialButton(label: context.tr('membership.check_access'), secondary: true, onPressed: _refreshAccess),
+            const SizedBox(height: 20),
+          ],
+          EditorialSearchField(controller: _searchCtrl,
+            onChanged: _onSearchChanged, hintText: context.tr('membership.search_hint')),
+          const SizedBox(height: 20),
+          if (general) ...[
+            CorpusKindControl(value: _corpusKind, onChanged: (kind) {
+              setState(() { _corpusKind = kind; _selectedFieldId = null; });
+            }),
+            const SizedBox(height: 20),
+          ],
+          if (general && _corpusKind == CorpusKind.discipline)
+            Padding(padding: const EdgeInsets.only(bottom: 24),
+              child: DropdownButtonFormField<String>(
+                key: ValueKey(_selectedFieldId ?? 'all'),
+                initialValue: _selectedFieldId ?? 'all',
+                isExpanded: true,
+                decoration: InputDecoration(labelText: context.tr('membership.discipline')),
+                items: [
+                  DropdownMenuItem(value: 'all', child: Text(context.tr('membership.all_disciplines'))),
+                  for (final field in FieldModel.defaultFields)
+                    DropdownMenuItem(value: field.id, child: Text(context.tr(field.name))),
+                ],
+                onChanged: (value) => setState(() => _selectedFieldId = value),
+              )),
+          if (_isLoading)
+            const Padding(padding: EdgeInsets.all(48), child: Center(child: CircularProgressIndicator()))
+          else if (_loadError != null)
+            EditorialEmptyState(title: context.tr('membership.directory_unavailable'), description: _loadError == null ? null : context.tr(_loadError!),
+              action: EditorialButton(label: context.tr('membership.retry'), onPressed: _loadAgents))
+          else if (filtered.isEmpty)
+            EditorialEmptyState(title: context.tr('membership.no_assistants'),
+              description: context.tr('membership.try_search'),
+              action: EditorialButton(label: context.tr('membership.reset_search'), secondary: true, onPressed: () {
+                _debounce?.cancel();
+                _searchCtrl.clear();
+                setState(() { _searchQuery = ''; _selectedFieldId = null; });
+              }))
+          else ...[
+            for (final agent in filtered)
+              if (agent.id == 'fiqh_tahawwulat')
+                Padding(padding: const EdgeInsets.only(bottom: 24),
+                  child: TahawwulatFlagshipCard(
+                    agent: agent,
+                    isSubscribed: _authService.cachedCurrentUser?.hasAccessToAgent(agent.id) ?? false,
+                    onOpenMain: () => _openAgent(agent),
+                    onOpenSubAgent: (role) => _openTahawwulatSubAgent(agent, role),
+                    onOpenLibrary: agent.catalogId == null ? null : () => showResearchLibrary(context, agent: agent),
+                  ))
+              else SpecialistCard(
+                title: context.tr(agent.title),
+                titleArabic: agent.titleArabic,
+                scopeLabel: context.tr(agent.description),
+                statusLabel: agent.isComingSoon ? context.tr('membership.unavailable') : context.tr(agent.subtitleAcademic),
+                onOpen: () => _openAgent(agent),
+                onOpenLibrary: agent.catalogId == null ? null : () => showResearchLibrary(context, agent: agent),
               ),
-
-              // Discipline Filter Chips (only in discipline mode)
-              if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
-                SizedBox(
-                  height: 38,
-                  child: ListView(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-                    children: [
-                      _filterChip(
-                        label: AppCopy.allCategories,
-                        isSelected: _selectedFieldId == null ||
-                            _selectedFieldId == 'all',
-                        onTap: () => setState(() => _selectedFieldId = 'all'),
-                        isDark: isDark,
-                        border: border,
-                        surface: surface,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      const SizedBox(width: 8),
-                      ...FieldModel.defaultFields.map((field) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: _filterChip(
-                            label: field.name,
-                            isSelected: _selectedFieldId == field.id,
-                            onTap: () =>
-                                setState(() => _selectedFieldId = field.id),
-                            isDark: isDark,
-                            border: border,
-                            surface: surface,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: OTSpacing.sm),
-              ],
-
-              // Content List
-              Expanded(
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : filtered.isEmpty
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(OTSpacing.xl),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.search_off_rounded,
-                                      size: 40, color: textSecondary),
-                                  const SizedBox(height: OTSpacing.sm),
-                                  Text(
-                                    _searchQuery.isNotEmpty
-                                        ? AppCopy.noAssistantsFound
-                                        : AppCopy.noAssistantsFound,
-                                    style:
-                                        OTTypography.body(color: textSecondary),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : Builder(
-                            builder: (context) {
-                              final sorted = List<AgentModel>.from(filtered);
-                              if (_searchQuery.isEmpty) {
-                                sorted.sort((a, b) {
-                                  if (a.isActive && !b.isActive) return -1;
-                                  if (!a.isActive && b.isActive) return 1;
-                                  return 0;
-                                });
-                              }
-
-                              return ListView.separated(
-                                physics: const BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics()),
-                                padding: const EdgeInsets.fromLTRB(OTSpacing.lg,
-                                    OTSpacing.xs, OTSpacing.lg, 96),
-                                itemCount: sorted.length,
-                                separatorBuilder: (_, index) {
-                                  final touchesFlagship = sorted[index].id ==
-                                          'fiqh_tahawwulat' ||
-                                      sorted[index + 1].id == 'fiqh_tahawwulat';
-                                  return SizedBox(
-                                    height: touchesFlagship ? OTSpacing.md : 0,
-                                  );
-                                },
-                                itemBuilder: (context, index) {
-                                  final agent = sorted[index];
-                                  if (agent.id == 'fiqh_tahawwulat') {
-                                    final user = _authService.cachedCurrentUser;
-                                    final isSubscribed = user != null &&
-                                        user.hasAccessToAgent(agent.id);
-                                    return TahawwulatFlagshipCard(
-                                      agent: agent,
-                                      isSubscribed: isSubscribed,
-                                      onOpenMain: () => _openAgent(agent),
-                                      onOpenSubAgent: (sub) =>
-                                          _openTahawwulatSubAgent(agent, sub),
-                                      onOpenLibrary: agent.catalogId != null
-                                          ? () => showResearchLibrary(context,
-                                              agent: agent)
-                                          : null,
-                                    );
-                                  }
-                                  return SpecialistCard(
-                                    title: agent.title,
-                                    statusLabel: agent.isComingSoon
-                                        ? AppCopy.comingSoon
-                                        : null,
-                                    onOpen: () => _openAgent(agent),
-                                    onOpenLibrary: agent.catalogId != null
-                                        ? () => showResearchLibrary(context,
-                                            agent: agent)
-                                        : null,
-                                  );
-                                },
-                              );
-                            },
-                          ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _filterChip({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required bool isDark,
-    required Color border,
-    required Color surface,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    final activeBg = textPrimary;
-    final activeFg = isDark ? Colors.black : Colors.white;
-
-    return AppleInteractiveWrapper(
-      onTap: onTap,
-      pressedScale: 0.94,
-      hapticType: HapticFeedbackType.selection,
-      borderRadius: BorderRadius.circular(20),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? activeBg : surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? activeBg : border,
-            width: 0.8,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style:
-              OTTypography.caption(color: isSelected ? activeFg : textSecondary)
-                  .copyWith(
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 12,
-          ),
-        ),
+          ],
+        ],
       ),
     );
   }

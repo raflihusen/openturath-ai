@@ -14,7 +14,7 @@ class OTColors {
   static const Color surfaceSubtleLight = Color(0xFFEEEEEB); // Area sekunder, track selector, header list
   static const Color textPrimaryLight = Color(0xFF171717); // Teks utama, heading, tombol primer (ink black)
   static const Color textSecondaryLight = Color(0xFF656560); // Metadata, deskripsi kitab, label sekunder
-  static const Color textTertiaryLight = Color(0xFF92928C); // Placeholder, informasi minor, divider halus
+  static const Color textTertiaryLight = Color(0xFF6D6D68); // Placeholder, informasi minor, divider halus
   static const Color borderLight = Color(0xFFDDDDD8); // Garis pembatas standar (1.0px hairline)
   static const Color borderSubtleLight = Color(0xFFEEEEEB);
   static const Color borderStrongLight = Color(0xFFB8B8B1); // Garis aktif, state fokus, pemisah penting
@@ -43,14 +43,14 @@ class OTColors {
   static const Color inverseSurfaceDark = Color(0xFF181817);
   static const Color onInverseSurface = Color(0xFFF4F4F0); // Krem naskah, sama di dua mode
 
-  // ── 5. Sage Zaitun — satu-satunya warna non-monokrom ──
+  // ── 5. Status — monochrome; pair with text and an icon ──
   // Dipakai HANYA sebagai penanda status marja' / terverifikasi, tidak pernah dekoratif.
-  static const Color marjaLight = Color(0xFF3D4A3E); // Hijau zaitun sangat tua
-  static const Color marjaDark = Color(0xFF9CAF9E); // Sage terang agar terbaca di obsidian
+  static const Color marjaLight = Color(0xFF171717); // Hijau zaitun sangat tua
+  static const Color marjaDark = Color(0xFFF4F4F0); // Sage terang agar terbaca di obsidian
 
-  // ── 6. Merah Bata Redup (Status kritis, bukan merah neon) ──
-  static const Color destructiveLight = Color(0xFF8C2F2F);
-  static const Color destructiveDark = Color(0xFFC97B74);
+  // ── 6. Destructive — explicit copy and confirmation establish meaning ──
+  static const Color destructiveLight = Color(0xFF171717);
+  static const Color destructiveDark = Color(0xFFF4F4F0);
 
   // ── 7. Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
@@ -67,3 +67,5 @@ class OTColors {
   static Color marja(bool isDark) => isDark ? marjaDark : marjaLight;
   static Color destructive(bool isDark) => isDark ? destructiveDark : destructiveLight;
 }
+
+

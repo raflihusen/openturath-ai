@@ -48,13 +48,10 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
   final values = entitlements.entries.toList();
   final active = values.where((entry) {
     final entitlement = entry.value;
-    return entitlement.status != 'revoked' &&
-        entitlement.status != 'expired' &&
-        (entitlement.plan == 'permanent' ||
-            (entitlement.expiry != null &&
-                entitlement.expiry!.isAfter(reference)));
+    return entitlement.isPremium && entitlement.isActiveAt(reference);
   }).toList();
-  if (active.isEmpty && user?.isSubscriptionActive == true) {
+  if (active.isEmpty && entitlements.isEmpty &&
+      user?.subscriptionExpiry?.isAfter(reference) == true) {
     final expiry = user!.subscriptionExpiry;
     final expiring = expiry != null && expiry.difference(reference).inDays <= 3;
     return MembershipPassSummary(
@@ -62,7 +59,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
           ? MembershipPassState.expiringSoon
           : MembershipPassState.activePro,
       badge: 'PRO',
-      accessLabel: AppCopy.allAssistantsAvailable,
+      accessLabel: 'Akses sesuai paket ${user.plan}',
       supportingLabel:
           expiring ? AppCopy.accessExpiringSoon : AppCopy.readyToUse,
       expiryLabel: AppCopy.validUntil,
@@ -177,3 +174,5 @@ MembershipPassSummary _base(
       expiresAt: null,
       ctaLabel: cta,
     );
+
+

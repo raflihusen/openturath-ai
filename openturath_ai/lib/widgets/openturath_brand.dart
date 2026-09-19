@@ -1,5 +1,6 @@
+import '../core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:openturath_ai/core/design/ot_fonts.dart';
 
 import '../core/theme.dart';
 
@@ -71,7 +72,7 @@ class OpenTurathBrand extends StatelessWidget {
           children: [
             Text(
               'OpenTurath',
-              style: GoogleFonts.newsreader(
+              style: OTFonts.newsreader(
                 fontSize: compact ? 18 : 21,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -81,8 +82,8 @@ class OpenTurathBrand extends StatelessWidget {
             if (showSlogan) ...[
               const SizedBox(height: 1),
               Text(
-                'Membaca kitab, menelusuri ibarah.',
-                style: GoogleFonts.newsreader(
+                context.tr('Membaca kitab, menelusuri ibarah.'),
+                style: OTFonts.newsreader(
                   fontSize: 11,
                   fontStyle: FontStyle.italic,
                   color: textSecondary,
@@ -96,3 +97,5 @@ class OpenTurathBrand extends StatelessWidget {
     );
   }
 }
+
+

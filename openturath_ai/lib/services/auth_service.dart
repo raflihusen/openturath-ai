@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../core/constants.dart';
 import 'session_user_stream.dart';
+import 'agent_session_manager.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -28,31 +28,18 @@ class AuthService {
 
   // ── Cache Helpers ──────────────────────────────────────────────
   static Future<void> _cacheUserLocally(UserModel user) async {
+    if (FirebaseAuth.instance.currentUser?.uid != user.uid) return;
+    // Entitlement/profile snapshots stay in process memory, not plaintext prefs.
     _userCache[user.uid] = user;
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'openturath_cached_user_${user.uid}',
-        jsonEncode(user.toJsonMap()),
-      );
+      await prefs.remove('openturath_cached_user_${user.uid}');
     } catch (_) {}
   }
 
   static Future<UserModel?> _getCachedUser(String uid) async {
-    if (_userCache.containsKey(uid)) {
-      return _userCache[uid];
-    }
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString('openturath_cached_user_$uid');
-      if (raw != null && raw.isNotEmpty) {
-        final map = jsonDecode(raw) as Map<String, dynamic>;
-        final user = UserModel.fromMap(uid, map);
-        _userCache[uid] = user;
-        return user;
-      }
-    } catch (_) {}
-    return null;
+    if (FirebaseAuth.instance.currentUser?.uid != uid) return null;
+    return _userCache[uid];
   }
 
   // ── Current Firebase User ──────────────────────────────────────
@@ -207,7 +194,7 @@ class AuthService {
     return UserModel(
       uid: _cachedGuestUid!,
       name: 'Peneliti Tamu',
-      email: 'tamu@openturath.ai',
+      email: '',
       photoUrl: '',
       plan: AppConstants.planTrial,
       questionsUsed: 0,
@@ -254,6 +241,34 @@ class AuthService {
     }
   }
 
+  /// Server-only refresh for membership confirmation; never falls back to cache.
+  Future<UserModel?> getFreshCurrentUserModel() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return null;
+    final doc = await _db.collection(AppConstants.colUsers).doc(uid)
+        .get(const GetOptions(source: Source.server))
+        .timeout(const Duration(seconds: 12));
+    if (_auth.currentUser?.uid != uid || !doc.exists) return null;
+    final model = UserModel.fromFirestore(doc);
+    await _cacheUserLocally(model);
+    return _auth.currentUser?.uid == uid ? model : null;
+  }
+
+  /// A convenience hint; actual notebook access is checked separately.
+  Future<bool> isGoogleSessionReady() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return false;
+    final prefs = await SharedPreferences.getInstance();
+    return _auth.currentUser?.uid == uid &&
+        prefs.getBool('openturath_${uid}_google_session_ready') == true;
+  }
+
+  Future<void> markGoogleSessionReady(String ownerUid) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_auth.currentUser?.uid != ownerUid) return;
+    await prefs.setBool('openturath_${ownerUid}_google_session_ready', true);
+  }
+
   // ── Stream user changes (real-time with single persistent cached stream, F10 & F41) ──
   Stream<UserModel?> get userStream => _cachedUserStream ??= _buildUserStream();
 
@@ -271,6 +286,7 @@ class AuthService {
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
     final currentUid = _auth.currentUser?.uid;
+    await AgentSessionManager.instance.closeAll(clearBrowserData: true);
 
     try {
       final cookieManager = CookieManager.instance();
@@ -289,6 +305,8 @@ class AuthService {
       await prefs.remove('google_session_ready');
       await prefs.remove('last_opened_notebook_id');
       if (currentUid != null) {
+        await prefs.remove('openturath_${currentUid}_google_session_ready');
+        await prefs.remove('last_opened_notebook_$currentUid');
         _userCache.remove(currentUid);
         await prefs.remove('openturath_cached_user_$currentUid');
       }
@@ -296,6 +314,7 @@ class AuthService {
 
     // Propagate Auth signOut to avoid half-signed-out UI state (F41)
     await _auth.signOut();
+    _cachedGuestUid = null;
   }
 
   // ── Increment Question Count ───────────────────────────────────
@@ -316,6 +335,7 @@ class AuthService {
     final uid = user.uid;
 
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
+    await AgentSessionManager.instance.closeAll(clearBrowserData: true);
     await user.delete();
     try {
       await CookieManager.instance().deleteAllCookies();
@@ -353,3 +373,5 @@ class AuthService {
     } catch (_) {}
   }
 }
+
+

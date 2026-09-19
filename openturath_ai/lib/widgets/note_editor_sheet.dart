@@ -1,697 +1,332 @@
+import '../core/l10n/app_dictionary.dart';
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
-import '../core/design/ot_spacing.dart';
-import '../core/design/ot_motion.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
+import 'editorial.dart';
+import 'scholarly_markdown.dart';
 
 class NoteEditorSheet extends StatefulWidget {
+  const NoteEditorSheet({super.key, this.item, this.onSaved, this.fullScreen = false});
   final BookmarkModel? item;
   final ValueChanged<BookmarkModel>? onSaved;
   final bool fullScreen;
 
-  const NoteEditorSheet({
-    super.key,
-    this.item,
-    this.onSaved,
-    this.fullScreen = false,
-  });
-
-  static Future<BookmarkModel?> show(
-    BuildContext context, {
-    BookmarkModel? item,
-  }) {
-    return Navigator.of(context).push<BookmarkModel>(
-      MaterialPageRoute(
+  static Future<BookmarkModel?> show(BuildContext context, {BookmarkModel? item}) =>
+      Navigator.of(context).push<BookmarkModel>(MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => Scaffold(
-          body: SafeArea(child: NoteEditorSheet(item: item, fullScreen: true)),
-        ),
-      ),
-    );
-  }
+        builder: (_) => Scaffold(body: SafeArea(
+            child: NoteEditorSheet(item: item, fullScreen: true))),
+      ));
 
   @override
   State<NoteEditorSheet> createState() => _NoteEditorSheetState();
 }
 
 class _NoteEditorSheetState extends State<NoteEditorSheet> {
-  late final TextEditingController _titleController;
-  late final TextEditingController _bodyController;
-  bool _isPreview = false;
-  bool _hasChanges = false;
-  bool _isSavingDraft = false;
-  bool _draftSaved = false;
-  bool _draftRestored = false;
-  Timer? _autoSaveDebounce;
+  late final TextEditingController _title;
+  late final TextEditingController _body;
+  late final String? _owner;
+  late final String _draftKey;
+  late final String _noteId;
+  StreamSubscription<User?>? _authSubscription;
+  Timer? _debounce;
+  Future<void> _draftWrite = Future.value();
+  bool _preview = false;
+  bool _dirty = false;
+  bool _saving = false;
+  bool _invalidSession = false;
+  bool _allowPop = false;
+  bool _restoring = false;
+  bool _draftFailed = false;
+  bool _closing = false;
+  String? _status;
+  TextDirection _direction = TextDirection.ltr;
 
-  String get _draftKey => 'openturath_draft_note_${widget.item?.id ?? 'new'}';
+  bool get _ownerValid => !_invalidSession &&
+      FirebaseAuth.instance.currentUser?.uid == _owner;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.item?.title ?? '');
-    _bodyController = TextEditingController(
-      text: widget.item?.fullAnswer ?? widget.item?.arabicExcerpt ?? '',
-    );
-
-    _titleController.addListener(_scheduleAutoSave);
-    _bodyController.addListener(_scheduleAutoSave);
-
-    _loadDraft();
+    _owner = FirebaseAuth.instance.currentUser?.uid;
+    _noteId = widget.item?.id ?? 'note_${DateTime.now().microsecondsSinceEpoch}';
+    _draftKey = 'openturath_note_draft_${Uri.encodeComponent(_owner ?? 'guest_local')}_${widget.item?.id ?? 'new'}';
+    _title = TextEditingController(text: widget.item?.title ?? '');
+    _body = TextEditingController(text: widget.item?.fullAnswer.trim().isNotEmpty == true
+        ? widget.item!.fullAnswer : widget.item?.arabicExcerpt ?? '');
+    _direction = ScholarlyMarkdown.directionOf(_body.text);
+    _title.addListener(_changed);
+    _body.addListener(_changed);
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user?.uid == _owner || !mounted) return;
+      _debounce?.cancel();
+      setState(() {
+        _invalidSession = true;
+        _title.clear();
+        _body.clear();
+        _status = 'notes.accountChanged';
+      });
+    });
+    _restore();
   }
 
-  Future<void> _loadDraft() async {
+  Future<void> _restore() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_draftKey);
-      if (raw == null || raw.isEmpty) return;
-      final map = jsonDecode(raw);
-      if (map is! Map<String, dynamic>) return;
-
-      final draftTitle = map['title'] as String? ?? '';
-      final draftBody = map['body'] as String? ?? '';
-
-      final initialTitle = widget.item?.title ?? '';
-      final initialBody =
-          widget.item?.fullAnswer ?? widget.item?.arabicExcerpt ?? '';
-
-      // Only restore if draft has different/more recent content
-      if ((draftTitle != initialTitle || draftBody != initialBody) &&
-          (draftTitle.isNotEmpty || draftBody.isNotEmpty)) {
-        if (mounted) {
-          setState(() {
-            _titleController.text = draftTitle;
-            _bodyController.text = draftBody;
-            _draftRestored = true;
-            _hasChanges = true;
-          });
-        }
-      }
-    } catch (_) {}
-  }
-
-  void _scheduleAutoSave() {
-    if (!_hasChanges) {
-      setState(() => _hasChanges = true);
-    }
-    _autoSaveDebounce?.cancel();
-    _autoSaveDebounce = Timer(const Duration(milliseconds: 1500), _saveDraft);
-  }
-
-  Future<void> _saveDraft() async {
-    final title = _titleController.text.trim();
-    final body = _bodyController.text.trim();
-    if (title.isEmpty && body.isEmpty) return;
-
-    if (mounted) setState(() => _isSavingDraft = true);
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        _draftKey,
-        jsonEncode({
-          'title': title,
-          'body': body,
-          'savedAt': DateTime.now().toIso8601String(),
-        }),
-      );
-      if (mounted) {
-        setState(() {
-          _isSavingDraft = false;
-          _draftSaved = true;
-        });
-      }
+      if (!mounted || !_ownerValid || _dirty || raw == null) return;
+      final parsed = jsonDecode(raw);
+      if (parsed is! Map<String, dynamic>) return;
+      final title = parsed['title'];
+      final body = parsed['body'];
+      if (title is! String || body is! String) return;
+      final savedAt = DateTime.tryParse(parsed['savedAt'] as String? ?? '');
+      if (widget.item != null && (savedAt == null ||
+          savedAt.isBefore(widget.item!.effectiveTime))) return;
+      _restoring = true;
+      _title.text = title;
+      _body.text = body;
+      _direction = ScholarlyMarkdown.directionOf(body);
+      _restoring = false;
+      setState(() { _dirty = true; _status = 'notes.draftRestored'; });
     } catch (_) {
-      if (mounted) setState(() => _isSavingDraft = false);
+      // A malformed local draft must not block opening the saved note.
     }
   }
 
-  TextDirection _textDirection = TextDirection.ltr;
+  void _changed() {
+    if (_restoring || !_ownerValid || !mounted) return;
+    setState(() { _dirty = true; _status = 'notes.unsaved'; });
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 900), _saveDraft);
+  }
+
+  Future<void> _saveDraft() {
+    if (!_ownerValid) return Future.value();
+    final title = _title.text;
+    final body = _body.text;
+    final key = _draftKey;
+    _draftWrite = _draftWrite.then((_) async {
+      final prefs = await SharedPreferences.getInstance();
+      if (!_ownerValid) return;
+      final saved = await prefs.setString(key, jsonEncode({
+        'title': title, 'body': body,
+        'savedAt': DateTime.now().toIso8601String(),
+      }));
+      if (!saved) throw StateError('Draft write failed');
+      _draftFailed = false;
+      if (mounted && _ownerValid && title == _title.text && body == _body.text) {
+        setState(() => _status = 'notes.draftSaved');
+      }
+    }).catchError((Object error) {
+      _draftFailed = true;
+      if (mounted) setState(() => _status = 'notes.draftFailed');
+    });
+    return _draftWrite;
+  }
+
+  Future<void> _close() async {
+    if (_saving || _closing) return;
+    _closing = true;
+    _debounce?.cancel();
+    if (_dirty && _ownerValid) await _saveDraft();
+    if (!mounted) return;
+    if (_draftFailed && _ownerValid) {
+      final discard = await showDialog<bool>(context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(dialogContext.tr('notes.draftTitle')),
+          content: Text(dialogContext.tr('notes.draftBody')),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialogContext, false),
+                child: Text(dialogContext.tr('notes.stay'))),
+            TextButton(onPressed: () => Navigator.pop(dialogContext, true),
+                child: Text(dialogContext.tr('notes.discard'))),
+          ],
+        ));
+      if (discard != true || !mounted) { _closing = false; return; }
+    }
+    setState(() => _allowPop = true);
+    Navigator.of(context).pop();
+  }
+
+  void _format(String prefix, String suffix) {
+    final value = _body.value;
+    final valid = value.selection.isValid;
+    final start = valid ? value.selection.start : value.text.length;
+    final end = valid ? value.selection.end : start;
+    final selected = value.text.substring(start, end);
+    _body.value = TextEditingValue(
+      text: value.text.replaceRange(start, end, '$prefix$selected$suffix'),
+      selection: TextSelection(baseOffset: start + prefix.length,
+          extentOffset: start + prefix.length + selected.length),
+    );
+  }
+
+  Future<void> _save() async {
+    if (_saving || !_ownerValid) return;
+    final body = _body.text.trim();
+    final title = _title.text.trim();
+    if (body.isEmpty && title.isEmpty) {
+      setState(() => _status = 'notes.writeFirst');
+      return;
+    }
+    setState(() => _saving = true);
+    _debounce?.cancel();
+    final now = DateTime.now();
+    // Keep an absent title absent; the reader supplies a live localized label.
+    final effectiveTitle = title;
+    // Editing a source invalidates the original verification stamp.
+    final item = widget.item?.copyWith(
+      title: effectiveTitle, fullAnswer: body, updatedAt: now,
+      verificationStatus: widget.item!.documentKind == BookmarkDocumentKind.personalNote
+          ? BookmarkVerificationStatus.notApplicable
+          : BookmarkVerificationStatus.needsReview,
+    ) ?? BookmarkModel(
+      id: _noteId, title: effectiveTitle,
+      agentId: 'catatan_mandiri', agentTitle: context.tr('notes.personal'),
+      fieldName: context.tr('notes.personal'), fieldId: 'general',
+      arabicExcerpt: '', fullAnswer: body, bookReference: '', pageNumber: '',
+      createdAt: now, updatedAt: now,
+      documentKind: BookmarkDocumentKind.personalNote,
+      verificationStatus: BookmarkVerificationStatus.notApplicable,
+    );
+    try {
+      await _draftWrite;
+      if (!_ownerValid) return;
+      await BookmarkService().addBookmark(item, userId: _owner ?? 'guest_local');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_draftKey);
+      if (!mounted || !_ownerValid) return;
+      widget.onSaved?.call(item);
+      setState(() { _dirty = false; _allowPop = true; });
+      Navigator.pop(context, item);
+    } catch (_) {
+      if (mounted) setState(() => _status = 'notes.saveFailed');
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
 
   @override
   void dispose() {
-    _autoSaveDebounce?.cancel();
-    _titleController.dispose();
-    _bodyController.dispose();
+    _debounce?.cancel();
+    _authSubscription?.cancel();
+    _title.dispose();
+    _body.dispose();
     super.dispose();
   }
 
-  void _applyDirection(TextDirection dir) {
-    final selection = _bodyController.selection;
-    final text = _bodyController.text;
-
-    if (selection.isValid && !selection.isCollapsed) {
-      final selectedText = text.substring(selection.start, selection.end);
-      final marker = dir == TextDirection.rtl ? '\u200F' : '\u200E';
-      final replaced = text.replaceRange(
-        selection.start,
-        selection.end,
-        '$marker$selectedText',
-      );
-      _bodyController.text = replaced;
-      _bodyController.selection = TextSelection(
-        baseOffset: selection.start,
-        extentOffset: selection.start + marker.length + selectedText.length,
-      );
-    }
-    setState(() => _textDirection = dir);
-    OTMotion.selection();
-    _scheduleAutoSave();
-  }
-
-  void _applyFormat(String prefix, String suffix,
-      {String defaultText = 'teks'}) {
-    final text = _bodyController.text;
-    final selection = _bodyController.selection;
-
-    if (text.isEmpty) {
-      _bodyController.text = '$prefix$defaultText$suffix';
-      _bodyController.selection = TextSelection(
-        baseOffset: prefix.length,
-        extentOffset: prefix.length + defaultText.length,
-      );
-      OTMotion.selection();
-      _scheduleAutoSave();
-      return;
-    }
-
-    if (selection.start < 0 || selection.end < 0) {
-      final newText = '$text$prefix$defaultText$suffix';
-      _bodyController.text = newText;
-      _bodyController.selection = TextSelection(
-        baseOffset: text.length + prefix.length,
-        extentOffset: text.length + prefix.length + defaultText.length,
-      );
-      OTMotion.selection();
-      _scheduleAutoSave();
-      return;
-    }
-
-    final selectedText = text.substring(selection.start, selection.end);
-    final insertText = selectedText.isEmpty ? defaultText : selectedText;
-    final replaced = text.replaceRange(
-      selection.start,
-      selection.end,
-      '$prefix$insertText$suffix',
-    );
-
-    _bodyController.text = replaced;
-    _bodyController.selection = TextSelection(
-      baseOffset: selection.start + prefix.length,
-      extentOffset: selection.start + prefix.length + insertText.length,
-    );
-    OTMotion.selection();
-    _scheduleAutoSave();
-  }
-
-  Future<void> _saveNote() async {
-    final title = _titleController.text.trim();
-    final body = _bodyController.text.trim();
-
-    if (title.isEmpty && body.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Isi judul atau tulis catatan terlebih dahulu.')),
-      );
-      return;
-    }
-
-    final effectiveTitle = title.isNotEmpty
-        ? title
-        : (body.length > 50 ? '${body.substring(0, 50)}...' : body);
-
-    final item = widget.item;
-    final BookmarkModel updated;
-    final now = DateTime.now();
-    if (item != null) {
-      updated = item.copyWith(
-        title: effectiveTitle,
-        fullAnswer: body,
-        updatedAt: now,
-      );
-    } else {
-      updated = BookmarkModel(
-        id: 'note_${now.millisecondsSinceEpoch}',
-        title: effectiveTitle,
-        agentId: 'catatan_mandiri',
-        agentTitle: 'Catatan Pribadi',
-        fieldName: 'Catatan Pribadi',
-        fieldId: 'general',
-        arabicExcerpt: '',
-        fullAnswer: body,
-        bookReference: '',
-        pageNumber: '',
-        createdAt: now,
-        updatedAt: now,
-        documentKind: BookmarkDocumentKind.personalNote,
-        verificationStatus: BookmarkVerificationStatus.notApplicable,
-      );
-    }
-
-    await BookmarkService().addBookmark(updated);
-
-    // Clear draft after successful persistent save
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_draftKey);
-    } catch (_) {}
-
-    widget.onSaved?.call(updated);
-    if (!mounted) return;
-    OTMotion.success();
-    Navigator.pop(context, updated);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-
-    final mediaQuery = MediaQuery.of(context);
-
-    return Container(
-      height:
-          widget.fullScreen ? double.infinity : mediaQuery.size.height * 0.88,
-      padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.zero,
-        border: Border.all(color: border, width: 0.8),
-      ),
-      child: Column(
-        children: [
-          if (!widget.fullScreen)
-            Center(
-              child: Container(
-                width: 36,
-                height: 3,
-                margin: const EdgeInsets.only(top: 8, bottom: 6),
-                color: textSecondary.withValues(alpha: 0.25),
-              ),
-            ),
-
-          // Appbar Row: Mode Toggle, Close, Save
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: OTSpacing.lg, vertical: 4),
-            child: Row(
-              children: [
-                if (widget.fullScreen)
-                  IconButton(
-                    icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-                    tooltip: 'Kembali',
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      widget.item != null ? 'Edit catatan' : 'Catatan baru',
-                      style:
-                          OTTypography.screenTitle(color: textPrimary).copyWith(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (_isSavingDraft || _draftSaved || _draftRestored)
-                      Text(
-                        _isSavingDraft
-                            ? 'Menyimpan draf...'
-                            : (_draftRestored
-                                ? 'Draf dipulihkan'
-                                : 'Draf tersimpan'),
-                        style:
-                            OTTypography.caption(color: textSecondary).copyWith(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                  ],
-                ),
-                const Spacer(),
-                // Toggle Edit / Preview
-                Container(
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: surfaceSubtle,
-                    borderRadius: BorderRadius.zero,
-                    border: Border.all(color: border, width: 0.6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () => setState(() => _isPreview = false),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                !_isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          child: Text(
-                            'Tulis',
-                            style: OTTypography.captionMedium(
-                              color: !_isPreview
-                                  ? (isDark
-                                      ? const Color(0xFF18181B)
-                                      : Colors.white)
-                                  : textSecondary,
-                            ).copyWith(fontSize: 11.5),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          FocusScope.of(context).unfocus();
-                          setState(() => _isPreview = true);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                _isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          child: Text(
-                            'Pratinjau',
-                            style: OTTypography.captionMedium(
-                              color: _isPreview
-                                  ? (isDark
-                                      ? const Color(0xFF18181B)
-                                      : Colors.white)
-                                  : textSecondary,
-                            ).copyWith(fontSize: 11.5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                TextButton(
-                  onPressed: _saveNote,
-                  style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    backgroundColor: textPrimary,
-                    foregroundColor:
-                        isDark ? const Color(0xFF18181B) : Colors.white,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero),
-                  ),
-                  child: Text(
-                    'Simpan',
-                    style: OTTypography.captionMedium(
-                      color: isDark ? const Color(0xFF18181B) : Colors.white,
-                    ).copyWith(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final secondary = OTColors.textSecondary(dark);
+    final arabic = _direction == TextDirection.rtl;
+    return PopScope(
+      canPop: _allowPop || (!_dirty && !_saving),
+      onPopInvokedWithResult: (didPop, result) { if (!didPop) _close(); },
+      child: Container(
+        color: OTColors.canvas(dark),
+        height: widget.fullScreen ? double.infinity : MediaQuery.sizeOf(context).height * .9,
+        child: Column(children: [
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: LayoutBuilder(builder: (context, constraints) {
+              final compact = constraints.maxWidth < 380 ||
+                  MediaQuery.textScalerOf(context).scale(14) > 20;
+              final title = Text(widget.item == null ? context.tr('notes.new') : context.tr('notes.editNote'),
+                  style: OTTypography.screenTitle());
+              final close = IconButton(tooltip: context.tr('notes.close'),
+                  onPressed: _saving ? null : _close,
+                  icon: const Icon(Icons.close_rounded, size: 22));
+              final actions = Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(tooltip: _preview ? context.tr('notes.resume') : context.tr('notes.preview'),
+                    onPressed: _invalidSession || _saving ? null : () {
+                      FocusScope.of(context).unfocus();
+                      setState(() => _preview = !_preview);
+                    }, icon: Icon(_preview ? Icons.edit_outlined : Icons.visibility_outlined, size: 22)),
+                EditorialButton(label: context.tr('notes.save'), busy: _saving,
+                    onPressed: _invalidSession ? null : _save),
+              ]);
+              if (compact) {
+                return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  Row(children: [close, Expanded(child: title)]),
+                  const SizedBox(height: 4),
+                  Align(alignment: AlignmentDirectional.centerEnd, child: actions),
+                ]);
+              }
+              return Row(children: [close, Expanded(child: title), actions]);
+            })),
           const Divider(height: 1),
-
-          // Formatting Toolbar (Full width row, centered and evenly distributed)
-          if (!_isPreview)
-            Container(
-              height: 42,
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                color: surfaceSubtle,
-                border: Border(bottom: BorderSide(color: border, width: 0.6)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _ToolbarBtn(
-                    label: 'B',
-                    tooltip: 'Tebal',
-                    isBold: true,
-                    onTap: () =>
-                        _applyFormat('**', '**', defaultText: 'teks tebal'),
-                  ),
-                  _ToolbarBtn(
-                    label: 'I',
-                    tooltip: 'Miring',
-                    isItalic: true,
-                    onTap: () =>
-                        _applyFormat('*', '*', defaultText: 'teks miring'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_list_bulleted_rounded,
-                    tooltip: 'Daftar Poin',
-                    onTap: () =>
-                        _applyFormat('\n- ', '', defaultText: 'poin catatan'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_quote_rounded,
-                    tooltip: 'Kutipan',
-                    onTap: () =>
-                        _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
-                  ),
-                  _ToolbarBtn(
-                    label: '« »',
-                    tooltip: 'Kutipan Arab',
-                    onTap: () => _applyFormat('«', '»', defaultText: 'عبارة'),
-                  ),
-                  _ToolbarBtn(
-                    label: 'H1',
-                    tooltip: 'Judul Bab',
-                    onTap: () =>
-                        _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_textdirection_l_to_r_rounded,
-                    tooltip: 'Orientasi Kiri ke Kanan (LTR)',
-                    isActive: _textDirection == TextDirection.ltr,
-                    onTap: () => _applyDirection(TextDirection.ltr),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_textdirection_r_to_l_rounded,
-                    tooltip: 'Orientasi Kanan ke Kiri / Arab (RTL)',
-                    isActive: _textDirection == TextDirection.rtl,
-                    onTap: () => _applyDirection(TextDirection.rtl),
-                  ),
-                ],
-              ),
-            ),
-
-          // Content Area
-          Expanded(
-            child: _isPreview
-                ? SingleChildScrollView(
-                    padding: const EdgeInsets.all(OTSpacing.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (_titleController.text.trim().isNotEmpty) ...[
-                          Text(
-                            _titleController.text.trim(),
-                            style: GoogleFonts.newsreader(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Divider(
-                              color: border.withValues(alpha: 0.6), height: 1),
-                          const SizedBox(height: 16),
-                        ],
-                        _bodyController.text.trim().isEmpty
-                            ? Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 40),
-                                  child: Text(
-                                    'Belum ada isi catatan.',
-                                    style:
-                                        OTTypography.body(color: textSecondary),
-                                  ),
-                                ),
-                              )
-                            : Directionality(
-                                textDirection: _textDirection,
-                                child: MarkdownBody(
-                                  data: _bodyController.text,
-                                  selectable: true,
-                                  styleSheet: MarkdownStyleSheet(
-                                    p: GoogleFonts.outfit(
-                                      fontSize: 14.5,
-                                      height: 1.6,
-                                      color: textPrimary,
-                                    ),
-                                    h1: GoogleFonts.newsreader(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      color: textPrimary,
-                                    ),
-                                    h2: GoogleFonts.newsreader(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: textPrimary,
-                                    ),
-                                    blockquote: GoogleFonts.outfit(
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic,
-                                      color: textSecondary,
-                                    ),
-                                    blockquoteDecoration: BoxDecoration(
-                                      color: surfaceSubtle,
-                                      borderRadius: BorderRadius.zero,
-                                      border: Border(
-                                        left: BorderSide(
-                                          color: textPrimary.withValues(
-                                              alpha: 0.6),
-                                          width: 3.5,
-                                        ),
-                                      ),
-                                    ),
-                                    code: GoogleFonts.sourceCodePro(
-                                      fontSize: 13,
-                                      backgroundColor: surfaceSubtle,
-                                    ),
-                                  ),
-                                ),
-                              ),
+          if (!_preview && !_invalidSession)
+            SingleChildScrollView(scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(children: [
+                _tool(context.tr('notes.bold'), Icons.format_bold, () => _format('**', '**')),
+                _tool(context.tr('notes.heading'), Icons.title, () => _format('\n## ', '\n')),
+                _tool(context.tr('notes.list'), Icons.format_list_bulleted, () => _format('\n- ', '')),
+                _tool(context.tr('notes.quote'), Icons.format_quote, () => _format('\n> ', '')),
+                const SizedBox(width: 12),
+                _tool(context.tr('notes.latin'), Icons.format_textdirection_l_to_r,
+                    () => setState(() => _direction = TextDirection.ltr), selected: !arabic),
+                _tool(context.tr('notes.arabic'), Icons.format_textdirection_r_to_l,
+                    () => setState(() => _direction = TextDirection.rtl), selected: arabic),
+              ])),
+          Expanded(child: SingleChildScrollView(
+            padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 40),
+            child: Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 720),
+              child: _invalidSession
+                  ? EditorialEmptyState(title: context.tr('notes.session'), description: _status == null ? null : context.tr(_status!))
+                  : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                      if (_preview) ...[
+                        Text(_title.text.isEmpty ? context.tr('notes.untitled') : _title.text,
+                          textDirection: _title.text.isEmpty ? Directionality.of(context)
+                              : ScholarlyMarkdown.directionOf(_title.text),
+                          style: (ScholarlyMarkdown.containsArabic(_title.text) ||
+                              (_title.text.isEmpty && context.languageCode == 'ar'))
+                              ? OTTypography.arabicReading(height: 1.95).copyWith(fontSize: 30)
+                              : OTTypography.pageTitle().copyWith(fontSize: 30)),
+                        const SizedBox(height: 24),
+                        ScholarlyMarkdown(data: _body.text),
+                      ] else ...[
+                        TextField(controller: _title, maxLines: null, enabled: !_saving,
+                          textDirection: ScholarlyMarkdown.directionOf(_title.text),
+                          style: (ScholarlyMarkdown.containsArabic(_title.text) ||
+                              (_title.text.isEmpty && context.languageCode == 'ar'))
+                              ? OTTypography.arabicReading(height: 1.95).copyWith(fontSize: 30)
+                              : OTTypography.pageTitle().copyWith(fontSize: 30, height: 1.3),
+                          decoration: InputDecoration(hintText: context.tr('notes.noteTitle'),
+                            border: InputBorder.none, filled: false)),
+                        const SizedBox(height: 16),
+                        const Divider(height: 1),
+                        const SizedBox(height: 16),
+                        TextField(controller: _body, minLines: 10, maxLines: null, enabled: !_saving,
+                          keyboardType: TextInputType.multiline, textDirection: _direction,
+                          style: arabic
+                              ? OTTypography.arabicReading(height: 1.95).copyWith(fontSize: 24)
+                              : OTTypography.body().copyWith(fontSize: 16, height: 1.85,
+                                  fontFamilyFallback: const ['Scheherazade New']),
+                          decoration: InputDecoration(
+                            hintText: context.tr('notes.bodyHint'),
+                            border: InputBorder.none, filled: false)),
                       ],
-                    ),
-                  )
-                : ListView(
-                    padding: const EdgeInsets.all(OTSpacing.lg),
-                    children: [
-                      // Title TextField
-                      TextField(
-                        controller: _titleController,
-                        style: GoogleFonts.newsreader(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: textPrimary,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Judul catatan',
-                          hintStyle: GoogleFonts.newsreader(
-                            fontSize: 20,
-                            color: textSecondary.withValues(alpha: 0.6),
-                          ),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Divider(color: border.withValues(alpha: 0.5), height: 1),
-                      const SizedBox(height: 14),
-
-                      // Body TextField
-                      TextField(
-                        controller: _bodyController,
-                        maxLines: null,
-                        minLines: 12,
-                        keyboardType: TextInputType.multiline,
-                        textDirection: _textDirection,
-                        textAlign: _textDirection == TextDirection.rtl
-                            ? TextAlign.right
-                            : TextAlign.left,
-                        style: GoogleFonts.outfit(
-                          fontSize: 14.5,
-                          height: 1.55,
-                          color: textPrimary,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Tulis catatan atau tempel ibarah di sini…',
-                          hintTextDirection: _textDirection,
-                          hintStyle: GoogleFonts.outfit(
-                            fontSize: 14,
-                            color: textSecondary.withValues(alpha: 0.6),
-                          ),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
-                  ),
-          ),
-        ],
+                    ]))),
+          )),
+          if (_status != null && !_invalidSession)
+            Padding(padding: const EdgeInsetsDirectional.fromSTEB(24, 8, 24, 12),
+              child: Semantics(liveRegion: true, child: Text(context.tr(_status!),
+                  style: OTTypography.caption(color: secondary)))),
+        ]),
       ),
     );
   }
-}
 
-class _ToolbarBtn extends StatelessWidget {
-  final String? label;
-  final IconData? icon;
-  final String tooltip;
-  final VoidCallback onTap;
-  final bool isBold;
-  final bool isItalic;
-  final bool isActive;
-
-  const _ToolbarBtn({
-    this.label,
-    this.icon,
-    required this.tooltip,
-    required this.onTap,
-    this.isBold = false,
-    this.isItalic = false,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textSecondary = OTColors.textSecondary(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final accent = OTColors.marja(isDark);
-
-    return Tooltip(
-      message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minWidth: 36, maxWidth: 44),
-          height: 32,
-          decoration: BoxDecoration(
-            color: isActive
-                ? accent.withValues(alpha: 0.14)
-                : Colors.transparent,
-            border: isActive
-                ? Border.all(
-                    color: accent.withValues(alpha: 0.45), width: 0.9)
-                : null,
-          ),
-          alignment: Alignment.center,
-          child: icon != null
-              ? Icon(icon,
-                  size: 17, color: isActive ? accent : textSecondary)
-              : Text(
-                  label!,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-                    fontStyle:
-                        isItalic ? FontStyle.italic : FontStyle.normal,
-                    color: isActive ? accent : textPrimary,
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
+  Widget _tool(String label, IconData icon, VoidCallback action, {bool selected = false}) =>
+      IconButton(tooltip: label, onPressed: _saving ? null : action, isSelected: selected,
+          icon: Icon(icon, size: 20), constraints: const BoxConstraints(minWidth: 48, minHeight: 48));
 }

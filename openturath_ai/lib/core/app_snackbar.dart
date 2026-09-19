@@ -1,7 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'theme.dart';
+import 'l10n/app_dictionary.dart';
+import 'design/ot_fonts.dart';
 import 'design/ot_colors.dart';
 
 enum SnackType { info, success, warning, error }
@@ -36,7 +37,7 @@ class AppSnackBar {
         icon = Icons.warning_amber_rounded;
         break;
       case SnackType.error:
-        accentColor = OTColors.destructiveDark; // Merah bata redup, bukan neon
+        accentColor = textColor; // Merah bata redup, bukan neon
         icon = Icons.error_outline;
         break;
       case SnackType.info:
@@ -67,8 +68,8 @@ class AppSnackBar {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                message,
-                style: const TextStyle(
+                context.tr(message),
+                style: OTFonts.outfit(
                   color: textColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -80,7 +81,7 @@ class AppSnackBar {
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
-        elevation: 4,
+        elevation: 0,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusCard),
@@ -96,15 +97,8 @@ class AppSnackBar {
       ),
     );
 
-    // Safeguard timeout: jamin snackbar selalu tertutup otomatis setelah durasi habis,
-    // bahkan jika ada persistensi bawaan framework saat action != null atau service aksesibilitas aktif.
-    if (!persist) {
-      Timer(effectiveDuration + const Duration(milliseconds: 200), () {
-        try {
-          messenger.clearSnackBars();
-        } catch (_) {}
-      });
-    }
+    // ScaffoldMessenger owns dismissal and respects accessibility services.
+
   }
 
   static void hide(BuildContext context) {
@@ -183,4 +177,6 @@ class AppSnackBar {
         persist: persist,
       );
 }
+
+
 

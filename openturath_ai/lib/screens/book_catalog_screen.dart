@@ -1,22 +1,19 @@
+import '../core/l10n/app_dictionary.dart';
+import '../core/l10n/library_dictionary.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../core/app_copy.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
-import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
 import '../widgets/book_row_item.dart';
-import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/editorial.dart';
 
-/// Halaman Katalog Kitab (Full-Screen Route).
-/// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
-/// filter hierarki disiplin (القسم), abad keilmuan, dan kartu kitab minimalis bergaya turath.
+/// Searchable catalogue backed by the canonical library repository.
 class BookCatalogScreen extends StatefulWidget {
   final AgentModel? agent;
   final String? initialQuery;
@@ -131,7 +128,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _errorMessage = AppCopy.catalogLoadFailed;
+        _errorMessage = 'library.load_failed';
       });
     }
   }
@@ -161,6 +158,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   }
 
   void _clearFilters() {
+    _debounce?.cancel();
     _searchCtrl.clear();
     setState(() {
       _searchQuery = '';
@@ -188,10 +186,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   }
 
   String _formatNumber(int number) {
-    return number.toString().replaceAllMapped(
+    // Search result quantities are UI counts, so honor the numeral preference.
+    return context.uiNumber(number.toString().replaceAllMapped(
           RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]}.',
-        );
+          (Match m) => '${m[1]}${context.languageCode == 'id' ? '.' : ','}',
+        ));
   }
 
   String _cleanSectionLabel(String full) {
@@ -202,699 +201,118 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     return full;
   }
 
-  String _resolveSubtitle() {
-    if (widget.agent != null) {
-      if (_allBooks != null && _allBooks!.isNotEmpty) {
-        return '${_formatNumber(_allBooks!.length)} Kitab ${widget.agent!.title}';
-      }
-      return widget.agent!.title;
-    }
-    if (_allBooks != null && _allBooks!.isNotEmpty) {
-      return '${_formatNumber(_allBooks!.length)} Kitab Mazhab Syafi\'i';
-    }
-    return '87 Kitab Mazhab Syafi\'i';
+  Future<void> _showFilters() async {
+    final useEras = _hasEras;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: FractionallySizedBox(
+          heightFactor: .8,
+          child: StatefulBuilder(builder: (_, refresh) {
+            Widget choices(String title, List<String> values, String? selected,
+                void Function(String?) select, {bool arabic = false}) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  Wrap(spacing: 8, runSpacing: 8, children: values.map((value) => ChoiceChip(
+                    label: arabic ? EditorialArabicText(_cleanSectionLabel(value), fontSize: 20) : Text(libraryDataLabel(value, context.languageCode)),
+                    selected: selected == value,
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    onSelected: (_) {
+                      setState(() {
+                        select(selected == value ? null : value);
+                        _applyFilters();
+                      });
+                      refresh(() {});
+                    },
+                  )).toList()),
+                ]),
+              );
+            }
+            return ListView(padding: const EdgeInsets.all(24), children: [
+              Text(context.tr('library.filter'), style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 24),
+              if (_availableSections.length > 1)
+                choices(context.tr('library.field'), _availableSections, _selectedSection,
+                  (value) => _selectedSection = value, arabic: true),
+              choices(context.tr('library.period'), useEras ? _eras : _centuries,
+                useEras ? _selectedEra : _selectedCentury, (value) {
+                  if (useEras) { _selectedEra = value; _selectedCentury = null; }
+                  else { _selectedCentury = value; _selectedEra = null; }
+                }),
+              if (_hasTypes)
+                choices(context.tr('library.type'), _types, _selectedType, (value) => _selectedType = value),
+              EditorialButton(label: context.tr('library.results'), onPressed: () => Navigator.pop(sheetContext)),
+            ]);
+          }),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final background = OTColors.canvas(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final primaryAccent = OTColors.accent(isDark);
-
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final books = _filteredBooks ?? const <CanonicalBookPresentation>[];
     return Scaffold(
-      backgroundColor: background,
-      appBar: AppBar(
-        backgroundColor: background,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-          tooltip: 'Kembali',
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppCopy.referenceBooks,
-              style: OTTypography.screenTitle(color: textPrimary)
-                  .copyWith(fontSize: 18),
-            ),
-            Text(
-              _resolveSubtitle(),
-              style: OTTypography.caption(color: textSecondary)
-                  .copyWith(fontSize: 11),
-            ),
-          ],
-        ),
-        actions: [
-          if (_hasActiveFilters)
-            TextButton(
-              onPressed: _clearFilters,
-              child: Text(
-                'Hapus filter',
-                style: OTTypography.button(color: primaryAccent)
-                    .copyWith(fontSize: 13),
-              ),
-            ),
-          const SizedBox(width: 8),
-        ],
-      ),
+      backgroundColor: OTColors.canvas(dark),
       body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            // ── SEARCH CONTAINER ──
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: OTSpacing.lg,
-                vertical: OTSpacing.sm,
-              ),
-              child: Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: border, width: 0.8),
-                ),
-                child: Row(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1100),
+            child: CustomScrollView(slivers: [
+              SliverPadding(
+                padding: const EdgeInsetsDirectional.fromSTEB(24, 24, 24, 0),
+                sliver: SliverToBoxAdapter(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(Icons.search_rounded, size: 20, color: textSecondary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchCtrl,
-                        onChanged: _onSearchChanged,
-                        style: GoogleFonts.outfit(
-                            fontSize: 13.5, color: textPrimary),
-                        decoration: InputDecoration(
-                          hintText: 'Cari kitab, pengarang, atau penahkik…',
-                          hintStyle: GoogleFonts.outfit(
-                            fontSize: 13.5,
-                            color: textSecondary.withValues(alpha: 0.7),
-                          ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          filled: false,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ),
-                    if (_searchQuery.isNotEmpty)
-                      GestureDetector(
-                        onTap: () {
-                          _searchCtrl.clear();
-                          setState(() {
-                            _searchQuery = '';
-                            _applyFilters();
-                          });
-                        },
-                        child: Icon(Icons.close_rounded,
-                            size: 18, color: textSecondary),
-                      ),
+                    EditorialHeader(title: context.tr('library.catalog'), eyebrow: context.tr('library.eyebrow'), showBack: true,
+                      subtitle: widget.agent == null ? context.tr('library.syafii') : context.agentTitle(widget.agent!)),
+                    const SizedBox(height: 24),
+                    EditorialSearchField(controller: _searchCtrl, onChanged: _onSearchChanged,
+                      hintText: context.tr('library.search')),
+                    const SizedBox(height: 12),
+                    Wrap(spacing: 12, runSpacing: 8, children: [
+                      EditorialButton(label: context.tr('library.filter'), icon: Icons.tune_outlined,
+                        secondary: true, onPressed: _isLoading ? null : _showFilters),
+                      if (_hasActiveFilters)
+                        EditorialButton(label: context.tr('library.clear'), secondary: true, onPressed: _clearFilters),
+                    ]),
+                    const SizedBox(height: 24),
+                    if (!_isLoading && _errorMessage == null)
+                      Text(context.tr('library.count', args: {'count': libraryBidi(_formatNumber(books.length), context.languageCode), 'total': libraryBidi(_formatNumber(_allBooks?.length ?? 0), context.languageCode)}),
+                        style: OTTypography.caption(color: OTColors.textSecondary(dark))),
+                    const SizedBox(height: 16),
                   ],
-                ),
+                )),
               ),
-            ),
-
-            // ── DYNAMIC HORIZONTAL FILTER CHIPS ──
-            _buildFilterChipsBar(
-              isDark: isDark,
-              surface: surface,
-              border: border,
-              textPrimary: textPrimary,
-              textSecondary: textSecondary,
-              primaryAccent: primaryAccent,
-            ),
-
-            const SizedBox(height: OTSpacing.sm),
-
-            // ── RESULTS COUNT HEADER ──
-            if (!_isLoading && _filteredBooks != null && _allBooks != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: OTSpacing.lg,
-                  vertical: 4,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
-                      style:
-                          OTTypography.caption(color: textSecondary).copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (_selectedSection != null ||
-                        _selectedEra != null ||
-                        _selectedType != null ||
-                        _selectedCentury != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: primaryAccent.withValues(
-                              alpha: isDark ? 0.12 : 0.06),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          [
-                            if (_selectedSection != null)
-                              _cleanSectionLabel(_selectedSection!),
-                            if (_selectedEra != null) _selectedEra!,
-                            if (_selectedType != null) _selectedType!,
-                            if (_selectedCentury != null) _selectedCentury!,
-                          ].join(' · '),
-                          style: OTTypography.caption(color: primaryAccent)
-                              .copyWith(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-            // ── MAIN CONTENT LIST / EMPTY / ERROR / LOADING ──
-            Expanded(
-              child: _buildContent(
-                isDark: isDark,
-                surface: surface,
-                border: border,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-                primaryAccent: primaryAccent,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterChipsBar({
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color primaryAccent,
-  }) {
-    final hasFilters = _hasActiveFilters;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-      child: Row(
-        children: [
-          _filterChip(
-            label: hasFilters ? 'Filter aktif' : 'Semua kitab',
-            isSelected: !hasFilters,
-            onTap: hasFilters ? _clearFilters : () {},
-            isDark: isDark,
-            border: border,
-            surface: surface,
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-          ),
-          const Spacer(),
-          OutlinedButton.icon(
-            onPressed: () => _showFilterSheet(
-                isDark, surface, border, textPrimary, textSecondary),
-            icon: const Icon(Icons.tune_rounded, size: 16),
-            label: const Text('Filter'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: textPrimary,
-              side: BorderSide(color: border),
-              visualDensity: VisualDensity.compact,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _showFilterSheet(bool isDark, Color surface, Color border,
-      Color textPrimary, Color textSecondary) {
-    final isSyafii = widget.agent == null ||
-        widget.agent!.id == 'fiqh_syafii' ||
-        widget.agent!.catalogId == 'canonical_syafii' ||
-        widget.agent!.fieldId == 'fiqh';
-    final eraChoices = isSyafii && _hasEras ? _eras : _centuries;
-    return showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: surface,
-      showDragHandle: true,
-      builder: (sheetContext) => SafeArea(
-        child: StatefulBuilder(
-          builder: (_, setSheetState) => Padding(
-            padding: const EdgeInsets.fromLTRB(
-                OTSpacing.lg, 0, OTSpacing.lg, OTSpacing.lg),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Text('Saring koleksi',
-                    style: OTTypography.screenTitle(color: textPrimary)),
-                const SizedBox(height: 16),
-                if (_availableSections.length > 1) ...[
-                  Text('Bidang',
-                      style: OTTypography.captionMedium(color: textSecondary)),
-                  Wrap(
-                      spacing: 8,
-                      children: _availableSections
-                          .map((section) => ChoiceChip(
-                              label: Text(_cleanSectionLabel(section)),
-                              selected: _selectedSection == section,
-                              onSelected: (_) {
-                                setState(() {
-                                  _selectedSection = _selectedSection == section
-                                      ? null
-                                      : section;
-                                  _applyFilters();
-                                });
-                                setSheetState(() {});
-                              }))
-                          .toList()),
-                  const SizedBox(height: 16),
-                ],
-                Text('Era',
-                    style: OTTypography.captionMedium(color: textSecondary)),
-                Wrap(
-                    spacing: 8,
-                    children: eraChoices
-                        .map((era) => ChoiceChip(
-                            label: Text(era),
-                            selected:
-                                _selectedCentury == era || _selectedEra == era,
-                            onSelected: (_) {
-                              setState(() {
-                                if (isSyafii && _hasEras) {
-                                  _selectedEra =
-                                      _selectedEra == era ? null : era;
-                                  _selectedCentury = null;
-                                } else {
-                                  _selectedCentury =
-                                      _selectedCentury == era ? null : era;
-                                  _selectedEra = null;
-                                }
-                                _applyFilters();
-                              });
-                              setSheetState(() {});
-                            }))
-                        .toList()),
-                if (_hasTypes) ...[
-                  const SizedBox(height: 16),
-                  Text('Jenis kitab',
-                      style: OTTypography.captionMedium(color: textSecondary)),
-                  Wrap(
-                      spacing: 8,
-                      children: _types
-                          .map((type) => ChoiceChip(
-                              label: Text(type),
-                              selected: _selectedType == type,
-                              onSelected: (_) {
-                                setState(() {
-                                  _selectedType =
-                                      _selectedType == type ? null : type;
-                                  _applyFilters();
-                                });
-                                setSheetState(() {});
-                              }))
-                          .toList()),
-                ],
-                const SizedBox(height: 20),
-                TextButton(
-                    onPressed: () {
-                      _clearFilters();
-                      Navigator.pop(sheetContext);
-                    },
-                    child: const Text('Hapus semua filter')),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Retained as a fallback while the compact filter sheet is rolled out.
-  // ignore: unused_element
-  Widget _buildLegacyFilterChipsBar({
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color primaryAccent,
-  }) {
-    // Mode 1: Multipel Sub-Bagian (seperti Tafsir & Sastra Arab)
-    if (_availableSections.length > 1) {
-      return SizedBox(
-        height: 38,
-        child: ListView(
-          physics: const BouncingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-          children: [
-            _filterChip(
-              label: 'Semua Bagian',
-              isSelected: _selectedSection == null,
-              onTap: () {
-                setState(() {
-                  _selectedSection = null;
-                  _applyFilters();
-                });
-              },
-              isDark: isDark,
-              border: border,
-              surface: surface,
-              textPrimary: textPrimary,
-              textSecondary: textSecondary,
-            ),
-            for (final section in _availableSections)
-              _filterChip(
-                label: _cleanSectionLabel(section),
-                isSelected: _selectedSection == section,
-                onTap: () {
-                  setState(() {
-                    _selectedSection =
-                        _selectedSection == section ? null : section;
-                    _applyFilters();
-                  });
-                },
-                isDark: isDark,
-                border: border,
-                surface: surface,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-              ),
-          ],
-        ),
-      );
-    }
-
-    // Mode 2: Mazhab Syafi'i (Era & Tipe Matan/Syarah)
-    final isSyafii = widget.agent == null ||
-        widget.agent!.id == 'fiqh_syafii' ||
-        widget.agent!.catalogId == 'canonical_syafii' ||
-        widget.agent!.fieldId == 'fiqh';
-    if (isSyafii && (_hasEras || _hasTypes)) {
-      return SizedBox(
-        height: 38,
-        child: ListView(
-          physics: const BouncingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-          children: [
-            _filterChip(
-              label: 'Semua Era',
-              isSelected: _selectedEra == null,
-              onTap: () {
-                setState(() {
-                  _selectedEra = null;
-                  _applyFilters();
-                });
-              },
-              isDark: isDark,
-              border: border,
-              surface: surface,
-              textPrimary: textPrimary,
-              textSecondary: textSecondary,
-            ),
-            for (final era in _eras)
-              _filterChip(
-                label: era,
-                isSelected: _selectedEra == era,
-                onTap: () {
-                  setState(() {
-                    _selectedEra = _selectedEra == era ? null : era;
-                    _applyFilters();
-                  });
-                },
-                isDark: isDark,
-                border: border,
-                surface: surface,
-                textPrimary: textPrimary,
-                textSecondary: textSecondary,
-              ),
-            if (_types.isNotEmpty) ...[
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                width: 1,
-                color: border,
-              ),
-              for (final type in _types)
-                _filterChip(
-                  label: type,
-                  isSelected: _selectedType == type,
-                  onTap: () {
-                    setState(() {
-                      _selectedType = _selectedType == type ? null : type;
-                      _applyFilters();
-                    });
-                  },
-                  isDark: isDark,
-                  border: border,
-                  surface: surface,
-                  textPrimary: textPrimary,
-                  textSecondary: textSecondary,
-                ),
-            ],
-          ],
-        ),
-      );
-    }
-
-    // Mode 3: Hadits, Ushul Fikih, & Tahawwulat (Abad Kronologis Turath)
-    return SizedBox(
-      height: 38,
-      child: ListView(
-        physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-        children: [
-          _filterChip(
-            label: 'Semua Era',
-            isSelected: _selectedCentury == null,
-            onTap: () {
-              setState(() {
-                _selectedCentury = null;
-                _applyFilters();
-              });
-            },
-            isDark: isDark,
-            border: border,
-            surface: surface,
-            textPrimary: textPrimary,
-            textSecondary: textSecondary,
-          ),
-          for (final century in _centuries)
-            _filterChip(
-              label: century,
-              isSelected: _selectedCentury == century,
-              onTap: () {
-                setState(() {
-                  _selectedCentury =
-                      _selectedCentury == century ? null : century;
-                  _applyFilters();
-                });
-              },
-              isDark: isDark,
-              border: border,
-              surface: surface,
-              textPrimary: textPrimary,
-              textSecondary: textSecondary,
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContent({
-    required bool isDark,
-    required Color surface,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color primaryAccent,
-  }) {
-    if (_isLoading) {
-      return ListView.builder(
-        padding: const EdgeInsets.all(OTSpacing.lg),
-        itemCount: 8,
-        itemBuilder: (ctx, i) => _buildSkeletonItem(surface, border),
-      );
-    }
-
-    if (_errorMessage != null) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(OTSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.error_outline_rounded, size: 48, color: textSecondary),
-              const SizedBox(height: 12),
-              Text(
-                _errorMessage!,
-                textAlign: TextAlign.center,
-                style: OTTypography.body(color: textPrimary),
-              ),
-              const SizedBox(height: 16),
-              AppleInteractiveWrapper(
-                onTap: _loadCatalog,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: primaryAccent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    AppCopy.tryAgain,
-                    style: OTTypography.button(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (_filteredBooks == null || _filteredBooks!.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(OTSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.search_off_rounded, size: 48, color: textSecondary),
-              const SizedBox(height: 12),
-              Text(
-                'Belum ada kitab yang cocok',
-                style: OTTypography.bodyMedium(color: textPrimary).copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Coba gunakan kata kunci lain, nama pengarang, atau penahkik.',
-                textAlign: TextAlign.center,
-                style: OTTypography.caption(color: textSecondary),
-              ),
-              if (_hasActiveFilters) ...[
-                const SizedBox(height: 16),
-                AppleInteractiveWrapper(
-                  onTap: _clearFilters,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: border),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'Hapus filter',
-                      style: OTTypography.button(color: textPrimary)
-                          .copyWith(fontSize: 13),
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadCatalog,
-      color: primaryAccent,
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics()),
-        padding: const EdgeInsets.symmetric(
-          horizontal: OTSpacing.lg,
-          vertical: OTSpacing.sm,
-        ),
-        itemCount: _filteredBooks!.length,
-        itemBuilder: (context, index) {
-          final book = _filteredBooks![index];
-          return BookRowItem(
-            book: book,
-            searchQuery: _searchQuery,
-            onTap: () => _openBookDetail(book),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildSkeletonItem(Color surface, Color border) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: OTSpacing.sm),
-      height: 72,
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border, width: 0.8),
-      ),
-    );
-  }
-
-  Widget _filterChip({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required bool isDark,
-    required Color border,
-    required Color surface,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    final activeBg = textPrimary;
-    final activeFg = isDark ? Colors.black : Colors.white;
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: AppleInteractiveWrapper(
-        onTap: onTap,
-        pressedScale: 0.94,
-        hapticType: HapticFeedbackType.selection,
-        borderRadius: BorderRadius.circular(20),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
-          decoration: BoxDecoration(
-            color: isSelected ? activeBg : surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isSelected ? activeBg : border,
-              width: 0.8,
-            ),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: OTTypography.caption(
-                    color: isSelected ? activeFg : textSecondary)
-                .copyWith(
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              fontSize: 12,
-            ),
+              if (_isLoading)
+                const SliverToBoxAdapter(child: Padding(padding: EdgeInsets.all(48),
+                  child: Center(child: CircularProgressIndicator())))
+              else if (_errorMessage != null)
+                SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(24),
+                  child: EditorialEmptyState(title: context.tr('library.load_title'), description: context.tr(_errorMessage!),
+                    action: EditorialButton(label: context.tr('library.retry'), onPressed: _loadCatalog))))
+              else if (books.isEmpty)
+                SliverToBoxAdapter(child: Padding(padding: const EdgeInsets.all(24),
+                  child: EditorialEmptyState(
+                    title: _hasActiveFilters ? context.tr('library.no_match') : context.tr('library.unavailable'),
+                    description: _hasActiveFilters ? context.tr('library.search_again') : context.tr('library.no_catalog'),
+                    action: EditorialButton(label: _hasActiveFilters ? context.tr('library.clear') : context.tr('library.reload'),
+                      onPressed: _hasActiveFilters ? _clearFilters : _loadCatalog))))
+              else
+                SliverPadding(padding: const EdgeInsetsDirectional.fromSTEB(24, 0, 24, 40),
+                  sliver: SliverList(delegate: SliverChildBuilderDelegate((context, index) {
+                    final book = books[index];
+                    return Padding(padding: const EdgeInsets.only(bottom: 12),
+                      child: BookRowItem(book: book, searchQuery: _searchQuery,
+                        onTap: () => _openBookDetail(book)));
+                  }, childCount: books.length))),
+            ]),
           ),
         ),
       ),

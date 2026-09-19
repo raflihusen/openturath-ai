@@ -1,10 +1,11 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:openturath_ai/core/design/ot_fonts.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/legal_copy.dart';
+import '../core/l10n/app_dictionary.dart';
 
 /// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
 /// Mengadopsi prinsip desain "The Quiet Scholar" dengan keterbacaan tinggi,
@@ -26,7 +27,7 @@ class LegalDocumentSheet extends StatelessWidget {
     return _show(
       context,
       title: LegalCopy.termsTitle,
-      subtitle: 'Versi ${LegalCopy.documentVersion} · Berlaku mulai ${LegalCopy.effectiveDate}',
+      subtitle: 'legal.version.effective',
       sections: LegalCopy.termsSections,
     );
   }
@@ -36,7 +37,7 @@ class LegalDocumentSheet extends StatelessWidget {
     return _show(
       context,
       title: LegalCopy.privacyTitle,
-      subtitle: 'Versi ${LegalCopy.documentVersion} · Sesuai UU No. 27 Tahun 2022',
+      subtitle: 'legal.version.privacy',
       sections: LegalCopy.privacySections,
     );
   }
@@ -107,7 +108,7 @@ class LegalDocumentSheet extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(color: border, width: 0.8),
       ),
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+      padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -133,8 +134,8 @@ class LegalDocumentSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
-                      style: GoogleFonts.newsreader(
+                      context.tr(title),
+                      style: OTFonts.newsreader(
                         fontSize: 21,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.3,
@@ -143,8 +144,11 @@ class LegalDocumentSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      subtitle,
-                      style: GoogleFonts.outfit(
+                      context.tr(subtitle, args: {
+                        'version': LegalCopy.documentVersion,
+                        'date': context.tr(LegalCopy.effectiveDate),
+                      }),
+                      style: OTFonts.outfit(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w400,
                         color: textSecondary,
@@ -154,6 +158,7 @@ class LegalDocumentSheet extends StatelessWidget {
                 ),
               ),
               IconButton(
+                tooltip: context.tr('Tutup'),
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
                 splashRadius: 20,
@@ -180,8 +185,8 @@ class LegalDocumentSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      sec.title,
-                      style: GoogleFonts.newsreader(
+                      context.tr(sec.title),
+                      style: OTFonts.newsreader(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
@@ -190,8 +195,8 @@ class LegalDocumentSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      sec.content,
-                      style: GoogleFonts.outfit(
+                      context.tr(sec.content),
+                      style: OTFonts.outfit(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w400,
                         height: 1.55,
@@ -220,8 +225,8 @@ class LegalDocumentSheet extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Tutup',
-                style: GoogleFonts.outfit(
+                context.tr('Tutup'),
+                style: OTFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: canvas,
@@ -234,3 +239,5 @@ class LegalDocumentSheet extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:openturath_ai/core/design/ot_fonts.dart';
 
 /// OpenTurath Design System — Typography (3-Pilar Arsitektur Baku)
-/// 1. Editorial & Heading Layer: Newsreader (Display, Page Title, Nama Kitab Besar)
-/// 2. Interface Layer: Outfit (Tombol, Navigasi, Input, Chip, Metadata, Angka Indeks)
+/// 1. Editorial & Heading Layer: Cormorant (Display, Page Title, Nama Kitab Besar)
+/// 2. Interface Layer: Inter (Tombol, Navigasi, Input, Chip, Metadata, Angka Indeks)
 /// 3. Arabic & Turats Layer: Scheherazade New (Naskh murni teks Arab, matan, syarah, ibarah)
 ///
-/// Hapus total ketergantungan pada font Amiri dan Tajawal.
+/// Local assets keep manuscript typography available without a network.
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
 
-  // ── 1. Newsreader (Editorial & Heading) ──
+  // ── 1. Cormorant (Editorial & Heading) ──
   static TextStyle _newsreader({
     required double fontSize,
     FontWeight? fontWeight,
@@ -19,17 +19,7 @@ class OTTypography {
     double? height,
     Color? color,
   }) {
-    if (useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Newsreader',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
-        height: height,
-        color: color,
-      );
-    }
-    return GoogleFonts.newsreader(
+    return OTFonts.newsreader(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -38,7 +28,7 @@ class OTTypography {
     );
   }
 
-  // ── 2. Outfit (Interface, UI, Metadata & Body) ──
+  // ── 2. Inter (Interface, UI, Metadata & Body) ──
   static TextStyle _outfit({
     required double fontSize,
     FontWeight? fontWeight,
@@ -46,17 +36,7 @@ class OTTypography {
     double? height,
     Color? color,
   }) {
-    if (useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Outfit',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
-        height: height,
-        color: color,
-      );
-    }
-    return GoogleFonts.outfit(
+    return OTFonts.outfit(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -73,17 +53,7 @@ class OTTypography {
     double? height,
     Color? color,
   }) {
-    if (useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Scheherazade New',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
-        height: height,
-        color: color,
-      );
-    }
-    return GoogleFonts.scheherazadeNew(
+    return OTFonts.scheherazadeNew(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
@@ -214,14 +184,14 @@ class OTTypography {
       );
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color, double height = 1.5}) => _scheherazadeNew(
+  static TextStyle arabicDisplay({Color? color, double height = 1.9}) => _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         height: height,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color, double height = 1.6}) => _scheherazadeNew(
+  static TextStyle arabicReading({Color? color, double height = 1.9}) => _scheherazadeNew(
         fontSize: 18,
         fontWeight: FontWeight.w500,
         height: height,
@@ -235,10 +205,12 @@ class OTTypography {
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color, double height = 1.65}) => _scheherazadeNew(
+  static TextStyle arabicQuote({Color? color, double height = 1.9}) => _scheherazadeNew(
         fontSize: 15,
         fontWeight: FontWeight.w400,
         height: height,
         color: color,
       );
 }
+
+

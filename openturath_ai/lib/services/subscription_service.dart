@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../core/payment_status.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
 import '../models/user_model.dart';
@@ -61,7 +63,7 @@ class SubscriptionService {
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }
-      return {'success': true, 'message': 'Kode akses sudah aktif.'};
+      return {'success': false, 'message': 'Respons server belum valid. Muat ulang status akses sebelum mencoba kembali.'};
     } on FirebaseFunctionsException catch (e) {
       final serverMsg = e.message;
       if (serverMsg != null &&
@@ -85,9 +87,9 @@ class SubscriptionService {
         return Map<String, dynamic>.from(data);
       }
       return {
-        'success': true,
+        'success': false,
         'synced': <String>[],
-        'message': 'Sinkronisasi berhasil.'
+        'message': 'Respons sinkronisasi belum valid. Coba lagi.'
       };
     } on FirebaseFunctionsException catch (e) {
       return {
@@ -115,11 +117,14 @@ class SubscriptionService {
     String? planTitle,
     int? amount,
   }) async {
+    if (FirebaseAuth.instance.currentUser?.uid != uid) {
+      throw StateError('Akun telah berubah. Buka ulang halaman pembayaran.');
+    }
     final resolvedAmount = amount ?? _getPriceForPlan(plan);
     final resolvedTitle = planTitle ?? _getTitleForPlan(plan);
 
     // Eksekusi checkout DOKU melalui Cloud Functions
-    return await _dokuService.createCheckoutSession(
+    final session = await _dokuService.createCheckoutSession(
       uid: uid,
       agentId: agentId,
       plan: plan,
@@ -129,6 +134,14 @@ class SubscriptionService {
       email: email,
       phone: phone,
     );
+    if (FirebaseAuth.instance.currentUser?.uid != uid) {
+      throw StateError('Akun telah berubah. Buka ulang halaman pembayaran.');
+    }
+    final url = session['paymentUrl'];
+    if (url is! String || !isAllowedPaymentUrl(url, initial: true)) {
+      throw StateError('Tautan pembayaran dari server belum dapat digunakan.');
+    }
+    return session;
   }
 
   // ── Cek status transaksi secara aktif (inquiry ke DOKU API via Cloud Function) ──
@@ -145,29 +158,33 @@ class SubscriptionService {
       };
     }
 
-    // Panggil checkPaymentStatus Cloud Function yang inquiry langsung ke API DOKU (server-to-server)
-    // Server-side function yang memverifikasi signature dan keaslian status transaksi dari DOKU
-    final res = await _dokuService.checkPaymentStatus(invoiceNumber: cleanInvoice);
-    
-    // Validasi ketat respon server Cloud Function
-    final isSuccess = res['status'] == 'SUCCESS' || (res['success'] == true && res['status'] != 'FAILED');
-    if (isSuccess) {
-      return {
-        'success': true,
-        'status': 'SUCCESS',
-        'data': res,
-      };
+    final ownerUid = FirebaseAuth.instance.currentUser?.uid;
+    if (ownerUid == null) {
+      return {'success': false, 'status': 'UNAUTHENTICATED'};
     }
-
-    return res;
+    // Only the server inquiry can confirm payment. It must authorize invoice
+    // ownership, verify gateway signatures and derive the authoritative amount.
+    final response = await _dokuService.checkPaymentStatus(invoiceNumber: cleanInvoice);
+    if (FirebaseAuth.instance.currentUser?.uid != ownerUid) {
+      return {'success': false, 'status': 'ACCOUNT_CHANGED'};
+    }
+    return {
+      ...response,
+      'status': paymentStatus(response['status']),
+      'success': isConfirmedPayment(response),
+      'paymentConfirmed': isConfirmedPayment(response),
+    };
   }
 
   // ── Legacy polling helper ────────────────────────────────────
   Future<String> checkPaymentStatus(String trxId) async {
-    final doc =
-        await _db.collection(AppConstants.colTransactions).doc(trxId).get();
-    if (!doc.exists) return 'pending';
-    return (doc.data()?['status'] ?? 'pending') as String;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null || trxId.trim().isEmpty) return 'pending';
+    final doc = await _db.collection(AppConstants.colTransactions).doc(trxId).get();
+    if (!doc.exists || FirebaseAuth.instance.currentUser?.uid != uid ||
+        doc.data()?['uid'] != uid) return 'pending';
+    final status = doc.data()?['status'];
+    return status is String ? status : 'pending';
   }
 
   // ── Stream status user secara real-time ───────────────────────
@@ -207,3 +224,5 @@ class SubscriptionService {
     }
   }
 }
+
+

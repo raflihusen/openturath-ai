@@ -1,57 +1,91 @@
+import '../core/l10n/app_dictionary.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
+import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/goakal_catalog_registry.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
+import '../services/auth_service.dart';
 import '../services/subscription_service.dart';
 import '../widgets/doku_checkout_sheet.dart';
 import '../widgets/redeem_code_sheet.dart';
-import '../widgets/apple_interactive_wrapper.dart';
-import '../core/goakal_catalog_registry.dart';
+import '../widgets/editorial.dart';
 
-/// Halaman Langganan OpenTurath (Quiet Scholar Adaptive)
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
-
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final SubscriptionService _subService = SubscriptionService();
+  final AuthService _authService = AuthService();
+  StreamSubscription<UserModel?>? _userChanges;
   UserModel? _user;
   AgentModel? _agent;
+  bool _initialized = false;
   bool _isProcessing = false;
   bool _isSyncingGoAkal = false;
-
-  // Durasi terpisah untuk masing-masing kartu
-  int _selectedSegment =
-      0; // 0: 6 Paket Tematik (Launch Promo), 1: AI Satuan Spesifik
+  int _selectedSegment = 0;
   final Map<String, int> _bundleDurationIndices = {};
-  int _tahawwulatDurationIndex = 0; // 0: 1 Bulan, 1: 6 Bulan, 2: 1 Tahun
-  int _otherDurationIndex = 0; // 0: 1 Bulan, 1: 6 Bulan, 2: 1 Tahun
+  final Map<String, int> _agentDurationIndices = {};
   AgentModel? _selectedOtherAgent;
+  String? _checkoutMessage;
+  String? _pendingAgentId;
+  bool _pendingGoAkal = false;
 
-  AgentModel get _tahawwulatAgent => AgentModel.defaultAgents.firstWhere(
-        (a) => a.id == 'fiqh_tahawwulat',
-        orElse: () => AgentModel.defaultAgents.first,
-      );
+  AgentModel get _tahawwulatAgent => AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
+  List<AgentModel> get _otherAgents => AgentModel.defaultAgents.where((a) => a.isActive && a.id != 'fiqh_tahawwulat').toList();
 
-  List<AgentModel> get _otherAgents => AgentModel.defaultAgents
-      .where((a) => a.isActive && a.id != 'fiqh_tahawwulat')
-      .toList();
+  @override
+  void initState() {
+    super.initState();
+    _userChanges = _authService.userStream.listen((user) {
+      if (!mounted) return;
+      setState(() {
+        if (_user?.uid != user?.uid) {
+          _checkoutMessage = null;
+          _pendingAgentId = null;
+          _pendingGoAkal = false;
+        }
+        _user = user;
+      });
+    }, onError: (Object error, StackTrace stack) {
+      if (mounted) setState(() => _checkoutMessage = 'membership.access_sync_prompt');
+    });
+  }
 
-  // Tier resmi GoAkal AI Fikih Tahawwulat (Direct Apply Links)
+  @override
+  void dispose() { _userChanges?.cancel(); super.dispose(); }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) return;
+    _initialized = true;
+    final args = ModalRoute.of(context)?.settings.arguments;
+    _user = _authService.cachedCurrentUser;
+    if (args is UserModel && args.uid == FirebaseAuth.instance.currentUser?.uid) _user = args;
+    if (args is Map<String, dynamic>) {
+      _agent = args['agent'] as AgentModel?;
+      final passed = args['user'] as UserModel?;
+      if (passed?.uid == FirebaseAuth.instance.currentUser?.uid) _user = passed;
+    }
+    final others = _otherAgents;
+    if (others.isNotEmpty) _selectedOtherAgent = others.firstWhere(
+      (a) => a.id == _agent?.id, orElse: () => others.first);
+    if (_agent != null) _selectedSegment = 1;
+  }
+
   static const List<Map<String, dynamic>> _tahawwulatTiers = [
     {
       'name': '1 Bulan',
@@ -82,53 +116,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     },
   ];
 
-  // Tier untuk disiplin ilmu lainnya berbasis GoAkal Registry Otomatis
-  List<Map<String, dynamic>> _getOtherTiers(AgentModel? agent) {
-    return GoAkalCatalogRegistry.getTiersForAgent(agent?.id);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_user == null) {
-      final args = ModalRoute.of(context)?.settings.arguments;
-      if (args is UserModel) {
-        _user = args;
-      } else if (args is Map<String, dynamic>) {
-        _user = args['user'] as UserModel?;
-        _agent = args['agent'] as AgentModel?;
-      }
-
-      final fbUser = FirebaseAuth.instance.currentUser;
-      if (_user == null && fbUser != null) {
-        _user = UserModel(
-          uid: fbUser.uid,
-          email: fbUser.email ?? '',
-          name: fbUser.displayName ??
-              (fbUser.email?.split('@').first ?? 'Santri Peneliti'),
-          photoUrl: fbUser.photoURL ?? '',
-          plan: 'trial',
-          questionsUsed: 0,
-        );
-      }
-
-      final others = _otherAgents;
-      if (_selectedOtherAgent == null && others.isNotEmpty) {
-        if (_agent != null && _agent!.id != 'fiqh_tahawwulat') {
-          _selectedOtherAgent = others.firstWhere(
-            (a) => a.id == _agent!.id,
-            orElse: () => others.first,
-          );
-        } else {
-          _selectedOtherAgent = others.firstWhere(
-            (a) => a.id == 'fiqh_syafii',
-            orElse: () => others.first,
-          );
-        }
-      }
-    }
-  }
-
   Future<String?> _getOrPromptPhone() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return null;
@@ -136,7 +123,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final saved = prefs.getString(phoneKey) ?? '';
-      if (saved.isNotEmpty && saved.length >= 8) {
+      if (RegExp(r'^\+?[0-9]{8,15}$').hasMatch(saved)) {
         return saved;
       }
     } catch (_) {}
@@ -161,16 +148,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             side: BorderSide(color: border, width: 0.8),
           ),
           title: Text(
-            'Nomor WhatsApp',
+            ctx.tr('membership.whatsapp_number'),
             style: OTTypography.cardTitle(color: textPrimary)
                 .copyWith(fontSize: 17),
           ),
-          content: Column(
+          content: SingleChildScrollView(child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Masukkan nomor WhatsApp aktif untuk konfirmasi pembayaran dan aktivasi langganan.',
+                ctx.tr('membership.phone_explanation'),
                 style: OTTypography.body(color: textSecondary)
                     .copyWith(fontSize: 13),
               ),
@@ -178,10 +165,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               TextField(
                 controller: textController,
                 keyboardType: TextInputType.phone,
+                textDirection: TextDirection.ltr,
                 autofocus: true,
                 style: OTTypography.body(color: textPrimary),
                 decoration: InputDecoration(
-                  hintText: 'Contoh: 081234567890',
+                  hintText: ctx.tr('membership.phone_hint'),
                   hintStyle: OTTypography.body(color: textSecondary),
                   prefixIcon: const Icon(Icons.phone_iphone_rounded, size: 20),
                   contentPadding:
@@ -193,25 +181,24 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 ),
               ),
             ],
-          ),
+          )),
           actions: [
             TextButton(
               onPressed: () {
                 OTMotion.light();
                 Navigator.pop(ctx, null);
               },
-              child: Text('Batal',
+              child: Text(ctx.tr('membership.cancel'),
                   style: OTTypography.button(color: textSecondary)),
             ),
             FilledButton(
               onPressed: () {
-                final val = textController.text.trim();
-                if (val.length < 8) {
+                final val = textController.text.trim().replaceAll(RegExp(r'[\s()-]'), '');
+                if (!RegExp(r'^\+?[0-9]{8,15}$').hasMatch(val)) {
                   AppSnackBar.warning(
-                      ctx, 'Masukkan nomor telepon yang valid.');
+                      ctx, ctx.tr('membership.invalid_phone'));
                   return;
                 }
-                OTMotion.success();
                 Navigator.pop(ctx, val);
               },
               style: FilledButton.styleFrom(
@@ -220,7 +207,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
-              child: Text('Lanjutkan pembayaran', style: OTTypography.button()),
+              child: Text(ctx.tr('membership.continue_payment'), style: OTTypography.button()),
             ),
           ],
         ),
@@ -238,1663 +225,307 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return phone;
   }
 
-  Future<void> _syncAkalPurchases({bool isSilent = false}) async {
-    if (_isSyncingGoAkal) return;
-    final fbUser = FirebaseAuth.instance.currentUser;
-    if (fbUser == null) {
-      if (!isSilent && mounted) {
-        AppSnackBar.warning(
-          context,
-          'Silakan masuk akun terlebih dahulu untuk menyinkronkan data langganan.',
-        );
-      }
-      return;
-    }
+  bool _requireAccount() {
+    if (FirebaseAuth.instance.currentUser != null) return true;
+    AppSnackBar.warning(context, context.tr('membership.login_purchase'));
+    return false;
+  }
 
+  Future<void> _syncAkalPurchases() async {
+    if (_isSyncingGoAkal || _isProcessing || !_requireAccount()) return;
+    final uid = FirebaseAuth.instance.currentUser!.uid;
     setState(() => _isSyncingGoAkal = true);
-    if (!isSilent && mounted) {
-      AppSnackBar.info(
-        context,
-        'Menyinkronkan transaksi GoAkal dengan akun Google Anda...',
-      );
-    }
-
     try {
-      final res = await _subService.syncAkalPurchases();
-      final success = res['success'] == true;
-      final syncedList =
-          (res['synced'] as List<dynamic>?)?.cast<String>() ?? [];
-      final message = res['message'] as String? ?? '';
-
-      if (!mounted) return;
-
-      if (success && syncedList.isNotEmpty) {
-        AppSnackBar.success(
-          context,
-          'Alhamdulillah! Akses aktif berhasil disinkronkan: ${syncedList.join(", ")}.',
-          duration: const Duration(seconds: 4),
-        );
-        setState(() {});
-      } else if (!isSilent) {
-        AppSnackBar.info(
-          context,
-          message.isNotEmpty
-              ? message
-              : 'Belum ditemukan transaksi aktif baru di GoAkal untuk email ini.',
-          duration: const Duration(seconds: 4),
-        );
+      final result = await _subService.syncAkalPurchases();
+      if (!mounted || FirebaseAuth.instance.currentUser?.uid != uid) return;
+      if (result['success'] != true) {
+        setState(() => _checkoutMessage = 'membership.sync_failed');
+        return;
       }
+      final fresh = await _authService.getFreshCurrentUserModel();
+      if (!mounted || FirebaseAuth.instance.currentUser?.uid != uid) return;
+      if (fresh == null) {
+        setState(() => _checkoutMessage = 'membership.account_access_missing');
+        return;
+      }
+      final active = _pendingAgentId != null && fresh.hasAccessToAgent(_pendingAgentId!);
+      setState(() {
+        _user = fresh;
+        _checkoutMessage = active
+            ? 'membership.access_updated'
+            : 'membership.sync_email_guidance';
+        if (active) _pendingGoAkal = false;
+      });
     } catch (_) {
-      if (!isSilent && mounted) {
-        AppSnackBar.error(
-          context,
-          'Kendala saat menghubungi server GoAkal. Periksa koneksi internet Anda.',
-        );
-      }
+      if (mounted) setState(() => _checkoutMessage = 'membership.sync_connection_failed');
     } finally {
       if (mounted) setState(() => _isSyncingGoAkal = false);
     }
   }
 
-  String _formatRupiah(int amount) {
-    final str = amount.toString();
-    final buffer = StringBuffer();
-    int count = 0;
-    for (int i = str.length - 1; i >= 0; i--) {
-      buffer.write(str[i]);
-      count++;
-      if (count % 3 == 0 && i > 0) {
-        buffer.write('.');
-      }
-    }
-    return buffer.toString().split('').reversed.join('');
-  }
-
-  Future<void> _showWhatsAppActivationSheet({
-    required String title,
-    required String subtitle,
-    required String priceLabel,
-    required String periodLabel,
-  }) async {
-    final user = FirebaseAuth.instance.currentUser;
-    final email = user?.email ?? 'Belum terdaftar';
-    final name = (user?.displayName?.isNotEmpty == true)
-        ? user!.displayName!
-        : 'Thalibul Ilmi';
-
-    final message = '''Assalamu'alaikum Khadim OpenTurath AI,
-Saya ingin mengaktifkan rujukan paket berikut:
-• Paket: $title
-• Masa Akses: $subtitle ($priceLabel $periodLabel)
-• Akun: $email ($name)
-
-Mohon panduan aktivasi resmi khazanah turath. Terima kasih.''';
-
-    final waUrl = Uri.parse(
-        'https://wa.me/6281292979189?text=${Uri.encodeComponent(message)}');
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        final isDark = Theme.of(ctx).brightness == Brightness.dark;
-        final canvasColor = OTColors.surface(isDark);
-        final textColor = OTColors.textPrimary(isDark);
-        final subTextColor = OTColors.textSecondary(isDark);
-        final borderColor = OTColors.border(isDark);
-
-        return Container(
-          decoration: BoxDecoration(
-            color: canvasColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            border: Border.all(color: borderColor, width: 1),
-          ),
-          padding: EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: 24,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: subTextColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: OTColors.surfaceSubtle(isDark),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: borderColor),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.verified_outlined,
-                        color: textColor,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Aktivasi Khazanah Turats',
-                          style: GoogleFonts.outfit(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Layanan Khusus Tim Khadim OpenTurath',
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            color: subTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: OTColors.canvas(isDark),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: borderColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.newsreader(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$subtitle • $priceLabel $periodLabel',
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: subTextColor,
-                      ),
-                    ),
-                    const Divider(height: 20, thickness: 0.8),
-                    Text(
-                      'Email Akun: $email',
-                      style: GoogleFonts.outfit(
-                        fontSize: 12,
-                        color: subTextColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Paket ini diproses langsung melalui Khadim Resmi via WhatsApp untuk memastikan konfigurasi lisensi korpus dan verifikasi akses instan tanpa kendala.',
-                style: GoogleFonts.outfit(
-                  fontSize: 12,
-                  height: 1.4,
-                  color: subTextColor,
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    Navigator.of(ctx).pop();
-                    if (await canLaunchUrl(waUrl)) {
-                      await launchUrl(waUrl,
-                          mode: LaunchMode.externalApplication);
-                    }
-                  },
-                  icon: const Icon(Icons.chat_bubble_outline, size: 18),
-                  label: Text(
-                    'Hubungi Khadim via WhatsApp',
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: OTColors.textPrimary(isDark),
-                    foregroundColor: OTColors.surface(isDark),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    elevation: 0,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: TextButton(
-                  onPressed: () async {
-                    Navigator.of(ctx).pop();
-                    final storeUri = Uri.parse(GoAkalCatalogRegistry.storeUrl);
-                    if (await canLaunchUrl(storeUri)) {
-                      await launchUrl(storeUri,
-                          mode: LaunchMode.externalApplication);
-                    }
-                  },
-                  child: Text(
-                    'Buka Katalog Web Resmi GoAkal',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      color: subTextColor,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _handleBundleCheckout({
-    required ThematicBundleMeta bundle,
-    required int durationIndex,
-  }) async {
-    final tiers = bundle.tiers;
-    if (tiers.isEmpty) return;
-    final safeIdx = durationIndex < tiers.length ? durationIndex : 0;
-    final tier = tiers[safeIdx];
-
-    // Jika paket bundle belum live langsung di link GoAkal, arahkan via WhatsApp resmi
-    if (!tier.isLiveOnGoAkal) {
-      await _showWhatsAppActivationSheet(
-        title: bundle.title,
-        subtitle: tier.title,
-        priceLabel: tier.priceLabel,
-        periodLabel: tier.periodLabel,
-      );
-      return;
-    }
-
-    final planTitle = '${bundle.title} (${tier.title})';
-    await DokuCheckoutSheet.show(
-      context,
-      paymentUrl: tier.applyUrl,
-      invoiceNumber: '',
-      planTitle: planTitle,
-      amount: tier.amount,
-    );
-
-    if (mounted) {
-      await _syncAkalPurchases(isSilent: false);
-    }
-  }
-
-  Future<void> _handleTierCheckout({
-    required Map<String, dynamic> tier,
-    required AgentModel targetAgent,
-  }) async {
-    final rawApplyUrl = tier['applyUrl'] as String? ?? '';
-    final planTitle = '${tier['name']} ${targetAgent.title}'.trim();
-    final price = tier['price'] as int;
-
-    // Jika URL apply tidak tersedia, arahkan ke WhatsApp resmi
-    if (rawApplyUrl.isEmpty) {
-      await _showWhatsAppActivationSheet(
-        title: targetAgent.title,
-        subtitle: (tier['name'] as String?) ?? '1 Bulan',
-        priceLabel: (tier['label'] as String?) ?? 'Rp 49.000',
-        periodLabel: (tier['period'] as String?) ?? '/ bulan',
-      );
-      return;
-    }
-
-    // Buka pop-up modal checkout in-app resmi GoAkal tanpa keluar aplikasi
-    await DokuCheckoutSheet.show(
-      context,
-      paymentUrl: rawApplyUrl,
-      invoiceNumber: '',
-      planTitle: planTitle,
-      amount: price,
-    );
-
-    // Otomatis sinkronkan status pembelian GoAkal begitu lembar transaksi ditutup
-    if (mounted) {
-      await _syncAkalPurchases(isSilent: false);
-    }
-  }
-
-  Future<void> _handleSubscribe({
-    required String plan,
-    required String planTitle,
-    required int price,
-    AgentModel? targetAgent,
-  }) async {
-    final fbUser = FirebaseAuth.instance.currentUser;
-    if (_user == null && fbUser != null) {
-      _user = UserModel(
-        uid: fbUser.uid,
-        email: fbUser.email ?? '',
-        name: fbUser.displayName ?? 'Santri Peneliti',
-        photoUrl: fbUser.photoURL ?? '',
-        plan: 'trial',
-        questionsUsed: 0,
-      );
-    }
-
-    if (_user == null) {
-      AppSnackBar.warning(
-        context,
-        'Silakan masuk akun terlebih dahulu untuk berlangganan.',
-      );
-      return;
-    }
-
-    final phone = await _getOrPromptPhone();
-    if (phone == null || phone.isEmpty) return;
-
-    final currentAgent = targetAgent ?? _agent;
-
-    setState(() {
-      _isProcessing = true;
-    });
-
-    String? dokuUrl;
-    String invoiceNumber = '';
-    String trxId = '';
-
+  Future<void> _refreshAccess() async {
+    if (_isProcessing || _isSyncingGoAkal || !_requireAccount()) return;
+    setState(() => _isSyncingGoAkal = true);
     try {
-      final userName = _user!.name.trim().isNotEmpty
-          ? _user!.name.trim()
-          : (_user!.email.isNotEmpty
-              ? _user!.email.split('@').first
-              : 'Santri Peneliti');
-
-      final result = await _subService
-          .createPayment(
-            uid: _user!.uid,
-            agentId: currentAgent?.id ?? 'all_ai',
-            plan: plan,
-            planTitle: planTitle,
-            amount: price,
-            name: userName,
-            email: _user!.email,
-            phone: phone,
-          )
-          .timeout(const Duration(seconds: 20));
-
-      final redirectUrl = result['redirectUrl'] as String?;
-      invoiceNumber = (result['invoiceNumber'] as String?) ?? '';
-      trxId = (result['trxId'] as String?) ?? '';
-      if (redirectUrl != null && redirectUrl.isNotEmpty) {
-        dokuUrl = redirectUrl;
-      } else {
-        throw Exception('DOKU PG tidak mengembalikan URL pembayaran valid');
-      }
-    } catch (err) {
+      final fresh = await _authService.getFreshCurrentUserModel();
       if (!mounted) return;
-      AppSnackBar.error(
-        context,
-        'Terjadi kendala saat menyiapkan sesi pembayaran. Periksa koneksi internet Anda lalu coba kembali.',
-      );
-      if (mounted) setState(() => _isProcessing = false);
-      return;
+      setState(() {
+        _user = fresh;
+        _checkoutMessage = fresh == null
+            ? 'membership.access_missing_retry'
+            : _pendingAgentId == null
+                ? (fresh.hasAccess
+                    ? 'membership.account_updated_directory'
+                    : 'membership.account_no_access')
+                : fresh.hasAccessToAgent(_pendingAgentId!)
+                    ? 'membership.study_available'
+                    : 'membership.access_pending';
+      });
+    } catch (_) {
+      if (mounted) setState(() => _checkoutMessage = 'membership.access_connection_failed');
+    } finally {
+      if (mounted) setState(() => _isSyncingGoAkal = false);
     }
+  }
 
+  Future<void> _openGoAkal({required String url, required String title,
+    required int amount, String? agentId}) async {
+    if (_isProcessing || !_requireAccount()) return;
+    setState(() { _isProcessing = true; _pendingAgentId = agentId; });
     try {
-      if (!mounted) return;
-      final isPaid = await DokuCheckoutSheet.show(
-        context,
-        paymentUrl: dokuUrl,
-        invoiceNumber: invoiceNumber,
-        trxId: trxId,
-        planTitle: planTitle,
-        amount: price,
-      );
-
-      if (isPaid == true) {
-        if (!mounted) return;
-        AppSnackBar.success(
-          context,
-          'Pembayaran berhasil. Akses sudah aktif.',
-          duration: const Duration(seconds: 4),
-        );
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (!mounted) return;
-      AppSnackBar.error(
-        context,
-        'Tidak dapat membuka sesi pembayaran saat ini. Silakan coba kembali.',
-      );
+      final ownerUid = FirebaseAuth.instance.currentUser?.uid;
+      await DokuCheckoutSheet.show(context, paymentUrl: url,
+        invoiceNumber: '', planTitle: title, amount: amount);
+      if (!mounted || FirebaseAuth.instance.currentUser?.uid != ownerUid) return;
+      setState(() {
+        _pendingGoAkal = true;
+        _checkoutMessage = 'membership.goakal_closed';
+      });
+    } catch (_) {
+      if (mounted) setState(() => _checkoutMessage = 'membership.payment_open_failed');
     } finally {
       if (mounted) setState(() => _isProcessing = false);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final accent = OTColors.accent(isDark);
+  Future<void> _showManualActivation(String title, String duration, String price) async {
+    await showModalBottomSheet<void>(context: context, isScrollControlled: true,
+      builder: (ctx) => SafeArea(child: SingleChildScrollView(child: Padding(padding: const EdgeInsets.all(24),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(ctx.tr('membership.confirm_plan'), style: OTTypography.cardTitle()),
+          const SizedBox(height: 12),
+          Text(ctx.tr('membership.manual_summary', args: {'title': ctx.tr(title), 'duration': ctx.tr(duration), 'price': price})),
+          const SizedBox(height: 12),
+          Text(ctx.tr('membership.manual_explanation')),
+          const SizedBox(height: 20),
+          EditorialButton(label: ctx.tr('membership.contact_whatsapp'), onPressed: () async {
+            final message = ctx.tr('membership.activation_message', args: {'title': ctx.tr(title), 'duration': ctx.tr(duration), 'price': price});
+            final uri = Uri.https('wa.me', '/6281292979189', {'text': message});
+            try {
+              final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+              if (!opened && ctx.mounted) AppSnackBar.error(ctx, ctx.tr('membership.whatsapp_failed'));
+            } catch (_) {
+              if (ctx.mounted) AppSnackBar.error(ctx, ctx.tr('membership.whatsapp_retry'));
+            }
+          }),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.tr('membership.back'))),
+        ])))));
+  }
 
-    // Data kartu Fikih Tahawwulat (Flagship)
-    final tahawwulatCurrentTier = _tahawwulatTiers[_tahawwulatDurationIndex];
+  Future<void> _handleTierCheckout(Map<String, dynamic> tier, AgentModel agent) async {
+    final url = tier['applyUrl'] as String? ?? '';
+    if (url.isEmpty || url == GoAkalCatalogRegistry.storeUrl) {
+      await _showManualActivation(agent.title, tier['name'] as String, tier['label'] as String);
+      return;
+    }
+    await _openGoAkal(url: url, title: '${context.tr(agent.title)} · ${context.tr(tier['name'] as String)}',
+      amount: tier['price'] as int, agentId: agent.id);
+  }
 
-    // Data kartu Disiplin Lainnya
-    final otherList = _otherAgents;
-    final otherTargetAgent = _selectedOtherAgent ??
-        (otherList.isNotEmpty ? otherList.first : _tahawwulatAgent);
-    final otherTiers = _getOtherTiers(otherTargetAgent);
-    final safeOtherIndex =
-        _otherDurationIndex < otherTiers.length ? _otherDurationIndex : 0;
-    final otherCurrentTier = otherTiers[safeOtherIndex];
+  Future<void> _handleSubscribe(Map<String, dynamic> tier, AgentModel agent) async {
+    if (_isProcessing || !_requireAccount()) return;
+    final fbUser = FirebaseAuth.instance.currentUser!;
+    // Claim the operation before prompting so repeated activation cannot create two invoices.
+    setState(() => _isProcessing = true);
+    try {
+      final phone = await _getOrPromptPhone();
+      if (phone == null || phone.isEmpty || !mounted) return;
+      if (FirebaseAuth.instance.currentUser?.uid != fbUser.uid) return;
+      final title = '${context.tr(agent.title)} · ${context.tr(tier['name'] as String)}';
+      final result = await _subService.createPayment(
+        uid: fbUser.uid, agentId: agent.id, plan: tier['planId'] as String,
+        planTitle: title, amount: tier['price'] as int,
+        name: fbUser.displayName ?? _user?.name ?? context.tr('membership.user'),
+        email: fbUser.email ?? '', phone: phone).timeout(const Duration(seconds: 20));
+      if (!mounted || FirebaseAuth.instance.currentUser?.uid != fbUser.uid) return;
+      final url = result['redirectUrl'] as String? ?? '';
+      final invoice = result['invoiceNumber'] as String? ?? '';
+      if (url.isEmpty || invoice.trim().isEmpty) throw StateError('Incomplete checkout session');
+      _pendingAgentId = agent.id;
+      _pendingGoAkal = false;
+      final paid = await DokuCheckoutSheet.show(context, paymentUrl: url,
+        invoiceNumber: invoice, trxId: result['trxId'] as String?,
+        planTitle: title, amount: tier['price'] as int);
+      if (!mounted || FirebaseAuth.instance.currentUser?.uid != fbUser.uid) return;
+      // Payment confirmation is independent of the server entitlement snapshot.
+      try {
+        final fresh = await _authService.getFreshCurrentUserModel();
+        if (!mounted || FirebaseAuth.instance.currentUser?.uid != fbUser.uid) return;
+        final active = fresh?.hasAccessToAgent(agent.id) ?? false;
+        setState(() {
+          _user = fresh;
+          _checkoutMessage = paid == true
+              ? (active ? 'membership.payment_access_confirmed'
+                  : 'membership.payment_access_pending')
+              : (active ? 'membership.access_payment_pending'
+                  : 'membership.payment_access_unconfirmed');
+        });
+      } catch (_) {
+        if (mounted) setState(() => _checkoutMessage = paid == true
+            ? 'membership.payment_verified_check_access'
+            : 'membership.payment_access_check_again');
+      }
+    } catch (_) {
+      if (mounted) setState(() => _checkoutMessage = 'membership.checkout_prepare_failed');
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
 
-    return Scaffold(
-      backgroundColor: canvas,
-      appBar: AppBar(
-        backgroundColor: canvas,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Langganan',
-          style: OTTypography.corpusTitle(color: textPrimary).copyWith(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: _isSyncingGoAkal
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Icon(Icons.sync_rounded, color: textPrimary),
-            tooltip: 'Sinkronkan Pembelian GoAkal',
-            onPressed: _isSyncingGoAkal
-                ? null
-                : () => _syncAkalPurchases(isSilent: false),
-          ),
-        ],
-      ),
-      body: AbsorbPointer(
-        absorbing: _isProcessing,
-        child: Column(
-          children: [
-            if (_isProcessing)
-              LinearProgressIndicator(
-                minHeight: 2.5,
-                backgroundColor: Colors.transparent,
-                valueColor: AlwaysStoppedAnimation<Color>(accent),
-              ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(
-                    OTSpacing.lg, OTSpacing.sm, OTSpacing.lg, 108),
-                children: [
-                  // Editorial Header
-                  Text(
-                    'Pilihan langganan',
-                    style: OTTypography.editorialHero(color: textPrimary)
-                        .copyWith(fontSize: 22),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Pilih paket langganan untuk menelaah ibarah dan rujukan kitab turats.',
-                    style: OTTypography.body(color: textSecondary).copyWith(
-                      fontSize: 13,
-                      height: 1.45,
-                    ),
-                  ),
+  String _durationLabel(String label) => label.replaceAll(RegExp(r'\s*\([^)]*\)'), '').trim();
 
-                  const SizedBox(height: OTSpacing.sm),
-
-                  // Pintu masuk redeem kode akses voucher & sinkronisasi GoAkal
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppleInteractiveWrapper(
-                          onTap: () =>
-                              RedeemCodeSheet.show(context, onSuccess: () {
-                            if (mounted) setState(() {});
-                          }),
-                          pressedScale: 0.96,
-                          hapticType: HapticFeedbackType.selection,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 9),
-                            decoration: BoxDecoration(
-                              color: surfaceSubtle,
-                              borderRadius: OTRadius.chipBorder,
-                              border: Border.all(color: border, width: 0.8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.confirmation_number_outlined,
-                                    size: 15, color: accent),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    'Punya voucher santri?',
-                                    style: OTTypography.captionMedium(
-                                            color: accent)
-                                        .copyWith(fontSize: 12),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: AppleInteractiveWrapper(
-                          onTap: _isSyncingGoAkal
-                              ? null
-                              : () => _syncAkalPurchases(isSilent: false),
-                          pressedScale: 0.96,
-                          hapticType: HapticFeedbackType.selection,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 9),
-                            decoration: BoxDecoration(
-                              color: surfaceSubtle,
-                              borderRadius: OTRadius.chipBorder,
-                              border: Border.all(color: border, width: 0.8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (_isSyncingGoAkal)
-                                  const SizedBox(
-                                    width: 13,
-                                    height: 13,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 1.8),
-                                  )
-                                else
-                                  Icon(Icons.sync_rounded,
-                                      size: 15, color: textPrimary),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    _isSyncingGoAkal
-                                        ? 'Sinkron...'
-                                        : 'Cek akses GoAkal',
-                                    style: OTTypography.captionMedium(
-                                            color: textPrimary)
-                                        .copyWith(fontSize: 12),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: OTSpacing.md),
-
-                  // Catatan harga: informatif, tanpa nuansa promosi yang berisik.
-                  Container(
-                    margin: const EdgeInsets.only(bottom: OTSpacing.base),
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: surfaceSubtle,
-                      borderRadius: OTRadius.cardBorder,
-                      border: Border.all(
-                        color: border,
-                        width: 0.8,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'HARGA PERDANA',
-                              style:
-                                  OTTypography.metadataTag(color: textPrimary),
-                            ),
-                            const Spacer(),
-                            Text(
-                              'hingga 50% lebih ringan',
-                              style: OTTypography.caption(color: textSecondary),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Harga perdana tersedia pada masa peluncuran. Setelah periode ini berakhir, harga dapat disesuaikan mengikuti pengembangan korpus dan layanan.',
-                          style: OTTypography.caption(color: textSecondary)
-                              .copyWith(fontSize: 12, height: 1.45),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // ── PILIHAN MODE: PAKET TEMATIK vs AI SATUAN ──
-                  Container(
-                    height: 44,
-                    margin: const EdgeInsets.only(bottom: OTSpacing.lg),
-                    decoration: BoxDecoration(
-                      color: surfaceSubtle,
-                      borderRadius: OTRadius.chipBorder,
-                      border: Border.all(color: border, width: 0.8),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: AppleInteractiveWrapper(
-                            onTap: () {
-                              OTMotion.selection();
-                              setState(() => _selectedSegment = 0);
-                            },
-                            pressedScale: 0.96,
-                            child: AnimatedContainer(
-                              duration: OTMotion.fast,
-                              curve: OTMotion.curve,
-                              decoration: BoxDecoration(
-                                color: _selectedSegment == 0
-                                    ? textPrimary
-                                    : Colors.transparent,
-                                borderRadius: OTRadius.chipBorder,
-                              ),
-                              alignment: Alignment.center,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Paket tematik',
-                                    style: OTTypography.caption(
-                                      color: _selectedSegment == 0
-                                          ? canvas
-                                          : textPrimary,
-                                    ).copyWith(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: AppleInteractiveWrapper(
-                            onTap: () {
-                              OTMotion.selection();
-                              setState(() => _selectedSegment = 1);
-                            },
-                            pressedScale: 0.96,
-                            child: AnimatedContainer(
-                              duration: OTMotion.fast,
-                              curve: OTMotion.curve,
-                              decoration: BoxDecoration(
-                                color: _selectedSegment == 1
-                                    ? textPrimary
-                                    : Colors.transparent,
-                                borderRadius: OTRadius.chipBorder,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Asisten satuan',
-                                style: OTTypography.caption(
-                                  color: _selectedSegment == 1
-                                      ? canvas
-                                      : textSecondary,
-                                ).copyWith(
-                                  fontSize: 12.5,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  if (_selectedSegment == 0) ...[
-                    // ════════════════════════════════════════════════════════
-                    // DAFTAR 6 PAKET TEMATIK (REKOMENDASI UTAMA SANTRI)
-                    // ════════════════════════════════════════════════════════
-                    ...GoAkalCatalogRegistry.thematicBundles.map((bundle) {
-                      final currentDurationIdx =
-                          _bundleDurationIndices[bundle.slug] ?? 0;
-                      final tiers = bundle.tiers;
-                      final safeTierIdx = currentDurationIdx < tiers.length
-                          ? currentDurationIdx
-                          : 0;
-                      final activeTier =
-                          tiers.isNotEmpty ? tiers[safeTierIdx] : null;
-
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: OTSpacing.lg),
-                        decoration: BoxDecoration(
-                          color: surface,
-                          borderRadius: OTRadius.cardBorder,
-                          border: Border.all(
-                            color: border,
-                            width: 0.8,
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(OTSpacing.lg),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Label konteks, bukan badge promosi.
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  bundle.badgeText.toUpperCase(),
-                                  style: OTTypography.metadataTag(
-                                    color: textSecondary,
-                                  ),
-                                ),
-                                Text(
-                                  'Harga perdana',
-                                  style: OTTypography.caption(
-                                    color: textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: OTSpacing.sm),
-
-                            // Judul & Subtitle
-                            Text(
-                              bundle.title,
-                              style:
-                                  OTTypography.corpusTitle(color: textPrimary)
-                                      .copyWith(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              bundle.subtitle,
-                              style: GoogleFonts.outfit(
-                                color: textSecondary,
-                                fontSize: 12.5,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-
-                            const SizedBox(height: OTSpacing.base),
-
-                            // Durasi Selector
-                            if (tiers.isNotEmpty)
-                              Container(
-                                height: 38,
-                                decoration: BoxDecoration(
-                                  color: surfaceSubtle,
-                                  borderRadius: OTRadius.chipBorder,
-                                  border: Border.all(color: border, width: 0.8),
-                                ),
-                                child: Row(
-                                  children: List.generate(tiers.length, (idx) {
-                                    final t = tiers[idx];
-                                    final isSelected = safeTierIdx == idx;
-                                    return Expanded(
-                                      child: AppleInteractiveWrapper(
-                                        onTap: () {
-                                          OTMotion.selection();
-                                          setState(() {
-                                            _bundleDurationIndices[
-                                                bundle.slug] = idx;
-                                          });
-                                        },
-                                        pressedScale: 0.94,
-                                        child: AnimatedContainer(
-                                          duration: OTMotion.fast,
-                                          curve: OTMotion.curve,
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? textPrimary
-                                                : Colors.transparent,
-                                            borderRadius: OTRadius.chipBorder,
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            t.durationKey == '1_month'
-                                                ? '1 Bulan'
-                                                : (t.durationKey == '6_months'
-                                                    ? '6 Bulan'
-                                                    : '1 Tahun'),
-                                            style: OTTypography.caption(
-                                              color: isSelected
-                                                  ? canvas
-                                                  : textSecondary,
-                                            ).copyWith(
-                                              fontSize: 11.5,
-                                              fontWeight: isSelected
-                                                  ? FontWeight.w600
-                                                  : FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-
-                            const SizedBox(height: OTSpacing.base),
-
-                            // Harga Normal Coret & Harga Launching
-                            if (activeTier != null)
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text(
-                                    activeTier.priceLabel,
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    activeTier.periodLabel,
-                                    style: OTTypography.caption(
-                                            color: textSecondary)
-                                        .copyWith(fontSize: 13),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  if (safeTierIdx == 0) ...[
-                                    Text(
-                                      'Rp ${_formatRupiah(bundle.originalPrice1m)}',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: textSecondary.withValues(
-                                            alpha: 0.7),
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-
-                            const SizedBox(height: OTSpacing.base),
-                            Divider(
-                                color: border.withValues(alpha: 0.5),
-                                height: 1),
-                            const SizedBox(height: OTSpacing.base),
-
-                            // Daftar AI yang didapat
-                            ...bundle.includedItems.map((item) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 6),
-                                  child: _benefitRow(item, textSecondary),
-                                )),
-
-                            const SizedBox(height: OTSpacing.lg),
-
-                            // Tombol Bayar Langsung GoAkal
-                            SizedBox(
-                              width: double.infinity,
-                              height: 48,
-                              child: FilledButton(
-                                onPressed: () => _handleBundleCheckout(
-                                  bundle: bundle,
-                                  durationIndex: safeTierIdx,
-                                ),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: textPrimary,
-                                  foregroundColor: canvas,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: OTRadius.buttonBorder,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.arrow_forward_rounded,
-                                        size: 18),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Pilih ${bundle.title.split('(').first.trim()}',
-                                      style: OTTypography.button(color: canvas)
-                                          .copyWith(fontSize: 13),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ] else ...[
-                    // ════════════════════════════════════════════════════════
-                    // 1. KARTU MANDIRI MEWAH-MINIMALIS: FIKIH TAHAWWULAT
-                    // ════════════════════════════════════════════════════════
-                    Container(
-                      decoration: BoxDecoration(
-                        color: OTColors.surface(isDark),
-                        borderRadius: OTRadius.cardBorder,
-                        border: Border.all(
-                          color: OTColors.borderStrong(isDark),
-                          width: 1.0,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(OTSpacing.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4.5),
-                                decoration: BoxDecoration(
-                                  color: OTColors.surfaceSubtle(isDark),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: OTColors.border(isDark),
-                                    width: 0.8,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.workspace_premium_rounded,
-                                        size: 14, color: textPrimary),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      'KORPUS UTAMA · 5 BILIK AI',
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 1.1,
-                                        color: textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: surfaceSubtle,
-                                  borderRadius: OTRadius.chipBorder,
-                                  border: Border.all(color: border, width: 0.6),
-                                ),
-                                child: Text(
-                                  'Eksklusif',
-                                  style: OTTypography.captionMedium(
-                                          color: textSecondary)
-                                      .copyWith(fontSize: 10.5),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          Text(
-                            'Super AI Fikih Tahawwulat',
-                            style: OTTypography.corpusTitle(color: textPrimary)
-                                .copyWith(
-                              fontSize: 21,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            'Akses penuh ke 5 persona AI spesialis (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib) yang dilatih dari 50+ kitab otoritatif & ribuan jam transkrip muhadharah Al-Habib Abu Bakar Al-Adni.',
-                            style: OTTypography.body(color: textSecondary)
-                                .copyWith(
-                              fontSize: 12.8,
-                              height: 1.45,
-                            ),
-                          ),
-
-                          const SizedBox(height: OTSpacing.lg),
-
-                          // Segmented Control Durasi Fikih Tahawwulat
-                          Container(
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: surfaceSubtle,
-                              borderRadius: OTRadius.chipBorder,
-                              border: Border.all(color: border, width: 0.8),
-                            ),
-                            child: Row(
-                              children:
-                                  List.generate(_tahawwulatTiers.length, (idx) {
-                                final tier = _tahawwulatTiers[idx];
-                                final isSelected =
-                                    _tahawwulatDurationIndex == idx;
-                                return Expanded(
-                                  child: AppleInteractiveWrapper(
-                                    onTap: () {
-                                      OTMotion.selection();
-                                      setState(
-                                          () => _tahawwulatDurationIndex = idx);
-                                    },
-                                    pressedScale: 0.94,
-                                    hapticType: HapticFeedbackType.selection,
-                                    child: AnimatedContainer(
-                                      duration: OTMotion.fast,
-                                      curve: OTMotion.curve,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? textPrimary
-                                            : Colors.transparent,
-                                        borderRadius: OTRadius.chipBorder,
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        tier['name'] as String,
-                                        style: OTTypography.caption(
-                                          color: isSelected
-                                              ? canvas
-                                              : textSecondary,
-                                        ).copyWith(
-                                          fontSize: 11.5,
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-
-                          const SizedBox(height: OTSpacing.lg),
-
-                          // Price Display Tahawwulat
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Text(
-                                tahawwulatCurrentTier['label'] as String,
-                                style: OTTypography.price(color: textPrimary)
-                                    .copyWith(
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                tahawwulatCurrentTier['period'] as String,
-                                style:
-                                    OTTypography.caption(color: textSecondary)
-                                        .copyWith(fontSize: 13),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: OTSpacing.base),
-                          Divider(
-                              color: border.withValues(alpha: 0.6), height: 1),
-                          const SizedBox(height: OTSpacing.base),
-
-                          _benefitRow(
-                              '5 Bilik AI Spesialis Terpadu dalam Satu Ruang Kajian',
-                              textPrimary),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                              'Verifikasi ibarah presisi ke kitab matan induk, jilid, & halaman',
-                              textPrimary),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                              'Akses arsip ribuan jam muhadharah & transkrip lisan mualif',
-                              textPrimary),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                              'Ujian nalar ilmiah interaktif & penyusun materi dakwah',
-                              textPrimary),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                              'Terhubung langsung ke infrastruktur Google NotebookLM Pro',
-                              textPrimary),
-
-                          const SizedBox(height: OTSpacing.lg),
-
-                          SizedBox(
-                            width: double.infinity,
-                            height: 48,
-                            child: AppleInteractiveWrapper(
-                              onTap: _isProcessing
-                                  ? null
-                                  : () => _handleTierCheckout(
-                                        tier: tahawwulatCurrentTier,
-                                        targetAgent: _tahawwulatAgent,
-                                      ),
-                              pressedScale: 0.97,
-                              hapticType: HapticFeedbackType.light,
-                              borderRadius:
-                                  BorderRadius.circular(OTRadius.button),
-                              child: FilledButton(
-                                onPressed: _isProcessing
-                                    ? null
-                                    : () => _handleTierCheckout(
-                                          tier: tahawwulatCurrentTier,
-                                          targetAgent: _tahawwulatAgent,
-                                        ),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: textPrimary,
-                                  foregroundColor: canvas,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: OTRadius.buttonBorder),
-                                  elevation: 0,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Pilih Paket Fikih Tahawwulat (${tahawwulatCurrentTier['label']})',
-                                      style: OTTypography.button(color: canvas)
-                                          .copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Icon(Icons.arrow_forward_rounded,
-                                        size: 16, color: canvas),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: OTSpacing.sm),
-
-                          Center(
-                            child: TextButton.icon(
-                              onPressed: _isProcessing
-                                  ? null
-                                  : () => _handleSubscribe(
-                                        plan: tahawwulatCurrentTier['planId']
-                                            as String,
-                                        planTitle:
-                                            '${tahawwulatCurrentTier['name']} ${_tahawwulatAgent.title}'
-                                                .trim(),
-                                        price: tahawwulatCurrentTier['price']
-                                            as int,
-                                        targetAgent: _tahawwulatAgent,
-                                      ),
-                              icon: Icon(Icons.payment_rounded,
-                                  size: 14, color: textSecondary),
-                              label: Text(
-                                'Atau bayar via DOKU Payment Gateway (QRIS / VA)',
-                                style:
-                                    OTTypography.caption(color: textSecondary)
-                                        .copyWith(
-                                  fontSize: 11.5,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor:
-                                      textSecondary.withValues(alpha: 0.3),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: OTSpacing.xl),
-
-                    // ════════════════════════════════════════════════════════
-                    // 2. KARTU SPESIALIS PER BIDANG LAINNYA
-                    // ════════════════════════════════════════════════════════
-                    Container(
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: OTRadius.cardBorder,
-                        border: Border.all(
-                          color: border,
-                          width: 1.0,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(OTSpacing.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Paket per bidang',
-                                style: OTTypography.sectionHeading(
-                                    color: textSecondary),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: surfaceSubtle,
-                                  borderRadius: OTRadius.chipBorder,
-                                ),
-                                child: Text(
-                                  '1 bidang',
-                                  style: OTTypography.captionMedium(
-                                          color: textSecondary)
-                                      .copyWith(fontSize: 10),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          Text(
-                            'Pilih bidang',
-                            style: OTTypography.corpusTitle(color: textPrimary)
-                                .copyWith(fontSize: 20),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Akses satu bidang beserta kitab rujukannya.',
-                            style: OTTypography.body(color: textSecondary)
-                                .copyWith(
-                              fontSize: 13,
-                            ),
-                          ),
-
-                          const SizedBox(height: OTSpacing.md),
-
-                          // Dropdown HANYA untuk disiplin lainnya (bukan Tahawwulat)
-                          DropdownButtonFormField<String>(
-                            initialValue: otherTargetAgent.id,
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 10),
-                              filled: true,
-                              fillColor: surfaceSubtle,
-                              border: OutlineInputBorder(
-                                borderRadius: OTRadius.inputBorder,
-                                borderSide: BorderSide(color: border),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: OTRadius.inputBorder,
-                                borderSide: BorderSide(color: border),
-                              ),
-                            ),
-                            dropdownColor: surface,
-                            items: otherList.map((a) {
-                              return DropdownMenuItem<String>(
-                                value: a.id,
-                                child: Text(
-                                  a.title,
-                                  style: OTTypography.bodyMedium(
-                                          color: textPrimary)
-                                      .copyWith(fontSize: 13),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (val) {
-                              if (val != null) {
-                                setState(() {
-                                  _selectedOtherAgent =
-                                      otherList.firstWhere((a) => a.id == val);
-                                });
-                              }
-                            },
-                          ),
-
-                          const SizedBox(height: OTSpacing.lg),
-
-                          // Segmented Control Durasi Bidang Lainnya
-                          Container(
-                            height: 38,
-                            decoration: BoxDecoration(
-                              color: surfaceSubtle,
-                              borderRadius: OTRadius.chipBorder,
-                              border: Border.all(color: border, width: 0.8),
-                            ),
-                            child: Row(
-                              children: List.generate(otherTiers.length, (idx) {
-                                final tier = otherTiers[idx];
-                                final isSelected = safeOtherIndex == idx;
-                                return Expanded(
-                                  child: AppleInteractiveWrapper(
-                                    onTap: () {
-                                      OTMotion.selection();
-                                      setState(() => _otherDurationIndex = idx);
-                                    },
-                                    pressedScale: 0.94,
-                                    hapticType: HapticFeedbackType.selection,
-                                    child: AnimatedContainer(
-                                      duration: OTMotion.fast,
-                                      curve: OTMotion.curve,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? textPrimary
-                                            : Colors.transparent,
-                                        borderRadius: OTRadius.chipBorder,
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        tier['name'] as String,
-                                        style: OTTypography.caption(
-                                          color: isSelected
-                                              ? canvas
-                                              : textSecondary,
-                                        ).copyWith(
-                                          fontSize: 11,
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-
-                          const SizedBox(height: OTSpacing.lg),
-
-                          // Price Display Bidang Lainnya
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Text(
-                                otherCurrentTier['label'] as String,
-                                style: OTTypography.price(color: textPrimary),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                otherCurrentTier['period'] as String,
-                                style:
-                                    OTTypography.caption(color: textSecondary),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: OTSpacing.base),
-                          Divider(
-                              color: border.withValues(alpha: 0.6), height: 1),
-                          const SizedBox(height: OTSpacing.base),
-
-                          _benefitRow(
-                            'Akses Asisten ${otherTargetAgent.title}',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Telusuri ibarah dan penjelasan dari kitab rujukan',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Lihat kitab, jilid, dan halaman yang dirujuk',
-                            textPrimary,
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                            'Cocokkan ibarah dengan kitab cetak atau digital',
-                            textPrimary,
-                          ),
-
-                          const SizedBox(height: OTSpacing.lg),
-
-                          // CTA Button Bidang Lainnya
-                          SizedBox(
-                            width: double.infinity,
-                            height: 48,
-                            child: AppleInteractiveWrapper(
-                              onTap: _isProcessing
-                                  ? null
-                                  : () => _handleTierCheckout(
-                                        tier: otherCurrentTier,
-                                        targetAgent: otherTargetAgent,
-                                      ),
-                              pressedScale: 0.97,
-                              hapticType: HapticFeedbackType.light,
-                              borderRadius:
-                                  BorderRadius.circular(OTRadius.button),
-                              child: FilledButton(
-                                onPressed: _isProcessing
-                                    ? null
-                                    : () => _handleTierCheckout(
-                                          tier: otherCurrentTier,
-                                          targetAgent: otherTargetAgent,
-                                        ),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: textPrimary,
-                                  foregroundColor: canvas,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: OTRadius.buttonBorder),
-                                  elevation: 0,
-                                ),
-                                child: Text(
-                                  'Pilih paket ${otherTargetAgent.title} (${otherCurrentTier['label']})',
-                                  style: OTTypography.button(color: canvas),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: OTSpacing.lg),
-
-                    // ── Bundling Card: Semua Bidang (Segera Hadir) ──
-                    Container(
-                      decoration: BoxDecoration(
-                        color: surfaceSubtle,
-                        borderRadius: OTRadius.cardBorder,
-                        border: Border.all(
-                          color: border,
-                          width: 0.8,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(OTSpacing.lg),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Paket semua bidang',
-                                  style: OTTypography.sectionHeading(
-                                      color: textSecondary),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: surface,
-                                  borderRadius: OTRadius.chipBorder,
-                                  border: Border.all(color: border, width: 0.6),
-                                ),
-                                child: Text(
-                                  'Segera hadir',
-                                  style: OTTypography.captionMedium(
-                                          color: textSecondary)
-                                      .copyWith(
-                                    fontSize: 10,
-                                    letterSpacing: 0.8,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: OTSpacing.sm),
-                          Text(
-                            'Akses semua bidang',
-                            style: OTTypography.corpusTitle(color: textPrimary)
-                                .copyWith(fontSize: 18),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Satu paket untuk mengakses seluruh bidang yang tersedia beserta kitab rujukannya.',
-                            style: OTTypography.body(color: textSecondary)
-                                .copyWith(
-                              fontSize: 12.5,
-                            ),
-                          ),
-                          const SizedBox(height: OTSpacing.base),
-                          Divider(
-                              color: border.withValues(alpha: 0.5), height: 1),
-                          const SizedBox(height: OTSpacing.base),
-                          _benefitRow('Akses ke seluruh bidang yang tersedia',
-                              textSecondary),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow(
-                              'Akses lintas bidang dalam satu langganan',
-                              textSecondary),
-                          const SizedBox(height: OTSpacing.sm),
-                          _benefitRow('Pembaruan berkala seluruh kitab rujukan',
-                              textSecondary),
-                          const SizedBox(height: OTSpacing.lg),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 46,
-                            child: OutlinedButton(
-                              onPressed: null,
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: border),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: OTRadius.buttonBorder),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.lock_outline_rounded,
-                                      size: 16, color: textSecondary),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Segera Hadir',
-                                    style: OTTypography.button(
-                                        color: textSecondary),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ], // Akhir _selectedSegment else
-
-                  const SizedBox(height: OTSpacing.lg),
-
-                  // ── Catatan Transparansi Pembelian ──
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(OTSpacing.base),
-                    decoration: BoxDecoration(
-                      color: surface,
-                      borderRadius: OTRadius.cardBorder,
-                      border: Border.all(color: border, width: 0.8),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(Icons.info_outline_rounded,
-                            size: 16, color: textSecondary),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            AppCopy.manualRenewalNotice,
-                            style: OTTypography.caption(color: textSecondary)
-                                .copyWith(
-                              fontSize: 12,
-                              height: 1.45,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _duration(List<String> names, int selected, ValueChanged<int> changed) {
+    return DropdownButtonFormField<int>(
+      key: ValueKey('${names.join('|')}:$selected'),
+      initialValue: selected, isExpanded: true,
+      decoration: InputDecoration(labelText: context.tr('membership.access_period')),
+      items: [for (var i = 0; i < names.length; i++)
+        DropdownMenuItem(value: i, child: Text(context.tr(_durationLabel(names[i]))))],
+      onChanged: _isProcessing ? null : (value) { if (value != null) changed(value); },
     );
   }
 
-  Widget _benefitRow(String text, Color textColor) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _agentPlan(AgentModel agent, {bool doku = false}) {
+    final tiers = doku ? _tahawwulatTiers : GoAkalCatalogRegistry.getTiersForAgent(agent.id);
+    if (tiers.isEmpty) return EditorialEmptyState(title: context.tr('membership.plan_unavailable', args: {'title': context.tr(agent.title)}));
+    final stored = _agentDurationIndices[agent.id] ?? 0;
+    final index = stored < tiers.length ? stored : 0;
+    final tier = tiers[index];
+    return EditorialCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(context.tr(agent.title), style: OTTypography.corpusTitle().copyWith(fontSize: 26)),
+      const SizedBox(height: 8),
+      Text(doku ? context.tr('membership.five_roles') : context.tr('membership.selected_access')),
+      const SizedBox(height: 20),
+      _duration(tiers.map((t) => t['name'] as String).toList(), index,
+        (value) => setState(() => _agentDurationIndices[agent.id] = value)),
+      const SizedBox(height: 20),
+      Text(context.tr('membership.total', args: {'price': tier['label']}), style: OTTypography.price().copyWith(fontSize: 30)),
+      Text(context.tr('membership.period_access', args: {'duration': context.tr(_durationLabel(tier['name'] as String))})),
+      const SizedBox(height: 20),
+      Wrap(spacing: 12, runSpacing: 12, children: [
+        EditorialButton(label: context.tr('membership.goakal_continue'), icon: Icons.arrow_forward_rounded,
+          onPressed: _isProcessing ? null : () => _handleTierCheckout(tier, agent)),
+        if (doku) EditorialButton(label: context.tr('membership.doku_pay'), secondary: true,
+          onPressed: _isProcessing ? null : () => _handleSubscribe(tier, agent)),
+      ]),
+    ]));
+  }
+
+  Widget _bundlePlan(ThematicBundleMeta bundle) {
+    final tiers = bundle.tiers;
+    if (tiers.isEmpty) return const SizedBox.shrink();
+    final stored = _bundleDurationIndices[bundle.slug] ?? 0;
+    final index = stored < tiers.length ? stored : 0;
+    final tier = tiers[index];
+    return ExpansionTile(
+      tilePadding: EdgeInsets.zero,
+      title: Text(context.tr(bundle.title), style: OTTypography.bookTitle()),
+      subtitle: Text(context.tr('membership.bundle_summary', args: {'subtitle': context.tr(bundle.subtitle), 'price': tier.priceLabel, 'duration': context.tr(tier.title)})),
+      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+      childrenPadding: const EdgeInsets.only(top: 12, bottom: 24),
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 2),
-          child: Icon(
-            Icons.check_rounded,
-            size: 15,
-            color: textColor.withValues(alpha: 0.75),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: OTTypography.body(color: textColor).copyWith(
-              fontSize: 12.5,
-              height: 1.35,
-            ),
-          ),
-        ),
+        Text(context.tr('membership.plan_scope')),
+        const SizedBox(height: 8),
+        for (final item in bundle.includedItems.where((item) =>
+            !item.contains('Komputasi Optimal') && !item.contains('Pembaruan Korpus') && !item.contains('Layanan Khadim')))
+          Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(context.tr(item.replaceAll('Super AI ', '')))),
+        const SizedBox(height: 16),
+        _duration(tiers.map((t) => t.title).toList(), index,
+          (value) => setState(() => _bundleDurationIndices[bundle.slug] = value)),
+        const SizedBox(height: 16),
+        Text(context.tr('membership.total', args: {'price': tier.priceLabel}), style: OTTypography.price().copyWith(fontSize: 28)),
+        Text(context.tr('membership.period_access', args: {'duration': context.tr(tier.title)})),
+        const SizedBox(height: 16),
+        EditorialButton(label: tier.isLiveOnGoAkal ? context.tr('membership.goakal_continue') : context.tr('membership.ask_availability'),
+          icon: Icons.arrow_forward_rounded, onPressed: _isProcessing ? null : () async {
+            if (tier.isLiveOnGoAkal) {
+              await _openGoAkal(url: tier.applyUrl, title: '${context.tr(bundle.title)} · ${context.tr(tier.title)}', amount: tier.amount);
+            } else { await _showManualActivation(bundle.title, tier.title, tier.priceLabel); }
+          }),
       ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final busy = _isProcessing || _isSyncingGoAkal;
+    final others = _otherAgents;
+    return EditorialPage(title: context.tr('membership.title'), eyebrow: context.tr('membership.eyebrow'),
+      subtitle: context.tr('membership.subtitle'),
+      showBack: true, maxWidth: 820,
+      children: [
+        if (FirebaseAuth.instance.currentUser == null) ...[
+          EditorialButton(label: context.tr('membership.login_subscribe'), onPressed: () => Navigator.pushNamed(context, AppRoutes.login)),
+          const SizedBox(height: 24),
+        ] else ...[
+          Text(_user?.email ?? FirebaseAuth.instance.currentUser?.email ?? '', textDirection: TextDirection.ltr),
+          const SizedBox(height: 16),
+        ],
+        Wrap(spacing: 12, runSpacing: 8, children: [
+          EditorialButton(label: context.tr('membership.sync_goakal'), secondary: true, busy: _isSyncingGoAkal,
+            icon: Icons.sync, onPressed: busy ? null : _syncAkalPurchases),
+          EditorialButton(label: context.tr('membership.redeem_access'), secondary: true, onPressed: busy ? null : () async {
+            var redeemed = false;
+            await RedeemCodeSheet.show(context, onSuccess: () => redeemed = true);
+            if (mounted && redeemed) await _refreshAccess();
+          }),
+        ]),
+        if (_checkoutMessage != null) ...[
+          const SizedBox(height: 20),
+          EditorialCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(context.tr(_checkoutMessage!)),
+            const SizedBox(height: 12),
+            EditorialButton(label: _pendingGoAkal ? context.tr('membership.sync_goakal') : context.tr('membership.check_access'),
+              secondary: true, onPressed: busy ? null : (_pendingGoAkal ? _syncAkalPurchases : _refreshAccess)),
+          ])),
+        ],
+        if (_isProcessing) const Padding(padding: EdgeInsets.only(top: 16), child: LinearProgressIndicator()),
+        const SizedBox(height: 32),
+        DropdownButtonFormField<int>(initialValue: _selectedSegment, isExpanded: true,
+          decoration: InputDecoration(labelText: context.tr('membership.membership_scope')),
+          items: [DropdownMenuItem(value: 0, child: Text(context.tr('membership.thematic'))),
+            DropdownMenuItem(value: 1, child: Text(context.tr('membership.one_discipline')))],
+          onChanged: busy ? null : (value) { if (value != null) setState(() => _selectedSegment = value); }),
+        const SizedBox(height: 24),
+        if (_selectedSegment == 0)
+          for (final bundle in GoAkalCatalogRegistry.thematicBundles) _bundlePlan(bundle)
+        else ...[
+          _agentPlan(_tahawwulatAgent, doku: true),
+          if (others.isNotEmpty) ...[
+            const SizedBox(height: 32),
+            EditorialSection(title: context.tr('membership.other_disciplines'), child: DropdownButtonFormField<String>(
+              initialValue: _selectedOtherAgent?.id ?? others.first.id, isExpanded: true,
+              decoration: InputDecoration(labelText: context.tr('membership.choose_discipline')),
+              items: [for (final agent in others) DropdownMenuItem(value: agent.id, child: Text(context.tr(agent.title)))],
+              onChanged: busy ? null : (value) => setState(() => _selectedOtherAgent = others.firstWhere((a) => a.id == value)))),
+            const SizedBox(height: 16),
+            _agentPlan(_selectedOtherAgent ?? others.first),
+          ],
+        ],
+        const SizedBox(height: 32),
+        Text(context.tr('membership.manual_renewal')),
+        const SizedBox(height: 12),
+        Text(context.tr('membership.price_explanation')),
+      ]);
   }
 }

@@ -1,3 +1,4 @@
+import '../core/l10n/app_dictionary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
@@ -44,33 +45,33 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
   String _humanizeErrorMessage(String raw) {
     final lower = raw.toLowerCase().replaceAll('_', '-');
     if (lower.contains('perangkat') || lower.contains('ponsel')) {
-      return raw;
+      return 'membership.code_device_error';
     }
     if (lower.contains('not-found')) {
-      return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+      return 'membership.code_not_found';
     }
     if (lower.contains('already-exists') || lower.contains('already-used')) {
-      return 'Kode ini sudah pernah ditukarkan sebelumnya.';
+      return 'membership.code_used';
     }
     if (lower.contains('resource-exhausted') || lower.contains('quota')) {
-      return 'Kuota penukaran untuk kode voucher ini sudah habis.';
+      return 'membership.code_quota';
     }
     if (lower.contains('deadline-exceeded') || lower.contains('expired')) {
-      return 'Masa berlaku kode voucher ini telah berakhir.';
+      return 'membership.code_expired';
     }
     if (lower.contains('failed-precondition')) {
-      return 'Kode voucher ini sudah tidak aktif.';
+      return 'membership.code_inactive';
     }
     if (lower.contains('invalid-argument')) {
-      return 'Format penulisan kode voucher belum sesuai.';
+      return 'membership.code_format';
     }
-    return raw;
+    return 'membership.code_error';
   }
 
   Future<void> _handleRedeem() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
-      setState(() => _inlineError = 'Masukkan kode voucher');
+      setState(() => _inlineError = 'membership.code_hint');
       return;
     }
 
@@ -85,12 +86,12 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
 
     final success = result['success'] == true;
     final message = (result['message'] as String?) ??
-        (success ? 'Akses berhasil diaktifkan' : 'Kode tidak valid atau sudah kedaluwarsa');
+        (success ? '' : 'invalid-argument');
 
     if (success) {
       AppSnackBar.show(
         context,
-        message: 'Voucher berhasil diaktifkan. Akses telaah telah dibuka.',
+        message: context.tr('membership.code_success'),
         type: SnackType.success,
       );
       widget.onSuccess?.call();
@@ -137,14 +138,15 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Gunakan voucher',
+                Expanded(child: Text(
+                  context.tr('membership.use_voucher'),
                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
-                ),
+                )),
                 IconButton(
+                  tooltip: context.tr('membership.close'),
                   icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -152,7 +154,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Masukkan kode voucher yang Anda miliki.',
+              context.tr('membership.code_instructions'),
               style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
@@ -160,6 +162,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
               controller: _codeController,
               enabled: !_isLoading,
               textCapitalization: TextCapitalization.characters,
+              textDirection: TextDirection.ltr,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\-_]')),
                 LengthLimitingTextInputFormatter(25),
@@ -173,12 +176,12 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 letterSpacing: 1.2,
               ),
               decoration: InputDecoration(
-                hintText: 'Masukkan kode voucher',
+                hintText: context.tr('membership.code_hint'),
                 hintStyle: OTTypography.body(color: textSecondary).copyWith(
                   letterSpacing: 0,
                   fontSize: 14,
                 ),
-                errorText: _inlineError,
+                errorText: _inlineError == null ? null : context.tr(_inlineError!),
                 errorStyle: const TextStyle(fontSize: 12),
                 filled: true,
                 fillColor: canvas,
@@ -213,7 +216,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 child: _isLoading
                     ? AppLoader(dotSize: 6, color: canvas)
                     : Text(
-                        'Gunakan voucher',
+                        context.tr('membership.use_voucher'),
                         style: OTTypography.button(color: canvas),
                       ),
               ),
@@ -225,3 +228,5 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     );
   }
 }
+
+
