@@ -71,10 +71,10 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 - **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green)**.
 - **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-  - Ukuran: 62.4 MB (62.352.872 bytes)
-  - Timestamp: 2026-09-19 15:52:22 WIB
-  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 136.3s).
-  - Termasuk perbaikan Google Sign-In, tombol akses tamu (Mode Telaah), dan perbaikan UI monokrom.
+  - Ukuran: 62.8 MB (62.814.142 bytes)
+  - Timestamp: 2026-09-19 18:09:04 WIB
+  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 116.1s).
+  - Termasuk perbaikan menyeluruh antarmuka *The Quiet Islamic Scholar (Monochrome Editorial)*, eliminasi total warna liar, standarisasi notifikasi monokrom, dan tipografi Scheherazade New & Newsreader.
 - **Rilis macOS DMG (Cloud GitHub Actions)**:
   - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
   - Output Artifact: `OpenTurath_AI_macOS.dmg`.
