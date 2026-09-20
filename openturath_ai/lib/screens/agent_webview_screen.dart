@@ -20,6 +20,7 @@ import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
 import '../services/agent_service.dart';
@@ -317,19 +318,28 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       _checkAndShowAdabDialog();
     } catch (e) {
       if (!mounted) return;
-      if (e is AgentAccessException && (e.code == 'permission-denied' || e.code == 'unauthenticated')) {
-        setState(() {
-          _errorMessage = e.message;
-          _isPaywallRequired = true;
-          _isLoadingUrl = false;
-        });
-        return;
-      }
+      final msg = e.toString().toLowerCase();
+      final hasAccess = _user != null && _user!.hasAccessToAgent(_agent!.id);
+      final isPaywall = msg.contains('permission-denied') ||
+          msg.contains('berlangganan') ||
+          msg.contains('langganan') ||
+          msg.contains('subscription') ||
+          msg.contains('unauthenticated') ||
+          msg.contains('unauthorized') ||
+          msg.contains('not-found') ||
+          !hasAccess ||
+          (e is AgentAccessException &&
+              (e.code == 'permission-denied' ||
+                  e.code == 'unauthenticated' ||
+                  e.code == 'not-found'));
+
       setState(() {
-        _errorMessage = e is AgentAccessException
-            ? e.message
-            : AppCopy.studyNotLoadedYet;
-        _isPaywallRequired = false;
+        _errorMessage = isPaywall
+            ? 'Untuk membuka dan menelaah kitab bersama ${_agent?.title ?? 'asisten ini'}, silakan aktifkan paket langganan Anda.'
+            : (e is AgentAccessException
+                ? e.message
+                : AppCopy.studyNotLoadedYet);
+        _isPaywallRequired = isPaywall;
         _isLoadingUrl = false;
       });
     }
@@ -605,6 +615,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
     final accent = OTColors.accent(isDark);
 
     return PopScope(
@@ -817,28 +828,117 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 ),
               ),
 
-            // ── 2. Error State Screen (Unified AppErrorState) ──
+            // ── 2. Error / Paywall State Screen ──
             if (_errorMessage != null && !_isLoadingUrl)
               Positioned.fill(
                 child: Container(
                   color: canvas,
-                  child: AppErrorState(
-                    title: _isPaywallRequired
-                        ? AppCopy.subscriptionRequiredTitle
-                        : AppCopy.cannotLoadStudy,
-                    message: _errorMessage!,
-                    icon: _isPaywallRequired
-                        ? Icons.workspace_premium_rounded
-                        : Icons.info_outline_rounded,
-                    onRetry: _isPaywallRequired
-                        ? _navigateToSubscription
-                        : _fetchAgentUrl,
-                    retryLabel: _isPaywallRequired
-                        ? AppCopy.viewSubscription
-                        : AppCopy.tryAgain,
-                    onBack: () => Navigator.pop(context),
-                    backLabel: AppCopy.backToHome,
-                  ),
+                  child: _isPaywallRequired
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 32, vertical: 24),
+                            child: ConstrainedBox(
+                              constraints:
+                                  const BoxConstraints(maxWidth: 400),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 72,
+                                    height: 72,
+                                    decoration: BoxDecoration(
+                                      color: OTColors.surface(isDark),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: OTColors.border(isDark),
+                                          width: 1.2),
+                                    ),
+                                    child: Icon(
+                                      Icons.workspace_premium_outlined,
+                                      size: 34,
+                                      color: OTColors.accent(isDark),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'Akses Langganan Diperlukan',
+                                    textAlign: TextAlign.center,
+                                    style: ScholarlyFonts.newsreader(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    _errorMessage ??
+                                        'Untuk membuka dan menelaah kitab bersama ${_agent?.title ?? 'asisten ini'}, silakan aktifkan paket langganan Anda.',
+                                    textAlign: TextAlign.center,
+                                    style: ScholarlyFonts.outfit(
+                                      fontSize: 13.5,
+                                      height: 1.45,
+                                      color: textSecondary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 46,
+                                    child: FilledButton.icon(
+                                      onPressed: _navigateToSubscription,
+                                      icon: const Icon(
+                                          Icons.card_membership_rounded,
+                                          size: 18),
+                                      label: Text(
+                                        'Langganan Sekarang',
+                                        style: ScholarlyFonts.outfit(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14.5,
+                                        ),
+                                      ),
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor:
+                                            OTColors.accent(isDark),
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(24),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: 44,
+                                    child: TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context),
+                                      child: Text(
+                                        AppCopy.backToHome,
+                                        style: ScholarlyFonts.outfit(
+                                          fontWeight: FontWeight.w500,
+                                          color: textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : AppErrorState(
+                          title: AppCopy.cannotLoadStudy,
+                          message: _errorMessage!,
+                          icon: Icons.info_outline_rounded,
+                          onRetry: _fetchAgentUrl,
+                          retryLabel: AppCopy.tryAgain,
+                          onBack: () => Navigator.pop(context),
+                          backLabel: AppCopy.backToHome,
+                        ),
                 ),
               ),
 
