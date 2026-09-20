@@ -1,4 +1,3 @@
-import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
@@ -121,7 +120,6 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
@@ -170,14 +168,14 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            Loc.text(title),
+                            title,
                             style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           if (_allBooks != null)
                             Text(
-                              Loc.tr('booksShown', ['${_filteredBooks?.length ?? 0}', '${_allBooks!.length}']),
+                              '${_filteredBooks?.length ?? 0} dari ${_allBooks!.length} kitab rujukan',
                               style: OTTypography.caption(color: textSecondary),
                             ),
                         ],
@@ -197,7 +195,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: Loc.tr('ui_5ed90ac17a'),
+                    hintText: 'Cari judul, pengarang, penerbit, atau tahkik...',
                     hintStyle: OTTypography.caption(color: textSecondary),
                     prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
@@ -244,7 +242,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                   const SizedBox(height: OTSpacing.base),
                                   OutlinedButton(
                                     onPressed: _loadData,
-                                    child: Text(Loc.tr('tryAgain')),
+                                    child: const Text('Coba lagi'),
                                   ),
                                 ],
                               ),
@@ -265,8 +263,8 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                       const SizedBox(height: OTSpacing.sm),
                                       Text(
                                         _searchController.text.isNotEmpty
-                                            ? Loc.tr('ui_6b42d45847')
-                                            : Loc.tr('ui_531856ca5c'),
+                                            ? 'Tidak ada kitab yang cocok dengan pencarian'
+                                            : 'Katalog naskah sedang disiapkan.',
                                         textAlign: TextAlign.center,
                                         style: OTTypography.body(color: textSecondary),
                                       ),
@@ -313,7 +311,6 @@ class CanonicalBookTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
@@ -351,7 +348,7 @@ class CanonicalBookTile extends StatelessWidget {
                   textAlign: TextAlign.right,
                   style: OTTypography.arabicReading(color: textPrimary).copyWith(
                     fontSize: 20,
-                    height: 1.85,
+                    height: 1.6,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -377,7 +374,7 @@ class CanonicalBookTile extends StatelessWidget {
                 if (book.verifiedDeathYearHijri != null) ...[
                   const SizedBox(height: 2),
                   Text(
-                    Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}']),
+                    'w. ${book.verifiedDeathYearHijri} H',
                     style: OTTypography.caption(color: textSecondary),
                   ),
                 ],
@@ -409,7 +406,7 @@ class CanonicalBookTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      Loc.tr('ui_84d7c6b7ae'),
+                      'Keterangan kitab',
                       style: OTTypography.button(color: accent).copyWith(fontSize: 12),
                     ),
                     const SizedBox(width: 4),

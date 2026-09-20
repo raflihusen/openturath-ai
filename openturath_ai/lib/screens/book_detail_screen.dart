@@ -1,4 +1,3 @@
-import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
@@ -223,7 +222,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final background = OTColors.canvas(isDark);
@@ -337,7 +335,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             .copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          height: 1.85,
+                          height: 1.6,
                         ),
                       ),
                       if (widget.book.shortTitleArabic != null &&
@@ -556,7 +554,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       _buildMetaRow(
                         icon: Icons.edit_note_rounded,
                         label: 'المحقق',
-                        value: widget.book.muhaqqiq ?? Loc.tr('unknownMetadata'),
+                        value: widget.book.muhaqqiq ?? 'غير مدون',
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),
@@ -575,8 +573,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   ),
                 ),
 
-                Text(Loc.tr('verificationNotice'),
-                  style: OTTypography.caption(color: textSecondary)),
                 const SizedBox(height: OTSpacing.xl),
               ],
             ),
@@ -606,7 +602,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   Widget _buildSectionHeader(String title, Color color) {
     return Text(
-      Loc.text(title),
+      title,
       style: OTTypography.arabicReading(color: color).copyWith(
         fontSize: 13,
         fontWeight: FontWeight.w700,
@@ -626,7 +622,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         Icon(icon, size: 18, color: textSecondary),
         const SizedBox(width: 8),
         Text(
-          Loc.text(label),
+          label,
           style: OTTypography.arabicReading(color: textSecondary).copyWith(
             fontSize: 13.5,
             fontWeight: FontWeight.w500,

@@ -1,8 +1,7 @@
-import '../core/localization.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
@@ -12,7 +11,6 @@ class UpdateReadyBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final updateService = UpdateService();
 
     return AnimatedBuilder(
@@ -63,8 +61,8 @@ class UpdateReadyBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isDesktop ? Loc.tr('updateAvailable', [version]) : Loc.tr('updateReady', [version]),
-                      style: ScholarlyFonts.outfit(
+                      isDesktop ? 'Pembaruan v$version Tersedia' : 'Pembaruan v$version Siap Dipasang',
+                      style: GoogleFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
@@ -73,9 +71,9 @@ class UpdateReadyBanner extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       isDesktop
-                          ? Loc.tr('ui_ffc1ce6e71')
-                          : Loc.tr('ui_9d5001b52a'),
-                      style: ScholarlyFonts.outfit(
+                          ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
+                          : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
+                      style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
@@ -99,8 +97,8 @@ class UpdateReadyBanner extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop ? Loc.tr('ui_032324ae7a') : Loc.tr('ui_643682e0fa'),
-                  style: ScholarlyFonts.outfit(
+                  isDesktop ? 'Perbarui' : 'Pasang',
+                  style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),

@@ -1,10 +1,9 @@
-import '../core/localization.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -131,14 +130,14 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  Loc.tr('ui_c6b269deaf'),
+                  'Sesuaikan ukuran huruf percakapan agar nyaman dibaca.',
                   style: OTTypography.caption(color: textSecondary),
                 ),
                 const SizedBox(height: 20),
                 Row(
                   children: [
                     Text('A',
-                        style: ScholarlyFonts.outfit(
+                        style: GoogleFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: textSecondary)),
@@ -160,7 +159,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       ),
                     ),
                     Text('A',
-                        style: ScholarlyFonts.outfit(
+                        style: GoogleFonts.outfit(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: textPrimary)),
@@ -176,7 +175,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surface = OTColors.surface(isDark);
@@ -201,7 +199,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         backgroundColor: canvas,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
-          tooltip: Loc.tr('ui_73d11e46c9'),
+          tooltip: 'Kembali ke Beranda',
           onPressed: () {
             AppSnackBar.clear(context);
             _sessionManager.closeRoom();
@@ -210,7 +208,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         titleSpacing: 0,
         title: Text(
           activeTab.agent.title,
-          style: ScholarlyFonts.outfit(
+          style: GoogleFonts.outfit(
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: textPrimary,
@@ -260,7 +258,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     Icon(Icons.format_size_rounded,
                         color: textPrimary, size: 18),
                     const SizedBox(width: 12),
-                    Text(Loc.tr('ui_2b3aa03422'),
+                    Text('Ukuran huruf',
                         style: OTTypography.body(color: textPrimary)),
                   ],
                 ),
@@ -269,17 +267,108 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           ),
           const SizedBox(width: 4),
         ],
-        // Composite Multi-Tab Bar & Tahawwulat Welcome Banner (Unified single bottom parameter)
-        bottom: _buildAppBarBottom(
-          context: context,
-          activeTab: activeTab,
-          sessions: sessions,
-          surface: surface,
-          surfaceSubtle: surfaceSubtle,
-          border: border,
-          textPrimary: textPrimary,
-          textSecondary: textSecondary,
-        ),
+        // Chrome-like Multi-Tab Bar (Hanya tampil jika terdapat lebih dari 1 sesi aktif)
+        bottom: sessions.length > 1
+            ? PreferredSize(
+                preferredSize: const Size.fromHeight(42),
+                child: Container(
+                  height: 42,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: surfaceSubtle,
+                    border: Border(
+                      top: BorderSide(color: border, width: 0.8),
+                      bottom: BorderSide(color: border, width: 0.8),
+                    ),
+                  ),
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    itemCount: sessions.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 6),
+                    itemBuilder: (context, index) {
+                      final session = sessions[index];
+                      final isActive = index == _sessionManager.activeIndex;
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: isActive ? surface : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isActive ? border : Colors.transparent,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Area klik tab untuk berpindah asisten
+                            InkWell(
+                              onTap: () {
+                                AppSnackBar.clear(context);
+                                _sessionManager.selectTab(index);
+                              },
+                              borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.chat_bubble_outline_rounded,
+                                      size: 13,
+                                      color: isActive ? textPrimary : textSecondary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      session.agent.title.replaceFirst('AI ', ''),
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 12,
+                                        fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                                        color: isActive ? textPrimary : textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // Tombol tutup tab terpisah tanpa nesting InkWell
+                            Semantics(
+                              label: 'Tutup tab ${session.agent.title}',
+                              button: true,
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkResponse(
+                                  onTap: () {
+                                    AppSnackBar.clear(context);
+                                    _sessionManager.closeTab(index);
+                                  },
+                                  radius: 18,
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.close_rounded,
+                                      size: 15,
+                                      color: textSecondary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 2),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            : null,
       ),
       body: IndexedStack(
         index: _sessionManager.activeIndex,
@@ -289,142 +378,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               key: ValueKey('agent_tab_${sessions[i].agent.id}'),
               session: sessions[i],
               isActive: i == _sessionManager.activeIndex,
-            ),
-        ],
-      ),
-    );
-  }
-
-  PreferredSizeWidget? _buildAppBarBottom({
-    required BuildContext context,
-    required AgentSessionTab activeTab,
-    required List<AgentSessionTab> sessions,
-    required Color surface,
-    required Color surfaceSubtle,
-    required Color border,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    final isTahawwulat = activeTab.agent.id.startsWith('fiqh_tahawwulat');
-    final showTabs = sessions.length > 1;
-
-    if (!isTahawwulat && !showTabs) return null;
-
-    final welcomeHeight = isTahawwulat
-        ? (MediaQuery.textScalerOf(context).scale(12) * 1.85 * 2 + 14)
-        : 0.0;
-    final tabsHeight = showTabs ? 42.0 : 0.0;
-    final totalHeight = welcomeHeight + tabsHeight;
-
-    return PreferredSize(
-      preferredSize: Size.fromHeight(totalHeight),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (isTahawwulat)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-              child: Text(
-                Loc.tr('tahawwulatWelcome'),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: ScholarlyFonts.outfit(fontSize: 12, color: textSecondary),
-              ),
-            ),
-          if (showTabs)
-            Container(
-              height: 42,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: surfaceSubtle,
-                border: Border(
-                  top: BorderSide(color: border, width: 0.8),
-                  bottom: BorderSide(color: border, width: 0.8),
-                ),
-              ),
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                itemCount: sessions.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 6),
-                itemBuilder: (context, index) {
-                  final session = sessions[index];
-                  final isActive = index == _sessionManager.activeIndex;
-
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: isActive ? surface : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: isActive ? border : Colors.transparent,
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            AppSnackBar.clear(context);
-                            _sessionManager.selectTab(index);
-                          },
-                          borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.chat_bubble_outline_rounded,
-                                  size: 13,
-                                  color: isActive ? textPrimary : textSecondary,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  session.agent.title.replaceFirst('AI ', ''),
-                                  style: ScholarlyFonts.outfit(
-                                    fontSize: 12,
-                                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                                    color: isActive ? textPrimary : textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Semantics(
-                          label: 'Tutup tab ${session.agent.title}',
-                          button: true,
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkResponse(
-                              onTap: () {
-                                AppSnackBar.clear(context);
-                                _sessionManager.closeTab(index);
-                              },
-                              radius: 18,
-                              borderRadius: BorderRadius.circular(14),
-                              child: Container(
-                                width: 32,
-                                height: 32,
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(4),
-                                child: Icon(
-                                  Icons.close_rounded,
-                                  size: 15,
-                                  color: textSecondary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 2),
-                      ],
-                    ),
-                  );
-                },
-              ),
             ),
         ],
       ),
@@ -461,7 +414,61 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     (function() {
       if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
 
-      // Preserve source controls and content. Apply only explicit reading preferences.
+      var styleId = 'ot-hide-controls';
+      var existingStyle = document.getElementById(styleId);
+      if (!existingStyle) {
+        var style = document.createElement('style');
+        style.id = styleId;
+        style.type = 'text/css';
+        style.textContent = `
+          top-bar, .top-bar, header, .header, .app-header, app-header,
+          mat-toolbar, [role="banner"], .header-container, .header-row,
+          .mobile-header, div[class*="mobile-header" i],
+          labs-tailwind-logo, a.logo-link, .logo-container,
+          a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
+          .title-input, input.title-input, .title-container, .notebook-title,
+          .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+          div[class*="title-card" i], div[class*="notebook-header" i],
+          .project-header, div.source-badge-container,
+          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
+          .pro-badge,
+          #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button.mat-tonal-button, a[aria-label*="Google" i],
+          div.chat-input-container + div,
+          div[class*="input-container" i] + div,
+          div[class*="query-container" i] + div,
+          .chat-disclaimer, .query-disclaimer, .model-disclaimer,
+          [class*="disclaimer" i], [aria-label*="disclaimer" i],
+          [data-testid*="disclaimer" i], footer, div[class*="footer" i],
+          .access-denied, div[class*="access-denied" i], div[class*="denied" i],
+          [aria-label*="Request access" i], [aria-label*="Minta akses" i],
+          app-access-denied, .error-page, .permission-denied,
+          [data-ot-hidden] {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0px !important;
+            max-height: 0px !important;
+            overflow: hidden !important;
+            margin: 0px !important;
+            padding: 0px !important;
+            font-size: 0px !important;
+            line-height: 0px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            border: none !important;
+          }
+          ::-webkit-scrollbar { display: none !important; width: 0px !important; }
+          html, body, * { scrollbar-width: none !important; }
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
+            padding-top: 14px !important;
+            padding-bottom: 24px !important;
+            margin-top: 0px !important;
+          }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+      }
+
       window.applyTurathFontScale = function(value) {
         var scale = Number(value);
         if (!Number.isFinite(scale)) return;
@@ -486,7 +493,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           [lang="ar"], .arabic, [dir="rtl"] {
             font-family: 'Scheherazade New', 'Traditional Arabic', serif !important;
             font-size: ${Math.round(scale * 19)}px !important;
-            line-height: 1.85 !important;
+            line-height: 1.8 !important;
           }
         `;
       };
@@ -775,7 +782,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     super.build(context);
     final session = widget.session;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -927,7 +933,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                           AppCopy.answerCopied,
                           duration: const Duration(milliseconds: 2500),
                           action: SnackBarAction(
-                            label: Loc.tr('save'),
+                            label: 'Simpan',
                             textColor: OTColors.onInverseSurface,
                             onPressed: () {
                               final uid = _authService.currentUser?.uid;

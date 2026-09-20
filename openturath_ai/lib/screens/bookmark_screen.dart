@@ -1,9 +1,7 @@
-import '../core/hijri_date_utils.dart';
-import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -277,7 +275,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surface = OTColors.surface(isDark);
@@ -540,7 +537,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                             icon: const Icon(
                                                 Icons.menu_book_outlined,
                                                 size: 16),
-                                            label: Text(AppCopy.startStudy),
+                                            label: const Text(AppCopy.startStudy),
                                             style: OutlinedButton.styleFrom(
                                               foregroundColor: textPrimary,
                                               side: BorderSide(
@@ -651,12 +648,26 @@ class _BookmarkCardState extends State<_BookmarkCard> {
   String _formatRelativeTime(DateTime dt) {
     final now = DateTime.now();
     final diff = now.difference(dt);
-    if (diff.inSeconds < 60) return Loc.tr('justNow');
-    if (diff.inMinutes < 60) return Loc.tr('minutesAgo', ['${diff.inMinutes}']);
-    if (diff.inHours < 24) return Loc.tr('hoursAgo', ['${diff.inHours}']);
-    if (diff.inDays == 1) return Loc.tr('yesterday');
-    if (diff.inDays < 7) return Loc.tr('daysAgo', ['${diff.inDays}']);
-    return HijriDateUtils.formatMasehiOnly(dt);
+    if (diff.inSeconds < 60) return 'Baru saja';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m lalu';
+    if (diff.inHours < 24) return '${diff.inHours}j lalu';
+    if (diff.inDays == 1) return 'Kemarin';
+    if (diff.inDays < 7) return '${diff.inDays}h lalu';
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des'
+    ];
+    return '${dt.day} ${months[dt.month - 1]}';
   }
 
   String _cleanSingleLine(String text) {
@@ -791,7 +802,6 @@ class _BookmarkCardState extends State<_BookmarkCard> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final item = widget.item;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isBookRef = item.documentKind == BookmarkDocumentKind.bookReference;
@@ -925,7 +935,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     ),
                     child: _buildHighlightedText(
                       text:
-                          '${item.bookReference}${item.pageNumber.isNotEmpty ? " · ${Loc.tr('pageNumber', [item.pageNumber])}" : ""}',
+                          '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
                       query: widget.searchQuery,
                       baseStyle:
                           OTTypography.captionMedium(color: widget.textPrimary),
@@ -953,7 +963,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text: item.arabicExcerpt,
                       query: widget.searchQuery,
                       isRtl: true,
-                      baseStyle: ScholarlyFonts.scheherazadeNew(
+                      baseStyle: GoogleFonts.scheherazadeNew(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         height: 1.8,
@@ -972,7 +982,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 600)
                           : item.fullAnswer.trim(),
                       query: widget.searchQuery,
-                      baseStyle: ScholarlyFonts.outfit(
+                      baseStyle: GoogleFonts.outfit(
                         fontSize: 13,
                         height: 1.5,
                         color: widget.textSecondary,
@@ -985,17 +995,17 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 300)
                           : item.fullAnswer.trim(),
                       styleSheet: MarkdownStyleSheet(
-                        p: ScholarlyFonts.outfit(
+                        p: GoogleFonts.outfit(
                           fontSize: 13,
                           height: 1.5,
                           color: widget.textSecondary,
                         ),
-                        strong: ScholarlyFonts.outfit(
+                        strong: GoogleFonts.outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: widget.textPrimary,
                         ),
-                        blockquote: ScholarlyFonts.outfit(
+                        blockquote: GoogleFonts.outfit(
                           fontSize: 12.5,
                           fontStyle: FontStyle.italic,
                           color: widget.textSecondary,
@@ -1012,7 +1022,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     OutlinedButton.icon(
                       onPressed: widget.onEdit,
                       icon: const Icon(Icons.edit_outlined, size: 14),
-                      label: Text(Loc.tr('ui_5301648dcf')),
+                      label: const Text('Edit'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: widget.textPrimary,
                         side: BorderSide(color: widget.border, width: 0.8),
@@ -1031,10 +1041,10 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         item.arabicExcerpt.isNotEmpty
                             ? AppCopy.copyIbarahAction
                             : (isBookRef
-                                ? Loc.tr('ui_96556d16a8')
-                                : (item.fieldName.contains(Loc.tr('navSaved'))
-                                    ? Loc.tr('ui_25935f7ea7')
-                                    : Loc.tr('copyAnswerAction'))),
+                                ? 'Salin rujukan'
+                                : (item.fieldName.contains('Catatan')
+                                    ? 'Salin catatan'
+                                    : 'Salin jawaban')),
                       ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: widget.textPrimary,
@@ -1051,7 +1061,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       FilledButton.icon(
                         onPressed: widget.onOpen,
                         icon: const Icon(Icons.menu_book, size: 14),
-                        label: Text(Loc.tr('ui_0b05afdbfa')),
+                        label: const Text('Lihat kitab'),
                         style: FilledButton.styleFrom(
                           backgroundColor: widget.surfaceSubtle,
                           foregroundColor: widget.textPrimary,

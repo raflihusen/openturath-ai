@@ -1,8 +1,7 @@
-import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -35,15 +34,15 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     final remove = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppCopy.deleteNoteTitle),
-        content: Text(AppCopy.deleteNoteDesc),
+        title: const Text(AppCopy.deleteNoteTitle),
+        content: const Text(AppCopy.deleteNoteDesc),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text(AppCopy.cancel)),
+              child: const Text(AppCopy.cancel)),
           FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text(AppCopy.delete)),
+              child: const Text(AppCopy.delete)),
         ],
       ),
     );
@@ -59,7 +58,6 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final primary = OTColors.textPrimary(isDark);
@@ -77,7 +75,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
         backgroundColor: canvas,
         surfaceTintColor: Colors.transparent,
         title: Text(AppCopy.savedCollection,
-            style: ScholarlyFonts.newsreader(
+            style: GoogleFonts.newsreader(
                 color: primary, fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
@@ -89,7 +87,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
               if (value == 'edit') _edit();
               if (value == 'delete') _delete();
             },
-            itemBuilder: (_) => [
+            itemBuilder: (_) => const [
               PopupMenuItem(value: 'edit', child: Text(AppCopy.editNote)),
               PopupMenuItem(value: 'delete', child: Text(AppCopy.deleteNote)),
             ],
@@ -104,14 +102,14 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                 OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
             children: [
               Text(_kindLabel(_item),
-                  style: ScholarlyFonts.outfit(
+                  style: GoogleFonts.outfit(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: secondary,
                       letterSpacing: .6)),
               const SizedBox(height: 8),
               Text(displayTitle,
-                  style: ScholarlyFonts.newsreader(
+                  style: GoogleFonts.newsreader(
                       fontSize: 29,
                       height: 1.15,
                       fontWeight: FontWeight.w700,
@@ -125,7 +123,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                 Text(
                   _item.agentTitle
                       .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), ''),
-                  style: ScholarlyFonts.outfit(fontSize: 13, color: secondary),
+                  style: GoogleFonts.outfit(fontSize: 13, color: secondary),
                 ),
               ],
               const SizedBox(height: 20),
@@ -135,19 +133,19 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                 data: displayContent,
                 selectable: true,
                 styleSheet: MarkdownStyleSheet(
-                  p: ScholarlyFonts.outfit(
+                  p: GoogleFonts.outfit(
                       fontSize: 16, height: 1.72, color: primary),
-                  h1: ScholarlyFonts.newsreader(
+                  h1: GoogleFonts.newsreader(
                       fontSize: 25,
                       height: 1.2,
                       fontWeight: FontWeight.w700,
                       color: primary),
-                  h2: ScholarlyFonts.newsreader(
+                  h2: GoogleFonts.newsreader(
                       fontSize: 20,
                       height: 1.25,
                       fontWeight: FontWeight.w700,
                       color: primary),
-                  blockquote: ScholarlyFonts.outfit(
+                  blockquote: GoogleFonts.outfit(
                       fontSize: 15,
                       height: 1.6,
                       fontStyle: FontStyle.italic,

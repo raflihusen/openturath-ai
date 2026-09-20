@@ -1,6 +1,5 @@
-import '../core/localization.dart';
 import 'package:flutter/material.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
@@ -71,7 +70,6 @@ class AppErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
     final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
@@ -100,9 +98,9 @@ class AppErrorState extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                Loc.text(title),
+                title,
                 textAlign: TextAlign.center,
-                style: ScholarlyFonts.outfit(
+                style: GoogleFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -110,9 +108,9 @@ class AppErrorState extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                Loc.text(message),
+                message,
                 textAlign: TextAlign.center,
-                style: ScholarlyFonts.outfit(
+                style: GoogleFonts.outfit(
                   fontSize: 13,
                   height: 1.45,
                   color: textSecondary,
@@ -128,7 +126,7 @@ class AppErrorState extends StatelessWidget {
                     icon: const Icon(Icons.refresh_rounded, size: 18),
                     label: Text(
                       retryLabel,
-                      style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
                     ),
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -147,7 +145,7 @@ class AppErrorState extends StatelessWidget {
                     onPressed: onBack,
                     child: Text(
                       backLabel,
-                      style: ScholarlyFonts.outfit(
+                      style: GoogleFonts.outfit(
                         fontWeight: FontWeight.w500,
                         color: textSecondary,
                       ),

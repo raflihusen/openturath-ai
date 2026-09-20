@@ -1,9 +1,7 @@
 library;
 
-import '../core/localization.dart';
-
 import 'package:flutter/material.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/legal_copy.dart';
@@ -48,7 +46,7 @@ class LegalDocumentSheet extends StatelessWidget {
     return _show(
       context,
       title: LegalCopy.refundTitle,
-      subtitle: Loc.tr('ui_91abbb166e'),
+      subtitle: 'Ketentuan Pembayaran DOKU & Pengembalian Dana',
       sections: LegalCopy.refundSections,
     );
   }
@@ -58,7 +56,7 @@ class LegalDocumentSheet extends StatelessWidget {
     return _show(
       context,
       title: LegalCopy.aiGuidelineTitle,
-      subtitle: Loc.tr('ui_9f7ecdca34'),
+      subtitle: 'Etika Telaah, Pembacaan Konteks, dan Adab Keilmuan',
       sections: LegalCopy.aiGuidelineSections,
     );
   }
@@ -68,7 +66,7 @@ class LegalDocumentSheet extends StatelessWidget {
     return _show(
       context,
       title: LegalCopy.contactTitle,
-      subtitle: Loc.tr('ui_58062da3e8'),
+      subtitle: 'Saluran Resmi dan Pengaduan Layanan',
       sections: LegalCopy.contactSections,
     );
   }
@@ -93,7 +91,6 @@ class LegalDocumentSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -136,8 +133,8 @@ class LegalDocumentSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      Loc.text(title),
-                      style: ScholarlyFonts.newsreader(
+                      title,
+                      style: GoogleFonts.newsreader(
                         fontSize: 21,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.3,
@@ -146,8 +143,8 @@ class LegalDocumentSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      Loc.text(subtitle),
-                      style: ScholarlyFonts.outfit(
+                      subtitle,
+                      style: GoogleFonts.outfit(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w400,
                         color: textSecondary,
@@ -165,11 +162,6 @@ class LegalDocumentSheet extends StatelessWidget {
           ),
 
           const SizedBox(height: 12),
-          if (Loc.language != 'id') ...[
-            Text(Loc.tr('policyOriginal'), style: ScholarlyFonts.outfit(
-              fontSize: 12, color: textSecondary)),
-            const SizedBox(height: 12),
-          ],
           Divider(height: 1, color: border),
           const SizedBox(height: 16),
 
@@ -189,7 +181,7 @@ class LegalDocumentSheet extends StatelessWidget {
                   children: [
                     Text(
                       sec.title,
-                      style: ScholarlyFonts.newsreader(
+                      style: GoogleFonts.newsreader(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
@@ -199,7 +191,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       sec.content,
-                      style: ScholarlyFonts.outfit(
+                      style: GoogleFonts.outfit(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w400,
                         height: 1.55,
@@ -228,8 +220,8 @@ class LegalDocumentSheet extends StatelessWidget {
                 ),
               ),
               child: Text(
-                Loc.tr('close'),
-                style: ScholarlyFonts.outfit(
+                'Tutup',
+                style: GoogleFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: canvas,

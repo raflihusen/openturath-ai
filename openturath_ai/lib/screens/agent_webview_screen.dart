@@ -1,10 +1,9 @@
-import '../core/localization.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
@@ -134,8 +133,69 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     (function() {
       if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
 
-      // Pengaturan keterbacaan naskah NotebookLM
-      // Preserve source controls and content. Apply only explicit reading preferences.
+      // 1. Injeksi Style CSS: Sembunyikan Header Resmi, Logo Google & NotebookLM
+      var styleId = 'ot-hide-controls';
+      var existingStyle = document.getElementById(styleId);
+      if (!existingStyle) {
+        var style = document.createElement('style');
+        style.id = styleId;
+        style.type = 'text/css';
+        style.textContent = `
+          /* Header, Top Bar, Logo, dan Banner Google NotebookLM */
+          top-bar, .top-bar, header, .header, .app-header, app-header,
+          mat-toolbar, [role="banner"], .header-container, .header-row,
+          .mobile-header, div[class*="mobile-header" i],
+          labs-tailwind-logo, a.logo-link, .logo-container,
+          a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
+          .title-input, input.title-input, .title-container, .notebook-title,
+          .notebook-header, app-notebook-header, .title-card, mat-card.title-card,
+          div[class*="title-card" i], div[class*="notebook-header" i],
+          .project-header, div.source-badge-container,
+          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
+          .pro-badge,
+          /* Google Account Bar, App Launcher & Setelan */
+          #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"],
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button[aria-label*="More" i], button[aria-label*="Opsi" i],
+          button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+          button[aria-label*="Option" i],
+          button.mat-tonal-button, a[aria-label*="Google" i],
+          /* Spinner, Circular Progress & Skeleton Placeholder */
+          mat-progress-spinner, mat-spinner, .mdc-circular-progress,
+          [role="progressbar"], svg.spinner, div[class*="spinner" i],
+          div[class*="skeleton" i], div[class*="shimmer" i],
+          div[class*="placeholder-bar" i],
+          /* Disclaimer Google NotebookLM & Gemini */
+          div.chat-input-container + div,
+          div[class*="input-container" i] + div,
+          div[class*="query-container" i] + div,
+          [data-ot-hidden] {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0px !important;
+            max-height: 0px !important;
+            overflow: hidden !important;
+            margin: 0px !important;
+            padding: 0px !important;
+            font-size: 0px !important;
+            line-height: 0px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            border: none !important;
+          }
+          ::-webkit-scrollbar { display: none !important; width: 0px !important; }
+          html, body, * { scrollbar-width: none !important; }
+          /* Padding atas dan bawah agar percakapan tidak terpotong */
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
+            padding-top: 14px !important;
+            padding-bottom: 24px !important;
+            margin-top: 0px !important;
+          }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+      }
+
+      // 2. Font Scale Presisi
       window.applyTurathFontScale = function(value) {
         var scale = Number(value);
         if (!Number.isFinite(scale)) return;
@@ -159,7 +219,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           }
           [lang="ar"], .arabic {
             font-size: ${Math.round(scale * 19)}px !important;
-            line-height: 1.85 !important;
+            line-height: 1.8 !important;
           }
         `;
       };
@@ -540,7 +600,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
@@ -563,7 +622,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           backgroundColor: canvas,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
-            tooltip: Loc.tr('back'),
+            tooltip: 'Kembali',
             onPressed: _handleBackPress,
           ),
           titleSpacing: 0,
@@ -579,7 +638,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           actions: [
             if (_user != null && _user!.plan == 'trial')
               Padding(
-                padding: const EdgeInsetsDirectional.only(end: 4),
+                padding: const EdgeInsets.only(right: 4),
                 child: Center(
                   child: InkWell(
                     onTap: _navigateToSubscription,
@@ -683,7 +742,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                           AppCopy.answerCopied,
                           duration: const Duration(milliseconds: 2500),
                           action: SnackBarAction(
-                            label: Loc.tr('save'),
+                            label: 'Simpan',
                             textColor: OTColors.onInverseSurface,
                             onPressed: () => unawaited(_saveCopiedAnswer(text, ownerUid)),
                           ),
@@ -851,7 +910,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     Expanded(
                       child: Text(
                         AppCopy.adabDialogTitle,
-                        style: ScholarlyFonts.newsreader(
+                        style: GoogleFonts.newsreader(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
@@ -872,7 +931,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 Text(
                   'التعلم بالتلقي عن الأشياخ هو الأصل',
                   textDirection: TextDirection.rtl,
-                  style: ScholarlyFonts.scheherazadeNew(
+                  style: GoogleFonts.scheherazadeNew(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -881,7 +940,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 8),
                 Text(
                   AppCopy.adabDialogLead,
-                  style: ScholarlyFonts.outfit(
+                  style: GoogleFonts.outfit(
                     fontSize: 12.5,
                     height: 1.45,
                     color: textSecondary,
@@ -932,7 +991,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     ),
                     child: Text(
                       AppCopy.adabAcknowledgeButton,
-                      style: ScholarlyFonts.outfit(
+                      style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -947,8 +1006,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       LegalDocumentSheet.showAiGuideline(context);
                     },
                     child: Text(
-                      Loc.tr('ui_bfbf5d1c00'),
-                      style: ScholarlyFonts.outfit(
+                      'Baca panduan rujukan selengkapnya',
+                      style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                         decoration: TextDecoration.underline,
@@ -985,8 +1044,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                Loc.text(title),
-                style: ScholarlyFonts.outfit(
+                title,
+                style: GoogleFonts.outfit(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
@@ -995,7 +1054,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               const SizedBox(height: 2),
               Text(
                 description,
-                style: ScholarlyFonts.outfit(
+                style: GoogleFonts.outfit(
                   fontSize: 12,
                   height: 1.35,
                   color: textSecondary,
@@ -1048,7 +1107,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             const SizedBox(height: 12),
             ListTile(
               leading: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-              title: Text(Loc.tr('textSize', ['${(_fontScale * 100).round()}']), style: OTTypography.bodyMedium(color: textPrimary)),
+              title: Text('Ukuran teks (${(_fontScale * 100).round()}%)', style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showFontScalePicker();
@@ -1123,16 +1182,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    Loc.tr('ui_c6b269deaf'),
+                    'Sesuaikan ukuran huruf percakapan agar nyaman dibaca.',
                     style: OTTypography.caption(color: textSecondary),
                   ),
                   const SizedBox(height: 14),
-                  _buildScaleOption(ctx, label: Loc.tr('ui_9d04d267b4'), scale: 0.85, isDark: isDark),
-                  _buildScaleOption(ctx, label: Loc.tr('ui_b52b4d4d4e'), scale: 1.0, isDark: isDark),
-                  _buildScaleOption(ctx, label: Loc.tr('ui_5eac981a5e'), scale: 1.20, isDark: isDark),
-                  _buildScaleOption(ctx, label: Loc.tr('ui_e2824091ed'), scale: 1.40, isDark: isDark),
-                  _buildScaleOption(ctx, label: Loc.tr('ui_49c3b2fbd2'), scale: 1.65, isDark: isDark),
-                  _buildScaleOption(ctx, label: Loc.tr('ui_a9dc11525b'), scale: 2.00, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Kecil (85%)', scale: 0.85, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Standar (100%)', scale: 1.0, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Sedang (120%)', scale: 1.20, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Besar (140%)', scale: 1.40, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Sangat besar (165%)', scale: 1.65, isDark: isDark),
+                  _buildScaleOption(ctx, label: 'Maksimal (200%)', scale: 2.00, isDark: isDark),
                   const SizedBox(height: 8),
                 ],
               ),
@@ -1163,7 +1222,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         color: isSelected ? accent : textSecondary,
       ),
       title: Text(
-        Loc.text(label),
+        label,
         style: OTTypography.body(color: isSelected ? accent : textPrimary).copyWith(
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
         ),
