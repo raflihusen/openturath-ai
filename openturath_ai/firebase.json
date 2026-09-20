@@ -61,6 +61,33 @@
           "function": "dokuWebhook"
         }
       ]
+    },
+    {
+      "site": "openturath-ai",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/chat/**",
+          "function": "chatGate"
+        },
+        {
+          "source": "/login",
+          "function": "chatGate"
+        },
+        {
+          "source": "/logout",
+          "function": "chatGate"
+        },
+        {
+          "source": "/doku-webhook",
+          "function": "dokuWebhook"
+        }
+      ]
     }
   ],
   "flutter": {
