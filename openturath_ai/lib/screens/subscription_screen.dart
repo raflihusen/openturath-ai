@@ -204,11 +204,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  Text(
-                                    a.emoji.isNotEmpty ? a.emoji : '📖',
-                                    style: const TextStyle(fontSize: 22),
-                                  ),
-                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,21 +386,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             ),
                             child: Row(
                               children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: OTColors.accent(dark).withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      selected.emoji.isNotEmpty ? selected.emoji : '📖',
-                                      style: const TextStyle(fontSize: 22),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 14),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
