@@ -23,9 +23,6 @@ import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
-import '../widgets/openturath_brand.dart';
-import '../widgets/language_switcher.dart';
-import '../widgets/tahawwulat_feature.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
@@ -145,62 +142,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
-  static const List<({
-    String fieldId,
-    String name,
-    String nameArabic,
-    String iconicKitab,
-    int specialistCount,
-    IconData icon,
-  })> _curatedDisciplines = [
-    (
-      fieldId: 'fiqh',
-      name: 'Fikih 4 Mazhab',
-      nameArabic: 'الفقه المقارن والمذاهب',
-      iconicKitab: 'المنهاج · الوجيز · المحرر',
-      specialistCount: 6,
-      icon: Icons.account_balance_outlined,
-    ),
-    (
-      fieldId: 'hadith',
-      name: 'Hadits & Syarah',
-      nameArabic: 'الحديث النبوي وشروحه',
-      iconicKitab: 'صحيح البخاري · فتح الباري',
-      specialistCount: 3,
-      icon: Icons.auto_stories_outlined,
-    ),
-    (
-      fieldId: 'tafsir',
-      name: 'Tafsir & Ulumul Quran',
-      nameArabic: 'التفسير وعلوم القرآن',
-      iconicKitab: 'ابن كثير · القرطبي · الإتقان',
-      specialistCount: 2,
-      icon: Icons.menu_book_outlined,
-    ),
-    (
-      fieldId: 'tasawwuf',
-      name: 'Tasawwuf & Adzkar',
-      nameArabic: 'التصوف والتزكية والأذكار',
-      iconicKitab: 'إحياء علوم الدين · الأذكار',
-      specialistCount: 1,
-      icon: Icons.spa_outlined,
-    ),
-    (
-      fieldId: 'usul',
-      name: 'Ushul Fikih & Qawaid',
-      nameArabic: 'أصول الفقه والقواعد الفقهية',
-      iconicKitab: 'الورقات · جمع الجوامع · الأشباه',
-      specialistCount: 2,
-      icon: Icons.gavel_outlined,
-    ),
-    (
-      fieldId: 'aqidah',
-      name: 'Aqidah & Ushuluddin',
-      nameArabic: 'العقيدة وأصول الدين',
-      iconicKitab: 'جوهرة التوحيد · لمع الأدلة',
-      specialistCount: 1,
-      icon: Icons.shield_outlined,
-    ),
+  static const List<({String fieldId, String name, int specialistCount})>
+      _curatedDisciplines = [
+    (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
+    (fieldId: 'hadith', name: 'Hadis', specialistCount: 1),
+    (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
+    (fieldId: 'aqidah', name: 'Akidah', specialistCount: 1),
+    (fieldId: 'usul', name: 'Usul Fikih', specialistCount: 1),
+    (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1),
   ];
 
   @override
@@ -247,10 +196,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── 1. Header Centered: OpenTurath ──
-                    const Row(children: [
-                      Expanded(child: OpenTurathBrand()),
-                      LanguageSwitcher(),
-                    ]),
+                    Center(
+                      child: Text(
+                        'OpenTurath',
+                        style: ScholarlyFonts.newsreader(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.4,
+                          color: textPrimary,
+                        ),
+                      ),
+                    ),
 
                     const SizedBox(height: 18),
 
@@ -311,12 +267,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 18),
 
-                    if (_searchQuery.isEmpty) ...[
-                      TahawwulatFeature(onOpen: () => _openNotebook(
-                        _agents.firstWhere((a) => a.id == 'fiqh_tahawwulat',
-                          orElse: () => AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat')), user)),
-                      const SizedBox(height: 22),
-                    ],
+
 
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
@@ -424,10 +375,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
-                                titleArabic: agent.titleArabic,
-                                emoji: agent.emoji,
-                                scopeLabel: agent.subtitleAcademic,
-                                referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
                                 statusLabel: agent.isComingSoon
                                     ? AppCopy.comingSoon
                                     : null,
@@ -497,7 +444,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          mainAxisExtent: 172,
+                          mainAxisExtent: 156,
                         ),
                         itemCount: _curatedDisciplines.length,
                         itemBuilder: (context, index) {
@@ -517,95 +464,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                             pressedScale: 0.96,
                             hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(18),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: surface,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(18),
                                 border: Border.all(color: border, width: 1.0),
                               ),
-                              padding: const EdgeInsets.all(14),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 32,
-                                        height: 32,
-                                        decoration: BoxDecoration(
-                                          color: border.withValues(alpha: 0.25),
-                                          borderRadius: BorderRadius.circular(8),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          (index + 1)
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                          style: ScholarlyFonts.outfit(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: 1.1,
+                                            color: textSecondary,
+                                          ),
                                         ),
-                                        child: Icon(
-                                          disc.icon,
+                                        Icon(
+                                          Icons.north_east_rounded,
                                           size: 17,
-                                          color: textPrimary,
+                                          color: textSecondary.withValues(
+                                              alpha: 0.72),
                                         ),
-                                      ),
-                                      Text(
-                                        '${disc.specialistCount} AI',
-                                        style: ScholarlyFonts.outfit(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: textSecondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    disc.name,
-                                    style: ScholarlyFonts.newsreader(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: -0.2,
-                                      color: textPrimary,
-                                      height: 1.15,
+                                      ],
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    disc.nameArabic,
-                                    textDirection: TextDirection.rtl,
-                                    style: ScholarlyFonts.scheherazadeNew(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: textSecondary,
-                                      height: 1.85,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const Spacer(),
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 7, vertical: 3),
-                                    decoration: BoxDecoration(
-                                      color: canvas,
-                                      borderRadius: BorderRadius.circular(5),
-                                      border: Border.all(
-                                          color: border.withValues(alpha: 0.6),
-                                          width: 0.5),
-                                    ),
-                                    child: Text(
-                                      disc.iconicKitab,
-                                      textDirection: TextDirection.rtl,
-                                      style: ScholarlyFonts.scheherazadeNew(
-                                        fontSize: 11,
-                                        color: textSecondary,
-                                        height: 1.85,
+                                    const Spacer(),
+                                    Text(
+                                      disc.name,
+                                      style: ScholarlyFonts.newsreader(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.25,
+                                        color: textPrimary,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      AppCopy.assistantsAvailableCount(
+                                          disc.specialistCount),
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: 11.5,
+                                        color: textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      height: 2,
+                                      width: 32 + (index % 3) * 12,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            textPrimary.withValues(alpha: 0.72),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           );
