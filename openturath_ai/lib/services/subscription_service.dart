@@ -149,8 +149,9 @@ class SubscriptionService {
     // Server-side function yang memverifikasi signature dan keaslian status transaksi dari DOKU
     final res = await _dokuService.checkPaymentStatus(invoiceNumber: cleanInvoice);
     
-    // Validasi ketat respon server Cloud Function
-    final isSuccess = res['status'] == 'SUCCESS' || (res['success'] == true && res['status'] != 'FAILED');
+    // Validasi ketat respon server Cloud Function: hanya status final yang dianggap lunas
+    final rawStatus = (res['status'] ?? '').toString().toUpperCase().trim();
+    final isSuccess = rawStatus == 'SUCCESS' || rawStatus == 'SETTLED' || rawStatus == 'PAID';
     if (isSuccess) {
       return {
         'success': true,
@@ -159,7 +160,12 @@ class SubscriptionService {
       };
     }
 
-    return res;
+    return {
+      'success': false,
+      'status': rawStatus.isNotEmpty ? rawStatus : 'PENDING',
+      'data': res,
+      if (res['message'] != null) 'message': res['message'],
+    };
   }
 
   // ── Legacy polling helper ────────────────────────────────────
