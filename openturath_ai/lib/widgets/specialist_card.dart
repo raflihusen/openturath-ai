@@ -2,7 +2,6 @@ import '../core/localization.dart';
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_spacing.dart';
 import '../core/scholarly_fonts.dart';
 import 'apple_interactive_wrapper.dart';
 
@@ -42,6 +41,9 @@ class SpecialistCard extends StatelessWidget {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
+    final surface = OTColors.surface(isDark);
+    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+
     // Tampilkan judul sesuai bahasa aktif:
     // Jika Arab, gunakan titleArabic bila ada.
     // Jika Indonesia / Inggris, gunakan nama lokal tanpa imbuhan teks Arab.
@@ -49,80 +51,115 @@ class SpecialistCard extends StatelessWidget {
         ? titleArabic!
         : Loc.text(title);
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: border, width: 0.8)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: AppleInteractiveWrapper(
-              onTap: onOpen,
-              pressedScale: 0.99,
-              hapticType: HapticFeedbackType.light,
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+    return AppleInteractiveWrapper(
+      onTap: onOpen,
+      pressedScale: 0.98,
+      hapticType: HapticFeedbackType.light,
+      borderRadius: BorderRadius.circular(16),
+      child: Material(
+        color: surface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: border, width: 1.0),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Pure Title & Optional Minimal Status Badge
+              Expanded(
+                child: Row(
                   children: [
-                    Text(
-                      displayTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.newsreader(
-                        color: textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (statusLabel?.isNotEmpty ?? false) ...[
-                      const SizedBox(height: 3),
-                      Text(
-                        statusLabel!,
+                    Flexible(
+                      child: Text(
+                        displayTitle,
+                        style: ScholarlyFonts.newsreader(
+                          fontSize: 16.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.2,
+                          color: textPrimary,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: ScholarlyFonts.outfit(
-                          fontSize: 11.5,
-                          color: textSecondary,
+                      ),
+                    ),
+                    if (statusLabel != null && statusLabel!.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: isDark ? border : const Color(0xFFE4E4E7),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Text(
+                          statusLabel!,
+                          style: ScholarlyFonts.outfit(
+                            color: textSecondary,
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
                   ],
                 ),
               ),
-            ),
-          ),
-          if (onOpenLibrary != null)
-            Tooltip(
-              message: Loc.tr('openLibrary'),
-              child: AppleInteractiveWrapper(
-                onTap: onOpenLibrary,
-                pressedScale: 0.92,
-                hapticType: HapticFeedbackType.selection,
-                borderRadius: BorderRadius.circular(22),
-                child: SizedBox(
-                  height: 44,
-                  width: 44,
-                  child: Icon(
-                    Icons.menu_book_outlined,
-                    size: 19,
-                    color: textSecondary,
+
+              // Action Buttons: Optional Pustaka + Chevron
+              if (onOpenLibrary != null) ...[
+                const SizedBox(width: 8),
+                Tooltip(
+                  message: Loc.tr('referenceBooks'),
+                  child: AppleInteractiveWrapper(
+                    onTap: onOpenLibrary,
+                    pressedScale: 0.94,
+                    hapticType: HapticFeedbackType.selection,
+                    borderRadius: BorderRadius.circular(100),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: surfaceSubtle,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: border, width: 0.8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.menu_book_outlined, size: 13, color: textSecondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Pustaka',
+                            style: ScholarlyFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          if (onOpen != null)
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Icon(
-                Icons.arrow_forward_rounded,
-                size: 18,
-                color: textSecondary.withValues(alpha: 0.72),
-              ),
-            ),
-        ],
+              ],
+
+              if (onOpen != null) ...[
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: textSecondary.withValues(alpha: 0.5),
+                  size: 20,
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
