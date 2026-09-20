@@ -34,15 +34,15 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     final remove = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(AppCopy.deleteNoteTitle),
-        content: const Text(AppCopy.deleteNoteDesc),
+        title: Text(AppCopy.deleteNoteTitle),
+        content: Text(AppCopy.deleteNoteDesc),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text(AppCopy.cancel)),
+              child: Text(AppCopy.cancel)),
           FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text(AppCopy.delete)),
+              child: Text(AppCopy.delete)),
         ],
       ),
     );
@@ -87,7 +87,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
               if (value == 'edit') _edit();
               if (value == 'delete') _delete();
             },
-            itemBuilder: (_) => const [
+            itemBuilder: (_) => [
               PopupMenuItem(value: 'edit', child: Text(AppCopy.editNote)),
               PopupMenuItem(value: 'delete', child: Text(AppCopy.deleteNote)),
             ],
