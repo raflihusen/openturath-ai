@@ -8,8 +8,8 @@ import 'book_library_editorial_screen.dart';
 
 String _readerTitle(String value) {
   return value
-      .replaceFirst(RegExp(r'^AI\\s+', caseSensitive: false), '')
-      .replaceAll(RegExp(r'\\s*\\([^)]*\\)'), '')
+      .replaceFirst(RegExp(r'^(Super\s+)?AI\s+', caseSensitive: false), '')
+      .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
       .trim();
 }
 

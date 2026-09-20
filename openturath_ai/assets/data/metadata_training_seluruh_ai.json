@@ -2,7 +2,7 @@
   "fiqh_syafii": {
     "id_modul": "01_FIKIH_SYAFII",
     "nama_tampilan": "Super AI Fikih Syafi'i",
-    "nama_arab": "الفقه الشافعي المعتمد",
+    "nama_arab": "الفقه الشافعي",
     "kategori": "Fikih Madzhab",
     "total_kitab": 87,
     "total_jilid_fisik": "400+ Jilid",
@@ -16,7 +16,7 @@
   "hadits": {
     "id_modul": "02_HADITS",
     "nama_tampilan": "AI Kutubus Sunnah & Matan Hadits",
-    "nama_arab": "متون الحديث النبوي وكتب السنة",
+    "nama_arab": "الحديث الشريف",
     "kategori": "Hadits Nabawi",
     "total_kitab": 1173,
     "total_jilid_fisik": "1.500+ Jilid",
@@ -30,7 +30,7 @@
   "ushul_fiqh": {
     "id_modul": "03_USHUL_FIKIH",
     "nama_tampilan": "AI Ushul Fikih 4 Madzhab",
-    "nama_arab": "أصول الفقه المقارن وقواعد الاستنباط",
+    "nama_arab": "أصول الفقه",
     "kategori": "Ushul Fikih",
     "total_kitab": 136,
     "total_jilid_fisik": "320+ Jilid",
@@ -44,7 +44,7 @@
   "bahasa_arab": {
     "id_modul": "04_BAHASA_DAN_SASTRA_ARAB",
     "nama_tampilan": "Super AI Ilmu Alat, Sastra & Kamus Bahasa Arab",
-    "nama_arab": "علوم الآلة واللغة والأدب والنحو والبلاغة والمنطق",
+    "nama_arab": "علوم اللغة العربية",
     "kategori": "Bahasa & Ilmu Alat",
     "total_kitab": 866,
     "total_jilid_fisik": "1.981 Jilid",
@@ -58,7 +58,7 @@
   "tafsir": {
     "id_modul": "05_TAFSIR_DAN_ULUMUL_QURAN",
     "nama_tampilan": "AI Tafsir & 'Ulumul Qur'an",
-    "nama_arab": "التفسير المأثور وعلوم القرآن والتأويل",
+    "nama_arab": "التفسير وعلوم القرآن",
     "kategori": "Tafsir & Al-Qur'an",
     "total_kitab": 123,
     "total_jilid_fisik": "450+ Jilid",
@@ -72,7 +72,7 @@
   "fiqh_tahawwulat": {
     "id_modul": "06_FIKIH_TAHAWWULAT",
     "nama_tampilan": "AI Fikih Tahawwulat (Sovereign Flagship)",
-    "nama_arab": "فقه التحولات وسنن المتغيرات",
+    "nama_arab": "فقه التحولات",
     "kategori": "Fikih Tahawwulat",
     "total_kitab": 58,
     "total_jilid_fisik": "58 Kitab Fisik",
@@ -87,7 +87,7 @@
   "tarikh_sirah": {
     "id_modul": "07_TARIKH_DAN_SIRAH_NABAWIYYAH",
     "nama_tampilan": "Super AI Tarikh, Sirah, Buldan & Ansab",
-    "nama_arab": "التاريخ الإسلامي والسيرة والبلدان والرحلات والأنساب",
+    "nama_arab": "السيرة والتاريخ",
     "kategori": "Tarikh & Peradaban",
     "total_kitab": 345,
     "total_jilid_fisik": "1.374 Jilid",
@@ -101,7 +101,7 @@
   "fiqh_muqaran": {
     "id_modul": "08_FIKIH_MUQARAN_DAN_UMUM",
     "nama_tampilan": "Super AI Fikih Muqaran, Siyasah & Faraidh",
-    "nama_arab": "الفقه المقارن والسياسة الشرعية وقسمة الفرائض",
+    "nama_arab": "الفقه المقارن",
     "kategori": "Fikih Lintas Madzhab",
     "total_kitab": 61,
     "total_jilid_fisik": "329 Jilid",
@@ -115,7 +115,7 @@
   "fatawa_masail": {
     "id_modul": "09_FATAWA_DAN_MASAIL_FIQHIYYAH",
     "nama_tampilan": "AI Fatawa & Masail Fiqhiyyah",
-    "nama_arab": "الفتاوى الكبرى والنوازل الفقهية",
+    "nama_arab": "الفتاوى والمسائل",
     "kategori": "Fatawa & Nawazil",
     "total_kitab": 221,
     "total_jilid_fisik": "324 Jilid",
@@ -129,7 +129,7 @@
   "syarah_hadits": {
     "id_modul": "10_SYARAH_HADITS",
     "nama_tampilan": "AI Syarah Hadits Nabawi",
-    "nama_arab": "شروح الحديث النبوي وفقه الآثار",
+    "nama_arab": "شروح الحديث",
     "kategori": "Hadits Nabawi",
     "total_kitab": 172,
     "total_jilid_fisik": "1.007 Jilid",
@@ -143,7 +143,7 @@
   "fiqh_hanafi": {
     "id_modul": "11_FIKIH_HANAFI",
     "nama_tampilan": "AI Fikih Hanafi",
-    "nama_arab": "الفقه الحنفي المعتمد وظاهر الرواية",
+    "nama_arab": "الفقه الحنفي",
     "kategori": "Fikih Madzhab",
     "total_kitab": 85,
     "total_jilid_fisik": "288 Jilid",
@@ -157,7 +157,7 @@
   "fiqh_maliki": {
     "id_modul": "12_FIKIH_MALIKI",
     "nama_tampilan": "AI Fikih Maliki",
-    "nama_arab": "الفقه المالكي المعتمد ومدونة سحنون",
+    "nama_arab": "الفقه المالكي",
     "kategori": "Fikih Madzhab",
     "total_kitab": 86,
     "total_jilid_fisik": "339 Jilid",
@@ -171,7 +171,7 @@
   "fiqh_hanbali": {
     "id_modul": "13_FIKIH_HANBALI",
     "nama_tampilan": "AI Fikih Hanbali",
-    "nama_arab": "الفقه الحنبلي المعتمد ومسائل الإمام أحمد",
+    "nama_arab": "الفقه الحنبلي",
     "kategori": "Fikih Madzhab",
     "total_kitab": 95,
     "total_jilid_fisik": "338 Jilid",
@@ -185,7 +185,7 @@
   "tasawwuf": {
     "id_modul": "14_TASAWWUF_DAN_ADZKAR",
     "nama_tampilan": "AI Tasawwuf, Suluk & Adzkar",
-    "nama_arab": "التصوف السني والتزكية والأذكار النبوية",
+    "nama_arab": "التصوف والتزكية",
     "kategori": "Tasawwuf & Adzkar",
     "total_kitab": 248,
     "total_jilid_fisik": "317 Jilid",
@@ -199,7 +199,7 @@
   "tajwid_qiraat": {
     "id_modul": "15_TAJWID_DAN_QIRAAT",
     "nama_tampilan": "AI Tajwid & Qira'at Al-Qur'an",
-    "nama_arab": "التجويد والقراءات المتواترة ورسم المصحف",
+    "nama_arab": "التجويد والقراءات",
     "kategori": "Al-Qur'an & Qira'at",
     "total_kitab": 130,
     "total_jilid_fisik": "182 Jilid",
@@ -213,7 +213,7 @@
   "qawaid_fiqhiyyah": {
     "id_modul": "16_QAWAID_FIQHIYYAH",
     "nama_tampilan": "AI Qawa'id Fiqhiyyah & Dhawabith",
-    "nama_arab": "القواعد الفقهية والأشباه والنظائر والفروق",
+    "nama_arab": "القواعد الفقهية",
     "kategori": "Kaidah Fikih",
     "total_kitab": 44,
     "total_jilid_fisik": "85 Jilid",
@@ -227,7 +227,7 @@
   "musthalah_hadits": {
     "id_modul": "17_MUSTHALAH_DAN_ULUMUL_HADITS",
     "nama_tampilan": "Super AI 'Ulumul Hadits, Musthalah & Takhrij",
-    "nama_arab": "علوم الحديث ومصطلحه ومناهج التخريج والعلل",
+    "nama_arab": "مصطلح الحديث",
     "kategori": "Hadits Nabawi",
     "total_kitab": 165,
     "total_jilid_fisik": "748 Jilid",
@@ -241,7 +241,7 @@
   "aqidah": {
     "id_modul": "18_AQIDAH_DAN_USHULUDDIN",
     "nama_tampilan": "Super AI Aqidah, Ushuluddin & Al-Firaq",
-    "nama_arab": "العقيدة وأصول الدين والمذاهب والفرق الإسلامية",
+    "nama_arab": "العقيدة والتوحيد",
     "kategori": "Aqidah & Pemikiran",
     "total_kitab": 173,
     "total_jilid_fisik": "249 Jilid",
@@ -255,7 +255,7 @@
   "thabaqat_tarajim": {
     "id_modul": "19_THABAQAT_DAN_TARAJIM_RIJAL",
     "nama_tampilan": "AI Thabaqat & Rijalul Hadits",
-    "nama_arab": "التراجم والطبقات ورجال الحديث والجرح والتعديل",
+    "nama_arab": "التراجم والطبقات",
     "kategori": "Biografi & Sanad",
     "total_kitab": 492,
     "total_jilid_fisik": "1.348 Jilid",
@@ -269,7 +269,7 @@
   "bibliografi_faharis": {
     "id_modul": "26_BIBLIOGRAFI_DAN_FAHARIS",
     "nama_tampilan": "AI Bibliografi, Faharis & Tahqiq Turath",
-    "nama_arab": "فهارس الكتب والأدلة والمخطوطات ومناهج التحقيق",
+    "nama_arab": "فهارس التراث",
     "kategori": "Bibliografi & Manuskrip",
     "total_kitab": 86,
     "total_jilid_fisik": "264 Jilid",
