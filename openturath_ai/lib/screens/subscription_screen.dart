@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
@@ -42,40 +41,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-  Future<String?> _phone(String uid) async {
-    final key = 'openturath_${uid}_user_phone';
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(key);
-    if (saved != null && RegExp(r'^\+?[0-9]{8,15}$').hasMatch(saved)) return saved;
-    if (!mounted) return null;
-    var draft = '';
-    String? error;
-    final value = await showDialog<String>(context: context, builder: (ctx) =>
-      StatefulBuilder(builder: (ctx, update) => AlertDialog(
-        title: Text(Loc.tr('phone')),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(Loc.tr('phoneNotice')),
-          const SizedBox(height: 16),
-          TextField(onChanged: (value) => draft = value, keyboardType: TextInputType.phone,
-            textDirection: TextDirection.ltr, autofocus: true,
-            decoration: InputDecoration(hintText: Loc.tr('phoneHint'), errorText: error)),
-        ]),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppCopy.cancel)),
-          FilledButton(onPressed: () {
-            final phone = draft.replaceAll(RegExp(r'[\s()-]'), '');
-            if (!RegExp(r'^\+?[0-9]{8,15}$').hasMatch(phone)) {
-              update(() => error = Loc.tr('phoneInvalid'));
-              return;
-            }
-            Navigator.pop(ctx, phone);
-          }, child: Text(Loc.tr('continuePayment'))),
-        ],
-      )));
-    if (value != null) await prefs.setString(key, value);
-    return value;
-  }
-
   Future<void> _checkout(AgentModel agent, SubscriptionOffer offer) async {
     if (_processing) return;
     final user = FirebaseAuth.instance.currentUser;
@@ -85,13 +50,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
     setState(() => _processing = true);
     try {
-      final phone = await _phone(user.uid);
-      if (phone == null || !mounted) return;
       final title = '${agent.title} · ${offer.title}';
       final result = await _service.createPayment(uid: user.uid, agentId: agent.id,
         plan: offer.plan, planTitle: title, amount: offer.amount,
         name: user.displayName ?? user.email?.split('@').first ?? AppCopy.ahlanDefault,
-        email: user.email ?? '', phone: phone);
+        email: user.email ?? '', phone: user.phoneNumber ?? '');
       if (!mounted) return;
       // An old backend or stale quote must never open a differently priced checkout.
       if (result['amount'] != offer.amount || result['pricingRevision'] != ProductPricing.revision) {
