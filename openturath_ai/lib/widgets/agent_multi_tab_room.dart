@@ -15,6 +15,7 @@ import '../core/copied_answer.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
@@ -739,14 +740,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     });
 
     final user = _authService.cachedCurrentUser;
-    if (user == null || !user.hasAccessToAgent(session.agent.id)) {
+    final hasAccess = user != null && user.hasAccessToAgent(session.agent.id);
+    if (!hasAccess) {
       if (!mounted) return;
       setState(() {
         session.isUrlLoading = false;
         session.isPaywallRequired = true;
         session.isGooglePermissionError = false;
         session.errorMessage =
-            'Akses untuk asisten ini memerlukan langganan aktif.';
+            'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.';
       });
       return;
     }
@@ -762,19 +764,32 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       } else {
         setState(() {
           session.isUrlLoading = false;
-          session.errorMessage = 'Tautan asisten tidak valid.';
+          session.isPaywallRequired = true;
+          session.errorMessage =
+              'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.';
         });
       }
     } catch (e) {
       if (!mounted) return;
       final msg = e.toString().toLowerCase();
-      final isPaywall =
-          msg.contains('permission-denied') || msg.contains('berlangganan');
+      final isPaywall = msg.contains('permission-denied') ||
+          msg.contains('berlangganan') ||
+          msg.contains('langganan') ||
+          msg.contains('subscription') ||
+          msg.contains('unauthenticated') ||
+          msg.contains('unauthorized') ||
+          msg.contains('not-found') ||
+          !hasAccess ||
+          (e is AgentAccessException &&
+              (e.code == 'permission-denied' ||
+                  e.code == 'unauthenticated' ||
+                  e.code == 'not-found'));
+
       setState(() {
         session.isUrlLoading = false;
         session.isPaywallRequired = isPaywall;
         session.errorMessage = isPaywall
-            ? 'Akses asisten ini memerlukan langganan aktif.'
+            ? 'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.'
             : 'Asisten belum bisa dihubungkan. Coba lagi.';
       });
     }
@@ -800,27 +815,126 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final isPaywall = session.isPaywallRequired;
       final isTimeout = session.isTimeoutError;
 
-      final title = isPaywall
-          ? 'Akses khusus diperlukan'
-          : (isGoogleErr
-              ? 'Akun Google belum memiliki izin'
-              : (isTimeout
-                  ? 'Asisten belum berhasil dibuka'
-                  : 'Asisten Belum Bisa Dibuka'));
+      if (isPaywall) {
+        final textPrimary = OTColors.textPrimary(isDark);
+        final textSecondary = OTColors.textSecondary(isDark);
+        return Container(
+          color: canvas,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: OTColors.surface(isDark),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: OTColors.border(isDark), width: 1.2),
+                      ),
+                      child: Icon(
+                        Icons.workspace_premium_outlined,
+                        size: 34,
+                        color: OTColors.accent(isDark),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Akses Langganan Diperlukan',
+                      textAlign: TextAlign.center,
+                      style: ScholarlyFonts.newsreader(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      session.errorMessage ??
+                          'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.',
+                      textAlign: TextAlign.center,
+                      style: ScholarlyFonts.outfit(
+                        fontSize: 13.5,
+                        height: 1.45,
+                        color: textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 46,
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          NavigationGuard.safePushNamed(
+                            context,
+                            AppRoutes.subscription,
+                            arguments: {
+                              'user': _authService.cachedCurrentUser,
+                              'agent': session.agent,
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.card_membership_rounded,
+                            size: 18),
+                        label: Text(
+                          'Langganan Sekarang',
+                          style: ScholarlyFonts.outfit(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.5,
+                          ),
+                        ),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: OTColors.accent(isDark),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: TextButton(
+                        onPressed: () =>
+                            AgentSessionManager.instance.closeRoom(),
+                        child: Text(
+                          'Kembali ke Beranda',
+                          style: ScholarlyFonts.outfit(
+                            fontWeight: FontWeight.w500,
+                            color: textSecondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
 
-      final icon = isPaywall
-          ? Icons.workspace_premium_rounded
-          : (isGoogleErr
-              ? Icons.account_circle_outlined
-              : (isTimeout
-                  ? Icons.wifi_off_rounded
-                  : Icons.info_outline_rounded));
+      final title = isGoogleErr
+          ? 'Akun Google belum memiliki izin'
+          : (isTimeout
+              ? 'Asisten belum berhasil dibuka'
+              : 'Asisten Belum Bisa Dibuka');
 
-      final retryLabel = isPaywall
-          ? 'Buka Akses Langganan'
-          : (isGoogleErr
-              ? 'Ganti Akun Google'
-              : 'Coba lagi');
+      final icon = isGoogleErr
+          ? Icons.account_circle_outlined
+          : (isTimeout
+              ? Icons.wifi_off_rounded
+              : Icons.info_outline_rounded);
+
+      final retryLabel = isGoogleErr ? 'Ganti Akun Google' : 'Coba lagi';
 
       return Container(
         color: canvas,
@@ -830,16 +944,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           icon: icon,
           retryLabel: retryLabel,
           onRetry: () {
-            if (isPaywall) {
-              NavigationGuard.safePushNamed(
-                context,
-                AppRoutes.subscription,
-                arguments: {
-                  'user': _authService.cachedCurrentUser,
-                  'agent': session.agent,
-                },
-              );
-            } else if (isGoogleErr) {
+            if (isGoogleErr) {
               NavigationGuard.safePushNamed(
                 context,
                 AppRoutes.googleSessionAuth,
