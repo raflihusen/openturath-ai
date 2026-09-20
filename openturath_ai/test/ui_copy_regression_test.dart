@@ -18,7 +18,7 @@ void main() {
     }
   });
   test('Conversation loading and menu describe their actions', () {
-    expect(AppCopy.loadingReferences, 'Menyiapkan ruang telaah…');
-    expect(AppCopy.studyOptions, 'Opsi telaah');
+    expect(AppCopy.loadingReferences, 'Menyiapkan asisten…');
+    expect(AppCopy.studyOptions, 'Tampilan bacaan');
   });
 }
