@@ -164,7 +164,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
         trxId: widget.trxId,
       );
 
-      if (res['status'] == 'SUCCESS' || res['success'] == true) {
+      if (res['status'] == 'SUCCESS' && res['success'] == true) {
         _triggerSuccess();
       }
     } catch (_) {
@@ -286,6 +286,51 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
       return true;
     }
 
+    return false;
+  }
+
+  static const Set<String> _allowedExternalPaymentSchemes = {
+    'gojek',
+    'gopay',
+    'shopeepay',
+    'shopee',
+    'ovo',
+    'dana',
+    'linkaja',
+    'bca',
+    'bankmandiri',
+    'brimo',
+    'bnicall',
+    'cimbclicks',
+  };
+
+  /// Validasi ketat skema eksternal untuk deep-linking e-wallet / perbankan
+  bool _isAllowedExternalScheme(Uri uri) {
+    final scheme = uri.scheme.toLowerCase();
+    if (_allowedExternalPaymentSchemes.contains(scheme)) {
+      return true;
+    }
+    // Tolak mentah-mentah skema berbahaya
+    if (scheme == 'javascript' ||
+        scheme == 'file' ||
+        scheme == 'content' ||
+        scheme == 'data' ||
+        scheme == 'about') {
+      return false;
+    }
+    // Izinkan skema intent hanya jika spesifik untuk pembayaran perbankan/e-wallet
+    if (scheme == 'intent') {
+      final str = uri.toString().toLowerCase();
+      return str.contains('scheme=gojek') ||
+          str.contains('scheme=shopeepay') ||
+          str.contains('scheme=ovo') ||
+          str.contains('scheme=dana') ||
+          str.contains('scheme=linkaja') ||
+          str.contains('scheme=bca') ||
+          str.contains('scheme=mandiri') ||
+          str.contains('scheme=bri') ||
+          str.contains('scheme=bni');
+    }
     return false;
   }
 
@@ -496,9 +541,15 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
                         // Deep links untuk aplikasi perbankan atau e-wallet (GoPay, ShopeePay, dsb.)
                         if (uri.scheme != 'http' && uri.scheme != 'https') {
-                          try {
-                            await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
-                          } catch (_) {}
+                          if (_isAllowedExternalScheme(uri)) {
+                            try {
+                              await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
+                            } catch (e) {
+                              debugPrint('[DokuCheckout] Gagal membuka external payment app: $e');
+                            }
+                          } else {
+                            debugPrint('[DokuCheckout] External scheme ditolak karena tidak masuk allowlist: ${uri.scheme}');
+                          }
                           return NavigationActionPolicy.CANCEL;
                         }
 
