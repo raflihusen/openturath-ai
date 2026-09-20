@@ -25,7 +25,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   String _selectedAgentId = 'fiqh_syafii';
   int _tahawwulatIndex = 0;
   bool _processing = false;
-  bool _restoring = false;
   bool _initialized = false;
 
   List<AgentModel> get _specialists => AgentModel.defaultAgents.where((a) =>
@@ -119,69 +118,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-  Future<void> _restore() async {
-    if (_restoring) return;
-    setState(() => _restoring = true);
-    try {
-      final result = await _service.syncAkalPurchases();
-      if (!mounted) return;
-      if (result['success'] == true) {
-        AppSnackBar.success(context, Loc.tr('syncDone'));
-      } else {
-        AppSnackBar.error(context, AppCopy.networkError);
-      }
-    } finally {
-      if (mounted) setState(() => _restoring = false);
-    }
-  }
+
 
   Widget _card({required Widget child, bool flagship = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final border = OTColors.border(dark);
-    if (flagship) {
-      return Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: dark ? const Color(0xFF1C1A16) : const Color(0xFFFAF7F2),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: dark ? const Color(0xFFC5A059).withValues(alpha: 0.5) : const Color(0xFFB38E44).withValues(alpha: 0.6),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: (dark ? Colors.black : const Color(0xFF8B6B23)).withValues(alpha: 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: OTColors.surface(dark),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: dark ? const Color(0xFFC5A059).withValues(alpha: 0.25) : const Color(0xFFB38E44).withValues(alpha: 0.3),
-              width: 1,
-            ),
-          ),
-          child: child,
-        ),
-      );
-    }
     return Container(
-      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border),
+        border: Border.all(color: border, width: 1.0),
       ),
-      child: Container(
-        padding: const EdgeInsets.all(19),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-        child: child,
-      ),
+      padding: const EdgeInsets.all(20),
+      child: child,
     );
   }
 
@@ -375,38 +324,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: (dark ? const Color(0xFFC5A059) : const Color(0xFF8B6B23)).withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: (dark ? const Color(0xFFC5A059) : const Color(0xFF8B6B23)).withValues(alpha: 0.35),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.verified_rounded,
-                                    size: 13,
-                                    color: dark ? const Color(0xFFD4AF37) : const Color(0xFF8B6B23),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    Loc.tr('tahawwulatHonor'),
-                                    style: OTTypography.captionMedium(
-                                      color: dark ? const Color(0xFFD4AF37) : const Color(0xFF8B6B23),
-                                    ).copyWith(fontSize: 11, letterSpacing: 0.3),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
@@ -423,9 +340,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             Text(
                               'فقه التحولات',
                               textDirection: TextDirection.rtl,
-                              style: OTTypography.arabicDisplay(
-                                color: dark ? const Color(0xFFD4AF37) : const Color(0xFF8B6B23),
-                              ).copyWith(fontSize: 22, height: 1.85),
+                              style: OTTypography.arabicDisplay(color: ink).copyWith(fontSize: 22, height: 1.85),
                             ),
                           ],
                         ),
@@ -444,46 +359,29 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: _tahawwulatIndex == i
-                                          ? (dark ? const Color(0xFFC5A059).withValues(alpha: 0.15) : const Color(0xFF8B6B23).withValues(alpha: 0.08))
-                                          : (dark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02)),
+                                          ? (dark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
+                                          : (dark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.02)),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
-                                        color: _tahawwulatIndex == i
-                                            ? (dark ? const Color(0xFFD4AF37) : const Color(0xFF8B6B23))
-                                            : border,
-                                        width: _tahawwulatIndex == i ? 1.5 : 1,
+                                        color: _tahawwulatIndex == i ? ink : border,
+                                        width: _tahawwulatIndex == i ? 1.2 : 1,
                                       ),
                                     ),
                                     child: Column(
                                       children: [
-                                        if (ProductPricing.tahawwulat[i].months == 12)
-                                          Container(
-                                            margin: const EdgeInsets.only(bottom: 4),
-                                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                                            decoration: BoxDecoration(
-                                              color: dark ? const Color(0xFFD4AF37) : const Color(0xFF8B6B23),
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                            child: Text(
-                                              Loc.tr('bestValue'),
-                                              style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white),
-                                            ),
-                                          ),
                                         Text(
                                           ProductPricing.tahawwulat[i].title,
                                           style: OTTypography.captionMedium(
                                             color: _tahawwulatIndex == i ? ink : muted,
                                           ),
                                         ),
-                                        const SizedBox(height: 2),
+                                        const SizedBox(height: 4),
                                         Text(
                                           ProductPricing.rupiah(ProductPricing.tahawwulat[i].amount),
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
-                                            color: _tahawwulatIndex == i
-                                                ? (dark ? const Color(0xFFD4AF37) : const Color(0xFF8B6B23))
-                                                : ink,
+                                            color: ink,
                                           ),
                                         ),
                                       ],
@@ -501,15 +399,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: _processing ? null : () => _checkout(flagship, offer),
-                            style: FilledButton.styleFrom(
-                              backgroundColor: dark ? const Color(0xFFD4AF37) : const Color(0xFF8B6B23),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: Text(
-                              Loc.tr('continuePayment'),
-                              style: const TextStyle(fontWeight: FontWeight.w700),
-                            ),
+                            child: Text(Loc.tr('continuePayment')),
                           ),
                         ),
                       ],
@@ -664,11 +554,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     onPressed: _processing ? null : () => RedeemCodeSheet.show(context),
                     icon: const Icon(Icons.confirmation_number_outlined),
                     label: Text(Loc.tr('redeemAccess')),
-                  ),
-                  TextButton.icon(
-                    onPressed: _restoring || _processing ? null : _restore,
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: Text(Loc.tr('syncPurchases')),
                   ),
                 ],
               ),
