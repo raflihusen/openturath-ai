@@ -183,6 +183,8 @@ with zipfile.ZipFile(ZIP_PATH, 'w', zipfile.ZIP_DEFLATED) as zf:
         'PROMPT_AUDIT_DAN_REFACTOR_UI_OPENTURATH.md',
         'MASTER_AUDIT_PROMPT_COMPREHENSIVE_V2.md',
         'MASTER_RENCANA_EKSEKUSI_AUDIT_FORENSIK.md',
+        'MASTER_HIGH_LEVEL_AUDIT_PROMPT.md',
+        'OpenTurath_logo_transparent.svg',
         'OPENTURATH_AI_FULL_AUDIT_SOURCE.txt',
     ]
     
