@@ -459,7 +459,7 @@ const copyCatalog = <String, List<String>>{
   "ui_6d6b866be5": ["Fikih Maliki", "Maliki Fiqh", "الفقه المالكي"],
   "ui_9954541c39": ["Fikih Hanbali", "Hanbali Fiqh", "الفقه الحنبلي"],
   "ui_2b90583ab7": ["Perbandingan Mazhab", "Comparative Fiqh", "الفقه المقارن"],
-  "ui_bb6b589ac6": ["Hadis & Syarah", "Hadith & Commentary", "الحديث وشروحه"],
+  "ui_bb6b589ac6": ["Matan Hadits", "Matan Hadith", "متن الحديث"],
   "ui_34fc2f7f7b": ["Tafsir Al-Qur'an", "Qur’anic Exegesis", "تفسير القرآن"],
   "ui_703ae50c4d": ["Sejarah & Sirah", "History & Prophetic Biography", "التاريخ والسيرة النبوية"],
   "ui_b63b74acc6": ["Tasawwuf & Adzkar", "Spirituality & Remembrance", "التصوف والأذكار"],

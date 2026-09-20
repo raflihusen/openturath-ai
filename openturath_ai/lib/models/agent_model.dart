@@ -422,7 +422,7 @@ class AgentModel {
         // ── 2. HADIS ──────────────────────────────────────────
         AgentModel(
           id: 'hadits',
-          title: 'Hadis & Syarah',
+          title: 'Matan Hadits',
           titleArabic: 'الحديث الشريف',
           description:
               'Telusuri hadis, sanad, perawi, dan penjelasannya dalam kitab rujukan.',
