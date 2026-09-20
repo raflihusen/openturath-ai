@@ -62,6 +62,7 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
     - **Perbaikan S03 (Status Pembayaran)**: Hardening fungsi `verifyPaymentStatus` pada `subscription_service.dart` agar hanya merespon `success: true` jika transaksi berstatus final (`SUCCESS`, `SETTLED`, atau `PAID`), menutup celah bypass saat status gateway masih `PENDING`.
     - **Perbaikan S04 (Deep Link Allowlist)**: Penerapan `_allowedExternalPaymentSchemes` ketat pada `doku_checkout_sheet.dart` (hanya mengizinkan aplikasi perbankan/e-wallet resmi seperti GoPay, ShopeePay, OVO, DANA, LinkAja, BCA, Mandiri, BRI, BNI), memblokir skema berbahaya seperti `javascript:`, `file:`, `content:`, `data:`.
     - **Optimasi Gradle**: Penambahan `org.gradle.daemon.idletimeout=60000` pada `android/gradle.properties` untuk mencegah daemon zombie di Mac 8GB.
+    - **Auto-Update Pop-Up Dialog (`UpdateReadyDialog`)**: Menambahkan modal pop-up hening yang otomatis muncul di beranda saat berkas APK pembaruan selesai diunduh di latar belakang, menyajikan tombol *'Pasang & Muat Ulang Sekarang'* secara instan.
 
 ---
 
