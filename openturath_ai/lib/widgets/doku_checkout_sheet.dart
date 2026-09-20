@@ -275,7 +275,11 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> with WidgetsBindi
                   if (mounted && _ownsCheckout) {
                     setState(() => _progress = 1);
                     if (url != null && isAllowedPaymentUrl(url.toString()) &&
-                        const {'openturath.ai', 'www.openturath.ai', 'openturath-ai.web.app'}.contains(url.host)) {
+                        const {
+                          'openturath.ai', 'www.openturath.ai',
+                          'openturath.id', 'www.openturath.id',
+                          'openturath-ai.web.app', 'openturath.web.app',
+                        }.contains(url.host)) {
                       _checkStatus();
                     }
                   }

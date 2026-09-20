@@ -39,8 +39,12 @@ void main() {
   });
   test('callbacks allow exact app hosts but never a custom external scheme', () {
     expect(isAllowedPaymentUrl('https://openturath-ai.web.app/success'), isTrue);
+    expect(isAllowedPaymentUrl('https://openturath.web.app/success'), isTrue);
     expect(isAllowedPaymentUrl('https://openturath.ai/callback'), isTrue);
+    expect(isAllowedPaymentUrl('https://openturath.id/callback'), isTrue);
+    expect(isAllowedPaymentUrl('https://www.openturath.id/success'), isTrue);
     expect(isAllowedPaymentUrl('https://openturath.ai.attacker.test/success'), isFalse);
+    expect(isAllowedPaymentUrl('https://openturath.id.attacker.test/success'), isFalse);
     expect(isAllowedPaymentUrl('bank-app://pay'), isFalse);
   });
 }

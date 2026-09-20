@@ -22,7 +22,11 @@ bool isAllowedPaymentUrl(String value, {bool initial = false}) {
     'checkout.doku.com', 'jokul.doku.com', 'staging.doku.com',
     'goakal.com', 'app.midtrans.com', 'app.sandbox.midtrans.com',
   };
-  const callbackHosts = {'openturath.ai', 'www.openturath.ai', 'openturath-ai.web.app'};
+  const callbackHosts = {
+    'openturath.ai', 'www.openturath.ai',
+    'openturath.id', 'www.openturath.id',
+    'openturath-ai.web.app', 'openturath.web.app',
+  };
   return gatewayHosts.contains(uri.host.toLowerCase()) ||
       (!initial && callbackHosts.contains(uri.host.toLowerCase()));
 }
