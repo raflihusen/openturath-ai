@@ -92,11 +92,11 @@ Apakah latest_version_code > versi sekarang?
         [ Validasi Hash SHA-256 Integritas File ]
                       │
                       ▼
-        [ Munculkan Banner Elegan di Profil / Layar Utama ]:
-        "Versi Baru Siap Dipasang. [Pasang Sekarang]"
+        [ Munculkan Pop-up Modal Otomatis di Layar (UpdateReadyDialog) & Banner Beranda ]:
+        "Pembaruan Telah Siap: Versi v... Selesai Diunduh. [Pasang & Muat Ulang Sekarang]"
                       │
                       ▼
-        [ Santri Klik 1x ] ──▶ Android Package Installer Terbuka ──▶ Update Selesai!
+        [ Santri Ketuk 1x ] ──▶ Android Package Installer Terbuka ──▶ Update Selesai & Aplikasi Dimuat Ulang!
 ```
 
 * **Mengapa Butuh 1 Klik Konfirmasi di Level 3?**  
