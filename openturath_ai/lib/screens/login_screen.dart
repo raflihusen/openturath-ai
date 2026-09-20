@@ -160,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _stagger(
                     delayMs: 140,
                     child: Text(
-                      AppCopy.academicSlogan,
+                      'AI for Islamic Scholarship',
                       textAlign: TextAlign.center,
                       style: ScholarlyFonts.newsreader(
                         fontSize: 16,
