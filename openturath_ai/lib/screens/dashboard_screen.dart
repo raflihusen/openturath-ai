@@ -17,6 +17,7 @@ import '../services/auth_service.dart';
 import '../services/update_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/update_ready_banner.dart';
+import '../widgets/update_ready_dialog.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
@@ -41,13 +42,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<AgentModel> _agents = AgentModel.defaultAgents;
   String _searchQuery = '';
   String? _lastOpenedAgentId;
+  bool _hasShownUpdateDialog = false;
 
   @override
   void initState() {
     super.initState();
     _loadData();
     _loadLastOpenedAgent();
-    UpdateService().checkForUpdatesSilently();
+    _initUpdateListener();
+  }
+
+  void _initUpdateListener() {
+    final updateService = UpdateService();
+    updateService.addListener(_onUpdateStatusChanged);
+    updateService.checkForUpdatesSilently();
+  }
+
+  void _onUpdateStatusChanged() {
+    if (!mounted) return;
+    final updateService = UpdateService();
+    if (updateService.isUpdateReady && !_hasShownUpdateDialog) {
+      _hasShownUpdateDialog = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          UpdateReadyDialog.show(context, updateService);
+        }
+      });
+    }
   }
 
   Future<void> _loadLastOpenedAgent() async {
@@ -62,6 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void dispose() {
+    UpdateService().removeListener(_onUpdateStatusChanged);
     _searchController.dispose();
     super.dispose();
   }
