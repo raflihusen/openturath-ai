@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
@@ -90,7 +91,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     if (success) {
       AppSnackBar.show(
         context,
-        message: 'Voucher berhasil diaktifkan. Akses telaah telah dibuka.',
+        message: Loc.tr('ui_76fa6fcef2'),
         type: SnackType.success,
       );
       widget.onSuccess?.call();
@@ -102,6 +103,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     final bgSurface = OTColors.surface(isDark);
@@ -138,7 +140,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Gunakan voucher',
+                  Loc.tr('ui_6f8fc6f8d5'),
                   style: OTTypography.cardTitle(color: textPrimary).copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -152,7 +154,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Masukkan kode voucher yang Anda miliki.',
+              Loc.tr('ui_75edf97617'),
               style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
@@ -173,7 +175,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 letterSpacing: 1.2,
               ),
               decoration: InputDecoration(
-                hintText: 'Masukkan kode voucher',
+                hintText: Loc.tr('ui_259e2d8b2c'),
                 hintStyle: OTTypography.body(color: textSecondary).copyWith(
                   letterSpacing: 0,
                   fontSize: 14,
@@ -213,7 +215,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 child: _isLoading
                     ? AppLoader(dotSize: 6, color: canvas)
                     : Text(
-                        'Gunakan voucher',
+                        Loc.tr('ui_6f8fc6f8d5'),
                         style: OTTypography.button(color: canvas),
                       ),
               ),

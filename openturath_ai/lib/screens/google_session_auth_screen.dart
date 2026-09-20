@@ -1,6 +1,7 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
@@ -63,14 +64,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
         title: Text(
           AppCopy.cancelSignInTitle,
-          style: GoogleFonts.outfit(
+          style: ScholarlyFonts.outfit(
             fontWeight: FontWeight.w600,
             color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
           ),
         ),
         content: Text(
           AppCopy.googleSessionSignInSameAccountDesc,
-          style: GoogleFonts.outfit(
+          style: ScholarlyFonts.outfit(
             fontSize: 13,
             color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
           ),
@@ -80,7 +81,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               AppCopy.stayHere,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
                 fontWeight: FontWeight.w600,
               ),
@@ -94,7 +95,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             ),
             child: Text(
               AppCopy.exit,
-              style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+              style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -111,6 +112,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
     final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
@@ -122,7 +124,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     if (_isSessionReady) {
       return Scaffold(
         backgroundColor: canvas,
-        body: const Center(
+        body: Center(
           child: AppLoader(
             title: AppCopy.googleSessionConnected,
             subtitle: AppCopy.googleSessionPreparing,
@@ -152,7 +154,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           scrolledUnderElevation: 0,
           title: Text(
             AppCopy.googleSessionConnectTitle,
-            style: GoogleFonts.newsreader(
+            style: ScholarlyFonts.newsreader(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: textPrimary,
@@ -202,7 +204,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     Expanded(
                       child: Text(
                         AppCopy.googleSessionSignInHint,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 12,
                           height: 1.35,
                           color: textSecondary,

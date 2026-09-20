@@ -1,5 +1,6 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import '../core/theme.dart';
 
 /// AppLoader: Komponen visual baku tiga titik berdenyut (Three-Dots Pulse Loader).
@@ -61,6 +62,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final defaultAccent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
     final dotColor = widget.color ?? defaultAccent;
@@ -110,7 +112,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
           Text(
             widget.title!,
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: textPrimary,
@@ -122,7 +124,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
           Text(
             widget.subtitle!,
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               fontSize: 12,
               color: textSecondary,
             ),
@@ -140,7 +142,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
             ),
             child: Text(
               widget.cancelLabel,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: textSecondary,

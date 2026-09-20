@@ -135,9 +135,9 @@ const AGENT_ENTITLEMENTS: Record<string, string> = {
   imam_ghazali: "tasawwuf",
 
   // Bibliografi & Faharis
-  bibliografi_faharis: "all_access",
-  faharis: "all_access",
-  bibliografi: "all_access",
+  bibliografi_faharis: "bibliografi_faharis",
+  faharis: "bibliografi_faharis",
+  bibliografi: "bibliografi_faharis",
 
   all_ai: "all_access",
 };
@@ -177,10 +177,10 @@ export const PURCHASABLE_AGENTS = new Set([
 ]);
 
 export const MODULE_PLANS: Record<string, { amount: number; durationMonths: number; labelSuffix: string }> = {
-  tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+  tholib_1m: { amount: 50000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
   tholib_6m: { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
   bahits_1y: { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
-  "1m": { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+  "1m": { amount: 50000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
   "6m": { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
   "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
 };
@@ -410,11 +410,11 @@ function resolvePlanPricing(agentId: string, plan: string): { amount: number; du
   if (agentId.startsWith("fiqh_tahawwulat")) {
     const tahawwulatTiers: Record<string, { amount: number; durationMonths: number; labelSuffix: string }> = {
       tholib_1m: { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-      tholib_6m: { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
-      bahits_1y: { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+      tholib_6m: { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+      bahits_1y: { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
       "1m": { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-      "6m": { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
-      "1y": { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+      "6m": { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+      "1y": { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
     };
     const tTier = tahawwulatTiers[plan];
     if (tTier) {
@@ -585,7 +585,7 @@ export const createCheckout = functions
         "Login diperlukan untuk melakukan transaksi."
       );
     }
-    const { plan, name, email, phone, agentId } = data;
+    const { plan, name, email, phone, agentId, expectedAmount, pricingRevision } = data;
 
     if (!plan || !name || !email) {
       throw new functions.https.HttpsError(
@@ -596,6 +596,12 @@ export const createCheckout = functions
 
     const currentAgentId = typeof agentId === "string" && agentId ? agentId : "fiqh_tahawwulat";
     const pricing = resolvePlanPricing(currentAgentId, plan as string);
+    // Reject stale offers before creating any invoice or contacting the gateway.
+    if (expectedAmount !== undefined &&
+        (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount ||
+         pricingRevision !== "perdana-2026-09-20")) {
+      throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
+    }
     const invoiceNumber = `OT-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const trxRef = db.collection("transactions").doc();
@@ -653,7 +659,9 @@ export const createCheckout = functions
       redirectUrl: paymentUrl,
       paymentUrl: paymentUrl,
       trxId,
-      invoiceNumber
+      invoiceNumber,
+      amount: pricing.amount,
+      pricingRevision: "perdana-2026-09-20"
     };
   });
 
@@ -1387,6 +1395,8 @@ export const onUserCreate = functions.firestore
       for (const tx of txs) {
         const data = tx.data();
         if (!data || !["paid", "success"].includes(data.status)) continue;
+        // Verified email never overrides an existing transaction owner.
+        if (data.uid && data.uid !== uid) continue;
         const key = data.entitlement_key;
         const expiry = data.subscription_expires_at;
         if (typeof key !== "string" || !expiry?.toDate || expiry.toDate() <= new Date()) continue;

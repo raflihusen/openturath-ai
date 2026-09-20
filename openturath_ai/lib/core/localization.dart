@@ -1,87 +1,51 @@
+import 'package:flutter/widgets.dart';
 import 'app_config.dart';
+import 'copy_catalog.dart';
 
-class Loc {
-  static const Map<String, Map<String, String>> _dict = {
-    'id': {
-      'app_name': 'OpenTurath AI',
-      'available_now': 'Tersedia',
-      'coming_soon': 'Belum tersedia',
-      'manage_subscription': 'Langganan',
-      'settings': 'Profil',
-      'logout': 'Keluar',
-      'welcome': 'أهلاً',
-      'subtitle_dash': 'Pilih bidang.',
-      'active_sub': 'Akses aktif',
-      'valid_until': 'Aktif hingga',
-      'full_access': 'Akses semua bidang yang tersedia',
-      'unlimited_research': 'Telusuri ibarah dari kitab rujukan',
-      'explore_corpus': 'Pilih bidang.',
-      'theme_mode': 'Tampilan Tema',
-      'theme_system': 'Sistem Default',
-      'theme_light': 'Terang',
-      'theme_dark': 'Gelap',
-      'language': 'Bahasa',
-      'save': 'Simpan',
-      'cancel': 'Batal',
-      'choose_plan': 'Pilih paket',
-    },
-    'en': {
-      'app_name': 'OpenTurath AI',
-      'available_now': 'Available',
-      'coming_soon': 'Unavailable',
-      'manage_subscription': 'Subscription',
-      'settings': 'Profile',
-      'logout': 'Sign Out',
-      'welcome': 'Welcome',
-      'subtitle_dash': 'Select a research space.',
-      'active_sub': 'Active Access',
-      'valid_until': 'Active until',
-      'full_access': 'Access to all available research spaces',
-      'unlimited_research': 'Turats manuscript research',
-      'explore_corpus': 'Select a research space.',
-      'theme_mode': 'Theme Mode',
-      'theme_system': 'System Default',
-      'theme_light': 'Light',
-      'theme_dark': 'Dark',
-      'language': 'Language',
-      'save': 'Save',
-      'cancel': 'Cancel',
-      'choose_plan': 'Choose Plan',
-    },
-    'ar': {
-      'app_name': 'أوبن تراث الذكاء الاصطناعي',
-      'available_now': 'متاح الآن',
-      'coming_soon': 'قريباً',
-      'manage_subscription': 'إدارة الاشتراك',
-      'settings': 'الإعدادات',
-      'logout': 'تسجيل الخروج',
-      'welcome': 'أهلاً',
-      'subtitle_dash': 'اختر مجال العلم الذي ترغب في البحث فيه.',
-      'active_sub': 'الاشتراك نشط',
-      'valid_until': 'صالح حتى',
-      'full_access': 'وصول كامل للمصادر',
-      'unlimited_research': 'بحث غير محدود في التراث',
-      'explore_corpus': 'استكشف كتب التراث الإسلامي مع العبارات الأصلية.',
-      'theme_mode': 'مظهر التطبيق',
-      'theme_system': 'تلقائي',
-      'theme_light': 'فاتح',
-      'theme_dark': 'داكن',
-      'language': 'اللغة',
-      'save': 'حفظ',
-      'cancel': 'إلغاء',
-      'choose_plan': 'اختر هذه الباقة',
-    }
+class LocaleScope extends InheritedNotifier<ValueNotifier<String>> {
+  LocaleScope({super.key, required super.child})
+      : super(notifier: AppConfig.localeNotifier);
+}
+
+abstract final class Loc {
+  static const supportedCodes = ['id', 'en', 'ar'];
+  static const supportedLocales = [Locale('id'), Locale('en'), Locale('ar')];
+  static const languageNames = {'id': 'Bahasa Indonesia', 'en': 'English', 'ar': 'العربية'};
+  static String get language => supportedCodes.contains(AppConfig.localeNotifier.value)
+      ? AppConfig.localeNotifier.value : 'id';
+  static bool get isArabic => language == 'ar';
+  static void watch(BuildContext context) {
+    context.dependOnInheritedWidgetOfExactType<LocaleScope>();
+  }
+  static final Map<String, String> _sourceKeys = {
+    for (final entry in copyCatalog.entries)
+      for (final value in entry.value) value: entry.key,
   };
-
+  static const _aliases = {
+    'app_name': 'appName', 'available_now': 'readyToUse', 'coming_soon': 'comingSoon',
+    'manage_subscription': 'manageSubscription', 'settings': 'navSettings', 'logout': 'logoutButton',
+    'welcome': 'ahlanDefault', 'subtitle_dash': 'defaultFieldDesc', 'active_sub': 'activeSubscription',
+    'valid_until': 'validUntil', 'full_access': 'fullAccess', 'unlimited_research': 'academicSlogan',
+    'explore_corpus': 'chooseField', 'theme_mode': 'appearance', 'theme_system': 'modeSystem',
+    'theme_light': 'modeLight', 'theme_dark': 'modeDark', 'choose_plan': 'choosePlan',
+  };
   static String tr(String key, [List<String>? args]) {
-    final lang = AppConfig.localeNotifier.value;
-    String text = _dict[lang]?[key] ?? _dict['en']?[key] ?? key;
-    
+    final values = copyCatalog[_aliases[key] ?? key];
+    assert(values != null, 'Missing translation: $key');
+    var text = values?[supportedCodes.indexOf(language)] ?? key;
     if (args != null) {
-      for (int i = 0; i < args.length; i++) {
+      for (var i = 0; i < args.length; i++) {
         text = text.replaceAll('{$i}', args[i]);
       }
     }
     return text;
   }
+  /// Terjemahkan label katalog statis. Naskah sumber dan nama kitab dipertahankan.
+  static String text(String source) {
+    final key = _sourceKeys[source];
+    return key == null ? source : tr(key);
+  }
+  static String cleanTitle(String title) => title
+      .replaceFirst(RegExp(r'^(?:Super\s+)?AI\s+', caseSensitive: false), '')
+      .trim();
 }

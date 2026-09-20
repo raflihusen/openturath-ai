@@ -1,98 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../core/app_copy.dart';
+import '../core/design/ot_colors.dart';
+import '../core/design/ot_typography.dart';
+import '../core/localization.dart';
 
-import '../core/theme.dart';
-
-/// Ikon Gerbang Kubah Resmi OpenTurath
 class OpenTurathMark extends StatelessWidget {
   const OpenTurathMark({super.key, this.size = 36, this.color});
-
   final double size;
   final Color? color;
-
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Semantics(
-      label: 'OpenTurath',
-      image: true,
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: Image.asset(
-          isDark
-              ? 'assets/images/arch_dark_transparent.png'
-              : 'assets/images/arch_light_transparent.png',
-          width: size,
-          height: size,
-          fit: BoxFit.contain,
-        ),
-      ),
-    );
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Semantics(label: Loc.tr('appName'), image: true,
+      child: SvgPicture.asset('assets/images/OpenTurath_logo_transparent.svg',
+        width: size, height: size, fit: BoxFit.contain,
+        excludeFromSemantics: true,
+        colorFilter: ColorFilter.mode(color ?? OTColors.textPrimary(dark), BlendMode.srcIn)));
   }
 }
 
-/// Logo Header Resmi OpenTurath (Arch + Wordmark Newsreader)
 class OpenTurathBrand extends StatelessWidget {
-  const OpenTurathBrand({
-    super.key,
-    this.compact = false,
-    this.onDark = false,
-    this.showSlogan = false,
-  });
-
+  const OpenTurathBrand({super.key, this.compact = false, this.onDark = false, this.showSlogan = false});
   final bool compact;
   final bool onDark;
   final bool showSlogan;
-
   @override
   Widget build(BuildContext context) {
-    final isDark = onDark || Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final iconSize = compact ? 22.0 : 28.0;
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Image.asset(
-          isDark
-              ? 'assets/images/arch_dark_transparent.png'
-              : 'assets/images/arch_light_transparent.png',
-          width: iconSize,
-          height: iconSize,
-          fit: BoxFit.contain,
-        ),
-        const SizedBox(width: 10),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'OpenTurath',
-              style: GoogleFonts.newsreader(
-                fontSize: compact ? 18 : 21,
-                fontWeight: FontWeight.w600,
-                color: textPrimary,
-                letterSpacing: -0.4,
-              ),
-            ),
-            if (showSlogan) ...[
-              const SizedBox(height: 1),
-              Text(
-                'Membaca kitab, menelusuri ibarah.',
-                style: GoogleFonts.newsreader(
-                  fontSize: 11,
-                  fontStyle: FontStyle.italic,
-                  color: textSecondary,
-                  letterSpacing: -0.1,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
-    );
+    Loc.watch(context);
+    final dark = onDark || Theme.of(context).brightness == Brightness.dark;
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      OpenTurathMark(size: compact ? 28 : 36, color: OTColors.textPrimary(dark)),
+      const SizedBox(width: 10),
+      Flexible(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // Latin wordmark is a brand asset, independent of interface direction.
+        Text('OpenTurath', textDirection: TextDirection.ltr,
+          style: OTTypography.brandLogo(color: OTColors.textPrimary(dark)).copyWith(fontSize: compact ? 18 : 21)),
+        if (showSlogan) Text(AppCopy.appTagline,
+          style: OTTypography.caption(color: OTColors.textSecondary(dark))),
+      ])),
+    ]);
   }
 }

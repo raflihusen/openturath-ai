@@ -935,3 +935,17 @@ h1, h2, h3, h4, h5 {
     padding: var(--space-8) var(--space-5);
   }
 }
+/* Harga perdana dan tanda merek resmi, mengikuti token monokrom situs. */
+.site-nav__brand { display: inline-flex; align-items: center; gap: 10px; }
+.site-nav__brand .official-brand-mark { display: inline-block; width: 32px; height: 32px; flex: 0 0 32px; background: var(--ink); mask: url('brand-mark.svg') center / contain no-repeat; -webkit-mask: url('brand-mark.svg') center / contain no-repeat; }
+.launch-price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; margin-top: 32px; }
+.launch-price-card { padding: 28px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+.launch-price-card--flagship { border: 4px double var(--border-strong); }
+.launch-price-card h3 { margin: 20px 0 12px; font: 600 28px var(--font-serif); color: var(--ink); }
+.launch-price-card p, .launch-price-note { color: var(--ink-secondary); font-size: 14px; line-height: 1.7; }
+.launch-price-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 16px; padding: 20px 0; border-block-start: 1px solid var(--border); }
+.launch-price-row small, .launch-price-row del, .launch-price { display: block; }
+.launch-price-row small { margin-top: 6px; color: var(--ink-secondary); font-size: 12px; }
+.launch-price-row del { color: var(--ink-secondary); font-size: 14px; }
+.launch-price { font: 700 27px var(--font-serif); color: var(--ink); margin-top: 8px; }
+.launch-price-note { margin-top: 24px; }

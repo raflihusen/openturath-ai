@@ -1,283 +1,203 @@
-import 'legal_copy.dart';
+import 'localization.dart';
 
-/// AppCopy: Sumber teks kanonik terpusat untuk OpenTurath.
-/// Menjaga nada bahasa tetap tenang, ringkas, jelas, dan wajar untuk kajian keislaman (The Quiet Scholar).
+/// Naskah antarmuka ID, EN dan AR. Resolusi mengikuti bahasa yang aktif.
 abstract final class AppCopy {
-  // ── Identitas & Merek ──────────────────────────────────────────
-  static const appName = 'OpenTurath';
-  static const appTagline = LegalCopy.aboutAppTagline;
-  static const defaultFieldDesc = 'Pilih bidang untuk mulai menelusuri kitab.';
-  static const aboutTitle = LegalCopy.aboutAppTitle;
-  static const aboutDescription = LegalCopy.aboutAppParagraph1;
-  static const aboutScholarlyPrinciple = LegalCopy.aboutAppParagraph2;
-  static const academicSlogan = 'Riset Kitab Turats';
+  static String get appName => Loc.tr('appName');
+  static String get appTagline => Loc.tr('appTagline');
+  static String get defaultFieldDesc => Loc.tr('defaultFieldDesc');
+  static String get aboutTitle => Loc.tr('aboutTitle');
+  static String get aboutDescription => Loc.tr('aboutDescription');
+  static String get aboutScholarlyPrinciple => Loc.tr('aboutScholarlyPrinciple');
+  static String get academicSlogan => Loc.tr('academicSlogan');
+  static String get navHome => Loc.tr('navHome');
+  static String get navStudies => Loc.tr('navStudies');
+  static String get navSaved => Loc.tr('navSaved');
+  static String get navSettings => Loc.tr('navSettings');
+  static String get studySpace => Loc.tr('studySpace');
+  static String get openStudy => Loc.tr('openStudy');
+  static String get studyOptions => Loc.tr('studyOptions');
+  static String get referenceBooks => Loc.tr('referenceBooks');
+  static String get savedCollection => Loc.tr('savedCollection');
+  static String get bookDetails => Loc.tr('bookDetails');
+  static String get chooseField => Loc.tr('chooseField');
+  static String get allCategories => Loc.tr('allCategories');
+  static String get searchResults => Loc.tr('searchResults');
+  static String get continueStudy => Loc.tr('continueStudy');
+  static String get startStudy => Loc.tr('startStudy');
+  static String get dashboardSearchHint => Loc.tr('dashboardSearchHint');
+  static String get ahlanDefault => Loc.tr('ahlanDefault');
+  static String get studyBookCategory => Loc.tr('studyBookCategory');
+  static String get studyEntryDefaultTitle => Loc.tr('studyEntryDefaultTitle');
+  static String get studyEntryResumeSubtitle => Loc.tr('studyEntryResumeSubtitle');
+  static String get studyEntryHistorySubtitle => Loc.tr('studyEntryHistorySubtitle');
+  static String get studyEntryDefaultSubtitle => Loc.tr('studyEntryDefaultSubtitle');
+  static String get loadingReferences => Loc.tr('loadingReferences');
+  static String get modulePreparing => Loc.tr('modulePreparing');
+  static String get moduleUnavailable => Loc.tr('moduleUnavailable');
+  static String get cannotLoad => Loc.tr('cannotLoad');
+  static String get cannotLoadStudy => Loc.tr('cannotLoadStudy');
+  static String get studyNotLoadedYet => Loc.tr('studyNotLoadedYet');
+  static String get subscriptionRequiredTitle => Loc.tr('subscriptionRequiredTitle');
+  static String get subscriptionRequiredShort => Loc.tr('subscriptionRequiredShort');
+  static String get catalogLoadFailed => Loc.tr('catalogLoadFailed');
+  static String get catalogPreparing => Loc.tr('catalogPreparing');
+  static String get inputQuestionHint => Loc.tr('inputQuestionHint');
+  static String get viewSubscription => Loc.tr('viewSubscription');
+  static String get tryAgain => Loc.tr('tryAgain');
+  static String get sessionExpiredOrNoAccess => Loc.tr('sessionExpiredOrNoAccess');
+  static String get agentLoadFailed => Loc.tr('agentLoadFailed');
+  static String get backToHome => Loc.tr('backToHome');
+  static String get noAssistantsFound => Loc.tr('noAssistantsFound');
+  static String get comingSoon => Loc.tr('comingSoon');
+  static String get deviceNotSupportedTitle => Loc.tr('deviceNotSupportedTitle');
+  static String get deviceNotSupportedMessage => Loc.tr('deviceNotSupportedMessage');
+  static String get cannotConnectTitle => Loc.tr('cannotConnectTitle');
+  static String get cannotConnectMessage => Loc.tr('cannotConnectMessage');
+  static String get adabDialogTitle => Loc.tr('adabDialogTitle');
+  static String get adabAcknowledgeButton => Loc.tr('adabAcknowledgeButton');
+  static String get adabDialogLead => Loc.tr('adabDialogLead');
+  static String get adabHeading1 => Loc.tr('adabHeading1');
+  static String get adabBody1 => Loc.tr('adabBody1');
+  static String get adabHeading2 => Loc.tr('adabHeading2');
+  static String get adabBody2 => Loc.tr('adabBody2');
+  static String get adabHeading3 => Loc.tr('adabHeading3');
+  static String get adabBody3 => Loc.tr('adabBody3');
+  static String get noAnswerToCopy => Loc.tr('noAnswerToCopy');
+  static String get noConversationToCopy => Loc.tr('noConversationToCopy');
+  static String get answerCopied => Loc.tr('answerCopied');
+  static String get conversationCopied => Loc.tr('conversationCopied');
+  static String get copyFailed => Loc.tr('copyFailed');
+  static String get noAnswerToSave => Loc.tr('noAnswerToSave');
+  static String get savedSuccess => Loc.tr('savedSuccess');
+  static String get saveFailed => Loc.tr('saveFailed');
+  static String get referenceCopied => Loc.tr('referenceCopied');
+  static String get ibarahCopied => Loc.tr('ibarahCopied');
+  static String get noteContentCopied => Loc.tr('noteContentCopied');
+  static String get bookmarkDeleted => Loc.tr('bookmarkDeleted');
+  static String get bookmarkDeleteFailed => Loc.tr('bookmarkDeleteFailed');
+  static String get cacheClearedSuccess => Loc.tr('cacheClearedSuccess');
+  static String get searchSavedHint => Loc.tr('searchSavedHint');
+  static String get searchSavedTooltip => Loc.tr('searchSavedTooltip');
+  static String get noSavedTitle => Loc.tr('noSavedTitle');
+  static String get noSavedDescription => Loc.tr('noSavedDescription');
+  static String get copyIbarahAction => Loc.tr('copyIbarahAction');
+  static String get viewReferenceAction => Loc.tr('viewReferenceAction');
+  static String get shareReferenceTooltip => Loc.tr('shareReferenceTooltip');
+  static String get copyAnswerAction => Loc.tr('copyAnswerAction');
+  static String get copyConversationAction => Loc.tr('copyConversationAction');
+  static String get saveAnswerMenu => Loc.tr('saveAnswerMenu');
+  static String get copyContentTooltip => Loc.tr('copyContentTooltip');
+  static String get editNote => Loc.tr('editNote');
+  static String get deleteNote => Loc.tr('deleteNote');
+  static String get deleteNoteTitle => Loc.tr('deleteNoteTitle');
+  static String get deleteNoteDesc => Loc.tr('deleteNoteDesc');
+  static String get addNote => Loc.tr('addNote');
+  static String get closeSearch => Loc.tr('closeSearch');
+  static String get undo => Loc.tr('undo');
+  static String get bookReferenceLabel => Loc.tr('bookReferenceLabel');
+  static String get googleSessionConnectTitle => Loc.tr('googleSessionConnectTitle');
+  static String get googleSessionConnectSubtitle => Loc.tr('googleSessionConnectSubtitle');
+  static String get googleSessionConnectDesc => Loc.tr('googleSessionConnectDesc');
+  static String get googleSessionSignInHint => Loc.tr('googleSessionSignInHint');
+  static String get googleSessionSignInSameAccountDesc => Loc.tr('googleSessionSignInSameAccountDesc');
+  static String get googleSessionConnected => Loc.tr('googleSessionConnected');
+  static String get googleSessionPreparing => Loc.tr('googleSessionPreparing');
+  static String get cancelSignIn => Loc.tr('cancelSignIn');
+  static String get cancelSignInTitle => Loc.tr('cancelSignInTitle');
+  static String get connectingGoogleAccount => Loc.tr('connectingGoogleAccount');
+  static String get googleSessionFailed => Loc.tr('googleSessionFailed');
+  static String get googleSessionActive => Loc.tr('googleSessionActive');
+  static String get continueWithGoogle => Loc.tr('continueWithGoogle');
+  static String get googleSignInFailed => Loc.tr('googleSignInFailed');
+  static String get termsAgreementPrefix => Loc.tr('termsAgreementPrefix');
+  static String get profile => Loc.tr('profile');
+  static String get subscription => Loc.tr('subscription');
+  static String get activeSubscription => Loc.tr('activeSubscription');
+  static String get inactiveSubscription => Loc.tr('inactiveSubscription');
+  static String get appearance => Loc.tr('appearance');
+  static String get modeDark => Loc.tr('modeDark');
+  static String get modeLight => Loc.tr('modeLight');
+  static String get modeSystem => Loc.tr('modeSystem');
+  static String get language => Loc.tr('language');
+  static String get languageIndonesian => Loc.tr('languageIndonesian');
+  static String get languageDialogNotice => Loc.tr('languageDialogNotice');
+  static String get languageDialogCurrent => Loc.tr('languageDialogCurrent');
+  static String get logoutDialogTitle => Loc.tr('logoutDialogTitle');
+  static String get logoutDialogBody => Loc.tr('logoutDialogBody');
+  static String get logoutButton => Loc.tr('logoutButton');
+  static String get loggingOut => Loc.tr('loggingOut');
+  static String get deleteAccountTitle => Loc.tr('deleteAccountTitle');
+  static String get deleteAccountBody => Loc.tr('deleteAccountBody');
+  static String get deleteAccountButton => Loc.tr('deleteAccountButton');
+  static String get deleteAccountCancel => Loc.tr('deleteAccountCancel');
+  static String get deleteAccountSuccess => Loc.tr('deleteAccountSuccess');
+  static String get recentLoginRequired => Loc.tr('recentLoginRequired');
+  static String get networkError => Loc.tr('networkError');
+  static String get accountSection => Loc.tr('accountSection');
+  static String get generalSettingsSection => Loc.tr('generalSettingsSection');
+  static String get supportAndPolicySection => Loc.tr('supportAndPolicySection');
+  static String get clearCache => Loc.tr('clearCache');
+  static String get clearCacheSubtitle => Loc.tr('clearCacheSubtitle');
+  static String get clearCacheDialogTitle => Loc.tr('clearCacheDialogTitle');
+  static String get clearCacheDialogDesc => Loc.tr('clearCacheDialogDesc');
+  static String get clearAction => Loc.tr('clearAction');
+  static String get chooseAppearance => Loc.tr('chooseAppearance');
+  static String get accessStatus => Loc.tr('accessStatus');
+  static String get fullAccess => Loc.tr('fullAccess');
+  static String get planSyafii => Loc.tr('planSyafii');
+  static String get planTahawwulat => Loc.tr('planTahawwulat');
+  static String get trialAccess => Loc.tr('trialAccess');
+  static String get activeUntil => Loc.tr('activeUntil');
+  static String get allAssistantsAvailable => Loc.tr('allAssistantsAvailable');
+  static String get accessExpiringSoon => Loc.tr('accessExpiringSoon');
+  static String get readyToUse => Loc.tr('readyToUse');
+  static String get validUntil => Loc.tr('validUntil');
+  static String get renewPro => Loc.tr('renewPro');
+  static String get manageSubscription => Loc.tr('manageSubscription');
+  static String get preparingProAccess => Loc.tr('preparingProAccess');
+  static String get paymentBeingVerified => Loc.tr('paymentBeingVerified');
+  static String get viewPaymentStatus => Loc.tr('viewPaymentStatus');
+  static String get accessNotYetActive => Loc.tr('accessNotYetActive');
+  static String get paymentNotSuccessful => Loc.tr('paymentNotSuccessful');
+  static String get tryPaymentAgain => Loc.tr('tryPaymentAgain');
+  static String get chooseAssistantAndPlan => Loc.tr('chooseAssistantAndPlan');
+  static String get chooseProPlan => Loc.tr('chooseProPlan');
+  static String get permanentAccessLabel => Loc.tr('permanentAccessLabel');
+  static String get manageAccess => Loc.tr('manageAccess');
+  static String get close => Loc.tr('close');
+  static String get cancel => Loc.tr('cancel');
+  static String get exit => Loc.tr('exit');
+  static String get reload => Loc.tr('reload');
+  static String get delete => Loc.tr('delete');
+  static String get seeAll => Loc.tr('seeAll');
+  static String get openAction => Loc.tr('openAction');
+  static String get stayHere => Loc.tr('stayHere');
+  static String get readMore => Loc.tr('readMore');
+  static String get today => Loc.tr('today');
+  static String get hijriCalendar => Loc.tr('hijriCalendar');
+  static String get paymentSuccessTitle => Loc.tr('paymentSuccessTitle');
+  static String get paymentSuccessRedirect => Loc.tr('paymentSuccessRedirect');
+  static String get packagePerField => Loc.tr('packagePerField');
+  static String get packageAllFields => Loc.tr('packageAllFields');
+  static String get packageAllFieldsPreparing => Loc.tr('packageAllFieldsPreparing');
+  static String get chooseFieldPlan => Loc.tr('chooseFieldPlan');
+  static String get accessAllFields => Loc.tr('accessAllFields');
+  static String get accessSingleField => Loc.tr('accessSingleField');
+  static String get notSubscribed => Loc.tr('notSubscribed');
+  static String get termsOfService => Loc.tr('termsOfService');
+  static String get privacyPolicy => Loc.tr('privacyPolicy');
+  static String get paymentAndRefund => Loc.tr('paymentAndRefund');
+  static String get aiGuideline => Loc.tr('aiGuideline');
+  static String get supportAndContact => Loc.tr('supportAndContact');
+  static String get manualRenewalNotice => Loc.tr('manualRenewalNotice');
 
-  // ── Navigasi Utama ─────────────────────────────────────────────
-  static const navHome = 'Beranda';
-  static const navStudies = 'Asisten';
-  static const navSaved = 'Catatan';
-  static const navSettings = 'Pengaturan';
-
-  // ── Istilah Ruang & Kajian ─────────────────────────────────────
-  static const studySpace = 'Ruang Telaah';
-  static const openStudy = 'Membuka ruang telaah…';
-  static const studyOptions = 'Opsi telaah';
-  static const referenceBooks = 'Marja\' mu\'tamad';
-  static const savedCollection = 'Perbendaharaan Catatan';
-  static const bookDetails = 'Detail edisi';
-  static const chooseField = 'Pilih bidang';
-  static const allCategories = 'Semua bidang';
-  static const searchResults = 'Hasil pencarian';
-  static const continueStudy = 'Lanjutkan telaah';
-  static const startStudy = 'Mulai telaah';
-  static const dashboardSearchHint = 'Cari marja\', topik, atau ibarah…';
-  static const ahlanDefault = 'Ahlan';
-  static const studyBookCategory = 'TELAAH KITAB';
-  static const studyEntryDefaultTitle = 'Ibarah & Istinbath Turats';
-  static const studyEntryResumeSubtitle = 'Sesi telaah siap dibuka kembali.';
-  static const studyEntryHistorySubtitle = 'Buka kembali marja\' dan catatan telaah sebelumnya.';
-  static const studyEntryDefaultSubtitle =
-      'Ajukan mas\'alah dan telusuri pembahasannya langsung dari naskah turats mu\'tamad.';
-
-  // ── Loading, Error & Akses ─────────────────────────────────────
-  static const loadingReferences = 'Menyiapkan ruang telaah…';
-  static const modulePreparing = 'sedang disiapkan.';
-  static const moduleUnavailable =
-      'Ruang telaah ini belum tersedia. Coba lagi nanti.';
-  static const cannotLoad = 'Data belum bisa dimuat. Coba lagi.';
-  static const cannotLoadStudy = 'Ruang telaah belum bisa dibuka';
-  static const studyNotLoadedYet =
-      'Ruang telaah belum bisa dimuat. Coba lagi sebentar.';
-  static const subscriptionRequiredTitle = 'Akses diperlukan untuk melanjutkan';
-  static const subscriptionRequiredShort = 'Akses diperlukan';
-  static const catalogLoadFailed = 'Daftar kitab belum bisa dimuat.';
-  static const catalogPreparing = 'Katalog kitab sedang disiapkan.';
-  static const inputQuestionHint = 'Tuliskan mas\'alah atau ibarah yang ingin ditelaah…';
-  static const viewSubscription = 'Lihat akses';
-  static const tryAgain = 'Coba lagi';
-  static const sessionExpiredOrNoAccess =
-      'Sesi Anda telah berakhir atau akses ke ruang telaah ini belum aktif.';
-  static const agentLoadFailed =
-      'Ruang telaah belum dapat dimuat. Coba lagi sebentar.';
-  static const backToHome = 'Kembali ke beranda';
-  static const noAssistantsFound =
-      'Belum ada bidang atau kitab yang cocok. Coba kata kunci lain.';
-  static const comingSoon = 'Belum tersedia';
-
-  // Platform & Inisialisasi
-  static const deviceNotSupportedTitle = 'Perangkat belum didukung';
-  static const deviceNotSupportedMessage =
-      'OpenTurath saat ini mendukung Android, macOS, dan Windows. Perangkat ini belum didukung.';
-  static const cannotConnectTitle = 'Tidak dapat terhubung';
-  static const cannotConnectMessage =
-      'Tidak dapat terhubung ke layanan OpenTurath. Periksa koneksi internet, lalu coba lagi.';
-
-  // ── Dialog Catatan Sebelum Mulai (Adab) ────────────────────────
-  static const adabDialogTitle = 'Catatan sebelum telaah';
-  static const adabAcknowledgeButton = 'Saya mengerti';
-  static const adabDialogLead =
-      'OpenTurath membantu mencari kutipan dan menelaah ibarah dalam kitab. Cocokkan kembali rujukan pada kitab rujukan, dan tetaplah bertalaqqi kepada guru serta masyayikh yang berkompeten.';
-
-  static const adabHeading1 = 'Bantuan untuk menelusuri kitab';
-  static const adabBody1 =
-      'Gunakan OpenTurath untuk mencari ibarah dan menelaah penjelasan ulama dalam kitab. Verifikasi hasilnya langsung dengan naskah kitab rujukan.';
-
-  static const adabHeading2 = 'Talaqqi dan bimbingan guru';
-  static const adabBody2 =
-      'Untuk memahami agama dengan baik dan benar, tetaplah bertalaqqi kepada guru dan ulama yang berkompeten.';
-
-  static const adabHeading3 = 'Tahqiq dan periksa rujukan';
-  static const adabBody3 =
-      'Periksa matan, syarah, dan nomor jilid/halaman pada kitab rujukan sebelum menjadikannya sandaran istinbath.';
-
-  // ── Umpan Balik Singkat (Toast & Snackbar) ─────────────────────
-  static const noAnswerToCopy = 'Belum ada jawaban untuk disalin.';
-  static const noConversationToCopy = 'Belum ada catatan telaah untuk disalin.';
-  static const answerCopied = 'Jawaban disalin.';
-  static const conversationCopied =
-      'Catatan telaah disalin dan tersimpan ke Catatan.';
-  static const copyFailed = 'Jawaban belum bisa disalin. Coba lagi.';
-  static const noAnswerToSave = 'Belum ada jawaban untuk disimpan.';
-  static const savedSuccess = 'Tersimpan ke Catatan.';
-  static const saveFailed = 'Jawaban belum tersimpan. Coba lagi.';
-  static const referenceCopied = 'Rujukan disalin.';
-  static const ibarahCopied = 'Ibarah disalin.';
-  static const noteContentCopied = 'Isi catatan disalin.';
-  static const bookmarkDeleted = 'Catatan dihapus.';
-  static const bookmarkDeleteFailed = 'Catatan belum bisa dihapus. Coba lagi.';
-  static const cacheClearedSuccess = 'Cache berhasil dibersihkan.';
-
-  // ── Catatan & Bacaan ───────────────────────────────────────────
-  static const searchSavedHint = 'Cari catatan atau ibarah…';
-  static const searchSavedTooltip = 'Cari catatan';
-  static const noSavedTitle = 'Belum ada catatan';
-  static const noSavedDescription =
-      'Simpan jawaban atau ibarah penting di sini agar mudah dibaca kembali.';
-  static const copyIbarahAction = 'Salin ibarah';
-  static const viewReferenceAction = 'Lihat rujukan';
-  static const shareReferenceTooltip = 'Bagikan catatan';
-  static const copyAnswerAction = 'Salin jawaban';
-  static const copyConversationAction = 'Salin catatan telaah';
-  static const saveAnswerMenu = 'Simpan ke Catatan';
-  static const copyContentTooltip = 'Salin isi';
-  static const editNote = 'Edit catatan';
-  static const deleteNote = 'Hapus catatan';
-  static const deleteNoteTitle = 'Hapus catatan?';
-  static const deleteNoteDesc = 'Catatan ini akan dihapus permanen.';
-  static const addNote = 'Tambah catatan';
-  static const closeSearch = 'Tutup pencarian';
-  static const undo = 'Urungkan';
-  static const bookReferenceLabel = 'Rujukan Kitab';
-
-  // ── Sesi Akun Google & NotebookLM ──────────────────────────────
-  static const googleSessionConnectTitle = 'Masuk ke akun Google';
-  static const googleSessionConnectSubtitle =
-      'Siapkan akun untuk ruang telaah Anda';
-  static const googleSessionConnectDesc =
-      'Setelah masuk, Anda akan kembali ke ruang telaah secara otomatis.';
-  static const googleSessionSignInHint =
-      'Gunakan akun Google yang sama agar Anda dapat langsung melanjutkan telaah tanpa perlu masuk ulang.';
-  static const googleSessionSignInSameAccountDesc =
-      'Masukan akun Google yang sama agar akses telaah dapat dibuka tanpa perlu masuk ulang.';
-  static const googleSessionConnected = 'Akun Google terhubung';
-  static const googleSessionPreparing = 'Menyiapkan ruang telaah…';
-  static const cancelSignIn = 'Batalkan proses masuk';
-  static const cancelSignInTitle = 'Batalkan proses masuk?';
-  static const connectingGoogleAccount = 'Menghubungkan akun Google…';
-  static const googleSessionFailed = 'Gagal menghubungkan akun Google.';
-  static const googleSessionActive = 'Sesi Google aktif';
-
-  // ── Autentikasi & Masuk ────────────────────────────────────────
-  static const continueWithGoogle = 'Lanjutkan dengan Google';
-  static const googleSignInFailed = 'Gagal masuk dengan Google. Coba lagi.';
-  static const termsAgreementPrefix = 'Dengan masuk, Anda menyetujui';
-
-  // ── Akun & Pengaturan ──────────────────────────────────────────
-  static const profile = 'Profil';
-  static const subscription = 'Akses & Langganan';
-  static const activeSubscription = 'Akses aktif';
-  static const inactiveSubscription =
-      'Pilih paket atau gunakan kode akses untuk membuka telaah.';
-  static const appearance = 'Tampilan';
-  static const modeDark = 'Gelap';
-  static const modeLight = 'Terang';
-  static const modeSystem = 'Ikuti sistem';
-  static const language = 'Bahasa';
-  static const languageIndonesian = 'Bahasa Indonesia';
-  static const languageDialogNotice =
-      'Bahasa Arab dan Inggris sedang disiapkan.';
-  static const languageDialogCurrent =
-      'Antarmuka saat ini tersedia dalam Bahasa Indonesia.';
-
-  static const logoutDialogTitle = 'Keluar dari akun';
-  static const logoutDialogBody =
-      'Anda perlu masuk kembali untuk menggunakan akun ini.';
-  static const logoutButton = 'Keluar';
-  static const loggingOut = 'Sedang keluar…';
-
-  static const deleteAccountTitle = 'Hapus akun';
-  static const deleteAccountBody = LegalCopy.deleteAccountConfirmationBody;
-  static const deleteAccountButton = LegalCopy.deleteAccountConfirmationConfirm;
-  static const deleteAccountCancel = LegalCopy.deleteAccountConfirmationCancel;
-  static const deleteAccountSuccess = 'Akun berhasil dihapus.';
-  static const recentLoginRequired =
-      'Masuk kembali untuk melanjutkan penghapusan akun.';
-  static const networkError = 'Periksa koneksi internet, lalu coba lagi.';
-
-  // ── Pengaturan Tambahan ───────────────────────────────────────
-  static const accountSection = 'Akun';
-  static const generalSettingsSection = 'Pengaturan umum';
-  static const supportAndPolicySection = 'Bantuan & kebijakan';
-  static const clearCache = 'Bersihkan cache';
-  static const clearCacheSubtitle =
-      'Hapus data sementara untuk meringankan penyimpanan';
-  static const clearCacheDialogTitle = 'Bersihkan cache?';
-  static const clearCacheDialogDesc =
-      'Data unduhan dan cache sesi lokal akan dibersihkan. Anda tetap berada dalam akun.';
-  static const clearAction = 'Bersihkan';
-  static const chooseAppearance = 'Pilih tampilan';
-
-  // ── Status Akses & Membership Pass ────────────────────────────
-  static const accessStatus = 'Status akses';
-  static const fullAccess = 'Akses penuh';
-  static const planSyafii = 'Fikih Syafi\'i';
-  static const planTahawwulat = 'Fikih Tahawwulat';
-  static const trialAccess = 'Akses uji coba';
-  static const activeUntil = 'Aktif hingga';
-  static const allAssistantsAvailable = 'Semua asisten tersedia';
-  static const accessExpiringSoon = 'Masa akses hampir berakhir';
-  static const readyToUse = 'Siap digunakan';
-  static const validUntil = 'Berlaku hingga';
-  static const renewPro = 'Perpanjang Pro';
-  static const manageSubscription = 'Kelola langganan';
-  static const preparingProAccess = 'Menyiapkan akses Pro';
-  static const paymentBeingVerified = 'Pembayaran sedang diperiksa';
-  static const viewPaymentStatus = 'Lihat status pembayaran';
-  static const accessNotYetActive = 'Akses belum aktif';
-  static const paymentNotSuccessful = 'Pembayaran belum berhasil';
-  static const tryPaymentAgain = 'Coba pembayaran lagi';
-  static const chooseAssistantAndPlan =
-      'Pilih asisten dan paket yang sesuai untuk mulai bertanya.';
-  static const chooseProPlan = 'Pilih paket Pro';
-  static const permanentAccessLabel = 'Tanpa batas waktu';
-  static const manageAccess = 'Kelola akses';
-
-  // ── Tombol Umum & Aksi ─────────────────────────────────────────
-  static const close = 'Tutup';
-  static const cancel = 'Batal';
-  static const exit = 'Keluar';
-  static const reload = 'Muat ulang';
-  static const delete = 'Hapus';
-  static const seeAll = 'Lihat semua';
-  static const openAction = 'Buka';
-  static const stayHere = 'Tetap di sini';
-  static const readMore = 'Baca selengkapnya';
-  static const today = 'Hari ini';
-  static const hijriCalendar = 'Kalender Hijriah';
-
-  // ── Pembayaran & Status Langganan ─────────────────────────────
-  static const paymentSuccessTitle = 'Pembayaran diterima';
-  static const paymentSuccessRedirect =
-      'Akses sudah aktif. Membuka OpenTurath…';
-  static const packagePerField = 'Satu asisten';
-  static const packageAllFields = 'Semua asisten';
-  static const packageAllFieldsPreparing =
-      'Paket semua asisten sedang disiapkan.';
-  static const chooseFieldPlan = 'Pilih bidang';
-  static const accessAllFields = 'Akses semua asisten';
-  static const accessSingleField = 'Akses satu asisten';
-  static const notSubscribed = 'Belum ada akses aktif';
-
-  // ── Kebijakan, Hukum & Bantuan ─────────────────────────────────
-  static const termsOfService = LegalCopy.termsTitle;
-  static const privacyPolicy = LegalCopy.privacyTitle;
-  static const paymentAndRefund = LegalCopy.refundTitle;
-  static const aiGuideline = LegalCopy.aiGuidelineTitle;
-  static const supportAndContact = LegalCopy.contactTitle;
-  static const manualRenewalNotice =
-      'Langganan tidak diperpanjang otomatis. Anda dapat memperpanjangnya saat masa akses berakhir.';
-
-  // ── Helper Interpolasi Dinamis ─────────────────────────────────
-  static String preparingModule(String module) => '$module sedang disiapkan.';
-
-  static String subscriptionRequiredFor(String module) =>
-      'Berlangganan untuk membuka $module.';
-
-  static String accessUnavailableFor(String module) =>
-      'Akses ke $module belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.';
-
-  static String planWithAgent(String agentTitle, String duration) =>
-      '$agentTitle — $duration';
-
-  static String trialDaysLeft(int days) => 'Masa coba · $days hari';
-
-  static String assistantsAvailableCount(int count) =>
-      count == 1 ? '1 asisten tersedia' : '$count asisten tersedia';
-
-  static String savedNotesCount(int count) => '$count catatan tersimpan';
-
-  static String versionWithTagline(String version) =>
-      'Versi $version · $appTagline';
-
-  static String ahlanWithName(String name) => 'Ahlan, $name';
+  static String preparingModule(String module) => Loc.tr('preparingModule', [module]);
+  static String subscriptionRequiredFor(String module) => Loc.tr('subscriptionRequiredFor', [module]);
+  static String accessUnavailableFor(String module) => Loc.tr('accessUnavailableFor', [module]);
+  static String planWithAgent(String title, String duration) => '$title · $duration';
+  static String trialDaysLeft(int days) => Loc.tr('trialDaysLeft', ['$days']);
+  static String assistantsAvailableCount(int count) => Loc.tr('assistantsAvailableCount', ['$count']);
+  static String savedNotesCount(int count) => Loc.tr('savedNotesCount', ['$count']);
+  static String versionWithTagline(String version) => Loc.tr('versionWithTagline', [version, appTagline]);
+  static String ahlanWithName(String name) => Loc.tr('ahlanWithName', [name]);
 }

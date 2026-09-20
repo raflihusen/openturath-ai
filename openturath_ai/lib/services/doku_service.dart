@@ -1,5 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
+import '../core/product_pricing.dart';
 
 /// DokuService — Layanan checkout DOKU yang aman & terpusat.
 /// Seluruh kalkulasi signature HMAC dan interaksi ke API DOKU
@@ -30,6 +31,8 @@ class DokuService {
         'plan': plan,
         'planTitle': planTitle,
         'amount': amount,
+        'expectedAmount': amount,
+        'pricingRevision': ProductPricing.revision,
         'name': name,
         'email': email,
         'phone': phone,
@@ -42,6 +45,8 @@ class DokuService {
         'trxId': data['trxId'] ?? '',
         'invoiceNumber': data['invoiceNumber'] ?? '',
         'status': 'pending',
+        'amount': data['amount'],
+        'pricingRevision': data['pricingRevision'],
       };
     } catch (e) {
       throw Exception('Gagal membuat sesi pembayaran DOKU: $e');

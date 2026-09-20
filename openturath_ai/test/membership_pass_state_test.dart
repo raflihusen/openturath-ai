@@ -38,6 +38,15 @@ void main() {
     expect(summary.ctaLabel, 'Lihat status pembayaran');
   });
 
+  test('pending payment with a future expiry never grants an active passport', () {
+    final summary = resolveMembershipPass(user({
+      'fiqh': ModuleEntitlement(plan: 'premium', status: 'pending',
+        paymentStatus: 'pending', expiry: DateTime(2027, 1, 1)),
+    }), now: DateTime(2026, 9, 20));
+    expect(summary.isOpen, isFalse);
+    expect(summary.state, MembershipPassState.paymentPending);
+  });
+
   test('keeps an active Pro pass open when another payment is pending', () {
     final user = UserModel(
       uid: 'u1', name: 'Udin', email: '', photoUrl: '', plan: 'free', questionsUsed: 0,

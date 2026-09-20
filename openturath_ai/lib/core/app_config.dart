@@ -23,8 +23,10 @@ class AppConfig {
 
     // Load Locale
     final localeStr = prefs.getString(_localeKey);
-    if (localeStr != null) {
-      localeNotifier.value = localeStr;
+    if (const ['id', 'en', 'ar'].contains(localeStr)) {
+      localeNotifier.value = localeStr!;
+    } else {
+      localeNotifier.value = 'id';
     }
   }
 
@@ -41,6 +43,7 @@ class AppConfig {
   }
 
   static Future<void> setLocale(String langCode) async {
+    if (!const ['id', 'en', 'ar'].contains(langCode)) return;
     localeNotifier.value = langCode;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_localeKey, langCode);

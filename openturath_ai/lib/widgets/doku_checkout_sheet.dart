@@ -1,9 +1,10 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants.dart';
@@ -12,6 +13,7 @@ import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
+import 'promo_price.dart';
 
 /// DokuCheckoutSheet: In-App Modal Pembayaran DOKU dengan Deteksi Otomatis
 /// Menampilkan halaman DOKU di dalam modal aplikasi tanpa perlu terlempar ke Chrome.
@@ -23,6 +25,8 @@ class DokuCheckoutSheet extends StatefulWidget {
   final String? trxId;
   final String? planTitle;
   final int? amount;
+  final int? regularAmount;
+  final String periodLabel;
 
   const DokuCheckoutSheet({
     super.key,
@@ -31,6 +35,8 @@ class DokuCheckoutSheet extends StatefulWidget {
     this.trxId,
     this.planTitle,
     this.amount,
+    this.regularAmount,
+    this.periodLabel = '',
   });
 
   /// Helper untuk membuka modal secara elegan dari layar manapun
@@ -41,6 +47,8 @@ class DokuCheckoutSheet extends StatefulWidget {
     String? trxId,
     String? planTitle,
     int? amount,
+    int? regularAmount,
+    String periodLabel = '',
   }) {
     return showModalBottomSheet<bool>(
       context: context,
@@ -54,6 +62,8 @@ class DokuCheckoutSheet extends StatefulWidget {
         trxId: trxId,
         planTitle: planTitle,
         amount: amount,
+        regularAmount: regularAmount,
+        periodLabel: periodLabel,
       ),
     );
   }
@@ -193,15 +203,15 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
           title: Text(
-            'Tutup halaman pembayaran?',
-            style: GoogleFonts.outfit(
+            Loc.tr('ui_56a2f9f730'),
+            style: ScholarlyFonts.outfit(
               fontWeight: FontWeight.w600,
               color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
             ),
           ),
           content: Text(
-            'Menutup halaman ini tidak otomatis membatalkan transaksi jika pembayaran telah diproses. Transaksi Anda tetap tercatat di sistem.',
-            style: GoogleFonts.outfit(
+            Loc.tr('ui_85f60bf7af'),
+            style: ScholarlyFonts.outfit(
               fontSize: 13,
               color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
             ),
@@ -210,8 +220,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
-                'Lanjutkan',
-                style: GoogleFonts.outfit(
+                Loc.tr('ui_5bcbc797a7'),
+                style: ScholarlyFonts.outfit(
                   color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
                   fontWeight: FontWeight.w600,
                 ),
@@ -220,8 +230,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
-                'Tutup',
-                style: GoogleFonts.outfit(
+                Loc.tr('close'),
+                style: ScholarlyFonts.outfit(
                   color: OTColors.destructive(isDark),
                 ),
               ),
@@ -336,6 +346,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
@@ -418,8 +429,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                   Text(
                                     widget.planTitle != null && widget.planTitle!.isNotEmpty
                                         ? widget.planTitle!
-                                        : 'Pembayaran',
-                                    style: GoogleFonts.outfit(
+                                        : Loc.tr('ui_f0874594eb'),
+                                    style: ScholarlyFonts.outfit(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 15,
                                       color: textPrimary,
@@ -427,10 +438,13 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  if (widget.amount != null && widget.regularAmount != null)
+                                    PromoPrice(amount: widget.amount!, regularAmount: widget.regularAmount!,
+                                      period: widget.periodLabel, compact: true),
                                   if (widget.invoiceNumber.isNotEmpty)
                                     Text(
                                       widget.invoiceNumber,
-                                      style: GoogleFonts.outfit(
+                                      style: ScholarlyFonts.outfit(
                                         fontSize: 12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
@@ -439,7 +453,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                   else if (widget.amount != null && widget.amount! > 0)
                                     Text(
                                       'Rp ${widget.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
-                                      style: GoogleFonts.outfit(
+                                      style: ScholarlyFonts.outfit(
                                         fontSize: 12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
@@ -447,8 +461,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     )
                                   else
                                     Text(
-                                      'Koneksi Aman Terenkripsi',
-                                      style: GoogleFonts.outfit(
+                                      Loc.tr('ui_9218f901c4'),
+                                      style: ScholarlyFonts.outfit(
                                         fontSize: 12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
@@ -472,7 +486,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                       child: CircularProgressIndicator(strokeWidth: 2),
                                     )
                                   : Icon(Icons.sync_rounded, size: 20, color: textSecondary),
-                              tooltip: 'Muat ulang status',
+                              tooltip: Loc.tr('ui_1c93ce4af4'),
                             ),
                             // Close Button
                             IconButton(
@@ -484,7 +498,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                 }
                               },
                               icon: Icon(Icons.close_rounded, size: 22, color: textSecondary),
-                              tooltip: 'Tutup',
+                              tooltip: Loc.tr('close'),
                             ),
                           ],
                         ),
@@ -638,6 +652,7 @@ class _CelebratorySuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0.0, end: 1.0),
       duration: const Duration(milliseconds: 400),
@@ -702,8 +717,8 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 16),
                             child: Text(
-                              'Alhamdulillah',
-                              style: GoogleFonts.outfit(
+                              Loc.tr('ui_28654608b2'),
+                              style: ScholarlyFonts.outfit(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 26,
                                 letterSpacing: -0.5,
@@ -726,8 +741,8 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 14),
                             child: Text(
-                              'Pembayaran berhasil',
-                              style: GoogleFonts.outfit(
+                              Loc.tr('ui_109055bfcd'),
+                              style: ScholarlyFonts.outfit(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
                                 color: const Color(0xFF10B981),
@@ -749,9 +764,9 @@ class _CelebratorySuccessView extends StatelessWidget {
                           child: Transform.translate(
                             offset: Offset(0, (1.0 - value) * 12),
                             child: Text(
-                              'Akses modul telah aktif. Mengalihkan…',
+                              Loc.tr('ui_1408872bee'),
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.outfit(
+                              style: ScholarlyFonts.outfit(
                                 fontSize: 13,
                                 color: textSecondary,
                                 height: 1.45,

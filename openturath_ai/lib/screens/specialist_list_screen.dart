@@ -1,6 +1,7 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';
@@ -19,6 +20,7 @@ import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
+import '../widgets/scholars_coming_soon.dart';
 import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -173,6 +175,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
@@ -204,7 +207,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         backgroundColor: canvas,
         appBar: AppBar(
           title: Text(
-            title,
+            Loc.text(title),
             style: OTTypography.corpusTitle(color: textPrimary)
                 .copyWith(fontSize: 20),
           ),
@@ -253,11 +256,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                             child: TextField(
                               controller: _searchCtrl,
                               onChanged: _onSearchChanged,
-                              style: GoogleFonts.outfit(
+                              style: ScholarlyFonts.outfit(
                                   fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: 'Cari asisten atau ulama…',
-                                hintStyle: GoogleFonts.outfit(
+                                hintText: Loc.tr('ui_55fddd168e'),
+                                hintStyle: ScholarlyFonts.outfit(
                                     fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -303,7 +306,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               // Discipline Filter Chips (only in discipline mode)
               if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
                 SizedBox(
-                  height: 38,
+                  height: Loc.isArabic ? 60 : 48,
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
@@ -324,7 +327,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                       const SizedBox(width: 8),
                       ...FieldModel.defaultFields.map((field) {
                         return Padding(
-                          padding: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsetsDirectional.only(end: 8),
                           child: _filterChip(
                             label: field.name,
                             isSelected: _selectedFieldId == field.id,
@@ -346,7 +349,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
               // Content List
               Expanded(
-                child: _isLoading
+                child: _corpusKind == CorpusKind.scholar
+                    ? const ScholarsComingSoon()
+                    : _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : filtered.isEmpty
                         ? Center(
@@ -375,6 +380,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               final sorted = List<AgentModel>.from(filtered);
                               if (_searchQuery.isEmpty) {
                                 sorted.sort((a, b) {
+                                  if (a.id == 'fiqh_tahawwulat') return -1;
+                                  if (b.id == 'fiqh_tahawwulat') return 1;
                                   if (a.isActive && !b.isActive) return -1;
                                   if (!a.isActive && b.isActive) return 1;
                                   return 0;
@@ -415,6 +422,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                   }
                                   return SpecialistCard(
                                     title: agent.title,
+                                    titleArabic: agent.titleArabic,
+                                    emoji: agent.emoji,
+                                    scopeLabel: agent.subtitleAcademic,
+                                    referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
                                     statusLabel: agent.isComingSoon
                                         ? AppCopy.comingSoon
                                         : null,
@@ -468,7 +479,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         ),
         alignment: Alignment.center,
         child: Text(
-          label,
+          Loc.text(label),
           style:
               OTTypography.caption(color: isSelected ? activeFg : textSecondary)
                   .copyWith(

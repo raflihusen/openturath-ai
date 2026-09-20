@@ -54,9 +54,10 @@ void main() {
 
     test('AgentModel defaultAgents contains valid active specialists', () {
       final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive).toList();
-      expect(activeAgents.length, equals(21));
+      expect(activeAgents.length, equals(22));
       expect(activeAgents.map((a) => a.id), contains('fiqh_tahawwulat'));
       expect(activeAgents.map((a) => a.id), contains('hadits'));
+      expect(activeAgents.map((a) => a.id), contains('tasawwuf'));
     });
 
     test('Default ThemeMode is system for fresh installs', () {

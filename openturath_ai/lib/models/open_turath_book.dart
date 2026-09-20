@@ -1,3 +1,5 @@
+import '../core/book_study_level.dart';
+import '../core/localization.dart';
 import 'dart:convert';
 
 /// Model data kanonikal untuk representasi naskah/kitab dalam katalog OpenTurath.
@@ -15,7 +17,11 @@ class OpenTurathBook {
     required this.volumes,
     required this.sourceFolder,
     required this.pages,
+    this.textType = '',
   });
+
+  final String textType;
+  BookStudyLevel get studyLevel => BookStudyLevel.fromMetadata(textType);
 
   final int id;
   final int? deathYear;
@@ -33,10 +39,11 @@ class OpenTurathBook {
   factory OpenTurathBook.fromJson(Map<String, dynamic> json) {
     return OpenTurathBook(
       id: _intValue(json['id']),
+      textType: _textValue(json['text_type'] ?? json['jenis_naskah'] ?? json['نوع_النص']),
       deathYear: _nullableInt(json['tahun_wafat']),
       section: _textValue(json['القسم'] ?? json['section'] ?? json['kategori']),
       shortName: _textValue(json['الاسم_المختصر'] ?? json['short_name']),
-      title: _textValue(json['الكتاب'] ?? json['title'] ?? json['nama_kitab']),
+      title: Loc.cleanTitle(_textValue(json['الكتاب'] ?? json['title'] ?? json['nama_kitab'])),
       author: _textValue(json['المؤلف'] ?? json['author'] ?? json['pengarang']),
       editor: _textValue(json['المحقق_أو_المعتني'] ?? json['editor'] ?? json['tahqiq']),
       publisher: _textValue(json['الناشر'] ?? json['publisher'] ?? json['penerbit']),
@@ -91,17 +98,17 @@ class OpenTurathBook {
   }
 
   String get volumeLabel {
-    if (volumes.isEmpty || volumes == '-') return 'Jumlah jilid belum tersedia';
-    return '$volumes jilid';
+    if (volumes.isEmpty || volumes == '-') return Loc.tr('unknownMetadata');
+    return Loc.tr('volumeCount', [volumes]);
   }
 
   String get deathLabel {
-    if (deathYear == null) return 'Tahun wafat belum tersedia';
-    return 'W. $deathYear H';
+    if (deathYear == null) return Loc.tr('unknownMetadata');
+    return Loc.tr('deathYear', ['$deathYear']);
   }
 
   String get pagesLabel {
-    if (pages.isEmpty || pages == '-') return 'Jumlah halaman belum tercatat';
-    return '$pages hlm.';
+    if (pages.isEmpty || pages == '-') return Loc.tr('unknownMetadata');
+    return Loc.tr('pageCount', [pages]);
   }
 }

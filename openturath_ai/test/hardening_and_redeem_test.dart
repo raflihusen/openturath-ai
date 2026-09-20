@@ -14,11 +14,11 @@ void main() {
       for (final agent in activeAgents) {
         expect(agent.price1m, isNotNull);
         expect(agent.price1m!, greaterThan(0));
-        // Fikih Tahawwulat adalah korpus berdaulat independen (300.000 IDR), modul lain standar (49.000 IDR)
+        // Fikih Tahawwulat adalah korpus berdaulat independen (300.000 IDR), modul lain standar (50.000 IDR)
         if (agent.id == 'fiqh_tahawwulat') {
           expect(agent.price1m, equals(300000));
         } else {
-          expect(agent.price1m, equals(49000));
+          expect(agent.price1m, equals(50000));
         }
       }
     });

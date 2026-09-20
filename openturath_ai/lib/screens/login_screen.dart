@@ -1,9 +1,10 @@
+import '../core/localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
@@ -12,6 +13,8 @@ import '../core/theme.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/openturath_brand.dart';
+import '../widgets/language_switcher.dart';
 
 /// LoginScreen: Gerbang Masuk OpenTurath
 /// Mengadopsi filosofi desain minimalis modern Claude:
@@ -56,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (_) {
       if (mounted) {
-        AppSnackBar.error(context, 'Tidak dapat membuka tautan halaman.');
+        AppSnackBar.error(context, Loc.tr('ui_0fb589d0e6'));
       }
     }
   }
@@ -102,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     const bg = AppTheme.canvasDark;
     const textPrimary = AppTheme.textPrimaryDark;
     const textMuted = AppTheme.textSecondaryDark;
@@ -131,27 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   // ── 1. Visual Symbol: Arch Artwork dengan Fade Bawah Mulus ──
                   _stagger(
                     delayMs: 40,
-                    child: SizedBox(
-                      height: 170,
-                      width: 170,
-                      child: ShaderMask(
-                        shaderCallback: (rect) {
-                          return const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.black, Colors.black, Colors.transparent],
-                            stops: [0.0, 0.86, 1.0],
-                          ).createShader(rect);
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: Image.asset(
-                          'assets/images/arch_dark_transparent.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
+                    child: const OpenTurathMark(size: 148, color: AppTheme.textPrimaryDark),
                   ),
-                  const SizedBox(height: 20),
+                  const LanguageSwitcher(),
 
                   // ── 2. Brand Wordmark: "OpenTurath" ──
                   _stagger(
@@ -159,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       AppCopy.appName,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.newsreader(
+                      style: ScholarlyFonts.newsreader(
                         fontSize: 32,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.6,
@@ -176,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       AppCopy.academicSlogan,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.newsreader(
+                      style: ScholarlyFonts.newsreader(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.italic,
@@ -224,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     const SizedBox(width: 12),
                                     Text(
                                       AppCopy.continueWithGoogle,
-                                      style: GoogleFonts.outfit(
+                                      style: ScholarlyFonts.outfit(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: -0.1,
@@ -247,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text.rich(
                         TextSpan(
                           text: '${AppCopy.termsAgreementPrefix}\n',
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             color: textMuted,
                             fontSize: 12,
                             height: 1.5,
@@ -294,6 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
 class _GoogleGVector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     return SvgPicture.string(
       '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px">

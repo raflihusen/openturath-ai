@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
@@ -74,7 +75,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Katalog rujukan belum dapat dimuat saat ini.';
+        _errorMessage = Loc.tr('ui_3e2acc1d99');
         _isLoading = false;
       });
     }
@@ -107,7 +108,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Detail edisi',
+                        Loc.tr('ui_0c9f252156'),
                         style: OTTypography.sectionHeading(color: textSecondary),
                       ),
                       IconButton(
@@ -123,7 +124,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     textAlign: TextAlign.right,
                     style: OTTypography.arabicReading(color: textPrimary).copyWith(
                       fontSize: 22,
-                      height: 1.5,
+                      height: 1.85,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -134,25 +135,25 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     textAlign: TextAlign.right,
                     style: OTTypography.arabicReading(color: textSecondary).copyWith(
                       fontSize: 16,
-                      height: 1.4,
+                      height: 1.85,
                     ),
                   ),
                   const SizedBox(height: OTSpacing.base),
                   Divider(color: border, height: 1),
                   const SizedBox(height: OTSpacing.base),
                   if (book.verifiedDeathYearHijri != null)
-                    _detailRow('Tahun Wafat', '${book.verifiedDeathYearHijri} H', textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_872fd06ff7'), '${book.verifiedDeathYearHijri} H', textPrimary, textSecondary),
                   if (book.reviewedTypeLabel != null)
-                    _detailRow('Jenis kitab', book.reviewedTypeLabel!, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_47b35543e3'), book.reviewedTypeLabel!, textPrimary, textSecondary),
                   if (book.reviewedEraLabel != null)
-                    _detailRow('Periode', book.reviewedEraLabel!, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_85e181b57a'), book.reviewedEraLabel!, textPrimary, textSecondary),
                   if (book.volumesCount != null)
-                    _detailRow('Jumlah Jilid', '${book.volumesCount} Jilid', textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_7e06fac12c'), '${book.volumesCount} Jilid', textPrimary, textSecondary),
                   if (book.publisher != null && book.publisher!.isNotEmpty)
-                    _detailRow('Penerbit', book.publisher!, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_291c152262'), book.publisher!, textPrimary, textSecondary),
                   if (book.muhaqqiq != null && book.muhaqqiq!.isNotEmpty)
-                    _detailRow('Tahqiq / Editor', book.muhaqqiq!, textPrimary, textSecondary),
-                  _detailRow('ID edisi', book.editionId, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_e488d9f73e'), book.muhaqqiq!, textPrimary, textSecondary),
+                  _detailRow(Loc.tr('ui_88bddfe74a'), book.editionId, textPrimary, textSecondary),
                   const SizedBox(height: OTSpacing.base),
                 ],
               ),
@@ -172,7 +173,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           SizedBox(
             width: 140,
             child: Text(
-              label,
+              Loc.text(label),
               style: OTTypography.caption(color: textSecondary),
             ),
           ),
@@ -190,6 +191,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surface = OTColors.surface(isDark);
@@ -198,8 +200,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
     final border = OTColors.border(isDark);
 
     final title = widget.agent != null
-        ? 'Pustaka ${widget.agent!.title}'
-        : 'Pustaka Rujukan';
+        ? '${Loc.tr('ui_9f0b5b5d87')} · ${widget.agent!.title}'
+        : Loc.tr('ui_9f0b5b5d87');
 
     return Scaffold(
       backgroundColor: canvas,
@@ -215,12 +217,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              title,
+              Loc.text(title),
               style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
             ),
             if (_allBooks != null)
               Text(
-                '${_filteredBooks?.length ?? 0} kitab',
+                Loc.tr('bookCount', ['${_filteredBooks?.length ?? 0}']),
                 style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
               ),
           ],
@@ -233,7 +235,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Cari judul kitab atau pengarang...',
+                hintText: Loc.tr('ui_c8c23c3325'),
                 hintStyle: OTTypography.caption(color: textSecondary),
                 prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
                 suffixIcon: _searchController.text.isNotEmpty
@@ -268,14 +270,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             const SizedBox(height: OTSpacing.md),
                             Text(_errorMessage!, style: OTTypography.body(color: textSecondary)),
                             const SizedBox(height: OTSpacing.base),
-                            OutlinedButton(onPressed: _loadData, child: const Text('Coba lagi')),
+                            OutlinedButton(onPressed: _loadData, child: Text(Loc.tr('tryAgain'))),
                           ],
                         ),
                       )
                     : _filteredBooks == null || _filteredBooks!.isEmpty
                         ? Center(
                             child: Text(
-                              'Tidak ada kitab yang cocok dengan pencarian',
+                              Loc.tr('ui_6b42d45847'),
                               style: OTTypography.body(color: textSecondary),
                             ),
                           )

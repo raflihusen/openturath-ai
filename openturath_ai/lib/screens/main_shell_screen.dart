@@ -1,6 +1,7 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import '../core/app_config.dart';
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
@@ -100,6 +101,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surface = OTColors.surface(isDark);
@@ -168,8 +170,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                       const Spacer(),
                       IconButton(
                         tooltip: isDark
-                            ? 'Beralih ke Tema Terang'
-                            : 'Beralih ke Tema Gelap',
+                            ? Loc.tr('ui_26894b3c65')
+                            : Loc.tr('ui_b16e7fe4e5'),
                         icon: Icon(
                           isDark
                               ? Icons.light_mode_rounded
@@ -331,6 +333,7 @@ class _GoogleNavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final activeFg = OTColors.accent(isDark);
     final unselected = OTColors.textTertiary(isDark);
@@ -355,10 +358,10 @@ class _GoogleNavBarItem extends StatelessWidget {
             ),
             const SizedBox(height: 3),
             Text(
-              label,
+              Loc.text(label),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 11.5,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 letterSpacing: -0.1,
@@ -404,6 +407,7 @@ class _RailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final activeFg = OTColors.accent(isDark);
 
@@ -430,7 +434,7 @@ class _RailItem extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              label,
+              Loc.text(label),
               style: OTTypography.captionMedium(
                 color: isSelected ? activeFg : unselected,
               ),

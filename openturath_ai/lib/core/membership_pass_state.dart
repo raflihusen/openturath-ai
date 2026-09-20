@@ -48,8 +48,7 @@ MembershipPassSummary resolveMembershipPass(UserModel? user, {DateTime? now}) {
   final values = entitlements.entries.toList();
   final active = values.where((entry) {
     final entitlement = entry.value;
-    return entitlement.status != 'revoked' &&
-        entitlement.status != 'expired' &&
+    return (entitlement.status == 'active' || entitlement.status == 'trial') &&
         (entitlement.plan == 'permanent' ||
             (entitlement.expiry != null &&
                 entitlement.expiry!.isAfter(reference)));

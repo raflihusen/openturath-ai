@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/theme.dart';
@@ -91,6 +92,7 @@ class OpenTurathApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: AppConfig.themeNotifier,
       builder: (context, currentTheme, _) {
@@ -113,18 +115,20 @@ class OpenTurathApp extends StatelessWidget {
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: overlayStyle,
               child: MaterialApp(
-                title: Loc.tr('app_name'),
+                title: AppCopy.appName,
                 debugShowCheckedModeBanner: false,
                 theme: AppTheme.lightTheme,
                 darkTheme: AppTheme.darkTheme,
                 themeMode: currentTheme,
                 locale: Locale(currentLocale),
-                builder: (context, child) => Directionality(
+                supportedLocales: Loc.supportedLocales,
+                localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                builder: (context, child) => LocaleScope(child: Directionality(
                   textDirection: currentLocale == 'ar'
                       ? TextDirection.rtl
                       : TextDirection.ltr,
                   child: child ?? const SizedBox.shrink(),
-                ),
+                )),
 
               // ── Initial Route ──
               initialRoute: AppRoutes.splash,

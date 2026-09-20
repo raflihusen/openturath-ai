@@ -30,6 +30,7 @@
   </script>
 
   <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body>
 
@@ -37,7 +38,7 @@
   <header class="site-nav">
     <div class="site-nav__inner">
       <a href="index.html" class="site-nav__brand">
-        OpenTurath <span>AI</span>
+        <span class="official-brand-mark" aria-hidden="true"></span> OpenTurath
       </a>
 
       <nav class="site-nav__links" aria-label="Navigasi Khazanah">
@@ -79,7 +80,7 @@
 
         <div class="hero__actions">
           <a href="download.html" class="btn btn--primary">
-            Unduh Aplikasi Android (v1.0.21)
+            Unduh Aplikasi Android
           </a>
           <a href="#khazanah" class="btn btn--secondary">
             Lihat Katalog Kitab
@@ -483,81 +484,40 @@
     <section class="editorial-section" id="harga">
       <div class="page-wrap">
         <div class="editorial-section__head">
-          <span class="eyebrow">Keanggotaan &amp; Akses Riset</span>
-          <h2>Katalog Layanan &amp; Biaya Langganan Resmi</h2>
-          <p>
-            Seluruh biaya berlangganan tertera secara transparan dalam mata uang <strong>Indonesian Rupiah (IDR)</strong>. Akses riset digital aktif seketika setelah pembayaran diverifikasi melalui QRIS atau Virtual Account Bank resmi.
-          </p>
+          <span class="eyebrow">Keanggotaan &amp; Akses Telaah</span>
+          <h2>Harga Perdana OpenTurath</h2>
+          <p>Pilih bidang keilmuan yang hendak ditelaah. Harga tertera dalam rupiah. Akses diaktifkan setelah pembayaran dikonfirmasi.</p>
         </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 32px;">
-          
-          <!-- Paket Riset Spesialis -->
-          <div style="background: var(--bg-card, #FFFFFF); border: 1px solid var(--border); border-radius: 8px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <span style="font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #D97706; background: rgba(217, 119, 6, 0.1); padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 12px;">Modul Riset Terpilih</span>
-              <h3 style="font-family: var(--font-serif); font-size: 24px; color: var(--ink); margin: 0 0 8px 0;">Modul Spesialis Kitab</h3>
-              <p style="font-size: 14px; color: var(--ink-secondary); margin-bottom: 20px; line-height: 1.5;">
-                Akses asistensi AI untuk riset bidang spesifik (Fikih, Nahwu-Sharaf, Tafsir, Hadis) dengan pencarian ibarah akurat.
-              </p>
-              
-              <div style="border-top: 1px solid var(--border); padding: 14px 0; display: flex; justify-content: space-between; align-items: baseline;">
-                <span style="font-weight: 600; color: var(--ink);">Thalib · 1 Bulan</span>
-                <span style="font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: #D97706;">Rp 49.000</span>
-              </div>
-              <div style="border-top: 1px solid var(--border); padding: 14px 0; display: flex; justify-content: space-between; align-items: baseline;">
-                <span style="font-weight: 600; color: var(--ink);">Thalib · 6 Bulan</span>
-                <span style="font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: #D97706;">Rp 299.000</span>
-              </div>
-              <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 14px 0; display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px;">
-                <span style="font-weight: 600; color: var(--ink);">Bahits · 1 Tahun</span>
-                <span style="font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: #D97706;">Rp 499.000</span>
-              </div>
+        <div class="launch-price-grid">
+          <article class="launch-price-card">
+            <span class="tag">19 Bidang Keilmuan</span>
+            <h3>Khadim Turats Spesialis</h3>
+            <p>Ruang telaah satu bidang ilmu, dengan rujukan kitab dan catatan yang dapat dibuka kembali.</p>
+            <div class="launch-price-row">
+              <div><strong>1 Bidang · 1 Bulan</strong><small>Harga Perdana · Hemat 83%</small></div>
+              <div><del>Rp 300.000</del><strong class="launch-price">Rp 50.000</strong><small>/bulan</small></div>
             </div>
-
-            <div style="font-size: 13px; color: var(--ink-secondary);">
-              ✔ Kuota konsultasi riset 24/7<br>
-              ✔ Salin ibarah &amp; ekspor catatan<br>
-              ✔ Bebas gangguan komersial
+            <p>Pilih salah satu dari 19 bidang keilmuan di halaman keanggotaan aplikasi.</p>
+          </article>
+          <article class="launch-price-card launch-price-card--flagship">
+            <span class="tag">Khazanah Khusus Akhir Zaman</span>
+            <h3>Fikih Tahawwulat</h3>
+            <p>Akses naskah, penelusuran sanad tanda zaman, serta telaah karya Al-Habib Abu Bakar Al-Adni Al-Masyhur.</p>
+            <div class="launch-price-row">
+              <div><strong>1 Bulan</strong><small>Harga Perdana · Hemat 70%</small></div>
+              <div><del>Rp 1.000.000</del><strong class="launch-price">Rp 300.000</strong><small>/bulan</small></div>
             </div>
-          </div>
-
-          <!-- Paket Fikih Tahawwulat -->
-          <div style="background: var(--bg-card, #FFFFFF); border: 2px solid #D97706; border-radius: 8px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
-            <div style="position: absolute; top: -12px; right: 24px; background: #0D201A; color: #F59E0B; font-size: 10px; font-weight: 800; letter-spacing: 1px; padding: 4px 12px; border-radius: 12px; border: 1px solid #D97706;">KORPUS UTAMA</div>
-            <div>
-              <span style="font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0D201A; background: #E6FFFA; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 12px;">Akses Penuh 5 Bilik</span>
-              <h3 style="font-family: var(--font-serif); font-size: 24px; color: var(--ink); margin: 0 0 8px 0;">Korpus Fikih Tahawwulat</h3>
-              <p style="font-size: 14px; color: var(--ink-secondary); margin-bottom: 20px; line-height: 1.5;">
-                Akses komprehensif ke-5 bilik keilmuan: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib Abu Bakar al-Adni, dan Al-Khatib (Spesialis Materi Dakwah/Khutbah).
-              </p>
-
-              <div style="border-top: 1px solid var(--border); padding: 14px 0; display: flex; justify-content: space-between; align-items: baseline;">
-                <span style="font-weight: 600; color: var(--ink);">Durasi 1 Bulan</span>
-                <span style="font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: #0D201A;">Rp 300.000</span>
-              </div>
-              <div style="border-top: 1px solid var(--border); padding: 14px 0; display: flex; justify-content: space-between; align-items: baseline;">
-                <span style="font-weight: 600; color: var(--ink);">Durasi 6 Bulan</span>
-                <span style="font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: #0D201A;">Rp 1.500.000</span>
-              </div>
-              <div style="border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 14px 0; display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px;">
-                <span style="font-weight: 600; color: var(--ink);">Durasi 1 Tahun Penuh</span>
-                <span style="font-family: var(--font-serif); font-size: 20px; font-weight: 700; color: #0D201A;">Rp 2.000.000</span>
-              </div>
+            <div class="launch-price-row">
+              <div><strong>6 Bulan</strong><small>Harga Perdana · Hemat 50%</small></div>
+              <div><del>Rp 2.995.000</del><strong class="launch-price">Rp 1.499.000</strong><small>/6 bulan</small></div>
             </div>
-
-            <div style="font-size: 13px; color: var(--ink-secondary);">
-              ✔ Seluruh 5 Bilik Keilmuan terbuka sekaligus<br>
-              ✔ Ujian pemahaman interaktif &amp; analisis sanad<br>
-              ✔ Akses Arsip Muhadharah &amp; Penyusun Materi Dakwah/Khutbah
+            <div class="launch-price-row">
+              <div><strong>1 Tahun · Pilihan Terbaik</strong><small>Harga Perdana · Hemat 60%</small></div>
+              <div><del>Rp 4.995.000</del><strong class="launch-price">Rp 1.999.000</strong><small>/tahun</small></div>
             </div>
-          </div>
-
+          </article>
         </div>
-
-        <div style="margin-top: 24px; padding: 16px; background: rgba(0,0,0,0.02); border-radius: 6px; font-size: 13px; color: var(--ink-secondary); text-align: center; border: 1px dashed var(--border);">
-          Metode Pembayaran Resmi Didukung: <strong>QRIS Dinamis</strong> (GoPay, OVO, Dana, ShopeePay, BCA QR, Mobile Banking) &amp; <strong>Virtual Account</strong> (BCA, Mandiri, BNI, BRI, Permata).
-        </div>
+        <p class="launch-price-note">Buka aplikasi untuk memilih paket dan melihat metode pembayaran yang tersedia. Periksa nama paket serta nominal pada halaman pembayaran sebelum melanjutkan.</p>
       </div>
     </section>
 

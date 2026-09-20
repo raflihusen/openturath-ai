@@ -7,7 +7,7 @@ void main() {
   group('OpenTurath Copywriting Overhaul — Quiet Scholar Principles v2', () {
     test('Canonical navigation labels use concise, quiet terms', () {
       expect(AppCopy.navHome, equals('Beranda'));
-      expect(AppCopy.navStudies, equals('Asisten'));
+      expect(AppCopy.navStudies, equals('Khadim Turats'));
       expect(AppCopy.navSaved, equals('Catatan'));
       expect(AppCopy.navSettings, equals('Pengaturan'));
     });
@@ -108,7 +108,7 @@ void main() {
       expect(AppCopy.accessUnavailableFor('Fikih Syafi\'i'),
           equals('Akses ke Fikih Syafi\'i belum aktif. Pilih paket atau gunakan voucher untuk melanjutkan.'));
       expect(AppCopy.planWithAgent('Fikih Syafi\'i', '1 Bulan'),
-          equals('Fikih Syafi\'i — 1 Bulan'));
+          equals('Fikih Syafi\'i · 1 Bulan'));
     });
 
     test('UI screens and widgets do not leak prohibited terms into user-facing code', () {

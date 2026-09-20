@@ -1,6 +1,7 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/navigation_guard.dart';
@@ -217,6 +218,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final background = OTColors.canvas(isDark);
@@ -233,7 +235,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-          tooltip: 'Kembali',
+          tooltip: Loc.tr('back'),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -256,7 +258,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             TextButton(
               onPressed: _clearFilters,
               child: Text(
-                'Hapus filter',
+                Loc.tr('ui_ae4f9663d7'),
                 style: OTTypography.button(color: primaryAccent)
                     .copyWith(fontSize: 13),
               ),
@@ -290,11 +292,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       child: TextField(
                         controller: _searchCtrl,
                         onChanged: _onSearchChanged,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 13.5, color: textPrimary),
                         decoration: InputDecoration(
-                          hintText: 'Cari kitab, pengarang, atau penahkik…',
-                          hintStyle: GoogleFonts.outfit(
+                          hintText: Loc.tr('ui_214d016291'),
+                          hintStyle: ScholarlyFonts.outfit(
                             fontSize: 13.5,
                             color: textSecondary.withValues(alpha: 0.7),
                           ),
@@ -349,7 +351,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 child: Row(
                   children: [
                     Text(
-                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
+                      Loc.tr('booksShown', [_formatNumber(_filteredBooks!.length), _formatNumber(_allBooks!.length)]),
                       style:
                           OTTypography.caption(color: textSecondary).copyWith(
                         fontSize: 12,
@@ -419,7 +421,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       child: Row(
         children: [
           _filterChip(
-            label: hasFilters ? 'Filter aktif' : 'Semua kitab',
+            label: hasFilters ? Loc.tr('ui_c0c96d1d9a') : Loc.tr('allBooks'),
             isSelected: !hasFilters,
             onTap: hasFilters ? _clearFilters : () {},
             isDark: isDark,
@@ -433,7 +435,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             onPressed: () => _showFilterSheet(
                 isDark, surface, border, textPrimary, textSecondary),
             icon: const Icon(Icons.tune_rounded, size: 16),
-            label: const Text('Filter'),
+            label: Text(Loc.tr('ui_d7decf1aa2')),
             style: OutlinedButton.styleFrom(
               foregroundColor: textPrimary,
               side: BorderSide(color: border),
@@ -464,11 +466,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             child: ListView(
               shrinkWrap: true,
               children: [
-                Text('Saring koleksi',
+                Text(Loc.tr('ui_ac03e7c93b'),
                     style: OTTypography.screenTitle(color: textPrimary)),
                 const SizedBox(height: 16),
                 if (_availableSections.length > 1) ...[
-                  Text('Bidang',
+                  Text(Loc.tr('ui_8b71077ed7'),
                       style: OTTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
@@ -488,7 +490,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                           .toList()),
                   const SizedBox(height: 16),
                 ],
-                Text('Era',
+                Text(Loc.tr('ui_f37a89cbd1'),
                     style: OTTypography.captionMedium(color: textSecondary)),
                 Wrap(
                     spacing: 8,
@@ -515,7 +517,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         .toList()),
                 if (_hasTypes) ...[
                   const SizedBox(height: 16),
-                  Text('Jenis kitab',
+                  Text(Loc.tr('ui_47b35543e3'),
                       style: OTTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
@@ -539,7 +541,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       _clearFilters();
                       Navigator.pop(sheetContext);
                     },
-                    child: const Text('Hapus semua filter')),
+                    child: Text(Loc.tr('ui_a74cf8b9bd'))),
               ],
             ),
           ),
@@ -561,14 +563,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     // Mode 1: Multipel Sub-Bagian (seperti Tafsir & Sastra Arab)
     if (_availableSections.length > 1) {
       return SizedBox(
-        height: 38,
+        height: Loc.isArabic ? 60 : 48,
         child: ListView(
           physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
           children: [
             _filterChip(
-              label: 'Semua Bagian',
+              label: Loc.tr('ui_6e02202968'),
               isSelected: _selectedSection == null,
               onTap: () {
                 setState(() {
@@ -611,14 +613,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         widget.agent!.fieldId == 'fiqh';
     if (isSyafii && (_hasEras || _hasTypes)) {
       return SizedBox(
-        height: 38,
+        height: Loc.isArabic ? 60 : 48,
         child: ListView(
           physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
           children: [
             _filterChip(
-              label: 'Semua Era',
+              label: Loc.tr('ui_3236d63ff7'),
               isSelected: _selectedEra == null,
               onTap: () {
                 setState(() {
@@ -678,14 +680,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
     // Mode 3: Hadits, Ushul Fikih, & Tahawwulat (Abad Kronologis Turath)
     return SizedBox(
-      height: 38,
+      height: Loc.isArabic ? 60 : 48,
       child: ListView(
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
         children: [
           _filterChip(
-            label: 'Semua Era',
+            label: Loc.tr('ui_3236d63ff7'),
             isSelected: _selectedCentury == null,
             onTap: () {
               setState(() {
@@ -783,14 +785,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               Icon(Icons.search_off_rounded, size: 48, color: textSecondary),
               const SizedBox(height: 12),
               Text(
-                'Belum ada kitab yang cocok',
+                Loc.tr('ui_022c202d54'),
                 style: OTTypography.bodyMedium(color: textPrimary).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Coba gunakan kata kunci lain, nama pengarang, atau penahkik.',
+                Loc.tr('ui_6e35db0b1e'),
                 textAlign: TextAlign.center,
                 style: OTTypography.caption(color: textSecondary),
               ),
@@ -806,7 +808,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Hapus filter',
+                      Loc.tr('ui_ae4f9663d7'),
                       style: OTTypography.button(color: textPrimary)
                           .copyWith(fontSize: 13),
                     ),
@@ -868,7 +870,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     final activeFg = isDark ? Colors.black : Colors.white;
 
     return Padding(
-      padding: const EdgeInsets.only(right: 6),
+      padding: const EdgeInsetsDirectional.only(end: 6),
       child: AppleInteractiveWrapper(
         onTap: onTap,
         pressedScale: 0.94,
@@ -888,7 +890,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           ),
           alignment: Alignment.center,
           child: Text(
-            label,
+            Loc.text(label),
             style: OTTypography.caption(
                     color: isSelected ? activeFg : textSecondary)
                 .copyWith(

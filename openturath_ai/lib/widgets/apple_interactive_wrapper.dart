@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -106,6 +107,7 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final hasAction = widget.onTap != null || widget.onLongPress != null;
     final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 

@@ -1,8 +1,9 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/design/ot_colors.dart';
@@ -217,8 +218,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
     if (title.isEmpty && body.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Isi judul atau tulis catatan terlebih dahulu.')),
+        SnackBar(
+            content: Text(Loc.tr('ui_4ccf3c2529'))),
       );
       return;
     }
@@ -271,6 +272,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
@@ -310,7 +312,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                 if (widget.fullScreen)
                   IconButton(
                     icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-                    tooltip: 'Kembali',
+                    tooltip: Loc.tr('back'),
                     onPressed: () => Navigator.pop(context),
                   ),
                 Column(
@@ -318,7 +320,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      widget.item != null ? 'Edit catatan' : 'Catatan baru',
+                      widget.item != null ? Loc.tr('editNote') : Loc.tr('ui_bdbc1bc83d'),
                       style:
                           OTTypography.screenTitle(color: textPrimary).copyWith(
                         fontSize: 17,
@@ -328,10 +330,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                     if (_isSavingDraft || _draftSaved || _draftRestored)
                       Text(
                         _isSavingDraft
-                            ? 'Menyimpan draf...'
+                            ? Loc.tr('ui_38329dceb2')
                             : (_draftRestored
-                                ? 'Draf dipulihkan'
-                                : 'Draf tersimpan'),
+                                ? Loc.tr('ui_9e29bfcc3a')
+                                : Loc.tr('ui_4d08ace78e')),
                         style:
                             OTTypography.caption(color: textSecondary).copyWith(
                           fontSize: 10.5,
@@ -363,7 +365,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                             borderRadius: BorderRadius.zero,
                           ),
                           child: Text(
-                            'Tulis',
+                            Loc.tr('ui_d1d150c064'),
                             style: OTTypography.captionMedium(
                               color: !_isPreview
                                   ? (isDark
@@ -388,7 +390,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                             borderRadius: BorderRadius.zero,
                           ),
                           child: Text(
-                            'Pratinjau',
+                            Loc.tr('ui_b062be87ba'),
                             style: OTTypography.captionMedium(
                               color: _isPreview
                                   ? (isDark
@@ -415,7 +417,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         borderRadius: BorderRadius.zero),
                   ),
                   child: Text(
-                    'Simpan',
+                    Loc.tr('save'),
                     style: OTTypography.captionMedium(
                       color: isDark ? const Color(0xFF18181B) : Colors.white,
                     ).copyWith(fontWeight: FontWeight.w700),
@@ -441,50 +443,50 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                 children: [
                   _ToolbarBtn(
                     label: 'B',
-                    tooltip: 'Tebal',
+                    tooltip: Loc.tr('ui_0ad31d3dbc'),
                     isBold: true,
                     onTap: () =>
                         _applyFormat('**', '**', defaultText: 'teks tebal'),
                   ),
                   _ToolbarBtn(
                     label: 'I',
-                    tooltip: 'Miring',
+                    tooltip: Loc.tr('ui_fab1614b6f'),
                     isItalic: true,
                     onTap: () =>
                         _applyFormat('*', '*', defaultText: 'teks miring'),
                   ),
                   _ToolbarBtn(
                     icon: Icons.format_list_bulleted_rounded,
-                    tooltip: 'Daftar Poin',
+                    tooltip: Loc.tr('ui_e0d33b4f52'),
                     onTap: () =>
                         _applyFormat('\n- ', '', defaultText: 'poin catatan'),
                   ),
                   _ToolbarBtn(
                     icon: Icons.format_quote_rounded,
-                    tooltip: 'Kutipan',
+                    tooltip: Loc.tr('ui_31ac832098'),
                     onTap: () =>
                         _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
                   ),
                   _ToolbarBtn(
                     label: '« »',
-                    tooltip: 'Kutipan Arab',
+                    tooltip: Loc.tr('ui_ba0dab7b01'),
                     onTap: () => _applyFormat('«', '»', defaultText: 'عبارة'),
                   ),
                   _ToolbarBtn(
                     label: 'H1',
-                    tooltip: 'Judul Bab',
+                    tooltip: Loc.tr('ui_63395fecb6'),
                     onTap: () =>
                         _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
                   ),
                   _ToolbarBtn(
                     icon: Icons.format_textdirection_l_to_r_rounded,
-                    tooltip: 'Orientasi Kiri ke Kanan (LTR)',
+                    tooltip: Loc.tr('ui_67450a0c82'),
                     isActive: _textDirection == TextDirection.ltr,
                     onTap: () => _applyDirection(TextDirection.ltr),
                   ),
                   _ToolbarBtn(
                     icon: Icons.format_textdirection_r_to_l_rounded,
-                    tooltip: 'Orientasi Kanan ke Kiri / Arab (RTL)',
+                    tooltip: Loc.tr('ui_7cb5acfec8'),
                     isActive: _textDirection == TextDirection.rtl,
                     onTap: () => _applyDirection(TextDirection.rtl),
                   ),
@@ -503,7 +505,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         if (_titleController.text.trim().isNotEmpty) ...[
                           Text(
                             _titleController.text.trim(),
-                            style: GoogleFonts.newsreader(
+                            style: ScholarlyFonts.newsreader(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               color: textPrimary,
@@ -519,7 +521,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 40),
                                   child: Text(
-                                    'Belum ada isi catatan.',
+                                    Loc.tr('ui_168ac11968'),
                                     style:
                                         OTTypography.body(color: textSecondary),
                                   ),
@@ -531,22 +533,22 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                   data: _bodyController.text,
                                   selectable: true,
                                   styleSheet: MarkdownStyleSheet(
-                                    p: GoogleFonts.outfit(
+                                    p: ScholarlyFonts.outfit(
                                       fontSize: 14.5,
                                       height: 1.6,
                                       color: textPrimary,
                                     ),
-                                    h1: GoogleFonts.newsreader(
+                                    h1: ScholarlyFonts.newsreader(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
                                       color: textPrimary,
                                     ),
-                                    h2: GoogleFonts.newsreader(
+                                    h2: ScholarlyFonts.newsreader(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w600,
                                       color: textPrimary,
                                     ),
-                                    blockquote: GoogleFonts.outfit(
+                                    blockquote: ScholarlyFonts.outfit(
                                       fontSize: 14,
                                       fontStyle: FontStyle.italic,
                                       color: textSecondary,
@@ -562,7 +564,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                         ),
                                       ),
                                     ),
-                                    code: GoogleFonts.sourceCodePro(
+                                    code: ScholarlyFonts.sourceCodePro(
                                       fontSize: 13,
                                       backgroundColor: surfaceSubtle,
                                     ),
@@ -578,14 +580,14 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                       // Title TextField
                       TextField(
                         controller: _titleController,
-                        style: GoogleFonts.newsreader(
+                        style: ScholarlyFonts.newsreader(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Judul catatan',
-                          hintStyle: GoogleFonts.newsreader(
+                          hintText: Loc.tr('ui_74ed01cdfb'),
+                          hintStyle: ScholarlyFonts.newsreader(
                             fontSize: 20,
                             color: textSecondary.withValues(alpha: 0.6),
                           ),
@@ -608,15 +610,15 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         textAlign: _textDirection == TextDirection.rtl
                             ? TextAlign.right
                             : TextAlign.left,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 14.5,
                           height: 1.55,
                           color: textPrimary,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Tulis catatan atau tempel ibarah di sini…',
+                          hintText: Loc.tr('ui_d0b4373b9e'),
                           hintTextDirection: _textDirection,
-                          hintStyle: GoogleFonts.outfit(
+                          hintStyle: ScholarlyFonts.outfit(
                             fontSize: 14,
                             color: textSecondary.withValues(alpha: 0.6),
                           ),
@@ -655,6 +657,7 @@ class _ToolbarBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textSecondary = OTColors.textSecondary(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
@@ -682,7 +685,7 @@ class _ToolbarBtn extends StatelessWidget {
                   size: 17, color: isActive ? accent : textSecondary)
               : Text(
                   label!,
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 13,
                     fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
                     fontStyle:

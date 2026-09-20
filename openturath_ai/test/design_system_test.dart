@@ -82,16 +82,16 @@ void main() {
       final arDisplay = OTTypography.arabicDisplay();
       expect(arDisplay.fontSize, 24);
       expect(arDisplay.fontWeight, FontWeight.w700);
-      expect(arDisplay.height, 1.5);
+      expect(arDisplay.height, 1.85);
 
       final arReading = OTTypography.arabicReading();
       expect(arReading.fontSize, 18);
       expect(arReading.fontWeight, FontWeight.w500);
-      expect(arReading.height, 1.6);
+      expect(arReading.height, 1.85);
 
       final arQuote = OTTypography.arabicQuote();
       expect(arQuote.fontSize, 15);
-      expect(arQuote.height, 1.65);
+      expect(arQuote.height, 1.85);
     });
 
     test('OTRadius enforces disciplined curvature without bubble-boxing', () {

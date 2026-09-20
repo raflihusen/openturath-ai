@@ -1,7 +1,8 @@
-/// Utilitas penanggalan Islam (Hijriah) dan Masehi deterministik & akurat
+import 'localization.dart';
+/// Utilitas penanggalan Islam (Hijriah) dan Masehi tabular dan deterministik
 /// untuk tajuk editorial OpenTurath.
 class HijriDateUtils {
-  static const List<String> _hijriMonths = [
+  static const List<String> _hijriMonthsId = [
     'Muharram',
     'Shafar',
     'Rabi\'ul Awwal',
@@ -16,7 +17,7 @@ class HijriDateUtils {
     'Dzulhijjah',
   ];
 
-  static const List<String> _masehiMonths = [
+  static const List<String> _masehiMonthsId = [
     'Januari',
     'Februari',
     'Maret',
@@ -31,10 +32,24 @@ class HijriDateUtils {
     'Desember',
   ];
 
+  static List<String> get _hijriMonths => Loc.language == 'ar'
+      ? const ['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة']
+      : Loc.language == 'en'
+        ? const ['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Ula','Jumada al-Akhirah','Rajab','Sha‘ban','Ramadan','Shawwal','Dhu al-Qa‘dah','Dhu al-Hijjah']
+        : _hijriMonthsId;
+  static List<String> get _masehiMonths => Loc.language == 'ar'
+      ? const ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']
+      : Loc.language == 'en'
+        ? const ['January','February','March','April','May','June','July','August','September','October','November','December']
+        : _masehiMonthsId;
+
+  static String get _hijriEra => Loc.isArabic ? 'هـ' : Loc.language == 'en' ? 'AH' : 'H';
+  static String get _gregorianEra => Loc.isArabic ? 'م' : Loc.language == 'en' ? 'CE' : 'M';
+
   static final Map<String, ({int day, int month, int year})> _apiCache = {};
 
   /// Mengonversi DateTime Masehi ke representasi Hijriah (Tahun, Bulan, Hari).
-  /// Memanfaatkan cache API AlAdhan jika tersedia, atau perhitungan deterministik Umm al-Qura.
+  /// Memanfaatkan cache API AlAdhan jika tersedia, atau perhitungan aritmetika tabular, bukan penetapan rukyat atau tabel Umm al-Qura.
   static ({int day, int month, int year}) gregorianToHijri(DateTime date) {
     final key = '${date.year}-${date.month}-${date.day}';
     if (_apiCache.containsKey(key)) {
@@ -88,7 +103,7 @@ class HijriDateUtils {
         ? _masehiMonths[now.month - 1]
         : '';
 
-    return '${h.day} $hMonthName ${h.year} H • ${now.day} $mMonthName ${now.year} M';
+    return '${h.day} $hMonthName ${h.year} $_hijriEra • ${now.day} $mMonthName ${now.year} $_gregorianEra';
   }
 
   /// Menghasilkan hanya tanggal Hijriah pendek:
@@ -99,7 +114,7 @@ class HijriDateUtils {
     final hMonthName = (h.month >= 1 && h.month <= 12)
         ? _hijriMonths[h.month - 1]
         : 'Bulan';
-    return '${h.day} $hMonthName ${h.year} H';
+    return '${h.day} $hMonthName ${h.year} $_hijriEra';
   }
 
   /// Menghasilkan hanya tanggal Masehi pendek:
@@ -109,7 +124,7 @@ class HijriDateUtils {
     final mMonthName = (now.month >= 1 && now.month <= 12)
         ? _masehiMonths[now.month - 1]
         : '';
-    return '${now.day} $mMonthName ${now.year} M';
+    return '${now.day} $mMonthName ${now.year} $_gregorianEra';
   }
 
   /// Menambahkan durasi bulan kalender dengan month-end clamping deterministik.

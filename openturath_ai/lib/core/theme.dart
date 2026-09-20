@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'scholarly_fonts.dart';
 import 'design/ot_colors.dart';
 import 'design/ot_typography.dart';
 
@@ -189,7 +189,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.outfit(
+        titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: textPrimaryDark,
@@ -217,7 +217,7 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
+          textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.2,
@@ -231,7 +231,7 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
+          textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -252,7 +252,7 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: surfaceElevated,
-        contentTextStyle: GoogleFonts.outfit(
+        contentTextStyle: ScholarlyFonts.outfit(
           color: textPrimaryDark,
           fontSize: 13,
           fontWeight: FontWeight.w400,
@@ -266,7 +266,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: queryBoxBgDark,
-        hintStyle: GoogleFonts.outfit(
+        hintStyle: ScholarlyFonts.outfit(
           color: textTertiaryDark,
           fontSize: 14,
         ),
@@ -291,7 +291,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusXS),
           border: Border.all(color: borderDark, width: 1),
         ),
-        textStyle: GoogleFonts.outfit(
+        textStyle: ScholarlyFonts.outfit(
           color: textPrimaryDark,
           fontSize: 12,
         ),
@@ -299,12 +299,12 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceCardDark,
         surfaceTintColor: Colors.transparent,
-        titleTextStyle: GoogleFonts.outfit(
+        titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: textPrimaryDark,
         ),
-        contentTextStyle: GoogleFonts.outfit(
+        contentTextStyle: ScholarlyFonts.outfit(
           fontSize: 14,
           color: textSecondaryDark,
         ),
@@ -360,7 +360,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: GoogleFonts.outfit(
+        titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: textPrimaryLight,
@@ -388,7 +388,7 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
+          textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.2,
@@ -402,7 +402,7 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
-          textStyle: GoogleFonts.outfit(
+          textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
@@ -423,7 +423,7 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: textPrimaryLight,
-        contentTextStyle: GoogleFonts.outfit(
+        contentTextStyle: ScholarlyFonts.outfit(
           color: Colors.white,
           fontSize: 13,
           fontWeight: FontWeight.w400,
@@ -436,7 +436,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: queryBoxBgLight,
-        hintStyle: GoogleFonts.outfit(
+        hintStyle: ScholarlyFonts.outfit(
           color: textTertiaryLight,
           fontSize: 14,
         ),
@@ -460,7 +460,7 @@ class AppTheme {
           color: textPrimaryLight,
           borderRadius: BorderRadius.circular(radiusXS),
         ),
-        textStyle: GoogleFonts.outfit(
+        textStyle: ScholarlyFonts.outfit(
           color: Colors.white,
           fontSize: 12,
         ),
@@ -468,12 +468,12 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceCardLight,
         surfaceTintColor: Colors.transparent,
-        titleTextStyle: GoogleFonts.outfit(
+        titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: textPrimaryLight,
         ),
-        contentTextStyle: GoogleFonts.outfit(
+        contentTextStyle: ScholarlyFonts.outfit(
           fontSize: 14,
           color: textSecondaryLight,
         ),
@@ -502,7 +502,7 @@ class AppTheme {
         height: height,
       );
     }
-    return GoogleFonts.newsreader(
+    return ScholarlyFonts.newsreader(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
@@ -528,7 +528,7 @@ class AppTheme {
         height: height,
       );
     }
-    return GoogleFonts.outfit(
+    return ScholarlyFonts.outfit(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,

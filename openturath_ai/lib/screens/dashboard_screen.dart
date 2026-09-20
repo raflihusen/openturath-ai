@@ -1,6 +1,7 @@
+import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
@@ -22,6 +23,9 @@ import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
+import '../widgets/openturath_brand.dart';
+import '../widgets/language_switcher.dart';
+import '../widgets/tahawwulat_feature.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
@@ -37,35 +41,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final AuthService _authService = AuthService();
   final AgentService _agentService = AgentService();
   final TextEditingController _searchController = TextEditingController();
+  late final UpdateService _updateService;
+  bool _hasShownUpdateDialog = false;
 
   UserModel? _initialUser;
   List<AgentModel> _agents = AgentModel.defaultAgents;
   String _searchQuery = '';
   String? _lastOpenedAgentId;
-  bool _hasShownUpdateDialog = false;
 
   @override
   void initState() {
     super.initState();
     _loadData();
     _loadLastOpenedAgent();
-    _initUpdateListener();
+    _updateService = UpdateService();
+    _updateService.addListener(_onUpdateServiceChanged);
+    _updateService.checkForUpdatesSilently();
   }
 
-  void _initUpdateListener() {
-    final updateService = UpdateService();
-    updateService.addListener(_onUpdateStatusChanged);
-    updateService.checkForUpdatesSilently();
-  }
-
-  void _onUpdateStatusChanged() {
+  void _onUpdateServiceChanged() {
     if (!mounted) return;
-    final updateService = UpdateService();
-    if (updateService.isUpdateReady && !_hasShownUpdateDialog) {
+    if (_updateService.isUpdateReady && !_hasShownUpdateDialog) {
       _hasShownUpdateDialog = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          UpdateReadyDialog.show(context, updateService);
+          UpdateReadyDialog.show(context, _updateService);
         }
       });
     }
@@ -83,7 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void dispose() {
-    UpdateService().removeListener(_onUpdateStatusChanged);
+    _updateService.removeListener(_onUpdateServiceChanged);
     _searchController.dispose();
     super.dispose();
   }
@@ -113,10 +113,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _openNotebook(AgentModel agent, UserModel? user) {
+    if (agent.kind == CorpusKind.scholar) {
+      AppSnackBar.warning(context, Loc.tr('scholarPreparingBody'));
+      return;
+    }
     if (agent.isComingSoon) {
       AppSnackBar.warning(
         context,
-        'Koleksi kitab untuk ${agent.title} masih disiapkan.',
+        Loc.tr('collectionPreparing', [agent.title]),
       );
       return;
     }
@@ -141,18 +145,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
-  static const List<({String fieldId, String name, int specialistCount})>
-      _curatedDisciplines = [
-    (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
-    (fieldId: 'hadith', name: 'Hadis', specialistCount: 1),
-    (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
-    (fieldId: 'aqidah', name: 'Akidah', specialistCount: 1),
-    (fieldId: 'usul', name: 'Usul Fikih', specialistCount: 1),
-    (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1),
+  static const List<({
+    String fieldId,
+    String name,
+    String nameArabic,
+    String iconicKitab,
+    int specialistCount,
+    IconData icon,
+  })> _curatedDisciplines = [
+    (
+      fieldId: 'fiqh',
+      name: 'Fikih 4 Mazhab',
+      nameArabic: 'الفقه المقارن والمذاهب',
+      iconicKitab: 'المنهاج · الوجيز · المحرر',
+      specialistCount: 6,
+      icon: Icons.account_balance_outlined,
+    ),
+    (
+      fieldId: 'hadith',
+      name: 'Hadits & Syarah',
+      nameArabic: 'الحديث النبوي وشروحه',
+      iconicKitab: 'صحيح البخاري · فتح الباري',
+      specialistCount: 3,
+      icon: Icons.auto_stories_outlined,
+    ),
+    (
+      fieldId: 'tafsir',
+      name: 'Tafsir & Ulumul Quran',
+      nameArabic: 'التفسير وعلوم القرآن',
+      iconicKitab: 'ابن كثير · القرطبي · الإتقان',
+      specialistCount: 2,
+      icon: Icons.menu_book_outlined,
+    ),
+    (
+      fieldId: 'tasawwuf',
+      name: 'Tasawwuf & Adzkar',
+      nameArabic: 'التصوف والتزكية والأذكار',
+      iconicKitab: 'إحياء علوم الدين · الأذكار',
+      specialistCount: 1,
+      icon: Icons.spa_outlined,
+    ),
+    (
+      fieldId: 'usul',
+      name: 'Ushul Fikih & Qawaid',
+      nameArabic: 'أصول الفقه والقواعد الفقهية',
+      iconicKitab: 'الورقات · جمع الجوامع · الأشباه',
+      specialistCount: 2,
+      icon: Icons.gavel_outlined,
+    ),
+    (
+      fieldId: 'aqidah',
+      name: 'Aqidah & Ushuluddin',
+      nameArabic: 'العقيدة وأصول الدين',
+      iconicKitab: 'جوهرة التوحيد · لمع الأدلة',
+      specialistCount: 1,
+      icon: Icons.shield_outlined,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
@@ -194,17 +247,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── 1. Header Centered: OpenTurath ──
-                    Center(
-                      child: Text(
-                        'OpenTurath',
-                        style: GoogleFonts.newsreader(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.4,
-                          color: textPrimary,
-                        ),
-                      ),
-                    ),
+                    const Row(children: [
+                      Expanded(child: OpenTurathBrand()),
+                      LanguageSwitcher(),
+                    ]),
 
                     const SizedBox(height: 18),
 
@@ -265,6 +311,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 18),
 
+                    if (_searchQuery.isEmpty) ...[
+                      TahawwulatFeature(onOpen: () => _openNotebook(
+                        _agents.firstWhere((a) => a.id == 'fiqh_tahawwulat',
+                          orElse: () => AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat')), user)),
+                      const SizedBox(height: 22),
+                    ],
+
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
                       height: 48,
@@ -284,11 +337,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               controller: _searchController,
                               onChanged: (val) =>
                                   setState(() => _searchQuery = val.trim()),
-                              style: GoogleFonts.outfit(
+                              style: ScholarlyFonts.outfit(
                                   fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
                                 hintText: AppCopy.dashboardSearchHint,
-                                hintStyle: GoogleFonts.outfit(
+                                hintStyle: ScholarlyFonts.outfit(
                                     fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
@@ -321,7 +374,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     if (_searchQuery.isNotEmpty) ...[
                       Text(
                         AppCopy.searchResults,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.2,
@@ -333,6 +386,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context) {
                           final q = _searchQuery.toLowerCase();
                           final matches = _agents.where((a) {
+                            if (a.kind == CorpusKind.scholar) return false;
                             final title = a.title.toLowerCase();
                             final arabic = a.titleArabic;
                             final subtitle = a.subtitleAcademic.toLowerCase();
@@ -353,7 +407,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               child: Center(
                                 child: Text(
                                   AppCopy.noAssistantsFound,
-                                  style: GoogleFonts.outfit(
+                                  style: ScholarlyFonts.outfit(
                                       fontSize: 13.5, color: textSecondary),
                                 ),
                               ),
@@ -370,6 +424,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
+                                titleArabic: agent.titleArabic,
+                                emoji: agent.emoji,
+                                scopeLabel: agent.subtitleAcademic,
+                                referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
                                 statusLabel: agent.isComingSoon
                                     ? AppCopy.comingSoon
                                     : null,
@@ -391,7 +449,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           Text(
                             AppCopy.chooseField,
-                            style: GoogleFonts.outfit(
+                            style: ScholarlyFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.2,
@@ -413,7 +471,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               children: [
                                 Text(
                                   AppCopy.seeAll,
-                                  style: GoogleFonts.outfit(
+                                  style: ScholarlyFonts.outfit(
                                     fontSize: 12.5,
                                     fontWeight: FontWeight.w600,
                                     color: textPrimary,
@@ -430,7 +488,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       const SizedBox(height: 14),
 
-                      // Setiap bidang tampil sebagai indeks katalog, bukan kartu kosong.
+                      // Setiap bidang tampil sebagai kartu direktori keilmuan adaptif berkelas.
                       GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -439,7 +497,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: 1.28,
+                          mainAxisExtent: 172,
                         ),
                         itemCount: _curatedDisciplines.length,
                         itemBuilder: (context, index) {
@@ -459,75 +517,95 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                             pressedScale: 0.96,
                             hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(16),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: surface,
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: BorderRadius.circular(16),
                                 border: Border.all(color: border, width: 1.0),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          (index + 1)
-                                              .toString()
-                                              .padLeft(2, '0'),
-                                          style: GoogleFonts.outfit(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.1,
-                                            color: textSecondary,
-                                          ),
+                              padding: const EdgeInsets.all(14),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          color: border.withValues(alpha: 0.25),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
-                                        Icon(
-                                          Icons.north_east_rounded,
+                                        child: Icon(
+                                          disc.icon,
                                           size: 17,
-                                          color: textSecondary.withValues(
-                                              alpha: 0.72),
+                                          color: textPrimary,
                                         ),
-                                      ],
+                                      ),
+                                      Text(
+                                        '${disc.specialistCount} AI',
+                                        style: ScholarlyFonts.outfit(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    disc.name,
+                                    style: ScholarlyFonts.newsreader(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: -0.2,
+                                      color: textPrimary,
+                                      height: 1.15,
                                     ),
-                                    const Spacer(),
-                                    Text(
-                                      disc.name,
-                                      style: GoogleFonts.newsreader(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.25,
-                                        color: textPrimary,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    disc.nameArabic,
+                                    textDirection: TextDirection.rtl,
+                                    style: ScholarlyFonts.scheherazadeNew(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: textSecondary,
+                                      height: 1.85,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const Spacer(),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 7, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: canvas,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                          color: border.withValues(alpha: 0.6),
+                                          width: 0.5),
+                                    ),
+                                    child: Text(
+                                      disc.iconicKitab,
+                                      textDirection: TextDirection.rtl,
+                                      style: ScholarlyFonts.scheherazadeNew(
+                                        fontSize: 11,
+                                        color: textSecondary,
+                                        height: 1.85,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      AppCopy.assistantsAvailableCount(
-                                          disc.specialistCount),
-                                      style: GoogleFonts.outfit(
-                                        fontSize: 11.5,
-                                        color: textSecondary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Container(
-                                      height: 2,
-                                      width: 32 + (index % 3) * 12,
-                                      decoration: BoxDecoration(
-                                        color:
-                                            textPrimary.withValues(alpha: 0.72),
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -562,6 +640,7 @@ class _StudyEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
     final hasHistory = agent != null;
     final title = hasLiveSession || hasHistory
@@ -576,7 +655,7 @@ class _StudyEntryCard extends StatelessWidget {
         ? AppCopy.continueStudy
         : AppCopy.startStudy;
 
-    const categoryLabel = AppCopy.studyBookCategory;
+    final categoryLabel = AppCopy.studyBookCategory;
 
     final surface = OTColors.surface(isDark);
     final border = OTColors.border(isDark);
@@ -609,7 +688,7 @@ class _StudyEntryCard extends StatelessWidget {
                       displayName == null
                           ? AppCopy.ahlanDefault
                           : AppCopy.ahlanWithName(displayName),
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: textSecondary,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -618,9 +697,9 @@ class _StudyEntryCard extends StatelessWidget {
                     const SizedBox(height: 22),
                     Text(
                       hasLiveSession || hasHistory
-                          ? 'LANJUTKAN KAJIAN'
+                          ? Loc.tr('ui_fb007d4dc4')
                           : categoryLabel,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: textSecondary,
                         fontSize: 9.5,
                         fontWeight: FontWeight.w700,
@@ -629,10 +708,10 @@ class _StudyEntryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      title,
+                      Loc.text(title),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.newsreader(
+                      style: ScholarlyFonts.newsreader(
                         color: textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
@@ -645,7 +724,7 @@ class _StudyEntryCard extends StatelessWidget {
                       subtitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: textSecondary,
                         fontSize: 12.5,
                         height: 1.35,
@@ -666,7 +745,7 @@ class _StudyEntryCard extends StatelessWidget {
                             children: [
                               Text(
                                 primaryLabel,
-                                style: GoogleFonts.outfit(
+                                style: ScholarlyFonts.outfit(
                                   color: isDark
                                       ? OTColors.canvasDark
                                       : Colors.white,
@@ -718,6 +797,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
       decoration: BoxDecoration(
@@ -743,7 +823,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                     children: [
                       Text(
                         AppCopy.today,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           color: textSecondary,
                           fontSize: 9.5,
                           fontWeight: FontWeight.w500,
@@ -754,7 +834,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                         masehiDate,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           color: textPrimary,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -788,7 +868,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                     children: [
                       Text(
                         AppCopy.hijriCalendar,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           color: textSecondary,
                           fontSize: 9.5,
                           fontWeight: FontWeight.w500,
@@ -799,7 +879,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                         hijriDate,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           color: textPrimary,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -951,8 +1031,8 @@ class _DashboardAnnouncementCarouselState
                   ),
                 ),
                 child: Text(
-                  slide.badge,
-                  style: GoogleFonts.outfit(
+                  Loc.text(slide.badge),
+                  style: ScholarlyFonts.outfit(
                     fontSize: 10.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.4,
@@ -962,8 +1042,8 @@ class _DashboardAnnouncementCarouselState
               ),
               const SizedBox(height: 12),
               Text(
-                slide.title,
-                style: GoogleFonts.newsreader(
+                Loc.text(slide.title),
+                style: ScholarlyFonts.newsreader(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.3,
@@ -972,8 +1052,8 @@ class _DashboardAnnouncementCarouselState
               ),
               const SizedBox(height: 12),
               Text(
-                slide.detailedContent,
-                style: GoogleFonts.outfit(
+                Loc.text(slide.detailedContent),
+                style: ScholarlyFonts.outfit(
                   fontSize: 14,
                   height: 1.55,
                   color: widget.textSecondary,
@@ -994,7 +1074,7 @@ class _DashboardAnnouncementCarouselState
                   ),
                   child: Text(
                     AppCopy.close,
-                    style: GoogleFonts.outfit(
+                    style: ScholarlyFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1010,6 +1090,7 @@ class _DashboardAnnouncementCarouselState
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     return Column(
       children: [
         SizedBox(
@@ -1065,8 +1146,8 @@ class _DashboardAnnouncementCarouselState
                                 ),
                               ),
                               child: Text(
-                                slide.badge,
-                                style: GoogleFonts.outfit(
+                                Loc.text(slide.badge),
+                                style: ScholarlyFonts.outfit(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.3,
@@ -1079,7 +1160,7 @@ class _DashboardAnnouncementCarouselState
                               children: [
                                 Text(
                                   AppCopy.readMore,
-                                  style: GoogleFonts.outfit(
+                                  style: ScholarlyFonts.outfit(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                     color: widget.textSecondary,
@@ -1096,8 +1177,8 @@ class _DashboardAnnouncementCarouselState
                           ],
                         ),
                         Text(
-                          slide.title,
-                          style: GoogleFonts.newsreader(
+                          Loc.text(slide.title),
+                          style: ScholarlyFonts.newsreader(
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
                             letterSpacing: -0.2,
@@ -1108,7 +1189,7 @@ class _DashboardAnnouncementCarouselState
                         ),
                         Text(
                           slide.summary,
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             fontSize: 12,
                             color: widget.textSecondary,
                             height: 1.35,

@@ -216,7 +216,7 @@ void main() {
 
   group('Localization & AppConfig Tests', () {
     test('Localization dictionary returns valid strings for all supported languages', () {
-      expect(Loc.tr('app_name'), equals('OpenTurath AI'));
+      expect(Loc.tr('app_name'), equals('OpenTurath'));
       expect(Loc.tr('choose_plan'), isNotEmpty);
       expect(Loc.tr('save'), isNotEmpty);
     });

@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
@@ -18,6 +19,7 @@ class CorpusKindControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
@@ -31,7 +33,7 @@ class CorpusKindControl extends StatelessWidget {
       child: Row(
         children: [
           _CorpusKindTab(
-            label: 'Bidang ilmu',
+            label: Loc.tr('ui_edf572027a'),
             selected: value == CorpusKind.discipline,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -39,7 +41,7 @@ class CorpusKindControl extends StatelessWidget {
           ),
           const SizedBox(width: 24),
           _CorpusKindTab(
-            label: 'Khazanah ulama',
+            label: Loc.tr('ui_3a9ab0a6cd'),
             selected: value == CorpusKind.scholar,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -68,6 +70,7 @@ class _CorpusKindTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     return Expanded(
       child: InkWell(
         onTap: () {
@@ -79,7 +82,7 @@ class _CorpusKindTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              label,
+              Loc.text(label),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: OTTypography.bodyMedium(

@@ -92,7 +92,8 @@
     "pages": "468",
     "halaman": "468",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "matn"
   },
   {
     "id": 6,
@@ -187,7 +188,8 @@
     "pages": "278",
     "halaman": "278",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "matn"
   },
   {
     "id": 11,
@@ -391,7 +393,8 @@
     "pages": "48",
     "halaman": "48",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "matn"
   },
   {
     "id": 22,
@@ -405,7 +408,8 @@
     "سنة_الطبع_والطبعة": "الأولى ، 1417 هـ - 1997 م",
     "عدد_الأجزاء": "13",
     "folder_sumber": "العزيز شرح الوجيز = الشرح الكبير للرافعي - ط العلمية",
-    "عدد_الصفحات": "7286"
+    "عدد_الصفحات": "7286",
+    "text_type": "sharh"
   },
   {
     "id": 23,
@@ -419,7 +423,8 @@
     "سنة_الطبع_والطبعة": "طبعة معتمدة",
     "عدد_الأجزاء": "12",
     "folder_sumber": "فتح العزيز بشرح الوجيز = الشرح الكبير للرافعي",
-    "عدد_الصفحات": "6056"
+    "عدد_الصفحات": "6056",
+    "text_type": "sharh"
   },
   {
     "id": 24,
@@ -723,7 +728,8 @@
     "pages": "248",
     "halaman": "248",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "matn"
   },
   {
     "id": 40,
@@ -761,7 +767,8 @@
     "pages": "2506",
     "halaman": "2506",
     "jilid": "4",
-    "volumes": "4"
+    "volumes": "4",
+    "text_type": "sharh"
   },
   {
     "id": 42,
@@ -875,7 +882,8 @@
     "pages": "5723",
     "halaman": "5723",
     "jilid": "10",
-    "volumes": "10"
+    "volumes": "10",
+    "text_type": "sharh"
   },
   {
     "id": 48,
@@ -913,7 +921,8 @@
     "pages": "586",
     "halaman": "586",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 50,
@@ -970,7 +979,8 @@
     "pages": "162",
     "halaman": "162",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "matn"
   },
   {
     "id": 53,
@@ -989,7 +999,8 @@
     "pages": "350",
     "halaman": "350",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 54,
@@ -1008,7 +1019,8 @@
     "pages": "2150",
     "halaman": "2150",
     "jilid": "5",
-    "volumes": "5"
+    "volumes": "5",
+    "text_type": "sharh"
   },
   {
     "id": 55,
@@ -1065,7 +1077,8 @@
     "pages": "200",
     "halaman": "200",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "matn"
   },
   {
     "id": 58,
@@ -1103,7 +1116,8 @@
     "pages": "1042",
     "halaman": "1042",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 60,
@@ -1141,7 +1155,8 @@
     "pages": "319",
     "halaman": "319",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 62,
@@ -1179,7 +1194,8 @@
     "pages": "935",
     "halaman": "935",
     "jilid": "2",
-    "volumes": "2"
+    "volumes": "2",
+    "text_type": "sharh"
   },
   {
     "id": 64,
@@ -1255,7 +1271,8 @@
     "pages": "345",
     "halaman": "345",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 68,
@@ -1312,7 +1329,8 @@
     "pages": "1598",
     "halaman": "1598",
     "jilid": "4",
-    "volumes": "4"
+    "volumes": "4",
+    "text_type": "hashiyah"
   },
   {
     "id": 71,
@@ -1350,7 +1368,8 @@
     "pages": "2822",
     "halaman": "2822",
     "jilid": "5",
-    "volumes": "5"
+    "volumes": "5",
+    "text_type": "hashiyah"
   },
   {
     "id": 73,
@@ -1369,7 +1388,8 @@
     "pages": "1984",
     "halaman": "1984",
     "jilid": "4",
-    "volumes": "4"
+    "volumes": "4",
+    "text_type": "hashiyah"
   },
   {
     "id": 74,
@@ -1388,7 +1408,8 @@
     "pages": "1855",
     "halaman": "1855",
     "jilid": "4",
-    "volumes": "4"
+    "volumes": "4",
+    "text_type": "hashiyah"
   },
   {
     "id": 75,
@@ -1407,7 +1428,8 @@
     "pages": "711",
     "halaman": "711",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 76,
@@ -1426,7 +1448,8 @@
     "pages": "1571",
     "halaman": "1571",
     "jilid": "4",
-    "volumes": "4"
+    "volumes": "4",
+    "text_type": "hashiyah"
   },
   {
     "id": 77,
@@ -1445,7 +1468,8 @@
     "pages": "402",
     "halaman": "402",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 78,
@@ -1464,7 +1488,8 @@
     "pages": "644",
     "halaman": "644",
     "jilid": "1",
-    "volumes": "1"
+    "volumes": "1",
+    "text_type": "sharh"
   },
   {
     "id": 79,

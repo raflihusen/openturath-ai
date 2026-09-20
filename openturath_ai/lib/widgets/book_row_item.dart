@@ -1,5 +1,6 @@
+import '../core/localization.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
@@ -23,6 +24,7 @@ class BookRowItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
@@ -80,7 +82,7 @@ class BookRowItem extends StatelessWidget {
                       ),
                       child: Text(
                         '#${book.editionId}',
-                        style: GoogleFonts.firaCode(
+                        style: ScholarlyFonts.firaCode(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w600,
                           color: textSecondary,
@@ -94,7 +96,7 @@ class BookRowItem extends StatelessWidget {
                           book.sectionArabic!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                             color: textSecondary,
@@ -115,8 +117,8 @@ class BookRowItem extends StatelessWidget {
                           border: Border.all(color: border.withValues(alpha: 0.7), width: 0.5),
                         ),
                         child: Text(
-                          'w. ${book.verifiedDeathYearHijri} H',
-                          style: GoogleFonts.outfit(
+                          Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}']),
+                          style: ScholarlyFonts.outfit(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
@@ -143,7 +145,7 @@ class BookRowItem extends StatelessWidget {
                           ).copyWith(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            height: 1.45,
+                            height: 1.85,
                             letterSpacing: 0,
                           ),
                         ),
@@ -174,7 +176,7 @@ class BookRowItem extends StatelessWidget {
                         book.authorArabic,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                           color: textSecondary,
@@ -194,7 +196,7 @@ class BookRowItem extends StatelessWidget {
                       fact,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w500,
                         color: textSecondary,

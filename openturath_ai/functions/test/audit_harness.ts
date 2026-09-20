@@ -118,16 +118,24 @@ export function loadBackend(root = process.cwd()) {
     config: () => ({}),
   };
   const deps: any = { 'firebase-functions':chain, 'firebase-admin':{initializeApp:()=>{},firestore,auth:()=>auth}, axios:{default:axios}, crypto };
+  // Evaluate the real catalog used by production, including named ES imports.
+  const catalogSource = fs.readFileSync(path.join(root, 'functions/src/notebook_catalog.ts'), 'utf8')
+    .replace(/export (const|function|async function) /g, '$1 ');
+  const catalogExports: any = {};
+  vm.runInNewContext(stripTypeScriptTypes(catalogSource + '\nexports.NOTEBOOK_ENTITIES = NOTEBOOK_ENTITIES; exports.AGENT_TO_ENTITY = AGENT_TO_ENTITY; exports.resolveAgentNotebook = resolveAgentNotebook;'),
+    {exports: catalogExports, console, Math});
+  deps['./notebook_catalog'] = catalogExports;
   const file = path.join(root,'functions/src/index.ts');
   let source = fs.readFileSync(file,'utf8')
     .replace(/^import \* as (\w+) from "([^"]+)";/gm, 'const $1 = require("$2");')
     .replace(/^import (\w+) from "([^"]+)";/gm, 'const $1 = require("$2").default;')
+    .replace(/^import\s*\{([\s\S]*?)\}\s*from\s*"([^"]+)";/gm, 'const {$1} = require("$2");')
     .replace(/export (const|function|async function) /g,'$1 ');
   source += '\nexports.api = {' + [
     'getEntitlementAccess','processSuccessfulPayment','dokuWebhook','getDokuConfig','notifySubscriptionServer',
     'onUserCreate','dailyRevoke','processProvisioningOutbox','cleanupOrphanedDeletions','redeemCode',
     'addCalendarMonthsClamped','verifySubscriptionFirestore','generateDokuSignature','handleLogin','chatGate',
-    'getAgentUrl','checkPaymentStatus',
+    'getAgentUrl','checkPaymentStatus','resolvePlanPricing','createCheckout',
   ].map(n=>n+':typeof '+n+' === "undefined" ? undefined : '+n).join(',') + ', onUserDeleted: typeof onUserDeleted === "undefined" ? undefined : onUserDeleted};';
   const exports: any = {};
   vm.runInNewContext(stripTypeScriptTypes(source), {require:(name: string)=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];}, exports, Buffer, process, console:{log(){},warn(){},error(){}},Date, setTimeout,clearTimeout});

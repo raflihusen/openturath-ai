@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'sub_agent_model.dart';
 import 'book_model.dart';
@@ -6,14 +7,16 @@ enum CorpusKind { discipline, scholar }
 
 class AgentModel {
   final String id;
-  final String title;
+  final String _title;
+  String get title => Loc.isArabic && titleArabic.isNotEmpty ? titleArabic : Loc.text(_title);
   final String titleArabic;
   final String description;
   final String emoji;
   final String category;
   final String status; // 'active' or 'coming_soon'
   final int sortOrder;
-  final String subtitleAcademic;
+  final String _subtitleAcademic;
+  String get subtitleAcademic => Loc.text(_subtitleAcademic);
   final String fieldId;
   final List<String> suggestedPrompts;
   final List<SubAgentModel>? subAgents;
@@ -31,14 +34,14 @@ class AgentModel {
 
   AgentModel({
     required this.id,
-    required this.title,
+    required String title,
     this.titleArabic = '',
     required this.description,
     required this.emoji,
     required this.category,
     required this.status,
     required this.sortOrder,
-    this.subtitleAcademic = 'Matan · Syarah · Hasyiyah',
+    String subtitleAcademic = 'Matan · Syarah · Hasyiyah',
     this.fieldId = 'fiqh',
     this.suggestedPrompts = const [],
     this.subAgents,
@@ -53,7 +56,7 @@ class AgentModel {
     this.disciplineIds = const [],
     this.scholarIds = const [],
     this.catalogId,
-  });
+  }) : _title = title, _subtitleAcademic = subtitleAcademic;
 
   bool get isActive => status == 'active';
   bool get isComingSoon => status == 'coming_soon';
@@ -110,8 +113,8 @@ class AgentModel {
           status: 'active',
           sortOrder: 1,
           price1m: 300000,
-          price6m: 1500000,
-          price1y: 2000000,
+          price6m: 1499000,
+          price1y: 1999000,
           subAgents: [
             SubAgentModel(
               id: 'fiqh_tahawwulat_muhaqqiq',
@@ -196,7 +199,7 @@ class AgentModel {
           ],
           status: 'active',
           sortOrder: 2,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -245,7 +248,7 @@ class AgentModel {
           catalogId: 'canonical_hanafi',
           status: 'active',
           sortOrder: 3,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -292,7 +295,7 @@ class AgentModel {
           catalogId: 'canonical_maliki',
           status: 'active',
           sortOrder: 4,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -339,7 +342,7 @@ class AgentModel {
           catalogId: 'canonical_hanbali',
           status: 'active',
           sortOrder: 5,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -386,7 +389,7 @@ class AgentModel {
           catalogId: 'canonical_fiqh_muqaran',
           status: 'active',
           sortOrder: 6,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -435,7 +438,7 @@ class AgentModel {
           catalogId: 'canonical_hadits',
           status: 'active',
           sortOrder: 7,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -485,7 +488,7 @@ class AgentModel {
           catalogId: 'canonical_tafsir',
           status: 'active',
           sortOrder: 8,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -535,7 +538,7 @@ class AgentModel {
           catalogId: 'canonical_ushul_fikih',
           status: 'active',
           sortOrder: 9,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -585,7 +588,7 @@ class AgentModel {
           catalogId: 'canonical_bahasa_arab',
           status: 'active',
           sortOrder: 10,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
           subAgents: [
@@ -647,7 +650,7 @@ class AgentModel {
           catalogId: 'canonical_akidah',
           status: 'active',
           sortOrder: 11,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -671,9 +674,18 @@ class AgentModel {
           catalogId: 'canonical_tarikh',
           status: 'active',
           sortOrder: 12,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
+        ),
+
+        AgentModel(
+          id: 'tasawwuf', title: 'Tasawwuf & Adzkar', titleArabic: 'التصوف والأذكار',
+          description: 'Telaah adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
+          emoji: '📖', category: 'Tasawwuf', fieldId: 'tasawwuf',
+          subtitleAcademic: 'Ihya Ulumiddin · Adab & Wirid',
+          catalogId: 'canonical_tasawuf', status: 'active', sortOrder: 13,
+          price1m: 50000,
         ),
 
         // ── 8. TASAWUF & ULAMA ────────────────────────────────
@@ -698,7 +710,7 @@ class AgentModel {
           catalogId: 'canonical_tasawuf',
           status: 'active',
           sortOrder: 13,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -723,7 +735,7 @@ class AgentModel {
           catalogId: 'canonical_tasawuf',
           status: 'active',
           sortOrder: 14,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -747,7 +759,7 @@ class AgentModel {
           catalogId: 'canonical_qawaid_fiqhiyyah',
           status: 'active',
           sortOrder: 15,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -769,7 +781,7 @@ class AgentModel {
           catalogId: 'canonical_fatawa_masail',
           status: 'active',
           sortOrder: 16,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -791,7 +803,7 @@ class AgentModel {
           catalogId: 'canonical_ulumul_quran',
           status: 'active',
           sortOrder: 17,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -813,7 +825,7 @@ class AgentModel {
           catalogId: 'canonical_musthalah_hadits',
           status: 'active',
           sortOrder: 18,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -835,7 +847,7 @@ class AgentModel {
           catalogId: 'canonical_syarah_hadits',
           status: 'active',
           sortOrder: 19,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -857,7 +869,7 @@ class AgentModel {
           catalogId: 'canonical_thabaqat_tarajim',
           status: 'active',
           sortOrder: 20,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),
@@ -879,7 +891,7 @@ class AgentModel {
           catalogId: 'canonical_bibliografi',
           status: 'active',
           sortOrder: 21,
-          price1m: 49000,
+          price1m: 50000,
           price6m: 299000,
           price1y: 499000,
         ),

@@ -1,5 +1,5 @@
-// Generated automatically by OpenTurath AI GoAkal Sync.
-// DO NOT EDIT MANUALLY.
+import 'product_pricing.dart';
+// Catalog record. Reconcile external store prices before restoring direct checkout.
 
 class GoAkalTierLink {
   final String durationKey;
@@ -114,6 +114,7 @@ class GoAkalCatalogRegistry {
     'tasawwuf_adzkar': 'tasawwuf-adzkar',
     'tasawwuf_ihya': 'tasawwuf-adzkar',
     'thabaqat': 'thabaqat-tarajim',
+    'thabaqat_rijal': 'thabaqat-tarajim',
     'thabaqat_tarajim': 'thabaqat-tarajim',
     'ushul_fiqh': 'ushul-fikih',
     'ushul_muhaqqiq': 'ushul-fikih',
@@ -127,8 +128,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'ai-bahasa-arab_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/ai-bahasa-arab/kbp4j/apply',
@@ -156,8 +157,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 1000000,
-        priceLabel: 'Rp 1.000.000',
+        amount: 300000,
+        priceLabel: 'Rp 300.000',
         periodLabel: '/ bulan',
         planId: 'ai-fikih-tahawwulat_1_month',
         applyUrl:
@@ -166,8 +167,8 @@ class GoAkalCatalogRegistry {
       '6_months': GoAkalTierLink(
         durationKey: '6_months',
         title: '6 Bulan',
-        amount: 2995000,
-        priceLabel: 'Rp 2.995.000',
+        amount: 1499000,
+        priceLabel: 'Rp 1.499.000',
         periodLabel: '/ 6 bulan',
         planId: 'ai-fikih-tahawwulat_6_months',
         applyUrl:
@@ -176,8 +177,8 @@ class GoAkalCatalogRegistry {
       '1_year': GoAkalTierLink(
         durationKey: '1_year',
         title: '12 Bulan',
-        amount: 4995000,
-        priceLabel: 'Rp 4.995.000',
+        amount: 1999000,
+        priceLabel: 'Rp 1.999.000',
         periodLabel: '/ tahun',
         planId: 'ai-fikih-tahawwulat_1_year',
         applyUrl:
@@ -188,8 +189,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'aqidah-ushuluddin_1_month',
         applyUrl:
@@ -220,8 +221,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'bibliografi-faharis_1_month',
         applyUrl:
@@ -252,8 +253,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'fatawa-masail_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/fatawa-masail/nv0m0/apply',
@@ -281,8 +282,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'fikih-hanafi_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/fikih-hanafi/5ofbj/apply',
@@ -310,8 +311,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'fikih-hanbali_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/fikih-hanbali/p814h/apply',
@@ -339,8 +340,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'fikih-maliki_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/fikih-maliki/r7fit/apply',
@@ -368,8 +369,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'fikih-muqaran_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/fikih-muqaran/ci0s6/apply',
@@ -397,8 +398,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'fikih-syafii_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/fikih-syafii/tjvxw/apply',
@@ -426,8 +427,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'hadits-nabawi_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/hadits-nabawi/rqlei/apply',
@@ -455,8 +456,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'musthalah-hadits_1_month',
         applyUrl:
@@ -661,8 +662,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'qawaid-fiqhiyyah_1_month',
         applyUrl:
@@ -693,8 +694,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'syarah-hadits_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/syarah-hadits/befmz/apply',
@@ -722,8 +723,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'tafsir-ulumul-quran_1_month',
         applyUrl:
@@ -754,8 +755,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'tajwid-qiraat_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/tajwid-qiraat/u7ful/apply',
@@ -783,8 +784,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'tarikh-sirah_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/tarikh-sirah/8sl8w/apply',
@@ -812,8 +813,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'tasawwuf-adzkar_1_month',
         applyUrl:
@@ -844,8 +845,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'thabaqat-tarajim_1_month',
         applyUrl:
@@ -876,8 +877,8 @@ class GoAkalCatalogRegistry {
       '1_month': GoAkalTierLink(
         durationKey: '1_month',
         title: '1 Bulan',
-        amount: 299000,
-        priceLabel: 'Rp 299.000',
+        amount: 50000,
+        priceLabel: 'Rp 50.000',
         periodLabel: '/ bulan',
         planId: 'ushul-fikih_1_month',
         applyUrl: 'https://goakal.com/openturath-ai/ushul-fikih/172b6/apply',
@@ -997,7 +998,7 @@ class GoAkalCatalogRegistry {
         "Akses Lengkap Seluruh 20 Modul Turats Lokal",
         "Akses Seluruh 5 Persona Fikih Tahawwulat",
         "Akses Pemrosesan Komputasi Optimal",
-        "Pembaruan Korpus Naskah Digital Berkala",
+        "Pembaruan Koleksi Naskah Digital Berkala",
         "Layanan Khadim Ilmiah Langsung dari Tim Peneliti OpenTurath",
       ],
     ),
@@ -1020,45 +1021,8 @@ class GoAkalCatalogRegistry {
 
   /// Mendapatkan daftar tier terstruktur untuk Agent tertentu
   static List<Map<String, dynamic>> getTiersForAgent(String? agentId) {
-    final slug = resolveSlug(agentId);
-    final tiersMap = directLinks[slug];
-    if (tiersMap != null && tiersMap.isNotEmpty) {
-      final list = <Map<String, dynamic>>[];
-      for (final key in ['1_month', '6_months', '1_year']) {
-        if (tiersMap.containsKey(key)) {
-          list.add(tiersMap[key]!.toMap());
-        }
-      }
-      if (list.isNotEmpty) return list;
-    }
-
-    // Default regular tier fallback
-    return const [
-      {
-        'name': '1 Bulan (Harga Khusus Launch)',
-        'price': 99000,
-        'label': 'Rp 99.000',
-        'period': '/ bulan',
-        'planId': 'regular_1m',
-        'applyUrl': storeUrl,
-      },
-      {
-        'name': '6 Bulan',
-        'price': 499000,
-        'label': 'Rp 499.000',
-        'period': '/ 6 bulan',
-        'planId': 'regular_6m',
-        'applyUrl': storeUrl,
-      },
-      {
-        'name': '1 Tahun',
-        'price': 890000,
-        'label': 'Rp 890.000',
-        'period': '/ tahun',
-        'planId': 'regular_1y',
-        'applyUrl': storeUrl,
-      },
-    ];
+    if (agentId == null || !agentIdToSlug.containsKey(agentId)) return const [];
+    return ProductPricing.forAgent(agentId).map((offer) => offer.toMap()).toList();
   }
 
   /// Resolve agentId to GoAkal slug

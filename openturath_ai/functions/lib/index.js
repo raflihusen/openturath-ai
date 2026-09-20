@@ -117,9 +117,9 @@ const AGENT_ENTITLEMENTS = {
     habib_umar: "tasawwuf",
     imam_ghazali: "tasawwuf",
     // Bibliografi & Faharis
-    bibliografi_faharis: "all_access",
-    faharis: "all_access",
-    bibliografi: "all_access",
+    bibliografi_faharis: "bibliografi_faharis",
+    faharis: "bibliografi_faharis",
+    bibliografi: "bibliografi_faharis",
     all_ai: "all_access",
 };
 // Whitelist modul yang diizinkan untuk dibeli via checkout payment (OT-F001)
@@ -155,10 +155,10 @@ exports.PURCHASABLE_AGENTS = new Set([
     "bibliografi_faharis",
 ]);
 exports.MODULE_PLANS = {
-    tholib_1m: { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+    tholib_1m: { amount: 50000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
     tholib_6m: { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
     bahits_1y: { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
-    "1m": { amount: 49000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
+    "1m": { amount: 50000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
     "6m": { amount: 299000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
     "1y": { amount: 499000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
 };
@@ -331,11 +331,11 @@ function resolvePlanPricing(agentId, plan) {
     if (agentId.startsWith("fiqh_tahawwulat")) {
         const tahawwulatTiers = {
             tholib_1m: { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-            tholib_6m: { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
-            bahits_1y: { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+            tholib_6m: { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+            bahits_1y: { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
             "1m": { amount: 300000, durationMonths: 1, labelSuffix: "(1 Bulan)" },
-            "6m": { amount: 1500000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
-            "1y": { amount: 2000000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
+            "6m": { amount: 1499000, durationMonths: 6, labelSuffix: "(6 Bulan)" },
+            "1y": { amount: 1999000, durationMonths: 12, labelSuffix: "(1 Tahun)" },
         };
         const tTier = tahawwulatTiers[plan];
         if (tTier) {
@@ -462,12 +462,18 @@ exports.createCheckout = functions
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Login diperlukan untuk melakukan transaksi.");
     }
-    const { plan, name, email, phone, agentId } = data;
+    const { plan, name, email, phone, agentId, expectedAmount, pricingRevision } = data;
     if (!plan || !name || !email) {
         throw new functions.https.HttpsError("invalid-argument", "Data tidak lengkap (nama dan email diperlukan).");
     }
     const currentAgentId = typeof agentId === "string" && agentId ? agentId : "fiqh_tahawwulat";
     const pricing = resolvePlanPricing(currentAgentId, plan);
+    // Reject stale offers before creating any invoice or contacting the gateway.
+    if (expectedAmount !== undefined &&
+        (!Number.isSafeInteger(expectedAmount) || expectedAmount !== pricing.amount ||
+            pricingRevision !== "perdana-2026-09-20")) {
+        throw new functions.https.HttpsError("failed-precondition", "Harga penawaran telah berubah. Muat ulang aplikasi.");
+    }
     const invoiceNumber = `OT-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
     const trxRef = db.collection("transactions").doc();
     const trxId = trxRef.id;
@@ -518,7 +524,9 @@ exports.createCheckout = functions
         redirectUrl: paymentUrl,
         paymentUrl: paymentUrl,
         trxId,
-        invoiceNumber
+        invoiceNumber,
+        amount: pricing.amount,
+        pricingRevision: "perdana-2026-09-20"
     };
 });
 function generateDokuGetSignature(clientId, requestId, timestamp, targetPath, secretKey) {
@@ -1156,6 +1164,9 @@ exports.onUserCreate = functions.firestore
         for (const tx of txs) {
             const data = tx.data();
             if (!data || !["paid", "success"].includes(data.status))
+                continue;
+            // Verified email never overrides an existing transaction owner.
+            if (data.uid && data.uid !== uid)
                 continue;
             const key = data.entitlement_key;
             const expiry = data.subscription_expires_at;

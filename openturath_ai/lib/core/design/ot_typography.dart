@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../scholarly_fonts.dart';
+import '../localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// OpenTurath Design System — Typography (3-Pilar Arsitektur Baku)
@@ -21,19 +23,19 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: 'Newsreader',
+        fontFamily: Loc.isArabic ? 'Scheherazade New' : 'Newsreader',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: height,
+        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
         color: color,
       );
     }
-    return GoogleFonts.newsreader(
+    return ScholarlyFonts.newsreader(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
-      height: height,
+      height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
       color: color,
     );
   }
@@ -48,19 +50,19 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: 'Outfit',
+        fontFamily: Loc.isArabic ? 'Scheherazade New' : 'Outfit',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: height,
+        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
         color: color,
       );
     }
-    return GoogleFonts.outfit(
+    return ScholarlyFonts.outfit(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
-      height: height,
+      height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
       color: color,
     );
   }
@@ -79,26 +81,23 @@ class OTTypography {
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: height,
+        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
         color: color,
       );
     }
-    return GoogleFonts.scheherazadeNew(
+    return ScholarlyFonts.scheherazadeNew(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
-      height: height,
+      height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
       color: color,
     );
   }
 
   // ── Editorial & Heading Styles ──
-  static TextStyle brandLogo({Color? color}) => _newsreader(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.4,
-        color: color,
-      );
+  static TextStyle brandLogo({Color? color}) => useSystemFontFallback
+      ? TextStyle(fontFamily: 'Newsreader', fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color)
+      : GoogleFonts.newsreader(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color);
 
   static TextStyle displayLarge({Color? color}) => _newsreader(
         fontSize: 36,
@@ -214,31 +213,31 @@ class OTTypography {
       );
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color, double height = 1.5}) => _scheherazadeNew(
+  static TextStyle arabicDisplay({Color? color, double height = 1.85}) => _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.w700,
-        height: height,
+        height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color, double height = 1.6}) => _scheherazadeNew(
+  static TextStyle arabicReading({Color? color, double height = 1.85}) => _scheherazadeNew(
         fontSize: 18,
         fontWeight: FontWeight.w500,
-        height: height,
+        height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
   static TextStyle arabicIbarah({Color? color, double height = 1.85}) => _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.bold,
-        height: height,
+        height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color, double height = 1.65}) => _scheherazadeNew(
+  static TextStyle arabicQuote({Color? color, double height = 1.85}) => _scheherazadeNew(
         fontSize: 15,
         fontWeight: FontWeight.w400,
-        height: height,
+        height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 }
