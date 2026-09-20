@@ -141,10 +141,7 @@ const notebookUiScript = r'''
         .notebook-cover, .notebook-cover-container, .notebook-title-card,
         .notebook-header, .project-header, .chat-header, .chat-panel-header,
         .header-content, .title-card, mat-card.title-card,
-        .loading-notebook, [class*="skeleton"],
-        .chat-disclaimer, .query-disclaimer, .model-disclaimer,
-        [class*="disclaimer" i], [aria-label*="disclaimer" i],
-        [data-testid*="disclaimer" i] {
+        .loading-notebook, [class*="skeleton"] {
           display:none!important;
           visibility:hidden!important;
           height:0px!important;
@@ -155,6 +152,20 @@ const notebookUiScript = r'''
           opacity:0!important;
           pointer-events:none!important;
           border:none!important;
+        }
+        .chat-disclaimer, .query-disclaimer, .model-disclaimer,
+        [class*="disclaimer" i], [aria-label*="disclaimer" i],
+        [data-testid*="disclaimer" i] {
+          display:block!important;
+          visibility:visible!important;
+          opacity:0.65!important;
+          font-size:11px!important;
+          line-height:1.4!important;
+          text-align:center!important;
+          margin:4px 0 8px 0!important;
+          pointer-events:auto!important;
+          height:auto!important;
+          max-height:none!important;
         }
       `;
       (document.head || document.documentElement).appendChild(style);
@@ -215,16 +226,35 @@ const notebookUiScript = r'''
         }
       }
     });
-    // Peringatan bawaan Gemini tidak termasuk antarmuka OpenTurath. Batasan
-    // penggunaan sudah disampaikan di dalam aplikasi, jadi jangan sisakan
-    // satu baris pun di bawah kolom pertanyaan.
-    document.querySelectorAll('div, p, span, small').forEach(el => {
+    // Tampilkan disclaimer dengan nama OpenTurath AI (menggantikan Gemini Notebook / NotebookLM)
+    function replaceBrandInText(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (/gemini notebook|notebooklm/i.test(node.nodeValue)) {
+          node.nodeValue = node.nodeValue.replace(/gemini notebook/gi, 'OpenTurath AI').replace(/notebooklm/gi, 'OpenTurath AI');
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE && !node.matches(answerSelector)) {
+        for (let child of node.childNodes) {
+          replaceBrandInText(child);
+        }
+      }
+    }
+    document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i], div, p, span, small').forEach(el => {
       if (el.closest(answerSelector)) return;
-      const t = text(el).toLowerCase();
-      if (t.length < 300 && (/gemini notebook.*(mungkin|may).*(tidak akurat|inaccurate)/i.test(t) || /responses? may be inaccurate/i.test(t) || (/tidak akurat/i.test(t) && /gemini/i.test(t)))) {
-        hide(el);
+      const t = (el.innerText || '').toLowerCase();
+      if (t.length < 300 && (/gemini notebook|notebooklm/i.test(t) || /tidak akurat|inaccurate/i.test(t))) {
+        replaceBrandInText(el);
       }
     });
+  }
+  window.otOpenLanguageSettings = function() {
+    const btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]');
+    if (btn) {
+      btn.click();
+    } else {
+      const anyBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i]');
+      if (anyBtn) anyBtn.click();
+    }
+  };
   }
   function ready() {
     clean();

@@ -196,6 +196,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         (document.head || document.documentElement).appendChild(style);
       }
 
+      window.otOpenLanguageSettings = function() {
+        var btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]');
+        if (btn) {
+          btn.click();
+        } else {
+          var anyBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i]');
+          if (anyBtn) anyBtn.click();
+        }
+      };
+
       // 2. Font Scale Presisi
       window.applyTurathFontScale = function(value) {
         var scale = Number(value);

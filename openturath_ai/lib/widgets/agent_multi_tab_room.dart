@@ -166,6 +166,47 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                             color: textPrimary)),
                   ],
                 ),
+                const SizedBox(height: 16),
+                Divider(height: 1, thickness: 0.8, color: border),
+                const SizedBox(height: 16),
+                Text(
+                  'Bahasa Output Jawaban',
+                  style: OTTypography.cardTitle(color: textPrimary)
+                      .copyWith(fontSize: 15),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Atur bahasa jawaban asisten keilmuan (mendukung 50+ bahasa).',
+                  style: OTTypography.caption(color: textSecondary),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      session.webController?.evaluateJavascript(
+                        source: 'if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
+                      );
+                    },
+                    icon: Icon(Icons.translate_rounded, size: 18, color: textPrimary),
+                    label: Text(
+                      'Ganti Bahasa Output (50+ Bahasa)',
+                      style: GoogleFonts.outfit(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: textPrimary,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: border, width: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
@@ -403,7 +444,7 @@ class _SingleAgentTabWebView extends StatefulWidget {
 }
 
 class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   final AgentService _agentService = AgentService();
   final BookmarkService _bookmarkService = BookmarkService();
   final AuthService _authService = AuthService();
@@ -439,9 +480,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           div.chat-input-container + div,
           div[class*="input-container" i] + div,
           div[class*="query-container" i] + div,
-          .chat-disclaimer, .query-disclaimer, .model-disclaimer,
-          [class*="disclaimer" i], [aria-label*="disclaimer" i],
-          [data-testid*="disclaimer" i], footer, div[class*="footer" i],
+          footer, div[class*="footer" i],
           .access-denied, div[class*="access-denied" i], div[class*="denied" i],
           [aria-label*="Request access" i], [aria-label*="Minta akses" i],
           app-access-denied, .error-page, .permission-denied,
@@ -459,6 +498,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             pointer-events: none !important;
             border: none !important;
           }
+          .chat-disclaimer, .query-disclaimer, .model-disclaimer,
+          [class*="disclaimer" i], [aria-label*="disclaimer" i],
+          [data-testid*="disclaimer" i] {
+            display: block !important;
+            visibility: visible !important;
+            font-size: 11px !important;
+            line-height: 1.4 !important;
+            opacity: 0.65 !important;
+            text-align: center !important;
+            margin: 4px 0 8px 0 !important;
+            pointer-events: auto !important;
+          }
           ::-webkit-scrollbar { display: none !important; width: 0px !important; }
           html, body, * { scrollbar-width: none !important; }
           .chat-panel-content, .chat-view, .conversation-container, .message-list, main {
@@ -469,6 +520,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         `;
         (document.head || document.documentElement).appendChild(style);
       }
+
+      window.otOpenLanguageSettings = function() {
+        var btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]');
+        if (btn) {
+          btn.click();
+        } else {
+          var anyBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i]');
+          if (anyBtn) anyBtn.click();
+        }
+      };
 
       window.applyTurathFontScale = function(value) {
         var scale = Number(value);
@@ -564,6 +625,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (widget.session.resolvedUrl == null) {
       _fetchUrl();
     }
@@ -571,11 +633,35 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _readinessTimer?.cancel();
     if (mounted) {
       AppSnackBar.clear(context);
     }
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      widget.session.webController?.resume();
+      _verifySurfaceHealth();
+    } else if (state == AppLifecycleState.paused) {
+      widget.session.webController?.pause();
+    }
+  }
+
+  Future<void> _verifySurfaceHealth() async {
+    final controller = widget.session.webController;
+    if (controller == null || !mounted) return;
+    try {
+      final res = await controller.evaluateJavascript(source: '1+1');
+      if (res != 2) {
+        controller.reload();
+      }
+    } catch (_) {
+      controller.reload();
+    }
   }
 
   @override
@@ -997,6 +1083,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
               thirdPartyCookiesEnabled: true,
               hardwareAcceleration: true,
+              useHybridComposition: true,
+              useOnRenderProcessGone: true,
               verticalScrollBarEnabled: false,
               horizontalScrollBarEnabled: false,
               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
@@ -1006,6 +1094,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               userAgent:
                   'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
             ),
+            onRenderProcessGone: (controller, detail) async {
+              debugPrint('[OpenTurath] WebView render process gone (didCrash: ${detail.didCrash})');
+              if (mounted) {
+                setState(() {
+                  widget.session.isWebLoading = true;
+                  widget.session.isSessionReady = false;
+                });
+                controller.reload();
+                _startReadinessCheck();
+              }
+            },
             onWebViewCreated: (controller) {
               session.webController = controller;
               controller.addJavaScriptHandler(
