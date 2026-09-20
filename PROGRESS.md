@@ -57,6 +57,11 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 9. **Fasa 9: Konsolidasi Ensiklopedia Fikih Tahawwulat & Audit Sumber (`2d4fe21`)**
    - Kompilasi berkas tunggal `KUMPULAN_TEKS_MENGENAL_TAHAWWULAT.txt` (1.316 baris, 100.6 KB) yang menyatukan seluruh materi Fikih Tahawwulat di dalam aplikasi: Buku Panduan 10 Bab, teks antarmuka modal interaktif, blueprint 5 bilik AI, dan katalog kanonikal 58 kitab resmi karya Habib Abu Bakar Al-Adni.
    - Pembaruan berkas konsolidasi kode sumber tersanitasi `OPENTURATH_AI_FULL_AUDIT_SOURCE.txt` (127 berkas terpadu).
+10. **Fasa 10: Eliminasi Mode Tamu & Hardening Keamanan Non-Desain (`1.0.51+52`)**
+    - **Penghapusan Mode Tamu**: Tombol dan handler `Masuk sebagai Tamu (Mode Telaah)` dihapus sepenuhnya dari `login_screen.dart` atas permintaan pengguna, mengembalikan login murni terautentikasi (Google Auth) dengan zero visual alteration pada elemen lainnya.
+    - **Perbaikan S03 (Status Pembayaran)**: Hardening fungsi `verifyPaymentStatus` pada `subscription_service.dart` agar hanya merespon `success: true` jika transaksi berstatus final (`SUCCESS`, `SETTLED`, atau `PAID`), menutup celah bypass saat status gateway masih `PENDING`.
+    - **Perbaikan S04 (Deep Link Allowlist)**: Penerapan `_allowedExternalPaymentSchemes` ketat pada `doku_checkout_sheet.dart` (hanya mengizinkan aplikasi perbankan/e-wallet resmi seperti GoPay, ShopeePay, OVO, DANA, LinkAja, BCA, Mandiri, BRI, BNI), memblokir skema berbahaya seperti `javascript:`, `file:`, `content:`, `data:`.
+    - **Optimasi Gradle**: Penambahan `org.gradle.daemon.idletimeout=60000` pada `android/gradle.properties` untuk mencegah daemon zombie di Mac 8GB.
 
 ---
 
@@ -71,14 +76,14 @@ Berdasarkan `AUDIT_OPENTURATH_AI.md`, dokumen perancangan pustaka, dan keluhan k
 
 ## 4. Status Pengujian, Rilis APK & macOS
 - **Syntax & Type Check**: `flutter analyze` $\rightarrow$ **0 issues**.
-- **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green)**.
+- **Automated Test Suite**: Seluruh 32 berkas pengujian unit/widget di `openturath_ai/test/` berstatus **LULUS (All Green - 159+ tests)**.
 - **Rilis Binary APK Terbaru (Lokal)**:
   - File: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-  - Versi: `1.0.50+51`
-  - Ukuran: 62.8 MB (62.813.378 bytes)
-  - Timestamp: 2026-09-20 08:16:32 WIB
-  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 128.7s).
-  - Termasuk pembersihan total penamaan Arab berlebihan (eliminasi kata redundant seperti المعتمد, ومدونة سحنون, وظاهر الرواية, dll.), perapihan subtitle modul, antarmuka monokrom editorial, dan seluruh 206/206 tes lulus hijau.
+  - Versi: `1.0.51+52`
+  - Ukuran: 62.7 MB (62.682.302 bytes)
+  - Timestamp: 2026-09-20 08:42:38 WIB
+  - Status: Kompilasi Gradle selesai 100% (Full assembleRelease 167.7s).
+  - Termasuk penghapusan Mode Tamu di layar login, hardening keamanan transaksi pembayaran, pembersihan nama Arab redundan, dan proteksi total desain asli.
 - **Rilis macOS DMG (Cloud GitHub Actions)**:
   - Workflow: `.github/workflows/release_all_platforms.yml` (Job `build-macos-dmg`).
   - Output Artifact: `OpenTurath_AI_macOS.dmg`.
