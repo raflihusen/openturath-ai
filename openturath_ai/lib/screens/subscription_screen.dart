@@ -214,15 +214,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                           ),
                                         ),
-                                        if (a.titleArabic.isNotEmpty)
-                                          Text(
-                                            a.titleArabic,
-                                            textDirection: TextDirection.rtl,
-                                            style: OTTypography.arabicReading(color: muted).copyWith(
-                                              fontSize: 13,
-                                              height: 1.85,
-                                            ),
-                                          ),
                                       ],
                                     ),
                                   ),
@@ -293,12 +284,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   Text(Loc.tr('tahawwulatBenefit'), style: OTTypography.body(color: muted)),
                                 ],
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              'فقه التحولات',
-                              textDirection: TextDirection.rtl,
-                              style: OTTypography.arabicDisplay(color: ink).copyWith(fontSize: 22, height: 1.85),
                             ),
                           ],
                         ),
@@ -396,30 +381,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      if (selected.titleArabic.isNotEmpty) ...[
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          selected.titleArabic,
-                                          textDirection: TextDirection.rtl,
-                                          style: OTTypography.arabicReading(color: muted).copyWith(
-                                            fontSize: 14,
-                                            height: 1.85,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ],
-                                      if (selected.referenceBooks?.isNotEmpty == true) ...[
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          selected.referenceBooks!.first.titleArabic.isNotEmpty
-                                              ? selected.referenceBooks!.first.titleArabic
-                                              : selected.referenceBooks!.first.title,
-                                          textDirection: TextDirection.rtl,
-                                          style: OTTypography.caption(color: muted).copyWith(fontStyle: FontStyle.italic),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
                                     ],
                                   ),
                                 ),
