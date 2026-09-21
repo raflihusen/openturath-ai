@@ -25,6 +25,7 @@ import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/staggered_entrance.dart';
 import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -394,46 +395,52 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 padding: const EdgeInsets.fromLTRB(OTSpacing.lg,
                                     OTSpacing.xs, OTSpacing.lg, 96),
                                 itemCount: sorted.length,
-                                separatorBuilder: (_, index) {
-                                  final touchesFlagship = sorted[index].id ==
-                                          'fiqh_tahawwulat' ||
-                                      sorted[index + 1].id == 'fiqh_tahawwulat';
-                                  return SizedBox(
-                                    height: touchesFlagship ? OTSpacing.md : 0,
-                                  );
-                                },
+                                separatorBuilder: (_, index) => const SizedBox(height: 14),
                                 itemBuilder: (context, index) {
                                   final agent = sorted[index];
                                   if (agent.id == 'fiqh_tahawwulat') {
                                     final user = _authService.cachedCurrentUser;
                                     final isSubscribed = user != null &&
                                         user.hasAccessToAgent(agent.id);
-                                    return TahawwulatFlagshipCard(
-                                      agent: agent,
-                                      isSubscribed: isSubscribed,
-                                      onOpenMain: () => _openAgent(agent),
-                                      onOpenSubAgent: (sub) =>
-                                          _openTahawwulatSubAgent(agent, sub),
+                                    return StaggeredEntrance(
+                                      index: index,
+                                      child: TahawwulatFlagshipCard(
+                                        agent: agent,
+                                        isSubscribed: isSubscribed,
+                                        onOpenMain: () => _openAgent(agent),
+                                        onOpenSubAgent: (sub) =>
+                                            _openTahawwulatSubAgent(agent, sub),
+                                        onOpenLibrary: agent.catalogId != null
+                                            ? () => showResearchLibrary(context,
+                                                agent: agent)
+                                            : null,
+                                      ),
+                                    );
+                                  }
+
+                                  final isHadits = agent.id == 'hadits' || agent.fieldId == 'hadith';
+                                  final booksCount = agent.referenceBooks?.length ?? 0;
+
+                                  return StaggeredEntrance(
+                                    index: index,
+                                    child: SpecialistCard(
+                                      title: agent.title,
+                                      titleArabic: agent.titleArabic,
+                                      scopeLabel: agent.subtitleAcademic,
+                                      referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
+                                      serialIndex: index + 1,
+                                      isFeatured: isHadits,
+                                      bookCount: booksCount > 0 ? booksCount : null,
+                                      period: 'Abad 2 H – 14 H',
+                                      statusLabel: agent.isComingSoon
+                                          ? AppCopy.comingSoon
+                                          : null,
+                                      onOpen: () => _openAgent(agent),
                                       onOpenLibrary: agent.catalogId != null
                                           ? () => showResearchLibrary(context,
                                               agent: agent)
                                           : null,
-                                    );
-                                  }
-                                  return SpecialistCard(
-                                    title: agent.title,
-                                    titleArabic: agent.titleArabic,
-                                    emoji: agent.emoji,
-                                    scopeLabel: agent.subtitleAcademic,
-                                    referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
-                                    statusLabel: agent.isComingSoon
-                                        ? AppCopy.comingSoon
-                                        : null,
-                                    onOpen: () => _openAgent(agent),
-                                    onOpenLibrary: agent.catalogId != null
-                                        ? () => showResearchLibrary(context,
-                                            agent: agent)
-                                        : null,
+                                    ),
                                   );
                                 },
                               );

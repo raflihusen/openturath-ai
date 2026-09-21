@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -963,10 +964,10 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text: item.arabicExcerpt,
                       query: widget.searchQuery,
                       isRtl: true,
-                      baseStyle: GoogleFonts.scheherazadeNew(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        height: 1.8,
+                      baseStyle: ScholarlyFonts.arabicQuote(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        height: 1.9,
                         color: widget.textPrimary,
                       ),
                       isDark: isDark,
