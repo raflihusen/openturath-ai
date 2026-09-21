@@ -816,9 +816,11 @@ class _MembershipPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    const cardColor = OTColors.sovereignSurface;
-    const foreground = OTColors.sovereignInk;
-    final muted = OTColors.sovereignInk.withValues(alpha: 0.62);
+    final cardColor = OTColors.surface(isDark);
+    final foreground = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
+    final subtle = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
     final isOpen = summary.isOpen;
 
     return Column(
@@ -828,178 +830,104 @@ class _MembershipPass extends StatelessWidget {
           label:
               'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
           child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
+            color: cardColor.withValues(alpha: 0),
+            borderRadius: OTRadius.cardBorder,
             child: InkWell(
               onTap: onViewAccess ?? onManage,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: OTRadius.cardBorder,
               child: Ink(
-                height: 198,
                 decoration: BoxDecoration(
                   color: cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.14), width: 0.8),
+                  borderRadius: OTRadius.cardBorder,
+                  border: Border.all(color: border),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Stack(
+                child: Padding(
+                  padding: OTSpacing.card,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Ornamen geometris halus: memberi karakter tanpa
-                      // menyamai visual kartu bank atau mengganggu teks.
-                      Positioned(
-                        right: -52,
-                        top: -76,
-                        child: Container(
-                          width: 190,
-                          height: 190,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.12),
-                              width: 1.2,
+                      Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: subtle,
+                              borderRadius: OTRadius.controlBorder,
+                            ),
+                            alignment: Alignment.center,
+                            child: Icon(
+                              isOpen
+                                  ? Icons.check_rounded
+                                  : Icons.lock_outline_rounded,
+                              color: foreground,
+                              size: 20,
                             ),
                           ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 20,
-                        top: 30,
-                        child: Container(
-                          width: 74,
-                          height: 74,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.08),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: -36,
-                        bottom: -56,
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.035),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                          OTSpacing.gapMd,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'OpenTurath',
-                                  style: ScholarlyFonts.newsreader(
-                                    color: foreground,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 21,
-                                    letterSpacing: -0.4,
-                                  ),
+                                  holderName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style:
+                                      OTTypography.cardTitle(color: foreground),
                                 ),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: isOpen
-                                        ? Colors.white.withValues(alpha: 0.16)
-                                        : Colors.white.withValues(alpha: 0.08),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.14)),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        isOpen
-                                            ? Icons.workspace_premium_rounded
-                                            : Icons.lock_outline_rounded,
-                                        color: foreground,
-                                        size: 13,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        summary.badge,
-                                        style: ScholarlyFonts.outfit(
-                                          color: foreground,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                OTSpacing.gapXs,
+                                Text(
+                                  email,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: OTTypography.caption(color: muted),
                                 ),
                               ],
                             ),
-                            const Spacer(),
-                            Text(
-                              'Untuk',
-                              style: ScholarlyFonts.outfit(
-                                color: muted,
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.1,
-                              ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: OTSpacing.sm,
+                              vertical: OTSpacing.xs,
                             ),
-                            const SizedBox(height: 3),
-                            Text(
-                              holderName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                color: foreground,
-                                fontSize: 19,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.3,
-                              ),
+                            decoration: BoxDecoration(
+                              color: subtle,
+                              borderRadius: OTRadius.smallBorder,
                             ),
-                            const SizedBox(height: 1),
-                            Text(
-                              email,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                  color: muted, fontSize: 11.5),
+                            child: Text(
+                              summary.badge,
+                              style:
+                                  OTTypography.captionMedium(color: foreground),
                             ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: _PassMeta(
-                                    label: AppCopy.navStudies,
-                                    value: summary.accessLabel,
-                                    valueColor: foreground,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  flex: 2,
-                                  child: _PassMeta(
-                                    label: summary.expiryLabel.isEmpty
-                                        ? AppCopy.validUntil
-                                        : summary.expiryLabel,
-                                    value: summary.expiresAt == null
-                                        ? '—'
-                                        : _expiryLabel(),
-                                    valueColor: foreground,
-                                  ),
-                                ),
-                              ],
+                          ),
+                        ],
+                      ),
+                      OTSpacing.gapLg,
+                      Divider(height: 1, color: border),
+                      OTSpacing.gapMd,
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: _PassMeta(
+                              label: AppCopy.navStudies,
+                              value: summary.accessLabel,
+                              valueColor: foreground,
                             ),
-                          ],
-                        ),
+                          ),
+                          OTSpacing.gapMd,
+                          Expanded(
+                            flex: 2,
+                            child: _PassMeta(
+                              label: AppCopy.activeUntil,
+                              value: summary.expiresAt == null
+                                  ? '—'
+                                  : _expiryLabel(),
+                              valueColor: foreground,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -1015,8 +943,9 @@ class _MembershipPass extends StatelessWidget {
             backgroundColor: OTColors.accent(isDark),
             foregroundColor: OTColors.onAccent(isDark),
             minimumSize: const Size.fromHeight(48),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape: RoundedRectangleBorder(
+              borderRadius: OTRadius.controlBorder,
+            ),
           ),
           icon: const Icon(Icons.tune_rounded, size: 18),
           label: Text(
@@ -1047,23 +976,14 @@ class _PassMeta extends StatelessWidget {
       children: [
         Text(
           label,
-          style: ScholarlyFonts.outfit(
-            color: Colors.white.withValues(alpha: 0.58),
-            fontSize: 9.5,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.9,
-          ),
+          style: OTTypography.caption(color: valueColor.withValues(alpha: .62)),
         ),
         const SizedBox(height: 3),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: ScholarlyFonts.outfit(
-            color: valueColor,
-            fontSize: 12.5,
-            fontWeight: FontWeight.w600,
-          ),
+          style: OTTypography.captionMedium(color: valueColor),
         ),
       ],
     );
