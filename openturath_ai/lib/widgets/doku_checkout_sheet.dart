@@ -53,7 +53,7 @@ class DokuCheckoutSheet extends StatefulWidget {
     return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: OTColors.transparent,
       enableDrag: false,
       isDismissible: false,
       builder: (context) => DokuCheckoutSheet(
@@ -387,7 +387,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
               top: Radius.circular(AppTheme.radiusCard)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(isDark ? 100 : 40),
+              color: OTColors.scrim.withAlpha(isDark ? 100 : 40),
               blurRadius: 24,
               offset: const Offset(0, -4),
             ),
@@ -540,7 +540,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                   if (_loadProgress < 1.0)
                     LinearProgressIndicator(
                       value: _loadProgress,
-                      backgroundColor: Colors.transparent,
+                      backgroundColor: OTColors.transparent,
                       color: accent,
                       minHeight: 2.5,
                     ),

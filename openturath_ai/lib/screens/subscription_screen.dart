@@ -161,7 +161,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       height: 4,
                       decoration: BoxDecoration(
                         color: muted.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
+                        borderRadius: OTRadius.chipBorder,
                       ),
                     ),
                     Padding(
