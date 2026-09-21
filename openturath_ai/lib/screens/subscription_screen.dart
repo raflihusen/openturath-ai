@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
@@ -26,8 +28,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   bool _processing = false;
   bool _initialized = false;
 
-  List<AgentModel> get _specialists => AgentModel.defaultAgents.where((a) =>
-    a.kind == CorpusKind.discipline && a.isActive && a.id != 'fiqh_tahawwulat').toList();
+  List<AgentModel> get _specialists => AgentModel.defaultAgents
+      .where((a) =>
+          a.kind == CorpusKind.discipline &&
+          a.isActive &&
+          a.id != 'fiqh_tahawwulat')
+      .toList();
 
   @override
   void didChangeDependencies() {
@@ -51,26 +57,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     setState(() => _processing = true);
     try {
       final title = '${agent.title} · ${offer.title}';
-      final result = await _service.createPayment(uid: user.uid, agentId: agent.id,
-        plan: offer.plan, planTitle: title, amount: offer.amount,
-        name: user.displayName ?? user.email?.split('@').first ?? AppCopy.ahlanDefault,
-        email: user.email ?? '', phone: user.phoneNumber ?? '');
+      final result = await _service.createPayment(
+          uid: user.uid,
+          agentId: agent.id,
+          plan: offer.plan,
+          planTitle: title,
+          amount: offer.amount,
+          name: user.displayName ??
+              user.email?.split('@').first ??
+              AppCopy.ahlanDefault,
+          email: user.email ?? '',
+          phone: user.phoneNumber ?? '');
       if (!mounted) return;
       // An old backend or stale quote must never open a differently priced checkout.
-      if (result['amount'] != offer.amount || result['pricingRevision'] != ProductPricing.revision) {
+      if (result['amount'] != offer.amount ||
+          result['pricingRevision'] != ProductPricing.revision) {
         AppSnackBar.warning(context, Loc.tr('priceChanged'));
         return;
       }
       final paymentUrl = result['redirectUrl'];
       final invoice = result['invoiceNumber'];
-      if (paymentUrl is! String || Uri.tryParse(paymentUrl)?.scheme != 'https' ||
-          invoice is! String || invoice.isEmpty) {
+      if (paymentUrl is! String ||
+          Uri.tryParse(paymentUrl)?.scheme != 'https' ||
+          invoice is! String ||
+          invoice.isEmpty) {
         throw const FormatException('Invalid checkout response');
       }
       final paid = await DokuCheckoutSheet.show(context,
-        paymentUrl: paymentUrl, invoiceNumber: invoice, trxId: result['trxId'] as String?,
-        planTitle: title, amount: offer.amount, regularAmount: offer.regularAmount,
-        periodLabel: offer.period);
+          paymentUrl: paymentUrl,
+          invoiceNumber: invoice,
+          trxId: result['trxId'] as String?,
+          planTitle: title,
+          amount: offer.amount,
+          regularAmount: offer.regularAmount,
+          periodLabel: offer.period);
       if (mounted && paid == true) {
         AppSnackBar.success(context, Loc.tr('paymentConfirmed'));
       }
@@ -81,23 +101,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-
-
-  Widget _card({required Widget child, bool flagship = false}) {
+  Widget _card({required Widget child}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final border = OTColors.border(dark);
     return Container(
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: OTRadius.cardBorder,
         border: Border.all(color: border, width: 1.0),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: OTSpacing.card,
       child: child,
     );
   }
 
-  void _showDisciplinePickerModal(BuildContext context, List<AgentModel> specialists) {
+  void _showDisciplinePickerModal(
+      BuildContext context, List<AgentModel> specialists) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
@@ -109,7 +128,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       isScrollControlled: true,
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
       ),
       builder: (ctx) {
         var query = '';
@@ -165,11 +185,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           const SizedBox(height: 8),
                           TextField(
                             autofocus: false,
-                            onChanged: (val) => setModalState(() => query = val),
+                            onChanged: (val) =>
+                                setModalState(() => query = val),
                             decoration: InputDecoration(
                               hintText: Loc.tr('searchBooks'),
-                              prefixIcon: Icon(Icons.search_rounded, size: 20, color: muted),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              prefixIcon: Icon(Icons.search_rounded,
+                                  size: 20, color: muted),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
                             ),
                           ),
                         ],
@@ -189,16 +212,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               setState(() => _selectedAgentId = a.id);
                               Navigator.pop(modalCtx);
                             },
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: OTRadius.controlBorder,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 12),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? OTColors.accent(dark).withValues(alpha: 0.1)
+                                    ? OTColors.accent(dark)
+                                        .withValues(alpha: 0.1)
                                     : surface,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: OTRadius.controlBorder,
                                 border: Border.all(
-                                  color: isSelected ? OTColors.accent(dark) : border,
+                                  color: isSelected
+                                      ? OTColors.accent(dark)
+                                      : border,
                                   width: isSelected ? 1.5 : 1,
                                 ),
                               ),
@@ -206,19 +233,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           a.title,
-                                          style: OTTypography.bodyMedium(color: ink).copyWith(
-                                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                          style: OTTypography.bodyMedium(
+                                                  color: ink)
+                                              .copyWith(
+                                            fontWeight: isSelected
+                                                ? FontWeight.w700
+                                                : FontWeight.w500,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   if (isSelected)
-                                    Icon(Icons.check_circle_rounded, color: OTColors.accent(dark), size: 20),
+                                    Icon(Icons.check_circle_rounded,
+                                        color: OTColors.accent(dark), size: 20),
                                 ],
                               ),
                             ),
@@ -243,15 +276,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
     final border = OTColors.border(dark);
-    final flagship = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
+    final flagship =
+        AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
     final offer = ProductPricing.tahawwulat[_tahawwulatIndex];
     final specialists = _specialists;
     final selected = specialists.firstWhere((a) => a.id == _selectedAgentId,
-      orElse: () => specialists.first);
+        orElse: () => specialists.first);
 
     return Scaffold(
       backgroundColor: OTColors.canvas(dark),
-      appBar: AppBar(title: Text(AppCopy.subscription), backgroundColor: OTColors.canvas(dark)),
+      appBar: AppBar(
+          title: Text(AppCopy.subscription),
+          backgroundColor: OTColors.canvas(dark)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
@@ -261,14 +297,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(Loc.tr('launchOffer'), style: OTTypography.pageTitle(color: ink)),
+                  Text('Pilih langganan',
+                      style: OTTypography.pageTitle(color: ink)),
                   const SizedBox(height: 8),
-                  Text(AppCopy.manualRenewalNotice, style: OTTypography.body(color: muted)),
+                  Text(AppCopy.manualRenewalNotice,
+                      style: OTTypography.body(color: muted)),
                   const SizedBox(height: 24),
 
-                  // Fikih Tahawwulat Sovereign Card
                   _card(
-                    flagship: true,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -279,9 +315,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(AppCopy.planTahawwulat, style: OTTypography.pageTitle(color: ink)),
+                                  Text(AppCopy.planTahawwulat,
+                                      style:
+                                          OTTypography.pageTitle(color: ink)),
                                   const SizedBox(height: 6),
-                                  Text(Loc.tr('tahawwulatBenefit'), style: OTTypography.body(color: muted)),
+                                  Text(Loc.tr('tahawwulatBenefit'),
+                                      style: OTTypography.body(color: muted)),
                                 ],
                               ),
                             ),
@@ -292,21 +331,29 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         // Tier Selector Cards
                         Row(
                           children: [
-                            for (var i = 0; i < ProductPricing.tahawwulat.length; i++) ...[
+                            for (var i = 0;
+                                i < ProductPricing.tahawwulat.length;
+                                i++) ...[
                               if (i > 0) const SizedBox(width: 8),
                               Expanded(
                                 child: InkWell(
-                                  onTap: _processing ? null : () => setState(() => _tahawwulatIndex = i),
-                                  borderRadius: BorderRadius.circular(10),
+                                  onTap: _processing
+                                      ? null
+                                      : () =>
+                                          setState(() => _tahawwulatIndex = i),
+                                  borderRadius: OTRadius.controlBorder,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: _tahawwulatIndex == i
-                                          ? (dark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
-                                          : (dark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.02)),
-                                      borderRadius: BorderRadius.circular(10),
+                                          ? OTColors.surfaceSubtle(dark)
+                                          : OTColors.surface(dark),
+                                      borderRadius: OTRadius.controlBorder,
                                       border: Border.all(
-                                        color: _tahawwulatIndex == i ? ink : border,
+                                        color: _tahawwulatIndex == i
+                                            ? ink
+                                            : border,
                                         width: _tahawwulatIndex == i ? 1.2 : 1,
                                       ),
                                     ),
@@ -315,12 +362,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         Text(
                                           ProductPricing.tahawwulat[i].title,
                                           style: OTTypography.captionMedium(
-                                            color: _tahawwulatIndex == i ? ink : muted,
+                                            color: _tahawwulatIndex == i
+                                                ? ink
+                                                : muted,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          ProductPricing.rupiah(ProductPricing.tahawwulat[i].amount),
+                                          ProductPricing.rupiah(ProductPricing
+                                              .tahawwulat[i].amount),
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
@@ -336,12 +386,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ],
                         ),
                         const SizedBox(height: 20),
-                        PromoPrice(amount: offer.amount, regularAmount: offer.regularAmount, period: offer.period),
+                        PromoPrice(
+                            amount: offer.amount,
+                            regularAmount: offer.regularAmount,
+                            period: offer.period),
                         const SizedBox(height: 20),
                         SizedBox(
                           width: double.infinity,
                           child: FilledButton(
-                            onPressed: _processing ? null : () => _checkout(flagship, offer),
+                            onPressed: _processing
+                                ? null
+                                : () => _checkout(flagship, offer),
                             child: Text(Loc.tr('continuePayment')),
                           ),
                         ),
@@ -355,29 +410,35 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(Loc.tr('specialistAccess'), style: OTTypography.pageTitle(color: ink)),
+                        Text(Loc.tr('specialistAccess'),
+                            style: OTTypography.pageTitle(color: ink)),
                         const SizedBox(height: 16),
 
                         // Interactive Tactile Discipline Card
                         InkWell(
-                          onTap: _processing ? null : () => _showDisciplinePickerModal(context, specialists),
-                          borderRadius: BorderRadius.circular(12),
+                          onTap: _processing
+                              ? null
+                              : () => _showDisciplinePickerModal(
+                                  context, specialists),
+                          borderRadius: OTRadius.controlBorder,
                           child: Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: dark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.02),
-                              borderRadius: BorderRadius.circular(12),
+                              color: OTColors.surfaceSubtle(dark),
+                              borderRadius: OTRadius.controlBorder,
                               border: Border.all(color: border),
                             ),
                             child: Row(
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         selected.title,
-                                        style: OTTypography.bodyMedium(color: ink),
+                                        style:
+                                            OTTypography.bodyMedium(color: ink),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -386,10 +447,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
                                     color: OTColors.surfaceSubtle(dark),
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: OTRadius.smallBorder,
                                     border: Border.all(color: border),
                                   ),
                                   child: Row(
@@ -397,10 +459,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     children: [
                                       Text(
                                         Loc.tr('chooseField'),
-                                        style: OTTypography.captionMedium(color: ink).copyWith(fontSize: 12),
+                                        style: OTTypography.captionMedium(
+                                                color: ink)
+                                            .copyWith(fontSize: 12),
                                       ),
                                       const SizedBox(width: 4),
-                                      Icon(Icons.unfold_more_rounded, size: 16, color: muted),
+                                      Icon(Icons.unfold_more_rounded,
+                                          size: 16, color: muted),
                                     ],
                                   ),
                                 ),
@@ -415,15 +480,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           height: 36,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
-                            itemCount: specialists.length > 8 ? 8 : specialists.length,
-                            separatorBuilder: (_, __) => const SizedBox(width: 8),
+                            itemCount:
+                                specialists.length > 8 ? 8 : specialists.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 8),
                             itemBuilder: (ctx, i) {
                               final spec = specialists[i];
                               final isSel = spec.id == selected.id;
                               return ChoiceChip(
                                 label: Text(spec.title),
                                 selected: isSel,
-                                onSelected: _processing ? null : (_) => setState(() => _selectedAgentId = spec.id),
+                                onSelected: _processing
+                                    ? null
+                                    : (_) => setState(
+                                        () => _selectedAgentId = spec.id),
                               );
                             },
                           ),
@@ -432,14 +502,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         PromoPrice(
                           amount: ProductPricing.specialist.amount,
-                          regularAmount: ProductPricing.specialist.regularAmount,
+                          regularAmount:
+                              ProductPricing.specialist.regularAmount,
                           period: ProductPricing.specialist.period,
                         ),
                         const SizedBox(height: 20),
                         SizedBox(
                           width: double.infinity,
                           child: FilledButton(
-                            onPressed: _processing ? null : () => _checkout(selected, ProductPricing.specialist),
+                            onPressed: _processing
+                                ? null
+                                : () => _checkout(
+                                    selected, ProductPricing.specialist),
                             child: Text(Loc.tr('continuePayment')),
                           ),
                         ),
@@ -455,7 +529,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                     ),
                   TextButton.icon(
-                    onPressed: _processing ? null : () => RedeemCodeSheet.show(context),
+                    onPressed: _processing
+                        ? null
+                        : () => RedeemCodeSheet.show(context),
                     icon: const Icon(Icons.confirmation_number_outlined),
                     label: Text(Loc.tr('redeemAccess')),
                   ),
