@@ -21,16 +21,6 @@ class OTTypography {
     double? height,
     Color? color,
   }) {
-    if (useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: Loc.isArabic ? 'Scheherazade New' : 'Newsreader',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
-        color: color,
-      );
-    }
     return ScholarlyFonts.newsreader(
       fontSize: fontSize,
       fontWeight: fontWeight,
@@ -48,16 +38,6 @@ class OTTypography {
     double? height,
     Color? color,
   }) {
-    if (useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: Loc.isArabic ? 'Scheherazade New' : 'Outfit',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
-        color: color,
-      );
-    }
     return ScholarlyFonts.outfit(
       fontSize: fontSize,
       fontWeight: fontWeight,
@@ -75,21 +55,11 @@ class OTTypography {
     double? height,
     Color? color,
   }) {
-    if (useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Scheherazade New',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
-        color: color,
-      );
-    }
     return ScholarlyFonts.scheherazadeNew(
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
-      height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+      height: height == null || height < 1.85 ? 1.85 : height,
       color: color,
     );
   }

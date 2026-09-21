@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'scholarly_fonts.dart';
 import 'design/ot_colors.dart';
-import 'design/ot_typography.dart';
 
 // OpenTurath AI: Monochrome Editorial Theme (Quiet Scholar Adaptive)
 class AppTheme {
@@ -492,16 +491,6 @@ class AppTheme {
     double? letterSpacing,
     double? height,
   }) {
-    if (OTTypography.useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Newsreader',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: color,
-        letterSpacing: letterSpacing,
-        height: height,
-      );
-    }
     return ScholarlyFonts.newsreader(
       fontSize: fontSize,
       fontWeight: fontWeight,
@@ -518,16 +507,6 @@ class AppTheme {
     double? letterSpacing,
     double? height,
   }) {
-    if (OTTypography.useSystemFontFallback) {
-      return TextStyle(
-        fontFamily: 'Outfit',
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        color: color,
-        letterSpacing: letterSpacing,
-        height: height,
-      );
-    }
     return ScholarlyFonts.outfit(
       fontSize: fontSize,
       fontWeight: fontWeight,
