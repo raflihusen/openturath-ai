@@ -15,6 +15,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/design/ot_motion.dart';
 import '../models/user_model.dart';
 import '../models/agent_model.dart';
 import '../services/auth_service.dart';
@@ -205,50 +206,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .toList();
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: OTColors.transparent,
       builder: (_) => Container(
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: OTRadius.sheetBorder,
         ),
         child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                  child: Container(
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                          color: textSecondary.withValues(alpha: .35),
-                          borderRadius: BorderRadius.circular(99)))),
-              const SizedBox(height: 18),
-              Text(Loc.tr('ui_6a2b35b4ca'),
-                  style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: 19)),
-              const SizedBox(height: 5),
-              Text(Loc.tr('ui_b92aed18d1'),
-                  style: OTTypography.caption(color: textSecondary)),
-              const SizedBox(height: 16),
-              if (summary.agentIds.contains('all_access') ||
-                  summary.agentIds.contains('all_ai'))
-                _AccessPortfolioRow(
-                    title: Loc.tr('ui_b236ca6182'),
-                    subtitle: summary.supportingLabel,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: textSecondary.withValues(alpha: .35),
+                  borderRadius: OTRadius.chipBorder,
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Text(Loc.tr('ui_6a2b35b4ca'),
+                style: OTTypography.cardTitle(color: textPrimary)
+                    .copyWith(fontSize: 19)),
+            const SizedBox(height: 5),
+            Text(Loc.tr('ui_b92aed18d1'),
+                style: OTTypography.caption(color: textSecondary)),
+            const SizedBox(height: 16),
+            if (summary.agentIds.contains('all_access') ||
+                summary.agentIds.contains('all_ai'))
+              _AccessPortfolioRow(
+                  title: Loc.tr('ui_b236ca6182'),
+                  subtitle: summary.supportingLabel,
+                  color: textPrimary,
+                  muted: textSecondary)
+            else
+              ...entries.map((entry) => _AccessPortfolioRow(
+                    title: _entitlementTitle(entry.key),
+                    subtitle: entry.value.expiry == null
+                        ? Loc.tr('activeSubscription')
+                        : Loc.tr('expiryDate',
+                            [_formatAccessDate(entry.value.expiry!)]),
                     color: textPrimary,
-                    muted: textSecondary)
-              else
-                ...entries.map((entry) => _AccessPortfolioRow(
-                      title: _entitlementTitle(entry.key),
-                      subtitle: entry.value.expiry == null
-                          ? Loc.tr('activeSubscription')
-                          : Loc.tr('expiryDate',
-                              [_formatAccessDate(entry.value.expiry!)]),
-                      color: textPrimary,
-                      muted: textSecondary,
-                    )),
-            ]),
+                    muted: textSecondary,
+                  )),
+          ],
+        ),
       ),
     );
   }
@@ -332,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: OTRadius.cardBorder,
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -365,7 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
                                     color: OTColors.surfaceSubtle(isDark),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: OTRadius.controlBorder,
                                   ),
                                   child: Row(
                                     children: [
@@ -436,7 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: OTRadius.cardBorder,
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: _SettingsTile(
@@ -462,14 +467,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: OTRadius.cardBorder,
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
+                    color: OTColors.transparent,
+                    borderRadius: OTRadius.cardBorder,
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: OTRadius.cardBorder,
                       onTap: (_isLoggingOut || _isDeletingAccount)
                           ? null
                           : _logout,
@@ -665,7 +670,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: OTRadius.smallBorder,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         child: Row(
@@ -737,22 +742,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onTap();
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
+          duration: OTMotion.fast,
+          curve: OTMotion.curve,
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(9),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ]
-                : null,
+            color: isSelected ? activeBg : OTColors.transparent,
+            borderRadius: OTRadius.smallBorder,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -775,8 +770,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-/// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
-/// dipakai tanpa menyamarkan halaman pengaturan sebagai layar perbankan.
+/// Ringkasan akun: merangkum identitas, status, dan asisten yang tersedia.
 class _MembershipPass extends StatelessWidget {
   final String holderName;
   final String email;
@@ -1012,7 +1006,7 @@ class _AccessPortfolioRow extends StatelessWidget {
             height: 38,
             decoration: BoxDecoration(
               color: muted.withValues(alpha: .10),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: OTRadius.controlBorder,
             ),
             child: Icon(Icons.auto_awesome_rounded, color: color, size: 18),
           ),
@@ -1056,7 +1050,7 @@ class _SettingsTile extends StatelessWidget {
       onTap: onTap,
       pressedScale: 0.985,
       hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: OTRadius.controlBorder,
       child: ListTile(
         onTap: onTap,
         contentPadding:
