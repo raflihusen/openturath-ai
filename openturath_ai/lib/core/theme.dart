@@ -26,8 +26,8 @@ class AppTheme {
 
   // ── 1b. Token Navigasi & Status ───────────────────────────────────────────
   // Status kritis memakai merah bata redup dari OTColors, bukan merah neon iOS.
-  static const Color navBarDark = Color(0xCC111110);
-  static const Color navBarLight = Color(0xD9F6F6F3);
+  static const Color navBarDark = OTColors.navigationDark;
+  static const Color navBarLight = OTColors.navigationLight;
   static const Color navBarBorderDark = OTColors.borderDark;
   static const Color navBarBorderLight = OTColors.borderLight;
   static const double dividerIndent = 54.0;
@@ -52,8 +52,8 @@ class AppTheme {
   static const Color queryBoxBorderDark = OTColors.borderDark;
   static const Color surfaceElevated = OTColors.surfaceSubtleDark;
   static const Color scholarlyIndigo = OTColors.textPrimaryDark;
-  static const Color readingCanvasParchmentLight = Color(0xFFF6F6F3);
-  static const Color readingCanvasParchmentDark = Color(0xFF181817);
+  static const Color readingCanvasParchmentLight = OTColors.canvasLight;
+  static const Color readingCanvasParchmentDark = OTColors.surfaceDark;
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
   static const Color lmLightCanvas = canvasLight;

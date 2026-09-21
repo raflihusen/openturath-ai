@@ -72,14 +72,25 @@ class OTColors {
   static const Color destructiveLight = Color(0xFF8C2F2F);
   static const Color destructiveDark = Color(0xFFC97B74);
 
-  // ── 7. Sovereign Tahawwulat ──
-  // A restrained archival brass reserved exclusively for the flagship card.
-  static const Color sovereignSurface = Color(0xFF111110);
-  static const Color sovereignSurfaceRaised = Color(0xFF1A1A18);
-  static const Color sovereignInk = Color(0xFFF4F4F0);
-  static const Color sovereignMuted = Color(0xFFB7B7AE);
-  static const Color sovereignGold = Color(0xFFC1A56B);
-  static const Color sovereignHairline = Color(0xFF3A3428);
+  // ── 7. Navigation overlays ──
+  static const Color navigationLight = Color(0xF2F6F6F3);
+  static const Color navigationDark = Color(0xF2111110);
+
+  // Temporary compatibility aliases while legacy feature cards are migrated.
+  // They intentionally resolve to the neutral palette; no gold or exclusive
+  // dark-card language remains.
+  @Deprecated('Use adaptive surface tokens')
+  static const Color sovereignSurface = surfaceDark;
+  @Deprecated('Use adaptive surface tokens')
+  static const Color sovereignSurfaceRaised = surfaceSubtleDark;
+  @Deprecated('Use adaptive text tokens')
+  static const Color sovereignInk = textPrimaryDark;
+  @Deprecated('Use adaptive text tokens')
+  static const Color sovereignMuted = textSecondaryDark;
+  @Deprecated('Use adaptive border tokens')
+  static const Color sovereignGold = borderStrongDark;
+  @Deprecated('Use adaptive border tokens')
+  static const Color sovereignHairline = borderDark;
 
   // ── 8. Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
