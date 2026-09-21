@@ -74,7 +74,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
       backgroundColor: canvas,
       appBar: AppBar(
         backgroundColor: canvas,
-        surfaceTintColor: Colors.transparent,
+        surfaceTintColor: OTColors.transparent,
         title: Text(AppCopy.savedCollection,
             style: ScholarlyFonts.newsreader(
                 color: primary, fontWeight: FontWeight.w700)),

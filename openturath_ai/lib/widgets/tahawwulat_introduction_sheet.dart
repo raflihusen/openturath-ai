@@ -529,7 +529,7 @@ class _TahawwulatIntroductionSheetState
                 ],
 
                 // ════════════════════════════════════════════════════════
-                // TAB 6: 5 BILIK SUPER AI
+                // TAB 6: LIMA ASISTEN
                 // ════════════════════════════════════════════════════════
                 if (_selectedTabIndex == 0 || _selectedTabIndex == 6) ...[
                   _buildSectionHeader(
@@ -1577,7 +1577,7 @@ class _TahawwulatIntroductionSheetState
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // FLOWCHART 5: 5 BILIK SUPER AI OPENTURATH
+  // FLOWCHART 5: LIMA ASISTEN OPENTURATH
   // ──────────────────────────────────────────────────────────────────────────
   Widget _buildFiveAiRoomsList(BuildContext context, bool isDark) {
     final subAgents = widget.agent?.subAgents ?? const <SubAgentModel>[];

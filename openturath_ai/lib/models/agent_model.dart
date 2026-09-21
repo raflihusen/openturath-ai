@@ -95,7 +95,7 @@ class AgentModel {
 
   // ── Hardcoded fallback terstruktur berbasis 8 Bidang Keilmuan ──
   static List<AgentModel> get defaultAgents => [
-        // ── 1. FIKIH TAHAWWULAT (SOVEREIGN FLAGSHIP) ─────────
+        // ── 1. FIKIH TAHAWWULAT ───────────────────────────────
         AgentModel(
           id: 'fiqh_tahawwulat',
           title: 'Fikih Tahawwulat',

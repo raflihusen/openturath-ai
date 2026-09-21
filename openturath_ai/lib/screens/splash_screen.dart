@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
 import '../core/scholarly_fonts.dart';
 import '../widgets/app_loader.dart';
 
@@ -81,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: OTColors.transparent,
         statusBarIconBrightness: Brightness.light,
         systemNavigationBarColor: bg,
         systemNavigationBarIconBrightness: Brightness.light,

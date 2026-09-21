@@ -195,7 +195,7 @@ class _AssistantRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: OTColors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: OTRadius.controlBorder,

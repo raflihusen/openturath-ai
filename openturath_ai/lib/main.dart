@@ -55,7 +55,8 @@ Future<void> main() async {
     TelemetryService.instance.init();
     runApp(const OpenTurathApp());
   } catch (error, stackTrace) {
-    debugPrint('[OpenTurath] Firebase initialization error: $error\n$stackTrace');
+    debugPrint(
+        '[OpenTurath] Firebase initialization error: $error\n$stackTrace');
     TelemetryService.instance.reportError(
       error,
       stackTrace,
@@ -99,16 +100,22 @@ class OpenTurathApp extends StatelessWidget {
         return ValueListenableBuilder<String>(
           valueListenable: AppConfig.localeNotifier,
           builder: (context, currentLocale, _) {
-            final platformBrightness = MediaQuery.maybePlatformBrightnessOf(context) ??
-                WidgetsBinding.instance.platformDispatcher.platformBrightness;
-            final isDark = currentTheme == ThemeMode.dark || 
-                           (currentTheme == ThemeMode.system && platformBrightness == Brightness.dark);
+            final platformBrightness =
+                MediaQuery.maybePlatformBrightnessOf(context) ??
+                    WidgetsBinding
+                        .instance.platformDispatcher.platformBrightness;
+            final isDark = currentTheme == ThemeMode.dark ||
+                (currentTheme == ThemeMode.system &&
+                    platformBrightness == Brightness.dark);
 
             final overlayStyle = SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
-              statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-              systemNavigationBarColor: isDark ? AppTheme.canvasDark : AppTheme.canvasLight,
-              systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+              statusBarIconBrightness:
+                  isDark ? Brightness.light : Brightness.dark,
+              systemNavigationBarColor:
+                  isDark ? AppTheme.canvasDark : AppTheme.canvasLight,
+              systemNavigationBarIconBrightness:
+                  isDark ? Brightness.light : Brightness.dark,
               systemNavigationBarDividerColor: Colors.transparent,
             );
 
@@ -123,97 +130,103 @@ class OpenTurathApp extends StatelessWidget {
                 locale: Locale(currentLocale),
                 supportedLocales: Loc.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                builder: (context, child) => LocaleScope(child: Directionality(
+                builder: (context, child) => LocaleScope(
+                    child: Directionality(
                   textDirection: currentLocale == 'ar'
                       ? TextDirection.rtl
                       : TextDirection.ltr,
                   child: child ?? const SizedBox.shrink(),
                 )),
 
-              // ── Initial Route ──
-              initialRoute: AppRoutes.splash,
+                // ── Initial Route ──
+                initialRoute: AppRoutes.splash,
 
-              // ── Dynamic Route Generator with M3 Expressive Transitions ──
-              onGenerateRoute: (settings) {
-                Widget page;
-                switch (settings.name) {
-                  case AppRoutes.splash:
-                    page = const SplashScreen();
-                    break;
-                  case AppRoutes.login:
-                    page = const LoginScreen();
-                    break;
-                  case AppRoutes.dashboard:
-                    page = const MainShellScreen();
-                    break;
-                  case AppRoutes.specialistList:
-                    page = const SpecialistListScreen();
-                    break;
-                  case AppRoutes.bookmark:
-                    page = const BookmarkScreen();
-                    break;
-                  case AppRoutes.profile:
-                    page = const ProfileScreen();
-                    break;
-                  case AppRoutes.agentWebview:
-                    // Jalur lama tetap kompatibel, tetapi selalu kembali ke
-                    // shell yang memiliki ruang kajian multi-tab persisten.
-                    // Ini mencegah dua WebView dengan perilaku copy/close
-                    // yang berbeda hidup bersamaan.
-                    page = const MainShellScreen();
-                    break;
-                  case AppRoutes.subscription:
-                    page = const SubscriptionScreen();
-                    break;
-                  case AppRoutes.googleSessionAuth:
-                    page = const GoogleSessionAuthScreen();
-                    break;
-                  case AppRoutes.bookCatalog:
-                    page = BookCatalogScreen(
-                      agent: settings.arguments is AgentModel
-                          ? settings.arguments as AgentModel
-                          : null,
-                    );
-                    break;
-                  case AppRoutes.bookDetail:
-                    final book = settings.arguments as CanonicalBookPresentation;
-                    page = BookDetailScreen(book: book);
-                    break;
-                  default:
-                    page = const SplashScreen();
-                    break;
-                }
+                // ── Dynamic Route Generator with M3 Expressive Transitions ──
+                onGenerateRoute: (settings) {
+                  Widget page;
+                  switch (settings.name) {
+                    case AppRoutes.splash:
+                      page = const SplashScreen();
+                      break;
+                    case AppRoutes.login:
+                      page = const LoginScreen();
+                      break;
+                    case AppRoutes.dashboard:
+                      page = const MainShellScreen();
+                      break;
+                    case AppRoutes.specialistList:
+                      page = const SpecialistListScreen();
+                      break;
+                    case AppRoutes.bookmark:
+                      page = const BookmarkScreen();
+                      break;
+                    case AppRoutes.profile:
+                      page = const ProfileScreen();
+                      break;
+                    case AppRoutes.agentWebview:
+                      // Jalur lama tetap kompatibel, tetapi selalu kembali ke
+                      // shell yang mempertahankan percakapan selama aplikasi aktif.
+                      // Ini mencegah dua WebView dengan perilaku copy/close
+                      // yang berbeda hidup bersamaan.
+                      page = const MainShellScreen();
+                      break;
+                    case AppRoutes.subscription:
+                      page = const SubscriptionScreen();
+                      break;
+                    case AppRoutes.googleSessionAuth:
+                      page = const GoogleSessionAuthScreen();
+                      break;
+                    case AppRoutes.bookCatalog:
+                      page = BookCatalogScreen(
+                        agent: settings.arguments is AgentModel
+                            ? settings.arguments as AgentModel
+                            : null,
+                      );
+                      break;
+                    case AppRoutes.bookDetail:
+                      final book =
+                          settings.arguments as CanonicalBookPresentation;
+                      page = BookDetailScreen(book: book);
+                      break;
+                    default:
+                      page = const SplashScreen();
+                      break;
+                  }
 
-                // Default Material 3 Expressive transition: FadeUpTransition (fade + subtle 30px slide-up)
-                return PageRouteBuilder(
-                  settings: settings,
-                  pageBuilder: (context, animation, secondaryAnimation) => page,
-                  transitionDuration: const Duration(milliseconds: 320),
-                  reverseTransitionDuration: const Duration(milliseconds: 240),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    final curvedAnimation = CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOutCubic,
-                      reverseCurve: Curves.easeInCubic,
-                    );
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0.0, 0.04),
-                        end: Offset.zero,
-                      ).animate(curvedAnimation),
-                      child: FadeTransition(
-                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
-                        child: child,
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+                  // Default Material 3 Expressive transition: FadeUpTransition (fade + subtle 30px slide-up)
+                  return PageRouteBuilder(
+                    settings: settings,
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        page,
+                    transitionDuration: const Duration(milliseconds: 320),
+                    reverseTransitionDuration:
+                        const Duration(milliseconds: 240),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      final curvedAnimation = CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOutCubic,
+                        reverseCurve: Curves.easeInCubic,
+                      );
+                      return SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.0, 0.04),
+                          end: Offset.zero,
+                        ).animate(curvedAnimation),
+                        child: FadeTransition(
+                          opacity: Tween<double>(begin: 0.0, end: 1.0)
+                              .animate(curvedAnimation),
+                          child: child,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }

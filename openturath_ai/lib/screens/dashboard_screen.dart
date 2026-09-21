@@ -11,6 +11,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
+import '../core/design/ot_motion.dart';
 import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
@@ -142,7 +143,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return;
     }
 
-    // Buka ruang kajian multi-tab secara seketika (0ms delay)
+    // Buka percakapan yang dipilih tanpa jeda tambahan.
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
@@ -283,7 +284,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: OTRadius.inputBorder,
                         border: Border.all(color: border, width: 1.0),
                       ),
                       child: Row(
@@ -1002,8 +1003,8 @@ class _DashboardAnnouncementCarouselState
         final nextPage = (_currentPage + 1) % _slides.length;
         _pageController.animateToPage(
           nextPage,
-          duration: const Duration(milliseconds: 450),
-          curve: Curves.easeOutCubic,
+          duration: OTMotion.transition,
+          curve: OTMotion.curve,
         );
       }
     });
@@ -1020,12 +1021,12 @@ class _DashboardAnnouncementCarouselState
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: OTColors.transparent,
       builder: (ctx) {
         return Container(
           decoration: BoxDecoration(
             color: widget.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: OTRadius.sheetBorder,
             border: Border.all(color: widget.border, width: 1.0),
           ),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -1040,7 +1041,7 @@ class _DashboardAnnouncementCarouselState
                   margin: const EdgeInsets.only(bottom: 18),
                   decoration: BoxDecoration(
                     color: widget.textSecondary.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: OTRadius.chipBorder,
                   ),
                 ),
               ),
@@ -1049,7 +1050,7 @@ class _DashboardAnnouncementCarouselState
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(widget.isDark),
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: OTRadius.chipBorder,
                   border: Border.all(
                     color: OTColors.border(widget.isDark),
                     width: 0.8,
@@ -1094,7 +1095,7 @@ class _DashboardAnnouncementCarouselState
                     backgroundColor: OTColors.textPrimary(widget.isDark),
                     foregroundColor: OTColors.surface(widget.isDark),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: OTRadius.buttonBorder,
                     ),
                   ),
                   child: Text(
@@ -1140,13 +1141,13 @@ class _DashboardAnnouncementCarouselState
                 final slide = _slides[index];
                 return InkWell(
                   onTap: () => _showDetailModal(slide),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: OTRadius.cardBorder,
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: widget.surface,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: OTRadius.cardBorder,
                       border: Border.all(
                         color: widget.border,
                         width: 1.0,
@@ -1164,7 +1165,7 @@ class _DashboardAnnouncementCarouselState
                                   horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
                                 color: OTColors.surfaceSubtle(widget.isDark),
-                                borderRadius: BorderRadius.circular(100),
+                                borderRadius: OTRadius.chipBorder,
                                 border: Border.all(
                                   color: OTColors.border(widget.isDark),
                                   width: 0.8,
@@ -1236,7 +1237,7 @@ class _DashboardAnnouncementCarouselState
           children: List.generate(
             _slides.length,
             (i) => AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
+              duration: OTMotion.fast,
               margin: const EdgeInsets.symmetric(horizontal: 3),
               width: _currentPage == i ? 18 : 5,
               height: 5,
@@ -1244,7 +1245,7 @@ class _DashboardAnnouncementCarouselState
                 color: _currentPage == i
                     ? OTColors.textPrimary(widget.isDark)
                     : widget.border,
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: OTRadius.chipBorder,
               ),
             ),
           ),
