@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
+import '../core/scholarly_fonts.dart';
 
 /// AppLoader: Komponen visual baku tiga titik berdenyut (Three-Dots Pulse Loader).
 /// Menyatukan 4 implementasi loader berbeda menjadi satu komponen berstandar Apple HIG.
@@ -41,7 +41,8 @@ class AppLoader extends StatefulWidget {
   State<AppLoader> createState() => _AppLoaderState();
 }
 
-class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMixin {
+class _AppLoaderState extends State<AppLoader>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   @override
@@ -64,8 +65,10 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final defaultAccent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
     final dotColor = widget.color ?? defaultAccent;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
 
     Widget content = Column(
@@ -80,9 +83,12 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
               children: List.generate(3, (index) {
                 final delay = index * 0.2;
                 final t = (_controller.value - delay) % 1.0;
-                final curveVal = Curves.easeInOutSine.transform(t < 0 ? t + 1.0 : t);
-                final scale = 0.75 + (0.45 * (1.0 - (curveVal - 0.5).abs() * 2));
-                final opacity = 0.3 + (0.7 * (1.0 - (curveVal - 0.5).abs() * 2));
+                final curveVal =
+                    Curves.easeInOutSine.transform(t < 0 ? t + 1.0 : t);
+                final scale =
+                    0.75 + (0.45 * (1.0 - (curveVal - 0.5).abs() * 2));
+                final opacity =
+                    0.3 + (0.7 * (1.0 - (curveVal - 0.5).abs() * 2));
 
                 return Container(
                   margin: EdgeInsets.symmetric(horizontal: widget.spacing),
@@ -110,7 +116,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
           Text(
             widget.title!,
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: textPrimary,
@@ -122,7 +128,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
           Text(
             widget.subtitle!,
             textAlign: TextAlign.center,
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               fontSize: 12,
               color: textSecondary,
             ),
@@ -140,7 +146,7 @@ class _AppLoaderState extends State<AppLoader> with SingleTickerProviderStateMix
             ),
             child: Text(
               widget.cancelLabel,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: textSecondary,

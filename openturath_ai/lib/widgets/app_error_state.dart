@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
+import '../core/scholarly_fonts.dart';
 
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
 /// Menghindarkan aplikasi dari layar kosong atau error bisu tanpa pemulihan.
@@ -16,7 +16,8 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState({
     super.key,
     this.title = 'Koneksi terputus',
-    this.message = 'Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.',
+    this.message =
+        'Tidak dapat memuat data saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -27,7 +28,8 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.network({
     super.key,
     this.title = 'Koneksi terputus',
-    this.message = 'Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.',
+    this.message =
+        'Tidak dapat memuat data rujukan saat ini. Periksa koneksi internet lalu coba lagi.',
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
@@ -38,7 +40,8 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.unauthorized({
     super.key,
     this.title = 'Langganan diperlukan',
-    this.message = 'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.',
+    this.message =
+        'Sesi Anda telah berakhir atau akses ke asisten ini belum aktif.',
     this.icon = Icons.lock_outline_rounded,
     this.onRetry,
     this.retryLabel = 'Lihat langganan',
@@ -49,7 +52,8 @@ class AppErrorState extends StatelessWidget {
   const AppErrorState.empty({
     super.key,
     this.title = 'Rujukan tidak ditemukan',
-    this.message = 'Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.',
+    this.message =
+        'Tidak ada kitab atau catatan yang sesuai dengan kata kunci atau saringan.',
     this.icon = Icons.find_in_page_outlined,
     this.onRetry,
     this.retryLabel = 'Atur ulang pencarian',
@@ -71,10 +75,13 @@ class AppErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final surface =
+        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
 
     return Center(
@@ -100,7 +107,7 @@ class AppErrorState extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -110,7 +117,7 @@ class AppErrorState extends StatelessWidget {
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 13,
                   height: 1.45,
                   color: textSecondary,
@@ -126,11 +133,12 @@ class AppErrorState extends StatelessWidget {
                     icon: const Icon(Icons.refresh_rounded, size: 18),
                     label: Text(
                       retryLabel,
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                      style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
                     ),
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusPill),
                       ),
                     ),
                   ),
@@ -145,7 +153,7 @@ class AppErrorState extends StatelessWidget {
                     onPressed: onBack,
                     child: Text(
                       backLabel,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontWeight: FontWeight.w500,
                         color: textSecondary,
                       ),

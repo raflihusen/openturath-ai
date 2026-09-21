@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 
@@ -503,7 +503,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         if (_titleController.text.trim().isNotEmpty) ...[
                           Text(
                             _titleController.text.trim(),
-                            style: GoogleFonts.newsreader(
+                            style: ScholarlyFonts.newsreader(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               color: textPrimary,
@@ -531,22 +531,22 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                   data: _bodyController.text,
                                   selectable: true,
                                   styleSheet: MarkdownStyleSheet(
-                                    p: GoogleFonts.outfit(
+                                    p: ScholarlyFonts.outfit(
                                       fontSize: 14.5,
                                       height: 1.6,
                                       color: textPrimary,
                                     ),
-                                    h1: GoogleFonts.newsreader(
+                                    h1: ScholarlyFonts.newsreader(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
                                       color: textPrimary,
                                     ),
-                                    h2: GoogleFonts.newsreader(
+                                    h2: ScholarlyFonts.newsreader(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w600,
                                       color: textPrimary,
                                     ),
-                                    blockquote: GoogleFonts.outfit(
+                                    blockquote: ScholarlyFonts.outfit(
                                       fontSize: 14,
                                       fontStyle: FontStyle.italic,
                                       color: textSecondary,
@@ -562,7 +562,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                         ),
                                       ),
                                     ),
-                                    code: GoogleFonts.sourceCodePro(
+                                    code: ScholarlyFonts.sourceCodePro(
                                       fontSize: 13,
                                       backgroundColor: surfaceSubtle,
                                     ),
@@ -578,14 +578,14 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                       // Title TextField
                       TextField(
                         controller: _titleController,
-                        style: GoogleFonts.newsreader(
+                        style: ScholarlyFonts.newsreader(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Judul catatan',
-                          hintStyle: GoogleFonts.newsreader(
+                          hintStyle: ScholarlyFonts.newsreader(
                             fontSize: 20,
                             color: textSecondary.withValues(alpha: 0.6),
                           ),
@@ -608,7 +608,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         textAlign: _textDirection == TextDirection.rtl
                             ? TextAlign.right
                             : TextAlign.left,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 14.5,
                           height: 1.55,
                           color: textPrimary,
@@ -616,7 +616,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         decoration: InputDecoration(
                           hintText: 'Tulis catatan atau tempel ibarah di sini…',
                           hintTextDirection: _textDirection,
-                          hintStyle: GoogleFonts.outfit(
+                          hintStyle: ScholarlyFonts.outfit(
                             fontSize: 14,
                             color: textSecondary.withValues(alpha: 0.6),
                           ),
@@ -668,25 +668,21 @@ class _ToolbarBtn extends StatelessWidget {
           constraints: const BoxConstraints(minWidth: 36, maxWidth: 44),
           height: 32,
           decoration: BoxDecoration(
-            color: isActive
-                ? accent.withValues(alpha: 0.14)
-                : Colors.transparent,
+            color:
+                isActive ? accent.withValues(alpha: 0.14) : Colors.transparent,
             border: isActive
-                ? Border.all(
-                    color: accent.withValues(alpha: 0.45), width: 0.9)
+                ? Border.all(color: accent.withValues(alpha: 0.45), width: 0.9)
                 : null,
           ),
           alignment: Alignment.center,
           child: icon != null
-              ? Icon(icon,
-                  size: 17, color: isActive ? accent : textSecondary)
+              ? Icon(icon, size: 17, color: isActive ? accent : textSecondary)
               : Text(
                   label!,
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 13,
                     fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-                    fontStyle:
-                        isItalic ? FontStyle.italic : FontStyle.normal,
+                    fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
                     color: isActive ? accent : textPrimary,
                   ),
                 ),

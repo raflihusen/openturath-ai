@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
+import '../core/scholarly_fonts.dart';
 import '../services/update_service.dart';
 
 /// Modal dialog elegan yang muncul otomatis saat pembaruan selesai diunduh di latar belakang
@@ -15,7 +15,8 @@ class UpdateReadyDialog extends StatelessWidget {
     required this.updateService,
   });
 
-  static Future<void> show(BuildContext context, UpdateService updateService) async {
+  static Future<void> show(
+      BuildContext context, UpdateService updateService) async {
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -27,14 +28,18 @@ class UpdateReadyDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final surface =
+        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final isDesktop = !kIsWeb && !Platform.isAndroid && !Platform.isIOS;
     final info = updateService.updateInfo;
     final version = info?.latestVersion ?? '';
-    final releaseNotes = info?.releaseNotes ?? 'Penyempurnaan stabilitas telaah dan sistem keilmuan.';
+    final releaseNotes = info?.releaseNotes ??
+        'Penyempurnaan stabilitas telaah dan sistem keilmuan.';
 
     return Dialog(
       backgroundColor: surface,
@@ -55,7 +60,9 @@ class UpdateReadyDialog extends StatelessWidget {
               height: 56,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
+                color: isDark
+                    ? AppTheme.borderDark
+                    : AppTheme.pillSecondaryBgLight,
               ),
               child: Icon(
                 Icons.system_update_rounded,
@@ -68,7 +75,7 @@ class UpdateReadyDialog extends StatelessWidget {
             // Judul Pembaruan
             Text(
               isDesktop ? 'Pembaruan Tersedia' : 'Pembaruan Telah Siap',
-              style: GoogleFonts.newsreader(
+              style: ScholarlyFonts.newsreader(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -81,12 +88,13 @@ class UpdateReadyDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1D) : const Color(0xFFEAEAE6),
+                color:
+                    isDark ? const Color(0xFF1E1E1D) : const Color(0xFFEAEAE6),
                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: Text(
                 'Versi $version',
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: textSecondary,
@@ -101,7 +109,7 @@ class UpdateReadyDialog extends StatelessWidget {
               isDesktop
                   ? 'Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.'
                   : 'Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.',
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 13,
                 height: 1.5,
                 color: textSecondary,
@@ -116,7 +124,9 @@ class UpdateReadyDialog extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF161615) : const Color(0xFFF2F2EE),
+                  color: isDark
+                      ? const Color(0xFF161615)
+                      : const Color(0xFFF2F2EE),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: border.withValues(alpha: 0.5),
@@ -125,7 +135,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   releaseNotes,
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 12,
                     color: textSecondary,
                     height: 1.4,
@@ -156,8 +166,10 @@ class UpdateReadyDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop ? 'Perbarui Sekarang' : 'Pasang & Muat Ulang Sekarang',
-                  style: GoogleFonts.outfit(
+                  isDesktop
+                      ? 'Perbarui Sekarang'
+                      : 'Pasang & Muat Ulang Sekarang',
+                  style: ScholarlyFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -180,7 +192,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   'Nanti Saja',
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),

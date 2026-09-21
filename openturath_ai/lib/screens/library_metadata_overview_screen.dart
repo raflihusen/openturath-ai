@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/design/ot_colors.dart';
+import '../core/scholarly_fonts.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'book_library_editorial_screen.dart';
 
@@ -156,7 +156,7 @@ class _TopBar extends StatelessWidget {
         ),
         Text(
           'Pustaka rujukan',
-          style: GoogleFonts.newsreader(
+          style: ScholarlyFonts.newsreader(
             color: ink,
             fontSize: 22,
             fontWeight: FontWeight.w600,
@@ -264,7 +264,7 @@ class _HeroLibraryCard extends StatelessWidget {
                 ),
                 child: Text(
                   metadata.kategori.toUpperCase(),
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     color: textSecondary,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
@@ -275,7 +275,7 @@ class _HeroLibraryCard extends StatelessWidget {
               const Spacer(),
               Text(
                 '${metadata.totalKitab} kitab',
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   color: textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -291,7 +291,7 @@ class _HeroLibraryCard extends StatelessWidget {
               child: Text(
                 metadata.namaArab,
                 textAlign: TextAlign.right,
-                style: GoogleFonts.scheherazadeNew(
+                style: ScholarlyFonts.scheherazadeNew(
                   color: ink,
                   fontSize: 34,
                   fontWeight: FontWeight.bold,
@@ -303,7 +303,7 @@ class _HeroLibraryCard extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             _readerTitle(metadata.nama),
-            style: GoogleFonts.newsreader(
+            style: ScholarlyFonts.newsreader(
               color: ink,
               fontSize: 24,
               fontWeight: FontWeight.w600,
@@ -316,7 +316,7 @@ class _HeroLibraryCard extends StatelessWidget {
             metadata.headlineAplikasi.isNotEmpty
                 ? metadata.headlineAplikasi
                 : 'Khazanah naskah rujukan mu\'tamad berstempel tahqiq ilmiah untuk rujukan santri dan peneliti turats.',
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               color: textSecondary,
               fontSize: 14,
               height: 1.5,
@@ -352,7 +352,7 @@ class _HeroLibraryCard extends StatelessWidget {
                 isLoadingBooks
                     ? 'Membuka katalog…'
                     : 'Telusuri ${metadata.totalKitab} kitab',
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -393,7 +393,7 @@ class _MetaRow extends StatelessWidget {
           width: 120,
           child: Text(
             label,
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               fontSize: 12,
               color: textSecondary,
             ),
@@ -402,7 +402,7 @@ class _MetaRow extends StatelessWidget {
         Expanded(
           child: Text(
             value,
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: ink,
@@ -521,7 +521,7 @@ class _StatCard extends StatelessWidget {
               const Spacer(),
               Text(
                 label,
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   color: textSecondary,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -533,7 +533,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             value,
-            style: GoogleFonts.newsreader(
+            style: ScholarlyFonts.newsreader(
               color: ink,
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -543,7 +543,7 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             unit,
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               color: textSecondary,
               fontSize: 12,
             ),

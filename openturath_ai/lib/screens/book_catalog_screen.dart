@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/navigation_guard.dart';
@@ -8,6 +7,7 @@ import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
@@ -290,11 +290,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       child: TextField(
                         controller: _searchCtrl,
                         onChanged: _onSearchChanged,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 13.5, color: textPrimary),
                         decoration: InputDecoration(
                           hintText: 'Cari kitab, pengarang, atau penahkik…',
-                          hintStyle: GoogleFonts.outfit(
+                          hintStyle: ScholarlyFonts.outfit(
                             fontSize: 13.5,
                             color: textSecondary.withValues(alpha: 0.7),
                           ),
