@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
 
@@ -40,7 +39,7 @@ class CorpusKindControl extends StatelessWidget {
           ),
           const SizedBox(width: 24),
           _CorpusKindTab(
-            label: 'Karya ulama',
+            label: 'Khazanah ulama',
             selected: value == CorpusKind.scholar,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -75,7 +74,7 @@ class _CorpusKindTab extends StatelessWidget {
           OTMotion.selection();
           onTap();
         },
-        borderRadius: OTRadius.smallBorder,
+        borderRadius: BorderRadius.circular(8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -93,7 +92,7 @@ class _CorpusKindTab extends StatelessWidget {
               curve: OTMotion.curve,
               height: 2,
               width: selected ? 28 : 0,
-              color: selected ? textPrimary : OTColors.transparent,
+              color: selected ? textPrimary : Colors.transparent,
             ),
           ],
         ),

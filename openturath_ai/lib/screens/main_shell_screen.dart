@@ -1,6 +1,7 @@
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../core/scholarly_fonts.dart';
 import '../core/app_config.dart';
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
@@ -68,8 +69,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
     if (_pageController.hasClients && _currentIndex != index) {
       _pageController.animateToPage(
         index,
-        duration: OTMotion.normal,
-        curve: OTMotion.curve,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
       );
     }
     setState(() {
@@ -343,8 +344,8 @@ class _GoogleNavBarItem extends StatelessWidget {
         HapticFeedback.selectionClick();
         onTap();
       },
-      splashColor: OTColors.surface(isDark).withValues(alpha: 0),
-      highlightColor: OTColors.surface(isDark).withValues(alpha: 0),
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -360,7 +361,12 @@ class _GoogleNavBarItem extends StatelessWidget {
               Loc.text(label),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: OTTypography.captionMedium(color: labelColor),
+              style: ScholarlyFonts.outfit(
+                fontSize: 11.5,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                letterSpacing: -0.1,
+                color: labelColor,
+              ),
             ),
             const SizedBox(height: 4),
             AnimatedContainer(
@@ -369,10 +375,8 @@ class _GoogleNavBarItem extends StatelessWidget {
               width: isSelected ? 16 : 4,
               height: 2,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? activeFg
-                    : OTColors.surface(isDark).withValues(alpha: 0),
-                borderRadius: OTRadius.chipBorder,
+                color: isSelected ? activeFg : Colors.transparent,
+                borderRadius: BorderRadius.circular(1),
               ),
             ),
           ],
@@ -442,10 +446,8 @@ class _RailItem extends StatelessWidget {
               height: 2,
               width: isSelected ? 16 : 4,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? activeFg
-                    : OTColors.surface(isDark).withValues(alpha: 0),
-                borderRadius: OTRadius.chipBorder,
+                color: isSelected ? activeFg : Colors.transparent,
+                borderRadius: BorderRadius.circular(1),
               ),
             ),
           ],

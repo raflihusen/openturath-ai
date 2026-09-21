@@ -43,8 +43,7 @@ void main() {
       expect(OTColors.accent(true), OTColors.accentDark);
     });
 
-    test('OTTypography strictly separates Brand, Interface, and Arabic layers',
-        () {
+    test('OTTypography strictly separates Brand, Interface, and Arabic layers', () {
       // 1. Brand / Editorial layer (Newsreader)
       final brand = OTTypography.brandLogo();
       expect(brand.fontSize, 22);
@@ -96,27 +95,27 @@ void main() {
     });
 
     test('OTRadius enforces disciplined curvature without bubble-boxing', () {
-      expect(OTRadius.input, 12.0);
+      expect(OTRadius.input, 14.0);
       expect(OTRadius.card, 16.0);
       expect(OTRadius.sheet, 24.0);
-      expect(OTRadius.dialog, 16.0);
+      expect(OTRadius.dialog, 20.0);
       expect(OTRadius.chip, 999.0);
-      expect(OTRadius.button, 12.0);
+      expect(OTRadius.button, 999.0);
 
-      expect(OTRadius.inputBorder, BorderRadius.circular(12.0));
+      expect(OTRadius.inputBorder, BorderRadius.circular(14.0));
       expect(OTRadius.cardBorder, BorderRadius.circular(16.0));
-      expect(OTRadius.dialogBorder, BorderRadius.circular(16.0));
+      expect(OTRadius.dialogBorder, BorderRadius.circular(20.0));
       expect(OTRadius.chipBorder, BorderRadius.circular(999.0));
-      expect(OTRadius.buttonBorder, BorderRadius.circular(12.0));
+      expect(OTRadius.buttonBorder, BorderRadius.circular(999.0));
     });
 
     test('OTMotion provides quiet, restrained animations and easing', () {
-      expect(OTMotion.fast, const Duration(milliseconds: 140));
-      expect(OTMotion.normal, const Duration(milliseconds: 180));
+      expect(OTMotion.fast, const Duration(milliseconds: 180));
+      expect(OTMotion.normal, const Duration(milliseconds: 220));
       expect(OTMotion.sheet, const Duration(milliseconds: 280));
       expect(OTMotion.transition, const Duration(milliseconds: 320));
 
-      expect(OTMotion.curve, const Cubic(0.16, 1, 0.3, 1));
+      expect(OTMotion.curve, Curves.easeOutCubic);
       expect(OTMotion.sheetCurve, Curves.easeOutQuart);
     });
 

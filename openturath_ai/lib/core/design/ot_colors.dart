@@ -72,15 +72,16 @@ class OTColors {
   static const Color destructiveLight = Color(0xFF8C2F2F);
   static const Color destructiveDark = Color(0xFFC97B74);
 
-  // ── 7. Navigation overlays ──
-  static const Color navigationLight = Color(0xF2F6F6F3);
-  static const Color navigationDark = Color(0xF2111110);
+  // ── 7. Sovereign Tahawwulat ──
+  // A restrained archival brass reserved exclusively for the flagship card.
+  static const Color sovereignSurface = Color(0xFF111110);
+  static const Color sovereignSurfaceRaised = Color(0xFF1A1A18);
+  static const Color sovereignInk = Color(0xFFF4F4F0);
+  static const Color sovereignMuted = Color(0xFFB7B7AE);
+  static const Color sovereignGold = Color(0xFFC1A56B);
+  static const Color sovereignHairline = Color(0xFF3A3428);
 
-  // ── 8. Utility colors ──
-  static const Color transparent = Color(0x00000000);
-  static const Color scrim = Color(0x99000000);
-
-  // ── 9. Context-Aware Adaptive Helpers ──
+  // ── 8. Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
   static Color surface(bool isDark) => isDark ? surfaceDark : surfaceLight;
   static Color surfaceSubtle(bool isDark) =>

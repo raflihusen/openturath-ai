@@ -7,7 +7,6 @@ import '../core/app_snackbar.dart';
 import '../core/bookmark_content.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_spacing.dart';
-import '../core/design/ot_typography.dart';
 import '../core/note_clipboard_content.dart';
 import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
@@ -74,7 +73,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
       backgroundColor: canvas,
       appBar: AppBar(
         backgroundColor: canvas,
-        surfaceTintColor: OTColors.transparent,
+        surfaceTintColor: Colors.transparent,
         title: Text(AppCopy.savedCollection,
             style: ScholarlyFonts.newsreader(
                 color: primary, fontWeight: FontWeight.w700)),
@@ -102,10 +101,12 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
             padding: const EdgeInsets.fromLTRB(
                 OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
             children: [
-              Text(
-                _sourceLabel(_item),
-                style: OTTypography.captionMedium(color: secondary),
-              ),
+              Text(_kindLabel(_item),
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: secondary,
+                      letterSpacing: .6)),
               const SizedBox(height: 8),
               Text(displayTitle,
                   style: ScholarlyFonts.newsreader(
@@ -113,6 +114,18 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                       height: 1.15,
                       fontWeight: FontWeight.w700,
                       color: primary)),
+              if (_item.agentTitle.isNotEmpty &&
+                  _item.documentKind == BookmarkDocumentKind.aiAnswer &&
+                  !displayTitle.toLowerCase().contains(_item.agentTitle
+                      .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+                      .toLowerCase())) ...[
+                const SizedBox(height: 10),
+                Text(
+                  _item.agentTitle.replaceFirst(
+                      RegExp(r'^AI\s+', caseSensitive: false), ''),
+                  style: ScholarlyFonts.outfit(fontSize: 13, color: secondary),
+                ),
+              ],
               const SizedBox(height: 20),
               Divider(color: secondary.withValues(alpha: .25)),
               const SizedBox(height: 20),
@@ -150,11 +163,12 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     );
   }
 
-  String _sourceLabel(BookmarkModel item) => switch (item.documentKind) {
-        BookmarkDocumentKind.personalNote => 'Catatan pribadi',
+  String _kindLabel(BookmarkModel item) => switch (item.documentKind) {
+        BookmarkDocumentKind.personalNote => AppCopy.navSaved,
         BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
-            ? 'Disimpan dari ${item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')}'
-            : 'Disimpan dari asisten',
+            ? item.agentTitle
+                .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+            : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace),
         BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
       };
 }

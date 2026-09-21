@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
 import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
@@ -22,7 +21,7 @@ class _QawaidBook {
   });
 }
 
-/// Item pembantu untuk lima asisten Fikih Tahawwulat.
+/// Item pembantu untuk 5 bilik Super AI
 class _AiRoomItem {
   final String number;
   final String name;
@@ -66,7 +65,7 @@ class TahawwulatIntroductionSheet extends StatefulWidget {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: OTColors.transparent,
+      backgroundColor: Colors.transparent,
       enableDrag: true,
       builder: (ctx) => TahawwulatIntroductionSheet(
         agent: agent,
@@ -125,11 +124,11 @@ class _TahawwulatIntroductionSheetState
       height: MediaQuery.of(context).size.height * 0.92,
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: OTRadius.sheetBorder,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border.all(color: borderColor, width: 0.8),
         boxShadow: [
           BoxShadow(
-            color: OTColors.scrim.withValues(alpha: isDark ? 0.5 : 0.15),
+            color: Colors.black.withValues(alpha: isDark ? 0.5 : 0.15),
             blurRadius: 32,
             offset: const Offset(0, -8),
           ),
@@ -148,7 +147,7 @@ class _TahawwulatIntroductionSheetState
                     height: 4,
                     decoration: BoxDecoration(
                       color: textTertiary.withValues(alpha: 0.3),
-                      borderRadius: OTRadius.chipBorder,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
@@ -163,7 +162,7 @@ class _TahawwulatIntroductionSheetState
                       ),
                       decoration: BoxDecoration(
                         color: OTColors.surfaceSubtle(isDark),
-                        borderRadius: OTRadius.smallBorder,
+                        borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: OTColors.border(isDark),
                           width: 0.8,
@@ -238,7 +237,7 @@ class _TahawwulatIntroductionSheetState
                       _scrollToTop();
                     },
                     pressedScale: 0.96,
-                    borderRadius: OTRadius.controlBorder,
+                    borderRadius: BorderRadius.circular(20),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(
@@ -247,12 +246,12 @@ class _TahawwulatIntroductionSheetState
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? OTColors.textPrimary(isDark)
+                            ? (isDark ? Colors.white : Colors.black)
                             : OTColors.surfaceSubtle(isDark),
-                        borderRadius: OTRadius.controlBorder,
+                        borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isSelected
-                              ? OTColors.textPrimary(isDark)
+                              ? (isDark ? Colors.white : Colors.black)
                               : borderColor,
                           width: 0.8,
                         ),
@@ -264,7 +263,7 @@ class _TahawwulatIntroductionSheetState
                           fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.w500,
                           color: isSelected
-                              ? OTColors.onAccent(isDark)
+                              ? (isDark ? Colors.black : Colors.white)
                               : textSecondary,
                         ),
                       ),
@@ -530,20 +529,20 @@ class _TahawwulatIntroductionSheetState
                 ],
 
                 // ════════════════════════════════════════════════════════
-                // TAB 6: LIMA ASISTEN
+                // TAB 6: 5 BILIK SUPER AI
                 // ════════════════════════════════════════════════════════
                 if (_selectedTabIndex == 0 || _selectedTabIndex == 6) ...[
                   _buildSectionHeader(
                     context,
                     tag: "BAB 12",
-                    title: "Lima Asisten Fikih Tahawwulat",
+                    title: "Arsitektur 5 Bilik Super AI OpenTurath",
                     arabic:
                         "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ التَّخَصُّصِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
                     "Karena disiplin ini sarat dengan peristilahan baru (al-muṣṭalaḥāt al-mubtakarah) serta ribuan jam transkrip lisan mualif, "
-                    "OpenTurath menyediakan lima asisten Fikih Tahawwulat yang dapat digunakan sesuai kebutuhan:",
+                    "OpenTurath AI menghadirkan 5 Bilik AI Spesialis Terpadu dalam satu ruang kajian:",
                     isDark,
                   ),
                   const SizedBox(height: 16),
@@ -573,7 +572,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -639,8 +638,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
             decoration: BoxDecoration(
-              color: OTColors.surface(isDark),
-              borderRadius: OTRadius.smallBorder,
+              color: isDark ? OTColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Row(
@@ -678,7 +677,7 @@ class _TahawwulatIntroductionSheetState
         : OTColors.border(isDark);
     final bgColor = isHighlight
         ? (isDark ? OTColors.surfaceSubtleDark : OTColors.surfaceSubtleLight)
-        : OTColors.surface(isDark);
+        : (isDark ? OTColors.surfaceDark : Colors.white);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
@@ -686,7 +685,7 @@ class _TahawwulatIntroductionSheetState
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: OTRadius.controlBorder,
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: borderColor, width: isHighlight ? 1.2 : 0.8),
       ),
       child: Row(
@@ -697,7 +696,7 @@ class _TahawwulatIntroductionSheetState
             height: 26,
             decoration: BoxDecoration(
               color: isDark ? OTColors.borderDark : OTColors.borderLight,
-              borderRadius: OTRadius.smallBorder,
+              borderRadius: BorderRadius.circular(6),
             ),
             alignment: Alignment.center,
             child: Text(
@@ -730,15 +729,15 @@ class _TahawwulatIntroductionSheetState
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: OTColors.borderStrong(isDark),
-                          borderRadius: OTRadius.smallBorder,
+                          color: isDark ? Colors.white24 : Colors.black87,
+                          borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           "Peta Navigasi",
                           style: ScholarlyFonts.outfit(
                             fontSize: 9.5,
                             fontWeight: FontWeight.w600,
-                            color: OTColors.onInverseSurface,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -781,7 +780,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -809,8 +808,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: OTColors.surface(isDark),
-              borderRadius: OTRadius.controlBorder,
+              color: isDark ? OTColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -852,8 +851,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: OTColors.surface(isDark),
-              borderRadius: OTRadius.controlBorder,
+              color: isDark ? OTColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -905,7 +904,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -934,8 +933,8 @@ class _TahawwulatIntroductionSheetState
                 child: Container(
                   padding: const EdgeInsets.all(11),
                   decoration: BoxDecoration(
-                    color: OTColors.surface(isDark),
-                    borderRadius: OTRadius.controlBorder,
+                    color: isDark ? OTColors.surfaceDark : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: borderColor, width: 0.8),
                   ),
                   child: Column(
@@ -974,7 +973,7 @@ class _TahawwulatIntroductionSheetState
                     color: isDark
                         ? OTColors.surfaceSubtleDark
                         : OTColors.surfaceSubtleLight,
-                    borderRadius: OTRadius.controlBorder,
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isDark
                           ? OTColors.borderStrongDark
@@ -1056,7 +1055,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -1085,8 +1084,8 @@ class _TahawwulatIntroductionSheetState
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: OTColors.surface(isDark),
-                  borderRadius: OTRadius.controlBorder,
+                  color: isDark ? OTColors.surfaceDark : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: borderColor, width: 0.8),
                 ),
                 child: Column(
@@ -1188,7 +1187,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(14),
@@ -1217,8 +1216,8 @@ class _TahawwulatIntroductionSheetState
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: OTColors.surface(isDark),
-                  borderRadius: OTRadius.smallBorder,
+                  color: isDark ? OTColors.surfaceDark : Colors.white,
+                  borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: borderColor, width: 0.7),
                 ),
                 child: Column(
@@ -1338,7 +1337,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -1366,8 +1365,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: OTColors.surface(isDark),
-              borderRadius: OTRadius.controlBorder,
+              color: isDark ? OTColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -1379,15 +1378,15 @@ class _TahawwulatIntroductionSheetState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 7, vertical: 3),
                       decoration: BoxDecoration(
-                        color: OTColors.borderStrong(isDark),
-                        borderRadius: OTRadius.smallBorder,
+                        color: isDark ? Colors.white24 : Colors.black87,
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
                         "KATEGORI I",
                         style: ScholarlyFonts.outfit(
                           fontSize: 9.5,
                           fontWeight: FontWeight.w700,
-                          color: OTColors.onInverseSurface,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -1414,7 +1413,7 @@ class _TahawwulatIntroductionSheetState
                         color: isDark
                             ? OTColors.surfaceSubtleDark
                             : OTColors.surfaceSubtleLight,
-                        borderRadius: OTRadius.smallBorder,
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1423,8 +1422,8 @@ class _TahawwulatIntroductionSheetState
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: OTColors.border(isDark),
-                              borderRadius: OTRadius.smallBorder,
+                              color: isDark ? Colors.white12 : Colors.black12,
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               book.level,
@@ -1476,8 +1475,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: OTColors.surface(isDark),
-              borderRadius: OTRadius.controlBorder,
+              color: isDark ? OTColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -1489,15 +1488,15 @@ class _TahawwulatIntroductionSheetState
                       padding: const EdgeInsets.symmetric(
                           horizontal: 7, vertical: 3),
                       decoration: BoxDecoration(
-                        color: OTColors.borderStrong(isDark),
-                        borderRadius: OTRadius.smallBorder,
+                        color: isDark ? Colors.white24 : Colors.black87,
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
                         "KATEGORI II",
                         style: ScholarlyFonts.outfit(
                           fontSize: 9.5,
                           fontWeight: FontWeight.w700,
-                          color: OTColors.onInverseSurface,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -1578,7 +1577,7 @@ class _TahawwulatIntroductionSheetState
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // FLOWCHART 5: LIMA ASISTEN OPENTURATH
+  // FLOWCHART 5: 5 BILIK SUPER AI OPENTURATH
   // ──────────────────────────────────────────────────────────────────────────
   Widget _buildFiveAiRoomsList(BuildContext context, bool isDark) {
     final subAgents = widget.agent?.subAgents ?? const <SubAgentModel>[];
@@ -1650,7 +1649,7 @@ class _TahawwulatIntroductionSheetState
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
             color: OTColors.surfaceSubtle(isDark),
-            borderRadius: OTRadius.controlBorder,
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(color: OTColors.border(isDark), width: 0.8),
           ),
           padding: const EdgeInsets.all(14),
@@ -1665,7 +1664,7 @@ class _TahawwulatIntroductionSheetState
                     decoration: BoxDecoration(
                       color:
                           isDark ? OTColors.borderDark : OTColors.borderLight,
-                      borderRadius: OTRadius.smallBorder,
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     alignment: Alignment.center,
                     child: Text(
@@ -1701,8 +1700,10 @@ class _TahawwulatIntroductionSheetState
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: OTColors.surfaceSubtle(isDark),
-                      borderRadius: OTRadius.smallBorder,
+                      color: isDark
+                          ? Colors.white10
+                          : Colors.black.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       room.role,
@@ -1736,15 +1737,15 @@ class _TahawwulatIntroductionSheetState
                     }
                   },
                   pressedScale: 0.96,
-                  borderRadius: OTRadius.smallBorder,
+                  borderRadius: BorderRadius.circular(6),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: OTColors.textPrimary(isDark),
-                      borderRadius: OTRadius.smallBorder,
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1754,14 +1755,14 @@ class _TahawwulatIntroductionSheetState
                           style: ScholarlyFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: OTColors.onAccent(isDark),
+                            color: isDark ? Colors.black : Colors.white,
                           ),
                         ),
                         const SizedBox(width: 4),
                         Icon(
                           Icons.arrow_forward_rounded,
                           size: 12,
-                          color: OTColors.onAccent(isDark),
+                          color: isDark ? Colors.black : Colors.white,
                         ),
                       ],
                     ),
@@ -1786,8 +1787,8 @@ class _TahawwulatIntroductionSheetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: OTColors.surface(isDark),
-        borderRadius: OTRadius.controlBorder,
+        color: isDark ? OTColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: borderColor,
           width: 0.8,
@@ -1813,7 +1814,7 @@ class _TahawwulatIntroductionSheetState
           ),
           const SizedBox(height: 10),
           Text(
-            "Asisten OpenTurath dibuat sebagai alat bantu membaca dan menelusuri rujukan, "
+            "Kehadiran teknologi Super AI di OpenTurath AI ini lahir murni sebagai Khadim Khazanah (pelayan ilmu), "
             "meruntuhkan dinding kesulitan istilah dan kendala akses agar mutiara warisan kenabian ini dapat dipelajari dengan mudah, jernih, dan beradab.",
             style: ScholarlyFonts.outfit(
               fontSize: 12,
@@ -1856,7 +1857,7 @@ class _TahawwulatIntroductionSheetState
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
           decoration: BoxDecoration(
             color: OTColors.surfaceSubtle(isDark),
-            borderRadius: OTRadius.smallBorder,
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: OTColors.border(isDark),
               width: 0.7,
@@ -1919,7 +1920,7 @@ class _TahawwulatIntroductionSheetState
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
-        borderRadius: OTRadius.controlBorder,
+        borderRadius: BorderRadius.circular(10),
         border: Border(
           left: BorderSide(color: textPrimary, width: 2.5),
         ),

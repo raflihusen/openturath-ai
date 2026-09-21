@@ -320,12 +320,12 @@ class _FilterChip extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: OTRadius.chipBorder,
+      borderRadius: BorderRadius.circular(999),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           color: isSelected ? ink : surface,
-          borderRadius: OTRadius.chipBorder,
+          borderRadius: BorderRadius.circular(999),
           border: Border.all(color: isSelected ? ink : border),
         ),
         child: Text(
@@ -583,7 +583,7 @@ Bidang: ${book.section}''';
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: OTRadius.cardBorder,
+                        borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: border),
                       ),
                       child: Column(
@@ -596,7 +596,7 @@ Bidang: ${book.section}''';
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: OTColors.surfaceSubtle(isDark),
-                                  borderRadius: OTRadius.smallBorder,
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
                                   book.section.toUpperCase(),
@@ -661,7 +661,7 @@ Bidang: ${book.section}''';
                     Container(
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: OTRadius.controlBorder,
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: border),
                       ),
                       child: Column(
@@ -677,7 +677,7 @@ Bidang: ${book.section}''';
                           _DetailRow(
                               label: 'Jumlah Halaman', value: book.pagesLabel),
                           _DetailRow(
-                              label: 'Folder Koleksi',
+                              label: 'Folder Korpus',
                               value: book.sourceFolder,
                               isLast: true),
                         ],
@@ -701,7 +701,7 @@ Bidang: ${book.section}''';
                           side: BorderSide(color: border),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: OTRadius.controlBorder,
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       ),

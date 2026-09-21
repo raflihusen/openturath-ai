@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/catalog_card_content.dart';
@@ -59,16 +58,16 @@ class BookRowItem extends StatelessWidget {
         onTap: onTap,
         pressedScale: 0.985,
         hapticType: HapticFeedbackType.light,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         child: Container(
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: OTRadius.cardBorder,
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: border, width: 0.8),
           ),
           child: Padding(
-            padding: OTSpacing.card,
+            padding: const EdgeInsets.all(14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -81,7 +80,7 @@ class BookRowItem extends StatelessWidget {
                           horizontal: 7, vertical: 2.5),
                       decoration: BoxDecoration(
                         color: surfaceSubtle,
-                        borderRadius: OTRadius.smallBorder,
+                        borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                             color: border.withValues(alpha: 0.8), width: 0.6),
                       ),
@@ -118,8 +117,10 @@ class BookRowItem extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 2.5),
                         decoration: BoxDecoration(
-                          color: surfaceSubtle,
-                          borderRadius: OTRadius.smallBorder,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(6),
                           border: Border.all(
                               color: border.withValues(alpha: 0.7), width: 0.5),
                         ),

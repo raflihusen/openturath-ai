@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
@@ -237,7 +236,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         backgroundColor: background,
         appBar: AppBar(
           backgroundColor: background,
-          surfaceTintColor: background.withValues(alpha: 0),
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
@@ -257,7 +256,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 _isSaved
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
-                color: _isSaved ? textPrimary : textSecondary,
+                color: _isSaved
+                    ? (isDark ? Colors.white : Colors.black)
+                    : textSecondary,
               ),
               tooltip: _isSaved ? 'إزالة من الملاحظات' : 'حفظ في الملاحظات',
               onPressed: _toggleSaveBook,
@@ -298,7 +299,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ),
                             decoration: BoxDecoration(
                               color: surfaceSubtle,
-                              borderRadius: OTRadius.smallBorder,
+                              borderRadius: BorderRadius.circular(6),
                               border: Border.all(
                                   color: border.withValues(alpha: 0.7),
                                   width: 0.6),
@@ -425,8 +426,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: surfaceSubtle,
-                                    borderRadius: OTRadius.smallBorder,
+                                    color: isDark
+                                        ? Colors.white.withValues(alpha: 0.06)
+                                        : Colors.black.withValues(alpha: 0.04),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
                                     widget.book.verifiedDeathYearHijri != null

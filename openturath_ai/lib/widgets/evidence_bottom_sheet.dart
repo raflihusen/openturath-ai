@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
 import '../core/app_copy.dart';
-import '../core/design/ot_colors.dart';
 import '../core/scholarly_fonts.dart';
 import 'staggered_entrance.dart';
 
@@ -103,7 +102,7 @@ class EvidenceBottomSheet extends StatelessWidget {
             border: Border.all(color: border, width: 1),
             boxShadow: [
               BoxShadow(
-                color: OTColors.scrim.withValues(alpha: 0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 blurRadius: 30,
                 offset: const Offset(0, -4),
               ),
@@ -400,7 +399,8 @@ class EvidenceBottomSheet extends StatelessWidget {
                               label: const Text('Buka di Maktabah Syamilah'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: accent,
-                                foregroundColor: OTColors.canvas(isDark),
+                                foregroundColor:
+                                    isDark ? AppTheme.canvasDark : Colors.white,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 13),
                                 shape: RoundedRectangleBorder(

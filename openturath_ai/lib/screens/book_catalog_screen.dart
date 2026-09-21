@@ -5,7 +5,6 @@ import '../core/app_copy.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/scholarly_fonts.dart';
@@ -230,7 +229,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       backgroundColor: background,
       appBar: AppBar(
         backgroundColor: background,
-        surfaceTintColor: background.withValues(alpha: 0),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
@@ -280,7 +279,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: surface,
-                  borderRadius: OTRadius.inputBorder,
+                  borderRadius: BorderRadius.circular(100),
                   border: Border.all(color: border, width: 0.8),
                 ),
                 child: Row(
@@ -368,7 +367,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         decoration: BoxDecoration(
                           color: primaryAccent.withValues(
                               alpha: isDark ? 0.12 : 0.06),
-                          borderRadius: OTRadius.smallBorder,
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           [
@@ -760,12 +759,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
                     color: primaryAccent,
-                    borderRadius: OTRadius.controlBorder,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     AppCopy.tryAgain,
-                    style:
-                        OTTypography.button(color: OTColors.onAccent(isDark)),
+                    style: OTTypography.button(color: Colors.white),
                   ),
                 ),
               ),
@@ -805,7 +803,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: border),
-                      borderRadius: OTRadius.smallBorder,
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Hapus filter',
@@ -850,7 +848,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       height: 72,
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border, width: 0.8),
       ),
     );
@@ -867,7 +865,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     required Color textSecondary,
   }) {
     final activeBg = textPrimary;
-    final activeFg = OTColors.onAccent(isDark);
+    final activeFg = isDark ? Colors.black : Colors.white;
 
     return Padding(
       padding: const EdgeInsets.only(right: 6),
@@ -875,14 +873,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         onTap: onTap,
         pressedScale: 0.94,
         hapticType: HapticFeedbackType.selection,
-        borderRadius: OTRadius.chipBorder,
+        borderRadius: BorderRadius.circular(20),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
           decoration: BoxDecoration(
             color: isSelected ? activeBg : surface,
-            borderRadius: OTRadius.chipBorder,
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isSelected ? activeBg : border,
               width: 0.8,

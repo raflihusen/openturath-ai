@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'scholarly_fonts.dart';
 import 'design/ot_colors.dart';
-import 'design/ot_radius.dart';
 import 'design/ot_typography.dart';
 
 // OpenTurath AI: Monochrome Editorial Theme (Quiet Scholar Adaptive)
@@ -27,8 +26,8 @@ class AppTheme {
 
   // ── 1b. Token Navigasi & Status ───────────────────────────────────────────
   // Status kritis memakai merah bata redup dari OTColors, bukan merah neon iOS.
-  static const Color navBarDark = OTColors.navigationDark;
-  static const Color navBarLight = OTColors.navigationLight;
+  static const Color navBarDark = Color(0xCC111110);
+  static const Color navBarLight = Color(0xD9F6F6F3);
   static const Color navBarBorderDark = OTColors.borderDark;
   static const Color navBarBorderLight = OTColors.borderLight;
   static const double dividerIndent = 54.0;
@@ -53,8 +52,8 @@ class AppTheme {
   static const Color queryBoxBorderDark = OTColors.borderDark;
   static const Color surfaceElevated = OTColors.surfaceSubtleDark;
   static const Color scholarlyIndigo = OTColors.textPrimaryDark;
-  static const Color readingCanvasParchmentLight = OTColors.canvasLight;
-  static const Color readingCanvasParchmentDark = OTColors.surfaceDark;
+  static const Color readingCanvasParchmentLight = Color(0xFFF6F6F3);
+  static const Color readingCanvasParchmentDark = Color(0xFF181817);
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
   static const Color lmLightCanvas = canvasLight;
@@ -85,12 +84,12 @@ class AppTheme {
   static const Color lmDarkCitationText = citationTextDark;
   static const Color lmDarkPillAction = pillActionBgDark;
 
-  static const Color brandRed = OTColors.destructiveLight;
+  static const Color brandRed = Color(0xFFBA1A1A);
   static const Color brandGreen = OTColors.textSecondaryLight;
   static const Color brandBlue = accentLight;
 
   static const Color bgBase = canvasDark;
-  static const Color bgDeep = OTColors.canvasDark;
+  static const Color bgDeep = Color(0xFF0E0E0F);
   static const Color bgCanvas = canvasDark;
   static const Color surfaceL1 = surfaceCardDark;
   static const Color surfaceL2 = surfaceHeaderDark;
@@ -116,16 +115,16 @@ class AppTheme {
   static const Color lightTextPrimary = textPrimaryLight;
   static const Color lightTextSecondary = textSecondaryLight;
 
-  // ── 4. Geometry compatibility aliases ────────────────────────────────────
-  static const double radiusXS = OTRadius.small;
-  static const double radiusCard = OTRadius.card;
-  static const double radiusM = OTRadius.card;
-  static const double radiusS = OTRadius.small;
-  static const double radiusL = OTRadius.card;
-  static const double radiusXL = OTRadius.sheet;
-  static const double radiusFull = 100.0;
-  static const double radiusPill = 100.0;
-  static const double radiusQuery = OTRadius.input;
+  // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
+  static const double radiusXS = 8.0; // Kecil: chip / badge / tag
+  static const double radiusCard = 16.0; // Sedang: card / dialog / bottom sheet
+  static const double radiusM = 16.0; // Alias untuk kompatibilitas
+  static const double radiusS = 8.0; // Diharmonisasi ke 8.0
+  static const double radiusL = 16.0; // Diharmonisasi ke 16.0
+  static const double radiusXL = 16.0; // Diharmonisasi ke 16.0
+  static const double radiusFull = 100.0; // Bulat: pill / button / avatar
+  static const double radiusPill = 100.0; // Stadium Pills & Buttons
+  static const double radiusQuery = 100.0; // Chat Query Stadium Pill
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
   static const LinearGradient bgGradient = LinearGradient(
@@ -166,7 +165,7 @@ class AppTheme {
         tertiaryContainer: pillSecondaryBgDark,
         onTertiaryContainer: textPrimaryDark,
         error: error,
-        onError: OTColors.onInverseSurface,
+        onError: Colors.white,
         errorContainer: pillSecondaryBgDark,
         onErrorContainer: OTColors.destructiveDark,
         surface: canvasDark,
@@ -180,8 +179,8 @@ class AppTheme {
         outlineVariant: borderSubtleDark,
         inverseSurface: surfaceCardLight,
         inversePrimary: accentLight,
-        scrim: OTColors.scrim,
-        shadow: OTColors.scrim,
+        scrim: Colors.black,
+        shadow: Colors.black,
       ),
       scaffoldBackgroundColor: canvasDark,
       textTheme: _buildTextTheme(Brightness.dark),
@@ -216,7 +215,8 @@ class AppTheme {
           foregroundColor: pillActionTextDark,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-          shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -229,7 +229,8 @@ class AppTheme {
           foregroundColor: textPrimaryDark,
           side: const BorderSide(color: borderDark, width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -243,7 +244,7 @@ class AppTheme {
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: surfaceCardDark,
-        surfaceTintColor: OTColors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
@@ -257,7 +258,7 @@ class AppTheme {
           fontWeight: FontWeight.w400,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: OTRadius.inputBorder,
+          borderRadius: BorderRadius.circular(radiusCard),
           side: const BorderSide(color: borderDark, width: 1),
         ),
         behavior: SnackBarBehavior.floating,
@@ -272,11 +273,11 @@ class AppTheme {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: OTRadius.inputBorder,
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderDark, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: OTRadius.inputBorder,
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderDark, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -297,7 +298,7 @@ class AppTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceCardDark,
-        surfaceTintColor: OTColors.transparent,
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -323,11 +324,11 @@ class AppTheme {
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
         primary: accentLight,
-        onPrimary: OTColors.onAccentLight,
+        onPrimary: Colors.white,
         primaryContainer: citationBgLight,
         onPrimaryContainer: citationTextLight,
         secondary: pillActionBgLight,
-        onSecondary: OTColors.onAccentLight,
+        onSecondary: Colors.white,
         secondaryContainer: pillSecondaryBgLight,
         onSecondaryContainer: textPrimaryLight,
         tertiary: textSecondaryLight,
@@ -335,12 +336,12 @@ class AppTheme {
         tertiaryContainer: pillSecondaryBgLight,
         onTertiaryContainer: textPrimaryLight,
         error: error,
-        onError: OTColors.onInverseSurface,
+        onError: Colors.white,
         errorContainer: pillSecondaryBgLight,
         onErrorContainer: OTColors.destructiveLight,
         surface: canvasLight,
         onSurface: textPrimaryLight,
-        surfaceContainerLowest: OTColors.surfaceLight,
+        surfaceContainerLowest: Color(0xFFFFFFFF),
         surfaceContainerLow: canvasLight,
         surfaceContainer: surfaceCardLight,
         surfaceContainerHigh: pillSecondaryBgLight,
@@ -349,8 +350,8 @@ class AppTheme {
         outlineVariant: borderSubtleLight,
         inverseSurface: surfaceCardDark,
         inversePrimary: accentDark,
-        scrim: OTColors.scrim,
-        shadow: OTColors.scrim,
+        scrim: Colors.black,
+        shadow: Colors.black,
       ),
       scaffoldBackgroundColor: canvasLight,
       textTheme: _buildTextTheme(Brightness.light),
@@ -385,7 +386,8 @@ class AppTheme {
           foregroundColor: pillActionTextLight,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-          shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -398,7 +400,8 @@ class AppTheme {
           foregroundColor: textPrimaryLight,
           side: const BorderSide(color: borderLight, width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -412,7 +415,7 @@ class AppTheme {
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: surfaceCardLight,
-        surfaceTintColor: OTColors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
@@ -421,12 +424,12 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         backgroundColor: textPrimaryLight,
         contentTextStyle: ScholarlyFonts.outfit(
-          color: OTColors.onInverseSurface,
+          color: Colors.white,
           fontSize: 13,
           fontWeight: FontWeight.w400,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: OTRadius.inputBorder,
+          borderRadius: BorderRadius.circular(radiusCard),
         ),
         behavior: SnackBarBehavior.floating,
       ),
@@ -440,11 +443,11 @@ class AppTheme {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: OTRadius.inputBorder,
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderLight, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: OTRadius.inputBorder,
+          borderRadius: BorderRadius.circular(radiusCard),
           borderSide: const BorderSide(color: borderLight, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
@@ -458,13 +461,13 @@ class AppTheme {
           borderRadius: BorderRadius.circular(radiusXS),
         ),
         textStyle: ScholarlyFonts.outfit(
-          color: OTColors.onInverseSurface,
+          color: Colors.white,
           fontSize: 12,
         ),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceCardLight,
-        surfaceTintColor: OTColors.transparent,
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,

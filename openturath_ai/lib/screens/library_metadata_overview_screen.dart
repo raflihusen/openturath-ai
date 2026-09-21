@@ -2,8 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
-import '../core/design/ot_spacing.dart';
 import '../core/scholarly_fonts.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'book_library_editorial_screen.dart';
@@ -244,10 +242,10 @@ class _HeroLibraryCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(OTSpacing.xl),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: border, width: 1.0),
       ),
       child: Column(
@@ -260,7 +258,7 @@ class _HeroLibraryCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(isDark),
-                  borderRadius: OTRadius.smallBorder,
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   metadata.kategori.toUpperCase(),
@@ -315,7 +313,7 @@ class _HeroLibraryCard extends StatelessWidget {
           Text(
             metadata.headlineAplikasi.isNotEmpty
                 ? metadata.headlineAplikasi
-                : 'Koleksi kitab rujukan mu\'tamad dengan data tahqiq untuk santri dan peneliti turats.',
+                : 'Khazanah naskah rujukan mu\'tamad berstempel tahqiq ilmiah untuk rujukan santri dan peneliti turats.',
             style: ScholarlyFonts.outfit(
               color: textSecondary,
               fontSize: 14,
@@ -331,7 +329,7 @@ class _HeroLibraryCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           _MetaRow(
-            label: 'Jenis koleksi',
+            label: 'Standar Otoritas',
             value: metadata.badgeOtoritas.isNotEmpty
                 ? metadata.badgeOtoritas
                 : '100% Kitab Mu\'tamad',
@@ -362,7 +360,7 @@ class _HeroLibraryCard extends StatelessWidget {
                 foregroundColor: OTColors.canvas(isDark),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: OTRadius.controlBorder,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 elevation: 0,
               ),
@@ -509,7 +507,7 @@ class _StatCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: border, width: 1.0),
       ),
       child: Column(

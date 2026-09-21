@@ -21,7 +21,7 @@ class RedeemCodeSheet extends StatefulWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: OTColors.transparent,
+      backgroundColor: Colors.transparent,
       builder: (ctx) => RedeemCodeSheet(onSuccess: onSuccess),
     );
   }
@@ -86,9 +86,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
 
     final success = result['success'] == true;
     final message = (result['message'] as String?) ??
-        (success
-            ? 'Akses berhasil diaktifkan'
-            : 'Kode tidak valid atau sudah kedaluwarsa');
+        (success ? 'Akses berhasil diaktifkan' : 'Kode tidak valid atau sudah kedaluwarsa');
 
     if (success) {
       AppSnackBar.show(
@@ -119,7 +117,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
       child: Container(
         decoration: BoxDecoration(
           color: bgSurface,
-          borderRadius: OTRadius.sheetBorder,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           border: Border.all(color: borderColor, width: 0.8),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -133,7 +131,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 height: 4,
                 decoration: BoxDecoration(
                   color: borderColor,
-                  borderRadius: OTRadius.chipBorder,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
@@ -149,8 +147,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                   ),
                 ),
                 IconButton(
-                  icon:
-                      Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -158,8 +155,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             const SizedBox(height: 4),
             Text(
               Loc.tr('ui_75edf97617'),
-              style: OTTypography.body(color: textSecondary)
-                  .copyWith(fontSize: 12.5),
+              style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
             TextField(
@@ -188,8 +184,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 errorStyle: const TextStyle(fontSize: 12),
                 filled: true,
                 fillColor: canvas,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: OTRadius.inputBorder,
                   borderSide: BorderSide(color: borderColor, width: 0.8),

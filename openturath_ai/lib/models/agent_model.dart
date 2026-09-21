@@ -8,8 +8,7 @@ enum CorpusKind { discipline, scholar }
 class AgentModel {
   final String id;
   final String _title;
-  String get title =>
-      Loc.isArabic && titleArabic.isNotEmpty ? titleArabic : Loc.text(_title);
+  String get title => Loc.isArabic && titleArabic.isNotEmpty ? titleArabic : Loc.text(_title);
   final String titleArabic;
   final String description;
   final String emoji;
@@ -57,8 +56,7 @@ class AgentModel {
     this.disciplineIds = const [],
     this.scholarIds = const [],
     this.catalogId,
-  })  : _title = title,
-        _subtitleAcademic = subtitleAcademic;
+  }) : _title = title, _subtitleAcademic = subtitleAcademic;
 
   bool get isActive => status == 'active';
   bool get isComingSoon => status == 'coming_soon';
@@ -74,8 +72,7 @@ class AgentModel {
       category: data['category'] ?? 'Fiqh',
       status: data['status'] ?? 'coming_soon',
       sortOrder: data['sort_order'] ?? 99,
-      subtitleAcademic:
-          data['subtitle_academic'] ?? 'Matan · Syarah · Hasyiyah',
+      subtitleAcademic: data['subtitle_academic'] ?? 'Matan · Syarah · Hasyiyah',
       fieldId: data['field_id'] ?? 'fiqh',
       suggestedPrompts: List<String>.from(data['suggested_prompts'] ?? []),
       akalUrl1m: data['akal_url_1m'],
@@ -84,9 +81,7 @@ class AgentModel {
       price1m: data['price_1m'],
       price6m: data['price_6m'],
       price1y: data['price_1y'],
-      kind: data['kind'] == 'scholar'
-          ? CorpusKind.scholar
-          : CorpusKind.discipline,
+      kind: data['kind'] == 'scholar' ? CorpusKind.scholar : CorpusKind.discipline,
       disciplineIds: List<String>.from(data['discipline_ids'] ?? []),
       scholarIds: List<String>.from(data['scholar_ids'] ?? []),
       catalogId: data['catalog_id'],
@@ -95,7 +90,7 @@ class AgentModel {
 
   // ── Hardcoded fallback terstruktur berbasis 8 Bidang Keilmuan ──
   static List<AgentModel> get defaultAgents => [
-        // ── 1. FIKIH TAHAWWULAT ───────────────────────────────
+        // ── 1. FIKIH TAHAWWULAT (SOVEREIGN FLAGSHIP) ─────────
         AgentModel(
           id: 'fiqh_tahawwulat',
           title: 'Fikih Tahawwulat',
@@ -275,12 +270,10 @@ class AgentModel {
               description: 'Kitab ensiklopedi induk fikih mazhab Hanafi.',
             ),
             BookModel(
-              title:
-                  'Radd Al-Muhtar \'ala Ad-Durr Al-Mukhtar (Hasyiyah Ibnu Abidin)',
+              title: 'Radd Al-Muhtar \'ala Ad-Durr Al-Mukhtar (Hasyiyah Ibnu Abidin)',
               titleArabic: 'رد المحتار على الدر المختار',
               author: 'Ibnu \'Abidin',
-              description:
-                  'Rujukan fatwa mu\'tamad muta\'akhkhirin mazhab Hanafi.',
+              description: 'Rujukan fatwa mu\'tamad muta\'akhkhirin mazhab Hanafi.',
             ),
           ],
         ),
@@ -327,8 +320,7 @@ class AgentModel {
               title: 'Mukhtashar Khalil',
               titleArabic: 'مختصر خليل',
               author: 'Syaikh Khalil bin Ishaq',
-              description:
-                  'Matan hukum paling padat dan mu\'tamad di kalangan Malikiyyah.',
+              description: 'Matan hukum paling padat dan mu\'tamad di kalangan Malikiyyah.',
             ),
           ],
         ),
@@ -358,8 +350,7 @@ class AgentModel {
               id: 'fiqh_hanbali_muhaqqiq',
               name: 'Al-Muhaqqiq',
               nameArabic: 'المحقق',
-              description:
-                  'Telaah Al-Mughni dan perbandingan riwayat Imam Ahmad.',
+              description: 'Telaah Al-Mughni dan perbandingan riwayat Imam Ahmad.',
               descriptionArabic: 'تحقيق المعتمد في المذهب الحنبلي',
               emoji: '⚖️',
               badge: 'Fikih Hanbali',
@@ -370,8 +361,7 @@ class AgentModel {
               title: 'Al-Mughni',
               titleArabic: 'المغني',
               author: 'Ibnu Qudamah Al-Maqdisi',
-              description:
-                  'Kitab fikih dalil mazhab Hanbali karya Ibnu Qudamah.',
+              description: 'Kitab fikih dalil mazhab Hanbali karya Ibnu Qudamah.',
             ),
             BookModel(
               title: 'Kasysyaf Al-Qina\' \'an Matn Al-Iqna\'',
@@ -418,15 +408,13 @@ class AgentModel {
               title: 'Bidayatul Mujtahid wa Nihayatul Muqtashid',
               titleArabic: 'بداية المجتهد ونهاية المقتصد',
               author: 'Ibnu Rusyd Al-Hafid',
-              description:
-                  'Kajian perbandingan mazhab empat beserta analisis dalil dan sebab perbedaan hukum.',
+              description: 'Kajian perbandingan mazhab empat beserta analisis dalil dan sebab perbedaan hukum.',
             ),
             BookModel(
               title: 'Al-Fiqh Al-Islami wa Adillatuh',
               titleArabic: 'الفقه الإسلامي وأدلته',
               author: 'Prof. Dr. Wahbah Az-Zuhaili',
-              description:
-                  'Ensiklopedi perbandingan mazhab klasik & kontemporer.',
+              description: 'Ensiklopedi perbandingan mazhab klasik & kontemporer.',
             ),
           ],
         ),
@@ -476,8 +464,7 @@ class AgentModel {
               title: 'Shahih Muslim',
               titleArabic: 'صحيح مسلم',
               author: 'Imam Muslim',
-              description:
-                  'Kitab shahih kedua dengan sistematika sanad yang sangat rapi.',
+              description: 'Kitab shahih kedua dengan sistematika sanad yang sangat rapi.',
             ),
           ],
         ),
@@ -521,15 +508,13 @@ class AgentModel {
               title: 'Tafsir Al-Qur\'an Al-\'Azhim',
               titleArabic: 'تفسير ابن كثير',
               author: 'Al-Hafizh Ibnu Katsir',
-              description:
-                  'Rujukan tafsir bil-ma\'tsur dengan penekanan pada riwayat shahih dan asbabun nuzul.',
+              description: 'Rujukan tafsir bil-ma\'tsur dengan penekanan pada riwayat shahih dan asbabun nuzul.',
             ),
             BookModel(
               title: 'Al-Jami\' li Ahkam Al-Qur\'an',
               titleArabic: 'تفسير القرطبي',
               author: 'Imam Al-Qurtubi',
-              description:
-                  'Tafsir dengan fokus pada hukum-hukum fikih dalam Al-Qur\'an.',
+              description: 'Tafsir dengan fokus pada hukum-hukum fikih dalam Al-Qur\'an.',
             ),
           ],
         ),
@@ -573,15 +558,13 @@ class AgentModel {
               title: 'Matan Al-Waraqat',
               titleArabic: 'متن الورقات',
               author: 'Imam Al-Haramain Al-Juwaini',
-              description:
-                  'Matan pondasi metodologi ushul fikih paling tersohor.',
+              description: 'Matan pondasi metodologi ushul fikih paling tersohor.',
             ),
             BookModel(
               title: 'Jam\'ul Jawami\'',
               titleArabic: 'جمع الجوامع',
               author: 'Tajuddin As-Subki',
-              description:
-                  'Karya induk ushul fikih lintas mazhab karya Tajuddin As-Subki.',
+              description: 'Karya induk ushul fikih lintas mazhab karya Tajuddin As-Subki.',
             ),
           ],
         ),
@@ -697,18 +680,11 @@ class AgentModel {
         ),
 
         AgentModel(
-          id: 'tasawwuf',
-          title: 'Tasawwuf & Adzkar',
-          titleArabic: 'التصوف والأذكار',
-          description:
-              'Telaah adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
-          emoji: '📖',
-          category: 'Tasawwuf',
-          fieldId: 'tasawwuf',
+          id: 'tasawwuf', title: 'Tasawwuf & Adzkar', titleArabic: 'التصوف والأذكار',
+          description: 'Telaah adab, tazkiyatun nafs, dan wirid dalam kitab rujukan.',
+          emoji: '📖', category: 'Tasawwuf', fieldId: 'tasawwuf',
           subtitleAcademic: 'Ihya Ulumiddin · Adab & Wirid',
-          catalogId: 'canonical_tasawuf',
-          status: 'active',
-          sortOrder: 13,
+          catalogId: 'canonical_tasawuf', status: 'active', sortOrder: 13,
           price1m: 50000,
         ),
 
@@ -720,7 +696,7 @@ class AgentModel {
           description:
               'Telusuri fatwa, khutbah, tulisan, dan nasihat dakwah Habib Umar bin Hafizh.',
           emoji: '🕌',
-          category: 'Karya Ulama',
+          category: 'Khazanah Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['habib_umar'],
           disciplineIds: const ['tasawwuf'],
@@ -745,7 +721,7 @@ class AgentModel {
           description:
               'Pelajari tasawuf, akhlak, dan usul fikih dalam karya-karya Imam Al-Ghazali, termasuk Ihya Ulumiddin.',
           emoji: '🕯️',
-          category: 'Karya Ulama',
+          category: 'Khazanah Ulama',
           kind: CorpusKind.scholar,
           scholarIds: const ['imam_ghazali'],
           disciplineIds: const ['tasawwuf', 'usul', 'aqidah'],
@@ -818,8 +794,7 @@ class AgentModel {
           emoji: '📖',
           category: 'Tafsir',
           fieldId: 'tafsir',
-          subtitleAcademic:
-              'Al-Jazariyyah, Asy-Syathibiyyah & Qira\'at Sab\'ah',
+          subtitleAcademic: 'Al-Jazariyyah, Asy-Syathibiyyah & Qira\'at Sab\'ah',
           suggestedPrompts: [
             'Jelaskan makharijul huruf dan shifat lazimah menurut Matan Al-Jazariyyah!',
             'Apa perbedaan bacaan Imam Hafsh dan Warsy dalam Surah Al-Fatihah?',
@@ -863,8 +838,7 @@ class AgentModel {
           emoji: '📚',
           category: 'Hadis',
           fieldId: 'hadith',
-          subtitleAcademic:
-              'Fathul Bari, An-Nawawi \'ala Muslim & Syuruh Sittah',
+          subtitleAcademic: 'Fathul Bari, An-Nawawi \'ala Muslim & Syuruh Sittah',
           suggestedPrompts: [
             'Bagaimana Ibnu Hajar mensyarah hadis niat dalam pembukaan Fathul Bari?',
             'Penjelasan Imam An-Nawawi tentang hadis Islam, Iman, dan Ihsan.',

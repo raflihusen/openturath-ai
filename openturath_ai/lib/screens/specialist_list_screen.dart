@@ -8,7 +8,6 @@ import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
@@ -246,7 +245,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: OTRadius.inputBorder,
+                        borderRadius: BorderRadius.circular(100),
                         border: Border.all(color: border, width: 1.0),
                       ),
                       child: Row(
@@ -486,20 +485,20 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     required Color textSecondary,
   }) {
     final activeBg = textPrimary;
-    final activeFg = OTColors.onAccent(isDark);
+    final activeFg = isDark ? Colors.black : Colors.white;
 
     return AppleInteractiveWrapper(
       onTap: onTap,
       pressedScale: 0.94,
       hapticType: HapticFeedbackType.selection,
-      borderRadius: OTRadius.chipBorder,
+      borderRadius: BorderRadius.circular(20),
       child: AnimatedContainer(
-        duration: OTMotion.fast,
-        curve: OTMotion.curve,
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? activeBg : surface,
-          borderRadius: OTRadius.chipBorder,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? activeBg : border,
             width: 0.8,
