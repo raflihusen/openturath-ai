@@ -1,57 +1,72 @@
-# OpenTurath Native UI — V6 Walkthrough
+# OpenTurath — Design System Unification Walkthrough
 
 Tanggal verifikasi: 21 September 2026 (Asia/Aden)
 
 ## Titik pemulihan
 
-- Tag sebelum pengerjaan: `pre-v6-redesign-v2`
-- Commit awal yang ditandai: `809cf8d6c9ceb93976ceec7f2e8ccf30c3acc0c3`
-- Setiap tahap desain disimpan sebagai commit terpisah agar dapat dipulihkan secara granular.
+- Branch pengerjaan: `codex/design-system-unification`
+- Tag sebelum perubahan: `pre-design-unification-20260921`
+- Commit awal yang ditandai: `d0db418e9d2c00c1cbbfb540f55b16ae5177e92f`
+- Perubahan disimpan dalam 20 checkpoint terpisah agar dapat ditinjau atau dipulihkan secara bertahap.
 
-## Fondasi desain
+## Bahasa desain final
 
-- Newsreader 400/500/600 untuk judul editorial, nama kitab, dan angka monumental.
-- Outfit 400/500/600/700 untuk antarmuka, metadata, tombol, dan navigasi.
-- Scheherazade New 400/700 untuk teks Arab dengan fallback global dan tinggi baris aman 1.85–1.90.
-- Seluruh font berasal dari aset lokal website OpenTurath V6 dan tidak bergantung pada jaringan.
-- Palet native memakai token adaptif tunggal untuk mode terang dan gelap.
-- Kurva interaksi V6: `Cubic(0.16, 1, 0.3, 1)`, 140 ms, skala tekan 0.985.
-- Entrance bertahap menghormati preferensi reduced motion perangkat.
+- Satu palet monokrom adaptif untuk mode terang dan gelap; warna sage hanya dipakai sebagai status bermakna.
+- Geometri baku: radius kecil 8, kontrol 12, kartu/dialog 16, dan sheet 24.
+- Tombol tidak lagi otomatis berbentuk kapsul; bentuk kapsul hanya untuk chip atau status.
+- Newsreader dipakai untuk judul editorial, Outfit untuk antarmuka, dan Scheherazade New untuk teks Arab.
+- Animasi memakai satu kurva tenang `Cubic(0.16, 1, 0.3, 1)` dengan durasi bersama.
+- Warna, radius, tipografi, jarak, dan gerak mengambil token pusat, bukan nilai lepas per layar.
 
 ## Perubahan utama
 
-### Beranda
+### Beranda dan navigasi
 
-- Hero kajian diberi watermark `تراث` yang halus.
-- Ditambahkan Skala Pustaka monumental: 5.370 kitab, 1,1 M kata, 4,1 juta halaman, 11.901+ jilid, dan 20 disiplin.
-- Kartu bidang mendapat nomor seri dan aksen kaligrafi Arab tanpa mengorbankan keterbacaan.
+- Kartu utama Beranda menjadi panel editorial yang berbeda jelas dari ringkasan akun di Pengaturan.
+- Tanggal Masehi dan Hijriah berada dalam panel tersendiri yang rapi di bagian bawah kartu.
+- Kartu bidang, pencarian, navigasi bawah, indikator, dan pengumuman mengikuti geometri yang sama.
+- Copy seperti “indeks korpus” dan “ruang kajian” diganti dengan bahasa pengguna yang lebih langsung.
 
-### Asisten
+### Asisten dan Fikih Tahawwulat
 
-- Kartu spesialis dirombak menjadi arsitektur Bento V6: nomor seri, status, aksen Arab, judul editorial, ruang lingkup, dan metrik pustaka.
-- Hadis memakai varian inverted yang terukur.
-- Fikih Tahawwulat memakai Sovereign Card eksklusif: radius 24 dp, double hairline, watermark `تحولات`, dan aksen brass yang hanya digunakan pada flagship.
+- Kartu asisten reguler dan unggulan memakai satu keluarga visual tanpa warna emas, panel hijau, atau efek eksklusif yang bertabrakan.
+- Istilah seperti “daulat”, “sovereign”, “Super AI”, dan metrik semu dihapus dari teks yang terlihat pengguna.
+- Keistimewaan Fikih Tahawwulat disampaikan lewat hierarki isi, bukan bahasa visual yang terpisah dari aplikasi.
 
-### Pustaka, bacaan, dan catatan
+### Pengaturan dan langganan
 
-- Katalog, metadata pustaka, daftar kitab, detail kitab, bookmark, pembaca catatan, editor, serta lembar sitasi memakai keluarga font lokal yang sama.
-- Kutipan Arab memakai Scheherazade New Bold dengan tinggi baris 1.9 agar harakat tidak terpotong.
-- Warna hard-coded pada UI native dipindahkan ke token desain pusat.
+- Kartu akun disederhanakan menjadi ringkasan identitas, status, asisten yang tersedia, dan masa aktif.
+- Struktur lama yang menimbulkan bayangan status bertumpuk dihapus.
+- Pemilih tema, daftar pengaturan, dialog, voucher, paket, dan checkout memakai kontrol 12 dp serta panel 16 dp yang konsisten.
+- Copy akses disederhanakan menjadi istilah natural seperti “Aktif hingga”, “Asisten”, dan “Kelola langganan”.
 
-## Batasan yang dipertahankan
+### Catatan
+
+- Daftar, pembaca, editor, pratinjau, toolbar, tombol simpan, dan blok kutipan memakai geometri serta warna yang sama.
+- Judul jawaban tetap mengambil heading pertama, sedangkan label teknis dan judul ganda dihapus.
+- Copy dan hierarki metadata dibuat lebih ringkas untuk layar ponsel.
+
+### Pustaka
+
+- Halaman ringkasan, katalog, pencarian, filter, kartu kitab, detail kitab, metadata, dan bottom sheet disatukan.
+- Kartu kitab memprioritaskan judul Arab, pengarang, tahun wafat, jilid, serta fakta edisi yang benar-benar berguna.
+- Permukaan putih/gelap mentah dan radius acak diganti token adaptif yang sama dengan aplikasi utama.
+
+## Batasan yang sengaja dipertahankan
 
 - `lib/widgets/agent_multi_tab_room.dart` tidak diubah.
 - `lib/core/notebook_ui_script.dart` tidak diubah.
-- Alur login Google dan pengalaman internal WebView tidak didesain ulang.
-- Tidak ada unggahan APK, perubahan CDN, atau broadcast versi Firestore.
-- Aset publik SEO tidak dihapus atau dimodifikasi.
+- Ruang AI, halaman internal WebView, dan login Google tidak didesain ulang sesuai arahan pengguna.
+- Tidak ada unggahan APK, perubahan CDN, ataupun broadcast versi.
+- Berkas pengguna dan cache Firebase yang sudah ada tidak disentuh.
 
 ## Hasil verifikasi
 
+- Audit istilah dan token native: bersih di luar batasan yang dipertahankan.
 - `flutter analyze`: lulus, 0 masalah.
-- `flutter test`: 55/55 test yang tersedia di repositori lulus.
+- `flutter test`: 164/164 tes lulus.
 - `flutter build apk --release`: berhasil 100%.
 - APK lokal: `/Users/apple/Downloads/ramadhan/app-release-latest.apk`
-- Ukuran: 64.194.270 byte.
-- Timestamp: `2026-09-21 14:01:00 +03`.
-- SHA-256: `dac042962bf82af2ef724cb4ba6735ff3fd48162ba2c5371825193694549e4a3`.
+- Ukuran: 64.112.246 byte.
+- Timestamp: `2026-09-21 19:03:23 +0300`.
+- SHA-256: `b70deaf127f57b767fa30e6b773c494361162b53002ca990f11db6a743cc6f4f`.
