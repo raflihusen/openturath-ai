@@ -947,10 +947,10 @@ class GoAkalCatalogRegistry {
       originalPrice1m: 196000,
       launchPrice1m: 129000,
       includedItems: [
-        "Super AI Tafsir & Ulumul Qur'an (Thabari, Ibnu Katsir, Razi)",
-        "Super AI Tajwid & Qira'at (Kaidah Bacaan 10 Imam Mutawatir)",
-        "Super AI Bahasa, Balaghah & Kamus (Lisanul Arab, Alfiyyah)",
-        "Super AI Bibliografi & Faharis (Peta Manuskrip & Penulis Kitab)",
+        "Asisten Tafsir & Ulumul Qur'an (Thabari, Ibnu Katsir, Razi)",
+        "Asisten Tajwid & Qira'at (Kaidah Bacaan 10 Imam Mutawatir)",
+        "Asisten Bahasa, Balaghah & Kamus (Lisanul Arab, Alfiyyah)",
+        "Asisten Bibliografi & Faharis (Peta Manuskrip & Penulis Kitab)",
       ],
     ),
     ThematicBundleMeta(
@@ -962,12 +962,12 @@ class GoAkalCatalogRegistry {
       originalPrice1m: 294000,
       launchPrice1m: 179000,
       includedItems: [
-        "Super AI Fikih Hanafi (Kutubul Mu'tamadah Mazhab Hanafi)",
-        "Super AI Fikih Maliki (Mudawwanah, Mukhtashar Khalil)",
-        "Super AI Fikih Hanbali (Al-Mughni, Zadul Mustaqni')",
-        "Super AI Fikih Muqaran & Siyasah (Tata Negara & Politik Islam)",
-        "Super AI Aqidah & Ushuluddin (Kalam, Asy'ariyah-Maturidiyah)",
-        "Super AI Fatawa Akbar Lintas Mazhab",
+        "Asisten Fikih Hanafi (Kutubul Mu'tamadah Mazhab Hanafi)",
+        "Asisten Fikih Maliki (Mudawwanah, Mukhtashar Khalil)",
+        "Asisten Fikih Hanbali (Al-Mughni, Zadul Mustaqni')",
+        "Asisten Fikih Muqaran & Siyasah (Tata Negara & Politik Islam)",
+        "Asisten Aqidah & Ushuluddin (Kalam, Asy'ariyah-Maturidiyah)",
+        "Asisten Fatawa Lintas Mazhab",
       ],
     ),
     ThematicBundleMeta(
@@ -989,7 +989,7 @@ class GoAkalCatalogRegistry {
     ThematicBundleMeta(
       slug: "paket-sultan-all-access",
       title: "Paket lengkap seluruh bidang",
-      subtitle: "Akses ke seluruh ruang kajian OpenTurath",
+      subtitle: "Akses ke seluruh asisten OpenTurath",
       badgeText: "Akses seluruh bidang",
       iconEmoji: "",
       originalPrice1m: 1176000,
@@ -1022,7 +1022,9 @@ class GoAkalCatalogRegistry {
   /// Mendapatkan daftar tier terstruktur untuk Agent tertentu
   static List<Map<String, dynamic>> getTiersForAgent(String? agentId) {
     if (agentId == null || !agentIdToSlug.containsKey(agentId)) return const [];
-    return ProductPricing.forAgent(agentId).map((offer) => offer.toMap()).toList();
+    return ProductPricing.forAgent(agentId)
+        .map((offer) => offer.toMap())
+        .toList();
   }
 
   /// Resolve agentId to GoAkal slug

@@ -91,7 +91,7 @@ class SpecialistCard extends StatelessWidget {
         : editorial?.arabic ?? '';
     final displayTitle =
         Loc.isArabic && arabic.isNotEmpty ? arabic : Loc.text(title);
-    final corpusMetric = metricLabel ?? editorial?.metric ?? 'Korpus terkurasi';
+    final corpusMetric = metricLabel ?? editorial?.metric ?? 'Koleksi rujukan';
 
     return Semantics(
       button: onOpen != null,

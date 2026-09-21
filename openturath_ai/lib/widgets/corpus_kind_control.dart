@@ -39,7 +39,7 @@ class CorpusKindControl extends StatelessWidget {
           ),
           const SizedBox(width: 24),
           _CorpusKindTab(
-            label: 'Khazanah ulama',
+            label: 'Karya ulama',
             selected: value == CorpusKind.scholar,
             textPrimary: textPrimary,
             textSecondary: textSecondary,

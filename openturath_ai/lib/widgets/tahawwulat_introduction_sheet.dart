@@ -21,7 +21,7 @@ class _QawaidBook {
   });
 }
 
-/// Item pembantu untuk 5 bilik Super AI
+/// Item pembantu untuk lima asisten Fikih Tahawwulat.
 class _AiRoomItem {
   final String number;
   final String name;
@@ -535,14 +535,14 @@ class _TahawwulatIntroductionSheetState
                   _buildSectionHeader(
                     context,
                     tag: "BAB 12",
-                    title: "Arsitektur 5 Bilik Super AI OpenTurath",
+                    title: "Lima Asisten Fikih Tahawwulat",
                     arabic:
                         "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ التَّخَصُّصِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
                     "Karena disiplin ini sarat dengan peristilahan baru (al-muṣṭalaḥāt al-mubtakarah) serta ribuan jam transkrip lisan mualif, "
-                    "OpenTurath AI menghadirkan 5 Bilik AI Spesialis Terpadu dalam satu ruang kajian:",
+                    "OpenTurath menyediakan lima asisten Fikih Tahawwulat yang dapat digunakan sesuai kebutuhan:",
                     isDark,
                   ),
                   const SizedBox(height: 16),
@@ -1814,7 +1814,7 @@ class _TahawwulatIntroductionSheetState
           ),
           const SizedBox(height: 10),
           Text(
-            "Kehadiran teknologi Super AI di OpenTurath AI ini lahir murni sebagai Khadim Khazanah (pelayan ilmu), "
+            "Asisten OpenTurath dibuat sebagai alat bantu membaca dan menelusuri rujukan, "
             "meruntuhkan dinding kesulitan istilah dan kendala akses agar mutiara warisan kenabian ini dapat dipelajari dengan mudah, jernih, dan beradab.",
             style: ScholarlyFonts.outfit(
               fontSize: 12,

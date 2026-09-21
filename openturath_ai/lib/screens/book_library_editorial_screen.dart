@@ -677,7 +677,7 @@ Bidang: ${book.section}''';
                           _DetailRow(
                               label: 'Jumlah Halaman', value: book.pagesLabel),
                           _DetailRow(
-                              label: 'Folder Korpus',
+                              label: 'Folder Koleksi',
                               value: book.sourceFolder,
                               isLast: true),
                         ],

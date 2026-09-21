@@ -313,7 +313,7 @@ class _HeroLibraryCard extends StatelessWidget {
           Text(
             metadata.headlineAplikasi.isNotEmpty
                 ? metadata.headlineAplikasi
-                : 'Khazanah naskah rujukan mu\'tamad berstempel tahqiq ilmiah untuk rujukan santri dan peneliti turats.',
+                : 'Koleksi kitab rujukan mu\'tamad dengan data tahqiq untuk santri dan peneliti turats.',
             style: ScholarlyFonts.outfit(
               color: textSecondary,
               fontSize: 14,
