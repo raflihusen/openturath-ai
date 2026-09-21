@@ -8,6 +8,8 @@ import '../core/app_copy.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
@@ -480,33 +482,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                             pressedScale: 0.96,
                             hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: OTRadius.cardBorder,
                             child: Container(
                               decoration: BoxDecoration(
                                 color: surface,
-                                borderRadius: BorderRadius.circular(18),
+                                borderRadius: OTRadius.cardBorder,
                                 border: Border.all(color: border, width: 1.0),
                               ),
                               clipBehavior: Clip.antiAlias,
                               child: Stack(
                                 children: [
-                                  Positioned(
-                                    right: 12,
-                                    top: 30,
-                                    child: IgnorePointer(
-                                      child: Text(
-                                        disc.arabic,
-                                        textDirection: TextDirection.rtl,
-                                        style: OTTypography.arabicDisplay(
-                                          color: textPrimary.withValues(
-                                              alpha: 0.07),
-                                          height: 1.9,
-                                        ).copyWith(fontSize: 30),
-                                      ),
-                                    ),
-                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.all(16),
+                                    padding: OTSpacing.card,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -556,15 +543,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           ),
                                         ),
                                         const SizedBox(height: 12),
-                                        Container(
-                                          height: 2,
-                                          width: 32 + (index % 3) * 12,
-                                          decoration: BoxDecoration(
-                                            color: textPrimary.withValues(
-                                                alpha: 0.72),
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                          ),
+                                        Text(
+                                          disc.arabic,
+                                          textDirection: TextDirection.rtl,
+                                          style: OTTypography.arabicQuote(
+                                              color: textSecondary),
                                         ),
                                       ],
                                     ),
@@ -590,152 +573,57 @@ class _DashboardScreenState extends State<DashboardScreen> {
 class _GrandCorpusScale extends StatelessWidget {
   const _GrandCorpusScale();
 
-  static const _metrics = <({String value, String label})>[
-    (value: '1,1 M', label: 'Kata'),
-    (value: '4,1 Jt', label: 'Halaman'),
-    (value: '11.901+', label: 'Jilid'),
-    (value: '20', label: 'Disiplin'),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
+    final subtle = OTColors.surfaceSubtle(isDark);
     final border = OTColors.border(isDark);
     final ink = OTColors.textPrimary(isDark);
     final muted = OTColors.textSecondary(isDark);
-    final inverseSurface =
-        isDark ? OTColors.textPrimaryDark : OTColors.textPrimaryLight;
-    final inverseInk =
-        isDark ? OTColors.textPrimaryLight : OTColors.textPrimaryDark;
-    final inverseMuted =
-        isDark ? OTColors.textSecondaryLight : OTColors.textSecondaryDark;
 
     return Semantics(
       container: true,
-      label: 'Skala pustaka OpenTurath, 5.370 kitab klasik',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Skala Pustaka',
-                style: OTTypography.sectionTitle(color: ink),
+      label: 'Pustaka OpenTurath, 5.370 kitab',
+      child: Container(
+        padding: OTSpacing.card,
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: OTRadius.cardBorder,
+          border: Border.all(color: border),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: subtle,
+                borderRadius: OTRadius.controlBorder,
               ),
-              const Spacer(),
-              Text(
-                'TERKURASI',
-                style: OTTypography.metadataTag(color: muted),
+              alignment: Alignment.center,
+              child: Icon(Icons.menu_book_outlined, color: ink, size: 22),
+            ),
+            OTSpacing.gapMd,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Pustaka OpenTurath',
+                      style: OTTypography.cardTitle(color: ink)),
+                  OTSpacing.gapXs,
+                  Text(
+                    '5.370 kitab dari berbagai bidang dan masa.',
+                    style: OTTypography.caption(color: muted),
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Container(
-            height: 224,
-            decoration: BoxDecoration(
-              color: inverseSurface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: border),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              children: [
-                Positioned(
-                  right: 18,
-                  top: -18,
-                  child: IgnorePointer(
-                    child: Text(
-                      'كتب',
-                      textDirection: TextDirection.rtl,
-                      style: OTTypography.arabicDisplay(
-                        color: inverseInk.withValues(alpha: 0.065),
-                        height: 1.9,
-                      ).copyWith(fontSize: 126),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(22),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'KHAZANAH KLASIK',
-                        style: OTTypography.metadataTag(color: inverseMuted)
-                            .copyWith(letterSpacing: 1.7),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '5.370',
-                        style: OTTypography.displayLarge(color: inverseInk)
-                            .copyWith(
-                          fontSize: 60,
-                          height: 0.95,
-                          letterSpacing: -2.2,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Kitab Klasik',
-                        style: OTTypography.corpusTitle(color: inverseInk)
-                            .copyWith(fontSize: 20),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Dari karya awal Islam hingga turats abad ke-14 H.',
-                        style: OTTypography.caption(color: inverseMuted),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _metrics.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              mainAxisExtent: 82,
-            ),
-            itemBuilder: (context, index) {
-              final metric = _metrics[index];
-              return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: border),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      metric.value,
-                      style: OTTypography.corpusTitle(color: ink)
-                          .copyWith(fontSize: 19),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(metric.label,
-                        style: OTTypography.caption(color: muted)),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '2.876 partisi terverifikasi · Abad 1 H–14 H',
-            style: OTTypography.caption(color: muted),
-          ),
-        ],
+            OTSpacing.gapSm,
+            Icon(Icons.chevron_right_rounded, color: muted, size: 20),
+          ],
+        ),
       ),
     );
   }
@@ -779,24 +667,25 @@ class _StudyEntryCard extends StatelessWidget {
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
+    final onAccent = OTColors.onAccent(isDark);
 
     return Semantics(
       button: true,
       label: '$title. $subtitle',
       child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        color: surface.withValues(alpha: 0),
+        borderRadius: OTRadius.cardBorder,
         child: InkWell(
           onTap: onPrimary,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: OTRadius.cardBorder,
           child: Ink(
             decoration: BoxDecoration(
               color: surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: OTRadius.cardBorder,
               border: Border.all(color: border, width: 1.0),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: OTRadius.cardBorder,
               child: Stack(
                 children: [
                   Positioned(
@@ -814,7 +703,7 @@ class _StudyEntryCard extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: OTSpacing.card,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -872,7 +761,7 @@ class _StudyEntryCard extends StatelessWidget {
                                   horizontal: 14, vertical: 7),
                               decoration: BoxDecoration(
                                 color: OTColors.accent(isDark),
-                                borderRadius: BorderRadius.circular(100),
+                                borderRadius: OTRadius.buttonBorder,
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -880,9 +769,7 @@ class _StudyEntryCard extends StatelessWidget {
                                   Text(
                                     primaryLabel,
                                     style: ScholarlyFonts.outfit(
-                                      color: isDark
-                                          ? OTColors.canvasDark
-                                          : Colors.white,
+                                      color: onAccent,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -891,9 +778,7 @@ class _StudyEntryCard extends StatelessWidget {
                                   Icon(
                                     Icons.arrow_forward_rounded,
                                     size: 13,
-                                    color: isDark
-                                        ? OTColors.canvasDark
-                                        : Colors.white,
+                                    color: onAccent,
                                   ),
                                 ],
                               ),
@@ -936,10 +821,13 @@ class _ScholarlyDatePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      padding: const EdgeInsets.symmetric(
+        horizontal: OTSpacing.base,
+        vertical: OTSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: OTRadius.cardBorder,
         border: Border.all(color: border, width: 1.0),
       ),
       child: Row(
