@@ -757,14 +757,15 @@ class _BookmarkCardState extends State<_BookmarkCard> {
             margin: const EdgeInsets.symmetric(horizontal: 1.5),
             padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 1),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white : const Color(0xFF18181B),
+              color: isDark ? OTColors.surfaceLight : OTColors.textPrimaryLight,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               matchedPart,
               textDirection: isRtl ? TextDirection.rtl : null,
               style: baseStyle.copyWith(
-                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                color:
+                    isDark ? OTColors.textPrimaryLight : OTColors.surfaceLight,
                 fontWeight: FontWeight.w700,
               ),
             ),

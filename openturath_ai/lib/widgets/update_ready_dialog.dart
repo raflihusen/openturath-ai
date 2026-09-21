@@ -88,8 +88,7 @@ class UpdateReadyDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color:
-                    isDark ? const Color(0xFF1E1E1D) : const Color(0xFFEAEAE6),
+                color: OTColors.surfaceSubtle(isDark),
                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: Text(
@@ -124,9 +123,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF161615)
-                      : const Color(0xFFF2F2EE),
+                  color: OTColors.canvas(isDark),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: border.withValues(alpha: 0.5),

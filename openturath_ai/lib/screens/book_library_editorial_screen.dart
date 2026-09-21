@@ -595,9 +595,7 @@ Bidang: ${book.section}''';
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF222220)
-                                      : const Color(0xFFEEEEEB),
+                                  color: OTColors.surfaceSubtle(isDark),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(

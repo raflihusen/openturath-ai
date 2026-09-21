@@ -366,9 +366,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                             'Tulis',
                             style: OTTypography.captionMedium(
                               color: !_isPreview
-                                  ? (isDark
-                                      ? const Color(0xFF18181B)
-                                      : Colors.white)
+                                  ? OTColors.onAccent(isDark)
                                   : textSecondary,
                             ).copyWith(fontSize: 11.5),
                           ),
@@ -391,9 +389,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                             'Pratinjau',
                             style: OTTypography.captionMedium(
                               color: _isPreview
-                                  ? (isDark
-                                      ? const Color(0xFF18181B)
-                                      : Colors.white)
+                                  ? OTColors.onAccent(isDark)
                                   : textSecondary,
                             ).copyWith(fontSize: 11.5),
                           ),
@@ -409,15 +405,14 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     backgroundColor: textPrimary,
-                    foregroundColor:
-                        isDark ? const Color(0xFF18181B) : Colors.white,
+                    foregroundColor: OTColors.onAccent(isDark),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero),
                   ),
                   child: Text(
                     'Simpan',
                     style: OTTypography.captionMedium(
-                      color: isDark ? const Color(0xFF18181B) : Colors.white,
+                      color: OTColors.onAccent(isDark),
                     ).copyWith(fontWeight: FontWeight.w700),
                   ),
                 ),

@@ -257,9 +257,7 @@ class _HeroLibraryCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF222220)
-                      : const Color(0xFFEEEEEB),
+                  color: OTColors.surfaceSubtle(isDark),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
