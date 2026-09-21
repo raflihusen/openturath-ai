@@ -3,6 +3,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
 import '../core/legal_copy.dart';
 import '../core/scholarly_fonts.dart';
 
@@ -82,7 +83,7 @@ class LegalDocumentSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: OTColors.transparent,
       builder: (ctx) => LegalDocumentSheet(
         title: title,
         subtitle: subtitle,
@@ -106,7 +107,7 @@ class LegalDocumentSheet extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: OTRadius.sheetBorder,
         border: Border.all(color: border, width: 0.8),
       ),
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -121,7 +122,7 @@ class LegalDocumentSheet extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
                 color: textSecondary.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: OTRadius.chipBorder,
               ),
             ),
           ),
@@ -218,7 +219,7 @@ class LegalDocumentSheet extends StatelessWidget {
                 backgroundColor: textPrimary,
                 foregroundColor: canvas,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: OTRadius.buttonBorder,
                 ),
               ),
               child: Text(

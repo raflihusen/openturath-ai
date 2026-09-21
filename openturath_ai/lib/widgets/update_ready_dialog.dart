@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
 import '../core/scholarly_fonts.dart';
 import '../services/update_service.dart';
 
@@ -20,7 +21,7 @@ class UpdateReadyDialog extends StatelessWidget {
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.65),
+      barrierColor: OTColors.scrim,
       builder: (ctx) => UpdateReadyDialog(updateService: updateService),
     );
   }
@@ -124,7 +125,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: OTColors.canvas(isDark),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: OTRadius.controlBorder,
                   border: Border.all(
                     color: border.withValues(alpha: 0.5),
                     width: 0.5,
@@ -158,7 +159,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   backgroundColor: OTColors.accent(isDark),
                   foregroundColor: OTColors.onAccent(isDark),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                    borderRadius: OTRadius.buttonBorder,
                   ),
                   elevation: 0,
                 ),
@@ -184,7 +185,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: textSecondary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                    borderRadius: OTRadius.buttonBorder,
                   ),
                 ),
                 child: Text(

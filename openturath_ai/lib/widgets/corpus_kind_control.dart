@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
 
@@ -74,7 +75,7 @@ class _CorpusKindTab extends StatelessWidget {
           OTMotion.selection();
           onTap();
         },
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: OTRadius.smallBorder,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -92,7 +93,7 @@ class _CorpusKindTab extends StatelessWidget {
               curve: OTMotion.curve,
               height: 2,
               width: selected ? 28 : 0,
-              color: selected ? textPrimary : Colors.transparent,
+              color: selected ? textPrimary : OTColors.transparent,
             ),
           ],
         ),
