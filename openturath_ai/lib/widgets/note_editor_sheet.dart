@@ -5,6 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
@@ -346,7 +347,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   height: 32,
                   decoration: BoxDecoration(
                     color: surfaceSubtle,
-                    borderRadius: BorderRadius.zero,
+                    borderRadius: OTRadius.controlBorder,
                     border: Border.all(color: border, width: 0.6),
                   ),
                   child: Row(
@@ -358,9 +359,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color:
-                                !_isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
+                            color: !_isPreview
+                                ? textPrimary
+                                : surface.withValues(alpha: 0),
+                            borderRadius: OTRadius.smallBorder,
                           ),
                           child: Text(
                             'Tulis',
@@ -381,9 +383,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color:
-                                _isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
+                            color: _isPreview
+                                ? textPrimary
+                                : surface.withValues(alpha: 0),
+                            borderRadius: OTRadius.smallBorder,
                           ),
                           child: Text(
                             'Pratinjau',
@@ -406,8 +409,9 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     backgroundColor: textPrimary,
                     foregroundColor: OTColors.onAccent(isDark),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: OTRadius.controlBorder,
+                    ),
                   ),
                   child: Text(
                     'Simpan',
@@ -548,7 +552,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                                     ),
                                     blockquoteDecoration: BoxDecoration(
                                       color: surfaceSubtle,
-                                      borderRadius: BorderRadius.zero,
+                                      borderRadius: OTRadius.smallBorder,
                                       border: Border(
                                         left: BorderSide(
                                           color: textPrimary.withValues(
@@ -663,8 +667,10 @@ class _ToolbarBtn extends StatelessWidget {
           constraints: const BoxConstraints(minWidth: 36, maxWidth: 44),
           height: 32,
           decoration: BoxDecoration(
-            color:
-                isActive ? accent.withValues(alpha: 0.14) : Colors.transparent,
+            color: isActive
+                ? accent.withValues(alpha: 0.14)
+                : OTColors.surface(isDark).withValues(alpha: 0),
+            borderRadius: OTRadius.smallBorder,
             border: isActive
                 ? Border.all(color: accent.withValues(alpha: 0.45), width: 0.9)
                 : null,
