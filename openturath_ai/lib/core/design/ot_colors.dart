@@ -76,23 +76,11 @@ class OTColors {
   static const Color navigationLight = Color(0xF2F6F6F3);
   static const Color navigationDark = Color(0xF2111110);
 
-  // Temporary compatibility aliases while legacy feature cards are migrated.
-  // They intentionally resolve to the neutral palette; no gold or exclusive
-  // dark-card language remains.
-  @Deprecated('Use adaptive surface tokens')
-  static const Color sovereignSurface = surfaceDark;
-  @Deprecated('Use adaptive surface tokens')
-  static const Color sovereignSurfaceRaised = surfaceSubtleDark;
-  @Deprecated('Use adaptive text tokens')
-  static const Color sovereignInk = textPrimaryDark;
-  @Deprecated('Use adaptive text tokens')
-  static const Color sovereignMuted = textSecondaryDark;
-  @Deprecated('Use adaptive border tokens')
-  static const Color sovereignGold = borderStrongDark;
-  @Deprecated('Use adaptive border tokens')
-  static const Color sovereignHairline = borderDark;
+  // ── 8. Utility colors ──
+  static const Color transparent = Color(0x00000000);
+  static const Color scrim = Color(0x99000000);
 
-  // ── 8. Context-Aware Adaptive Helpers ──
+  // ── 9. Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
   static Color surface(bool isDark) => isDark ? surfaceDark : surfaceLight;
   static Color surfaceSubtle(bool isDark) =>
