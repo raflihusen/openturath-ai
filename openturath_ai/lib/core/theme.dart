@@ -123,8 +123,8 @@ class AppTheme {
   static const double radiusS = OTRadius.small;
   static const double radiusL = OTRadius.card;
   static const double radiusXL = OTRadius.sheet;
-  static const double radiusFull = OTRadius.chip;
-  static const double radiusPill = OTRadius.chip;
+  static const double radiusFull = 100.0;
+  static const double radiusPill = 100.0;
   static const double radiusQuery = OTRadius.input;
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
