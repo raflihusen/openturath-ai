@@ -25,6 +25,7 @@ import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/staggered_entrance.dart';
 import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -417,41 +418,49 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                             _authService.cachedCurrentUser;
                                         final isSubscribed = user != null &&
                                             user.hasAccessToAgent(agent.id);
-                                        return TahawwulatFlagshipCard(
-                                          agent: agent,
-                                          isSubscribed: isSubscribed,
-                                          onOpenMain: () => _openAgent(agent),
-                                          onOpenSubAgent: (sub) =>
-                                              _openTahawwulatSubAgent(
-                                                  agent, sub),
+                                        return OTStaggeredEntrance(
+                                          index: index,
+                                          child: TahawwulatFlagshipCard(
+                                            agent: agent,
+                                            isSubscribed: isSubscribed,
+                                            onOpenMain: () => _openAgent(agent),
+                                            onOpenSubAgent: (sub) =>
+                                                _openTahawwulatSubAgent(
+                                                    agent, sub),
+                                            onOpenLibrary:
+                                                agent.catalogId != null
+                                                    ? () => showResearchLibrary(
+                                                        context,
+                                                        agent: agent)
+                                                    : null,
+                                          ),
+                                        );
+                                      }
+                                      return OTStaggeredEntrance(
+                                        index: index,
+                                        child: SpecialistCard(
+                                          title: agent.title,
+                                          serial: (index + 1)
+                                              .toString()
+                                              .padLeft(2, '0'),
+                                          titleArabic: agent.titleArabic,
+                                          emoji: agent.emoji,
+                                          scopeLabel: agent.subtitleAcademic,
+                                          referenceLabel: agent.referenceBooks
+                                              ?.take(2)
+                                              .map((b) => b.titleArabic)
+                                              .where((s) => s.isNotEmpty)
+                                              .join(' · '),
+                                          statusLabel: agent.isComingSoon
+                                              ? AppCopy.comingSoon
+                                              : null,
+                                          onOpen: () => _openAgent(agent),
                                           onOpenLibrary: agent.catalogId != null
                                               ? () => showResearchLibrary(
                                                   context,
                                                   agent: agent)
                                               : null,
-                                        );
-                                      }
-                                      return SpecialistCard(
-                                        title: agent.title,
-                                        serial: (index + 1)
-                                            .toString()
-                                            .padLeft(2, '0'),
-                                        titleArabic: agent.titleArabic,
-                                        emoji: agent.emoji,
-                                        scopeLabel: agent.subtitleAcademic,
-                                        referenceLabel: agent.referenceBooks
-                                            ?.take(2)
-                                            .map((b) => b.titleArabic)
-                                            .where((s) => s.isNotEmpty)
-                                            .join(' · '),
-                                        statusLabel: agent.isComingSoon
-                                            ? AppCopy.comingSoon
-                                            : null,
-                                        onOpen: () => _openAgent(agent),
-                                        onOpenLibrary: agent.catalogId != null
-                                            ? () => showResearchLibrary(context,
-                                                agent: agent)
-                                            : null,
+                                        ),
                                       );
                                     },
                                   );
