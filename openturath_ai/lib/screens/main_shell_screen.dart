@@ -372,7 +372,7 @@ class _GoogleNavBarItem extends StatelessWidget {
                 color: isSelected
                     ? activeFg
                     : OTColors.surface(isDark).withValues(alpha: 0),
-                borderRadius: BorderRadius.circular(1),
+                borderRadius: OTRadius.chipBorder,
               ),
             ),
           ],
@@ -445,7 +445,7 @@ class _RailItem extends StatelessWidget {
                 color: isSelected
                     ? activeFg
                     : OTColors.surface(isDark).withValues(alpha: 0),
-                borderRadius: BorderRadius.circular(1),
+                borderRadius: OTRadius.chipBorder,
               ),
             ),
           ],

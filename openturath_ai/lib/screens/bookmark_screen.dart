@@ -758,7 +758,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
             padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 1),
             decoration: BoxDecoration(
               color: isDark ? OTColors.surfaceLight : OTColors.textPrimaryLight,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: OTRadius.smallBorder,
             ),
             child: Text(
               matchedPart,
