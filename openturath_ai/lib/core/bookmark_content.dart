@@ -18,7 +18,8 @@ ParsedAiAnswerContent parseAiAnswerContent(String answer) {
   final lines = answer.split(RegExp(r'\r?\n'));
   final headingIndex = lines.indexWhere((line) {
     final clean = line.trim();
-    if (RegExp(r'^#{1,6}\s*percakapan\b', caseSensitive: false).hasMatch(clean)) {
+    if (RegExp(r'^#{1,6}\s*percakapan\b', caseSensitive: false)
+        .hasMatch(clean)) {
       return false;
     }
     return RegExp(r'^\s{0,3}#{1,6}\s+\S').hasMatch(line);
@@ -30,7 +31,7 @@ ParsedAiAnswerContent parseAiAnswerContent(String answer) {
 
   if (titleIndex < 0) {
     return const ParsedAiAnswerContent(
-      title: 'Kajian tanpa judul',
+      title: 'Catatan tanpa judul',
       preview: '',
       hasFallbackTitle: true,
     );
@@ -45,7 +46,7 @@ ParsedAiAnswerContent parseAiAnswerContent(String answer) {
   }
 
   return ParsedAiAnswerContent(
-    title: title.isEmpty ? 'Kajian tanpa judul' : title,
+    title: title.isEmpty ? 'Catatan tanpa judul' : title,
     preview: previewLines.join(' '),
     hasFallbackTitle: !hasHeading,
   );
@@ -122,7 +123,7 @@ String aiAnswerTitle(String answer, String agentTitle) {
       !raw.contains('jawaban langsung') &&
       !raw.contains('jawaban ai') &&
       parsed.title.isNotEmpty &&
-      parsed.title != 'Kajian tanpa judul') {
+      parsed.title != 'Catatan tanpa judul') {
     return parsed.title;
   }
   for (final line in lines) {
@@ -136,5 +137,5 @@ String aiAnswerTitle(String answer, String agentTitle) {
       return _limitTitle(candidate);
     }
   }
-  return cleanAgent.isNotEmpty ? cleanAgent : 'Catatan Kajian';
+  return cleanAgent.isNotEmpty ? cleanAgent : 'Catatan';
 }
