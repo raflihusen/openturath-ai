@@ -1,4 +1,5 @@
 import '../core/localization.dart';
+import '../core/design/ot_motion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,8 +21,8 @@ class AppleInteractiveWrapper extends StatefulWidget {
     required this.child,
     this.onTap,
     this.onLongPress,
-    this.pressedScale = 0.975,
-    this.duration = const Duration(milliseconds: 110),
+    this.pressedScale = OTMotion.pressedScale,
+    this.duration = OTMotion.fast,
     this.enableHaptic = true,
     this.hapticType = HapticFeedbackType.light,
     this.borderRadius,
@@ -29,7 +30,8 @@ class AppleInteractiveWrapper extends StatefulWidget {
   });
 
   @override
-  State<AppleInteractiveWrapper> createState() => _AppleInteractiveWrapperState();
+  State<AppleInteractiveWrapper> createState() =>
+      _AppleInteractiveWrapperState();
 }
 
 enum HapticFeedbackType {
@@ -50,7 +52,7 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
-      reverseDuration: const Duration(milliseconds: 140),
+      reverseDuration: widget.duration,
     );
     _scaleAnimation = Tween<double>(
       begin: 1.0,
@@ -58,8 +60,8 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeOutCubic,
-        reverseCurve: Curves.easeOutBack,
+        curve: OTMotion.curve,
+        reverseCurve: OTMotion.curve,
       ),
     );
   }
@@ -109,7 +111,8 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
   Widget build(BuildContext context) {
     Loc.watch(context);
     final hasAction = widget.onTap != null || widget.onLongPress != null;
-    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
     Widget result = reduceMotion
         ? widget.child
