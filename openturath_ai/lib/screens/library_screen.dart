@@ -65,7 +65,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
     });
 
     try {
-      final books = widget.agent != null ? await _service.loadCatalogForAgent(widget.agent!) : await _service.loadSyafiiCatalog();
+      final books = widget.agent != null
+          ? await _service.loadCatalogForAgent(widget.agent!)
+          : await _service.loadSyafiiCatalog();
       if (!mounted) return;
       setState(() {
         _allBooks = books;
@@ -93,7 +95,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
       useRootNavigator: true,
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
       ),
       builder: (ctx) {
         return SafeArea(
@@ -109,7 +112,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     children: [
                       Text(
                         Loc.tr('ui_0c9f252156'),
-                        style: OTTypography.sectionHeading(color: textSecondary),
+                        style:
+                            OTTypography.sectionHeading(color: textSecondary),
                       ),
                       IconButton(
                         icon: Icon(Icons.close_rounded, color: textSecondary),
@@ -122,7 +126,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     book.titleArabic,
                     textDirection: TextDirection.rtl,
                     textAlign: TextAlign.right,
-                    style: OTTypography.arabicReading(color: textPrimary).copyWith(
+                    style:
+                        OTTypography.arabicReading(color: textPrimary).copyWith(
                       fontSize: 22,
                       height: 1.85,
                       fontWeight: FontWeight.w700,
@@ -133,7 +138,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     book.authorArabic,
                     textDirection: TextDirection.rtl,
                     textAlign: TextAlign.right,
-                    style: OTTypography.arabicReading(color: textSecondary).copyWith(
+                    style: OTTypography.arabicReading(color: textSecondary)
+                        .copyWith(
                       fontSize: 16,
                       height: 1.85,
                     ),
@@ -142,18 +148,31 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   Divider(color: border, height: 1),
                   const SizedBox(height: OTSpacing.base),
                   if (book.verifiedDeathYearHijri != null)
-                    _detailRow(Loc.tr('ui_872fd06ff7'), '${book.verifiedDeathYearHijri} H', textPrimary, textSecondary),
+                    _detailRow(
+                        Loc.tr('ui_872fd06ff7'),
+                        '${book.verifiedDeathYearHijri} H',
+                        textPrimary,
+                        textSecondary),
                   if (book.reviewedTypeLabel != null)
-                    _detailRow(Loc.tr('ui_47b35543e3'), book.reviewedTypeLabel!, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_47b35543e3'), book.reviewedTypeLabel!,
+                        textPrimary, textSecondary),
                   if (book.reviewedEraLabel != null)
-                    _detailRow(Loc.tr('ui_85e181b57a'), book.reviewedEraLabel!, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_85e181b57a'), book.reviewedEraLabel!,
+                        textPrimary, textSecondary),
                   if (book.volumesCount != null)
-                    _detailRow(Loc.tr('ui_7e06fac12c'), '${book.volumesCount} Jilid', textPrimary, textSecondary),
+                    _detailRow(
+                        Loc.tr('ui_7e06fac12c'),
+                        '${book.volumesCount} Jilid',
+                        textPrimary,
+                        textSecondary),
                   if (book.publisher != null && book.publisher!.isNotEmpty)
-                    _detailRow(Loc.tr('ui_291c152262'), book.publisher!, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_291c152262'), book.publisher!,
+                        textPrimary, textSecondary),
                   if (book.muhaqqiq != null && book.muhaqqiq!.isNotEmpty)
-                    _detailRow(Loc.tr('ui_e488d9f73e'), book.muhaqqiq!, textPrimary, textSecondary),
-                  _detailRow(Loc.tr('ui_88bddfe74a'), book.editionId, textPrimary, textSecondary),
+                    _detailRow(Loc.tr('ui_e488d9f73e'), book.muhaqqiq!,
+                        textPrimary, textSecondary),
+                  _detailRow(Loc.tr('ui_88bddfe74a'), book.editionId,
+                      textPrimary, textSecondary),
                   const SizedBox(height: OTSpacing.base),
                 ],
               ),
@@ -164,7 +183,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
     );
   }
 
-  Widget _detailRow(String label, String value, Color textPrimary, Color textSecondary) {
+  Widget _detailRow(
+      String label, String value, Color textPrimary, Color textSecondary) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -218,12 +238,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
           children: [
             Text(
               Loc.text(title),
-              style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
+              style: OTTypography.corpusTitle(color: textPrimary)
+                  .copyWith(fontSize: 18),
             ),
             if (_allBooks != null)
               Text(
                 Loc.tr('bookCount', ['${_filteredBooks?.length ?? 0}']),
-                style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
+                style: OTTypography.caption(color: textSecondary)
+                    .copyWith(fontSize: 11),
               ),
           ],
         ),
@@ -237,16 +259,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
               decoration: InputDecoration(
                 hintText: Loc.tr('ui_c8c23c3325'),
                 hintStyle: OTTypography.caption(color: textSecondary),
-                prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
+                prefixIcon:
+                    Icon(Icons.search_rounded, size: 20, color: textSecondary),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.clear_rounded, size: 18, color: textSecondary),
+                        icon: Icon(Icons.clear_rounded,
+                            size: 18, color: textSecondary),
                         onPressed: () => _searchController.clear(),
                       )
                     : null,
                 filled: true,
                 fillColor: surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: OTRadius.inputBorder,
                   borderSide: BorderSide(color: border, width: 0.8),
@@ -266,11 +291,15 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.menu_book_outlined, size: 48, color: textSecondary),
+                            Icon(Icons.menu_book_outlined,
+                                size: 48, color: textSecondary),
                             const SizedBox(height: OTSpacing.md),
-                            Text(_errorMessage!, style: OTTypography.body(color: textSecondary)),
+                            Text(_errorMessage!,
+                                style: OTTypography.body(color: textSecondary)),
                             const SizedBox(height: OTSpacing.base),
-                            OutlinedButton(onPressed: _loadData, child: Text(Loc.tr('tryAgain'))),
+                            OutlinedButton(
+                                onPressed: _loadData,
+                                child: Text(Loc.tr('tryAgain'))),
                           ],
                         ),
                       )
@@ -283,9 +312,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           )
                         : ListView.separated(
                             physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.lg, vertical: OTSpacing.xs),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: OTSpacing.lg,
+                                vertical: OTSpacing.xs),
                             itemCount: _filteredBooks!.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 12),
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 12),
                             itemBuilder: (ctx, index) {
                               final item = _filteredBooks![index];
                               return CanonicalBookTile(
