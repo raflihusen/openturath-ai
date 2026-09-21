@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
-import '../core/scholarly_fonts.dart';
 import '../core/app_snackbar.dart';
 import '../core/app_copy.dart';
 
@@ -293,10 +292,10 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: ScholarlyFonts.arabicQuote(
-                                fontSize: 21,
+                              style: GoogleFonts.scheherazadeNew(
+                                fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                height: 1.9,
+                                height: 1.8,
                                 color: textPrimary,
                               ),
                             ),

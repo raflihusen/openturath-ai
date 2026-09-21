@@ -20,8 +20,8 @@ class AppleInteractiveWrapper extends StatefulWidget {
     required this.child,
     this.onTap,
     this.onLongPress,
-    this.pressedScale = 0.985,
-    this.duration = const Duration(milliseconds: 140),
+    this.pressedScale = 0.975,
+    this.duration = const Duration(milliseconds: 110),
     this.enableHaptic = true,
     this.hapticType = HapticFeedbackType.light,
     this.borderRadius,
@@ -50,7 +50,7 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
-      reverseDuration: const Duration(milliseconds: 160),
+      reverseDuration: const Duration(milliseconds: 140),
     );
     _scaleAnimation = Tween<double>(
       begin: 1.0,
@@ -58,8 +58,8 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Cubic(0.16, 1.0, 0.3, 1.0),
-        reverseCurve: const Cubic(0.16, 1.0, 0.3, 1.0),
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeOutBack,
       ),
     );
   }

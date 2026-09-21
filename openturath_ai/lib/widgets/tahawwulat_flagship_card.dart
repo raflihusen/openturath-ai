@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../core/scholarly_fonts.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import '../core/theme.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'apple_interactive_wrapper.dart';
 import 'tahawwulat_introduction_sheet.dart';
 
-/// Kartu Sovereign untuk paket utama OpenTurath (Fikih Tahawwulat).
+/// Kartu monokrom untuk paket utama OpenTurath.
 ///
-/// Mengadopsi arsitektur Sovereign Card V6:
-/// - Bingkai ganda eksklusif (inset double-border ring)
-/// - Watermark kaligrafi تحولات dalam font Scheherazade New
-/// - Tipografi editorial Newsreader, Outfit, dan aksen Scheherazade New
+/// Kemewahan dibangun melalui ruang, tipografi, dan detail hairline. Seluruh
+/// asisten berada dalam satu daftar editorial agar kartu tetap tenang dan tidak
+/// berubah menjadi kumpulan kartu kecil yang ramai.
 class TahawwulatFlagshipCard extends StatelessWidget {
   final AgentModel agent;
   final bool isSubscribed;
@@ -57,7 +57,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
             colors: [_graphite, _obsidian],
             stops: [0, 0.72],
           ),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.16),
             width: 0.8,
@@ -71,7 +71,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           child: Stack(
             children: [
               const Positioned.fill(
@@ -79,48 +79,13 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                   child: CustomPaint(painter: _ObsidianDetailPainter()),
                 ),
               ),
-
-              // Sovereign Inset Double-Border Ring
-              Positioned.fill(
-                child: Padding(
-                  padding: const EdgeInsets.all(7.0),
-                  child: IgnorePointer(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(19),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          width: 1.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              // Watermark Kaligrafi تحولات (Scheherazade New)
-              Positioned(
-                right: -10,
-                top: 35,
-                child: IgnorePointer(
-                  child: Text(
-                    'تحولات',
-                    textDirection: TextDirection.rtl,
-                    style: ScholarlyFonts.arabicWatermark(
-                      fontSize: 130,
-                      color: Colors.white.withValues(alpha: 0.04),
-                    ),
-                  ),
-                ),
-              ),
-
               Positioned(
                 right: 18,
                 top: 62,
                 child: IgnorePointer(
                   child: Text(
                     subAgents.length.toString().padLeft(2, '0'),
-                    style: ScholarlyFonts.newsreader(
+                    style: GoogleFonts.newsreader(
                       fontSize: 78,
                       fontWeight: FontWeight.w500,
                       height: 0.9,
@@ -138,7 +103,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                       children: [
                         Text(
                           'KOLEKSI UTAMA',
-                          style: ScholarlyFonts.outfit(
+                          style: GoogleFonts.outfit(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 1.8,
@@ -154,7 +119,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                         const SizedBox(width: 10),
                         Text(
                           '${subAgents.length} ASISTEN',
-                          style: ScholarlyFonts.outfit(
+                          style: GoogleFonts.outfit(
                             fontSize: 9.5,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 1.25,
@@ -192,7 +157,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                               const SizedBox(width: 6),
                               Text(
                                 isSubscribed ? 'AKTIF' : 'PREMIUM',
-                                style: ScholarlyFonts.outfit(
+                                style: GoogleFonts.outfit(
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 1.1,
@@ -207,7 +172,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                     const SizedBox(height: 26),
                     Text(
                       agent.title,
-                      style: ScholarlyFonts.newsreader(
+                      style: GoogleFonts.newsreader(
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.55,
@@ -219,8 +184,8 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                     Text(
                       agent.titleArabic,
                       textDirection: TextDirection.rtl,
-                      style: ScholarlyFonts.scheherazadeNew(
-                        fontSize: 22,
+                      style: GoogleFonts.scheherazadeNew(
+                        fontSize: 19,
                         fontWeight: FontWeight.w500,
                         height: 1.5,
                         color: _silver,
@@ -231,7 +196,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                       agent.description,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.outfit(
+                      style: GoogleFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         color: _silver,
@@ -268,7 +233,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                   width: 34,
                                   child: Text(
                                     number,
-                                    style: ScholarlyFonts.jetBrainsMono(
+                                    style: GoogleFonts.jetBrainsMono(
                                       fontSize: 10.5,
                                       fontWeight: FontWeight.w500,
                                       letterSpacing: 0.35,
@@ -292,7 +257,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                         sub.name,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: ScholarlyFonts.outfit(
+                                        style: GoogleFonts.outfit(
                                           fontSize: 13.5,
                                           fontWeight: FontWeight.w600,
                                           letterSpacing: -0.1,
@@ -304,7 +269,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                         sub.description,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: ScholarlyFonts.outfit(
+                                        style: GoogleFonts.outfit(
                                           fontSize: 11.5,
                                           fontWeight: FontWeight.w400,
                                           color: _muted,
@@ -363,7 +328,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                       'Mengenal Fikih Tahawwulat',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: ScholarlyFonts.outfit(
+                                      style: GoogleFonts.outfit(
                                         fontSize: 13.5,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: -0.15,

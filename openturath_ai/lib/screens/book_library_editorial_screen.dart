@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/scholarly_fonts.dart';
 
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
@@ -409,11 +408,11 @@ class _BookEditorialItem extends StatelessWidget {
                       child: Text(
                         book.title,
                         textAlign: TextAlign.right,
-                        style: ScholarlyFonts.scheherazadeNew(
+                        style: GoogleFonts.scheherazadeNew(
                           color: ink,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          height: 1.85,
+                          height: 1.25,
                         ),
                       ),
                     ),
@@ -629,11 +628,11 @@ Bidang: ${book.section}''';
                               child: Text(
                                 book.title,
                                 textAlign: TextAlign.right,
-                                style: ScholarlyFonts.scheherazadeNew(
+                                style: GoogleFonts.scheherazadeNew(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: ink,
-                                  height: 1.85,
+                                  height: 1.25,
                                 ),
                               ),
                             ),

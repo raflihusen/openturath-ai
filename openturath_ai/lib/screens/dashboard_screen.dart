@@ -142,14 +142,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     AgentSessionManager.instance.openAgent(agent, user: user);
   }
 
-  static const List<({String fieldId, String name, String arabic, int specialistCount})>
+  static const List<({String fieldId, String name, int specialistCount})>
       _curatedDisciplines = [
-    (fieldId: 'fiqh', name: 'Fikih', arabic: 'الفقه', specialistCount: 6),
-    (fieldId: 'hadith', name: 'Hadits', arabic: 'الحديث', specialistCount: 1),
-    (fieldId: 'tafsir', name: 'Tafsir', arabic: 'التفسير', specialistCount: 1),
-    (fieldId: 'aqidah', name: 'Akidah', arabic: 'العقيدة', specialistCount: 1),
-    (fieldId: 'usul', name: 'Usul Fikih', arabic: 'أصول الفقه', specialistCount: 1),
-    (fieldId: 'lughah', name: 'Bahasa Arab', arabic: 'اللغة', specialistCount: 1),
+    (fieldId: 'fiqh', name: 'Fikih', specialistCount: 6),
+    (fieldId: 'hadith', name: 'Hadis', specialistCount: 1),
+    (fieldId: 'tafsir', name: 'Tafsir', specialistCount: 1),
+    (fieldId: 'aqidah', name: 'Akidah', specialistCount: 1),
+    (fieldId: 'usul', name: 'Usul Fikih', specialistCount: 1),
+    (fieldId: 'lughah', name: 'Bahasa Arab', specialistCount: 1),
   ];
 
   @override
@@ -195,49 +195,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ── 1. Header Centered: OpenTurath dengan Watermark Kaligrafi ──
+                    // ── 1. Header Centered: OpenTurath ──
                     Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Positioned(
-                            child: IgnorePointer(
-                              child: Text(
-                                'تراث',
-                                textDirection: TextDirection.rtl,
-                                style: ScholarlyFonts.arabicWatermark(
-                                  fontSize: 110,
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.04)
-                                      : Colors.black.withValues(alpha: 0.035),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                'AI FOR ISLAMIC SCHOLARSHIP',
-                                style: ScholarlyFonts.outfit(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.8,
-                                  color: textSecondary,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'OpenTurath',
-                                style: ScholarlyFonts.newsreader(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: -0.5,
-                                  color: textPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      child: Text(
+                        'OpenTurath',
+                        style: ScholarlyFonts.newsreader(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.4,
+                          color: textPrimary,
+                        ),
                       ),
                     ),
 
@@ -292,15 +259,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
                               accent: accent,
-                            ),
-                            const SizedBox(height: 14),
-                            // ── Skala Korpus Monumental V6 ──
-                            _CorpusScaleBento(
-                              isDark: isDark,
-                              surface: surface,
-                              border: border,
-                              textPrimary: textPrimary,
-                              textSecondary: textSecondary,
                             ),
                           ],
                         );
@@ -417,12 +375,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
-                                titleArabic: agent.titleArabic,
-                                scopeLabel: agent.subtitleAcademic,
-                                serialIndex: idx + 1,
-                                isFeatured: agent.id == 'hadits',
-                                bookCount: agent.referenceBooks?.length,
-                                period: 'Abad 2 H – 14 H',
                                 statusLabel: agent.isComingSoon
                                     ? AppCopy.comingSoon
                                     : null,
@@ -492,7 +444,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          mainAxisExtent: 164,
+                          mainAxisExtent: 156,
                         ),
                         itemCount: _curatedDisciplines.length,
                         itemBuilder: (context, index) {
@@ -510,13 +462,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               }
                             },
-                            pressedScale: 0.985,
+                            pressedScale: 0.96,
                             hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(18),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: surface,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(18),
                                 border: Border.all(color: border, width: 1.0),
                               ),
                               child: Padding(
@@ -541,7 +493,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         ),
                                         Icon(
                                           Icons.north_east_rounded,
-                                          size: 16,
+                                          size: 17,
                                           color: textSecondary.withValues(
                                               alpha: 0.72),
                                         ),
@@ -549,18 +501,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     const Spacer(),
                                     Text(
-                                      disc.arabic,
-                                      textDirection: TextDirection.rtl,
-                                      style: ScholarlyFonts.arabicCardAccent(
-                                        fontSize: 21,
-                                        color: textSecondary.withValues(alpha: 0.75),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
                                       disc.name,
                                       style: ScholarlyFonts.newsreader(
-                                        fontSize: 19,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: -0.25,
                                         color: textPrimary,
@@ -568,13 +511,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: 5),
                                     Text(
                                       AppCopy.assistantsAvailableCount(
                                           disc.specialistCount),
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 11,
+                                        fontSize: 11.5,
                                         color: textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      height: 2,
+                                      width: 32 + (index % 3) * 12,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            textPrimary.withValues(alpha: 0.72),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
                                       ),
                                     ),
                                   ],
@@ -1215,247 +1169,3 @@ class _AnnouncementSlide {
     required this.detailedContent,
   });
 }
-
-class _CorpusScaleBento extends StatelessWidget {
-  final bool isDark;
-  final Color surface;
-  final Color border;
-  final Color textPrimary;
-  final Color textSecondary;
-
-  const _CorpusScaleBento({
-    required this.isDark,
-    required this.surface,
-    required this.border,
-    required this.textPrimary,
-    required this.textSecondary,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: border, width: 1.0),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Positioned(
-            right: 12,
-            bottom: -8,
-            child: IgnorePointer(
-              child: Text(
-                'كتب',
-                style: ScholarlyFonts.scheherazadeNew(
-                  fontSize: 88,
-                  fontWeight: FontWeight.w700,
-                  color: isDark
-                      ? Colors.white.withOpacity(0.04)
-                      : Colors.black.withOpacity(0.04),
-                  height: 1.0,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF1F1ED),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: isDark ? Colors.white12 : Colors.black12,
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Text(
-                        'KORPUS DIGITAL',
-                        style: ScholarlyFonts.outfit(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.0,
-                          color: textSecondary,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      'خزانة التراث',
-                      style: ScholarlyFonts.scheherazadeNew(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: textSecondary.withOpacity(0.8),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      '5.370',
-                      style: ScholarlyFonts.newsreader(
-                        fontSize: 34,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -1.0,
-                        color: textPrimary,
-                        height: 1.0,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Kitab Klasik',
-                      style: ScholarlyFonts.newsreader(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.italic,
-                        color: textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withOpacity(0.02)
-                        : Colors.black.withOpacity(0.02),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: border.withOpacity(0.5),
-                      width: 0.8,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _MetricItem(
-                        value: '1,1 M',
-                        label: 'Kata',
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      _MetricDivider(color: border),
-                      _MetricItem(
-                        value: '4,1 Jt',
-                        label: 'Halaman',
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      _MetricDivider(color: border),
-                      _MetricItem(
-                        value: '11.901+',
-                        label: 'Jilid',
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      _MetricDivider(color: border),
-                      _MetricItem(
-                        value: '20',
-                        label: 'Disiplin',
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Container(
-                      width: 4,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF10B981) : const Color(0xFF059669),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        '2.876 partisi korpus terverifikasi · Abad 1 H – 14 H',
-                        style: ScholarlyFonts.outfit(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w500,
-                          color: textSecondary,
-                          letterSpacing: 0.1,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MetricItem extends StatelessWidget {
-  final String value;
-  final String label;
-  final Color textPrimary;
-  final Color textSecondary;
-
-  const _MetricItem({
-    required this.value,
-    required this.label,
-    required this.textPrimary,
-    required this.textSecondary,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          value,
-          style: ScholarlyFonts.newsreader(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.3,
-            color: textPrimary,
-          ),
-        ),
-        const SizedBox(height: 1),
-        Text(
-          label,
-          style: ScholarlyFonts.outfit(
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-            color: textSecondary,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _MetricDivider extends StatelessWidget {
-  final Color color;
-  const _MetricDivider({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 24,
-      color: color.withOpacity(0.6),
-    );
-  }
-}
-
