@@ -495,6 +495,7 @@ class AppTheme {
     if (OTTypography.useSystemFontFallback) {
       return TextStyle(
         fontFamily: 'Newsreader',
+        fontFamilyFallback: const ['Scheherazade New'],
         fontSize: fontSize,
         fontWeight: fontWeight,
         color: color,
@@ -521,6 +522,7 @@ class AppTheme {
     if (OTTypography.useSystemFontFallback) {
       return TextStyle(
         fontFamily: 'Outfit',
+        fontFamilyFallback: const ['Scheherazade New'],
         fontSize: fontSize,
         fontWeight: fontWeight,
         color: color,

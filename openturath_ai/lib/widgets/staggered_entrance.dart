@@ -13,12 +13,12 @@ class OTStaggeredEntrance extends StatefulWidget {
     super.key,
     required this.child,
     this.index = 0,
-    this.offset = const Offset(0, 0.025),
+    this.translateY = 22,
   });
 
   final Widget child;
   final int index;
-  final Offset offset;
+  final double translateY;
 
   @override
   State<OTStaggeredEntrance> createState() => _OTStaggeredEntranceState();
@@ -54,10 +54,14 @@ class _OTStaggeredEntranceState extends State<OTStaggeredEntrance> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSlide(
+    return AnimatedContainer(
       duration: OTMotion.normal,
       curve: OTMotion.curve,
-      offset: _visible ? Offset.zero : widget.offset,
+      transform: Matrix4.translationValues(
+        0,
+        _visible ? 0 : widget.translateY,
+        0,
+      ),
       child: AnimatedOpacity(
         duration: OTMotion.normal,
         curve: OTMotion.curve,

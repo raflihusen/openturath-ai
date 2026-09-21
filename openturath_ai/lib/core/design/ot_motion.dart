@@ -8,7 +8,7 @@ class OTMotion {
   static const Duration normal = Duration(milliseconds: 180);
   static const Duration sheet = Duration(milliseconds: 280);
   static const Duration transition = Duration(milliseconds: 320);
-  static const Duration stagger = Duration(milliseconds: 45);
+  static const Duration stagger = Duration(milliseconds: 60);
 
   static const Curve curve = Cubic(0.16, 1, 0.3, 1);
   static const Curve sheetCurve = Curves.easeOutQuart;
