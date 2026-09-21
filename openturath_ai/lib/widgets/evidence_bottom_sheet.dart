@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
 import '../core/app_copy.dart';
+import '../core/scholarly_fonts.dart';
+import 'staggered_entrance.dart';
 
 class EvidenceBottomSheet extends StatelessWidget {
   final int citationNumber;
@@ -40,7 +41,8 @@ class EvidenceBottomSheet extends StatelessWidget {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
         if (context.mounted) {
-          AppSnackBar.error(context, 'Tidak dapat membuka rujukan eksternal: $url');
+          AppSnackBar.error(
+              context, 'Tidak dapat membuka rujukan eksternal: $url');
         }
       }
     } catch (_) {}
@@ -72,30 +74,19 @@ class EvidenceBottomSheet extends StatelessWidget {
   }
 
   Widget _stagger(int index, Widget child) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 260 + (index * 60)),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, animChild) {
-        return Transform.translate(
-          offset: Offset(0, 16 * (1 - value)),
-          child: Opacity(
-            opacity: value.clamp(0.0, 1.0),
-            child: animChild,
-          ),
-        );
-      },
-      child: child,
-    );
+    return OTStaggeredEntrance(index: index, child: child);
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final surface =
+        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     return DraggableScrollableSheet(
@@ -106,7 +97,8 @@ class EvidenceBottomSheet extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
+            borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppTheme.radiusCard)),
             border: Border.all(color: border, width: 1),
             boxShadow: [
               BoxShadow(
@@ -133,7 +125,8 @@ class EvidenceBottomSheet extends StatelessWidget {
 
               // ── Header Bar (Figma Screen 10) ──
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -143,7 +136,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'Ibarah & rujukan',
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
                             color: textPrimary,
@@ -152,7 +145,8 @@ class EvidenceBottomSheet extends StatelessWidget {
                       ],
                     ),
                     IconButton(
-                      icon: Icon(Icons.close_rounded, color: textSecondary, size: 22),
+                      icon: Icon(Icons.close_rounded,
+                          color: textSecondary, size: 22),
                       onPressed: () => Navigator.pop(context),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -174,7 +168,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                       0,
                       Text(
                         bookName,
-                        style: GoogleFonts.newsreader(
+                        style: ScholarlyFonts.newsreader(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
@@ -190,8 +184,11 @@ class EvidenceBottomSheet extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: isDark ? AppTheme.surfaceElevated : AppTheme.surfaceCardLight,
-                          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+                          color: isDark
+                              ? AppTheme.surfaceElevated
+                              : AppTheme.surfaceCardLight,
+                          borderRadius:
+                              BorderRadius.circular(AppTheme.radiusCard),
                           border: Border.all(color: border),
                         ),
                         child: Row(
@@ -200,45 +197,70 @@ class EvidenceBottomSheet extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Pengarang', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text('Pengarang',
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: 12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     author,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
+                                    style: ScholarlyFonts.outfit(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrimary),
                                   ),
                                 ],
                               ),
                             ),
-                            Container(width: 1, height: 28, color: border, margin: const EdgeInsets.symmetric(horizontal: 12)),
+                            Container(
+                                width: 1,
+                                height: 28,
+                                color: border,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 12)),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Halaman', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text('Halaman',
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: 12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     pageNumber,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
+                                    style: ScholarlyFonts.outfit(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrimary),
                                   ),
                                 ],
                               ),
                             ),
-                            Container(width: 1, height: 28, color: border, margin: const EdgeInsets.symmetric(horizontal: 12)),
+                            Container(
+                                width: 1,
+                                height: 28,
+                                color: border,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 12)),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Disiplin', style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text('Disiplin',
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: 12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     category,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
+                                    style: ScholarlyFonts.outfit(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: accent),
                                   ),
                                 ],
                               ),
@@ -258,11 +280,12 @@ class EvidenceBottomSheet extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.format_quote_rounded, size: 18, color: accent),
+                              Icon(Icons.format_quote_rounded,
+                                  size: 18, color: accent),
                               const SizedBox(width: 6),
                               Text(
                                 'Naskah ibarah asli',
-                                style: GoogleFonts.outfit(
+                                style: ScholarlyFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                   color: textPrimary,
@@ -275,15 +298,20 @@ class EvidenceBottomSheet extends StatelessWidget {
                             width: double.infinity,
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: isDark ? AppTheme.surfaceElevated : AppTheme.citationBgLight,
-                              borderRadius: BorderRadius.circular(AppTheme.radiusCard),
+                              color: isDark
+                                  ? AppTheme.surfaceElevated
+                                  : AppTheme.citationBgLight,
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusCard),
                               border: Border.all(
-                                color: accent.withValues(alpha: isDark ? 0.35 : 0.25),
+                                color: accent.withValues(
+                                    alpha: isDark ? 0.35 : 0.25),
                                 width: 1.2,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: accent.withValues(alpha: isDark ? 0.08 : 0.04),
+                                  color: accent.withValues(
+                                      alpha: isDark ? 0.08 : 0.04),
                                   blurRadius: 16,
                                   offset: const Offset(0, 2),
                                 ),
@@ -292,10 +320,10 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: GoogleFonts.scheherazadeNew(
+                              style: ScholarlyFonts.scheherazadeNew(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                height: 1.8,
+                                height: 1.9,
                                 color: textPrimary,
                               ),
                             ),
@@ -314,7 +342,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         children: [
                           Text(
                             'Intisari & penjelasan',
-                            style: GoogleFonts.outfit(
+                            style: ScholarlyFonts.outfit(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: textPrimary,
@@ -323,7 +351,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             explanation,
-                            style: GoogleFonts.outfit(
+                            style: ScholarlyFonts.outfit(
                               fontSize: 13,
                               color: textSecondary,
                               height: 1.5,
@@ -347,12 +375,15 @@ class EvidenceBottomSheet extends StatelessWidget {
                               label: const Text('Salin ibarah'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: accent,
-                                side: BorderSide(color: accent.withValues(alpha: 0.6)),
-                                padding: const EdgeInsets.symmetric(vertical: 13),
+                                side: BorderSide(
+                                    color: accent.withValues(alpha: 0.6)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 13),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                                  borderRadius: BorderRadius.circular(
+                                      AppTheme.radiusPill),
                                 ),
-                                textStyle: GoogleFonts.outfit(
+                                textStyle: ScholarlyFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -363,18 +394,20 @@ class EvidenceBottomSheet extends StatelessWidget {
                           Expanded(
                             child: FilledButton.icon(
                               onPressed: () => _launchExternal(context),
-                              icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                              icon: const Icon(Icons.open_in_new_rounded,
+                                  size: 16),
                               label: const Text('Buka di Maktabah Syamilah'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: accent,
-                                foregroundColor: isDark
-                                    ? AppTheme.canvasDark
-                                    : Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 13),
+                                foregroundColor:
+                                    isDark ? AppTheme.canvasDark : Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 13),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                                  borderRadius: BorderRadius.circular(
+                                      AppTheme.radiusPill),
                                 ),
-                                textStyle: GoogleFonts.outfit(
+                                textStyle: ScholarlyFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -389,7 +422,8 @@ class EvidenceBottomSheet extends StatelessWidget {
                             style: IconButton.styleFrom(
                               padding: const EdgeInsets.all(13),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                                borderRadius:
+                                    BorderRadius.circular(AppTheme.radiusPill),
                               ),
                             ),
                           ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
@@ -130,7 +130,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     const SizedBox(height: 20),
                     Text(
                       'Katalog kitab',
-                      style: GoogleFonts.newsreader(
+                      style: ScholarlyFonts.newsreader(
                         color: ink,
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
@@ -140,7 +140,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     const SizedBox(height: 4),
                     Text(
                       widget.collectionName,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: textSecondary,
                         fontSize: 13,
                       ),
@@ -150,11 +150,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     TextField(
                       controller: _searchController,
                       focusNode: _searchFocusNode,
-                      style: GoogleFonts.outfit(color: ink, fontSize: 14),
+                      style: ScholarlyFonts.outfit(color: ink, fontSize: 14),
                       decoration: InputDecoration(
                         hintText:
                             'Cari judul kitab, pengarang, muhaqqiq, atau bidang...',
-                        hintStyle: GoogleFonts.outfit(
+                        hintStyle: ScholarlyFonts.outfit(
                             color: textSecondary, fontSize: 13),
                         prefixIcon: Icon(Icons.search_rounded,
                             color: textSecondary, size: 20),
@@ -222,7 +222,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       children: [
                         Text(
                           'Menampilkan ${visibleBooks.length} dari ${widget.books.length} kitab',
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             fontSize: 12,
                             color: textSecondary,
                           ),
@@ -247,7 +247,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       const SizedBox(height: 12),
                       Text(
                         'Tidak ditemukan kitab yang sesuai',
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: ink,
@@ -256,7 +256,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       const SizedBox(height: 4),
                       Text(
                         'Coba cari dengan kata kunci judul atau nama pengarang lain',
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 12,
                           color: textSecondary,
                         ),
@@ -330,7 +330,7 @@ class _FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.outfit(
+          style: ScholarlyFonts.outfit(
             color: isSelected ? OTColors.canvas(isDark) : ink,
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -373,7 +373,7 @@ class _BookEditorialItem extends StatelessWidget {
               width: 36,
               child: Text(
                 index.toString().padLeft(2, '0'),
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   color: textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -408,11 +408,11 @@ class _BookEditorialItem extends StatelessWidget {
                       child: Text(
                         book.title,
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.scheherazadeNew(
+                        style: ScholarlyFonts.scheherazadeNew(
                           color: ink,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          height: 1.25,
+                          height: 1.9,
                         ),
                       ),
                     ),
@@ -420,7 +420,7 @@ class _BookEditorialItem extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     'Karya ${book.author}',
-                    style: GoogleFonts.outfit(
+                    style: ScholarlyFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       color: textSecondary,
@@ -430,7 +430,7 @@ class _BookEditorialItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       'Tahqiq: ${book.editor}',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
@@ -444,7 +444,7 @@ class _BookEditorialItem extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         book.volumeLabel,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 11, color: textSecondary),
                       ),
                       const SizedBox(width: 14),
@@ -453,7 +453,7 @@ class _BookEditorialItem extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         book.pagesLabel,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 11, color: textSecondary),
                       ),
                     ],
@@ -549,7 +549,7 @@ Bidang: ${book.section}''';
                     const SizedBox(width: 8),
                     Text(
                       'Rujukan Kitab',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: ink,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -602,7 +602,7 @@ Bidang: ${book.section}''';
                                 ),
                                 child: Text(
                                   book.section.toUpperCase(),
-                                  style: GoogleFonts.outfit(
+                                  style: ScholarlyFonts.outfit(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: textSecondary,
@@ -612,7 +612,7 @@ Bidang: ${book.section}''';
                               const Spacer(),
                               Text(
                                 book.deathLabel,
-                                style: GoogleFonts.outfit(
+                                style: ScholarlyFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: textSecondary,
@@ -628,11 +628,11 @@ Bidang: ${book.section}''';
                               child: Text(
                                 book.title,
                                 textAlign: TextAlign.right,
-                                style: GoogleFonts.scheherazadeNew(
+                                style: ScholarlyFonts.scheherazadeNew(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: ink,
-                                  height: 1.25,
+                                  height: 1.9,
                                 ),
                               ),
                             ),
@@ -640,7 +640,7 @@ Bidang: ${book.section}''';
                           const SizedBox(height: 12),
                           Text(
                             book.author,
-                            style: GoogleFonts.newsreader(
+                            style: ScholarlyFonts.newsreader(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: ink,
@@ -652,7 +652,7 @@ Bidang: ${book.section}''';
                     const SizedBox(height: 24),
                     Text(
                       'METADATA NASKAH RUJUKAN',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
@@ -693,7 +693,7 @@ Bidang: ${book.section}''';
                         icon: const Icon(Icons.content_copy_rounded, size: 18),
                         label: Text(
                           'Salin Sitasi Lengkap ke Papan Klip',
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -753,7 +753,7 @@ class _DetailRow extends StatelessWidget {
             width: 130,
             child: Text(
               label,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 12,
                 color: textSecondary,
               ),
@@ -762,7 +762,7 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: Text(
               displayValue,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: ink,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -14,6 +13,7 @@ import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
 import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
@@ -384,8 +384,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  OTSpacing.lg, 12, OTSpacing.lg, 8),
+              padding:
+                  const EdgeInsets.fromLTRB(OTSpacing.lg, 12, OTSpacing.lg, 8),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -811,8 +811,13 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     final pillLabel = switch (item.documentKind) {
       BookmarkDocumentKind.personalNote => AppCopy.navSaved,
       BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
-          ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-          : (item.fieldName.contains('Catatan') ? AppCopy.navSaved : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace)),
+          ? item.agentTitle
+              .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+          : (item.fieldName.contains('Catatan')
+              ? AppCopy.navSaved
+              : (item.fieldName.isNotEmpty
+                  ? item.fieldName
+                  : AppCopy.studySpace)),
       BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
     };
     final displayTitle = item.documentKind == BookmarkDocumentKind.aiAnswer
@@ -963,10 +968,10 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text: item.arabicExcerpt,
                       query: widget.searchQuery,
                       isRtl: true,
-                      baseStyle: GoogleFonts.scheherazadeNew(
+                      baseStyle: ScholarlyFonts.scheherazadeNew(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        height: 1.8,
+                        height: 1.9,
                         color: widget.textPrimary,
                       ),
                       isDark: isDark,
@@ -982,7 +987,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 600)
                           : item.fullAnswer.trim(),
                       query: widget.searchQuery,
-                      baseStyle: GoogleFonts.outfit(
+                      baseStyle: ScholarlyFonts.outfit(
                         fontSize: 13,
                         height: 1.5,
                         color: widget.textSecondary,
@@ -995,17 +1000,17 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 300)
                           : item.fullAnswer.trim(),
                       styleSheet: MarkdownStyleSheet(
-                        p: GoogleFonts.outfit(
+                        p: ScholarlyFonts.outfit(
                           fontSize: 13,
                           height: 1.5,
                           color: widget.textSecondary,
                         ),
-                        strong: GoogleFonts.outfit(
+                        strong: ScholarlyFonts.outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: widget.textPrimary,
                         ),
-                        blockquote: GoogleFonts.outfit(
+                        blockquote: ScholarlyFonts.outfit(
                           fontSize: 12.5,
                           fontStyle: FontStyle.italic,
                           color: widget.textSecondary,
