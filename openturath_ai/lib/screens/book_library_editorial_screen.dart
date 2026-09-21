@@ -320,12 +320,12 @@ class _FilterChip extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
+      borderRadius: OTRadius.chipBorder,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           color: isSelected ? ink : surface,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: OTRadius.chipBorder,
           border: Border.all(color: isSelected ? ink : border),
         ),
         child: Text(
@@ -583,7 +583,7 @@ Bidang: ${book.section}''';
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: OTRadius.cardBorder,
                         border: Border.all(color: border),
                       ),
                       child: Column(
@@ -596,7 +596,7 @@ Bidang: ${book.section}''';
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: OTColors.surfaceSubtle(isDark),
-                                  borderRadius: BorderRadius.circular(6),
+                                  borderRadius: OTRadius.smallBorder,
                                 ),
                                 child: Text(
                                   book.section.toUpperCase(),
@@ -661,7 +661,7 @@ Bidang: ${book.section}''';
                     Container(
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: OTRadius.controlBorder,
                         border: Border.all(color: border),
                       ),
                       child: Column(
@@ -701,7 +701,7 @@ Bidang: ${book.section}''';
                           side: BorderSide(color: border),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: OTRadius.controlBorder,
                           ),
                         ),
                       ),

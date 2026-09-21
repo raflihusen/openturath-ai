@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/scholarly_fonts.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'book_library_editorial_screen.dart';
@@ -242,10 +244,10 @@ class _HeroLibraryCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(OTSpacing.xl),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: OTRadius.cardBorder,
         border: Border.all(color: border, width: 1.0),
       ),
       child: Column(
@@ -258,7 +260,7 @@ class _HeroLibraryCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(isDark),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: OTRadius.smallBorder,
                 ),
                 child: Text(
                   metadata.kategori.toUpperCase(),
@@ -329,7 +331,7 @@ class _HeroLibraryCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           _MetaRow(
-            label: 'Standar Otoritas',
+            label: 'Jenis koleksi',
             value: metadata.badgeOtoritas.isNotEmpty
                 ? metadata.badgeOtoritas
                 : '100% Kitab Mu\'tamad',
@@ -360,7 +362,7 @@ class _HeroLibraryCard extends StatelessWidget {
                 foregroundColor: OTColors.canvas(isDark),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: OTRadius.controlBorder,
                 ),
                 elevation: 0,
               ),
@@ -507,7 +509,7 @@ class _StatCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: OTRadius.cardBorder,
         border: Border.all(color: border, width: 1.0),
       ),
       child: Column(
