@@ -267,8 +267,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 18),
 
-
-
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     Container(
                       height: 48,
@@ -375,6 +373,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
+                                titleArabic: agent.titleArabic,
+                                serial: (idx + 1).toString().padLeft(2, '0'),
+                                scopeLabel: agent.subtitleAcademic,
                                 statusLabel: agent.isComingSoon
                                     ? AppCopy.comingSoon
                                     : null,
