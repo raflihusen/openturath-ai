@@ -7,6 +7,7 @@ import '../models/field_model.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../widgets/native_components.dart';
+import '../widgets/native_study_surfaces.dart';
 import 'note_reader_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -188,21 +189,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: ListView(
                           padding: const EdgeInsets.fromLTRB(20, 20, 20, 104),
                           children: [
-                            Text('OpenTurath',
-                                style: NativeType.title(dark, size: 24)),
-                            const SizedBox(height: 6),
-                            Text(
-                                '${HijriDateUtils.formatMasehiOnly()} · ${HijriDateUtils.formatHijriOnly()}',
-                                style: NativeType.meta(dark)),
-                            const SizedBox(height: 28),
-                            Text(
-                                user == null
-                                    ? AppCopy.ahlanDefault
-                                    : AppCopy.ahlanWithName(user.name),
-                                style: NativeType.meta(dark)),
+                            Text('OpenTurath', style: NativeType.title(dark, size: 26)),
                             const SizedBox(height: 8),
-                            Text(NativeCopy.text('yourStudy'),
-                                style: NativeType.title(dark, size: 32)),
+                            Text(user == null ? AppCopy.ahlanDefault : AppCopy.ahlanWithName(user.name), style: NativeType.body(dark, size: 15)),
+                            const SizedBox(height: 4),
+                            Text(HijriDateUtils.formatHijriOnly(), style: NativeType.meta(dark)),
                             const SizedBox(height: 20),
                             const UpdateReadyBanner(),
                             ListenableBuilder(
@@ -217,58 +208,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     }
                                   }
                                   final selected = target;
-                                  return NativeSection(
-                                      collection: selected?.id
-                                              .startsWith('fiqh_tahawwulat') ==
-                                          true,
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                selected == null
-                                                    ? AppCopy
-                                                        .studyEntryDefaultTitle
-                                                    : Loc.text(selected.title),
-                                                style: NativeType.title(dark)),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                                selected == null
-                                                    ? AppCopy
-                                                        .studyEntryDefaultSubtitle
-                                                    : AppCopy
-                                                        .studyEntryHistorySubtitle,
-                                                style: NativeType.body(dark)),
-                                            const SizedBox(height: 20),
-                                            Wrap(
-                                                spacing: 8,
-                                                runSpacing: 8,
-                                                children: [
-                                                  FilledButton(
-                                                      onPressed: () =>
-                                                          selected == null
-                                                              ? _browse()
-                                                              : _openNotebook(
-                                                                  selected,
-                                                                  user),
-                                                      child: Text(selected ==
-                                                              null
-                                                          ? AppCopy.startStudy
-                                                          : AppCopy
-                                                              .continueStudy)),
-                                                  if (selected?.catalogId !=
-                                                      null)
-                                                    TextButton(
-                                                        onPressed: () =>
-                                                            openNativeLibrary(
-                                                                context,
-                                                                agent:
-                                                                    selected!),
-                                                        child: Text(
-                                                            NativeCopy.text(
-                                                                'sources'))),
-                                                ]),
-                                          ]));
+                                  return NativeResumeCard(
+                                    title: selected == null ? AppCopy.studyEntryDefaultTitle : Loc.text(selected.title),
+                                    action: selected == null ? AppCopy.startStudy : AppCopy.continueStudy,
+                                    onOpen: () => selected == null ? _browse() : _openNotebook(selected, user),
+                                    onLibrary: selected?.catalogId == null ? null : () => openNativeLibrary(context, agent: selected!),
+                                  );
                                 }),
                             const SizedBox(height: 24),
                             NativeSearch(
@@ -321,8 +266,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           child: Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 16),
+                                                      horizontal: 16,
+                                                      vertical: 12),
                                               child: Row(children: [
                                                 Expanded(
                                                     child: Text(
@@ -354,7 +299,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             const SizedBox(height: 8),
                                             Text(AppCopy.planTahawwulat,
                                                 style: NativeType.title(dark,
-                                                    size: 26)),
+                                                    size: 22)),
                                             const SizedBox(height: 6),
                                             Text(NativeCopy.text('fivePaths'),
                                                 style: NativeType.meta(dark)),

@@ -13,6 +13,7 @@ import '../widgets/openturath_brand.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/native_design.dart';
 import '../widgets/native_components.dart';
+import '../widgets/native_study_surfaces.dart';
 import '../core/design/native_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
@@ -834,31 +835,11 @@ class _MembershipPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    return NativeSection(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(holderName, style: NativeType.title(isDark, size: 28)),
-      const SizedBox(height: 6),
-      Text(email,
-          textDirection: TextDirection.ltr, style: NativeType.meta(isDark)),
-      const SizedBox(height: 24),
-      Divider(color: NativeColors.border(isDark)),
-      const SizedBox(height: 20),
-      Text(summary.badge, style: NativeType.meta(isDark)),
-      const SizedBox(height: 8),
-      Text(summary.accessLabel, style: NativeType.body(isDark)),
-      if (summary.expiresAt != null) ...[
-        const SizedBox(height: 8),
-        Text(
-            '${summary.expiryLabel.isEmpty ? AppCopy.validUntil : summary.expiryLabel} · ${MaterialLocalizations.of(context).formatMediumDate(summary.expiresAt!)}',
-            style: NativeType.meta(isDark)),
-      ],
-      const SizedBox(height: 20),
-      Wrap(spacing: 8, runSpacing: 8, children: [
-        FilledButton(onPressed: onManage, child: Text(summary.ctaLabel)),
-        if (onViewAccess != null)
-          TextButton(onPressed: onViewAccess, child: Text(AppCopy.navStudies)),
-      ]),
-    ]));
+    return NativeAccountSummary(
+      name: holderName, email: email, status: summary.badge, access: summary.accessLabel,
+      manageLabel: summary.ctaLabel, onManage: onManage, onAccess: onViewAccess, accessLabel: AppCopy.navStudies,
+      expiry: summary.expiresAt == null ? null : '${summary.expiryLabel.isEmpty ? AppCopy.validUntil : summary.expiryLabel} · ${MaterialLocalizations.of(context).formatShortDate(summary.expiresAt!)}',
+    );
   }
 }
 

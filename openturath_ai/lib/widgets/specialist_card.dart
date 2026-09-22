@@ -28,14 +28,14 @@ class SpecialistCard extends StatelessWidget {
         : Loc.text(title);
     return Padding(
         padding: const EdgeInsets.only(bottom: 12),
-        child: NativeSection(
-          padding: EdgeInsets.zero,
+        child: Container(
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: NativeColors.border(dark)))),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             NativePress(
                 onTap: onOpen,
                 child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.fromLTRB(0, 14, 0, 0),
                     child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -44,9 +44,9 @@ class SpecialistCard extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                 Text(name,
-                                    style: NativeType.title(dark, size: 22)),
+                                    style: NativeType.title(dark, size: 19)),
                                 if (scopeLabel?.isNotEmpty == true) ...[
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 6),
                                   Text(Loc.text(scopeLabel!),
                                       style: NativeType.meta(dark)),
                                 ],
@@ -62,7 +62,7 @@ class SpecialistCard extends StatelessWidget {
                         ]))),
             if (onOpenLibrary != null)
               Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(12, 0, 12, 8),
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 8),
                   child: Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: TextButton.icon(
