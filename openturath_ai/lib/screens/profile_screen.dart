@@ -87,7 +87,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.logoutButton,
-                  style: NativeTypography.button(color: NativeColors.onAccent(isDark))),
+                  style: NativeTypography.button(
+                      color: NativeColors.onAccent(isDark))),
             ),
           ],
         );
@@ -135,7 +136,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           content: Text(
             AppCopy.deleteAccountBody,
-            style: NativeTypography.body(color: NativeColors.textSecondary(isDark)),
+            style: NativeTypography.body(
+                color: NativeColors.textSecondary(isDark)),
           ),
           actions: [
             TextButton(
@@ -152,7 +154,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.deleteAccountButton,
-                  style: NativeTypography.button(color: NativeColors.onAccent(isDark))),
+                  style: NativeTypography.button(
+                      color: NativeColors.onAccent(isDark))),
             ),
           ],
         );
@@ -244,7 +247,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: _entitlementTitle(entry.key),
                       subtitle: entry.value.expiry == null
                           ? Loc.tr('activeSubscription')
-                          : Loc.tr('expiryDate', [_formatAccessDate(entry.value.expiry!)]),
+                          : Loc.tr('expiryDate',
+                              [_formatAccessDate(entry.value.expiry!)]),
                       color: textPrimary,
                       muted: textSecondary,
                     )),
@@ -253,7 +257,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  static String _formatAccessDate(DateTime value) => HijriDateUtils.formatMasehiOnly(value.toLocal());
+  static String _formatAccessDate(DateTime value) =>
+      HijriDateUtils.formatMasehiOnly(value.toLocal());
 
   static String _entitlementTitle(String key) => Loc.text(switch (key) {
         'fiqh_tahawwulat' => 'Fikih Tahawwulat',
@@ -457,20 +462,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                Text(AppCopy.supportAndPolicySection, style: NativeType.title(isDark, size: 22)),
+                Text(AppCopy.supportAndPolicySection,
+                    style: NativeType.title(isDark, size: 22)),
                 const SizedBox(height: 12),
-                NativeSection(padding: EdgeInsets.zero, child: Column(children: [
-                  ListTile(leading: const Icon(Icons.headset_mic_outlined), title: Text(AppCopy.supportAndContact),
-                    onTap: () => LegalDocumentSheet.showContactSupport(context)),
-                  ListTile(leading: const Icon(Icons.description_outlined), title: Text(AppCopy.termsOfService),
-                    onTap: () => LegalDocumentSheet.showTermsOfService(context)),
-                  ListTile(leading: const Icon(Icons.privacy_tip_outlined), title: Text(AppCopy.privacyPolicy),
-                    onTap: () => LegalDocumentSheet.showPrivacyPolicy(context)),
-                  ListTile(leading: const Icon(Icons.payment_outlined), title: Text(AppCopy.paymentAndRefund),
-                    onTap: () => LegalDocumentSheet.showRefundPolicy(context)),
-                  ListTile(leading: const Icon(Icons.menu_book_outlined), title: Text(AppCopy.aiGuideline),
-                    onTap: () => LegalDocumentSheet.showAiGuideline(context)),
-                ])),
+                NativeSection(
+                    padding: EdgeInsets.zero,
+                    child: Column(children: [
+                      ListTile(
+                          leading: const Icon(Icons.headset_mic_outlined),
+                          title: Text(AppCopy.supportAndContact),
+                          onTap: () =>
+                              LegalDocumentSheet.showContactSupport(context)),
+                      ListTile(
+                          leading: const Icon(Icons.description_outlined),
+                          title: Text(AppCopy.termsOfService),
+                          onTap: () =>
+                              LegalDocumentSheet.showTermsOfService(context)),
+                      ListTile(
+                          leading: const Icon(Icons.privacy_tip_outlined),
+                          title: Text(AppCopy.privacyPolicy),
+                          onTap: () =>
+                              LegalDocumentSheet.showPrivacyPolicy(context)),
+                      ListTile(
+                          leading: const Icon(Icons.payment_outlined),
+                          title: Text(AppCopy.paymentAndRefund),
+                          onTap: () =>
+                              LegalDocumentSheet.showRefundPolicy(context)),
+                      ListTile(
+                          leading: const Icon(Icons.menu_book_outlined),
+                          title: Text(AppCopy.aiGuideline),
+                          onTap: () =>
+                              LegalDocumentSheet.showAiGuideline(context)),
+                    ])),
                 const SizedBox(height: 24),
                 // ── Card 5: Log out ──
                 Container(
@@ -593,9 +616,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               const Center(child: OpenTurathMark(size: 64)),
               const SizedBox(height: 12),
-              Text(Loc.tr('brandPhilosophyTitle'), style: NativeTypography.cardTitle(color: textPrimary)),
+              Text(Loc.tr('brandPhilosophyTitle'),
+                  style: NativeTypography.cardTitle(color: textPrimary)),
               const SizedBox(height: 8),
-              Text(Loc.tr('brandPhilosophy'), style: NativeTypography.body(color: textSecondary)),
+              Text(Loc.tr('brandPhilosophy'),
+                  style: NativeTypography.body(color: textSecondary)),
               const SizedBox(height: 16),
               Divider(height: 1, color: border),
               const SizedBox(height: 8),
@@ -705,22 +730,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Color surface,
     Color border,
   ) {
-    showDialog<void>(context: context, builder: (ctx) => AlertDialog(
-      title: Text(AppCopy.language),
-      content: Column(mainAxisSize: MainAxisSize.min, children: [
-        for (final entry in Loc.languageNames.entries)
-          ListTile(title: Text(entry.value),
-            trailing: entry.key == Loc.language ? const Icon(Icons.check_rounded) : null,
-            onTap: () async {
-              Navigator.of(ctx).pop();
-              try {
-                await AppConfig.setLocale(entry.key);
-              } catch (_) {
-                // The in-memory preference is still applied.
-              }
-            }),
-      ]),
-    ));
+    showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text(AppCopy.language),
+              content: Column(mainAxisSize: MainAxisSize.min, children: [
+                for (final entry in Loc.languageNames.entries)
+                  ListTile(
+                      title: Text(entry.value),
+                      trailing: entry.key == Loc.language
+                          ? const Icon(Icons.check_rounded)
+                          : null,
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        try {
+                          await AppConfig.setLocale(entry.key);
+                        } catch (_) {
+                          // The in-memory preference is still applied.
+                        }
+                      }),
+              ]),
+            ));
   }
 
   Widget _buildThemeOption({
@@ -804,10 +834,12 @@ class _MembershipPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    return NativeSection(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return NativeSection(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(holderName, style: NativeType.title(isDark, size: 28)),
       const SizedBox(height: 6),
-      Text(email, textDirection: TextDirection.ltr, style: NativeType.meta(isDark)),
+      Text(email,
+          textDirection: TextDirection.ltr, style: NativeType.meta(isDark)),
       const SizedBox(height: 24),
       Divider(color: NativeColors.border(isDark)),
       const SizedBox(height: 20),
@@ -816,13 +848,15 @@ class _MembershipPass extends StatelessWidget {
       Text(summary.accessLabel, style: NativeType.body(isDark)),
       if (summary.expiresAt != null) ...[
         const SizedBox(height: 8),
-        Text('${summary.expiryLabel.isEmpty ? AppCopy.validUntil : summary.expiryLabel} · ${MaterialLocalizations.of(context).formatMediumDate(summary.expiresAt!)}',
-          style: NativeType.meta(isDark)),
+        Text(
+            '${summary.expiryLabel.isEmpty ? AppCopy.validUntil : summary.expiryLabel} · ${MaterialLocalizations.of(context).formatMediumDate(summary.expiresAt!)}',
+            style: NativeType.meta(isDark)),
       ],
       const SizedBox(height: 20),
       Wrap(spacing: 8, runSpacing: 8, children: [
         FilledButton(onPressed: onManage, child: Text(summary.ctaLabel)),
-        if (onViewAccess != null) TextButton(onPressed: onViewAccess, child: Text(AppCopy.navStudies)),
+        if (onViewAccess != null)
+          TextButton(onPressed: onViewAccess, child: Text(AppCopy.navStudies)),
       ]),
     ]));
   }
@@ -859,7 +893,8 @@ class _AccessPortfolioRow extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                Text(Loc.text(title), style: NativeTypography.bodyMedium(color: color)),
+                Text(Loc.text(title),
+                    style: NativeTypography.bodyMedium(color: color)),
                 const SizedBox(height: 2),
                 Text(subtitle, style: NativeTypography.caption(color: muted)),
               ])),

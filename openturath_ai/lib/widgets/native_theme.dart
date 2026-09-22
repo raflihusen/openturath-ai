@@ -13,25 +13,58 @@ class NativeTheme extends StatelessWidget {
     final dark = base.brightness == Brightness.dark;
     final ink = NativeColors.textPrimary(dark);
     final surface = NativeColors.surface(dark);
-    return Theme(data: base.copyWith(
-      scaffoldBackgroundColor: NativeColors.canvas(dark),
-      colorScheme: base.colorScheme.copyWith(primary: ink, onPrimary: NativeColors.onAccent(dark),
-        surface: surface, onSurface: ink, outline: NativeColors.borderStrong(dark), outlineVariant: NativeColors.border(dark)),
-      appBarTheme: base.appBarTheme.copyWith(backgroundColor: NativeColors.canvas(dark),
-        centerTitle: false, elevation: 0, scrolledUnderElevation: 0, titleTextStyle: NativeType.title(dark, size: 24)),
-      filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(
-        backgroundColor: ink, foregroundColor: NativeColors.onAccent(dark), minimumSize: const Size(48, 48),
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14), textStyle: NativeType.body(dark, size: 15),
-        shape: const StadiumBorder(), elevation: 0)),
-      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(
-        foregroundColor: ink, minimumSize: const Size(48, 48), shape: const StadiumBorder(),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14), textStyle: NativeType.body(dark, size: 15))),
-      textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: ink,
-        minimumSize: const Size(48, 48), textStyle: NativeType.body(dark, size: 14))),
-      iconButtonTheme: IconButtonThemeData(style: IconButton.styleFrom(minimumSize: const Size(48, 48), foregroundColor: ink)),
-      dividerTheme: DividerThemeData(color: NativeColors.border(dark), thickness: .8, space: 1),
-      bottomSheetTheme: BottomSheetThemeData(backgroundColor: surface, surfaceTintColor: Colors.transparent,
-        elevation: 0, shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24)))),
-    ), child: child);
+    return Theme(
+        data: base.copyWith(
+          scaffoldBackgroundColor: NativeColors.canvas(dark),
+          colorScheme: base.colorScheme.copyWith(
+              primary: ink,
+              onPrimary: NativeColors.onAccent(dark),
+              surface: surface,
+              onSurface: ink,
+              outline: NativeColors.borderStrong(dark),
+              outlineVariant: NativeColors.border(dark)),
+          appBarTheme: base.appBarTheme.copyWith(
+              backgroundColor: NativeColors.canvas(dark),
+              centerTitle: false,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              titleTextStyle: NativeType.title(dark, size: 24)),
+          filledButtonTheme: FilledButtonThemeData(
+              style: FilledButton.styleFrom(
+                  backgroundColor: ink,
+                  foregroundColor: NativeColors.onAccent(dark),
+                  minimumSize: const Size(48, 48),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+                  textStyle: NativeType.body(dark, size: 15),
+                  shape: const StadiumBorder(),
+                  elevation: 0)),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                  foregroundColor: ink,
+                  minimumSize: const Size(48, 48),
+                  shape: const StadiumBorder(),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  textStyle: NativeType.body(dark, size: 15))),
+          textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                  foregroundColor: ink,
+                  minimumSize: const Size(48, 48),
+                  textStyle: NativeType.body(dark, size: 14))),
+          iconButtonTheme: IconButtonThemeData(
+              style: IconButton.styleFrom(
+                  minimumSize: const Size(48, 48), foregroundColor: ink)),
+          dividerTheme: DividerThemeData(
+              color: NativeColors.border(dark), thickness: .8, space: 1),
+          bottomSheetTheme: BottomSheetThemeData(
+              backgroundColor: surface,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(24)))),
+        ),
+        child: child);
   }
 }

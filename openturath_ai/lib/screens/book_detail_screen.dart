@@ -306,8 +306,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ),
                             child: Text(
                               widget.book.sectionArabic ?? 'نص محقق معتمد',
-                              style: NativeTypography.caption(color: textSecondary)
-                                  .copyWith(
+                              style:
+                                  NativeTypography.caption(color: textSecondary)
+                                      .copyWith(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 11,
                               ),
@@ -318,8 +319,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             textDirection: TextDirection.ltr,
                             child: Text(
                               widget.book.editionId,
-                              style: NativeTypography.caption(color: textSecondary)
-                                  .copyWith(
+                              style:
+                                  NativeTypography.caption(color: textSecondary)
+                                      .copyWith(
                                 fontFamily: 'Courier',
                                 fontSize: 11,
                               ),
@@ -331,8 +333,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       Text(
                         widget.book.titleArabic,
                         textAlign: TextAlign.right,
-                        style: NativeTypography.arabicDisplay(color: textPrimary)
-                            .copyWith(
+                        style:
+                            NativeTypography.arabicDisplay(color: textPrimary)
+                                .copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                           height: 1.6,
@@ -346,9 +349,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         Text(
                           'المختصر: ${widget.book.shortTitleArabic!}',
                           textAlign: TextAlign.right,
-                          style:
-                              NativeTypography.arabicReading(color: textSecondary)
-                                  .copyWith(
+                          style: NativeTypography.arabicReading(
+                                  color: textSecondary)
+                              .copyWith(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),

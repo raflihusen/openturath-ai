@@ -32,9 +32,13 @@ class BookRowItem extends StatelessWidget {
 
     // Format jilid bersih tanpa duplikasi kata
     String? formattedVolumes;
-    if (book.volumesDescription != null && book.volumesDescription!.isNotEmpty) {
+    if (book.volumesDescription != null &&
+        book.volumesDescription!.isNotEmpty) {
       final v = book.volumesDescription!;
-      formattedVolumes = (v.contains('جزء') || v.contains('مجلد') || v.contains('jilid') || v.contains('Jilid'))
+      formattedVolumes = (v.contains('جزء') ||
+              v.contains('مجلد') ||
+              v.contains('jilid') ||
+              v.contains('Jilid'))
           ? v
           : '$v jilid';
     } else if (book.volumesCount != null && book.volumesCount! > 0) {
@@ -72,11 +76,13 @@ class BookRowItem extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2.5),
                       decoration: BoxDecoration(
                         color: surfaceSubtle,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: border.withValues(alpha: 0.8), width: 0.6),
+                        border: Border.all(
+                            color: border.withValues(alpha: 0.8), width: 0.6),
                       ),
                       child: Text(
                         '#${book.editionId}',
@@ -87,7 +93,8 @@ class BookRowItem extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (book.sectionArabic != null && book.sectionArabic!.isNotEmpty) ...[
+                    if (book.sectionArabic != null &&
+                        book.sectionArabic!.isNotEmpty) ...[
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -103,16 +110,19 @@ class BookRowItem extends StatelessWidget {
                       ),
                     ] else
                       const Spacer(),
-                    if (book.verifiedDeathYearHijri != null && book.verifiedDeathYearHijri! > 0) ...[
+                    if (book.verifiedDeathYearHijri != null &&
+                        book.verifiedDeathYearHijri! > 0) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2.5),
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.05)
                               : Colors.black.withValues(alpha: 0.04),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: border.withValues(alpha: 0.7), width: 0.5),
+                          border: Border.all(
+                              color: border.withValues(alpha: 0.7), width: 0.5),
                         ),
                         child: Text(
                           'w. ${book.verifiedDeathYearHijri} H',
@@ -190,16 +200,18 @@ class BookRowItem extends StatelessWidget {
                   Wrap(
                     spacing: 8,
                     runSpacing: 5,
-                    children: facts.map((fact) => Text(
-                      fact,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: NativeFonts.outfit(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w500,
-                        color: textSecondary,
-                      ),
-                    )).toList(),
+                    children: facts
+                        .map((fact) => Text(
+                              fact,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: NativeFonts.outfit(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w500,
+                                color: textSecondary,
+                              ),
+                            ))
+                        .toList(),
                   ),
                 ],
               ],
@@ -209,5 +221,4 @@ class BookRowItem extends StatelessWidget {
       ),
     );
   }
-
 }

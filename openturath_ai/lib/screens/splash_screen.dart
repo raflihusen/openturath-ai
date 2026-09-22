@@ -84,15 +84,20 @@ class _SplashScreenState extends State<SplashScreen>
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
         systemNavigationBarColor: bg,
-        systemNavigationBarIconBrightness: dark ? Brightness.light : Brightness.dark,
+        systemNavigationBarIconBrightness:
+            dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: bg,
         body: Center(
           child: FadeTransition(
-            opacity: MediaQuery.disableAnimationsOf(context) ? const AlwaysStoppedAnimation(1.0) : _fadeAnimation,
+            opacity: MediaQuery.disableAnimationsOf(context)
+                ? const AlwaysStoppedAnimation(1.0)
+                : _fadeAnimation,
             child: ScaleTransition(
-              scale: MediaQuery.disableAnimationsOf(context) ? const AlwaysStoppedAnimation(1.0) : _scaleAnimation,
+              scale: MediaQuery.disableAnimationsOf(context)
+                  ? const AlwaysStoppedAnimation(1.0)
+                  : _scaleAnimation,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

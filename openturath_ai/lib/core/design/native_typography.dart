@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'native_fonts.dart';
 import '../localization.dart';
 
-
 /// OpenTurath Design System — Typography (3-Pilar Arsitektur Baku)
 /// 1. Editorial & Heading Layer: Newsreader (Display, Page Title, Nama Kitab Besar)
 /// 2. Interface Layer: Outfit (Tombol, Navigasi, Input, Chip, Metadata, Angka Indeks)
@@ -27,7 +26,8 @@ class NativeTypography {
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+        height:
+            Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
         color: color,
       );
     }
@@ -54,7 +54,8 @@ class NativeTypography {
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+        height:
+            Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
         color: color,
       );
     }
@@ -81,7 +82,8 @@ class NativeTypography {
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+        height:
+            Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
         color: color,
       );
     }
@@ -96,8 +98,17 @@ class NativeTypography {
 
   // ── Editorial & Heading Styles ──
   static TextStyle brandLogo({Color? color}) => useSystemFontFallback
-      ? TextStyle(fontFamily: 'Newsreader', fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color)
-      : NativeFonts.newsreader(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color);
+      ? TextStyle(
+          fontFamily: 'Newsreader',
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -.4,
+          color: color)
+      : NativeFonts.newsreader(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -.4,
+          color: color);
 
   static TextStyle displayLarge({Color? color}) => _newsreader(
         fontSize: 36,
@@ -213,28 +224,32 @@ class NativeTypography {
       );
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
-  static TextStyle arabicDisplay({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicDisplay({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicReading({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicReading({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: 18,
         fontWeight: FontWeight.w500,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicIbarah({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicIbarah({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: 24,
         fontWeight: FontWeight.bold,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
-  static TextStyle arabicQuote({Color? color, double height = 1.85}) => _scheherazadeNew(
+  static TextStyle arabicQuote({Color? color, double height = 1.85}) =>
+      _scheherazadeNew(
         fontSize: 15,
         fontWeight: FontWeight.w400,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,

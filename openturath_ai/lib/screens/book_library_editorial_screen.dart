@@ -10,7 +10,6 @@ import '../core/design/native_design.dart';
 
 import '../core/app_snackbar.dart';
 
-
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
@@ -153,7 +152,10 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         fontSize: 13,
                       ),
                     ),
-                    if (widget.onAbout != null) TextButton(onPressed: widget.onAbout, child: Text(NativeCopy.text('aboutCollection'))),
+                    if (widget.onAbout != null)
+                      TextButton(
+                          onPressed: widget.onAbout,
+                          child: Text(NativeCopy.text('aboutCollection'))),
                     const SizedBox(height: 18),
                     // Search Bar
                     TextField(
@@ -161,8 +163,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       focusNode: _searchFocusNode,
                       style: NativeFonts.outfit(color: ink, fontSize: 14),
                       decoration: InputDecoration(
-                        hintText:
-                            NativeCopy.text('searchBooks'),
+                        hintText: NativeCopy.text('searchBooks'),
                         hintStyle: NativeFonts.outfit(
                             color: textSecondary, fontSize: 13),
                         prefixIcon: Icon(Icons.search_rounded,
@@ -230,7 +231,10 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     Row(
                       children: [
                         Text(
-                          NativeCopy.text('results', ['${visibleBooks.length}', '${widget.books.length}']),
+                          NativeCopy.text('results', [
+                            '${visibleBooks.length}',
+                            '${widget.books.length}'
+                          ]),
                           style: NativeFonts.outfit(
                             fontSize: 12,
                             color: textSecondary,
@@ -291,8 +295,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           }
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
-                              builder: (_) =>
-                                  NativeTheme(child: OpenTurathBookDetailPage(book: book)),
+                              builder: (_) => NativeTheme(
+                                  child: OpenTurathBookDetailPage(book: book)),
                             ),
                           );
                         },
@@ -354,7 +358,8 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _BookEditorialItem extends StatelessWidget {
-  const _BookEditorialItem({required this.book, required this.index, required this.onTap});
+  const _BookEditorialItem(
+      {required this.book, required this.index, required this.onTap});
   final OpenTurathBook book;
   final int index;
   final VoidCallback onTap;
@@ -363,30 +368,43 @@ class _BookEditorialItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return InkWell(onTap: onTap, child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: NativeColors.border(dark), width: .8))),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Wrap(spacing: 16, runSpacing: 6, children: [
-          Text(book.section, style: NativeType.meta(dark)),
-          if (book.deathYear != null) Text(book.deathLabel, style: NativeType.meta(dark)),
-        ]),
-        const SizedBox(height: 12),
-        Align(alignment: Alignment.centerRight, child: Text(book.title, textDirection: TextDirection.rtl,
-          textAlign: TextAlign.right, style: NativeType.arabic(dark, size: 24))),
-        const SizedBox(height: 8),
-        Text(Loc.tr('authorCredit', [book.author]), style: NativeType.body(dark, size: 15)),
-        if (book.editor.isNotEmpty && book.editor != '-') ...[
-          const SizedBox(height: 4),
-          Text(Loc.tr('editorCredit', [book.editor]), style: NativeType.meta(dark)),
-        ],
-        const SizedBox(height: 12),
-        Wrap(spacing: 16, runSpacing: 6, children: [
-          Text(book.volumeLabel, style: NativeType.meta(dark)),
-          Text(book.pagesLabel, style: NativeType.meta(dark)),
-        ]),
-      ]),
-    ));
+    return InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          decoration: BoxDecoration(
+              border: Border(
+                  bottom:
+                      BorderSide(color: NativeColors.border(dark), width: .8))),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Wrap(spacing: 16, runSpacing: 6, children: [
+              Text(book.section, style: NativeType.meta(dark)),
+              if (book.deathYear != null)
+                Text(book.deathLabel, style: NativeType.meta(dark)),
+            ]),
+            const SizedBox(height: 12),
+            Align(
+                alignment: Alignment.centerRight,
+                child: Text(book.title,
+                    textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.right,
+                    style: NativeType.arabic(dark, size: 24))),
+            const SizedBox(height: 8),
+            Text(Loc.tr('authorCredit', [book.author]),
+                style: NativeType.body(dark, size: 15)),
+            if (book.editor.isNotEmpty && book.editor != '-') ...[
+              const SizedBox(height: 4),
+              Text(Loc.tr('editorCredit', [book.editor]),
+                  style: NativeType.meta(dark)),
+            ],
+            const SizedBox(height: 12),
+            Wrap(spacing: 16, runSpacing: 6, children: [
+              Text(book.volumeLabel, style: NativeType.meta(dark)),
+              Text(book.pagesLabel, style: NativeType.meta(dark)),
+            ]),
+          ]),
+        ));
   }
 }
 
@@ -400,22 +418,37 @@ class OpenTurathBookDetailPage extends StatefulWidget {
   final OpenTurathBook book;
 
   @override
-  State<OpenTurathBookDetailPage> createState() => _OpenTurathBookDetailPageState();
+  State<OpenTurathBookDetailPage> createState() =>
+      _OpenTurathBookDetailPageState();
 }
 
-String nativeBookReferenceId(OpenTurathBook book) => 'book_editorial_${sha256.convert(utf8.encode(jsonEncode([book.id, book.title, book.author, book.editor, book.publisher, book.edition, book.volumes, book.sourceFolder])))}';
+String nativeBookReferenceId(OpenTurathBook book) =>
+    'book_editorial_${sha256.convert(utf8.encode(jsonEncode([
+          book.id,
+          book.title,
+          book.author,
+          book.editor,
+          book.publisher,
+          book.edition,
+          book.volumes,
+          book.sourceFolder
+        ])))}';
 
 String nativeBookCitation(OpenTurathBook book) => [
-  '[OpenTurath]',
-  '${NativeCopy.text('sources')}: ${book.title}',
-  '${NativeCopy.text('author')}: ${book.author} (${book.deathLabel})',
-  if (book.editor.isNotEmpty) '${NativeCopy.text('editor')}: ${book.editor}',
-  if (book.publisher.isNotEmpty) '${NativeCopy.text('publisher')}: ${book.publisher}',
-  if (book.edition.isNotEmpty) '${NativeCopy.text('edition')}: ${book.edition}',
-  '${NativeCopy.text('volumes')}: ${book.volumeLabel}',
-  '${NativeCopy.text('pages')}: ${book.pagesLabel}',
-  if (book.section.isNotEmpty) '${NativeCopy.text('disciplines')}: ${book.section}',
-].join('\n');
+      '[OpenTurath]',
+      '${NativeCopy.text('sources')}: ${book.title}',
+      '${NativeCopy.text('author')}: ${book.author} (${book.deathLabel})',
+      if (book.editor.isNotEmpty)
+        '${NativeCopy.text('editor')}: ${book.editor}',
+      if (book.publisher.isNotEmpty)
+        '${NativeCopy.text('publisher')}: ${book.publisher}',
+      if (book.edition.isNotEmpty)
+        '${NativeCopy.text('edition')}: ${book.edition}',
+      '${NativeCopy.text('volumes')}: ${book.volumeLabel}',
+      '${NativeCopy.text('pages')}: ${book.pagesLabel}',
+      if (book.section.isNotEmpty)
+        '${NativeCopy.text('disciplines')}: ${book.section}',
+    ].join('\n');
 
 class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
   OpenTurathBook get book => widget.book;
@@ -430,7 +463,8 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
 
   Future<void> _readSaved() async {
     try {
-      final saved = await BookmarkService().isBookmarked(nativeBookReferenceId(book));
+      final saved =
+          await BookmarkService().isBookmarked(nativeBookReferenceId(book));
       if (mounted) setState(() => _saved = saved);
     } catch (_) {
       // Saving remains available even if the initial storage read fails.
@@ -441,31 +475,32 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
     if (_saving || _saved) return;
     setState(() => _saving = true);
     try {
-    final uid = AuthService().currentUser?.uid;
-    final bookmark = BookmarkModel(
-      id: nativeBookReferenceId(book),
-      title: book.title,
-      agentId: 'pustaka_turats',
-      agentTitle: book.section,
-      fieldName: book.section,
-      fieldId: 'pustaka',
-      arabicExcerpt: book.title,
-      fullAnswer: nativeBookCitation(book),
-      bookReference: '${book.title} - ${book.author}',
-      pageNumber: book.pagesLabel,
-      author: book.author,
-      createdAt: DateTime.now(),
-      documentKind: BookmarkDocumentKind.bookReference,
-      verificationStatus: BookmarkVerificationStatus.verified,
-    );
+      final uid = AuthService().currentUser?.uid;
+      final bookmark = BookmarkModel(
+        id: nativeBookReferenceId(book),
+        title: book.title,
+        agentId: 'pustaka_turats',
+        agentTitle: book.section,
+        fieldName: book.section,
+        fieldId: 'pustaka',
+        arabicExcerpt: book.title,
+        fullAnswer: nativeBookCitation(book),
+        bookReference: '${book.title} - ${book.author}',
+        pageNumber: book.pagesLabel,
+        author: book.author,
+        createdAt: DateTime.now(),
+        documentKind: BookmarkDocumentKind.bookReference,
+        verificationStatus: BookmarkVerificationStatus.verified,
+      );
 
-    await BookmarkService().addBookmark(bookmark, userId: uid);
-    if (context.mounted) {
-      setState(() => _saved = true);
-      AppSnackBar.success(context, NativeCopy.text('saved'));
-    }
+      await BookmarkService().addBookmark(bookmark, userId: uid);
+      if (context.mounted) {
+        setState(() => _saved = true);
+        AppSnackBar.success(context, NativeCopy.text('saved'));
+      }
     } catch (_) {
-      if (context.mounted) AppSnackBar.error(context, NativeCopy.text('saveFailed'));
+      if (context.mounted)
+        AppSnackBar.error(context, NativeCopy.text('saveFailed'));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -508,7 +543,8 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                       onPressed: () => Navigator.of(context).maybePop(),
                     ),
                     const SizedBox(width: 8),
-                    Expanded(child: Text(
+                    Expanded(
+                        child: Text(
                       NativeCopy.text('sources'),
                       style: NativeFonts.outfit(
                         color: ink,
@@ -522,10 +558,17 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                       onPressed: () => _handleCopyCitation(context),
                     ),
                     IconButton(
-                      icon: Icon(_saved ? Icons.bookmark_added_outlined : Icons.bookmark_add_outlined,
-                          color: ink, size: 20),
-                      tooltip: NativeCopy.text(_saved ? 'saved' : 'saveReference'),
-                      onPressed: _saving || _saved ? null : () => _handleBookmark(context),
+                      icon: Icon(
+                          _saved
+                              ? Icons.bookmark_added_outlined
+                              : Icons.bookmark_add_outlined,
+                          color: ink,
+                          size: 20),
+                      tooltip:
+                          NativeCopy.text(_saved ? 'saved' : 'saveReference'),
+                      onPressed: _saving || _saved
+                          ? null
+                          : () => _handleBookmark(context),
                     ),
                   ],
                 ),
@@ -629,15 +672,20 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                       child: Column(
                         children: [
                           _DetailRow(
-                              label: NativeCopy.text('editor'), value: book.editor),
+                              label: NativeCopy.text('editor'),
+                              value: book.editor),
                           _DetailRow(
-                              label: NativeCopy.text('publisher'), value: book.publisher),
+                              label: NativeCopy.text('publisher'),
+                              value: book.publisher),
                           _DetailRow(
-                              label: NativeCopy.text('year'), value: book.edition),
+                              label: NativeCopy.text('year'),
+                              value: book.edition),
                           _DetailRow(
-                              label: NativeCopy.text('volumes'), value: book.volumeLabel),
+                              label: NativeCopy.text('volumes'),
+                              value: book.volumeLabel),
                           _DetailRow(
-                              label: NativeCopy.text('pages'), value: book.pagesLabel),
+                              label: NativeCopy.text('pages'),
+                              value: book.pagesLabel),
                           _DetailRow(
                               label: NativeCopy.text('sources'),
                               value: book.sourceFolder,
@@ -647,9 +695,17 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                     ),
                     const SizedBox(height: 28),
                     FilledButton.icon(
-                      onPressed: _saving || _saved ? null : () => _handleBookmark(context),
-                      icon: Icon(_saved ? Icons.bookmark_added_outlined : Icons.bookmark_add_outlined),
-                      label: Text(NativeCopy.text(_saving ? 'loading' : _saved ? 'saved' : 'saveReference')),
+                      onPressed: _saving || _saved
+                          ? null
+                          : () => _handleBookmark(context),
+                      icon: Icon(_saved
+                          ? Icons.bookmark_added_outlined
+                          : Icons.bookmark_add_outlined),
+                      label: Text(NativeCopy.text(_saving
+                          ? 'loading'
+                          : _saved
+                              ? 'saved'
+                              : 'saveReference')),
                     ),
                     const SizedBox(height: 12),
                     SizedBox(

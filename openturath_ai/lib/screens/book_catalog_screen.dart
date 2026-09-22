@@ -350,8 +350,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   children: [
                     Text(
                       'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
-                      style:
-                          NativeTypography.caption(color: textSecondary).copyWith(
+                      style: NativeTypography.caption(color: textSecondary)
+                          .copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -469,7 +469,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 const SizedBox(height: 16),
                 if (_availableSections.length > 1) ...[
                   Text('Bidang',
-                      style: NativeTypography.captionMedium(color: textSecondary)),
+                      style:
+                          NativeTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
                       children: _availableSections
@@ -489,7 +490,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   const SizedBox(height: 16),
                 ],
                 Text('Era',
-                    style: NativeTypography.captionMedium(color: textSecondary)),
+                    style:
+                        NativeTypography.captionMedium(color: textSecondary)),
                 Wrap(
                     spacing: 8,
                     children: eraChoices
@@ -516,7 +518,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 if (_hasTypes) ...[
                   const SizedBox(height: 16),
                   Text('Jenis kitab',
-                      style: NativeTypography.captionMedium(color: textSecondary)),
+                      style:
+                          NativeTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
                       children: _types

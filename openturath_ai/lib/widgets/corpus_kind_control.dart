@@ -90,7 +90,9 @@ class _CorpusKindTab extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             AnimatedContainer(
-              duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.fast,
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : OTMotion.fast,
               curve: OTMotion.curve,
               height: 2,
               width: selected ? 28 : 0,

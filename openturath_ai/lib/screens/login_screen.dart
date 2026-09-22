@@ -76,7 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      final message = e.toString().contains('network') || e.toString().contains('SocketException')
+      final message = e.toString().contains('network') ||
+              e.toString().contains('SocketException')
           ? AppCopy.networkError
           : AppCopy.googleSignInFailed;
       AppSnackBar.error(context, message);
@@ -117,166 +118,171 @@ class _LoginScreenState extends State<LoginScreen> {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
         systemNavigationBarColor: bg,
-        systemNavigationBarIconBrightness: dark ? Brightness.light : Brightness.dark,
+        systemNavigationBarIconBrightness:
+            dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: bg,
         body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 380),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 12),
+          child: Center(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 380),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 12),
 
-                  // ── 1. Visual Symbol: Arch Artwork dengan Fade Bawah Mulus ──
-                  _stagger(
-                    delayMs: 40,
-                    child: OpenTurathMark(size: 80, color: textPrimary),
-                  ),
-                  const LanguageSwitcher(),
-
-                  // ── 2. Brand Wordmark: "OpenTurath" ──
-                  _stagger(
-                    delayMs: 90,
-                    child: Text(
-                      AppCopy.appName,
-                      textAlign: TextAlign.center,
-                      style: NativeFonts.newsreader(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.6,
-                        color: textPrimary,
-                        height: 1.15,
-                      ),
+                    // ── 1. Visual Symbol: Arch Artwork dengan Fade Bawah Mulus ──
+                    _stagger(
+                      delayMs: 40,
+                      child: OpenTurathMark(size: 80, color: textPrimary),
                     ),
-                  ),
-                  const SizedBox(height: 8),
+                    const LanguageSwitcher(),
 
-                  // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
-                  _stagger(
-                    delayMs: 140,
-                    child: Text(
-                      AppCopy.appTagline,
-                      textAlign: TextAlign.center,
-                      style: NativeFonts.newsreader(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.italic,
-                        letterSpacing: -0.1,
-                        color: textMuted,
-                        height: 1.3,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // ── 4. High-Contrast Solid White Action Pill ──
-                  _stagger(
-                    delayMs: 200,
-                    child: AppleInteractiveWrapper(
-                      onTap: _isLoading ? null : _signIn,
-                      hapticType: HapticFeedbackType.selection,
-                      child: SizedBox(
-                        height: MediaQuery.textScalerOf(context).scale(52).clamp(52, 120),
-                        width: double.infinity,
-                        child: FilledButton(
-                          onPressed: _isLoading ? null : _signIn,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: textPrimary,
-                            foregroundColor: NativeColors.onAccent(dark),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                          ),
-                          child: _isLoading
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: NativeColors.onAccent(dark),
-                                  ),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    _GoogleGVector(),
-                                    const SizedBox(width: 12),
-                                    Flexible(child: Text(
-                                      AppCopy.continueWithGoogle,
-                                      style: NativeFonts.outfit(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.1,
-                                        color: NativeColors.onAccent(dark),
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // ── 5. Minimalist Legal Disclaimer (Proporsional 2-Baris Seimbang) ──
-                  _stagger(
-                    delayMs: 260,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 320),
-                      child: Text.rich(
-                        TextSpan(
-                          text: '${AppCopy.termsAgreementPrefix}\n',
-                          style: NativeFonts.outfit(
-                            color: textMuted,
-                            fontSize: 12,
-                            height: 1.5,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: AppCopy.termsOfService,
-                              style: TextStyle(
-                                color: textPrimary,
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              recognizer: _termsRecognizer,
-                            ),
-                            const TextSpan(text: ' & '),
-                            TextSpan(
-                              text: AppCopy.privacyPolicy,
-                              style: TextStyle(
-                                color: textPrimary,
-                                decoration: TextDecoration.underline,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              recognizer: _privacyRecognizer,
-                            ),
-                            const TextSpan(text: '.'),
-                          ],
-                        ),
+                    // ── 2. Brand Wordmark: "OpenTurath" ──
+                    _stagger(
+                      delayMs: 90,
+                      child: Text(
+                        AppCopy.appName,
                         textAlign: TextAlign.center,
+                        style: NativeFonts.newsreader(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.6,
+                          color: textPrimary,
+                          height: 1.15,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                    const SizedBox(height: 8),
+
+                    // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
+                    _stagger(
+                      delayMs: 140,
+                      child: Text(
+                        AppCopy.appTagline,
+                        textAlign: TextAlign.center,
+                        style: NativeFonts.newsreader(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.italic,
+                          letterSpacing: -0.1,
+                          color: textMuted,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // ── 4. High-Contrast Solid White Action Pill ──
+                    _stagger(
+                      delayMs: 200,
+                      child: AppleInteractiveWrapper(
+                        onTap: _isLoading ? null : _signIn,
+                        hapticType: HapticFeedbackType.selection,
+                        child: SizedBox(
+                          height: MediaQuery.textScalerOf(context)
+                              .scale(52)
+                              .clamp(52, 120),
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: _isLoading ? null : _signIn,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: textPrimary,
+                              foregroundColor: NativeColors.onAccent(dark),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              elevation: 0,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                            child: _isLoading
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: NativeColors.onAccent(dark),
+                                    ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _GoogleGVector(),
+                                      const SizedBox(width: 12),
+                                      Flexible(
+                                          child: Text(
+                                        AppCopy.continueWithGoogle,
+                                        style: NativeFonts.outfit(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: -0.1,
+                                          color: NativeColors.onAccent(dark),
+                                        ),
+                                      )),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // ── 5. Minimalist Legal Disclaimer (Proporsional 2-Baris Seimbang) ──
+                    _stagger(
+                      delayMs: 260,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 320),
+                        child: Text.rich(
+                          TextSpan(
+                            text: '${AppCopy.termsAgreementPrefix}\n',
+                            style: NativeFonts.outfit(
+                              color: textMuted,
+                              fontSize: 12,
+                              height: 1.5,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: AppCopy.termsOfService,
+                                style: TextStyle(
+                                  color: textPrimary,
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                recognizer: _termsRecognizer,
+                              ),
+                              const TextSpan(text: ' & '),
+                              TextSpan(
+                                text: AppCopy.privacyPolicy,
+                                style: TextStyle(
+                                  color: textPrimary,
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                recognizer: _privacyRecognizer,
+                              ),
+                              const TextSpan(text: '.'),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _GoogleGVector extends StatelessWidget {

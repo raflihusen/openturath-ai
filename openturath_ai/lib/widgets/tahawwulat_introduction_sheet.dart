@@ -307,12 +307,12 @@ class _TahawwulatIntroductionSheetState
                     isDark,
                   ),
                   const SizedBox(height: 14),
-
                   _buildSectionHeader(
                     context,
                     tag: "BAB 01",
                     title: "Hakikat & Definisi Syariat",
-                    arabic: "حَقِيقَةُ فِقْهِ التَّحَوُّلَاتِ وَمَفْهُومُهُ الشَّرْعِيُّ",
+                    arabic:
+                        "حَقِيقَةُ فِقْهِ التَّحَوُّلَاتِ وَمَفْهُومُهُ الشَّرْعِيُّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -336,12 +336,12 @@ class _TahawwulatIntroductionSheetState
                     isDark,
                   ),
                   const SizedBox(height: 20),
-
                   _buildSectionHeader(
                     context,
                     tag: "BAB 02",
                     title: "Pondasi Dalil: Rukun Keempat Agama",
-                    arabic: "الرُّكْنُ الرَّابِعُ: عِلْمُ عَلَامَاتِ السَّاعَةِ",
+                    arabic:
+                        "الرُّكْنُ الرَّابِعُ: عِلْمُ عَلَامَاتِ السَّاعَةِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -362,7 +362,8 @@ class _TahawwulatIntroductionSheetState
                     context,
                     tag: "BAB 03",
                     title: "Dua Pilar Keruntuhan Otoritas Peradaban",
-                    arabic: "رُكْنَا عِلْمِ السَّاعَةِ: نَقْضُ قَرَارِ العِلْمِ وَالحُكْمِ",
+                    arabic:
+                        "رُكْنَا عِلْمِ السَّاعَةِ: نَقْضُ قَرَارِ العِلْمِ وَالحُكْمِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -372,12 +373,12 @@ class _TahawwulatIntroductionSheetState
                   const SizedBox(height: 14),
                   _buildTwoPillarsCollapseCard(context, isDark),
                   const SizedBox(height: 20),
-
                   _buildSectionHeader(
                     context,
                     tag: "BAB 04",
                     title: "Pisau Bedah: An-Nawāqid & An-Naqā'id",
-                    arabic: "النَّوَاِقضُ وَالنَّقَائِضُ: تَفْكِيكُ الغَزْوِ الفِكْرِيِّ",
+                    arabic:
+                        "النَّوَاِقضُ وَالنَّقَائِضُ: تَفْكِيكُ الغَزْوِ الفِكْرِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -390,12 +391,12 @@ class _TahawwulatIntroductionSheetState
                     isDark,
                   ),
                   const SizedBox(height: 20),
-
                   _buildSectionHeader(
                     context,
                     tag: "BAB 05",
                     title: "Menyikapi Teknologi & Kecerdasan Buatan (AI)",
-                    arabic: "المُسْتَجَدَّاتُ التِّقَنِيَّةُ وَقَاعِدَةُ الِاغْتِنَامِ",
+                    arabic:
+                        "المُسْتَجَدَّاتُ التِّقَنِيَّةُ وَقَاعِدَةُ الِاغْتِنَامِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -417,7 +418,8 @@ class _TahawwulatIntroductionSheetState
                     context,
                     tag: "BAB 06",
                     title: "Transformasi Bahasa Dakwah Kenabian",
-                    arabic: "لُغَةُ الطِّبِّ وَالإِنْقَاذِ بَدَلَ التَّكْفِيرِ وَالتَّحْرِيشِ",
+                    arabic:
+                        "لُغَةُ الطِّبِّ وَالإِنْقَاذِ بَدَلَ التَّكْفِيرِ وَالتَّحْرِيشِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -427,12 +429,12 @@ class _TahawwulatIntroductionSheetState
                   const SizedBox(height: 14),
                   _buildDakwahTransformationCard(context, isDark),
                   const SizedBox(height: 20),
-
                   _buildSectionHeader(
                     context,
                     tag: "BAB 07",
                     title: "Sunnah Mawāqif & Manhaj as-Salāmah",
-                    arabic: "سُنَّةُ المَوَاقِفِ وَمَنْهَجُ السَّلَامَةِ النَّبَوِيَّةِ",
+                    arabic:
+                        "سُنَّةُ المَوَاقِفِ وَمَنْهَجُ السَّلَامَةِ النَّبَوِيَّةِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -466,7 +468,8 @@ class _TahawwulatIntroductionSheetState
                     context,
                     tag: "BAB 08",
                     title: "Konsep Masterpiece: Al-Khuwaiṣah (الـخُوَيْصَة)",
-                    arabic: "مَنْظُومَةُ الخُوَيْصَةِ: حِصْنُ النَّجَاةِ فِي طُوفَانِ الفِتَنِ",
+                    arabic:
+                        "مَنْظُومَةُ الخُوَيْصَةِ: حِصْنُ النَّجَاةِ فِي طُوفَانِ الفِتَنِ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -479,12 +482,12 @@ class _TahawwulatIntroductionSheetState
                   const SizedBox(height: 16),
                   _buildKhuwaishahLayersCard(context, isDark),
                   const SizedBox(height: 20),
-
                   _buildSectionHeader(
                     context,
                     tag: "BAB 09",
                     title: "Mengatasi Kecemasan Akhir Zaman",
-                    arabic: "عِلَاجُ القَلَقِ النَّفْسِيِّ وَالسَّكِينَةُ الإِيمَانِيَّةُ",
+                    arabic:
+                        "عِلَاجُ القَلَقِ النَّفْسِيِّ وَالسَّكِينَةُ الإِيمَانِيَّةُ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -495,7 +498,6 @@ class _TahawwulatIntroductionSheetState
                     isDark,
                   ),
                   const SizedBox(height: 20),
-
                   _buildSectionHeader(
                     context,
                     tag: "BAB 10",
@@ -515,7 +517,8 @@ class _TahawwulatIntroductionSheetState
                     context,
                     tag: "BAB 11",
                     title: "Struktur Kurikulum: Al-Qawā'id & At-Taṭbīqāt",
-                    arabic: "هَيْكَلُ الكُتُبِ: القَوَاعِدُ التَّأْصِيلِيَّةُ وَالتَّطْبِيقَاتُ العَمَلِيَّةُ",
+                    arabic:
+                        "هَيْكَلُ الكُتُبِ: القَوَاعِدُ التَّأْصِيلِيَّةُ وَالتَّطْبِيقَاتُ العَمَلِيَّةُ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -536,7 +539,8 @@ class _TahawwulatIntroductionSheetState
                     context,
                     tag: "BAB 12",
                     title: "Arsitektur 5 Bilik Super AI OpenTurath",
-                    arabic: "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ التَّخَصُّصِيِّ",
+                    arabic:
+                        "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ التَّخَصُّصِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
@@ -594,12 +598,12 @@ class _TahawwulatIntroductionSheetState
             ],
           ),
           const SizedBox(height: 14),
-
           _buildPillarTile(
             number: "01",
             title: "Al-Islām (الإِسْلَام)",
             discipline: "Fikih Hukum & Syariat (Aṡ-Ṡawābit)",
-            desc: "Ibadah lahiriah, rukun fi'li, halal-haram & muamalah baku sepanjang masa.",
+            desc:
+                "Ibadah lahiriah, rukun fi'li, halal-haram & muamalah baku sepanjang masa.",
             isDark: isDark,
             isHighlight: false,
           ),
@@ -608,7 +612,8 @@ class _TahawwulatIntroductionSheetState
             number: "02",
             title: "Al-Īmān (الإِيمَان)",
             discipline: "Akidah & Tauhid (Aṡ-Ṡawābit)",
-            desc: "Pondasi keyakinan pada Allah, malaikat, kitab, rasul & takdir azali.",
+            desc:
+                "Pondasi keyakinan pada Allah, malaikat, kitab, rasul & takdir azali.",
             isDark: isDark,
             isHighlight: false,
           ),
@@ -617,7 +622,8 @@ class _TahawwulatIntroductionSheetState
             number: "03",
             title: "Al-Iḥsān (الإِحْسَان)",
             discipline: "Tasawuf & Akhlak (Aṡ-Ṡawābit)",
-            desc: "Penyucian jiwa (tazkiyatun nufūs), muraqabah hati & keluhuran adab batin.",
+            desc:
+                "Penyucian jiwa (tazkiyatun nufūs), muraqabah hati & keluhuran adab batin.",
             isDark: isDark,
             isHighlight: false,
           ),
@@ -626,11 +632,11 @@ class _TahawwulatIntroductionSheetState
             number: "04",
             title: "Fikih Tahawwulat (فِقْهُ التَّحَوُّلَاتِ)",
             discipline: "Tanda Kiamat & Navigasi Zaman (Al-Mutaghayyirāt)",
-            desc: "Peta kompas nubuwwah yang memandu agar Islam, Iman, dan Ihsan tidak tersapu badai fitnah akhir zaman.",
+            desc:
+                "Peta kompas nubuwwah yang memandu agar Islam, Iman, dan Ihsan tidak tersapu badai fitnah akhir zaman.",
             isDark: isDark,
             isHighlight: true,
           ),
-
           const SizedBox(height: 14),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
@@ -924,7 +930,6 @@ class _TahawwulatIntroductionSheetState
             ],
           ),
           const SizedBox(height: 14),
-
           Row(
             children: [
               Expanded(
@@ -968,10 +973,14 @@ class _TahawwulatIntroductionSheetState
                 child: Container(
                   padding: const EdgeInsets.all(11),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E222A) : const Color(0xFFF0F4F8),
+                    color: isDark
+                        ? const Color(0xFF1E222A)
+                        : const Color(0xFFF0F4F8),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF384050) : const Color(0xFFD0DCE5),
+                      color: isDark
+                          ? const Color(0xFF384050)
+                          : const Color(0xFFD0DCE5),
                       width: 1.0,
                     ),
                   ),
@@ -1020,25 +1029,29 @@ class _TahawwulatIntroductionSheetState
         layer: "Lapis 1",
         title: "Benteng Diri (Khuwaiṣat an-Nafs)",
         arabic: "خُوَيْصَةُ النَّفْسِ",
-        desc: "Menjaga hati dari dengki, lisan dari mencela, dan tangan dari kekerasan. Menjalankan puasa dari kebisingan perdebatan media (shiyām 'an al-wasā'il)."
+        desc:
+            "Menjaga hati dari dengki, lisan dari mencela, dan tangan dari kekerasan. Menjalankan puasa dari kebisingan perdebatan media (shiyām 'an al-wasā'il)."
       ),
       (
         layer: "Lapis 2",
         title: "Benteng Keluarga (Khuwaiṣat al-Usrah)",
         arabic: "خُوَيْصَةُ الأُسْرَةِ وَالبَيْتِ",
-        desc: "Menjadikan rumah sebagai shelter peradaban kecil. Mendampingi gawai anak, menanamkan akidah di meja makan keluarga, dan memupuk kehangatan cinta."
+        desc:
+            "Menjadikan rumah sebagai shelter peradaban kecil. Mendampingi gawai anak, menanamkan akidah di meja makan keluarga, dan memupuk kehangatan cinta."
       ),
       (
         layer: "Lapis 3",
         title: "Benteng Majelis & Zawiyah",
         arabic: "خُوَيْصَةُ الأَتْبَاعِ وَالمَجَالِسِ",
-        desc: "Mendirikan zawiyah, pesantren (ribath), dan majelis taklim sebagai Zona Aman Spiritual (Manāṭiq Āminah) bagi siapa saja yang lelah oleh fitnah dunia."
+        desc:
+            "Mendirikan zawiyah, pesantren (ribath), dan majelis taklim sebagai Zona Aman Spiritual (Manāṭiq Āminah) bagi siapa saja yang lelah oleh fitnah dunia."
       ),
       (
         layer: "Lapis 4",
         title: "Benteng Gawai & Alat (Khuwaiṣat al-Wasā'il)",
         arabic: "خُوَيْصَةُ الوَسَائِلِ",
-        desc: "Menggunakan gawai dan kecerdasan buatan secara produktif untuk riset ilmu dan syiar dakwah damai, bukan untuk terseret arus polemik di kolom komentar."
+        desc:
+            "Menggunakan gawai dan kecerdasan buatan secara produktif untuk riset ilmu dan syiar dakwah damai, bukan untuk terseret arus polemik di kolom komentar."
       ),
     ];
 
@@ -1068,7 +1081,6 @@ class _TahawwulatIntroductionSheetState
             ],
           ),
           const SizedBox(height: 14),
-
           Column(
             children: layers.map((l) {
               return Container(
@@ -1133,33 +1145,45 @@ class _TahawwulatIntroductionSheetState
     const rows = [
       (
         aspect: "Nalar Ilmiah",
-        before: "Kaku memaksakan teks hukum ibadah tetap untuk menghakimi krisis sosial modern.",
-        after: "Menjaga teks syariat tetap murni seraya luwes membaca pergeseran peradaban zaman."
+        before:
+            "Kaku memaksakan teks hukum ibadah tetap untuk menghakimi krisis sosial modern.",
+        after:
+            "Menjaga teks syariat tetap murni seraya luwes membaca pergeseran peradaban zaman."
       ),
       (
         aspect: "Teknologi & AI",
-        before: "Terbelah ekstrem: menolak total sebagai bid'ah atau menelan mentah-mentah hingga hilang adab.",
-        after: "Kaidah Al-Ightinām: merebut teknologi dan AI untuk khidmat ilmu turats secara selamat."
+        before:
+            "Terbelah ekstrem: menolak total sebagai bid'ah atau menelan mentah-mentah hingga hilang adab.",
+        after:
+            "Kaidah Al-Ightinām: merebut teknologi dan AI untuk khidmat ilmu turats secara selamat."
       ),
       (
         aspect: "Gaya Dakwah",
-        before: "Suka memvonis dan mencaci; menganggap masyarakat sebagai lawan yang harus dihantam.",
-        after: "Dokter penolong yang merangkul; menyelamatkan korban sistem zaman yang rusak."
+        before:
+            "Suka memvonis dan mencaci; menganggap masyarakat sebagai lawan yang harus dihantam.",
+        after:
+            "Dokter penolong yang merangkul; menyelamatkan korban sistem zaman yang rusak."
       ),
       (
         aspect: "Fitnah Politik",
-        before: "Fanatik buta golongan dan mengeksploitasi ayat agama untuk politik praktis.",
-        after: "Manhaj as-Salāmah: lisan bersih dari mencela, tangan bersih dari menumpahkan darah."
+        before:
+            "Fanatik buta golongan dan mengeksploitasi ayat agama untuk politik praktis.",
+        after:
+            "Manhaj as-Salāmah: lisan bersih dari mencela, tangan bersih dari menumpahkan darah."
       ),
       (
         aspect: "Keluarga",
-        before: "Sibuk berdebat di medsos hingga anak-istri di rumah terbengkalai.",
-        after: "Al-Khuwaiṣah: membentengi rumah tangga dan majelis sebagai shelter rohani yang kokoh."
+        before:
+            "Sibuk berdebat di medsos hingga anak-istri di rumah terbengkalai.",
+        after:
+            "Al-Khuwaiṣah: membentengi rumah tangga dan majelis sebagai shelter rohani yang kokoh."
       ),
       (
         aspect: "Kondisi Batin",
-        before: "Gampang panik dan stres (apocalyptic anxiety) akibat dicekoki ramalan kiamat viral.",
-        after: "Hati tenang (sakīnah); yakin sejarah dalam takdir Allah dan optimis giat beramal shalih."
+        before:
+            "Gampang panik dan stres (apocalyptic anxiety) akibat dicekoki ramalan kiamat viral.",
+        after:
+            "Hati tenang (sakīnah); yakin sejarah dalam takdir Allah dan optimis giat beramal shalih."
       ),
     ];
 
@@ -1189,7 +1213,6 @@ class _TahawwulatIntroductionSheetState
             ],
           ),
           const SizedBox(height: 12),
-
           Column(
             children: rows.map((r) {
               return Container(
@@ -1274,37 +1297,43 @@ class _TahawwulatIntroductionSheetState
         level: "Tingkat 1 (Pemula)",
         title: "An-Nubżah aṣ-Ṣughrā",
         arabic: "النُّبْذَةُ الصُّغْرَى",
-        desc: "Pintu gerbang pengenalan definisi, dalil Hadis Jibril, dan klasifikasi tanda kiamat.",
+        desc:
+            "Pintu gerbang pengenalan definisi, dalil Hadis Jibril, dan klasifikasi tanda kiamat.",
       ),
       _QawaidBook(
         level: "Tingkat 2 (Siklus Sejarah)",
         title: "Dawā'ir al-I'ādah",
         arabic: "دَوَائِرُ الإِعَادَةِ",
-        desc: "Kaidah siklus pengulangan sejarah peradaban dalam lingkaran takdir azali.",
+        desc:
+            "Kaidah siklus pengulangan sejarah peradaban dalam lingkaran takdir azali.",
       ),
       _QawaidBook(
         level: "Tingkat 3 (Kunci Cabang)",
         title: "Al-Iqlīd",
         arabic: "الإِقْلِيدُ فِي فَتْحِ أَبْوَابِ العُلُومِ",
-        desc: "Kaidah pengoperasian 5 cabang ilmu turunan Fikih Tahawwulat & antisipasi krisis.",
+        desc:
+            "Kaidah pengoperasian 5 cabang ilmu turunan Fikih Tahawwulat & antisipasi krisis.",
       ),
       _QawaidBook(
         level: "Tingkat 4 (Sikap Kenabian)",
         title: "At-Talīd wat-Ṭarīf",
         arabic: "التَّلِيدُ وَالطَّارِفُ",
-        desc: "Syarah atas kaidah Sunnah al-Mawāqif dan Manhaj as-Salāmah para salafus shalih.",
+        desc:
+            "Syarah atas kaidah Sunnah al-Mawāqif dan Manhaj as-Salāmah para salafus shalih.",
       ),
       _QawaidBook(
         level: "Tingkat 5 (Ikhtisar Padat)",
         title: "Al-Mukhtaṣar al-Ḥabīk / Siyāḥatul Fikr",
         arabic: "المُخْتَصَرُ الحَبِيك",
-        desc: "Peta konsep dakwah terpadat, kaidah gerakan, dan nalar kritis terhadap ideologi modern.",
+        desc:
+            "Peta konsep dakwah terpadat, kaidah gerakan, dan nalar kritis terhadap ideologi modern.",
       ),
       _QawaidBook(
         level: "Tingkat 6 (Puncak Induk)",
         title: "Al-Usūs wal-Munṭalaqāt",
         arabic: "الأُسُسُ وَالمُنْطَلَقَاتُ",
-        desc: "Kitab ensiklopedis babon setebal ratusan halaman; rujukan tertinggi kaidah istinbath.",
+        desc:
+            "Kitab ensiklopedis babon setebal ratusan halaman; rujukan tertinggi kaidah istinbath.",
       ),
     ];
 
@@ -1378,7 +1407,6 @@ class _TahawwulatIntroductionSheetState
                   ],
                 ),
                 const SizedBox(height: 10),
-
                 Column(
                   children: qawaidBooks.map((book) {
                     return Container(
@@ -1563,7 +1591,8 @@ class _TahawwulatIntroductionSheetState
         name: "Al-Muhaqqiq",
         arabic: "المُحَقِّق",
         role: "Penjaga Teks Matan & Ibarah",
-        desc: "Verifikasi redaksi Arab asli mualif, mencocokkan kutipan matan, serta rujukan presisi ke nama kitab, jilid, dan nomor halaman.",
+        desc:
+            "Verifikasi redaksi Arab asli mualif, mencocokkan kutipan matan, serta rujukan presisi ke nama kitab, jilid, dan nomor halaman.",
         subAgentId: "fiqh_tahawwulat_muhaqqiq",
       ),
       _AiRoomItem(
@@ -1571,7 +1600,8 @@ class _TahawwulatIntroductionSheetState
         name: "Al-Bayan",
         arabic: "البَيَان",
         role: "Pensyarah Konsep & Istilah Baru",
-        desc: "Mengurai istilah rumit (mustalahat mubtakarah) ke bahasa yang mudah dicerna pemula, analogi modern, serta peta pemikiran komprehensif.",
+        desc:
+            "Mengurai istilah rumit (mustalahat mubtakarah) ke bahasa yang mudah dicerna pemula, analogi modern, serta peta pemikiran komprehensif.",
         subAgentId: "fiqh_tahawwulat_bayan",
       ),
       _AiRoomItem(
@@ -1579,7 +1609,8 @@ class _TahawwulatIntroductionSheetState
         name: "Al-Mukhtabir",
         arabic: "المُخْتَبِر",
         role: "Ujian Nalar & Kaji Kasus Interaktif",
-        desc: "Mitra diskusi dan penguji pemahaman ilmiah; menyajikan studi kasus fitnah zaman untuk memastikan nalar tetap lurus dan bebas dari cocokologi.",
+        desc:
+            "Mitra diskusi dan penguji pemahaman ilmiah; menyajikan studi kasus fitnah zaman untuk memastikan nalar tetap lurus dan bebas dari cocokologi.",
         subAgentId: "fiqh_tahawwulat_mukhtabir",
       ),
       _AiRoomItem(
@@ -1587,7 +1618,8 @@ class _TahawwulatIntroductionSheetState
         name: "Al-Habib",
         arabic: "الحَبِيب",
         role: "Arsip Muhadharah & Sentuhan Ruhani",
-        desc: "Menghadirkan kehangatan nada lisan dari ribuan jam rekaman ceramah mualif, tausiyah penyejuk batin, serta bimbingan adab tazkiyatun nufus.",
+        desc:
+            "Menghadirkan kehangatan nada lisan dari ribuan jam rekaman ceramah mualif, tausiyah penyejuk batin, serta bimbingan adab tazkiyatun nufus.",
         subAgentId: "fiqh_tahawwulat_habib",
       ),
       _AiRoomItem(
@@ -1595,7 +1627,8 @@ class _TahawwulatIntroductionSheetState
         name: "Al-Khatib",
         arabic: "الخَطِيب",
         role: "Penyusun Materi Khutbah & Dakwah",
-        desc: "Formulasi materi khutbah Jumat, panduan dakwah di era krisis, materi tabligh tematik, serta narasi penyejuk umat di tengah polarisasi.",
+        desc:
+            "Formulasi materi khutbah Jumat, panduan dakwah di era krisis, materi tabligh tematik, serta narasi penyejuk umat di tengah polarisasi.",
         subAgentId: "fiqh_tahawwulat_khatib",
       ),
     ];
@@ -1632,7 +1665,9 @@ class _TahawwulatIntroductionSheetState
                     width: 26,
                     height: 26,
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF282832) : const Color(0xFFE4E4E8),
+                      color: isDark
+                          ? const Color(0xFF282832)
+                          : const Color(0xFFE4E4E8),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     alignment: Alignment.center,
@@ -1669,7 +1704,9 @@ class _TahawwulatIntroductionSheetState
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+                      color: isDark
+                          ? Colors.white10
+                          : Colors.black.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -1930,8 +1967,10 @@ class _TahawwulatIntroductionSheetState
     );
   }
 }
+
 class _LocalizedTahawwulatIntroduction extends StatelessWidget {
-  const _LocalizedTahawwulatIntroduction({this.agent, this.onSelectSubAgent, this.onOpenMain});
+  const _LocalizedTahawwulatIntroduction(
+      {this.agent, this.onSelectSubAgent, this.onOpenMain});
   final AgentModel? agent;
   final ValueChanged<SubAgentModel>? onSelectSubAgent;
   final VoidCallback? onOpenMain;
@@ -1939,35 +1978,75 @@ class _LocalizedTahawwulatIntroduction extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return SafeArea(child: FractionallySizedBox(heightFactor: .92, child: Container(
-      decoration: BoxDecoration(color: NativeColors.canvas(dark), borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
-      child: Column(children: [
-        Align(alignment: AlignmentDirectional.centerEnd, child: CloseButton(onPressed: () => Navigator.pop(context))),
-        Expanded(child: ListView(padding: const EdgeInsets.fromLTRB(24, 0, 24, 32), children: [
-          Text(Loc.tr('introTitle'), style: NativeType.title(dark, size: 30)),
-          const SizedBox(height: 24),
-          for (final section in ['introFoundation', 'introMethod', 'introReferences']) ...[
-            Text(Loc.tr(section), style: NativeType.title(dark, size: 22)),
-            const SizedBox(height: 10),
-            Text(Loc.tr('${section}Body'), style: NativeType.body(dark)),
-            const SizedBox(height: 24),
-          ],
-          if (agent != null) ...[
-            Text(NativeCopy.text('fivePaths'), style: NativeType.title(dark, size: 22)),
-            const SizedBox(height: 12),
-            for (final sub in agent!.subAgents ?? <SubAgentModel>[])
-              NativePress(onTap: onSelectSubAgent == null ? null : () { Navigator.pop(context); onSelectSubAgent!(sub); },
-                child: Padding(padding: const EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(sub.name, style: NativeType.title(dark, size: 20)),
-                  const SizedBox(height: 6), Text(NativeCopy.role(sub.id), style: NativeType.meta(dark)),
-                ]))),
-          ],
-          const SizedBox(height: 16),
-          OutlinedButton(onPressed: () => showModalBottomSheet<void>(context: context, isScrollControlled: true,
-            builder: (_) => TahawwulatIntroductionSheet(agent: agent)),
-            child: Text(Loc.tr('originalArticle'))),
-        ])),
-      ]),
-    )));
+    return SafeArea(
+        child: FractionallySizedBox(
+            heightFactor: .92,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: NativeColors.canvas(dark),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(24))),
+              child: Column(children: [
+                Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child:
+                        CloseButton(onPressed: () => Navigator.pop(context))),
+                Expanded(
+                    child: ListView(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                        children: [
+                      Text(Loc.tr('introTitle'),
+                          style: NativeType.title(dark, size: 30)),
+                      const SizedBox(height: 24),
+                      for (final section in [
+                        'introFoundation',
+                        'introMethod',
+                        'introReferences'
+                      ]) ...[
+                        Text(Loc.tr(section),
+                            style: NativeType.title(dark, size: 22)),
+                        const SizedBox(height: 10),
+                        Text(Loc.tr('${section}Body'),
+                            style: NativeType.body(dark)),
+                        const SizedBox(height: 24),
+                      ],
+                      if (agent != null) ...[
+                        Text(NativeCopy.text('fivePaths'),
+                            style: NativeType.title(dark, size: 22)),
+                        const SizedBox(height: 12),
+                        for (final sub in agent!.subAgents ?? <SubAgentModel>[])
+                          NativePress(
+                              onTap: onSelectSubAgent == null
+                                  ? null
+                                  : () {
+                                      Navigator.pop(context);
+                                      onSelectSubAgent!(sub);
+                                    },
+                              child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(sub.name,
+                                            style: NativeType.title(dark,
+                                                size: 20)),
+                                        const SizedBox(height: 6),
+                                        Text(NativeCopy.role(sub.id),
+                                            style: NativeType.meta(dark)),
+                                      ]))),
+                      ],
+                      const SizedBox(height: 16),
+                      OutlinedButton(
+                          onPressed: () => showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) =>
+                                  TahawwulatIntroductionSheet(agent: agent)),
+                          child: Text(Loc.tr('originalArticle'))),
+                    ])),
+              ]),
+            )));
   }
 }

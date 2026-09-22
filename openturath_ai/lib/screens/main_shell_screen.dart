@@ -87,7 +87,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
     return [
       const NativeTheme(child: DashboardScreen()),
-      NativeTheme(child: SpecialistListScreen(
+      NativeTheme(
+          child: SpecialistListScreen(
         key: ValueKey('${_selectedFieldId}_${_selectedKind?.name}'),
         field: field,
       )),
@@ -216,7 +217,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
               child: SafeArea(
                 top: false,
                 child: SizedBox(
-                  height: MediaQuery.textScalerOf(context).scale(64).clamp(64, 110),
+                  height:
+                      MediaQuery.textScalerOf(context).scale(64).clamp(64, 110),
                   child: Row(
                     children: [
                       Expanded(
@@ -291,7 +293,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
             child: Stack(
               children: [
                 // 1. Dashboard latar belakang (Stationary - bebas GPU overhead)
-                TickerMode(enabled: !sessionManager.isOpen, child: baseScaffold),
+                TickerMode(
+                    enabled: !sessionManager.isOpen, child: baseScaffold),
 
                 // 2. Ruang AI Multi-Tab (Instant zero-glitch display dengan retensi memori penuh)
                 Positioned.fill(
@@ -367,7 +370,9 @@ class _GoogleNavBarItem extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             AnimatedContainer(
-              duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.fast,
+              duration: MediaQuery.disableAnimationsOf(context)
+                  ? Duration.zero
+                  : OTMotion.fast,
               curve: OTMotion.curve,
               width: isSelected ? 16 : 4,
               height: 2,

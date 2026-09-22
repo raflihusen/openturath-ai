@@ -99,71 +99,84 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760), child: SelectionArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-                OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
-            children: [
-              Text(_kindLabel(_item),
-                  style: NativeFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: secondary,
-                      letterSpacing: .6)),
-              const SizedBox(height: 8),
-              Text(displayTitle,
-                  style: NativeFonts.newsreader(
-                      fontSize: 29,
-                      height: 1.15,
-                      fontWeight: FontWeight.w700,
-                      color: primary)),
-              if (_item.agentTitle.isNotEmpty &&
-                  _item.documentKind == BookmarkDocumentKind.aiAnswer &&
-                  !displayTitle.toLowerCase().contains(_item.agentTitle
-                      .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-                      .toLowerCase())) ...[
-                const SizedBox(height: 10),
-                Text(
-                  _item.agentTitle
-                      .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), ''),
-                  style: NativeFonts.outfit(fontSize: 13, color: secondary),
-                ),
-              ],
-              const SizedBox(height: 20),
-              Divider(color: secondary.withValues(alpha: .25)),
-              const SizedBox(height: 20),
-              Directionality(
-                textDirection: Bidi.detectRtlDirectionality(displayContent) ? TextDirection.rtl : TextDirection.ltr,
-                child: MarkdownBody(
-                data: displayContent,
-                selectable: true,
-                styleSheet: MarkdownStyleSheet(
-                  p: (RegExp(r'[\u0600-\u06FF]').hasMatch(displayContent) ? NativeFonts.scheherazadeNew : NativeFonts.outfit)(
-                      fontSize: 18, height: 1.9, color: primary),
-                  h1: NativeFonts.newsreader(
-                      fontSize: 25,
-                      height: 1.2,
-                      fontWeight: FontWeight.w700,
-                      color: primary),
-                  h2: NativeFonts.newsreader(
-                      fontSize: 20,
-                      height: 1.25,
-                      fontWeight: FontWeight.w700,
-                      color: primary),
-                  blockquote: NativeFonts.outfit(
-                      fontSize: 15,
-                      height: 1.6,
-                      fontStyle: FontStyle.italic,
-                      color: secondary),
-                  blockquoteDecoration: BoxDecoration(
-                      color: subtle,
-                      border:
-                          Border(left: BorderSide(color: secondary, width: 3))),
-                ),
-              )),
-            ],
-          ),
-        ))),
+        child: Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: SelectionArea(
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(
+                        OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
+                    children: [
+                      Text(_kindLabel(_item),
+                          style: NativeFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: secondary,
+                              letterSpacing: .6)),
+                      const SizedBox(height: 8),
+                      Text(displayTitle,
+                          style: NativeFonts.newsreader(
+                              fontSize: 29,
+                              height: 1.15,
+                              fontWeight: FontWeight.w700,
+                              color: primary)),
+                      if (_item.agentTitle.isNotEmpty &&
+                          _item.documentKind == BookmarkDocumentKind.aiAnswer &&
+                          !displayTitle.toLowerCase().contains(_item.agentTitle
+                              .replaceFirst(
+                                  RegExp(r'^AI\s+', caseSensitive: false), '')
+                              .toLowerCase())) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          _item.agentTitle.replaceFirst(
+                              RegExp(r'^AI\s+', caseSensitive: false), ''),
+                          style: NativeFonts.outfit(
+                              fontSize: 13, color: secondary),
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      Divider(color: secondary.withValues(alpha: .25)),
+                      const SizedBox(height: 20),
+                      Directionality(
+                          textDirection:
+                              Bidi.detectRtlDirectionality(displayContent)
+                                  ? TextDirection.rtl
+                                  : TextDirection.ltr,
+                          child: MarkdownBody(
+                            data: displayContent,
+                            selectable: true,
+                            styleSheet: MarkdownStyleSheet(
+                              p: (RegExp(r'[\u0600-\u06FF]')
+                                          .hasMatch(displayContent)
+                                      ? NativeFonts.scheherazadeNew
+                                      : NativeFonts.outfit)(
+                                  fontSize: 18, height: 1.9, color: primary),
+                              h1: NativeFonts.newsreader(
+                                  fontSize: 25,
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                  color: primary),
+                              h2: NativeFonts.newsreader(
+                                  fontSize: 20,
+                                  height: 1.25,
+                                  fontWeight: FontWeight.w700,
+                                  color: primary),
+                              blockquote: NativeFonts.outfit(
+                                  fontSize: 15,
+                                  height: 1.6,
+                                  fontStyle: FontStyle.italic,
+                                  color: secondary),
+                              blockquoteDecoration: BoxDecoration(
+                                  color: subtle,
+                                  border: Border(
+                                      left: BorderSide(
+                                          color: secondary, width: 3))),
+                            ),
+                          )),
+                    ],
+                  ),
+                ))),
       ),
     );
   }
@@ -171,7 +184,8 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
   String _kindLabel(BookmarkModel item) => switch (item.documentKind) {
         BookmarkDocumentKind.personalNote => AppCopy.navSaved,
         BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
-            ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+            ? item.agentTitle
+                .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
             : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace),
         BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
       };

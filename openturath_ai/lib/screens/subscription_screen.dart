@@ -28,8 +28,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   bool _initialized = false;
   bool _isTahawwulat = true;
 
-  List<AgentModel> get _specialists => AgentModel.defaultAgents.where((a) =>
-    a.kind == CorpusKind.discipline && a.isActive && a.id != 'fiqh_tahawwulat').toList();
+  List<AgentModel> get _specialists => AgentModel.defaultAgents
+      .where((a) =>
+          a.kind == CorpusKind.discipline &&
+          a.isActive &&
+          a.id != 'fiqh_tahawwulat')
+      .toList();
 
   @override
   void didChangeDependencies() {
@@ -38,7 +42,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     _initialized = true;
     final args = ModalRoute.of(context)?.settings.arguments;
     final agent = args is Map ? args['agent'] : null;
-    if (agent is AgentModel) _isTahawwulat = agent.id.startsWith('fiqh_tahawwulat');
+    if (agent is AgentModel)
+      _isTahawwulat = agent.id.startsWith('fiqh_tahawwulat');
     if (agent is AgentModel && _specialists.any((a) => a.id == agent.id)) {
       _selectedAgentId = agent.id;
     }
@@ -54,26 +59,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     setState(() => _processing = true);
     try {
       final title = '${agent.title} · ${offer.title}';
-      final result = await _service.createPayment(uid: user.uid, agentId: agent.id,
-        plan: offer.plan, planTitle: title, amount: offer.amount,
-        name: user.displayName ?? user.email?.split('@').first ?? AppCopy.ahlanDefault,
-        email: user.email ?? '', phone: user.phoneNumber ?? '');
+      final result = await _service.createPayment(
+          uid: user.uid,
+          agentId: agent.id,
+          plan: offer.plan,
+          planTitle: title,
+          amount: offer.amount,
+          name: user.displayName ??
+              user.email?.split('@').first ??
+              AppCopy.ahlanDefault,
+          email: user.email ?? '',
+          phone: user.phoneNumber ?? '');
       if (!mounted) return;
       // An old backend or stale quote must never open a differently priced checkout.
-      if (result['amount'] != offer.amount || result['pricingRevision'] != ProductPricing.revision) {
+      if (result['amount'] != offer.amount ||
+          result['pricingRevision'] != ProductPricing.revision) {
         AppSnackBar.warning(context, Loc.tr('priceChanged'));
         return;
       }
       final paymentUrl = result['redirectUrl'];
       final invoice = result['invoiceNumber'];
-      if (paymentUrl is! String || Uri.tryParse(paymentUrl)?.scheme != 'https' ||
-          invoice is! String || invoice.isEmpty) {
+      if (paymentUrl is! String ||
+          Uri.tryParse(paymentUrl)?.scheme != 'https' ||
+          invoice is! String ||
+          invoice.isEmpty) {
         throw const FormatException('Invalid checkout response');
       }
       final paid = await DokuCheckoutSheet.show(context,
-        paymentUrl: paymentUrl, invoiceNumber: invoice, trxId: result['trxId'] as String?,
-        planTitle: title, amount: offer.amount, regularAmount: offer.regularAmount,
-        periodLabel: offer.period);
+          paymentUrl: paymentUrl,
+          invoiceNumber: invoice,
+          trxId: result['trxId'] as String?,
+          planTitle: title,
+          amount: offer.amount,
+          regularAmount: offer.regularAmount,
+          periodLabel: offer.period);
       if (mounted && paid == true) {
         AppSnackBar.success(context, Loc.tr('paymentConfirmed'));
       }
@@ -84,9 +103,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     }
   }
 
-
-
-  void _showDisciplinePickerModal(BuildContext context, List<AgentModel> specialists) {
+  void _showDisciplinePickerModal(
+      BuildContext context, List<AgentModel> specialists) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = NativeColors.textPrimary(dark);
     final muted = NativeColors.textSecondary(dark);
@@ -154,11 +172,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           const SizedBox(height: 8),
                           TextField(
                             autofocus: false,
-                            onChanged: (val) => setModalState(() => query = val),
+                            onChanged: (val) =>
+                                setModalState(() => query = val),
                             decoration: InputDecoration(
                               hintText: Loc.tr('searchBooks'),
-                              prefixIcon: Icon(Icons.search_rounded, size: 20, color: muted),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              prefixIcon: Icon(Icons.search_rounded,
+                                  size: 20, color: muted),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
                             ),
                           ),
                         ],
@@ -180,14 +201,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             },
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 12),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? NativeColors.accent(dark).withValues(alpha: 0.1)
+                                    ? NativeColors.accent(dark)
+                                        .withValues(alpha: 0.1)
                                     : surface,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: isSelected ? NativeColors.accent(dark) : border,
+                                  color: isSelected
+                                      ? NativeColors.accent(dark)
+                                      : border,
                                   width: isSelected ? 1.5 : 1,
                                 ),
                               ),
@@ -195,19 +220,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           a.title,
-                                          style: NativeTypography.bodyMedium(color: ink).copyWith(
-                                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                          style: NativeTypography.bodyMedium(
+                                                  color: ink)
+                                              .copyWith(
+                                            fontWeight: isSelected
+                                                ? FontWeight.w700
+                                                : FontWeight.w500,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
                                   if (isSelected)
-                                    Icon(Icons.check_circle_rounded, color: NativeColors.accent(dark), size: 20),
+                                    Icon(Icons.check_circle_rounded,
+                                        color: NativeColors.accent(dark),
+                                        size: 20),
                                 ],
                               ),
                             ),
@@ -230,55 +262,113 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
     final specialists = _specialists;
-    final flagship = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
-    final selected = _isTahawwulat ? flagship : specialists.firstWhere((a) => a.id == _selectedAgentId, orElse: () => specialists.first);
-    final offer = _isTahawwulat ? ProductPricing.tahawwulat[_tahawwulatIndex] : ProductPricing.specialist;
+    final flagship =
+        AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
+    final selected = _isTahawwulat
+        ? flagship
+        : specialists.firstWhere((a) => a.id == _selectedAgentId,
+            orElse: () => specialists.first);
+    final offer = _isTahawwulat
+        ? ProductPricing.tahawwulat[_tahawwulatIndex]
+        : ProductPricing.specialist;
     return Scaffold(
       backgroundColor: NativeColors.canvas(dark),
       appBar: AppBar(title: Text(AppCopy.subscription)),
-      body: SafeArea(child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 760),
-        child: ListView(padding: const EdgeInsets.all(20), children: [
-          Text(NativeCopy.text('selectedAccess'), style: NativeType.title(dark, size: 30)),
-          const SizedBox(height: 12),
-          Text(AppCopy.manualRenewalNotice, style: NativeType.body(dark)),
-          const SizedBox(height: 24),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            ChoiceChip(label: Text(AppCopy.planTahawwulat), selected: _isTahawwulat,
-              onSelected: _processing ? null : (_) => setState(() => _isTahawwulat = true)),
-            ChoiceChip(label: Text(Loc.tr('specialistAccess')), selected: !_isTahawwulat,
-              onSelected: _processing ? null : (_) => setState(() => _isTahawwulat = false)),
-          ]),
-          const SizedBox(height: 20),
-          NativeSection(collection: _isTahawwulat, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            if (_isTahawwulat) ...[
-              Text(NativeCopy.text('exclusive'), style: NativeType.meta(dark).copyWith(color: NativeColors.brass(dark))),
-              const SizedBox(height: 12),
-            ],
-            Text(Loc.isArabic ? selected.titleArabic : selected.title, style: NativeType.title(dark)),
-            const SizedBox(height: 10),
-            Text(_isTahawwulat ? NativeCopy.text('allFive') : Loc.text(selected.subtitleAcademic), style: NativeType.body(dark)),
-            const SizedBox(height: 20),
-            if (_isTahawwulat)
-              Wrap(spacing: 8, runSpacing: 8, children: [
-                for (var i = 0; i < ProductPricing.tahawwulat.length; i++)
-                  ChoiceChip(label: Text(ProductPricing.tahawwulat[i].title), selected: _tahawwulatIndex == i,
-                    onSelected: _processing ? null : (_) => setState(() => _tahawwulatIndex = i)),
-              ])
-            else
-              OutlinedButton.icon(onPressed: _processing ? null : () => _showDisciplinePickerModal(context, specialists),
-                icon: const Icon(Icons.unfold_more_rounded), label: Text(Loc.tr('chooseField'))),
-            const SizedBox(height: 24),
-            PromoPrice(amount: offer.amount, regularAmount: offer.regularAmount, period: offer.period),
-            const SizedBox(height: 24),
-            FilledButton(onPressed: _processing ? null : () => _checkout(selected, offer),
-              child: Text(_processing ? NativeCopy.text('loading') : Loc.tr('continuePayment'))),
-          ])),
-          const SizedBox(height: 16),
-          TextButton.icon(onPressed: _processing ? null : () => RedeemCodeSheet.show(context),
-            icon: const Icon(Icons.confirmation_number_outlined), label: Text(Loc.tr('redeemAccess'))),
-        ]),
-      ))),
+      body: SafeArea(
+          child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: ListView(padding: const EdgeInsets.all(20), children: [
+                  Text(NativeCopy.text('selectedAccess'),
+                      style: NativeType.title(dark, size: 30)),
+                  const SizedBox(height: 12),
+                  Text(AppCopy.manualRenewalNotice,
+                      style: NativeType.body(dark)),
+                  const SizedBox(height: 24),
+                  Wrap(spacing: 8, runSpacing: 8, children: [
+                    ChoiceChip(
+                        label: Text(AppCopy.planTahawwulat),
+                        selected: _isTahawwulat,
+                        onSelected: _processing
+                            ? null
+                            : (_) => setState(() => _isTahawwulat = true)),
+                    ChoiceChip(
+                        label: Text(Loc.tr('specialistAccess')),
+                        selected: !_isTahawwulat,
+                        onSelected: _processing
+                            ? null
+                            : (_) => setState(() => _isTahawwulat = false)),
+                  ]),
+                  const SizedBox(height: 20),
+                  NativeSection(
+                      collection: _isTahawwulat,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (_isTahawwulat) ...[
+                              Text(NativeCopy.text('exclusive'),
+                                  style: NativeType.meta(dark).copyWith(
+                                      color: NativeColors.brass(dark))),
+                              const SizedBox(height: 12),
+                            ],
+                            Text(
+                                Loc.isArabic
+                                    ? selected.titleArabic
+                                    : selected.title,
+                                style: NativeType.title(dark)),
+                            const SizedBox(height: 10),
+                            Text(
+                                _isTahawwulat
+                                    ? NativeCopy.text('allFive')
+                                    : Loc.text(selected.subtitleAcademic),
+                                style: NativeType.body(dark)),
+                            const SizedBox(height: 20),
+                            if (_isTahawwulat)
+                              Wrap(spacing: 8, runSpacing: 8, children: [
+                                for (var i = 0;
+                                    i < ProductPricing.tahawwulat.length;
+                                    i++)
+                                  ChoiceChip(
+                                      label: Text(
+                                          ProductPricing.tahawwulat[i].title),
+                                      selected: _tahawwulatIndex == i,
+                                      onSelected: _processing
+                                          ? null
+                                          : (_) => setState(
+                                              () => _tahawwulatIndex = i)),
+                              ])
+                            else
+                              OutlinedButton.icon(
+                                  onPressed: _processing
+                                      ? null
+                                      : () => _showDisciplinePickerModal(
+                                          context, specialists),
+                                  icon: const Icon(Icons.unfold_more_rounded),
+                                  label: Text(Loc.tr('chooseField'))),
+                            const SizedBox(height: 24),
+                            PromoPrice(
+                                amount: offer.amount,
+                                regularAmount: offer.regularAmount,
+                                period: offer.period),
+                            const SizedBox(height: 24),
+                            FilledButton(
+                                onPressed: _processing
+                                    ? null
+                                    : () => _checkout(selected, offer),
+                                child: Text(_processing
+                                    ? NativeCopy.text('loading')
+                                    : Loc.tr('continuePayment'))),
+                          ])),
+                  const SizedBox(height: 16),
+                  TextButton.icon(
+                      onPressed: _processing
+                          ? null
+                          : () => RedeemCodeSheet.show(context),
+                      icon: const Icon(Icons.confirmation_number_outlined),
+                      label: Text(Loc.tr('redeemAccess'))),
+                ]),
+              ))),
     );
   }
 }

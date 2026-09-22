@@ -16,7 +16,8 @@ class UpdateReadyDialog extends StatelessWidget {
     required this.updateService,
   });
 
-  static Future<void> show(BuildContext context, UpdateService updateService) async {
+  static Future<void> show(
+      BuildContext context, UpdateService updateService) async {
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -29,10 +30,13 @@ class UpdateReadyDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final surface =
+        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final isDesktop = !kIsWeb && !Platform.isAndroid && !Platform.isIOS;
     final info = updateService.updateInfo;
     final version = info?.latestVersion ?? '';
@@ -45,7 +49,8 @@ class UpdateReadyDialog extends StatelessWidget {
         side: BorderSide(color: border, width: 1),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: SingleChildScrollView(child: Padding(
+      child: SingleChildScrollView(
+          child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -57,7 +62,9 @@ class UpdateReadyDialog extends StatelessWidget {
               height: 56,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
+                color: isDark
+                    ? AppTheme.borderDark
+                    : AppTheme.pillSecondaryBgLight,
               ),
               child: Icon(
                 Icons.system_update_rounded,
@@ -83,7 +90,8 @@ class UpdateReadyDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1D) : const Color(0xFFEAEAE6),
+                color:
+                    isDark ? const Color(0xFF1E1E1D) : const Color(0xFFEAEAE6),
                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: Text(
@@ -116,7 +124,9 @@ class UpdateReadyDialog extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF161615) : const Color(0xFFF2F2EE),
+                  color: isDark
+                      ? const Color(0xFF161615)
+                      : const Color(0xFFF2F2EE),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: border.withValues(alpha: 0.5),

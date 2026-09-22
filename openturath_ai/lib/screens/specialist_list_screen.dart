@@ -239,7 +239,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                     horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
                 child: Column(
                   children: [
-                    NativeSearch(controller: _searchCtrl, hint: NativeCopy.text('searchAssistants'), onChanged: _onSearchChanged),
+                    NativeSearch(
+                        controller: _searchCtrl,
+                        hint: NativeCopy.text('searchAssistants'),
+                        onChanged: _onSearchChanged),
                     if (isGeneralTab) ...[
                       const SizedBox(height: OTSpacing.md),
                       // Dual Taxonomy Switcher
@@ -260,7 +263,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               // Discipline Filter Chips (only in discipline mode)
               if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
                 SizedBox(
-                  height: MediaQuery.textScalerOf(context).scale(52).clamp(52, 110),
+                  height:
+                      MediaQuery.textScalerOf(context).scale(52).clamp(52, 110),
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
@@ -306,93 +310,107 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 child: _corpusKind == CorpusKind.scholar
                     ? const ScholarsComingSoon()
                     : _isLoading
-                    ? const Center(child: NativeLoading())
-                    : filtered.isEmpty
-                        ? Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(OTSpacing.xl),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.search_off_rounded,
-                                      size: 40, color: textSecondary),
-                                  const SizedBox(height: OTSpacing.sm),
-                                  Text(
-                                    _searchQuery.isNotEmpty
-                                        ? AppCopy.noAssistantsFound
-                                        : AppCopy.noAssistantsFound,
-                                    style:
-                                        NativeTypography.body(color: textSecondary),
-                                    textAlign: TextAlign.center,
+                        ? const Center(child: NativeLoading())
+                        : filtered.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(OTSpacing.xl),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.search_off_rounded,
+                                          size: 40, color: textSecondary),
+                                      const SizedBox(height: OTSpacing.sm),
+                                      Text(
+                                        _searchQuery.isNotEmpty
+                                            ? AppCopy.noAssistantsFound
+                                            : AppCopy.noAssistantsFound,
+                                        style: NativeTypography.body(
+                                            color: textSecondary),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                          )
-                        : Builder(
-                            builder: (context) {
-                              final sorted = List<AgentModel>.from(filtered);
-                              if (_searchQuery.isEmpty) {
-                                sorted.sort((a, b) {
-                                  if (a.id == 'fiqh_tahawwulat') return -1;
-                                  if (b.id == 'fiqh_tahawwulat') return 1;
-                                  if (a.isActive && !b.isActive) return -1;
-                                  if (!a.isActive && b.isActive) return 1;
-                                  return 0;
-                                });
-                              }
-
-                              return ListView.separated(
-                                physics: const BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics()),
-                                padding: const EdgeInsets.fromLTRB(OTSpacing.lg,
-                                    OTSpacing.xs, OTSpacing.lg, 96),
-                                itemCount: sorted.length,
-                                separatorBuilder: (_, index) {
-                                  final touchesFlagship = sorted[index].id ==
-                                          'fiqh_tahawwulat' ||
-                                      sorted[index + 1].id == 'fiqh_tahawwulat';
-                                  return SizedBox(
-                                    height: touchesFlagship ? OTSpacing.md : 0,
-                                  );
-                                },
-                                itemBuilder: (context, index) {
-                                  final agent = sorted[index];
-                                  if (agent.id == 'fiqh_tahawwulat') {
-                                    final user = _authService.cachedCurrentUser;
-                                    final isSubscribed = user != null &&
-                                        user.hasAccessToAgent(agent.id);
-                                    return TahawwulatFlagshipCard(
-                                      agent: agent,
-                                      isSubscribed: isSubscribed,
-                                      onOpenMain: () => _openAgent(agent),
-                                      onOpenSubAgent: (sub) =>
-                                          _openTahawwulatSubAgent(agent, sub),
-                                      onOpenLibrary: agent.catalogId != null
-                                          ? () => openNativeLibrary(context,
-                                              agent: agent)
-                                          : null,
-                                    );
+                                ),
+                              )
+                            : Builder(
+                                builder: (context) {
+                                  final sorted =
+                                      List<AgentModel>.from(filtered);
+                                  if (_searchQuery.isEmpty) {
+                                    sorted.sort((a, b) {
+                                      if (a.id == 'fiqh_tahawwulat') return -1;
+                                      if (b.id == 'fiqh_tahawwulat') return 1;
+                                      if (a.isActive && !b.isActive) return -1;
+                                      if (!a.isActive && b.isActive) return 1;
+                                      return 0;
+                                    });
                                   }
-                                  return SpecialistCard(
-                                    title: agent.title,
-                                    titleArabic: agent.titleArabic,
-                                    emoji: agent.emoji,
-                                    scopeLabel: agent.subtitleAcademic,
-                                    referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
-                                    statusLabel: agent.isComingSoon
-                                        ? AppCopy.comingSoon
-                                        : null,
-                                    onOpen: () => _openAgent(agent),
-                                    onOpenLibrary: agent.catalogId != null
-                                        ? () => openNativeLibrary(context,
-                                            agent: agent)
-                                        : null,
+
+                                  return ListView.separated(
+                                    physics: const BouncingScrollPhysics(
+                                        parent:
+                                            AlwaysScrollableScrollPhysics()),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        OTSpacing.lg,
+                                        OTSpacing.xs,
+                                        OTSpacing.lg,
+                                        96),
+                                    itemCount: sorted.length,
+                                    separatorBuilder: (_, index) {
+                                      final touchesFlagship =
+                                          sorted[index].id ==
+                                                  'fiqh_tahawwulat' ||
+                                              sorted[index + 1].id ==
+                                                  'fiqh_tahawwulat';
+                                      return SizedBox(
+                                        height:
+                                            touchesFlagship ? OTSpacing.md : 0,
+                                      );
+                                    },
+                                    itemBuilder: (context, index) {
+                                      final agent = sorted[index];
+                                      if (agent.id == 'fiqh_tahawwulat') {
+                                        final user =
+                                            _authService.cachedCurrentUser;
+                                        final isSubscribed = user != null &&
+                                            user.hasAccessToAgent(agent.id);
+                                        return TahawwulatFlagshipCard(
+                                          agent: agent,
+                                          isSubscribed: isSubscribed,
+                                          onOpenMain: () => _openAgent(agent),
+                                          onOpenSubAgent: (sub) =>
+                                              _openTahawwulatSubAgent(
+                                                  agent, sub),
+                                          onOpenLibrary: agent.catalogId != null
+                                              ? () => openNativeLibrary(context,
+                                                  agent: agent)
+                                              : null,
+                                        );
+                                      }
+                                      return SpecialistCard(
+                                        title: agent.title,
+                                        titleArabic: agent.titleArabic,
+                                        emoji: agent.emoji,
+                                        scopeLabel: agent.subtitleAcademic,
+                                        referenceLabel: agent.referenceBooks
+                                            ?.take(2)
+                                            .map((b) => b.titleArabic)
+                                            .where((s) => s.isNotEmpty)
+                                            .join(' · '),
+                                        statusLabel: agent.isComingSoon
+                                            ? AppCopy.comingSoon
+                                            : null,
+                                        onOpen: () => _openAgent(agent),
+                                        onOpenLibrary: agent.catalogId != null
+                                            ? () => openNativeLibrary(context,
+                                                agent: agent)
+                                            : null,
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                          ),
+                              ),
               ),
             ],
           ),
@@ -434,9 +452,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         alignment: Alignment.center,
         child: Text(
           Loc.text(label),
-          style:
-              NativeTypography.caption(color: isSelected ? activeFg : textSecondary)
-                  .copyWith(
+          style: NativeTypography.caption(
+                  color: isSelected ? activeFg : textSecondary)
+              .copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 12,
           ),

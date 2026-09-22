@@ -12,6 +12,7 @@ class NativePress extends StatefulWidget {
   @override
   State<NativePress> createState() => _NativePressState();
 }
+
 class _NativePressState extends State<NativePress> {
   bool _pressed = false;
   @override
@@ -39,7 +40,11 @@ class _NativePressState extends State<NativePress> {
 }
 
 class NativeSection extends StatelessWidget {
-  const NativeSection({super.key, required this.child, this.collection = false, this.padding = const EdgeInsets.all(20)});
+  const NativeSection(
+      {super.key,
+      required this.child,
+      this.collection = false,
+      this.padding = const EdgeInsets.all(20)});
   final Widget child;
   final bool collection;
   final EdgeInsetsGeometry padding;
@@ -49,10 +54,16 @@ class NativeSection extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: ShapeDecoration(
-        color: collection ? NativeColors.collection(dark) : NativeColors.surface(dark),
+        color: collection
+            ? NativeColors.collection(dark)
+            : NativeColors.surface(dark),
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(collection ? 40 : 28),
-          side: BorderSide(color: collection ? NativeColors.brass(dark).withValues(alpha: .35) : NativeColors.border(dark), width: .8),
+          side: BorderSide(
+              color: collection
+                  ? NativeColors.brass(dark).withValues(alpha: .35)
+                  : NativeColors.border(dark),
+              width: .8),
         ),
       ),
       child: child,
@@ -61,7 +72,11 @@ class NativeSection extends StatelessWidget {
 }
 
 class NativeSearch extends StatelessWidget {
-  const NativeSearch({super.key, required this.controller, required this.hint, required this.onChanged});
+  const NativeSearch(
+      {super.key,
+      required this.controller,
+      required this.hint,
+      required this.onChanged});
   final TextEditingController controller;
   final String hint;
   final ValueChanged<String> onChanged;
@@ -81,15 +96,27 @@ class NativeSearch extends StatelessWidget {
         prefixIcon: const Icon(Icons.search_rounded),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
-          builder: (_, value, __) => value.text.isEmpty ? const SizedBox.shrink() : IconButton(
-            tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-            onPressed: () { controller.clear(); onChanged(''); },
-            icon: const Icon(Icons.close_rounded),
-          ),
+          builder: (_, value, __) => value.text.isEmpty
+              ? const SizedBox.shrink()
+              : IconButton(
+                  tooltip:
+                      MaterialLocalizations.of(context).deleteButtonTooltip,
+                  onPressed: () {
+                    controller.clear();
+                    onChanged('');
+                  },
+                  icon: const Icon(Icons.close_rounded),
+                ),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100), borderSide: BorderSide(color: NativeColors.border(dark))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100), borderSide: BorderSide(color: NativeColors.textPrimary(dark), width: 1.5)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide(color: NativeColors.border(dark))),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide:
+                BorderSide(color: NativeColors.textPrimary(dark), width: 1.5)),
       ),
     );
   }
@@ -101,16 +128,24 @@ class NativeLoading extends StatefulWidget {
   @override
   State<NativeLoading> createState() => _NativeLoadingState();
 }
+
 class _NativeLoadingState extends State<NativeLoading> {
   Timer? _timer;
   bool _slow = false;
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 8), () { if (mounted) setState(() => _slow = true); });
+    _timer = Timer(const Duration(seconds: 8), () {
+      if (mounted) setState(() => _slow = true);
+    });
   }
+
   @override
-  void dispose() { _timer?.cancel(); super.dispose(); }
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
@@ -121,12 +156,22 @@ class _NativeLoadingState extends State<NativeLoading> {
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           if (MediaQuery.disableAnimationsOf(context))
-            Icon(Icons.hourglass_empty_rounded, color: NativeColors.textSecondary(dark))
+            Icon(Icons.hourglass_empty_rounded,
+                color: NativeColors.textSecondary(dark))
           else
-            SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 1.5, color: NativeColors.textSecondary(dark))),
+            SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                    strokeWidth: 1.5, color: NativeColors.textSecondary(dark))),
           const SizedBox(height: 16),
-          Text(widget.label ?? NativeCopy.text('loading'), style: NativeType.meta(dark), textAlign: TextAlign.center),
-          if (_slow) ...[const SizedBox(height: 8), Text(NativeCopy.text('slow'), style: NativeType.meta(dark), textAlign: TextAlign.center)],
+          Text(widget.label ?? NativeCopy.text('loading'),
+              style: NativeType.meta(dark), textAlign: TextAlign.center),
+          if (_slow) ...[
+            const SizedBox(height: 8),
+            Text(NativeCopy.text('slow'),
+                style: NativeType.meta(dark), textAlign: TextAlign.center)
+          ],
         ]),
       ),
     );
@@ -134,7 +179,13 @@ class _NativeLoadingState extends State<NativeLoading> {
 }
 
 class NativeEmpty extends StatelessWidget {
-  const NativeEmpty({super.key, required this.title, this.detail, this.onAction, this.action, this.icon = Icons.menu_book_outlined});
+  const NativeEmpty(
+      {super.key,
+      required this.title,
+      this.detail,
+      this.onAction,
+      this.action,
+      this.icon = Icons.menu_book_outlined});
   final String title;
   final String? detail;
   final VoidCallback? onAction;
@@ -143,13 +194,26 @@ class NativeEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(icon, size: 32, color: NativeColors.textSecondary(dark)),
-      const SizedBox(height: 16),
-      Text(title, style: NativeType.title(dark, size: 22), textAlign: TextAlign.center),
-      if (detail != null) ...[const SizedBox(height: 8), Text(detail!, style: NativeType.meta(dark), textAlign: TextAlign.center)],
-      if (onAction != null) ...[const SizedBox(height: 20), FilledButton(onPressed: onAction, child: Text(action ?? NativeCopy.text('retry')))],
-    ]));
+    return Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(icon, size: 32, color: NativeColors.textSecondary(dark)),
+          const SizedBox(height: 16),
+          Text(title,
+              style: NativeType.title(dark, size: 22),
+              textAlign: TextAlign.center),
+          if (detail != null) ...[
+            const SizedBox(height: 8),
+            Text(detail!,
+                style: NativeType.meta(dark), textAlign: TextAlign.center)
+          ],
+          if (onAction != null) ...[
+            const SizedBox(height: 20),
+            FilledButton(
+                onPressed: onAction,
+                child: Text(action ?? NativeCopy.text('retry')))
+          ],
+        ]));
   }
 }
 
@@ -160,9 +224,13 @@ class NativeEntrance extends StatelessWidget {
   Widget build(BuildContext context) {
     if (MediaQuery.disableAnimationsOf(context)) return child;
     return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1), duration: const Duration(milliseconds: 240),
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 240),
       curve: const Cubic(.16, 1, .3, 1),
-      builder: (_, value, child) => Opacity(opacity: value.clamp(0, 1), child: Transform.translate(offset: Offset(0, 8 * (1 - value)), child: child)),
+      builder: (_, value, child) => Opacity(
+          opacity: value.clamp(0, 1),
+          child: Transform.translate(
+              offset: Offset(0, 8 * (1 - value)), child: child)),
       child: child,
     );
   }

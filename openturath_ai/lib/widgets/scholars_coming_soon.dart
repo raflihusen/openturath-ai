@@ -9,19 +9,30 @@ class ScholarsComingSoon extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return Center(child: SingleChildScrollView(padding: const EdgeInsets.all(24),
-      child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 520),
-        child: Container(padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(color: NativeColors.surface(dark), borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: NativeColors.border(dark))),
+    return Center(
+        child: SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+              color: NativeColors.surface(dark),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: NativeColors.border(dark))),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.lock_outline_rounded, size: 30, color: NativeColors.textSecondary(dark)),
+            Icon(Icons.lock_outline_rounded,
+                size: 30, color: NativeColors.textSecondary(dark)),
             const SizedBox(height: 20),
-            Text(Loc.tr('scholarPreparing'), textAlign: TextAlign.center,
-              style: NativeTypography.pageTitle(color: NativeColors.textPrimary(dark))),
+            Text(Loc.tr('scholarPreparing'),
+                textAlign: TextAlign.center,
+                style: NativeTypography.pageTitle(
+                    color: NativeColors.textPrimary(dark))),
             const SizedBox(height: 12),
-            Text(Loc.tr('scholarPreparingBody'), textAlign: TextAlign.center,
-              style: NativeTypography.body(color: NativeColors.textSecondary(dark))),
+            Text(Loc.tr('scholarPreparingBody'),
+                textAlign: TextAlign.center,
+                style: NativeTypography.body(
+                    color: NativeColors.textSecondary(dark))),
           ]),
         ),
       ),

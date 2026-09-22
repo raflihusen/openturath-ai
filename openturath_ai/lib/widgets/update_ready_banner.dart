@@ -24,10 +24,13 @@ class UpdateReadyBanner extends StatelessWidget {
 
         final isDesktop = !kIsWeb && !Platform.isAndroid && !Platform.isIOS;
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+        final surface =
+            isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
         final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-        final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-        final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+        final textPrimary =
+            isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+        final textSecondary =
+            isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
         final info = updateService.updateInfo;
         final version = info?.latestVersion ?? '';
 
@@ -46,9 +49,12 @@ class UpdateReadyBanner extends StatelessWidget {
             children: [
               Container(
                 width: 40,
-                height: MediaQuery.textScalerOf(context).scale(48).clamp(48, 120),
+                height:
+                    MediaQuery.textScalerOf(context).scale(48).clamp(48, 120),
                 decoration: BoxDecoration(
-                  color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
+                  color: isDark
+                      ? AppTheme.borderDark
+                      : AppTheme.pillSecondaryBgLight,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -63,7 +69,8 @@ class UpdateReadyBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      Loc.tr(isDesktop ? 'updateAvailable' : 'updateReady', [version]),
+                      Loc.tr(isDesktop ? 'updateAvailable' : 'updateReady',
+                          [version]),
                       style: NativeFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -72,7 +79,8 @@ class UpdateReadyBanner extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      NativeCopy.text(isDesktop ? 'updateDesktop' : 'updateMobile'),
+                      NativeCopy.text(
+                          isDesktop ? 'updateDesktop' : 'updateMobile'),
                       style: NativeFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
@@ -89,7 +97,8 @@ class UpdateReadyBanner extends StatelessWidget {
                 style: FilledButton.styleFrom(
                   backgroundColor: NativeColors.accent(isDark),
                   foregroundColor: NativeColors.onAccent(isDark),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   minimumSize: const Size(64, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppTheme.radiusPill),

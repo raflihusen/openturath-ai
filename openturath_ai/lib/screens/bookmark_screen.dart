@@ -176,7 +176,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
               child: Text(
                 AppCopy.delete,
-                style: NativeTypography.button(color: NativeColors.onAccent(isDark)),
+                style: NativeTypography.button(
+                    color: NativeColors.onAccent(isDark)),
               ),
             ),
           ],
@@ -270,7 +271,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
     if (!mounted) return;
     final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => NativeTheme(child: NoteReaderScreen(item: item))),
+      MaterialPageRoute(
+          builder: (_) => NativeTheme(child: NoteReaderScreen(item: item))),
     );
     if (changed == true && mounted) _loadBookmarks();
   }
@@ -387,13 +389,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  OTSpacing.lg, 12, OTSpacing.lg, 8),
+              padding:
+                  const EdgeInsets.fromLTRB(OTSpacing.lg, 12, OTSpacing.lg, 8),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   AppCopy.savedNotesCount(_filteredBookmarks.length),
-                  style: NativeTypography.caption(color: textSecondary).copyWith(
+                  style:
+                      NativeTypography.caption(color: textSecondary).copyWith(
                     fontSize: 12,
                     letterSpacing: 0.2,
                   ),
@@ -424,7 +427,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       });
                     },
                     child: AnimatedContainer(
-                      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.fast,
+                      duration: MediaQuery.disableAnimationsOf(context)
+                          ? Duration.zero
+                          : OTMotion.fast,
                       curve: OTMotion.curve,
                       padding: const EdgeInsets.symmetric(
                         horizontal: OTSpacing.md + 2,
@@ -505,7 +510,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           ),
                                           const SizedBox(height: OTSpacing.lg),
                                           Text(
-                                            _allBookmarks.isEmpty ? NativeCopy.text('notesEmpty') : NativeCopy.text('noNotesResults'),
+                                            _allBookmarks.isEmpty
+                                                ? NativeCopy.text('notesEmpty')
+                                                : NativeCopy.text(
+                                                    'noNotesResults'),
                                             style: NativeTypography.cardTitle(
                                                     color: textPrimary)
                                                 .copyWith(
@@ -515,7 +523,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           const SizedBox(
                                               height: OTSpacing.xs + 2),
                                           Text(
-                                            _allBookmarks.isEmpty ? NativeCopy.text('notesHint') : NativeCopy.text('searchHint'),
+                                            _allBookmarks.isEmpty
+                                                ? NativeCopy.text('notesHint')
+                                                : NativeCopy.text('searchHint'),
                                             textAlign: TextAlign.center,
                                             style: NativeTypography.body(
                                                     color: textSecondary)
@@ -531,13 +541,20 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                 _openNoteEditor();
                                               } else {
                                                 _searchCtrl.clear();
-                                                setState(() { _searchQuery = ''; _selectedCategory = 'Semua'; _filter(); });
+                                                setState(() {
+                                                  _searchQuery = '';
+                                                  _selectedCategory = 'Semua';
+                                                  _filter();
+                                                });
                                               }
                                             },
                                             icon: const Icon(
                                                 Icons.menu_book_outlined,
                                                 size: 16),
-                                            label: Text(_allBookmarks.isEmpty ? NativeCopy.text('write') : NativeCopy.text('resetSearch')),
+                                            label: Text(_allBookmarks.isEmpty
+                                                ? NativeCopy.text('write')
+                                                : NativeCopy.text(
+                                                    'resetSearch')),
                                             style: OutlinedButton.styleFrom(
                                               foregroundColor: textPrimary,
                                               side: BorderSide(
@@ -551,7 +568,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                 borderRadius:
                                                     OTRadius.buttonBorder,
                                               ),
-                                              textStyle: NativeTypography.button(),
+                                              textStyle:
+                                                  NativeTypography.button(),
                                             ),
                                           ),
                                         ],
@@ -645,7 +663,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
   // lewat ketukan kartu agar satu tangan tetap nyaman dipakai pada ponsel.
   final bool _isExpanded = false;
 
-  String _formatRelativeTime(DateTime dt) => MaterialLocalizations.of(context).formatMediumDate(dt);
+  String _formatRelativeTime(DateTime dt) =>
+      MaterialLocalizations.of(context).formatMediumDate(dt);
 
   String _cleanSingleLine(String text) {
     final lines =
@@ -789,8 +808,13 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     final pillLabel = switch (item.documentKind) {
       BookmarkDocumentKind.personalNote => AppCopy.navSaved,
       BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
-          ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-          : (item.fieldName.contains('Catatan') ? AppCopy.navSaved : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace)),
+          ? item.agentTitle
+              .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+          : (item.fieldName.contains('Catatan')
+              ? AppCopy.navSaved
+              : (item.fieldName.isNotEmpty
+                  ? item.fieldName
+                  : AppCopy.studySpace)),
       BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
     };
     final displayTitle = item.documentKind == BookmarkDocumentKind.aiAnswer
@@ -801,14 +825,15 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         : item.fullAnswer;
 
     return AnimatedContainer(
-      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.normal,
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : OTMotion.normal,
       curve: OTMotion.curve,
       child: InkWell(
         onTap: widget.onOpen,
         borderRadius: OTRadius.cardBorder,
         child: Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 20, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
             color: widget.surface,
             borderRadius: OTRadius.cardBorder,
@@ -823,7 +848,10 @@ class _BookmarkCardState extends State<_BookmarkCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Metadata Bar: Pill Asisten / Keilmuan berdampingan rapi dengan keterangan waktu
-              Wrap(spacing: 8, runSpacing: 6, crossAxisAlignment: WrapCrossAlignment.center,
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -834,8 +862,9 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     ),
                     child: Text(
                       pillLabel,
-                      style: NativeTypography.captionMedium(color: widget.accent)
-                          .copyWith(
+                      style:
+                          NativeTypography.captionMedium(color: widget.accent)
+                              .copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -867,8 +896,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
               _buildHighlightedText(
                 text: displayTitle,
                 query: widget.searchQuery,
-                baseStyle:
-                    NativeTypography.cardTitle(color: widget.textPrimary).copyWith(
+                baseStyle: NativeTypography.cardTitle(color: widget.textPrimary)
+                    .copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -886,8 +915,9 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       ? parseAiAnswerContent(readableAnswer).preview
                       : _getSnippet(readableAnswer, widget.searchQuery),
                   query: widget.searchQuery,
-                  baseStyle: NativeTypography.caption(color: widget.textSecondary)
-                      .copyWith(
+                  baseStyle:
+                      NativeTypography.caption(color: widget.textSecondary)
+                          .copyWith(
                     fontSize: 12,
                   ),
                   isDark: isDark,
@@ -915,8 +945,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text:
                           '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
                       query: widget.searchQuery,
-                      baseStyle:
-                          NativeTypography.captionMedium(color: widget.textPrimary),
+                      baseStyle: NativeTypography.captionMedium(
+                          color: widget.textPrimary),
                       isDark: isDark,
                       overflow: TextOverflow.ellipsis,
                     ),

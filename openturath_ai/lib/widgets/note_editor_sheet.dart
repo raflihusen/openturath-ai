@@ -7,9 +7,6 @@ import 'native_theme.dart';
 import '../core/design/native_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
-
 import '../core/design/ot_motion.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
@@ -33,7 +30,8 @@ class NoteEditorSheet extends StatefulWidget {
     return Navigator.of(context).push<BookmarkModel>(
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => NativeTheme(child: Scaffold(
+        builder: (_) => NativeTheme(
+            child: Scaffold(
           body: SafeArea(child: NoteEditorSheet(item: item, fullScreen: true)),
         )),
       ),
@@ -270,7 +268,6 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     Navigator.pop(context, updated);
   }
 
-
   bool _submitting = false;
   Future<void> _submit() async {
     if (_submitting) return;
@@ -278,7 +275,9 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     try {
       await _saveNote();
     } catch (_) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(NativeCopy.text('saveFailed'))));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(NativeCopy.text('saveFailed'))));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -292,54 +291,147 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     return Container(
       height: widget.fullScreen ? double.infinity : media.size.height * .92,
       color: NativeColors.canvas(dark),
-      padding: EdgeInsets.only(bottom: widget.fullScreen ? 0 : media.viewInsets.bottom),
+      padding: EdgeInsets.only(
+          bottom: widget.fullScreen ? 0 : media.viewInsets.bottom),
       child: Column(children: [
-        Padding(padding: const EdgeInsets.all(12), child: Column(children: [
-          Row(children: [
-            IconButton(tooltip: NativeCopy.text('back'), onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back_rounded)),
-            Expanded(child: Text(Loc.text(widget.item == null ? 'Catatan baru' : 'Edit catatan'), style: NativeType.title(dark, size: 22))),
-            TextButton(onPressed: _submitting ? null : _submit, child: Text(_submitting ? NativeCopy.text('loading') : Loc.tr('save'))),
-          ]),
-          Wrap(spacing: 12, runSpacing: 4, crossAxisAlignment: WrapCrossAlignment.center, children: [
-            ChoiceChip(label: Text(Loc.text('Tulis')), selected: !_isPreview, onSelected: (_) => setState(() => _isPreview = false)),
-            ChoiceChip(label: Text(Loc.text('Pratinjau')), selected: _isPreview,
-              onSelected: (_) { FocusScope.of(context).unfocus(); setState(() => _isPreview = true); }),
-            if (_isSavingDraft || _draftSaved || _draftRestored)
-              Text(Loc.text(_isSavingDraft ? 'Menyimpan draf...' : _draftRestored ? 'Draf dipulihkan' : 'Draf tersimpan'), style: NativeType.meta(dark)),
-          ]),
-        ])),
-        if (!_isPreview) SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: [
-          IconButton(tooltip: Loc.text('Tebal'), icon: const Icon(Icons.format_bold), onPressed: () => _applyFormat('**', '**', defaultText: Loc.text('teks tebal'))),
-          IconButton(tooltip: Loc.text('Miring'), icon: const Icon(Icons.format_italic), onPressed: () => _applyFormat('*', '*', defaultText: Loc.text('teks miring'))),
-          IconButton(tooltip: Loc.text('Daftar Poin'), icon: const Icon(Icons.format_list_bulleted), onPressed: () => _applyFormat('\n- ', '', defaultText: Loc.text('poin catatan'))),
-          IconButton(tooltip: Loc.text('Kutipan'), icon: const Icon(Icons.format_quote), onPressed: () => _applyFormat('\n> ', '', defaultText: Loc.text('kutipan ibarah'))),
-          IconButton(tooltip: NativeCopy.text('arabicQuote'), icon: const Icon(Icons.format_quote_rounded), onPressed: () => _applyFormat('« ', ' »', defaultText: Loc.text('kutipan ibarah'))),
-          IconButton(tooltip: Loc.text('Judul Bab'), icon: const Icon(Icons.title), onPressed: () => _applyFormat('\n# ', '', defaultText: Loc.text('Judul Bab'))),
-          IconButton(tooltip: Loc.text('Orientasi Kiri ke Kanan (LTR)'), icon: const Icon(Icons.format_textdirection_l_to_r), onPressed: () => _applyDirection(TextDirection.ltr)),
-          IconButton(tooltip: Loc.text('Orientasi Kanan ke Kiri / Arab (RTL)'), icon: const Icon(Icons.format_textdirection_r_to_l), onPressed: () => _applyDirection(TextDirection.rtl)),
-        ])),
+        Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(children: [
+              Row(children: [
+                IconButton(
+                    tooltip: NativeCopy.text('back'),
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back_rounded)),
+                Expanded(
+                    child: Text(
+                        Loc.text(widget.item == null
+                            ? 'Catatan baru'
+                            : 'Edit catatan'),
+                        style: NativeType.title(dark, size: 22))),
+                TextButton(
+                    onPressed: _submitting ? null : _submit,
+                    child: Text(_submitting
+                        ? NativeCopy.text('loading')
+                        : Loc.tr('save'))),
+              ]),
+              Wrap(
+                  spacing: 12,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    ChoiceChip(
+                        label: Text(Loc.text('Tulis')),
+                        selected: !_isPreview,
+                        onSelected: (_) => setState(() => _isPreview = false)),
+                    ChoiceChip(
+                        label: Text(Loc.text('Pratinjau')),
+                        selected: _isPreview,
+                        onSelected: (_) {
+                          FocusScope.of(context).unfocus();
+                          setState(() => _isPreview = true);
+                        }),
+                    if (_isSavingDraft || _draftSaved || _draftRestored)
+                      Text(
+                          Loc.text(_isSavingDraft
+                              ? 'Menyimpan draf...'
+                              : _draftRestored
+                                  ? 'Draf dipulihkan'
+                                  : 'Draf tersimpan'),
+                          style: NativeType.meta(dark)),
+                  ]),
+            ])),
+        if (!_isPreview)
+          SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: [
+                IconButton(
+                    tooltip: Loc.text('Tebal'),
+                    icon: const Icon(Icons.format_bold),
+                    onPressed: () => _applyFormat('**', '**',
+                        defaultText: Loc.text('teks tebal'))),
+                IconButton(
+                    tooltip: Loc.text('Miring'),
+                    icon: const Icon(Icons.format_italic),
+                    onPressed: () => _applyFormat('*', '*',
+                        defaultText: Loc.text('teks miring'))),
+                IconButton(
+                    tooltip: Loc.text('Daftar Poin'),
+                    icon: const Icon(Icons.format_list_bulleted),
+                    onPressed: () => _applyFormat('\n- ', '',
+                        defaultText: Loc.text('poin catatan'))),
+                IconButton(
+                    tooltip: Loc.text('Kutipan'),
+                    icon: const Icon(Icons.format_quote),
+                    onPressed: () => _applyFormat('\n> ', '',
+                        defaultText: Loc.text('kutipan ibarah'))),
+                IconButton(
+                    tooltip: NativeCopy.text('arabicQuote'),
+                    icon: const Icon(Icons.format_quote_rounded),
+                    onPressed: () => _applyFormat('« ', ' »',
+                        defaultText: Loc.text('kutipan ibarah'))),
+                IconButton(
+                    tooltip: Loc.text('Judul Bab'),
+                    icon: const Icon(Icons.title),
+                    onPressed: () => _applyFormat('\n# ', '',
+                        defaultText: Loc.text('Judul Bab'))),
+                IconButton(
+                    tooltip: Loc.text('Orientasi Kiri ke Kanan (LTR)'),
+                    icon: const Icon(Icons.format_textdirection_l_to_r),
+                    onPressed: () => _applyDirection(TextDirection.ltr)),
+                IconButton(
+                    tooltip: Loc.text('Orientasi Kanan ke Kiri / Arab (RTL)'),
+                    icon: const Icon(Icons.format_textdirection_r_to_l),
+                    onPressed: () => _applyDirection(TextDirection.rtl)),
+              ])),
         Divider(color: NativeColors.border(dark)),
-        Expanded(child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 760),
-          child: ListView(padding: const EdgeInsets.all(20), children: [
-            if (_isPreview) ...[
-              Text(_titleController.text, style: NativeType.title(dark)),
-              const SizedBox(height: 24),
-              Directionality(textDirection: _textDirection, child: MarkdownBody(data: _bodyController.text, selectable: true,
-                styleSheet: MarkdownStyleSheet(
-                  p: _textDirection == TextDirection.rtl ? NativeType.arabic(dark, size: 22) : NativeType.body(dark, size: 17),
-                  h1: NativeType.title(dark), h2: NativeType.title(dark, size: 24),
+        Expanded(
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: ListView(padding: const EdgeInsets.all(20), children: [
+                    if (_isPreview) ...[
+                      Text(_titleController.text,
+                          style: NativeType.title(dark)),
+                      const SizedBox(height: 24),
+                      Directionality(
+                          textDirection: _textDirection,
+                          child: MarkdownBody(
+                              data: _bodyController.text,
+                              selectable: true,
+                              styleSheet: MarkdownStyleSheet(
+                                p: _textDirection == TextDirection.rtl
+                                    ? NativeType.arabic(dark, size: 22)
+                                    : NativeType.body(dark, size: 17),
+                                h1: NativeType.title(dark),
+                                h2: NativeType.title(dark, size: 24),
+                              ))),
+                    ] else ...[
+                      TextField(
+                          controller: _titleController,
+                          maxLines: null,
+                          style: NativeType.title(dark),
+                          decoration: InputDecoration(
+                              hintText: Loc.text('Judul catatan'),
+                              border: InputBorder.none,
+                              filled: false)),
+                      const SizedBox(height: 16),
+                      TextField(
+                          controller: _bodyController,
+                          maxLines: null,
+                          minLines: 8,
+                          textDirection: _textDirection,
+                          style: _textDirection == TextDirection.rtl
+                              ? NativeType.arabic(dark, size: 22)
+                              : NativeType.body(dark, size: 17),
+                          decoration: InputDecoration(
+                              hintText: Loc.text(
+                                  'Tulis catatan atau tempel ibarah di sini…'),
+                              border: InputBorder.none,
+                              filled: false)),
+                    ],
+                  ]),
                 ))),
-            ] else ...[
-              TextField(controller: _titleController, maxLines: null, style: NativeType.title(dark),
-                decoration: InputDecoration(hintText: Loc.text('Judul catatan'), border: InputBorder.none, filled: false)),
-              const SizedBox(height: 16),
-              TextField(controller: _bodyController, maxLines: null, minLines: 8, textDirection: _textDirection,
-                style: _textDirection == TextDirection.rtl ? NativeType.arabic(dark, size: 22) : NativeType.body(dark, size: 17),
-                decoration: InputDecoration(hintText: Loc.text('Tulis catatan atau tempel ibarah di sini…'), border: InputBorder.none, filled: false)),
-            ],
-          ]),
-        ))),
       ]),
     );
   }
