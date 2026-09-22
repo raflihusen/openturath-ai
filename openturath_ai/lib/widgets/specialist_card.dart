@@ -55,12 +55,12 @@ class SpecialistCard extends StatelessWidget {
       onTap: onOpen,
       pressedScale: 0.98,
       hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(18),
       child: Material(
         color: surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           side: BorderSide(color: border, width: 1.0),
         ),
         clipBehavior: Clip.antiAlias,

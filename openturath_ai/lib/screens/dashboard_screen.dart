@@ -594,18 +594,18 @@ class _StudyEntryCard extends StatelessWidget {
       label: '$title. $subtitle',
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         child: InkWell(
           onTap: onPrimary,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           child: Ink(
             decoration: BoxDecoration(
               color: surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(color: border, width: 1.0),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(17),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -729,7 +729,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: border, width: 1.0),
       ),
       child: Row(
@@ -1042,13 +1042,13 @@ class _DashboardAnnouncementCarouselState
                 final slide = _slides[index];
                 return InkWell(
                   onTap: () => _showDetailModal(slide),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(18),
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: widget.surface,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(18),
                       border: Border.all(
                         color: widget.border,
                         width: 1.0,

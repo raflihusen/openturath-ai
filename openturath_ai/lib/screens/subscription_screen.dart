@@ -86,14 +86,64 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget _card({required Widget child, bool flagship = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final border = OTColors.border(dark);
+    if (flagship) {
+      return Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF141418),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: const Color(0xFF383842),
+            width: 1.3,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.35),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(22),
+        child: child,
+      );
+    }
     return Container(
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: border, width: 1.0),
       ),
       padding: const EdgeInsets.all(20),
       child: child,
+    );
+  }
+
+  Widget _benefitRow(String text, Color textColor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Icon(
+              Icons.check_rounded,
+              size: 16,
+              color: textColor.withValues(alpha: 0.8),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: OTTypography.body(color: textColor).copyWith(
+                fontSize: 13,
+                height: 1.45,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -266,26 +316,62 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   Text(AppCopy.manualRenewalNotice, style: OTTypography.body(color: muted)),
                   const SizedBox(height: 24),
 
-                  // Fikih Tahawwulat Sovereign Card
+                  // ── 1. KARTU HITAM ELEGAN: SUPER AI FIKIH TAHAWWULAT (FLAGSHIP) ──
                   _card(
                     flagship: true,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF22222A),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: const Color(0xFF40404C),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(AppCopy.planTahawwulat, style: OTTypography.pageTitle(color: ink)),
-                                  const SizedBox(height: 6),
-                                  Text(Loc.tr('tahawwulatBenefit'), style: OTTypography.body(color: muted)),
+                                  const Icon(Icons.workspace_premium_rounded, size: 14, color: Colors.white),
+                                  const SizedBox(width: 5),
+                                  const Text(
+                                    'KORPUS UTAMA · 5 BILIK AI',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.1,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 0.6),
+                              ),
+                              child: const Text(
+                                'Eksklusif',
+                                style: TextStyle(color: Color(0xFFA1A1AA), fontSize: 10.5, fontWeight: FontWeight.w500),
+                              ),
+                            ),
                           ],
+                        ),
+                        const SizedBox(height: 14),
+                        Text(AppCopy.planTahawwulat, style: OTTypography.pageTitle(color: Colors.white)),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Akses penuh ke 5 persona AI spesialis (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib) yang dilatih dari 50+ kitab otoritatif & ribuan jam transkrip muhadharah Al-Habib Abu Bakar Al-Adni.',
+                          style: OTTypography.body(color: const Color(0xFFA1A1AA)).copyWith(fontSize: 13, height: 1.45),
                         ),
                         const SizedBox(height: 20),
 
@@ -302,12 +388,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: _tahawwulatIndex == i
-                                          ? (dark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
-                                          : (dark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.02)),
+                                          ? const Color(0xFF2A2A34)
+                                          : Colors.white.withValues(alpha: 0.03),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
-                                        color: _tahawwulatIndex == i ? ink : border,
-                                        width: _tahawwulatIndex == i ? 1.2 : 1,
+                                        color: _tahawwulatIndex == i ? Colors.white : const Color(0xFF383842),
+                                        width: _tahawwulatIndex == i ? 1.4 : 1,
                                       ),
                                     ),
                                     child: Column(
@@ -315,16 +401,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         Text(
                                           ProductPricing.tahawwulat[i].title,
                                           style: OTTypography.captionMedium(
-                                            color: _tahawwulatIndex == i ? ink : muted,
+                                            color: _tahawwulatIndex == i ? Colors.white : const Color(0xFFA1A1AA),
                                           ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           ProductPricing.rupiah(ProductPricing.tahawwulat[i].amount),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
-                                            color: ink,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ],
@@ -337,12 +423,43 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 20),
                         PromoPrice(amount: offer.amount, regularAmount: offer.regularAmount, period: offer.period),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
+                        Divider(color: Colors.white.withValues(alpha: 0.12), height: 1),
+                        const SizedBox(height: 16),
+
+                        // Daftar Benefit Fikih Tahawwulat
+                        _benefitRow(
+                          'Akses Eksklusif ke Super AI Fikih Tahawwulat yang Pertama Di Dunia',
+                          Colors.white.withValues(alpha: 0.9),
+                        ),
+                        _benefitRow(
+                          'Akses 5 Persona AI spesialis (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib)',
+                          Colors.white.withValues(alpha: 0.9),
+                        ),
+                        _benefitRow(
+                          'Uji Pemahaman Interaktif & Evaluasi Mandiri',
+                          Colors.white.withValues(alpha: 0.9),
+                        ),
+                        _benefitRow(
+                          'Akses Arsip Muhadharah & Transkrip Al-Habib Abu Bakar Al-Adni',
+                          Colors.white.withValues(alpha: 0.9),
+                        ),
+
+                        const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: _processing ? null : () => _checkout(flagship, offer),
-                            child: Text(Loc.tr('continuePayment')),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF141418),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: Text(
+                              'Pilih Paket Fikih Tahawwulat (${offer.title})',
+                              style: const TextStyle(fontWeight: FontWeight.w700),
+                            ),
                           ),
                         ),
                       ],
@@ -350,12 +467,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Individual Study Guide (Discipline Specialist) Card
+                  // ── 2. KARTU SPESIALIS PER BIDANG LAINNYA ──
                   _card(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(Loc.tr('specialistAccess'), style: OTTypography.pageTitle(color: ink)),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Akses satu bidang keilmuan beserta kitab rujukannya 24/7.',
+                          style: OTTypography.body(color: muted).copyWith(fontSize: 13),
+                        ),
                         const SizedBox(height: 16),
 
                         // Interactive Tactile Discipline Card
@@ -435,11 +557,37 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           regularAmount: ProductPricing.specialist.regularAmount,
                           period: ProductPricing.specialist.period,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
+                        Divider(color: border.withValues(alpha: 0.6), height: 1),
+                        const SizedBox(height: 16),
+
+                        // Daftar Benefit Spesialis Per Bidang
+                        _benefitRow(
+                          'Akses Penuh AI Spesialis ${selected.title} 24/7',
+                          ink,
+                        ),
+                        _benefitRow(
+                          'Temukan Ibarah & Konsep dalam waktu tersingkat',
+                          ink,
+                        ),
+                        _benefitRow(
+                          'Rujukan terperinci mencakup nama kitab, jilid dan halaman dengan akurasi tinggi',
+                          ink,
+                        ),
+                        _benefitRow(
+                          'Permudah pemahaman konsep melalui ibarah dan penjelasan yang disederhanakan dan tersusun',
+                          ink,
+                        ),
+
+                        const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: _processing ? null : () => _checkout(selected, ProductPricing.specialist),
+                            style: FilledButton.styleFrom(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
                             child: Text(Loc.tr('continuePayment')),
                           ),
                         ),

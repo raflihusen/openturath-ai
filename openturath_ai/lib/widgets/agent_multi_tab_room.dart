@@ -473,7 +473,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           .title-card, mat-card.title-card,
           div[class*="title-card" i], div[class*="notebook-header" i],
           .project-header, div[class*="project-header" i], div.source-badge-container,
-          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
           .pro-badge,
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
@@ -487,9 +486,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           div[class*="input-container" i] + div,
           div[class*="query-container" i] + div,
           footer, div[class*="footer" i],
-          .access-denied, div[class*="access-denied" i], div[class*="denied" i],
-          [aria-label*="Request access" i], [aria-label*="Minta akses" i],
-          app-access-denied, .error-page, .permission-denied,
           [data-ot-hidden] {
             display: none !important;
             visibility: hidden !important;
@@ -785,6 +781,21 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final isLogin = url?.host == 'accounts.google.com' ||
           url?.host == 'accounts.youtube.com' ||
           url?.host == 'consent.google.com';
+      if (isLogin) {
+        _readinessTimer?.cancel();
+        if (mounted) {
+          setState(() {
+            widget.session.isWebLoading = false;
+            widget.session.isSessionReady = false;
+            widget.session.isGooglePermissionError = true;
+            widget.session.isPaywallRequired = false;
+            widget.session.isTimeoutError = false;
+            widget.session.errorMessage =
+                'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda untuk mengakses asisten.';
+          });
+        }
+        return;
+      }
       final isDenied = await controller.evaluateJavascript(
           source:
               'window.otNotebook ? window.otNotebook.accessDenied() : false');
@@ -799,7 +810,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
-      if (isLogin || (_readySamples >= 2 && elapsedMs >= 2200)) {
+      if (_readySamples >= 2 && elapsedMs >= 1500) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
@@ -808,13 +819,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isTimeoutError = false;
           });
         }
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 12) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 25) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
-            widget.session.isSessionReady = true;
-            widget.session.isTimeoutError = false;
+            widget.session.isSessionReady = false;
+            widget.session.isTimeoutError = true;
+            widget.session.errorMessage =
+                'Koneksi ke asisten turats membutuhkan waktu lebih lama dari biasanya. Silakan muat ulang atau periksa koneksi internet Anda.';
           });
         }
       }
@@ -1088,6 +1101,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               displayZoomControls: false,
               mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
               thirdPartyCookiesEnabled: true,
+              sharedCookiesEnabled: true,
               hardwareAcceleration: true,
               useHybridComposition: true,
               useOnRenderProcessGone: true,

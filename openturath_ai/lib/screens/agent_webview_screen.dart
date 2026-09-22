@@ -151,9 +151,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           .title-input, input.title-input, .title-container, .notebook-title,
           .notebook-header, app-notebook-header, app-project-header,
           .title-card, mat-card.title-card,
-          div[class*="title-card" i], div[class*="notebook-header" i],
           .project-header, div[class*="project-header" i], div.source-badge-container,
-          app-chat-guide, .chat-guide, div[class*="landing" i], div[class*="banner" i],
           .pro-badge,
           /* Google Account Bar, App Launcher & Setelan */
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
@@ -550,10 +548,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       _readySamples = result == true ? _readySamples + 1 : 0;
       if (!mounted) return;
       final elapsedMs = _loadingStarted != null ? DateTime.now().difference(_loadingStarted!).inMilliseconds : 0;
-      if (isLogin || (_readySamples >= 7 && elapsedMs >= 6500)) {
+      if (isLogin) {
+        _readinessTimer?.cancel();
+        setState(() {
+          _isWebViewLoading = false;
+          _errorMessage = 'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda.';
+        });
+        return;
+      }
+      if (_readySamples >= 2 && elapsedMs >= 2000) {
         _readinessTimer?.cancel();
         setState(() => _isWebViewLoading = false);
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 25) {
         _readinessTimer?.cancel();
         setState(() {
           _isWebViewLoading = false;

@@ -330,7 +330,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -434,7 +434,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: _SettingsTile(
@@ -460,14 +460,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Material(
                     color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(18),
                       onTap: (_isLoggingOut || _isDeletingAccount)
                           ? null
                           : _logout,
@@ -821,20 +821,20 @@ class _MembershipPass extends StatelessWidget {
               'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
           child: Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
             child: InkWell(
               onTap: onViewAccess ?? onManage,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(18),
               child: Ink(
                 height: 198,
                 decoration: BoxDecoration(
                   color: cardColor,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(18),
                   border: Border.all(
                       color: Colors.white.withValues(alpha: 0.14), width: 0.8),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(17),
                   child: Stack(
                     children: [
                       // Ornamen geometris halus: memberi karakter tanpa
