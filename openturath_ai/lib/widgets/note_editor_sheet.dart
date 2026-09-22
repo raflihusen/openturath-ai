@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/localization.dart';
+import 'native_theme.dart';
+import '../core/design/native_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
-import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
@@ -31,9 +30,10 @@ class NoteEditorSheet extends StatefulWidget {
     return Navigator.of(context).push<BookmarkModel>(
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => Scaffold(
+        builder: (_) => NativeTheme(
+            child: Scaffold(
           body: SafeArea(child: NoteEditorSheet(item: item, fullScreen: true)),
-        ),
+        )),
       ),
     );
   }
@@ -217,8 +217,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
     if (title.isEmpty && body.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Isi judul atau tulis catatan terlebih dahulu.')),
+        SnackBar(content: Text(Loc.tr('ui_4ccf3c2529'))),
       );
       return;
     }
@@ -269,429 +268,172 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     Navigator.pop(context, updated);
   }
 
+  bool _submitting = false;
+  Future<void> _submit() async {
+    if (_submitting) return;
+    setState(() => _submitting = true);
+    try {
+      await _saveNote();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(NativeCopy.text('saveFailed'))));
+      }
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-
-    final mediaQuery = MediaQuery.of(context);
-
+    Loc.watch(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final media = MediaQuery.of(context);
     return Container(
-      height:
-          widget.fullScreen ? double.infinity : mediaQuery.size.height * 0.88,
-      padding: EdgeInsets.only(bottom: mediaQuery.viewInsets.bottom),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.zero,
-        border: Border.all(color: border, width: 0.8),
-      ),
-      child: Column(
-        children: [
-          if (!widget.fullScreen)
-            Center(
-              child: Container(
-                width: 36,
-                height: 3,
-                margin: const EdgeInsets.only(top: 8, bottom: 6),
-                color: textSecondary.withValues(alpha: 0.25),
-              ),
-            ),
-
-          // Appbar Row: Mode Toggle, Close, Save
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: OTSpacing.lg, vertical: 4),
-            child: Row(
-              children: [
-                if (widget.fullScreen)
-                  IconButton(
-                    icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-                    tooltip: 'Kembali',
+      height: widget.fullScreen ? double.infinity : media.size.height * .92,
+      color: NativeColors.canvas(dark),
+      padding: EdgeInsets.only(
+          bottom: widget.fullScreen ? 0 : media.viewInsets.bottom),
+      child: Column(children: [
+        Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(children: [
+              Row(children: [
+                IconButton(
+                    tooltip: NativeCopy.text('back'),
                     onPressed: () => Navigator.pop(context),
-                  ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                    icon: const Icon(Icons.arrow_back_rounded)),
+                Expanded(
+                    child: Text(
+                        Loc.text(widget.item == null
+                            ? 'Catatan baru'
+                            : 'Edit catatan'),
+                        style: NativeType.title(dark, size: 22))),
+                TextButton(
+                    onPressed: _submitting ? null : _submit,
+                    child: Text(_submitting
+                        ? NativeCopy.text('loading')
+                        : Loc.tr('save'))),
+              ]),
+              Wrap(
+                  spacing: 12,
+                  runSpacing: 4,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
-                      widget.item != null ? 'Edit catatan' : 'Catatan baru',
-                      style:
-                          OTTypography.screenTitle(color: textPrimary).copyWith(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (_isSavingDraft || _draftSaved || _draftRestored)
-                      Text(
-                        _isSavingDraft
-                            ? 'Menyimpan draf...'
-                            : (_draftRestored
-                                ? 'Draf dipulihkan'
-                                : 'Draf tersimpan'),
-                        style:
-                            OTTypography.caption(color: textSecondary).copyWith(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                  ],
-                ),
-                const Spacer(),
-                // Toggle Edit / Preview
-                Container(
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: surfaceSubtle,
-                    borderRadius: BorderRadius.zero,
-                    border: Border.all(color: border, width: 0.6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () => setState(() => _isPreview = false),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                !_isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          child: Text(
-                            'Tulis',
-                            style: OTTypography.captionMedium(
-                              color: !_isPreview
-                                  ? (isDark
-                                      ? const Color(0xFF18181B)
-                                      : Colors.white)
-                                  : textSecondary,
-                            ).copyWith(fontSize: 11.5),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
+                    ChoiceChip(
+                        label: Text(Loc.text('Tulis')),
+                        selected: !_isPreview,
+                        onSelected: (_) => setState(() => _isPreview = false)),
+                    ChoiceChip(
+                        label: Text(Loc.text('Pratinjau')),
+                        selected: _isPreview,
+                        onSelected: (_) {
                           FocusScope.of(context).unfocus();
                           setState(() => _isPreview = true);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                _isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          child: Text(
-                            'Pratinjau',
-                            style: OTTypography.captionMedium(
-                              color: _isPreview
-                                  ? (isDark
-                                      ? const Color(0xFF18181B)
-                                      : Colors.white)
-                                  : textSecondary,
-                            ).copyWith(fontSize: 11.5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                TextButton(
-                  onPressed: _saveNote,
-                  style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    backgroundColor: textPrimary,
-                    foregroundColor:
-                        isDark ? const Color(0xFF18181B) : Colors.white,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero),
-                  ),
-                  child: Text(
-                    'Simpan',
-                    style: OTTypography.captionMedium(
-                      color: isDark ? const Color(0xFF18181B) : Colors.white,
-                    ).copyWith(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const Divider(height: 1),
-
-          // Formatting Toolbar (Full width row, centered and evenly distributed)
-          if (!_isPreview)
-            Container(
-              height: 42,
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                color: surfaceSubtle,
-                border: Border(bottom: BorderSide(color: border, width: 0.6)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _ToolbarBtn(
-                    label: 'B',
-                    tooltip: 'Tebal',
-                    isBold: true,
-                    onTap: () =>
-                        _applyFormat('**', '**', defaultText: 'teks tebal'),
-                  ),
-                  _ToolbarBtn(
-                    label: 'I',
-                    tooltip: 'Miring',
-                    isItalic: true,
-                    onTap: () =>
-                        _applyFormat('*', '*', defaultText: 'teks miring'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_list_bulleted_rounded,
-                    tooltip: 'Daftar Poin',
-                    onTap: () =>
-                        _applyFormat('\n- ', '', defaultText: 'poin catatan'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_quote_rounded,
-                    tooltip: 'Kutipan',
-                    onTap: () =>
-                        _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
-                  ),
-                  _ToolbarBtn(
-                    label: '« »',
-                    tooltip: 'Kutipan Arab',
-                    onTap: () => _applyFormat('«', '»', defaultText: 'عبارة'),
-                  ),
-                  _ToolbarBtn(
-                    label: 'H1',
-                    tooltip: 'Judul Bab',
-                    onTap: () =>
-                        _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_textdirection_l_to_r_rounded,
-                    tooltip: 'Orientasi Kiri ke Kanan (LTR)',
-                    isActive: _textDirection == TextDirection.ltr,
-                    onTap: () => _applyDirection(TextDirection.ltr),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_textdirection_r_to_l_rounded,
-                    tooltip: 'Orientasi Kanan ke Kiri / Arab (RTL)',
-                    isActive: _textDirection == TextDirection.rtl,
-                    onTap: () => _applyDirection(TextDirection.rtl),
-                  ),
-                ],
-              ),
-            ),
-
-          // Content Area
-          Expanded(
-            child: _isPreview
-                ? SingleChildScrollView(
-                    padding: const EdgeInsets.all(OTSpacing.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (_titleController.text.trim().isNotEmpty) ...[
-                          Text(
-                            _titleController.text.trim(),
-                            style: GoogleFonts.newsreader(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Divider(
-                              color: border.withValues(alpha: 0.6), height: 1),
-                          const SizedBox(height: 16),
-                        ],
-                        _bodyController.text.trim().isEmpty
-                            ? Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 40),
-                                  child: Text(
-                                    'Belum ada isi catatan.',
-                                    style:
-                                        OTTypography.body(color: textSecondary),
-                                  ),
-                                ),
-                              )
-                            : Directionality(
-                                textDirection: _textDirection,
-                                child: MarkdownBody(
-                                  data: _bodyController.text,
-                                  selectable: true,
-                                  styleSheet: MarkdownStyleSheet(
-                                    p: GoogleFonts.outfit(
-                                      fontSize: 14.5,
-                                      height: 1.6,
-                                      color: textPrimary,
-                                    ),
-                                    h1: GoogleFonts.newsreader(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      color: textPrimary,
-                                    ),
-                                    h2: GoogleFonts.newsreader(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: textPrimary,
-                                    ),
-                                    blockquote: GoogleFonts.outfit(
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic,
-                                      color: textSecondary,
-                                    ),
-                                    blockquoteDecoration: BoxDecoration(
-                                      color: surfaceSubtle,
-                                      borderRadius: BorderRadius.zero,
-                                      border: Border(
-                                        left: BorderSide(
-                                          color: textPrimary.withValues(
-                                              alpha: 0.6),
-                                          width: 3.5,
-                                        ),
-                                      ),
-                                    ),
-                                    code: GoogleFonts.sourceCodePro(
-                                      fontSize: 13,
-                                      backgroundColor: surfaceSubtle,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ],
-                    ),
-                  )
-                : ListView(
-                    padding: const EdgeInsets.all(OTSpacing.lg),
-                    children: [
-                      // Title TextField
+                        }),
+                    if (_isSavingDraft || _draftSaved || _draftRestored)
+                      Text(
+                          Loc.text(_isSavingDraft
+                              ? 'Menyimpan draf...'
+                              : _draftRestored
+                                  ? 'Draf dipulihkan'
+                                  : 'Draf tersimpan'),
+                          style: NativeType.meta(dark)),
+                  ]),
+            ])),
+        if (!_isPreview)
+          SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: [
+                IconButton(
+                    tooltip: Loc.text('Tebal'),
+                    icon: const Icon(Icons.format_bold),
+                    onPressed: () => _applyFormat('**', '**',
+                        defaultText: Loc.text('teks tebal'))),
+                IconButton(
+                    tooltip: Loc.text('Miring'),
+                    icon: const Icon(Icons.format_italic),
+                    onPressed: () => _applyFormat('*', '*',
+                        defaultText: Loc.text('teks miring'))),
+                IconButton(
+                    tooltip: Loc.text('Daftar Poin'),
+                    icon: const Icon(Icons.format_list_bulleted),
+                    onPressed: () => _applyFormat('\n- ', '',
+                        defaultText: Loc.text('poin catatan'))),
+                IconButton(
+                    tooltip: Loc.text('Kutipan'),
+                    icon: const Icon(Icons.format_quote),
+                    onPressed: () => _applyFormat('\n> ', '',
+                        defaultText: Loc.text('kutipan ibarah'))),
+                IconButton(
+                    tooltip: NativeCopy.text('arabicQuote'),
+                    icon: const Icon(Icons.format_quote_rounded),
+                    onPressed: () => _applyFormat('« ', ' »',
+                        defaultText: Loc.text('kutipan ibarah'))),
+                IconButton(
+                    tooltip: Loc.text('Judul Bab'),
+                    icon: const Icon(Icons.title),
+                    onPressed: () => _applyFormat('\n# ', '',
+                        defaultText: Loc.text('Judul Bab'))),
+                IconButton(
+                    tooltip: Loc.text('Orientasi Kiri ke Kanan (LTR)'),
+                    icon: const Icon(Icons.format_textdirection_l_to_r),
+                    onPressed: () => _applyDirection(TextDirection.ltr)),
+                IconButton(
+                    tooltip: Loc.text('Orientasi Kanan ke Kiri / Arab (RTL)'),
+                    icon: const Icon(Icons.format_textdirection_r_to_l),
+                    onPressed: () => _applyDirection(TextDirection.rtl)),
+              ])),
+        Divider(color: NativeColors.border(dark)),
+        Expanded(
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: ListView(padding: const EdgeInsets.all(20), children: [
+                    if (_isPreview) ...[
+                      Text(_titleController.text,
+                          style: NativeType.title(dark)),
+                      const SizedBox(height: 24),
+                      Directionality(
+                          textDirection: _textDirection,
+                          child: MarkdownBody(
+                              data: _bodyController.text,
+                              selectable: true,
+                              styleSheet: MarkdownStyleSheet(
+                                p: _textDirection == TextDirection.rtl
+                                    ? NativeType.arabic(dark, size: 22)
+                                    : NativeType.body(dark, size: 17),
+                                h1: NativeType.title(dark),
+                                h2: NativeType.title(dark, size: 24),
+                              ))),
+                    ] else ...[
                       TextField(
-                        controller: _titleController,
-                        style: GoogleFonts.newsreader(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: textPrimary,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Judul catatan',
-                          hintStyle: GoogleFonts.newsreader(
-                            fontSize: 20,
-                            color: textSecondary.withValues(alpha: 0.6),
-                          ),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Divider(color: border.withValues(alpha: 0.5), height: 1),
-                      const SizedBox(height: 14),
-
-                      // Body TextField
+                          controller: _titleController,
+                          maxLines: null,
+                          style: NativeType.title(dark),
+                          decoration: InputDecoration(
+                              hintText: Loc.text('Judul catatan'),
+                              border: InputBorder.none,
+                              filled: false)),
+                      const SizedBox(height: 16),
                       TextField(
-                        controller: _bodyController,
-                        maxLines: null,
-                        minLines: 12,
-                        keyboardType: TextInputType.multiline,
-                        textDirection: _textDirection,
-                        textAlign: _textDirection == TextDirection.rtl
-                            ? TextAlign.right
-                            : TextAlign.left,
-                        style: GoogleFonts.outfit(
-                          fontSize: 14.5,
-                          height: 1.55,
-                          color: textPrimary,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Tulis catatan atau tempel ibarah di sini…',
-                          hintTextDirection: _textDirection,
-                          hintStyle: GoogleFonts.outfit(
-                            fontSize: 14,
-                            color: textSecondary.withValues(alpha: 0.6),
-                          ),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
+                          controller: _bodyController,
+                          maxLines: null,
+                          minLines: 8,
+                          textDirection: _textDirection,
+                          style: _textDirection == TextDirection.rtl
+                              ? NativeType.arabic(dark, size: 22)
+                              : NativeType.body(dark, size: 17),
+                          decoration: InputDecoration(
+                              hintText: Loc.text(
+                                  'Tulis catatan atau tempel ibarah di sini…'),
+                              border: InputBorder.none,
+                              filled: false)),
                     ],
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ToolbarBtn extends StatelessWidget {
-  final String? label;
-  final IconData? icon;
-  final String tooltip;
-  final VoidCallback onTap;
-  final bool isBold;
-  final bool isItalic;
-  final bool isActive;
-
-  const _ToolbarBtn({
-    this.label,
-    this.icon,
-    required this.tooltip,
-    required this.onTap,
-    this.isBold = false,
-    this.isItalic = false,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textSecondary = OTColors.textSecondary(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final accent = OTColors.marja(isDark);
-
-    return Tooltip(
-      message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minWidth: 36, maxWidth: 44),
-          height: 32,
-          decoration: BoxDecoration(
-            color: isActive
-                ? accent.withValues(alpha: 0.14)
-                : Colors.transparent,
-            border: isActive
-                ? Border.all(
-                    color: accent.withValues(alpha: 0.45), width: 0.9)
-                : null,
-          ),
-          alignment: Alignment.center,
-          child: icon != null
-              ? Icon(icon,
-                  size: 17, color: isActive ? accent : textSecondary)
-              : Text(
-                  label!,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-                    fontStyle:
-                        isItalic ? FontStyle.italic : FontStyle.normal,
-                    color: isActive ? accent : textPrimary,
-                  ),
-                ),
-        ),
-      ),
+                  ]),
+                ))),
+      ]),
     );
   }
 }

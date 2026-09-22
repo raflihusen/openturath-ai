@@ -1,14 +1,17 @@
+import '../core/localization.dart';
+import '../widgets/native_theme.dart';
+import '../widgets/native_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/design/native_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
 import '../core/bookmark_content.dart';
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_design.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
@@ -19,7 +22,6 @@ import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/canonical_library_service.dart';
 import '../widgets/note_editor_sheet.dart';
-import 'main_shell_screen.dart';
 import 'note_reader_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -138,9 +140,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   Future<void> _deleteBookmark(BookmarkModel item) async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final surface = NativeColors.surface(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     final confirm = await showDialog<bool>(
       context: context,
@@ -150,31 +152,32 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
             AppCopy.deleteNoteTitle,
-            style: OTTypography.screenTitle(color: textPrimary)
+            style: NativeTypography.screenTitle(color: textPrimary)
                 .copyWith(fontSize: 18),
           ),
           content: Text(
             AppCopy.deleteNoteDesc,
-            style: OTTypography.body(color: textSecondary),
+            style: NativeTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text(
                 AppCopy.cancel,
-                style: OTTypography.button(color: textSecondary),
+                style: NativeTypography.button(color: textSecondary),
               ),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
+                backgroundColor: NativeColors.destructiveFill(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(
                 AppCopy.delete,
-                style: OTTypography.button(color: OTColors.onAccent(isDark)),
+                style: NativeTypography.button(
+                    color: NativeColors.onAccent(isDark)),
               ),
             ),
           ],
@@ -190,7 +193,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           message: AppCopy.bookmarkDeleted,
           action: SnackBarAction(
             label: AppCopy.undo,
-            textColor: OTColors.accent(isDark),
+            textColor: NativeColors.accent(isDark),
             onPressed: () => _bookmarkService.addBookmark(item),
           ),
         );
@@ -212,15 +215,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     }
     buffer.write('— ');
     if (item.bookReference.isNotEmpty) {
-      buffer.write('Kitab ${item.bookReference}');
+      buffer.write('${NativeCopy.text('sources')}: ${item.bookReference}');
       if (item.pageNumber.isNotEmpty) {
-        buffer.write(' (Hal. ${item.pageNumber})');
+        buffer.write(' (${NativeCopy.text('pages')}: ${item.pageNumber})');
       }
     } else {
       buffer.write(item.title);
     }
     if (item.author != null && item.author!.isNotEmpty) {
-      buffer.write(', karya ${item.author}');
+      buffer.write(', ${NativeCopy.text('author')}: ${item.author}');
     }
     buffer.write('.');
 
@@ -268,21 +271,23 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
     if (!mounted) return;
     final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => NoteReaderScreen(item: item)),
+      MaterialPageRoute(
+          builder: (_) => NativeTheme(child: NoteReaderScreen(item: item))),
     );
     if (changed == true && mounted) _loadBookmarks();
   }
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final accent = OTColors.accent(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final surfaceSubtle = NativeColors.surfaceSubtle(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final accent = NativeColors.accent(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -292,7 +297,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         scrolledUnderElevation: 0,
         title: Text(
           AppCopy.savedCollection,
-          style: OTTypography.corpusTitle(color: textPrimary).copyWith(
+          style: NativeTypography.corpusTitle(color: textPrimary).copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w600,
           ),
@@ -336,7 +341,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   vertical: OTSpacing.xs + 2,
                 ),
                 child: Container(
-                  height: 44,
+                  constraints: const BoxConstraints(minHeight: 48),
                   decoration: BoxDecoration(
                     color: surfaceSubtle,
                     borderRadius: OTRadius.inputBorder,
@@ -351,10 +356,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         _filter();
                       });
                     },
-                    style: OTTypography.body(color: textPrimary),
+                    style: NativeTypography.body(color: textPrimary),
                     decoration: InputDecoration(
                       hintText: AppCopy.searchSavedHint,
-                      hintStyle: OTTypography.body(color: textSecondary),
+                      hintStyle: NativeTypography.body(color: textSecondary),
                       prefixIcon: Icon(
                         Icons.search_rounded,
                         size: 18,
@@ -384,13 +389,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
 
             Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  OTSpacing.lg, 12, OTSpacing.lg, 8),
+              padding:
+                  const EdgeInsets.fromLTRB(OTSpacing.lg, 12, OTSpacing.lg, 8),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   AppCopy.savedNotesCount(_filteredBookmarks.length),
-                  style: OTTypography.caption(color: textSecondary).copyWith(
+                  style:
+                      NativeTypography.caption(color: textSecondary).copyWith(
                     fontSize: 12,
                     letterSpacing: 0.2,
                   ),
@@ -400,7 +406,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
             // ── Horizontal Filter Pills (Pengelompokan Keilmuan) ──
             Container(
-              height: 38,
+              height: MediaQuery.textScalerOf(context).scale(48).clamp(48, 100),
               margin: const EdgeInsets.only(bottom: 8),
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
@@ -421,7 +427,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       });
                     },
                     child: AnimatedContainer(
-                      duration: OTMotion.fast,
+                      duration: MediaQuery.disableAnimationsOf(context)
+                          ? Duration.zero
+                          : OTMotion.fast,
                       curve: OTMotion.curve,
                       padding: const EdgeInsets.symmetric(
                         horizontal: OTSpacing.md + 2,
@@ -439,8 +447,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          cat,
-                          style: OTTypography.caption(
+                          Loc.text(cat),
+                          style: NativeTypography.caption(
                             color: isSelected ? canvas : textSecondary,
                           ).copyWith(
                             fontSize: 12,
@@ -458,12 +466,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             // ── List of Saved Bookmarks ──
             Expanded(
               child: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: accent,
-                      ),
-                    )
+                  ? const Center(child: NativeLoading())
                   : RefreshIndicator(
                       onRefresh: _syncBookmarks,
                       color: accent,
@@ -507,8 +510,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           ),
                                           const SizedBox(height: OTSpacing.lg),
                                           Text(
-                                            AppCopy.noSavedTitle,
-                                            style: OTTypography.cardTitle(
+                                            _allBookmarks.isEmpty
+                                                ? NativeCopy.text('notesEmpty')
+                                                : NativeCopy.text(
+                                                    'noNotesResults'),
+                                            style: NativeTypography.cardTitle(
                                                     color: textPrimary)
                                                 .copyWith(
                                               fontSize: 16,
@@ -517,9 +523,11 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           const SizedBox(
                                               height: OTSpacing.xs + 2),
                                           Text(
-                                            AppCopy.noSavedDescription,
+                                            _allBookmarks.isEmpty
+                                                ? NativeCopy.text('notesHint')
+                                                : NativeCopy.text('searchHint'),
                                             textAlign: TextAlign.center,
-                                            style: OTTypography.body(
+                                            style: NativeTypography.body(
                                                     color: textSecondary)
                                                 .copyWith(
                                               fontSize: 13,
@@ -529,15 +537,24 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           OutlinedButton.icon(
                                             onPressed: () {
                                               OTMotion.light();
-                                              final shell =
-                                                  MainShellController.of(
-                                                      context);
-                                              shell?.switchTab(1);
+                                              if (_allBookmarks.isEmpty) {
+                                                _openNoteEditor();
+                                              } else {
+                                                _searchCtrl.clear();
+                                                setState(() {
+                                                  _searchQuery = '';
+                                                  _selectedCategory = 'Semua';
+                                                  _filter();
+                                                });
+                                              }
                                             },
                                             icon: const Icon(
                                                 Icons.menu_book_outlined,
                                                 size: 16),
-                                            label: Text(AppCopy.startStudy),
+                                            label: Text(_allBookmarks.isEmpty
+                                                ? NativeCopy.text('write')
+                                                : NativeCopy.text(
+                                                    'resetSearch')),
                                             style: OutlinedButton.styleFrom(
                                               foregroundColor: textPrimary,
                                               side: BorderSide(
@@ -551,7 +568,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                 borderRadius:
                                                     OTRadius.buttonBorder,
                                               ),
-                                              textStyle: OTTypography.button(),
+                                              textStyle:
+                                                  NativeTypography.button(),
                                             ),
                                           ),
                                         ],
@@ -645,30 +663,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
   // lewat ketukan kartu agar satu tangan tetap nyaman dipakai pada ponsel.
   final bool _isExpanded = false;
 
-  String _formatRelativeTime(DateTime dt) {
-    final now = DateTime.now();
-    final diff = now.difference(dt);
-    if (diff.inSeconds < 60) return 'Baru saja';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m lalu';
-    if (diff.inHours < 24) return '${diff.inHours}j lalu';
-    if (diff.inDays == 1) return 'Kemarin';
-    if (diff.inDays < 7) return '${diff.inDays}h lalu';
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des'
-    ];
-    return '${dt.day} ${months[dt.month - 1]}';
-  }
+  String _formatRelativeTime(DateTime dt) =>
+      MaterialLocalizations.of(context).formatMediumDate(dt);
 
   String _cleanSingleLine(String text) {
     final lines =
@@ -802,6 +798,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final item = widget.item;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isBookRef = item.documentKind == BookmarkDocumentKind.bookReference;
@@ -811,8 +808,13 @@ class _BookmarkCardState extends State<_BookmarkCard> {
     final pillLabel = switch (item.documentKind) {
       BookmarkDocumentKind.personalNote => AppCopy.navSaved,
       BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
-          ? item.agentTitle.replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-          : (item.fieldName.contains('Catatan') ? AppCopy.navSaved : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace)),
+          ? item.agentTitle
+              .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+          : (item.fieldName.contains('Catatan')
+              ? AppCopy.navSaved
+              : (item.fieldName.isNotEmpty
+                  ? item.fieldName
+                  : AppCopy.studySpace)),
       BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
     };
     final displayTitle = item.documentKind == BookmarkDocumentKind.aiAnswer
@@ -823,14 +825,15 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         : item.fullAnswer;
 
     return AnimatedContainer(
-      duration: OTMotion.normal,
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : OTMotion.normal,
       curve: OTMotion.curve,
       child: InkWell(
         onTap: widget.onOpen,
         borderRadius: OTRadius.cardBorder,
         child: Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: OTSpacing.md + 2, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
             color: widget.surface,
             borderRadius: OTRadius.cardBorder,
@@ -845,7 +848,10 @@ class _BookmarkCardState extends State<_BookmarkCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Metadata Bar: Pill Asisten / Keilmuan berdampingan rapi dengan keterangan waktu
-              Row(
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -856,8 +862,9 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     ),
                     child: Text(
                       pillLabel,
-                      style: OTTypography.captionMedium(color: widget.accent)
-                          .copyWith(
+                      style:
+                          NativeTypography.captionMedium(color: widget.accent)
+                              .copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -876,7 +883,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                   const SizedBox(width: 8),
                   Text(
                     _formatRelativeTime(item.effectiveTime),
-                    style: OTTypography.caption(
+                    style: NativeTypography.caption(
                       color: widget.textSecondary.withValues(alpha: 0.8),
                     ).copyWith(fontSize: 11),
                   ),
@@ -889,8 +896,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
               _buildHighlightedText(
                 text: displayTitle,
                 query: widget.searchQuery,
-                baseStyle:
-                    OTTypography.cardTitle(color: widget.textPrimary).copyWith(
+                baseStyle: NativeTypography.cardTitle(color: widget.textPrimary)
+                    .copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -908,8 +915,9 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       ? parseAiAnswerContent(readableAnswer).preview
                       : _getSnippet(readableAnswer, widget.searchQuery),
                   query: widget.searchQuery,
-                  baseStyle: OTTypography.caption(color: widget.textSecondary)
-                      .copyWith(
+                  baseStyle:
+                      NativeTypography.caption(color: widget.textSecondary)
+                          .copyWith(
                     fontSize: 12,
                   ),
                   isDark: isDark,
@@ -937,8 +945,8 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text:
                           '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
                       query: widget.searchQuery,
-                      baseStyle:
-                          OTTypography.captionMedium(color: widget.textPrimary),
+                      baseStyle: NativeTypography.captionMedium(
+                          color: widget.textPrimary),
                       isDark: isDark,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -963,7 +971,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text: item.arabicExcerpt,
                       query: widget.searchQuery,
                       isRtl: true,
-                      baseStyle: GoogleFonts.scheherazadeNew(
+                      baseStyle: NativeFonts.scheherazadeNew(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         height: 1.8,
@@ -982,7 +990,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 600)
                           : item.fullAnswer.trim(),
                       query: widget.searchQuery,
-                      baseStyle: GoogleFonts.outfit(
+                      baseStyle: NativeFonts.outfit(
                         fontSize: 13,
                         height: 1.5,
                         color: widget.textSecondary,
@@ -995,17 +1003,17 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 300)
                           : item.fullAnswer.trim(),
                       styleSheet: MarkdownStyleSheet(
-                        p: GoogleFonts.outfit(
+                        p: NativeFonts.outfit(
                           fontSize: 13,
                           height: 1.5,
                           color: widget.textSecondary,
                         ),
-                        strong: GoogleFonts.outfit(
+                        strong: NativeFonts.outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: widget.textPrimary,
                         ),
-                        blockquote: GoogleFonts.outfit(
+                        blockquote: NativeFonts.outfit(
                           fontSize: 12.5,
                           fontStyle: FontStyle.italic,
                           color: widget.textSecondary,
@@ -1028,7 +1036,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         side: BorderSide(color: widget.border, width: 0.8),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
-                        textStyle: OTTypography.captionMedium(),
+                        textStyle: NativeTypography.captionMedium(),
                         shape: RoundedRectangleBorder(
                             borderRadius: OTRadius.buttonBorder),
                       ),
@@ -1051,7 +1059,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         side: BorderSide(color: widget.border, width: 0.8),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
-                        textStyle: OTTypography.captionMedium(),
+                        textStyle: NativeTypography.captionMedium(),
                         shape: RoundedRectangleBorder(
                             borderRadius: OTRadius.buttonBorder),
                       ),
@@ -1068,7 +1076,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 8),
-                          textStyle: OTTypography.captionMedium(),
+                          textStyle: NativeTypography.captionMedium(),
                           shape: RoundedRectangleBorder(
                               borderRadius: OTRadius.buttonBorder),
                         ),

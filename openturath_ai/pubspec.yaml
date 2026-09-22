@@ -41,6 +41,7 @@ dependencies:
   package_info_plus: ^8.0.2
   flutter_markdown: ^0.7.7+1
   crypto: ^3.0.7
+  intl: ^0.20.2
   path_provider: ^2.1.6
   open_filex: ^4.7.0
   device_info_plus: ^12.4.0
@@ -52,6 +53,20 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: NativeInter
+      fonts:
+        - asset: assets/native_fonts/NativeInter.ttf
+    - family: NativeOutfit
+      fonts:
+        - asset: assets/native_fonts/NativeOutfit.ttf
+    - family: NativeNewsreader
+      fonts:
+        - asset: assets/native_fonts/NativeNewsreader.ttf
+          weight: 600
+    - family: NativeArabic
+      fonts:
+        - asset: assets/native_fonts/NativeArabic.ttf
   assets:
     - assets/images/
     - assets/animations/
