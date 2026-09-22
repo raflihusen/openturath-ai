@@ -1,13 +1,13 @@
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../core/scholarly_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_layout.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
@@ -25,7 +25,8 @@ import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
-import '../widgets/staggered_entrance.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/ot_mobile_primitives.dart';
 import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -232,242 +233,100 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         ),
         body: SafeArea(
           top: false,
-          child: Column(
-            children: [
-              // Search & Controls Container
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: border, width: 1.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search_rounded,
-                              size: 20, color: textSecondary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchCtrl,
-                              onChanged: _onSearchChanged,
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: 13.5, color: textPrimary),
-                              decoration: InputDecoration(
-                                hintText: Loc.tr('ui_55fddd168e'),
-                                hintStyle: ScholarlyFonts.outfit(
-                                    fontSize: 13.5, color: textSecondary),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                filled: false,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                          ),
-                          if (_searchQuery.isNotEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                _searchCtrl.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                              child: Icon(Icons.close_rounded,
-                                  size: 18, color: textSecondary),
-                            ),
-                        ],
-                      ),
-                    ),
-                    if (isGeneralTab) ...[
-                      const SizedBox(height: OTSpacing.md),
-                      // Dual Taxonomy Switcher
-                      CorpusKindControl(
-                        value: _corpusKind,
-                        onChanged: (k) {
-                          setState(() {
-                            _corpusKind = k;
-                            _selectedFieldId = null;
-                          });
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Discipline Filter Chips (only in discipline mode)
-              if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
-                SizedBox(
-                  height: Loc.isArabic ? 60 : 48,
-                  child: ListView(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
+          child: OTConstrainedContent(
+            maxWidth: OTLayout.catalogueWidth,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: OTSpacing.sm),
+                  child: Column(
                     children: [
-                      _filterChip(
-                        label: AppCopy.allCategories,
-                        isSelected: _selectedFieldId == null ||
-                            _selectedFieldId == 'all',
-                        onTap: () => setState(() => _selectedFieldId = 'all'),
-                        isDark: isDark,
-                        border: border,
-                        surface: surface,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
+                      OTSearchField(
+                        controller: _searchCtrl,
+                        hintText: 'Cari asisten atau bidang kajian',
+                        onChanged: _onSearchChanged,
                       ),
-                      const SizedBox(width: 8),
-                      ...FieldModel.defaultFields.map((field) {
-                        return Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 8),
-                          child: _filterChip(
-                            label: field.name,
-                            isSelected: _selectedFieldId == field.id,
-                            onTap: () =>
-                                setState(() => _selectedFieldId = field.id),
-                            isDark: isDark,
-                            border: border,
-                            surface: surface,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                        );
-                      }),
+                      if (isGeneralTab) ...[
+                        const SizedBox(height: OTSpacing.md),
+                        CorpusKindControl(
+                          value: _corpusKind,
+                          onChanged: (kind) {
+                            setState(() {
+                              _corpusKind = kind;
+                              _selectedFieldId = null;
+                            });
+                          },
+                        ),
+                      ],
                     ],
                   ),
                 ),
-                const SizedBox(height: OTSpacing.sm),
-              ],
-
-              // Content List
-              Expanded(
-                child: _corpusKind == CorpusKind.scholar
-                    ? const ScholarsComingSoon()
-                    : _isLoading
-                        ? const Center(child: CircularProgressIndicator())
-                        : filtered.isEmpty
-                            ? Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(OTSpacing.xl),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.search_off_rounded,
-                                          size: 40, color: textSecondary),
-                                      const SizedBox(height: OTSpacing.sm),
-                                      Text(
-                                        _searchQuery.isNotEmpty
-                                            ? AppCopy.noAssistantsFound
-                                            : AppCopy.noAssistantsFound,
-                                        style: OTTypography.body(
-                                            color: textSecondary),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
+                if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
+                  SizedBox(
+                    height: Loc.isArabic ? 60 : 48,
+                    child: ListView(
+                      physics: const BouncingScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        _filterChip(
+                          label: AppCopy.allCategories,
+                          isSelected: _selectedFieldId == null ||
+                              _selectedFieldId == 'all',
+                          onTap: () => setState(() => _selectedFieldId = 'all'),
+                          isDark: isDark,
+                          border: border,
+                          surface: surface,
+                          textPrimary: textPrimary,
+                          textSecondary: textSecondary,
+                        ),
+                        const SizedBox(width: OTSpacing.sm),
+                        ...FieldModel.defaultFields.map((field) {
+                          return Padding(
+                            padding: const EdgeInsetsDirectional.only(
+                              end: OTSpacing.sm,
+                            ),
+                            child: _filterChip(
+                              label: field.name,
+                              isSelected: _selectedFieldId == field.id,
+                              onTap: () =>
+                                  setState(() => _selectedFieldId = field.id),
+                              isDark: isDark,
+                              border: border,
+                              surface: surface,
+                              textPrimary: textPrimary,
+                              textSecondary: textSecondary,
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: OTSpacing.sm),
+                ],
+                Expanded(
+                  child: _corpusKind == CorpusKind.scholar
+                      ? const ScholarsComingSoon()
+                      : _isLoading
+                          ? const Center(
+                              child: AppLoader(title: 'Menyiapkan asisten…'),
+                            )
+                          : filtered.isEmpty
+                              ? const OTEmptyState(
+                                  icon: Icons.search_off_rounded,
+                                  title: 'Asisten tidak ditemukan',
+                                  message:
+                                      'Coba kata kunci lain atau pilih bidang kajian yang berbeda.',
+                                )
+                              : _AssistantDirectory(
+                                  agents: filtered,
+                                  searchIsEmpty: _searchQuery.isEmpty,
+                                  currentUser: _authService.cachedCurrentUser,
+                                  onOpenAgent: _openAgent,
+                                  onOpenSubAgent: _openTahawwulatSubAgent,
                                 ),
-                              )
-                            : Builder(
-                                builder: (context) {
-                                  final sorted =
-                                      List<AgentModel>.from(filtered);
-                                  if (_searchQuery.isEmpty) {
-                                    sorted.sort((a, b) {
-                                      if (a.id == 'fiqh_tahawwulat') return -1;
-                                      if (b.id == 'fiqh_tahawwulat') return 1;
-                                      if (a.isActive && !b.isActive) return -1;
-                                      if (!a.isActive && b.isActive) return 1;
-                                      return 0;
-                                    });
-                                  }
-
-                                  return ListView.separated(
-                                    physics: const BouncingScrollPhysics(
-                                        parent:
-                                            AlwaysScrollableScrollPhysics()),
-                                    padding: const EdgeInsets.fromLTRB(
-                                        OTSpacing.lg,
-                                        OTSpacing.xs,
-                                        OTSpacing.lg,
-                                        96),
-                                    itemCount: sorted.length,
-                                    separatorBuilder: (_, index) {
-                                      final touchesFlagship =
-                                          sorted[index].id ==
-                                                  'fiqh_tahawwulat' ||
-                                              sorted[index + 1].id ==
-                                                  'fiqh_tahawwulat';
-                                      return SizedBox(
-                                        height:
-                                            touchesFlagship ? OTSpacing.md : 0,
-                                      );
-                                    },
-                                    itemBuilder: (context, index) {
-                                      final agent = sorted[index];
-                                      if (agent.id == 'fiqh_tahawwulat') {
-                                        final user =
-                                            _authService.cachedCurrentUser;
-                                        final isSubscribed = user != null &&
-                                            user.hasAccessToAgent(agent.id);
-                                        return OTStaggeredEntrance(
-                                          index: index,
-                                          child: TahawwulatFlagshipCard(
-                                            agent: agent,
-                                            isSubscribed: isSubscribed,
-                                            onOpenMain: () => _openAgent(agent),
-                                            onOpenSubAgent: (sub) =>
-                                                _openTahawwulatSubAgent(
-                                                    agent, sub),
-                                            onOpenLibrary:
-                                                agent.catalogId != null
-                                                    ? () => showResearchLibrary(
-                                                        context,
-                                                        agent: agent)
-                                                    : null,
-                                          ),
-                                        );
-                                      }
-                                      return OTStaggeredEntrance(
-                                        index: index,
-                                        child: SpecialistCard(
-                                          title: agent.title,
-                                          serial: (index + 1)
-                                              .toString()
-                                              .padLeft(2, '0'),
-                                          titleArabic: agent.titleArabic,
-                                          emoji: agent.emoji,
-                                          scopeLabel: agent.subtitleAcademic,
-                                          referenceLabel: agent.referenceBooks
-                                              ?.take(2)
-                                              .map((b) => b.titleArabic)
-                                              .where((s) => s.isNotEmpty)
-                                              .join(' · '),
-                                          statusLabel: agent.isComingSoon
-                                              ? AppCopy.comingSoon
-                                              : null,
-                                          onOpen: () => _openAgent(agent),
-                                          onOpenLibrary: agent.catalogId != null
-                                              ? () => showResearchLibrary(
-                                                  context,
-                                                  agent: agent)
-                                              : null,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -515,6 +374,76 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AssistantDirectory extends StatelessWidget {
+  const _AssistantDirectory({
+    required this.agents,
+    required this.searchIsEmpty,
+    required this.currentUser,
+    required this.onOpenAgent,
+    required this.onOpenSubAgent,
+  });
+
+  final List<AgentModel> agents;
+  final bool searchIsEmpty;
+  final UserModel? currentUser;
+  final ValueChanged<AgentModel> onOpenAgent;
+  final void Function(AgentModel agent, SubAgentModel subAgent) onOpenSubAgent;
+
+  @override
+  Widget build(BuildContext context) {
+    final sorted = List<AgentModel>.from(agents);
+    if (searchIsEmpty) {
+      sorted.sort((a, b) {
+        if (a.id == 'fiqh_tahawwulat') return -1;
+        if (b.id == 'fiqh_tahawwulat') return 1;
+        if (a.isActive && !b.isActive) return -1;
+        if (!a.isActive && b.isActive) return 1;
+        return a.sortOrder.compareTo(b.sortOrder);
+      });
+    }
+
+    return ListView.separated(
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
+      padding: const EdgeInsets.only(top: OTSpacing.xs, bottom: 96),
+      itemCount: sorted.length,
+      separatorBuilder: (_, __) => const SizedBox(height: OTSpacing.md),
+      itemBuilder: (context, index) {
+        final agent = sorted[index];
+        final openLibrary = agent.catalogId == null
+            ? null
+            : () => showResearchLibrary(context, agent: agent);
+
+        if (agent.id == 'fiqh_tahawwulat') {
+          return TahawwulatFlagshipCard(
+            agent: agent,
+            isSubscribed: currentUser?.hasAccessToAgent(agent.id) ?? false,
+            onOpenMain: () => onOpenAgent(agent),
+            onOpenSubAgent: (subAgent) => onOpenSubAgent(agent, subAgent),
+            onOpenLibrary: openLibrary,
+          );
+        }
+
+        return SpecialistCard(
+          title: agent.title,
+          titleArabic: agent.titleArabic,
+          emoji: agent.emoji,
+          scopeLabel: agent.subtitleAcademic,
+          referenceLabel: agent.referenceBooks
+              ?.take(2)
+              .map((book) => book.titleArabic)
+              .where((title) => title.isNotEmpty)
+              .join(' · '),
+          statusLabel: agent.isComingSoon ? AppCopy.comingSoon : null,
+          onOpen: () => onOpenAgent(agent),
+          onOpenLibrary: openLibrary,
+        );
+      },
     );
   }
 }
