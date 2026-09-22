@@ -169,151 +169,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       initialData: _initialUser,
       builder: (context, snapshot) {
         final user = snapshot.data ?? _initialUser;
-        final matches = _agents
-            .where((a) =>
-                a.kind == CorpusKind.discipline &&
-                (ArabicUtils.matches(a.title, _searchQuery) ||
-                    ArabicUtils.matches(a.titleArabic, _searchQuery) ||
-                    ArabicUtils.matches(a.subtitleAcademic, _searchQuery)))
-            .toList();
-        return Scaffold(
-          backgroundColor: NativeColors.canvas(dark),
-          body: SafeArea(
-              bottom: false,
-              child: RefreshIndicator(
-                onRefresh: _loadData,
-                child: Align(
-                    alignment: Alignment.topCenter,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 760),
-                      child: ListView(
-                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 104),
-                          children: [
-                            Text('OpenTurath', style: NativeType.title(dark, size: 26)),
-                            const SizedBox(height: 8),
-                            Text(user == null ? AppCopy.ahlanDefault : AppCopy.ahlanWithName(user.name), style: NativeType.body(dark, size: 15)),
-                            const SizedBox(height: 4),
-                            Text(HijriDateUtils.formatHijriOnly(), style: NativeType.meta(dark)),
-                            const SizedBox(height: 20),
-                            const UpdateReadyBanner(),
-                            ListenableBuilder(
-                                listenable: AgentSessionManager.instance,
-                                builder: (context, _) {
-                                  AgentModel? target = AgentSessionManager
-                                      .instance.activeTab?.agent;
-                                  for (final agent in _agents) {
-                                    if (target == null &&
-                                        agent.id == _lastOpenedAgentId) {
-                                      target = agent;
-                                    }
-                                  }
-                                  final selected = target;
-                                  return NativeResumeCard(
-                                    title: selected == null ? AppCopy.studyEntryDefaultTitle : Loc.text(selected.title),
-                                    action: selected == null ? AppCopy.startStudy : AppCopy.continueStudy,
-                                    onOpen: () => selected == null ? _browse() : _openNotebook(selected, user),
-                                    onLibrary: selected?.catalogId == null ? null : () => openNativeLibrary(context, agent: selected!),
-                                  );
-                                }),
-                            const SizedBox(height: 24),
-                            NativeSearch(
-                                controller: _searchController,
-                                hint: NativeCopy.text('searchAssistants'),
-                                onChanged: (value) => setState(
-                                    () => _searchQuery = value.trim())),
-                            const SizedBox(height: 24),
-                            if (_searchQuery.isNotEmpty) ...[
-                              Text(AppCopy.searchResults,
-                                  style: NativeType.title(dark, size: 22)),
-                              const SizedBox(height: 16),
-                              if (matches.isEmpty)
-                                NativeEmpty(
-                                    title: AppCopy.noAssistantsFound,
-                                    icon: Icons.search_off_rounded),
-                              for (final agent in matches)
-                                SpecialistCard(
-                                    title: agent.title,
-                                    titleArabic: agent.titleArabic,
-                                    scopeLabel: agent.subtitleAcademic,
-                                    statusLabel: agent.isComingSoon
-                                        ? AppCopy.comingSoon
-                                        : null,
-                                    onOpen: () => _openNotebook(agent, user),
-                                    onOpenLibrary: agent.catalogId == null
-                                        ? null
-                                        : () => openNativeLibrary(context,
-                                            agent: agent)),
-                            ] else ...[
-                              Row(children: [
-                                Expanded(
-                                    child: Text(AppCopy.chooseField,
-                                        style:
-                                            NativeType.title(dark, size: 22))),
-                                TextButton(
-                                    onPressed: () => _browse(),
-                                    child: Text(AppCopy.seeAll)),
-                              ]),
-                              const SizedBox(height: 12),
-                              NativeSection(
-                                  padding: EdgeInsets.zero,
-                                  child: Column(children: [
-                                    for (final field in FieldModel.defaultFields
-                                        .where((f) =>
-                                            f.id != 'fiqh_tahawwulat')) ...[
-                                      NativePress(
-                                          onTap: () =>
-                                              _browse(fieldId: field.id),
-                                          child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 12),
-                                              child: Row(children: [
-                                                Expanded(
-                                                    child: Text(
-                                                        Loc.text(field.name),
-                                                        style: NativeType.body(
-                                                            dark))),
-                                                const Icon(
-                                                    Icons.chevron_right_rounded,
-                                                    size: 20),
-                                              ]))),
-                                    ],
-                                  ])),
-                              const SizedBox(height: 20),
-                              NativePress(
-                                  onTap: () =>
-                                      _browse(fieldId: 'fiqh_tahawwulat'),
-                                  child: NativeSection(
-                                      collection: true,
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(NativeCopy.text('exclusive'),
-                                                style: NativeType.meta(dark)
-                                                    .copyWith(
-                                                        color:
-                                                            NativeColors.brass(
-                                                                dark))),
-                                            const SizedBox(height: 8),
-                                            Text(AppCopy.planTahawwulat,
-                                                style: NativeType.title(dark,
-                                                    size: 22)),
-                                            const SizedBox(height: 6),
-                                            Text(NativeCopy.text('fivePaths'),
-                                                style: NativeType.meta(dark)),
-                                          ]))),
-                              const SizedBox(height: 28),
-                              Text(NativeCopy.text('recentNotes'),
-                                  style: NativeType.title(dark, size: 22)),
-                              const SizedBox(height: 12),
-                              _RecentNotes(userId: user?.uid),
-                            ],
-                          ]),
-                    )),
-              )),
-        );
+        return NativeDashboardPage(user: user, agents: _agents, lastOpenedAgentId: _lastOpenedAgentId,
+          searchController: _searchController, searchQuery: _searchQuery,
+          onSearch: (value) => setState(() => _searchQuery = value.trim()),
+          onBrowse: _browse, onOpen: (agent) => _openNotebook(agent, user), onRefresh: _loadData);
       },
     );
   }
@@ -408,5 +267,170 @@ class _RecentNotesState extends State<_RecentNotes> {
                           ]))),
               ]));
         });
+  }
+}
+
+/// Same presentation used in production and offline visual regression tests.
+class NativeDashboardPage extends StatelessWidget {
+  const NativeDashboardPage({super.key, required this.user, required this.agents,
+    required this.searchController, required this.searchQuery, required this.onSearch,
+    required this.onBrowse, required this.onOpen, required this.onRefresh, this.lastOpenedAgentId});
+  final UserModel? user;
+  final List<AgentModel> agents;
+  final String? lastOpenedAgentId;
+  final TextEditingController searchController;
+  final String searchQuery;
+  final ValueChanged<String> onSearch;
+  final void Function({String? fieldId}) onBrowse;
+  final ValueChanged<AgentModel> onOpen;
+  final Future<void> Function() onRefresh;
+  @override
+  Widget build(BuildContext context) {
+    Loc.watch(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final matches = agents
+            .where((a) =>
+                a.kind == CorpusKind.discipline &&
+                (ArabicUtils.matches(a.title, searchQuery) ||
+                    ArabicUtils.matches(a.titleArabic, searchQuery) ||
+                    ArabicUtils.matches(a.subtitleAcademic, searchQuery)))
+            .toList();
+        return Scaffold(
+          backgroundColor: NativeColors.canvas(dark),
+          body: SafeArea(
+              bottom: false,
+              child: RefreshIndicator(
+                onRefresh: onRefresh,
+                child: Align(
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: ListView(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 104),
+                          children: [
+                            Text('OpenTurath', style: NativeType.title(dark, size: 26)),
+                            const SizedBox(height: 8),
+                            Text(user == null ? AppCopy.ahlanDefault : AppCopy.ahlanWithName(user.name), style: NativeType.body(dark, size: 15)),
+                            const SizedBox(height: 4),
+                            Text(HijriDateUtils.formatHijriOnly(), style: NativeType.meta(dark)),
+                            const SizedBox(height: 20),
+                            const UpdateReadyBanner(),
+                            ListenableBuilder(
+                                listenable: AgentSessionManager.instance,
+                                builder: (context, _) {
+                                  AgentModel? target = AgentSessionManager
+                                      .instance.activeTab?.agent;
+                                  for (final agent in agents) {
+                                    if (target == null &&
+                                        agent.id == lastOpenedAgentId) {
+                                      target = agent;
+                                    }
+                                  }
+                                  final selected = target;
+                                  return NativeResumeCard(
+                                    title: selected == null ? AppCopy.studyEntryDefaultTitle : Loc.text(selected.title),
+                                    action: selected == null ? AppCopy.startStudy : AppCopy.continueStudy,
+                                    onOpen: () => selected == null ? onBrowse() : onOpen(selected),
+                                    onLibrary: selected?.catalogId == null ? null : () => openNativeLibrary(context, agent: selected!),
+                                  );
+                                }),
+                            const SizedBox(height: 24),
+                            NativeSearch(
+                                controller: searchController,
+                                hint: NativeCopy.text('searchAssistants'),
+                                onChanged: onSearch),
+                            const SizedBox(height: 24),
+                            if (searchQuery.isNotEmpty) ...[
+                              Text(AppCopy.searchResults,
+                                  style: NativeType.title(dark, size: 22)),
+                              const SizedBox(height: 16),
+                              if (matches.isEmpty)
+                                NativeEmpty(
+                                    title: AppCopy.noAssistantsFound,
+                                    icon: Icons.search_off_rounded),
+                              for (final agent in matches)
+                                SpecialistCard(
+                                    title: agent.title,
+                                    titleArabic: agent.titleArabic,
+                                    scopeLabel: agent.subtitleAcademic,
+                                    statusLabel: agent.isComingSoon
+                                        ? AppCopy.comingSoon
+                                        : null,
+                                    onOpen: () => onOpen(agent),
+                                    onOpenLibrary: agent.catalogId == null
+                                        ? null
+                                        : () => openNativeLibrary(context,
+                                            agent: agent)),
+                            ] else ...[
+                              Row(children: [
+                                Expanded(
+                                    child: Text(AppCopy.chooseField,
+                                        style:
+                                            NativeType.title(dark, size: 22))),
+                                TextButton(
+                                    onPressed: () => onBrowse(),
+                                    child: Text(AppCopy.seeAll)),
+                              ]),
+                              const SizedBox(height: 12),
+                              NativeSection(
+                                  padding: EdgeInsets.zero,
+                                  child: Column(children: [
+                                    for (final field in FieldModel.defaultFields
+                                        .where((f) =>
+                                            f.id != 'fiqh_tahawwulat')) ...[
+                                      NativePress(
+                                          onTap: () =>
+                                              onBrowse(fieldId: field.id),
+                                          child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 12),
+                                              child: Row(children: [
+                                                Expanded(
+                                                    child: Text(
+                                                        Loc.text(field.name),
+                                                        style: NativeType.body(
+                                                            dark))),
+                                                const Icon(
+                                                    Icons.chevron_right_rounded,
+                                                    size: 20),
+                                              ]))),
+                                    ],
+                                  ])),
+                              const SizedBox(height: 20),
+                              NativePress(
+                                  onTap: () =>
+                                      onBrowse(fieldId: 'fiqh_tahawwulat'),
+                                  child: NativeSection(
+                                      collection: true,
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(NativeCopy.text('exclusive'),
+                                                style: NativeType.meta(dark)
+                                                    .copyWith(
+                                                        color:
+                                                            NativeColors.brass(
+                                                                dark))),
+                                            const SizedBox(height: 8),
+                                            Text(AppCopy.planTahawwulat,
+                                                style: NativeType.title(dark,
+                                                    size: 22)),
+                                            const SizedBox(height: 6),
+                                            Text(NativeCopy.text('fivePaths'),
+                                                style: NativeType.meta(dark)),
+                                          ]))),
+                              const SizedBox(height: 28),
+                              Text(NativeCopy.text('recentNotes'),
+                                  style: NativeType.title(dark, size: 22)),
+                              const SizedBox(height: 12),
+                              _RecentNotes(userId: user?.uid),
+                            ],
+                          ]),
+                    )),
+              )),
+        );
   }
 }
