@@ -61,10 +61,12 @@ void main() {
           expect(Directionality.of(tester.element(find.byType(TahawwulatCollectionPage))), locale == 'ar' ? TextDirection.rtl : TextDirection.ltr);
           if (scale == 1 && const bool.fromEnvironment('CAPTURE_NATIVE')) {
             final boundary = capture.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-            final image = await boundary.toImage(pixelRatio: 2);
-            final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-            await tester.runAsync(() => File('/tmp/openturath-$locale-${dark ? "dark" : "light"}.png').writeAsBytes(bytes!.buffer.asUint8List()));
-            image.dispose();
+            await tester.runAsync(() async {
+              final image = await boundary.toImage(pixelRatio: 2);
+              final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+              await File('/tmp/openturath-$locale-${dark ? "dark" : "light"}.png').writeAsBytes(bytes!.buffer.asUint8List());
+              image.dispose();
+            });
           }
           for (final sub in agent.subAgents!) {
             final label = find.text(sub.name);
