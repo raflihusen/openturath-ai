@@ -195,9 +195,10 @@ class BookmarkService extends ChangeNotifier {
       }
 
       // Step 4: Two-way reconciliation
-      // - Push any local notes not yet on cloud
+      // - Push local notes not yet on cloud, or local notes newer than cloud version
       for (final entry in localMap.entries) {
-        if (!cloudMap.containsKey(entry.key)) {
+        final cloudItem = cloudMap[entry.key];
+        if (cloudItem == null || entry.value.syncTime.isAfter(cloudItem.syncTime)) {
           unawaited(_pushToCloud(entry.value, effectiveUid));
         }
       }

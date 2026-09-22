@@ -38,6 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final AuthService _authService = AuthService();
   final AgentService _agentService = AgentService();
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   late final UpdateService _updateService;
   bool _hasShownUpdateDialog = false;
 
@@ -81,6 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void dispose() {
     _updateService.removeListener(_onUpdateServiceChanged);
+    _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -270,53 +272,71 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
-                    Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: border, width: 1.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search_rounded,
-                              size: 20, color: textSecondary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              onChanged: (val) =>
-                                  setState(() => _searchQuery = val.trim()),
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: 13.5, color: textPrimary),
-                              decoration: InputDecoration(
-                                hintText: AppCopy.dashboardSearchHint,
-                                hintStyle: ScholarlyFonts.outfit(
-                                    fontSize: 13.5, color: textSecondary),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                filled: false,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
+                    ListenableBuilder(
+                      listenable: _searchFocusNode,
+                      builder: (context, _) {
+                        final isFocused = _searchFocusNode.hasFocus;
+                        return Container(
+                          height: 48,
+                          padding: const EdgeInsets.only(left: 16, right: 6),
+                          decoration: BoxDecoration(
+                            color: surface,
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(
+                              color: isFocused ? accent : border,
+                              width: isFocused ? 1.5 : 1.0,
                             ),
                           ),
-                          if (_searchQuery.isNotEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                _searchController.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                              child: Icon(Icons.close_rounded,
-                                  size: 18, color: textSecondary),
-                            ),
-                        ],
-                      ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.search_rounded,
+                                  size: 20,
+                                  color: isFocused ? accent : textSecondary),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: TextField(
+                                  controller: _searchController,
+                                  focusNode: _searchFocusNode,
+                                  onChanged: (val) =>
+                                      setState(() => _searchQuery = val.trim()),
+                                  style: ScholarlyFonts.outfit(
+                                      fontSize: 13.5, color: textPrimary),
+                                  decoration: InputDecoration(
+                                    hintText: AppCopy.dashboardSearchHint,
+                                    hintStyle: ScholarlyFonts.outfit(
+                                        fontSize: 13.5, color: textSecondary),
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    focusedErrorBorder: InputBorder.none,
+                                    filled: false,
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                              ),
+                              if (_searchQuery.isNotEmpty)
+                                Tooltip(
+                                  message: 'Hapus pencarian',
+                                  child: InkWell(
+                                    onTap: () {
+                                      _searchController.clear();
+                                      setState(() => _searchQuery = '');
+                                    },
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.close_rounded,
+                                          size: 18, color: textSecondary),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 22),

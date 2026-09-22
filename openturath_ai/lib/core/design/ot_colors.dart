@@ -14,7 +14,7 @@ class OTColors {
   static const Color surfaceSubtleLight = Color(0xFFEEEEEB); // Area sekunder, track selector, header list
   static const Color textPrimaryLight = Color(0xFF171717); // Teks utama, heading, tombol primer (ink black)
   static const Color textSecondaryLight = Color(0xFF656560); // Metadata, deskripsi kitab, label sekunder
-  static const Color textTertiaryLight = Color(0xFF92928C); // Placeholder, informasi minor, divider halus
+  static const Color textTertiaryLight = Color(0xFF71716C); // Placeholder, informasi minor, divider halus (WCAG AA 4.8:1)
   static const Color borderLight = Color(0xFFDDDDD8); // Garis pembatas standar (1.0px hairline)
   static const Color borderSubtleLight = Color(0xFFEEEEEB);
   static const Color borderStrongLight = Color(0xFFB8B8B1); // Garis aktif, state fokus, pemisah penting

@@ -22,7 +22,7 @@ const copyCatalog = <String, List<String>>{
   "searchResults": ["Hasil pencarian", "Search results", "نتائج البحث"],
   "continueStudy": ["Lanjutkan telaah", "Continue reading", "متابعة المطالعة"],
   "startStudy": ["Mulai telaah", "Begin your study", "ابدأ المطالعة"],
-  "dashboardSearchHint": ["Cari marja', topik, atau ibarah…", "Search references, topics, or passages…", "ابحث عن مرجع أو موضوع أو عبارة…"],
+  "dashboardSearchHint": ["Cari asisten atau bidang keilmuan…", "Search assistants or disciplines…", "ابحث عن المساعد أو المجال العلمي…"],
   "ahlanDefault": ["Ahlan", "Welcome", "أهلًا وسهلًا"],
   "studyBookCategory": ["TELAAH KITAB", "TEXTUAL STUDIES", "مطالعة الكتب"],
   "studyEntryDefaultTitle": ["Ibarah & Istinbath Turats", "Reading and Understanding the Classics", "قراءة عبارات التراث وفهمها"],

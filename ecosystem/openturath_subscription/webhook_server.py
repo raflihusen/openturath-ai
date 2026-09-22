@@ -490,11 +490,11 @@ async def process_webhook(payload: dict) -> dict:
                 break
 
     if not notebook_ids:
-        logger.warning(
-            "⚠️  Produk '%s' tidak ada di PRODUCT_TO_NOTEBOOKS. Menggunakan fallback Paket Semua AI.",
+        logger.error(
+            "❌ Produk '%s' tidak terdaftar di PRODUCT_TO_NOTEBOOKS. Transaksi dikarantina (fail-closed).",
             service_name,
         )
-        notebook_ids = PRODUCT_TO_NOTEBOOKS.get("Paket Semua AI", [])
+        return {"success": False, "error": f"Produk '{service_name}' tidak terdaftar"}
 
     # Filter out empty notebook IDs
     notebook_ids = [nid for nid in notebook_ids if nid]
@@ -965,6 +965,13 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 "webhook_secret_set": bool(AKAL_WEBHOOK_SECRET),
             })
         elif self.path == "/keepalive":
+            cron_secret = os.getenv("CRON_SECRET", "")
+            if cron_secret:
+                auth_header = self.headers.get("Authorization", "")
+                param_secret = self.headers.get("X-Cron-Secret", "")
+                if not (auth_header == f"Bearer {cron_secret}" or param_secret == cron_secret):
+                    self._send_json(401, {"error": "Unauthorized keepalive trigger"})
+                    return
             try:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
@@ -998,6 +1005,13 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 logger.error(f"   ❌ Keep-Alive exception: {e}")
                 self._send_json(500, {"success": False, "error": str(e)})
         elif self.path.startswith("/cron/reap"):
+            cron_secret = os.getenv("CRON_SECRET", "")
+            if cron_secret:
+                auth_header = self.headers.get("Authorization", "")
+                param_secret = self.headers.get("X-Cron-Secret", "")
+                if not (auth_header == f"Bearer {cron_secret}" or param_secret == cron_secret):
+                    self._send_json(401, {"error": "Unauthorized cron trigger"})
+                    return
             try:
                 from autonomous_reaper import AutonomousReaper
                 reaper = AutonomousReaper()
@@ -1014,6 +1028,14 @@ class WebhookHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == "/telegram":
+            tg_secret = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
+            if tg_secret:
+                header_token = self.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
+                if not hmac.compare_digest(header_token, tg_secret):
+                    logger.warning("❌ Unauthorized Telegram webhook attempt (invalid secret token)")
+                    self._send_json(403, {"error": "Unauthorized"})
+                    return
+
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length)
             try:

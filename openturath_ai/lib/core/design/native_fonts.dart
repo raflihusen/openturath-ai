@@ -15,7 +15,7 @@ abstract final class NativeFonts {
       TextDecoration? decoration}) {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
-        fontFamily: 'NativeInter',
+        fontFamily: 'NativeOutfit',
         fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
@@ -40,7 +40,7 @@ abstract final class NativeFonts {
       TextDecoration? decoration}) {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
-        fontFamily: 'NativeInter',
+        fontFamily: 'NativeNewsreader',
         fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,

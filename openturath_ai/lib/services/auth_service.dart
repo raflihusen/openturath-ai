@@ -8,6 +8,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../core/constants.dart';
+import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 
 class AuthService {
@@ -271,6 +272,10 @@ class AuthService {
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
     final currentUid = _auth.currentUser?.uid;
+
+    try {
+      AgentSessionManager.instance.closeAll();
+    } catch (_) {}
 
     try {
       final cookieManager = CookieManager.instance();
