@@ -1,3 +1,5 @@
+import '../core/localization.dart';
+import '../widgets/native_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -459,12 +461,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             // ── List of Saved Bookmarks ──
             Expanded(
               child: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: accent,
-                      ),
-                    )
+                  ? const Center(child: NativeLoading())
                   : RefreshIndicator(
                       onRefresh: _syncBookmarks,
                       color: accent,
