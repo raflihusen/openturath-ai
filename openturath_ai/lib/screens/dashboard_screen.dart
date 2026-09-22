@@ -163,7 +163,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final dark = Theme.of(context).brightness == Brightness.dark;
     return StreamBuilder<UserModel?>(
       stream: _authService.userStream,
       initialData: _initialUser,
@@ -310,7 +309,7 @@ class NativeDashboardPage extends StatelessWidget {
                           children: [
                             Text('OpenTurath', style: NativeType.title(dark, size: 26)),
                             const SizedBox(height: 8),
-                            Text(user == null ? AppCopy.ahlanDefault : AppCopy.ahlanWithName(user.name), style: NativeType.body(dark, size: 15)),
+                            Text(user == null ? AppCopy.ahlanDefault : AppCopy.ahlanWithName(user!.name), style: NativeType.body(dark, size: 15)),
                             const SizedBox(height: 4),
                             Text(HijriDateUtils.formatHijriOnly(), style: NativeType.meta(dark)),
                             const SizedBox(height: 20),

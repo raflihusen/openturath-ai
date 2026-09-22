@@ -182,6 +182,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   String _translateType(String? type) {
+    if (widget.localizedControls && type != null) {
+      final lower = type.toLowerCase();
+      for (final entry in {'matn': 'workMatn', 'matan': 'workMatn', 'syarah': 'workSharh', 'sharh': 'workSharh', 'hasyiyah': 'workHashiya', 'hashiyah': 'workHashiya', 'mukhtasar': 'workSummary', 'ringkasan': 'workSummary', 'ensiklopedi': 'workEncyclopedia', 'nazham': 'workPoem'}.entries) {
+        if (lower.contains(entry.key)) return NativeCopy.text(entry.value);
+      }
+      return Loc.text(type);
+    }
     if (type == null || type.isEmpty) return 'مصنف علمي';
     final l = type.toLowerCase();
     if (l.contains('matn') || l.contains('matan')) return 'متن معتمد';
@@ -198,6 +205,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   String _translateEra(String? era) {
+    if (widget.localizedControls && era != null) {
+      final lower = era.toLowerCase();
+      for (final entry in {'mutaqaddim': 'eraEarly', 'awal': 'eraEarly', 'mutawassith': 'eraMiddle', 'pertengahan': 'eraMiddle', "muta'akhkhir": 'eraLate', 'mutaakhir': 'eraLate', 'lanjut': 'eraLate', "mu'ashir": 'eraModern', 'modern': 'eraModern', 'kontemporer': 'eraModern'}.entries) {
+        if (lower.contains(entry.key)) return NativeCopy.text(entry.value);
+      }
+      return Loc.text(era);
+    }
     if (era == null || era.isEmpty) return 'التراث الإسلامي';
     final l = era.toLowerCase();
     if (l.contains('mutaqaddim') || l.contains('awal')) {
@@ -220,6 +234,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   String _formatVolumes() {
+    if (widget.localizedControls) {
+      final volumes = widget.book.volumesDescription ?? widget.book.volumesCount?.toString();
+      return volumes == null ? Loc.tr('unknownMetadata') : Loc.tr('volumeCount', [volumes]);
+    }
     final vd = widget.book.volumesDescription;
     if (vd != null && vd.isNotEmpty) {
       return (vd.contains('جزء') || vd.contains('مجلد')) ? vd : '$vd أجزاء';
@@ -319,7 +337,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   width: 0.6),
                             ),
                             child: Text(
-                              widget.book.sectionArabic ?? 'نص محقق معتمد',
+                              widget.book.sectionArabic ?? _label('sources', 'نص محقق معتمد'),
                               style:
                                   NativeTypography.caption(color: textSecondary)
                                       .copyWith(
@@ -329,7 +347,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ),
                           ),
                           const Spacer(),
-                          Directionality(
+                          if (!widget.localizedControls) Directionality(
                             textDirection: TextDirection.ltr,
                             child: Text(
                               widget.book.editionId,
@@ -352,7 +370,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 .copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          height: 1.6,
+                          height: 1.9,
                         ),
                       ),
                       if (widget.book.shortTitleArabic != null &&
@@ -361,7 +379,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               widget.book.titleArabic) ...[
                         const SizedBox(height: 6),
                         Text(
-                          'المختصر: ${widget.book.shortTitleArabic!}',
+                          '${_label('shortTitle', 'المختصر')}: ${widget.book.shortTitleArabic!}',
                           textAlign: TextAlign.right,
                           style: NativeTypography.arabicReading(
                                   color: textSecondary)
@@ -451,7 +469,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
-                                    widget.book.verifiedDeathYearHijri != null
+                                    widget.localizedControls ? (widget.book.verifiedDeathYearHijri == null ? Loc.tr('unknownMetadata') : Loc.tr('deathYear', ['${widget.book.verifiedDeathYearHijri}'])) : widget.book.verifiedDeathYearHijri != null
                                         ? 'سنة الوفاة: ${widget.book.verifiedDeathYearHijri} هـ'
                                         : 'سنة الوفاة: غير مدونة',
                                     style: NativeTypography.arabicReading(
@@ -532,7 +550,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         _buildMetaRow(
                           icon: Icons.article_outlined,
                           label: _label('pages', 'عدد الصفحات'),
-                          value: '${widget.book.pagesDescription} صفحة',
+                          value: widget.localizedControls ? Loc.tr('pageCount', [widget.book.pagesDescription!]) : '${widget.book.pagesDescription} صفحة',
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
                         ),
@@ -568,7 +586,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       _buildMetaRow(
                         icon: Icons.business_outlined,
                         label: _label('publisher', 'دار النشر'),
-                        value: widget.book.publisher ?? 'غير مدون',
+                        value: widget.book.publisher ?? Loc.tr('unknownMetadata'),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),
@@ -576,7 +594,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       _buildMetaRow(
                         icon: Icons.edit_note_rounded,
                         label: _label('editor', 'المحقق'),
-                        value: widget.book.muhaqqiq ?? 'غير مدون',
+                        value: widget.book.muhaqqiq ?? Loc.tr('unknownMetadata'),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),

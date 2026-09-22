@@ -75,6 +75,16 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
+    'workMatn': ['Matan', 'Source text', 'متن'],
+    'workSharh': ['Syarah', 'Commentary', 'شرح'],
+    'workHashiya': ['Hasyiyah', 'Marginal commentary', 'حاشية'],
+    'workSummary': ['Ringkasan', 'Abridgment', 'مختصر'],
+    'workEncyclopedia': ['Ensiklopedia fikih', 'Fiqh encyclopedia', 'موسوعة فقهية'],
+    'workPoem': ['Nazham', 'Didactic poem', 'منظومة علمية'],
+    'eraEarly': ['Mutaqaddimin (hingga 400 H)', 'Early period (through 400 AH)', 'عصر المتقدمين (حتى ٤٠٠ هـ)'],
+    'eraMiddle': ['Mutawassithin (400–800 H)', 'Middle period (400–800 AH)', 'عصر المتوسطين (٤٠٠ - ٨٠٠ هـ)'],
+    'eraLate': ['Mutaakhkhirin (800–1200 H)', 'Later period (800–1200 AH)', 'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)'],
+    'eraModern': ['Kontemporer (setelah 1200 H)', 'Contemporary (after 1200 AH)', 'العصر المعاصر (بعد ١٢٠٠ هـ)'],
     'removeReference': [
       'Hapus dari catatan',
       'Remove from notes',
