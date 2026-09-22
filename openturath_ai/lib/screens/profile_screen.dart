@@ -670,7 +670,9 @@ class NativeProfilePage extends StatelessWidget {
                                     color: NativeColors.surfaceSubtle(isDark),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: Row(
+                                  child: Wrap(
+                                    spacing: 4,
+                                    runSpacing: 4,
                                     children: [
                                       _buildThemeOption(
                                         title: AppCopy.modeSystem,
@@ -869,48 +871,20 @@ class NativeProfilePage extends StatelessWidget {
     final activeFg = isDark ? Colors.white : const Color(0xFF18181B);
     final inactiveFg = textSecondary;
 
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
+    return ChoiceChip(
+        selected: isSelected,
+        showCheckmark: false,
+        avatar: Icon(icon, size: 18, color: isSelected ? activeFg : inactiveFg),
+        selectedColor: activeBg,
+        backgroundColor: Colors.transparent,
+        side: BorderSide.none,
+        label: Text(Loc.text(title), style: NativeFonts.outfit(
+          fontSize: 14, fontWeight: FontWeight.w500,
+          color: isSelected ? activeFg : inactiveFg)),
+        onSelected: (_) {
           HapticFeedback.selectionClick();
           onTap();
         },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(9),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 15, color: isSelected ? activeFg : inactiveFg),
-              const SizedBox(width: 6),
-              Text(
-                Loc.text(title),
-                style: NativeFonts.outfit(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? activeFg : inactiveFg,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
