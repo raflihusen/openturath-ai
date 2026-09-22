@@ -301,10 +301,14 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
               ),
             ),
 
-          // Appbar Row: Mode Toggle, Close, Save
+          // Header: navigation and save remain stable on narrow phones.
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: OTSpacing.lg, vertical: 4),
+            padding: const EdgeInsets.fromLTRB(
+              OTSpacing.sm,
+              OTSpacing.sm,
+              OTSpacing.lg,
+              OTSpacing.sm,
+            ),
             child: Row(
               children: [
                 if (widget.fullScreen)
@@ -341,149 +345,103 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   ],
                 ),
                 const Spacer(),
-                // Toggle Edit / Preview
-                Container(
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: surfaceSubtle,
-                    borderRadius: BorderRadius.zero,
-                    border: Border.all(color: border, width: 0.6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () => setState(() => _isPreview = false),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                !_isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          child: Text(
-                            'Tulis',
-                            style: OTTypography.captionMedium(
-                              color: !_isPreview
-                                  ? OTColors.onAccent(isDark)
-                                  : textSecondary,
-                            ).copyWith(fontSize: 11.5),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          FocusScope.of(context).unfocus();
-                          setState(() => _isPreview = true);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color:
-                                _isPreview ? textPrimary : Colors.transparent,
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          child: Text(
-                            'Pratinjau',
-                            style: OTTypography.captionMedium(
-                              color: _isPreview
-                                  ? OTColors.onAccent(isDark)
-                                  : textSecondary,
-                            ).copyWith(fontSize: 11.5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                TextButton(
+                FilledButton(
                   onPressed: _saveNote,
-                  style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    backgroundColor: textPrimary,
-                    foregroundColor: OTColors.onAccent(isDark),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(84, 44),
                   ),
-                  child: Text(
-                    'Simpan',
-                    style: OTTypography.captionMedium(
-                      color: OTColors.onAccent(isDark),
-                    ).copyWith(fontWeight: FontWeight.w700),
-                  ),
+                  child: const Text('Simpan'),
                 ),
               ],
             ),
           ),
-
           const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              OTSpacing.lg,
+              OTSpacing.sm,
+              OTSpacing.lg,
+              OTSpacing.sm,
+            ),
+            child: SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment(value: false, label: Text('Tulis')),
+                ButtonSegment(value: true, label: Text('Pratinjau')),
+              ],
+              selected: {_isPreview},
+              showSelectedIcon: false,
+              onSelectionChanged: (selection) {
+                final preview = selection.first;
+                if (preview) FocusScope.of(context).unfocus();
+                setState(() => _isPreview = preview);
+              },
+            ),
+          ),
 
-          // Formatting Toolbar (Full width row, centered and evenly distributed)
+          // Toolbar scrolls horizontally so every action retains a 44px target.
           if (!_isPreview)
             Container(
-              height: 42,
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              height: 48,
+              padding: const EdgeInsets.symmetric(horizontal: OTSpacing.sm),
               decoration: BoxDecoration(
                 color: surfaceSubtle,
                 border: Border(bottom: BorderSide(color: border, width: 0.6)),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _ToolbarBtn(
-                    label: 'B',
-                    tooltip: 'Tebal',
-                    isBold: true,
-                    onTap: () =>
-                        _applyFormat('**', '**', defaultText: 'teks tebal'),
-                  ),
-                  _ToolbarBtn(
-                    label: 'I',
-                    tooltip: 'Miring',
-                    isItalic: true,
-                    onTap: () =>
-                        _applyFormat('*', '*', defaultText: 'teks miring'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_list_bulleted_rounded,
-                    tooltip: 'Daftar Poin',
-                    onTap: () =>
-                        _applyFormat('\n- ', '', defaultText: 'poin catatan'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_quote_rounded,
-                    tooltip: 'Kutipan',
-                    onTap: () =>
-                        _applyFormat('\n> ', '', defaultText: 'kutipan ibarah'),
-                  ),
-                  _ToolbarBtn(
-                    label: '« »',
-                    tooltip: 'Kutipan Arab',
-                    onTap: () => _applyFormat('«', '»', defaultText: 'عبارة'),
-                  ),
-                  _ToolbarBtn(
-                    label: 'H1',
-                    tooltip: 'Judul Bab',
-                    onTap: () =>
-                        _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_textdirection_l_to_r_rounded,
-                    tooltip: 'Orientasi Kiri ke Kanan (LTR)',
-                    isActive: _textDirection == TextDirection.ltr,
-                    onTap: () => _applyDirection(TextDirection.ltr),
-                  ),
-                  _ToolbarBtn(
-                    icon: Icons.format_textdirection_r_to_l_rounded,
-                    tooltip: 'Orientasi Kanan ke Kiri / Arab (RTL)',
-                    isActive: _textDirection == TextDirection.rtl,
-                    onTap: () => _applyDirection(TextDirection.rtl),
-                  ),
-                ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _ToolbarBtn(
+                      label: 'B',
+                      tooltip: 'Tebal',
+                      isBold: true,
+                      onTap: () =>
+                          _applyFormat('**', '**', defaultText: 'teks tebal'),
+                    ),
+                    _ToolbarBtn(
+                      label: 'I',
+                      tooltip: 'Miring',
+                      isItalic: true,
+                      onTap: () =>
+                          _applyFormat('*', '*', defaultText: 'teks miring'),
+                    ),
+                    _ToolbarBtn(
+                      icon: Icons.format_list_bulleted_rounded,
+                      tooltip: 'Daftar Poin',
+                      onTap: () =>
+                          _applyFormat('\n- ', '', defaultText: 'poin catatan'),
+                    ),
+                    _ToolbarBtn(
+                      icon: Icons.format_quote_rounded,
+                      tooltip: 'Kutipan',
+                      onTap: () => _applyFormat('\n> ', '',
+                          defaultText: 'kutipan ibarah'),
+                    ),
+                    _ToolbarBtn(
+                      label: '« »',
+                      tooltip: 'Kutipan Arab',
+                      onTap: () => _applyFormat('«', '»', defaultText: 'عبارة'),
+                    ),
+                    _ToolbarBtn(
+                      label: 'H1',
+                      tooltip: 'Judul Bab',
+                      onTap: () =>
+                          _applyFormat('\n# ', '\n', defaultText: 'Judul Bab'),
+                    ),
+                    _ToolbarBtn(
+                      icon: Icons.format_textdirection_l_to_r_rounded,
+                      tooltip: 'Orientasi Kiri ke Kanan (LTR)',
+                      isActive: _textDirection == TextDirection.ltr,
+                      onTap: () => _applyDirection(TextDirection.ltr),
+                    ),
+                    _ToolbarBtn(
+                      icon: Icons.format_textdirection_r_to_l_rounded,
+                      tooltip: 'Orientasi Kanan ke Kiri / Arab (RTL)',
+                      isActive: _textDirection == TextDirection.rtl,
+                      onTap: () => _applyDirection(TextDirection.rtl),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -660,8 +618,8 @@ class _ToolbarBtn extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          constraints: const BoxConstraints(minWidth: 36, maxWidth: 44),
-          height: 32,
+          constraints: const BoxConstraints(minWidth: 44),
+          height: 44,
           decoration: BoxDecoration(
             color:
                 isActive ? accent.withValues(alpha: 0.14) : Colors.transparent,
