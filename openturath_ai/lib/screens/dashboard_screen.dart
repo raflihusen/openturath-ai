@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/app_copy.dart';
-import '../core/constants.dart';
 import '../core/routes.dart';
 
 import '../core/app_snackbar.dart';
@@ -27,7 +26,7 @@ import '../core/navigation_guard.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/update_ready_dialog.dart';
 import '../widgets/specialist_card.dart';
-import '../widgets/library_bottom_sheet.dart';
+import 'native_library_page.dart';
 
 import 'main_shell_screen.dart';
 
@@ -202,7 +201,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Wrap(spacing: 8, runSpacing: 8, children: [
                         FilledButton(onPressed: () => selected == null ? _browse() : _openNotebook(selected, user),
                           child: Text(selected == null ? AppCopy.startStudy : AppCopy.continueStudy)),
-                        if (selected?.catalogId != null) TextButton(onPressed: () => showResearchLibrary(context, agent: selected),
+                        if (selected?.catalogId != null) TextButton(onPressed: () => openNativeLibrary(context, agent: selected!),
                           child: Text(NativeCopy.text('sources'))),
                       ]),
                     ]));
@@ -217,7 +216,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   if (matches.isEmpty) NativeEmpty(title: AppCopy.noAssistantsFound, icon: Icons.search_off_rounded),
                   for (final agent in matches) SpecialistCard(title: agent.title, titleArabic: agent.titleArabic,
                     scopeLabel: agent.subtitleAcademic, statusLabel: agent.isComingSoon ? AppCopy.comingSoon : null,
-                    onOpen: () => _openNotebook(agent, user), onOpenLibrary: agent.catalogId == null ? null : () => showResearchLibrary(context, agent: agent)),
+                    onOpen: () => _openNotebook(agent, user), onOpenLibrary: agent.catalogId == null ? null : () => openNativeLibrary(context, agent: agent)),
                 ] else ...[
                   Row(children: [
                     Expanded(child: Text(AppCopy.chooseField, style: NativeType.title(dark, size: 22))),

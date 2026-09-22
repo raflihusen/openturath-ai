@@ -23,7 +23,7 @@ import '../widgets/specialist_card.dart';
 import '../widgets/scholars_coming_soon.dart';
 import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
-import '../widgets/library_bottom_sheet.dart';
+import 'native_library_page.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import 'main_shell_screen.dart';
 
@@ -415,7 +415,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                       onOpenSubAgent: (sub) =>
                                           _openTahawwulatSubAgent(agent, sub),
                                       onOpenLibrary: agent.catalogId != null
-                                          ? () => showResearchLibrary(context,
+                                          ? () => openNativeLibrary(context,
                                               agent: agent)
                                           : null,
                                     );
@@ -431,7 +431,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                         : null,
                                     onOpen: () => _openAgent(agent),
                                     onOpenLibrary: agent.catalogId != null
-                                        ? () => showResearchLibrary(context,
+                                        ? () => openNativeLibrary(context,
                                             agent: agent)
                                         : null,
                                   );

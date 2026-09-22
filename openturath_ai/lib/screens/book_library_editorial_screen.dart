@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
+import '../core/localization.dart';
+import '../core/arabic_utils.dart';
+import '../core/design/native_design.dart';
 
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
+
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../models/bookmark_model.dart';
@@ -18,11 +21,13 @@ class OpenTurathBookLibraryPage extends StatefulWidget {
     required this.books,
     required this.collectionName,
     this.onOpenBook,
+    this.onAbout,
   });
 
   final List<OpenTurathBook> books;
   final String collectionName;
   final ValueChanged<OpenTurathBook>? onOpenBook;
+  final VoidCallback? onAbout;
 
   @override
   State<OpenTurathBookLibraryPage> createState() =>
@@ -74,7 +79,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
             book.editor,
             book.publisher,
             book.section,
-          ].join(' ').toLowerCase().contains(_query);
+          ].any((value) => ArabicUtils.matches(value, _query));
 
       if (!matchesQuery) return false;
 
@@ -96,12 +101,13 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final ink = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final ink = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final border = NativeColors.border(isDark);
 
     final visibleBooks = _filteredBooks;
 
@@ -122,15 +128,15 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         IconButton(
                           icon: Icon(Icons.arrow_back_rounded,
                               color: ink, size: 22),
-                          tooltip: 'Kembali',
+                          tooltip: NativeCopy.text('back'),
                           onPressed: () => Navigator.of(context).maybePop(),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Katalog kitab',
-                      style: GoogleFonts.newsreader(
+                      NativeCopy.text('catalog'),
+                      style: ScholarlyFonts.newsreader(
                         color: ink,
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
@@ -140,21 +146,22 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     const SizedBox(height: 4),
                     Text(
                       widget.collectionName,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: textSecondary,
                         fontSize: 13,
                       ),
                     ),
+                    if (widget.onAbout != null) TextButton(onPressed: widget.onAbout, child: Text(NativeCopy.text('aboutCollection'))),
                     const SizedBox(height: 18),
                     // Search Bar
                     TextField(
                       controller: _searchController,
                       focusNode: _searchFocusNode,
-                      style: GoogleFonts.outfit(color: ink, fontSize: 14),
+                      style: ScholarlyFonts.outfit(color: ink, fontSize: 14),
                       decoration: InputDecoration(
                         hintText:
-                            'Cari judul kitab, pengarang, muhaqqiq, atau bidang...',
-                        hintStyle: GoogleFonts.outfit(
+                            NativeCopy.text('searchBooks'),
+                        hintStyle: ScholarlyFonts.outfit(
                             color: textSecondary, fontSize: 13),
                         prefixIcon: Icon(Icons.search_rounded,
                             color: textSecondary, size: 20),
@@ -173,15 +180,15 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         border: OutlineInputBorder(
-                          borderRadius: OTRadius.inputBorder,
+                          borderRadius: BorderRadius.circular(100),
                           borderSide: BorderSide(color: border),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: OTRadius.inputBorder,
+                          borderRadius: BorderRadius.circular(100),
                           borderSide: BorderSide(color: border),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: OTRadius.inputBorder,
+                          borderRadius: BorderRadius.circular(100),
                           borderSide: BorderSide(color: ink, width: 1.2),
                         ),
                       ),
@@ -193,14 +200,14 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       child: Row(
                         children: [
                           _FilterChip(
-                            label: 'Semua Kitab',
+                            label: NativeCopy.text('allBooks'),
                             isSelected: _filter == _BookVolumeFilter.all,
                             onTap: () =>
                                 setState(() => _filter = _BookVolumeFilter.all),
                           ),
                           const SizedBox(width: 8),
                           _FilterChip(
-                            label: 'Satu jilid',
+                            label: NativeCopy.text('singleVolume'),
                             isSelected:
                                 _filter == _BookVolumeFilter.singleVolume,
                             onTap: () => setState(
@@ -208,7 +215,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           ),
                           const SizedBox(width: 8),
                           _FilterChip(
-                            label: 'Beberapa jilid',
+                            label: NativeCopy.text('multiVolume'),
                             isSelected:
                                 _filter == _BookVolumeFilter.multiVolume,
                             onTap: () => setState(
@@ -221,8 +228,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     Row(
                       children: [
                         Text(
-                          'Menampilkan ${visibleBooks.length} dari ${widget.books.length} kitab',
-                          style: GoogleFonts.outfit(
+                          NativeCopy.text('results', ['${visibleBooks.length}', '${widget.books.length}']),
+                          style: ScholarlyFonts.outfit(
                             fontSize: 12,
                             color: textSecondary,
                           ),
@@ -246,8 +253,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           size: 48, color: textSecondary),
                       const SizedBox(height: 12),
                       Text(
-                        'Tidak ditemukan kitab yang sesuai',
-                        style: GoogleFonts.outfit(
+                        NativeCopy.text('noBooks'),
+                        style: ScholarlyFonts.outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: ink,
@@ -255,8 +262,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Coba cari dengan kata kunci judul atau nama pengarang lain',
-                        style: GoogleFonts.outfit(
+                        NativeCopy.text('searchHint'),
+                        style: ScholarlyFonts.outfit(
                           fontSize: 12,
                           color: textSecondary,
                         ),
@@ -313,10 +320,11 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
+    final ink = NativeColors.textPrimary(isDark);
+    final surface = NativeColors.surface(isDark);
+    final border = NativeColors.border(isDark);
 
     return InkWell(
       onTap: onTap,
@@ -330,8 +338,8 @@ class _FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.outfit(
-            color: isSelected ? OTColors.canvas(isDark) : ink,
+          style: ScholarlyFonts.outfit(
+            color: isSelected ? NativeColors.canvas(isDark) : ink,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -354,10 +362,11 @@ class _BookEditorialItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
+    final ink = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final border = NativeColors.border(isDark);
 
     return InkWell(
       onTap: onTap,
@@ -373,7 +382,7 @@ class _BookEditorialItem extends StatelessWidget {
               width: 36,
               child: Text(
                 index.toString().padLeft(2, '0'),
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   color: textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -408,19 +417,19 @@ class _BookEditorialItem extends StatelessWidget {
                       child: Text(
                         book.title,
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.scheherazadeNew(
+                        style: ScholarlyFonts.scheherazadeNew(
                           color: ink,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          height: 1.25,
+                          height: 1.9,
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Karya ${book.author}',
-                    style: GoogleFonts.outfit(
+                    Loc.tr('authorCredit', [book.author]),
+                    style: ScholarlyFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       color: textSecondary,
@@ -429,8 +438,8 @@ class _BookEditorialItem extends StatelessWidget {
                   if (book.editor.isNotEmpty && book.editor != '-') ...[
                     const SizedBox(height: 2),
                     Text(
-                      'Tahqiq: ${book.editor}',
-                      style: GoogleFonts.outfit(
+                      Loc.tr('editorCredit', [book.editor]),
+                      style: ScholarlyFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
@@ -444,7 +453,7 @@ class _BookEditorialItem extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         book.volumeLabel,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 11, color: textSecondary),
                       ),
                       const SizedBox(width: 14),
@@ -453,7 +462,7 @@ class _BookEditorialItem extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         book.pagesLabel,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 11, color: textSecondary),
                       ),
                     ],
@@ -501,7 +510,7 @@ class OpenTurathBookDetailPage extends StatelessWidget {
 
     await BookmarkService().addBookmark(bookmark, userId: uid);
     if (context.mounted) {
-      AppSnackBar.success(context, 'Kitab rujukan disimpan ke Catatan');
+      AppSnackBar.success(context, NativeCopy.text('saved'));
     }
   }
 
@@ -516,18 +525,19 @@ Bidang: ${book.section}''';
 
     await Clipboard.setData(ClipboardData(text: citation));
     if (context.mounted) {
-      AppSnackBar.success(context, 'Sitasi rujukan kitab berhasil disalin');
+      AppSnackBar.success(context, NativeCopy.text('copied'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final ink = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final ink = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final border = NativeColors.border(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -549,7 +559,7 @@ Bidang: ${book.section}''';
                     const SizedBox(width: 8),
                     Text(
                       'Rujukan Kitab',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: ink,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -558,13 +568,13 @@ Bidang: ${book.section}''';
                     const Spacer(),
                     IconButton(
                       icon: Icon(Icons.copy_rounded, color: ink, size: 20),
-                      tooltip: 'Salin Sitasi',
+                      tooltip: NativeCopy.text('copyReference'),
                       onPressed: () => _handleCopyCitation(context),
                     ),
                     IconButton(
                       icon: Icon(Icons.bookmark_add_outlined,
                           color: ink, size: 20),
-                      tooltip: 'Simpan ke Catatan',
+                      tooltip: NativeCopy.text('saveReference'),
                       onPressed: () => _handleBookmark(context),
                     ),
                   ],
@@ -602,7 +612,7 @@ Bidang: ${book.section}''';
                                 ),
                                 child: Text(
                                   book.section.toUpperCase(),
-                                  style: GoogleFonts.outfit(
+                                  style: ScholarlyFonts.outfit(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: textSecondary,
@@ -612,7 +622,7 @@ Bidang: ${book.section}''';
                               const Spacer(),
                               Text(
                                 book.deathLabel,
-                                style: GoogleFonts.outfit(
+                                style: ScholarlyFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: textSecondary,
@@ -628,11 +638,11 @@ Bidang: ${book.section}''';
                               child: Text(
                                 book.title,
                                 textAlign: TextAlign.right,
-                                style: GoogleFonts.scheherazadeNew(
+                                style: ScholarlyFonts.scheherazadeNew(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: ink,
-                                  height: 1.25,
+                                  height: 1.9,
                                 ),
                               ),
                             ),
@@ -640,7 +650,7 @@ Bidang: ${book.section}''';
                           const SizedBox(height: 12),
                           Text(
                             book.author,
-                            style: GoogleFonts.newsreader(
+                            style: ScholarlyFonts.newsreader(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: ink,
@@ -651,8 +661,8 @@ Bidang: ${book.section}''';
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'METADATA NASKAH RUJUKAN',
-                      style: GoogleFonts.outfit(
+                      NativeCopy.text('edition'),
+                      style: ScholarlyFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
@@ -669,17 +679,17 @@ Bidang: ${book.section}''';
                       child: Column(
                         children: [
                           _DetailRow(
-                              label: 'Muhaqqiq / Editor', value: book.editor),
+                              label: NativeCopy.text('editor'), value: book.editor),
                           _DetailRow(
-                              label: 'Penerbit Naskah', value: book.publisher),
+                              label: NativeCopy.text('publisher'), value: book.publisher),
                           _DetailRow(
-                              label: 'Tahun / Cetakan', value: book.edition),
+                              label: NativeCopy.text('year'), value: book.edition),
                           _DetailRow(
-                              label: 'Jumlah Jilid', value: book.volumeLabel),
+                              label: NativeCopy.text('volumes'), value: book.volumeLabel),
                           _DetailRow(
-                              label: 'Jumlah Halaman', value: book.pagesLabel),
+                              label: Loc.tr('pageCount', ['']), value: book.pagesLabel),
                           _DetailRow(
-                              label: 'Folder Korpus',
+                              label: NativeCopy.text('sources'),
                               value: book.sourceFolder,
                               isLast: true),
                         ],
@@ -692,8 +702,8 @@ Bidang: ${book.section}''';
                         onPressed: () => _handleCopyCitation(context),
                         icon: const Icon(Icons.content_copy_rounded, size: 18),
                         label: Text(
-                          'Salin Sitasi Lengkap ke Papan Klip',
-                          style: GoogleFonts.outfit(
+                          NativeCopy.text('copyReference'),
+                          style: ScholarlyFonts.outfit(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -732,10 +742,11 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
+    final ink = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final border = NativeColors.border(isDark);
 
     final displayValue = value.trim().isEmpty ? '-' : value.trim();
 
@@ -750,10 +761,10 @@ class _DetailRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 130,
+            width: MediaQuery.sizeOf(context).width < 400 ? 100 : 130,
             child: Text(
               label,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 12,
                 color: textSecondary,
               ),
@@ -762,7 +773,7 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: Text(
               displayValue,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: ink,
