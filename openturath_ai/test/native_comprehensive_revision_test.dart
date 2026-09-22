@@ -20,6 +20,8 @@ import 'package:openturath_ai/screens/book_detail_screen.dart';
 import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
 import 'package:openturath_ai/widgets/native_theme.dart';
+import 'package:openturath_ai/widgets/tahawwulat_flagship_card.dart';
+import 'package:openturath_ai/core/design/native_design.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -98,6 +100,28 @@ void main() {
       pages: '500');
 
   for (final locale in ['id', 'en', 'ar']) {
+    testWidgets('five direct role actions preserve identity in $locale', (tester) async {
+      AppConfig.localeNotifier.value = locale;
+      final agent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
+      final opened = <String>[];
+      await tester.pumpWidget(MaterialApp(
+        locale: Locale(locale), supportedLocales: Loc.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        home: NativeTheme(child: Scaffold(body: SingleChildScrollView(
+          child: TahawwulatFlagshipCard(agent: agent, isSubscribed: true,
+            onOpenMain: () {}, onOpenSubAgent: (sub) => opened.add(sub.id)),
+        ))),
+      ));
+      for (final sub in agent.subAgents!) {
+        final button = find.widgetWithText(TextButton, sub.name);
+        expect(button, findsOneWidget);
+        await tester.ensureVisible(button);
+        await tester.tap(button);
+        await tester.pump();
+      }
+      expect(opened, agent.subAgents!.map((s) => s.id).toList());
+      expect(tester.takeException(), isNull);
+    });
     for (final dark in [false, true]) {
       for (final scale in [1.0, 2.0]) {
         for (final page in [
@@ -183,6 +207,10 @@ void main() {
             expect(tester.takeException(), isNull);
             expect(find.text('INTERNAL_FOLDER_NOT_FOR_UI'), findsNothing);
             expect(find.text('INTERNAL_EDITION_NOT_FOR_UI'), findsNothing);
+            if (page == 'home' && scale == 1) {
+              expect(find.text(NativeCopy.text('field_fiqh')), findsOneWidget);
+              if (locale == 'ar') expect(find.text('Fikih & Fatwa'), findsNothing);
+            }
             if (scale == 1 && const bool.fromEnvironment('CAPTURE_REVISION')) {
               final boundary = capture.currentContext!.findRenderObject()!
                   as RenderRepaintBoundary;
