@@ -1,4 +1,5 @@
 import '../core/localization.dart';
+import '../widgets/native_theme.dart';
 import 'dart:async';
 import '../core/arabic_utils.dart';
 import '../core/design/native_design.dart';
@@ -287,7 +288,7 @@ class _RecentNotesState extends State<_RecentNotes> {
         action: AppCopy.navSaved, onAction: () => MainShellController.of(context)?.switchTab(2)); }
       return NativeSection(padding: EdgeInsets.zero, child: Column(children: [
         for (final note in notes.take(2)) NativePress(onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
-          builder: (_) => NoteReaderScreen(item: note))), child: Padding(padding: const EdgeInsets.all(20),
+          builder: (_) => NativeTheme(child: NoteReaderScreen(item: note)))), child: Padding(padding: const EdgeInsets.all(20),
           child: Row(children: [
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(note.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: NativeType.body(dark)),

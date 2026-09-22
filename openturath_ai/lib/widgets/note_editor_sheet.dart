@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../core/localization.dart';
+import 'native_theme.dart';
 import '../core/design/native_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,9 +33,9 @@ class NoteEditorSheet extends StatefulWidget {
     return Navigator.of(context).push<BookmarkModel>(
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => Scaffold(
+        builder: (_) => NativeTheme(child: Scaffold(
           body: SafeArea(child: NoteEditorSheet(item: item, fullScreen: true)),
-        ),
+        )),
       ),
     );
   }

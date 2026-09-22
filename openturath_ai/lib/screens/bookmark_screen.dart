@@ -1,4 +1,5 @@
 import '../core/localization.dart';
+import '../widgets/native_theme.dart';
 import '../widgets/native_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -270,7 +271,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
     if (!mounted) return;
     final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => NoteReaderScreen(item: item)),
+      MaterialPageRoute(builder: (_) => NativeTheme(child: NoteReaderScreen(item: item))),
     );
     if (changed == true && mounted) _loadBookmarks();
   }
@@ -442,7 +443,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          cat,
+                          Loc.text(cat),
                           style: NativeTypography.caption(
                             color: isSelected ? canvas : textSecondary,
                           ).copyWith(

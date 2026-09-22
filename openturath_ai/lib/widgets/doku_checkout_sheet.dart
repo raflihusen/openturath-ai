@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/native_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/constants.dart';
@@ -204,14 +204,14 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
           title: Text(
             Loc.tr('ui_56a2f9f730'),
-            style: ScholarlyFonts.outfit(
+            style: NativeFonts.outfit(
               fontWeight: FontWeight.w600,
               color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
             ),
           ),
           content: Text(
             Loc.tr('ui_85f60bf7af'),
-            style: ScholarlyFonts.outfit(
+            style: NativeFonts.outfit(
               fontSize: 13,
               color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
             ),
@@ -221,7 +221,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
                 Loc.tr('ui_5bcbc797a7'),
-                style: ScholarlyFonts.outfit(
+                style: NativeFonts.outfit(
                   color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
                   fontWeight: FontWeight.w600,
                 ),
@@ -231,7 +231,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
                 Loc.tr('close'),
-                style: ScholarlyFonts.outfit(
+                style: NativeFonts.outfit(
                   color: NativeColors.destructive(isDark),
                 ),
               ),
@@ -430,7 +430,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     widget.planTitle != null && widget.planTitle!.isNotEmpty
                                         ? widget.planTitle!
                                         : Loc.tr('ui_f0874594eb'),
-                                    style: ScholarlyFonts.outfit(
+                                    style: NativeFonts.outfit(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 15,
                                       color: textPrimary,
@@ -444,7 +444,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                   if (widget.invoiceNumber.isNotEmpty)
                                     Text(
                                       widget.invoiceNumber,
-                                      style: ScholarlyFonts.outfit(
+                                      style: NativeFonts.outfit(
                                         fontSize: 12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
@@ -453,7 +453,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                   else if (widget.amount != null && widget.amount! > 0)
                                     Text(
                                       'Rp ${widget.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
-                                      style: ScholarlyFonts.outfit(
+                                      style: NativeFonts.outfit(
                                         fontSize: 12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
@@ -462,7 +462,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                   else
                                     Text(
                                       Loc.tr('ui_9218f901c4'),
-                                      style: ScholarlyFonts.outfit(
+                                      style: NativeFonts.outfit(
                                         fontSize: 12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
@@ -718,7 +718,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                             offset: Offset(0, (1.0 - value) * 16),
                             child: Text(
                               Loc.tr('ui_28654608b2'),
-                              style: ScholarlyFonts.outfit(
+                              style: NativeFonts.outfit(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 26,
                                 letterSpacing: -0.5,
@@ -742,7 +742,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                             offset: Offset(0, (1.0 - value) * 14),
                             child: Text(
                               Loc.tr('ui_109055bfcd'),
-                              style: ScholarlyFonts.outfit(
+                              style: NativeFonts.outfit(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
                                 color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark),
@@ -766,7 +766,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                             child: Text(
                               Loc.tr('ui_1408872bee'),
                               textAlign: TextAlign.center,
-                              style: ScholarlyFonts.outfit(
+                              style: NativeFonts.outfit(
                                 fontSize: 13,
                                 color: textSecondary,
                                 height: 1.45,
