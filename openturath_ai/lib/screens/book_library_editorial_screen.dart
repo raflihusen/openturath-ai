@@ -739,8 +739,9 @@ class _DetailRow extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final border = NativeColors.border(isDark);
 
-    if (value.trim().isEmpty || value.trim() == '-')
+    if (value.trim().isEmpty || value.trim() == '-') {
       return const SizedBox.shrink();
+    }
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         child:

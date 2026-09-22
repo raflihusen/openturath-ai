@@ -74,6 +74,8 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
+    'classificationMissing': ['Klasifikasi belum tersedia', 'Classification unavailable', 'التصنيف غير متاح'],
+    'authorityRecognized': ['Rujukan dalam mazhab dan fatwa', 'Recognized in the school and its fatwas', 'معتمد في المذهب والفتوى'],
     'field_fiqh_tahawwulat': [
       'Fikih Tahawwulat',
       'Fiqh Tahawwulat',
