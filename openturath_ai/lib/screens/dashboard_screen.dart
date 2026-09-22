@@ -388,7 +388,7 @@ class NativeDashboardPage extends StatelessWidget {
                                               child: Row(children: [
                                                 Expanded(
                                                     child: Text(
-                                                        Loc.text(field.name),
+                                                        NativeCopy.text('field_${field.id}'),
                                                         style: NativeType.body(
                                                             dark))),
                                                 const Icon(

@@ -213,7 +213,7 @@ class NativeAssistantPage extends StatelessWidget {
     final textSecondary = NativeColors.textSecondary(isDark);
 
     final isGeneralTab = field == null;
-    final title = isGeneralTab ? AppCopy.navStudies : field!.name;
+    final title = isGeneralTab ? AppCopy.navStudies : NativeCopy.text('field_${field!.id}');
 
     final shell = MainShellController.of(context);
 
@@ -298,11 +298,11 @@ class NativeAssistantPage extends StatelessWidget {
                       onSelected: onField,
                       itemBuilder: (_) => [
                         PopupMenuItem(value: 'all', child: Text(AppCopy.allCategories)),
-                        for (final field in FieldModel.defaultFields) PopupMenuItem(value: field.id, child: Text(Loc.text(field.name))),
+                        for (final field in FieldModel.defaultFields) PopupMenuItem(value: field.id, child: Text(NativeCopy.text('field_${field.id}'))),
                       ],
                       child: Padding(padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Row(children: [
-                          Expanded(child: Text(Loc.text(FieldModel.defaultFields.where((f) => f.id == selectedFieldId).firstOrNull?.name ?? AppCopy.allCategories), style: NativeType.body(isDark, size: 14).copyWith(color: NativeColors.accent(isDark)))),
+                          Expanded(child: Text(selectedFieldId == null ? AppCopy.allCategories : NativeCopy.text('field_$selectedFieldId'), style: NativeType.body(isDark, size: 14).copyWith(color: NativeColors.accent(isDark)))),
                           Icon(Icons.expand_more, size: 18, color: NativeColors.accent(isDark)),
                         ])),
                     )),

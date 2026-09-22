@@ -739,7 +739,7 @@ class _DetailRow extends StatelessWidget {
     final border = NativeColors.border(isDark);
 
     if (value.trim().isEmpty || value.trim() == '-') return const SizedBox.shrink();
-    return Padding(padding: const EdgeInsets.symmetric(vertical: 14),
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text(label, style: NativeType.meta(isDark)),
         const SizedBox(height: 6),

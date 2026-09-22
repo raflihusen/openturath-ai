@@ -40,6 +40,7 @@ abstract final class NativeColors {
   static Color accent(bool dark) => dark ? accentDark : accentLight;
   static Color onAccent(bool dark) => Colors.white;
   static Color actionFill(bool dark) => const Color(0xFF0066CC);
+  static Color destructiveFill(bool dark) => const Color(0xFF8C2F2F);
   static Color inverseSurface(bool dark) =>
       dark ? surfaceLight : textPrimaryLight;
   static Color destructive(bool dark) =>
@@ -75,6 +76,16 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
+    'field_fiqh_tahawwulat': ['Fikih Tahawwulat', 'Fiqh Tahawwulat', 'فقه التحولات'],
+    'field_fiqh': ['Fikih & Fatwa', 'Fiqh & Fatwa', 'الفقه والفتوى'],
+    'field_hadith': ['Hadis & Ulumul Hadis', 'Hadith & Hadith Sciences', 'الحديث وعلومه'],
+    'field_tafsir': ['Tafsir & Qiraat', 'Tafsir & Quranic Readings', 'التفسير والقراءات'],
+    'field_aqidah': ['Akidah & Ushuluddin', 'Creed & Theology', 'العقيدة وأصول الدين'],
+    'field_usul': ['Usul Fikih & Kaidah', 'Legal Theory & Maxims', 'أصول الفقه والقواعد'],
+    'field_lughah': ['Bahasa & Sastra Arab', 'Arabic Language & Literature', 'اللغة العربية وآدابها'],
+    'field_tarikh': ['Sejarah, Sirah & Rijal', 'History, Sirah & Biography', 'التاريخ والسيرة والتراجم'],
+    'field_tasawwuf': ['Tasawuf & Akhlak', 'Spirituality & Ethics', 'التصوف والأخلاق'],
+    'field_bibliografi': ['Bibliografi & Faharis', 'Bibliography & Indexes', 'الببليوغرافيا والفهارس'],
     'workMatn': ['Matan', 'Source text', 'متن'],
     'workSharh': ['Syarah', 'Commentary', 'شرح'],
     'workHashiya': ['Hasyiyah', 'Marginal commentary', 'حاشية'],
