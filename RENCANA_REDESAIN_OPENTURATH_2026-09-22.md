@@ -1,7 +1,7 @@
 # Rencana desain ulang OpenTurath — Ruang Baca
 
 Tanggal: 22 September 2026. Baseline kode: `bba54a3`, branch `main`.
-Status: kajian dan proposal; belum mengubah aplikasi. Build APK dan publikasi tidak termasuk tahap ini.
+Status: kajian dan proposal revisi 2; belum mengubah aplikasi. Build APK dan publikasi tidak termasuk tahap ini. Revisi 2 menindaklanjuti penekanan pengguna pada kreativitas menyeluruh, copy ID/EN/AR, seluruh motion/state native, serta eksklusivitas lima tipe Fikih Tahawwulat. Bila berbeda dengan proposal awal, keputusan revisi 2 dalam dokumen ini yang berlaku.
 
 ## 1. Keputusan desain utama
 
@@ -108,11 +108,11 @@ Status “Segera hadir” tidak tampak sama dengan asisten yang dapat dibuka. Kh
 
 Ketukan utama tetap membuka asisten sesuai hak akses. Pustaka memakai tombol berlabel dengan sasaran tekan sendiri; tidak menumpuk dua gesture detector yang membuat tindakan ambigu.
 
-### Fikih Tahawwulat: halaman koleksi yang khas
+### Fikih Tahawwulat: koleksi unggulan eksklusif
 
-Kartu ringkasan membuka halaman native koleksi yang menyatukan pengenalan, cakupan, subasisten, dan kitab rujukan. Sediakan akses langsung ke asisten utama dari ringkasan agar pengguna rutin tidak wajib melewati halaman pengenalan.
+Tahawwulat mendapat identitas visual khusus yang hadir konsisten pada pintu masuk Beranda, direktori Asisten, halaman koleksi, katalog sumber dan paketnya. Kartu ringkasan membuka halaman native koleksi yang menyatukan pengenalan, cakupan, lima tipe, dan kitab rujukan. Sediakan akses langsung ke asisten utama dari ringkasan agar pengguna rutin tidak wajib melewati halaman pengenalan. Perlakuan eksklusif dijabarkan pada bagian 13.
 
-Ekspresi khas: judul Arab sebagai bagian halaman judul, diikuti nama koleksi dan deskripsi pendek; subasisten tersusun seperti daftar isi dengan penjelasan peran. Data dan jumlah subasisten berasal dari model. Warna gelap bukan penanda premium otomatis; susunan tetap berkelas pada light mode.
+Ekspresi khas: halaman judul dengan lambang resmi OpenTurath, judul Arab dan nama koleksi; lima tipe memiliki identitas editorial serta penjelasan peran masing-masing. Data dan jumlah tipe berasal dari model. Warna gelap bukan penanda premium otomatis; susunan tetap berkelas pada light mode.
 
 Pengenalan panjang yang sudah ada dibuka sebagai bacaan lanjut. Jangan mengganti seluruh isi pengenalan, menambah slogan besar, atau membuat fungsi belajar baru. Akses tiap subasisten memakai pemeriksaan entitlement yang sekarang.
 
@@ -167,7 +167,7 @@ Nilai berikut proposal untuk prototipe; bukan angka universal yang diwajibkan Ap
 | Kanvas | Light #F9F9F8; dark #101010 | Netral untuk bacaan panjang |
 | Permukaan | #FFFFFF / #1A1A1A; permukaan sekunder terpisah | Membentuk lapisan tanpa banyak shadow |
 | Teks | Utama sekitar #191919 / #F2F2EF; sekunder dipilih berdasarkan uji kontras | Keterbacaan, bukan opacity dekoratif |
-| Aksen | Tinta monokrom untuk aksi utama; olive hanya untuk status yang benar; merah untuk destruktif/error | Makna konsisten |
+| Aksen | Tinta monokrom untuk aksi utama; olive untuk status yang benar; merah untuk destruktif/error; aksen kuningan redup khusus identitas Tahawwulat | Makna konsisten, flagship memiliki identitas tersendiri |
 | Border | 0.8–1 dp dekoratif dengan alpha 6–8% / 8–12%; fokus kontrol memakai token lebih kuat | Hairline tidak menjadi satu-satunya pembeda kontrol |
 | Radius | Chip 10–12; card/dialog 16; hero 24; sheet 24; CTA/search stadium | Hierarki bentuk; tidak semua elemen menjadi pill |
 | Sudut | Shape continuous bila didukung SDK yang terpasang; fill, clip, border dan hit area konsisten | BorderRadius.circular saja bukan corner smoothing |
@@ -206,7 +206,7 @@ Refaktor model katalog bukan prasyarat visual. Adapter tampilan menyatukan kompo
 | Tahap | Keluaran | Kriteria selesai |
 |---|---|---|
 | A — Baseline visual | Capture aplikasi dari commit baseline, state dan jalur aktif; catat 166 tes sebagai baseline runtime | Tampilan aktual dibedakan dari screenshot lama; kegagalan lama terdokumentasi |
-| B — Prototipe arah | Empat layar representatif: Beranda, Asisten, detail kitab, Catatan/pembaca; light dan dark, memakai data contoh yang diberi label | Komposisi, tipografi Arab, density, dan CTA dapat ditinjau sebelum migrasi luas |
+| B — Prototipe arah | Tahawwulat dan lima tipe lebih dahulu; dilanjutkan Beranda, Asisten, detail kitab, Catatan/pembaca; light/dark dan ID/EN/AR, memakai data contoh berlabel | Identitas flagship, komposisi, bahasa, motion, density dan CTA dapat ditinjau sebelum migrasi luas |
 | C — Fondasi native | Token scoped, shape, typography, search, group, button, state | Isolasi chat terbukti; semantics dan ukuran teks diuji pada komponen representatif |
 | D — Shell dan Beranda | Navigasi, resume, pencarian, direktori, catatan terakhir | Resume dan filter menuju konteks benar; tidak ada riwayat/jumlah palsu |
 | E — Asisten dan Tahawwulat | Direktori informatif, ringkasan koleksi, halaman koleksi | Cakupan terbaca; akses utama cepat; semua subasisten dan pustaka tetap terjangkau |
@@ -236,3 +236,170 @@ Definisi selesai desain: layar pertama menjelaskan tindakan utama; daftar member
 - [Apple HIG Layout](https://developer.apple.com/design/human-interface-guidelines/layout), [Typography](https://developer.apple.com/design/human-interface-guidelines/typography), [Color](https://developer.apple.com/design/human-interface-guidelines/color), [Motion](https://developer.apple.com/design/human-interface-guidelines/motion): landasan prinsip. Hex, keluarga font dan cubic dalam proposal adalah keputusan OpenTurath.
 
 Metode audit dibantu skill `ecc:design-system`. Review runtime dan prototipe visual masih merupakan tahap berikutnya; laporan ini tidak menyatakan aplikasi sudah didesain ulang atau semua tes sudah lulus.
+
+## 12. Blind spot revisi 2 dan keputusan yang menutupnya
+
+Rencana awal belum cukup untuk menjamin redesain menyeluruh. Kekurangannya bukan hanya jumlah layar yang dibahas, melainkan belum adanya kontrak terukur untuk bahasa, identitas flagship, semua keadaan sementara, dan batas dependensi area AI.
+
+| Blind spot | Bukti / celah | Keputusan revisi |
+|---|---|---|
+| Tahawwulat masih diperlakukan sebagai kartu besar | Identitas lima tipe belum dirancang satu per satu | Sistem visual koleksi eksklusif + lima profil peran + jalur cepat; menjadi prototipe pertama |
+| Tiga bahasa dianggap sebagai penerjemahan label | `Loc.text` mengembalikan sumber bila tidak ditemukan; `Loc.tr` hanya assert pada key hilang; teks dinamis dan panjang tidak tercakup oleh tes kelengkapan katalog | Inventaris copy berdasar permukaan/state; stable keys untuk native baru; QA layout dan makna per bahasa |
+| Default error/loading bocor bahasa Indonesia | `app_loader.dart` default Batal; `app_error_state.dart` default judul/isi/tindakan Indonesia dan GoogleFonts langsung | Komponen state khusus native dengan copy wajib terlokalisasi; caller AI lama tetap identik |
+| Reduce Motion belum menyeluruh | `AppLoader` menjalankan controller.repeat tanpa pengecekan disableAnimations | Motion policy untuk native baru; loading tetap dapat dipahami tanpa gerak |
+| Redesign shared components merembet ke AI | AgentMultiTabRoom memakai AppLoader pada baris 898/1224 dan AppErrorState pada 1033; jalur agent_webview_screen juga memakainya | Jangan mengganti default/implementasi shared widget; pakai versi native baru dan migrasi caller yang berada dalam scope saja |
+| Mengubah copy global dapat mengubah UI AI | Locale dan AppCopy/copyCatalog adalah dependensi bersama | Tambahkan namespace/key baru untuk copy native; jangan mengganti key AI yang sama atau mekanisme global tanpa pemeriksaan caller |
+| Eksklusivitas berisiko menambah hambatan | Halaman koleksi menambah ketukan bila selalu diwajibkan | Pintu utama dan lima tipe punya akses langsung; pengenalan adalah pilihan, bukan gerbang wajib |
+| Lima tipe mudah terkesan lima produk berbayar | Satu parent entitlement dengan beberapa subagent | Status hak akses mengikuti model sebenarnya; jumlah tipe bukan lima lisensi terpisah |
+| Copy deskripsi antarbahasa tidak setara | Al-Mukhtabir: Indonesia menyebut ujian pemahaman, Arab juga menyebut nawazil; Al-Muhaqqiq berbeda tingkat rincian | Satu definisi kemampuan per tipe menjadi sumber brief bagi ketiga bahasa |
+| Test hijau disamakan dengan kualitas UX | Tes kelengkapan translation memeriksa tiga nilai/placeholder, bukan kualitas Arab/EN, overflow atau fokus | Gabungkan tes perilaku, review linguistik, screenshot state dan uji tugas |
+| Kelengkapan native belum memiliki daftar selesai | Dialog, voucher, legal, update, auth dan keyboard bisa tertinggal | Coverage ledger seluruh layar/overlay native; semua baris harus punya desain dan QA |
+| Rencana belum memberi batas data baru | Riwayat tipe terakhir belum dibuktikan tersedia; Al-Habib adalah asisten arsip, belum tentu audio player native | Desain bekerja tanpa data baru; rekomendasi/riwayat hanya tampil bila ada sumber yang sah |
+
+## 13. Art direction Tahawwulat — edisi istimewa dalam perpustakaan
+
+### Identitas yang dapat dikenali
+
+Konsep internal: **Lima Pintu Telaah**. Nama ini menjelaskan struktur rancangan; bukan kewajiban menambah slogan pada aplikasi. OpenTurath tetap rumah besarnya, Tahawwulat merupakan koleksi istimewa dengan satu identitas induk dan lima peran yang jelas.
+
+Pengguna memosisikan Tahawwulat sebagai AI khusus pertama di dunia. Itu menjadi konteks positioning dan ambisi desain; kajian ini belum melakukan pembuktian pasar atas klaim pertama di dunia. Dalam rancangan publik, siapkan tempat ringkas untuk klaim tersebut bila substansiasinya tersedia, tanpa membuat tanggal, penghargaan, segel otoritas atau pengesahan palsu. Nilai eksklusif harus sudah terasa melalui kualitas komposisi dan pengalaman, bahkan tanpa headline superlatif.
+
+Signature visual yang diusulkan:
+
+1. **Halaman judul koleksi.** Lambang resmi kecil, judul Arab yang lapang, judul lokal dan atribusi keilmuan. Bingkai tunggal tipis seperti halaman awal edisi khusus, bukan frame berlapis di setiap kartu.
+2. **Tinta dan kuningan redup.** Dark: permukaan #171917 dengan aksen awal #C7AD78; light: kertas #F7F5F0 dengan aksen awal #765C2E. Teks utama tetap warna kontras tinggi; warna ini proposal yang harus diukur. Aksen hanya pada penanda koleksi, garis bab, dan keadaan terpilih, bukan seluruh paragraf atau layar.
+3. **Daftar isi lima peran.** Lima entri yang sengaja dirancang, dengan nomor urut kecil noninteraktif, nama, deskripsi tujuan, ikon fungsional dari keluarga yang sama, dan affordance Buka. Penomoran memetakan tepat lima tipe; berbeda dari nomor dekoratif acak pada kategori umum.
+4. **Momen masuk pendek.** Halaman koleksi muncul melalui fade dan perpindahan kecil 240–300 ms. Judul dan daftar hadir berdekatan, tanpa antrean animasi panjang. Tidak ada intro video, gerbang yang harus ditunggu, efek partikel, atau shimmer emas berulang.
+5. **Identitas yang berlanjut.** Detail koleksi, katalog Tahawwulat dan ringkasan paket memakai penanda yang sama. Area percakapan tidak menerima dekorasi, warna, loader, atau perilaku baru dari sistem ini.
+
+Lambang resmi dipakai dari aset existing. Tidak menciptakan kaligrafi ayat, atribusi ulama, sertifikat atau manuskrip palsu sebagai dekorasi. Tipografi Arab dibentuk oleh font, bukan gambar hasil generasi.
+
+### Lima tipe: identitas dan copy konsep
+
+Nama produk/ID tetap mengikuti model pada `models/agent_model.dart:119–164`. Deskripsi berikut adalah draft desain, diselaraskan terhadap tujuan model; tidak mengubah prompt, kemampuan AI atau isi WebView.
+
+| Tipe dan ID suffix | Peran visual | Indonesia | English | العربية |
+|---|---|---|---|---|
+| Al-Muhaqqiq · المحقق · `muhaqqiq` | Motif tanda rujukan/halaman; ketelitian sumber | Telaah matan, ibarah, dan rujukannya. | Study source texts, passages, and references. | مطالعة المتون والعبارات ومراجعها. |
+| Al-Bayan · البيان · `bayan` | Motif anotasi; penjelasan yang terbuka | Pahami konsep dan istilah secara bertahap. | Explore concepts and terms step by step. | فهم المفاهيم والمصطلحات خطوة بخطوة. |
+| Al-Mukhtabir · المختبر · `mukhtabir` | Motif pertanyaan; refleksi pemahaman | Uji pemahaman melalui tanya jawab. | Test your understanding through questions and answers. | اختبار الفهم من خلال الأسئلة والأجوبة. |
+| Al-Habib · الحبيب · `habib` | Motif arsip suara; khazanah lisan | Telusuri materi muhadharah Habib Abu Bakar. | Explore Habib Abu Bakr’s lecture materials. | استكشاف مواد محاضرات الحبيب أبي بكر. |
+| Al-Khatib · الخطيب · `khatib` | Motif susunan naskah; penyampaian | Susun bahan dakwah dan khutbah. | Prepare materials for talks and sermons. | إعداد مواد للدعوة والخطب. |
+
+Al-Habib dipresentasikan sebagai asisten untuk materi muhadharah, bukan percakapan langsung dengan tokoh atau suara tiruan. Ikon arsip tidak berarti tersedia pemutar audio native. Al-Mukhtabir tidak diberi skor, sertifikat atau progres belajar fiktif. Al-Khatib tidak diberi janji validasi ilmiah otomatis.
+
+### Komposisi dan interaksi
+
+Pada ponsel: header kembali → judul koleksi dan atribusi → tindakan utama sesuai akses → lima tipe dalam daftar → Kitab rujukan → Mengenal Fikih Tahawwulat. Header cukup ringkas agar awal daftar terlihat pada viewport normal. Seluruh lima tipe tetap mudah dicapai dengan satu scroll kontinu.
+
+Kelima tipe memiliki bobot yang setara. Hindari susunan 2×2+1 yang tanpa alasan membuat tipe terakhir terlihat sebagai opsi sisa. Pada layar lebar, halaman judul dan ringkasan berada di sisi awal, daftar lima tipe di sisi berikutnya; layout berbalik secara semantik pada RTL.
+
+Ketuk Buka pada tipe → panggil callback existing → pemeriksaan akses existing → ruang AI existing. Ketuk area informasi terpisah → uraian native singkat bila diperlukan. Tidak ada selector yang menyuntik prompt, mengganti notebook URL, atau mengubah tipe secara diam-diam di dalam WebView.
+
+Pintu Tahawwulat di Beranda adalah tautan unggulan ringkas pada komposisi default, bukan promo besar berulang. Pada Asisten, kartu koleksi punya ruang lebih dari baris reguler tetapi tidak memuat seluruh lima tipe sekaligus. Jika sesi Tahawwulat sedang aktif, hero Lanjutkan kajian tetap mengutamakan sesi aktual. Status aktif, terkunci, belum tersedia, atau gagal dimuat dijelaskan dengan label, bukan kuningan semata.
+
+## 14. Sistem copy tiga bahasa sebagai pekerjaan desain
+
+### Kontrak bahasa
+
+- Indonesia: alami, ringkas, menghormati pembaca; istilah mapan seperti Asisten, Catatan, Kitab rujukan, Langganan dipertahankan. Perbaikan copy boleh dilakukan menyeluruh untuk membantu keputusan; tidak mengganti nama demi terlihat baru.
+- Inggris: tulisan natural untuk pembaca literatur Islam, bukan meniru susunan kalimat Indonesia. Istilah matan/ibarah dapat dipertahankan pada konteks ilmiah dengan penjelasan singkat bila diperlukan.
+- Arab: fusha kontemporer yang tenang, terminologi keilmuan konsisten, tanpa dekorasi harakat berlebihan pada label UI. Naskah kutipan dan judul asli tetap utuh.
+- Nama ulama dan kitab mengikuti data sumber; jangan menerjemahkan judul secara spekulatif. Simpan transliterasi secara konsisten. Bahasa UI tidak otomatis menerjemahkan isi catatan atau jawaban AI.
+
+Glossary awal: Asisten / Assistant / المساعد; Catatan / Notes / الملاحظات; Kitab rujukan / Reference works / الكتب المرجعية; Langganan / Subscription / الاشتراك; Lanjutkan kajian / Continue studying / متابعة الدراسة. Periksa perbedaan dengan key lama sebelum diterapkan; perbaikan native memakai key baru bila key lama juga digunakan AI.
+
+### Sampel copy untuk keadaan native
+
+| Maksud | Indonesia | English | العربية |
+|---|---|---|---|
+| Pilih tipe Tahawwulat | Pilih asisten sesuai kebutuhan kajian Anda. | Choose an assistant for your study needs. | اختر المساعد المناسب لاحتياجات دراستك. |
+| Tombol tipe | Buka asisten | Open assistant | فتح المساعد |
+| Pustaka loading | Memuat kitab rujukan… | Loading reference works… | جارٍ تحميل الكتب المرجعية… |
+| Loading lambat | Masih memuat. Anda dapat kembali dan mencoba lagi. | Still loading. You can go back and try again. | لا يزال التحميل جاريًا. يمكنك الرجوع والمحاولة مجددًا. |
+| Tanpa hasil | Tidak ada kitab yang cocok. Coba judul atau nama pengarang lain. | No matching works. Try another title or author. | لم نعثر على كتب مطابقة. جرّب عنوانًا أو اسم مؤلف آخر. |
+| Catatan kosong | Belum ada catatan. Simpan rujukan atau tulis catatan pertama Anda. | No notes yet. Save a reference or write your first note. | لا توجد ملاحظات بعد. احفظ مرجعًا أو اكتب ملاحظتك الأولى. |
+| Tindakan catatan | Tulis catatan | Write a note | كتابة ملاحظة |
+| Simpan lokal berhasil | Catatan tersimpan di perangkat. | Note saved on this device. | حُفظت الملاحظة على هذا الجهاز. |
+| Gagal memuat | Belum dapat memuat data. Silakan coba lagi. | Couldn’t load the data. Please try again. | تعذّر تحميل البيانات. يُرجى المحاولة مجددًا. |
+| Retry | Coba lagi | Try again | إعادة المحاولة |
+| Pembayaran diverifikasi | Pembayaran sedang diperiksa. | Your payment is being verified. | جارٍ التحقق من الدفع. |
+| Pembayaran diterima, akses pending | Pembayaran diterima. Akses sedang diaktifkan. | Payment received. Your access is being activated. | تم استلام الدفع. جارٍ تفعيل الوصول. |
+| Aktivasi selesai | Akses Anda sudah aktif. | Your access is active. | تم تفعيل وصولك. |
+
+Copy status hanya digunakan ketika state yang mendasarinya benar-benar diketahui. `BookmarkService.isSyncing` saja tidak membuktikan sinkronisasi sukses; jangan menampilkan “Tersinkron” tanpa bukti. Teks “memeriksa pembayaran” tidak dipakai untuk loading katalog. Error jaringan hanya disebut bila penyebabnya diketahui; error umum tidak otomatis menyalahkan koneksi pengguna.
+
+### Engineering dan QA bahasa
+
+1. Buat ledger copy: key, layar/state, ID, EN, AR, placeholder bertipe, catatan konteks, pemilik review dan status validasi. Cakup tooltip, semantics, dialog, toast, empty/error, kebijakan, voucher, menu dan teks aksesibilitas.
+2. Gunakan stable semantic keys native; jangan bergantung pada pencarian balik teks `Loc.text` untuk copy baru. Bahasa harus berubah pada layar dan overlay terbuka tanpa restart. Konten dinamis dari model tetap dihormati.
+3. Susun kalimat lengkap dengan placeholder; jangan menggabungkan fragmen berdasarkan tata bahasa Indonesia. Jumlah Arab memiliki kategori zero/one/two/few/many/other. Pilihan mekanisme ICU/formatter ditetapkan saat implementasi dengan cakupan native saja; tidak mewajibkan migrasi i18n seluruh aplikasi.
+4. Format tanggal/jumlah sesuai locale, tanpa mengganti nilai harga/mata uang. Tentukan kebijakan angka Arab secara konsisten; invoice, URL, email dan kode akses tetap LTR terisolasi. Kalender Hijriah memakai metode yang sudah ada dan label yang jelas; jangan mengubah perhitungannya karena redesign.
+5. Layout menggunakan start/end, ikon arah yang benar, urutan fokus RTL yang logis. Ikon nonarah, logo, foto dan angka bukan semuanya dibalik. Naskah Arab pada UI Inggris/Indonesia tetap RTL sendiri; kutipan Latin pada UI Arab tetap terbaca.
+6. Font untuk Arab diuji pada judul, body, field input, placeholder, numeral dan tanda baca campuran. Pastikan font offline dan fallback tersedia sebelum mengklaim konsistensi.
+7. Periksa seluruh key terpakai, placeholder, teks kosong/key mentah, serta istilah yang tidak diterjemahkan secara sengaja. Tes katalog yang sudah ada dipertahankan, tetapi ditambah pemeriksaan penggunaan dan layout native.
+8. Review makna EN/AR terpisah dari tes teknis. Draft tabel bukan bukti sudah ditinjau penutur/editor; review bahasa dicatat eksplisit dan tidak menghalangi pembuatan prototipe.
+
+## 15. Koreografi motion dan semua state native
+
+Motion harus menjelaskan respons, perubahan posisi atau keadaan. Durasi berikut titik awal prototipe, bukan penundaan buatan operasi.
+
+| Peristiwa | Rancangan | Reduced Motion / batas |
+|---|---|---|
+| Launch | Lambang/wordmark fade singkat maksimal sekitar 200 ms, mengikuti kesiapan auth | Statis; tidak menunggu animasi selesai untuk navigasi |
+| Tekan tombol/kartu | Scale 0.985, 140 ms, easing yang ditetapkan | Highlight/statis; haptic selektif dan tanpa duplikasi |
+| Berpindah tab | Perubahan konten langsung atau fade 120–160 ms; posisi scroll tersimpan sesuai kontrak | Langsung; tidak menyapu melewati tab di antaranya |
+| Halaman detail | Transisi 220–280 ms yang mempertahankan orientasi; Back platform tetap bekerja | Tanpa slide; native page saja |
+| Masuk koleksi Tahawwulat | Fade + offset kecil 240–300 ms, hanya pada halaman koleksi | Statis/fade singkat; tidak mengulang animasi untuk setiap rebuild |
+| Pilih filter | State terpilih berubah sekitar 140 ms; hasil berubah tanpa seluruh layar berkedip | Perubahan instan; fokus dan input tetap |
+| Pemuatan pertama daftar | Skeleton yang mengikuti geometri baris nyata, pulse opacity sangat halus | Skeleton statis + label semantics; tanpa kilatan |
+| Refresh data tersedia | Tetap tampilkan data lama dengan indikator kecil; gagal refresh tidak menghapusnya | Label status tanpa gerak |
+| Submit/simpan | Tombol mempertahankan lebar; tampilkan busy dan cegah double submit | Label proses; selesai diumumkan sekali |
+| Empty/error → data | Crossfade sekitar 160 ms, tanpa layout jump yang besar | Instan; fokus kembali ke lokasi yang masuk akal |
+| Sheet/menu | 240–280 ms, menyesuaikan keyboard dan safe area | Tanpa slide; fokus masuk dan kembali ke pemicu saat ditutup |
+| Voucher/pembayaran sukses | Check sederhana + pesan jelas, maksimal 200 ms | Ikon statis; tanpa konfeti atau bounce besar |
+| Penggantian tema | Adaptasi pendek bila nyaman, tanpa flash putih | Langsung; preferensi sistem dihormati |
+| Penggantian bahasa | Layout dihitung ulang atomik, menjaga input dan scroll bila memungkinkan | Tidak ada animasi yang membalik teks secara visual |
+
+Loading kurang dari sekitar 150 ms tidak perlu memunculkan skeleton berkedip. Jika loading masih berlangsung, tampilkan feedback; pada waktu lama (misalnya 8 detik sebagai ambang UX awal) tampilkan penjelasan yang jujur dan pilihan keluar/retry yang aman. Angka ini bukan network timeout baru dan bukan alasan membatalkan payment request. Progress persentase hanya untuk operasi dengan progress terukur, misalnya unduhan update yang sudah disediakan layanan.
+
+State ledger minimal per permukaan: initial, loading, content, empty, no-results, refresh, stale/offline bila data tersedia, recoverable-error, access-required, disabled/busy, success dan cancelled. Tidak semua state harus ada di setiap komponen; tandai yang tidak relevan beserta alasan. Hindari membangun skeleton palsu untuk jenis layar yang memang tidak mengambil data.
+
+Skeleton, indicator, animation controller dan semantik harus berhenti/tidak aktif saat layar native tidak terlihat, lifecycle paused atau navigasi meninggalkannya. Layar tersembunyi di bawah ruang AI tidak boleh terus menggambar efek dekoratif. Target frame budget mengikuti refresh rate perangkat; ukur di perangkat nyata pada tahap implementasi, jangan mengklaim 60/120 fps dari kode saja.
+
+## 16. Coverage seluruh aplikasi dan isolasi AI
+
+Redesain menyeluruh berarti setiap permukaan native memiliki keputusan desain, termasuk yang jarang dibuka. Coverage ledger implementasi harus mencatat desain, copy ID/EN/AR, light/dark, motion, semantics, state dan pengujian untuk:
+
+- Shell/tab/rail dan header native; Beranda; direktori Asisten; filter/korpus; Khazanah Ulama belum tersedia.
+- Ringkasan dan halaman koleksi Tahawwulat; lima tipe; pengenalan panjang; kartu fitur terkait.
+- Ringkasan pustaka, katalog editorial/canonical, detail kedua jalur, bookmark/save feedback; LibraryScreen/ResearchLibrarySheet lama ditentukan keterjangkauannya sebelum dimigrasi.
+- Catatan, search/filter, pembaca, editor, salin/bagikan, konfirmasi hapus dan undo.
+- Profil/status akses, portfolio akses, bahasa, tema, Tentang, bantuan, seluruh dokumen legal, logout/hapus akun.
+- Login/splash dan area native autentikasi yang terpisah dari WebView; state gagal/batal/menunggu.
+- Langganan, pemilih bidang/periode, ringkasan harga, redeem code, checkout chrome dan status native.
+- Banner/dialog update, loader/error/toast/dialog umum dalam subtree native.
+
+Ada batas yang tidak dinegosiasikan untuk pekerjaan ini: **isi dan pengalaman area AI berbasis WebView tetap seperti sekarang**. Termasuk HTML/CSS/JS yang disuntikkan, chat chrome di modul AI, prompt, notebook URL, cookies/session, tab retention, bridge, clipboard AI, reload/retry AI, loader/error AI, serta auth flow yang melekat pada WebView. Desain lima tipe berhenti saat callback existing menyerahkan kontrol ke ruang AI.
+
+Token, copy, widget dan motion global yang dipakai AI harus dianggap bagian batas tersebut. Gunakan versi native baru dengan default yang tidak mengubah caller lama. Locale aplikasi yang memang sudah tersedia tetap bekerja; jangan mengubah perilaku bahasa di dalam AI. Checkout pembayaran juga mempertahankan halaman provider dan proses transaksi; hanya presentasi native di luarnya masuk cakupan.
+
+Verifikasi isolasi meliputi hash/diff berkas terlindungi, pemeriksaan dependency/callsite shared, screenshot area AI sebelum/sesudah, serta skenario buka/tutup/kembali yang menggunakan alur existing. File terlindungi tanpa diff belum cukup bila tema atau default shared widget berubah.
+
+## 17. Tahap visual dan ukuran keberhasilan revisi
+
+Deliverable pertama pada implementasi berikutnya adalah prototipe fidelity tinggi halaman koleksi Tahawwulat beserta kelima tipe, dalam ID/EN/AR dan light/dark. Prototipe kemudian mencakup entry card pada Beranda/Asisten, sehingga eksklusivitas dinilai dalam konteks keseluruhan aplikasi. Peragakan loading/empty/error/success dan reduced-motion pada contoh native yang relevan; tidak perlu mensimulasikan ulang chat.
+
+Setelah itu lanjutkan prototipe halaman nonflagship serta migrasi per modul sesuai bagian 9. Arah visual tidak dinilai hanya dari satu screenshot dark mode. Bahasa Arab, light mode dan state gagal harus mendapat tingkat penyelesaian yang sama.
+
+Gate review desain:
+
+1. Pembaca dapat menjelaskan perbedaan kelima tipe dari label dan deskripsinya tanpa membuka WebView untuk mencoba satu per satu.
+2. Tahawwulat dapat dikenali dari komposisi dan penanda koleksinya, namun status aktif/terkunci tetap jelas serta tidak bergantung pada warna premium.
+3. Semua tugas utama tetap cepat; pengguna kembali tidak dipaksa membaca pengenalan ulang atau menunggu animasi.
+4. Ketiga bahasa lengkap pada permukaan native baru, tidak ada key mentah/teks Indonesia tak sengaja, serta tidak ada overflow pada teks besar.
+5. State loading/error/pending memberi informasi faktual dan langkah berikutnya; pengalaman tetap jelas saat animasi dinonaktifkan.
+6. Area AI, dependensi shared yang melayaninya, dan proses pembayaran tidak berubah akibat desain baru.
+7. Semua test lama tetap dijalankan; screenshot, layout dan review bahasa melengkapi hasilnya. Tidak menggunakan nilai skor audit awal sebagai klaim peningkatan tanpa pengukuran ulang.
+
+Rencana ini lebih lengkap, tetapi tidak dinyatakan sempurna: hierarki final, kontras aksen, kepadatan Arab, pemahaman kelima tipe, dan performa motion masih perlu dibuktikan melalui prototipe dan pengujian. Pada tahap sekarang hanya dokumen perencanaan yang berubah.
