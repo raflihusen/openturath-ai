@@ -725,12 +725,12 @@ class _DetailRow extends StatelessWidget {
   const _DetailRow({
     required this.label,
     required this.value,
-    this.isLast = false,
+
   });
 
   final String label;
   final String value;
-  final bool isLast;
+
 
   @override
   Widget build(BuildContext context) {
@@ -744,7 +744,7 @@ class _DetailRow extends StatelessWidget {
         Text(label, style: NativeType.meta(isDark)),
         const SizedBox(height: 6),
         SelectableText(value.trim(), style: NativeType.body(isDark)),
-        if (!isLast) ...[const SizedBox(height: 14), Divider(color: border)],
+        const SizedBox(height: 14), Divider(color: border),
       ]));
   }
 }
