@@ -8,6 +8,7 @@ import '../core/routes.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_layout.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
@@ -181,8 +182,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
+    final surface = OTColors.surfaceSubtle(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
@@ -274,7 +274,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               _selectedFieldId == 'all',
                           onTap: () => setState(() => _selectedFieldId = 'all'),
                           isDark: isDark,
-                          border: border,
                           surface: surface,
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -291,7 +290,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               onTap: () =>
                                   setState(() => _selectedFieldId = field.id),
                               isDark: isDark,
-                              border: border,
                               surface: surface,
                               textPrimary: textPrimary,
                               textSecondary: textSecondary,
@@ -338,7 +336,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     required bool isSelected,
     required VoidCallback onTap,
     required bool isDark,
-    required Color border,
     required Color surface,
     required Color textPrimary,
     required Color textSecondary,
@@ -350,18 +347,14 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       onTap: onTap,
       pressedScale: 0.94,
       hapticType: HapticFeedbackType.selection,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: OTRadius.chipBorder,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? activeBg : surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? activeBg : border,
-            width: 0.8,
-          ),
+          borderRadius: OTRadius.chipBorder,
         ),
         alignment: Alignment.center,
         child: Text(
@@ -406,44 +399,61 @@ class _AssistantDirectory extends StatelessWidget {
       });
     }
 
-    return ListView.separated(
+    final flagship = sorted.where((agent) => agent.id == 'fiqh_tahawwulat');
+    final featured = flagship.isEmpty ? null : flagship.first;
+    final regular =
+        sorted.where((agent) => agent.id != 'fiqh_tahawwulat').toList();
+
+    return ListView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
       padding: const EdgeInsets.only(top: OTSpacing.xs, bottom: 96),
-      itemCount: sorted.length,
-      separatorBuilder: (_, __) => const SizedBox(height: OTSpacing.md),
-      itemBuilder: (context, index) {
-        final agent = sorted[index];
-        final openLibrary = agent.catalogId == null
-            ? null
-            : () => showResearchLibrary(context, agent: agent);
-
-        if (agent.id == 'fiqh_tahawwulat') {
-          return TahawwulatFlagshipCard(
-            agent: agent,
-            isSubscribed: currentUser?.hasAccessToAgent(agent.id) ?? false,
-            onOpenMain: () => onOpenAgent(agent),
-            onOpenSubAgent: (subAgent) => onOpenSubAgent(agent, subAgent),
-            onOpenLibrary: openLibrary,
-          );
-        }
-
-        return SpecialistCard(
-          title: agent.title,
-          titleArabic: agent.titleArabic,
-          emoji: agent.emoji,
-          scopeLabel: agent.subtitleAcademic,
-          referenceLabel: agent.referenceBooks
-              ?.take(2)
-              .map((book) => book.titleArabic)
-              .where((title) => title.isNotEmpty)
-              .join(' · '),
-          statusLabel: agent.isComingSoon ? AppCopy.comingSoon : null,
-          onOpen: () => onOpenAgent(agent),
-          onOpenLibrary: openLibrary,
-        );
-      },
+      children: [
+        if (featured != null) ...[
+          TahawwulatFlagshipCard(
+            agent: featured,
+            isSubscribed: currentUser?.hasAccessToAgent(featured.id) ?? false,
+            onOpenMain: () => onOpenAgent(featured),
+            onOpenSubAgent: (subAgent) => onOpenSubAgent(featured, subAgent),
+            onOpenLibrary: featured.catalogId == null
+                ? null
+                : () => showResearchLibrary(context, agent: featured),
+          ),
+          const SizedBox(height: OTSpacing.lg),
+        ],
+        if (regular.isNotEmpty)
+          OTGroupedSection(
+            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.base),
+            child: Column(
+              children: [
+                for (var index = 0; index < regular.length; index++)
+                  SpecialistCard(
+                    title: regular[index].title,
+                    titleArabic: regular[index].titleArabic,
+                    emoji: regular[index].emoji,
+                    scopeLabel: regular[index].subtitleAcademic,
+                    referenceLabel: regular[index]
+                        .referenceBooks
+                        ?.take(2)
+                        .map((book) => book.titleArabic)
+                        .where((title) => title.isNotEmpty)
+                        .join(' · '),
+                    statusLabel:
+                        regular[index].isComingSoon ? AppCopy.comingSoon : null,
+                    onOpen: () => onOpenAgent(regular[index]),
+                    onOpenLibrary: regular[index].catalogId == null
+                        ? null
+                        : () => showResearchLibrary(
+                              context,
+                              agent: regular[index],
+                            ),
+                    showDivider: index != regular.length - 1,
+                  ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

@@ -220,9 +220,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('OpenTurath',
-                          style: OTTypography.brandLogo(color: textPrimary)),
-                      const SizedBox(height: OTSpacing.base),
+                      Text(
+                        'OpenTurath',
+                        style: OTTypography.brandLogo(color: textPrimary),
+                      ),
+                      const SizedBox(height: OTSpacing.lg),
                       const UpdateReadyBanner(),
                       ListenableBuilder(
                         listenable: AgentSessionManager.instance,
@@ -293,42 +295,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           },
                         ),
                         const SizedBox(height: OTSpacing.sm),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: OTColors.surface(isDark),
-                            borderRadius: OTRadius.cardBorder,
-                            border: Border.all(color: OTColors.border(isDark)),
+                        OTGroupedSection(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: OTSpacing.base,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: OTSpacing.base),
-                            child: Column(
-                              children: [
-                                for (var index = 0;
-                                    index < _curatedDisciplines.length;
-                                    index++)
-                                  OTEditorialRow(
-                                    title: _curatedDisciplines[index].name,
-                                    subtitle: AppCopy.assistantsAvailableCount(
-                                        _curatedDisciplines[index]
-                                            .specialistCount),
-                                    leading: SizedBox(
-                                      width: 54,
-                                      child: Text(
-                                        _curatedDisciplines[index].arabic,
-                                        textDirection: TextDirection.rtl,
-                                        style: OTTypography.arabicReading(
-                                          color: OTColors.textSecondary(isDark),
-                                        ).copyWith(fontSize: 17),
-                                      ),
+                          child: Column(
+                            children: [
+                              for (var index = 0;
+                                  index < _curatedDisciplines.length;
+                                  index++)
+                                OTEditorialRow(
+                                  title: _curatedDisciplines[index].name,
+                                  subtitle: AppCopy.assistantsAvailableCount(
+                                      _curatedDisciplines[index]
+                                          .specialistCount),
+                                  leading: SizedBox(
+                                    width: 54,
+                                    child: Text(
+                                      _curatedDisciplines[index].arabic,
+                                      textDirection: TextDirection.rtl,
+                                      style: OTTypography.arabicReading(
+                                        color: OTColors.textSecondary(isDark),
+                                      ).copyWith(fontSize: 17),
                                     ),
-                                    onTap: () => _openField(
-                                        _curatedDisciplines[index].fieldId),
-                                    showDivider:
-                                        index != _curatedDisciplines.length - 1,
                                   ),
-                              ],
-                            ),
+                                  onTap: () => _openField(
+                                      _curatedDisciplines[index].fieldId),
+                                  showDivider:
+                                      index != _curatedDisciplines.length - 1,
+                                ),
+                            ],
                           ),
                         ),
                       ],
@@ -390,36 +386,29 @@ class _DashboardSearchResults extends StatelessWidget {
           description: '${matches.length} asisten ditemukan',
         ),
         const SizedBox(height: OTSpacing.sm),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: OTColors.surface(dark),
-            borderRadius: OTRadius.cardBorder,
-            border: Border.all(color: OTColors.border(dark)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.base),
-            child: Column(
-              children: [
-                for (var index = 0; index < matches.length; index++)
-                  OTEditorialRow(
-                    title: matches[index].title,
-                    subtitle: matches[index].subtitleAcademic,
-                    leading: Text(
-                      matches[index].titleArabic,
-                      textDirection: TextDirection.rtl,
-                      style: OTTypography.arabicReading(
-                        color: OTColors.textSecondary(dark),
-                      ).copyWith(fontSize: 16),
-                    ),
-                    trailing: matches[index].isComingSoon
-                        ? const OTStatusPill(label: 'Segera')
-                        : Icon(Icons.arrow_forward_rounded,
-                            size: 19, color: OTColors.textTertiary(dark)),
-                    onTap: () => onOpen(matches[index], user),
-                    showDivider: index != matches.length - 1,
+        OTGroupedSection(
+          padding: const EdgeInsets.symmetric(horizontal: OTSpacing.base),
+          child: Column(
+            children: [
+              for (var index = 0; index < matches.length; index++)
+                OTEditorialRow(
+                  title: matches[index].title,
+                  subtitle: matches[index].subtitleAcademic,
+                  leading: Text(
+                    matches[index].titleArabic,
+                    textDirection: TextDirection.rtl,
+                    style: OTTypography.arabicReading(
+                      color: OTColors.textSecondary(dark),
+                    ).copyWith(fontSize: 16),
                   ),
-              ],
-            ),
+                  trailing: matches[index].isComingSoon
+                      ? const OTStatusPill(label: 'Segera')
+                      : Icon(Icons.arrow_forward_rounded,
+                          size: 19, color: OTColors.textTertiary(dark)),
+                  onTap: () => onOpen(matches[index], user),
+                  showDivider: index != matches.length - 1,
+                ),
+            ],
           ),
         ),
       ],
@@ -459,10 +448,10 @@ class _StudyEntryCard extends StatelessWidget {
         ? AppCopy.continueStudy
         : AppCopy.startStudy;
 
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final surface = isDark ? OTColors.surface(isDark) : OTColors.accent(isDark);
+    final textPrimary =
+        isDark ? OTColors.textPrimary(isDark) : OTColors.onAccent(isDark);
+    final textSecondary = textPrimary.withValues(alpha: 0.68);
 
     return Semantics(
       button: true,
@@ -477,7 +466,15 @@ class _StudyEntryCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: surface,
               borderRadius: OTRadius.featureBorder,
-              border: Border.all(color: border, width: 1.0),
+              boxShadow: isDark
+                  ? null
+                  : const [
+                      BoxShadow(
+                        color: Color(0x1A000000),
+                        blurRadius: 28,
+                        offset: Offset(0, 12),
+                      ),
+                    ],
             ),
             child: Padding(
               padding: const EdgeInsets.all(OTSpacing.lg),
@@ -496,20 +493,17 @@ class _StudyEntryCard extends StatelessWidget {
                           style: OTTypography.bodyMedium(color: textSecondary),
                         ),
                       ),
-                      OTStatusPill(
-                        label: hasLiveSession
-                            ? 'Sedang terbuka'
+                      Text(
+                        hasLiveSession
+                            ? 'SEDANG DIBUKA'
                             : hasHistory
-                                ? 'Terakhir dibuka'
-                                : 'Mulai di sini',
-                        icon: hasLiveSession
-                            ? Icons.circle
-                            : Icons.bookmark_border_rounded,
-                        emphasized: hasLiveSession,
+                                ? 'TERAKHIR DIBUKA'
+                                : 'MULAI DI SINI',
+                        style: OTTypography.metadataTag(color: textSecondary),
                       ),
                     ],
                   ),
-                  const SizedBox(height: OTSpacing.xl),
+                  const SizedBox(height: OTSpacing.lg),
                   Text(
                     Loc.text(title),
                     maxLines: 2,
@@ -523,15 +517,18 @@ class _StudyEntryCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: OTTypography.body(color: textSecondary),
                   ),
-                  const SizedBox(height: OTSpacing.xl),
-                  Row(
-                    children: [
-                      FilledButton.icon(
-                        onPressed: onPrimary,
-                        icon: const Icon(Icons.arrow_forward_rounded, size: 17),
-                        label: Text(primaryLabel),
+                  const SizedBox(height: OTSpacing.lg),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: FilledButton.icon(
+                      onPressed: onPrimary,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: textPrimary,
+                        foregroundColor: surface,
                       ),
-                    ],
+                      icon: const Icon(Icons.arrow_forward_rounded, size: 17),
+                      label: Text(primaryLabel),
+                    ),
                   ),
                 ],
               ),
@@ -557,7 +554,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final surface = OTColors.surfaceSubtle(isDark);
+    final surface = OTColors.surface(isDark);
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
@@ -568,7 +565,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: OTRadius.inputBorder,
+        borderRadius: OTRadius.cardBorder,
       ),
       child: Row(
         children: [

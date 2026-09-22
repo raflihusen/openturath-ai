@@ -33,9 +33,9 @@ class TahawwulatFlagshipCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(dark);
-    final muted = OTColors.textSecondary(dark);
-    final surface = OTColors.surface(dark);
+    final surface = dark ? OTColors.surface(dark) : OTColors.accent(dark);
+    final ink = dark ? OTColors.textPrimary(dark) : OTColors.onAccent(dark);
+    final muted = ink.withValues(alpha: 0.68);
     final subAgents = agent.subAgents ?? const <SubAgentModel>[];
 
     return Semantics(
@@ -46,7 +46,15 @@ class TahawwulatFlagshipCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: surface,
           borderRadius: OTRadius.featureBorder,
-          border: Border.all(color: OTColors.borderStrong(dark), width: 1.2),
+          boxShadow: dark
+              ? null
+              : const [
+                  BoxShadow(
+                    color: Color(0x18000000),
+                    blurRadius: 30,
+                    offset: Offset(0, 14),
+                  ),
+                ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +67,10 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                     style: OTTypography.metadataTag(color: muted),
                   ),
                 ),
-                _AccessLabel(active: isSubscribed),
+                _AccessLabel(
+                  active: isSubscribed,
+                  foreground: ink,
+                ),
               ],
             ),
             const SizedBox(height: OTSpacing.lg),
@@ -92,10 +103,23 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                 runSpacing: OTSpacing.sm,
                 children: [
                   for (final subAgent in subAgents)
-                    ActionChip(
-                      onPressed: () => onOpenSubAgent(subAgent),
-                      avatar: const Icon(Icons.arrow_forward_rounded, size: 15),
-                      label: Text(subAgent.name),
+                    InkWell(
+                      onTap: () => onOpenSubAgent(subAgent),
+                      borderRadius: OTRadius.rowBorder,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: OTSpacing.md,
+                          vertical: OTSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: ink.withValues(alpha: 0.1),
+                          borderRadius: OTRadius.rowBorder,
+                        ),
+                        child: Text(
+                          subAgent.name,
+                          style: OTTypography.captionMedium(color: ink),
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -106,15 +130,20 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: onOpenMain,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: ink,
+                      foregroundColor: surface,
+                    ),
                     icon: const Icon(Icons.auto_awesome_outlined, size: 18),
                     label: const Text('Buka asisten utama'),
                   ),
                 ),
                 if (onOpenLibrary != null) ...[
                   const SizedBox(width: OTSpacing.sm),
-                  IconButton.outlined(
+                  IconButton(
                     tooltip: 'Buka pustaka ${agent.title}',
                     onPressed: onOpenLibrary,
+                    color: ink,
                     icon: const Icon(Icons.menu_book_outlined, size: 20),
                   ),
                 ],
@@ -122,6 +151,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
             ),
             const SizedBox(height: OTSpacing.sm),
             TextButton(
+              style: TextButton.styleFrom(foregroundColor: muted),
               onPressed: onOpenIntroduction ??
                   () => TahawwulatIntroductionSheet.show(
                         context,
@@ -139,16 +169,16 @@ class TahawwulatFlagshipCard extends StatelessWidget {
 }
 
 class _AccessLabel extends StatelessWidget {
-  const _AccessLabel({required this.active});
+  const _AccessLabel({required this.active, required this.foreground});
 
   final bool active;
+  final Color foreground;
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: active ? OTColors.accent(dark) : OTColors.surfaceSubtle(dark),
+        color: foreground.withValues(alpha: active ? 0.14 : 0.08),
         borderRadius: OTRadius.chipBorder,
       ),
       child: Padding(
@@ -159,8 +189,7 @@ class _AccessLabel extends StatelessWidget {
         child: Text(
           active ? 'Termasuk paket Anda' : 'Perlu akses',
           style: OTTypography.captionMedium(
-            color:
-                active ? OTColors.onAccent(dark) : OTColors.textSecondary(dark),
+            color: foreground,
           ),
         ),
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
-import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
@@ -28,6 +27,7 @@ class SpecialistCard extends StatelessWidget {
     this.serial,
     this.metricLabel,
     this.featured,
+    this.showDivider = true,
   });
 
   final String title;
@@ -42,6 +42,7 @@ class SpecialistCard extends StatelessWidget {
   final String? serial;
   final String? metricLabel;
   final bool? featured;
+  final bool showDivider;
 
   @override
   Widget build(BuildContext context) {
@@ -60,25 +61,33 @@ class SpecialistCard extends StatelessWidget {
       label: '$displayTitle. $description',
       child: AppleInteractiveWrapper(
         onTap: onOpen,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.zero,
         child: Container(
-          constraints: const BoxConstraints(minHeight: 116),
-          padding: const EdgeInsets.all(OTSpacing.base),
+          constraints: const BoxConstraints(minHeight: 92),
+          padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
           decoration: BoxDecoration(
             color: OTColors.surface(dark),
-            borderRadius: OTRadius.cardBorder,
-            border: Border.all(color: OTColors.border(dark)),
+            border: showDivider
+                ? Border(
+                    bottom: BorderSide(
+                      color: dark
+                          ? OTColors.borderSubtleDark
+                          : OTColors.borderSubtleLight,
+                      width: 0.7,
+                    ),
+                  )
+                : null,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: 48,
-                height: 64,
+                width: 42,
+                height: 42,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(dark),
-                  borderRadius: OTRadius.rowBorder,
+                  shape: BoxShape.circle,
                 ),
                 child: arabic.isNotEmpty
                     ? Text(
@@ -88,7 +97,7 @@ class SpecialistCard extends StatelessWidget {
                         textDirection: TextDirection.rtl,
                         style: OTTypography.arabicReading(
                           color: OTColors.textPrimary(dark),
-                        ).copyWith(fontSize: 15),
+                        ).copyWith(fontSize: 14),
                       )
                     : Icon(icon ?? Icons.auto_awesome_outlined,
                         size: 21, color: OTColors.textSecondary(dark)),
@@ -123,7 +132,7 @@ class SpecialistCard extends StatelessWidget {
                           color: OTColors.textSecondary(dark)),
                     ),
                     if (referenceLabel?.trim().isNotEmpty == true) ...[
-                      const SizedBox(height: OTSpacing.sm),
+                      const SizedBox(height: OTSpacing.xs),
                       Text(
                         referenceLabel!.trim(),
                         maxLines: 1,
