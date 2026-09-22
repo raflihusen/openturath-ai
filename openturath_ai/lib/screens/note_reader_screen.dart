@@ -6,16 +6,17 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/bookmark_content.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_layout.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/design/ot_typography.dart';
 import '../core/note_clipboard_content.dart';
-import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../widgets/note_editor_sheet.dart';
 
-/// Focused reading surface: the archive list remains an index, not an editor.
 class NoteReaderScreen extends StatefulWidget {
   const NoteReaderScreen({super.key, required this.item});
+
   final BookmarkModel item;
 
   @override
@@ -38,11 +39,13 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
         content: Text(AppCopy.deleteNoteDesc),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(AppCopy.cancel)),
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppCopy.cancel),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(AppCopy.delete)),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(AppCopy.delete),
+          ),
         ],
       ),
     );
@@ -56,32 +59,44 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
     AppSnackBar.success(context, AppCopy.noteContentCopied);
   }
 
+  String _sourceLabel() {
+    if (_item.documentKind == BookmarkDocumentKind.personalNote) {
+      return 'Catatan pribadi';
+    }
+    if (_item.documentKind == BookmarkDocumentKind.bookReference) {
+      return 'Rujukan kitab';
+    }
+    final source = _item.agentTitle
+        .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
+        .trim();
+    return source.isEmpty ? 'Hasil kajian' : source;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final primary = OTColors.textPrimary(isDark);
-    final secondary = OTColors.textSecondary(isDark);
-    final subtle = OTColors.surfaceSubtle(isDark);
-    final displayTitle = _item.documentKind == BookmarkDocumentKind.aiAnswer
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final primary = OTColors.textPrimary(dark);
+    final secondary = OTColors.textSecondary(dark);
+    final subtle = OTColors.surfaceSubtle(dark);
+    final title = _item.documentKind == BookmarkDocumentKind.aiAnswer
         ? aiAnswerTitle(_item.fullAnswer, _item.agentTitle)
         : _item.title;
-    final displayContent = _item.documentKind == BookmarkDocumentKind.aiAnswer
+    final content = _item.documentKind == BookmarkDocumentKind.aiAnswer
         ? readableAiAnswerMarkdown(_item.fullAnswer)
         : (_item.fullAnswer.isEmpty ? _item.arabicExcerpt : _item.fullAnswer);
+
     return Scaffold(
-      backgroundColor: canvas,
+      backgroundColor: OTColors.canvas(dark),
       appBar: AppBar(
-        backgroundColor: canvas,
-        surfaceTintColor: Colors.transparent,
-        title: Text(AppCopy.savedCollection,
-            style: ScholarlyFonts.newsreader(
-                color: primary, fontWeight: FontWeight.w700)),
+        title: const Text('Catatan'),
+        backgroundColor: OTColors.canvas(dark),
+        scrolledUnderElevation: 0,
         actions: [
           IconButton(
-              icon: const Icon(Icons.copy_outlined),
-              tooltip: AppCopy.copyContentTooltip,
-              onPressed: _copy),
+            icon: const Icon(Icons.copy_outlined),
+            tooltip: AppCopy.copyContentTooltip,
+            onPressed: _copy,
+          ),
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'edit') _edit();
@@ -97,78 +112,48 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
       body: SafeArea(
         top: false,
         child: SelectionArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-                OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
-            children: [
-              Text(_kindLabel(_item),
-                  style: ScholarlyFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: secondary,
-                      letterSpacing: .6)),
-              const SizedBox(height: 8),
-              Text(displayTitle,
-                  style: ScholarlyFonts.newsreader(
-                      fontSize: 29,
-                      height: 1.15,
-                      fontWeight: FontWeight.w700,
-                      color: primary)),
-              if (_item.agentTitle.isNotEmpty &&
-                  _item.documentKind == BookmarkDocumentKind.aiAnswer &&
-                  !displayTitle.toLowerCase().contains(_item.agentTitle
-                      .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-                      .toLowerCase())) ...[
-                const SizedBox(height: 10),
+          child: OTConstrainedContent(
+            child: ListView(
+              padding: const EdgeInsets.only(
+                top: OTSpacing.md,
+                bottom: OTSpacing.xl,
+              ),
+              children: [
+                Text(title, style: OTTypography.pageTitle(color: primary)),
+                const SizedBox(height: OTSpacing.sm),
                 Text(
-                  _item.agentTitle.replaceFirst(
-                      RegExp(r'^AI\s+', caseSensitive: false), ''),
-                  style: ScholarlyFonts.outfit(fontSize: 13, color: secondary),
+                  _sourceLabel(),
+                  style: OTTypography.caption(color: secondary),
                 ),
-              ],
-              const SizedBox(height: 20),
-              Divider(color: secondary.withValues(alpha: .25)),
-              const SizedBox(height: 20),
-              MarkdownBody(
-                data: displayContent,
-                selectable: true,
-                styleSheet: MarkdownStyleSheet(
-                  p: ScholarlyFonts.outfit(
-                      fontSize: 16, height: 1.72, color: primary),
-                  h1: ScholarlyFonts.newsreader(
-                      fontSize: 25,
-                      height: 1.2,
-                      fontWeight: FontWeight.w700,
-                      color: primary),
-                  h2: ScholarlyFonts.newsreader(
-                      fontSize: 20,
-                      height: 1.25,
-                      fontWeight: FontWeight.w700,
-                      color: primary),
-                  blockquote: ScholarlyFonts.outfit(
-                      fontSize: 15,
+                const SizedBox(height: OTSpacing.lg),
+                Divider(color: OTColors.border(dark)),
+                const SizedBox(height: OTSpacing.lg),
+                MarkdownBody(
+                  data: content,
+                  selectable: true,
+                  styleSheet: MarkdownStyleSheet(
+                    p: OTTypography.readingBody(color: primary),
+                    h1: OTTypography.pageTitle(color: primary)
+                        .copyWith(fontSize: 25),
+                    h2: OTTypography.sectionTitle(color: primary)
+                        .copyWith(fontSize: 20),
+                    blockquote: OTTypography.body(color: secondary).copyWith(
                       height: 1.6,
                       fontStyle: FontStyle.italic,
-                      color: secondary),
-                  blockquoteDecoration: BoxDecoration(
+                    ),
+                    blockquoteDecoration: BoxDecoration(
                       color: subtle,
-                      border:
-                          Border(left: BorderSide(color: secondary, width: 3))),
+                      border: Border(
+                        left: BorderSide(color: secondary, width: 3),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-
-  String _kindLabel(BookmarkModel item) => switch (item.documentKind) {
-        BookmarkDocumentKind.personalNote => AppCopy.navSaved,
-        BookmarkDocumentKind.aiAnswer => item.agentTitle.isNotEmpty
-            ? item.agentTitle
-                .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), '')
-            : (item.fieldName.isNotEmpty ? item.fieldName : AppCopy.studySpace),
-        BookmarkDocumentKind.bookReference => AppCopy.bookReferenceLabel,
-      };
 }
