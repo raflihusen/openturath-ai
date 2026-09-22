@@ -97,51 +97,61 @@ class OTTypography {
   }
 
   // ── Editorial & Heading Styles ──
-  static TextStyle brandLogo({Color? color}) => _newsreader(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -.4,
-        color: color,
-      );
-
-  static TextStyle displayLarge({Color? color}) => _newsreader(
-        fontSize: 36,
-        fontWeight: FontWeight.w500,
-        letterSpacing: -1.0,
-        color: color,
-      );
-
-  static TextStyle pageTitle({Color? color}) => _newsreader(
+  /// Reserved for long-form editorial moments and book presentation. It is
+  /// intentionally not used for navigation, controls, or ordinary headings.
+  static TextStyle literaryTitle({Color? color}) => _newsreader(
         fontSize: 28,
         fontWeight: FontWeight.w600,
-        letterSpacing: -0.6,
+        letterSpacing: -0.55,
+        height: 1.16,
+        color: color,
+      );
+
+  static TextStyle brandLogo({Color? color}) => _outfit(
+        fontSize: 21,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -.45,
+        color: color,
+      );
+
+  static TextStyle displayLarge({Color? color}) => _outfit(
+        fontSize: 34,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -1.15,
+        color: color,
+      );
+
+  static TextStyle pageTitle({Color? color}) => _outfit(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.75,
         height: 1.12,
         color: color,
       );
 
-  static TextStyle editorialHero({Color? color}) => _newsreader(
-        fontSize: 26,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.4,
-        height: 1.25,
+  static TextStyle editorialHero({Color? color}) => _outfit(
+        fontSize: 25,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.65,
+        height: 1.18,
         color: color,
       );
 
-  static TextStyle bookTitle({Color? color}) => _newsreader(
+  static TextStyle bookTitle({Color? color}) => _outfit(
+        fontSize: 19,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.35,
+        color: color,
+      );
+
+  static TextStyle screenTitle({Color? color}) => _outfit(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.3,
         color: color,
       );
 
-  static TextStyle screenTitle({Color? color}) => _newsreader(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        letterSpacing: -0.3,
-        color: color,
-      );
-
-  static TextStyle corpusTitle({Color? color}) => _newsreader(
+  static TextStyle corpusTitle({Color? color}) => _outfit(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.2,

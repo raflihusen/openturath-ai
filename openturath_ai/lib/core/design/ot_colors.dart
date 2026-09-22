@@ -10,43 +10,40 @@ import 'package:flutter/material.dart';
 class OTColors {
   // ── 1. Light Mode (Warm Archival Paper) ──
   static const Color canvasLight =
-      Color(0xFFF6F6F3); // Latar utama aplikasi (tekstur kertas arsip hangat)
+      Color(0xFFF5F5F7); // Grouped background ala aplikasi native Apple
   static const Color surfaceLight = Color(
       0xFFFFFFFF); // Panel utama, bottom sheet, dialog, kartu, input field
   static const Color surfaceSubtleLight =
-      Color(0xFFEEEEEB); // Area sekunder, track selector, header list
+      Color(0xFFEFEFF4); // Input, selector, dan grouped secondary surface
   static const Color textPrimaryLight =
-      Color(0xFF171717); // Teks utama, heading, tombol primer (ink black)
+      Color(0xFF1D1D1F); // Near-black Apple ink
   static const Color textSecondaryLight =
-      Color(0xFF656560); // Metadata, deskripsi kitab, label sekunder
+      Color(0xFF6E6E73); // Metadata dan label sekunder
   static const Color textTertiaryLight =
-      Color(0xFF92928C); // Placeholder, informasi minor, divider halus
-  static const Color borderLight =
-      Color(0xFFDDDDD8); // Garis pembatas standar (1.0px hairline)
-  static const Color borderSubtleLight = Color(0xFFEEEEEB);
+      Color(0xFF8E8E93); // Placeholder dan informasi minor
+  static const Color borderLight = Color(0xFFD1D1D6); // Separator native
+  static const Color borderSubtleLight = Color(0xFFE5E5EA);
   static const Color borderStrongLight =
-      Color(0xFFB8B8B1); // Garis aktif, state fokus, pemisah penting
-  static const Color accentLight = Color(0xFF171717); // Ink black
+      Color(0xFFA8A8AD); // Garis aktif dan pemisah penting
+  static const Color accentLight = Color(0xFF1D1D1F);
 
   // ── 2. Dark Mode (Quiet Obsidian Scholar) ──
   static const Color canvasDark =
-      Color(0xFF111110); // Latar utama aplikasi (obsidian hangat)
+      Color(0xFF000000); // True black agar OLED terasa native
   static const Color surfaceDark =
-      Color(0xFF181817); // Panel utama, sheet, dialog, kartu
+      Color(0xFF1C1C1E); // Secondary system background
   static const Color surfaceSubtleDark =
-      Color(0xFF222220); // Area sekunder, background chip
-  static const Color textPrimaryDark =
-      Color(0xFFF4F4F0); // Teks utama, heading, tombol inverse
+      Color(0xFF2C2C2E); // Tertiary grouped surface
+  static const Color textPrimaryDark = Color(0xFFF5F5F7); // Teks utama
   static const Color textSecondaryDark =
-      Color(0xFFB2B2AA); // Metadata, deskripsi
+      Color(0xFFAEAEB2); // Metadata dan deskripsi
   static const Color textTertiaryDark =
-      Color(0xFF85857F); // Placeholder, label minor
-  static const Color borderDark =
-      Color(0xFF30302E); // Garis pembatas standar (1.0px)
-  static const Color borderSubtleDark = Color(0xFF222220);
+      Color(0xFF8E8E93); // Placeholder dan label minor
+  static const Color borderDark = Color(0xFF38383A); // Separator standar
+  static const Color borderSubtleDark = Color(0xFF2C2C2E);
   static const Color borderStrongDark =
-      Color(0xFF4B4B47); // Garis aktif, pemisah seksi
-  static const Color accentDark = Color(0xFFF4F4F0); // Clean white
+      Color(0xFF545458); // Garis aktif, pemisah seksi
+  static const Color accentDark = Color(0xFFF5F5F7);
 
   // ── 3. Tinta Balik (Foreground di atas permukaan ber-accent) ──
   // Tombol primer diisi `accent`, sehingga labelnya wajib memakai `onAccent`.
@@ -57,8 +54,8 @@ class OTColors {
       canvasDark; // Tinta obsidian di atas krem naskah
 
   // ── 4. Permukaan Terbalik (Snackbar, tooltip, pil gelap di mode terang) ──
-  static const Color inverseSurfaceLight = Color(0xFF171717);
-  static const Color inverseSurfaceDark = Color(0xFF181817);
+  static const Color inverseSurfaceLight = Color(0xFF1D1D1F);
+  static const Color inverseSurfaceDark = Color(0xFF2C2C2E);
   static const Color onInverseSurface =
       Color(0xFFF4F4F0); // Krem naskah, sama di dua mode
 

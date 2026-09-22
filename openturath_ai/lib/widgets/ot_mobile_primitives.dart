@@ -56,6 +56,31 @@ class OTPageHeader extends StatelessWidget {
   }
 }
 
+/// A native grouped surface. Use this for related controls or rows, never as a
+/// decorative frame around a single piece of text.
+class OTGroupedSection extends StatelessWidget {
+  const OTGroupedSection({
+    super.key,
+    required this.child,
+    this.padding = EdgeInsets.zero,
+  });
+
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return ClipRRect(
+      borderRadius: OTRadius.cardBorder,
+      child: ColoredBox(
+        color: OTColors.surface(dark),
+        child: Padding(padding: padding, child: child),
+      ),
+    );
+  }
+}
+
 class OTSectionHeader extends StatelessWidget {
   const OTSectionHeader({
     super.key,
@@ -134,6 +159,8 @@ class OTSearchField extends StatelessWidget {
           style: OTTypography.body(color: OTColors.textPrimary(dark)),
           decoration: InputDecoration(
             hintText: hintText,
+            filled: true,
+            fillColor: OTColors.surfaceSubtle(dark),
             prefixIcon: const Icon(Icons.search_rounded, size: 21),
             suffixIcon: value.text.isEmpty
                 ? null
@@ -175,7 +202,7 @@ class OTEditorialRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final border = OTColors.border(dark);
+    const border = OTColors.borderSubtleLight;
     final row = InkWell(
       onTap: onTap,
       child: ConstrainedBox(
@@ -183,7 +210,7 @@ class OTEditorialRow extends StatelessWidget {
             const BoxConstraints(minHeight: OTLayout.minimumTouchTarget),
         child: Padding(
           padding: contentPadding ??
-              const EdgeInsets.symmetric(vertical: OTSpacing.base),
+              const EdgeInsets.symmetric(vertical: OTSpacing.md),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -230,7 +257,12 @@ class OTEditorialRow extends StatelessWidget {
     if (!showDivider) return row;
     return DecoratedBox(
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: border, width: 1)),
+        border: Border(
+          bottom: BorderSide(
+            color: dark ? OTColors.borderSubtleDark : border,
+            width: 0.7,
+          ),
+        ),
       ),
       child: row,
     );
@@ -319,7 +351,7 @@ class OTStatusPill extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: OTSpacing.md,
-          vertical: OTSpacing.sm,
+          vertical: 6,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

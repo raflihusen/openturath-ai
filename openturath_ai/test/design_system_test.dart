@@ -13,23 +13,23 @@ void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
   OTTypography.useSystemFontFallback = true;
 
-  group('Quiet Scholar Design System — Tokens Suite', () {
-    test('OTColors provides calm, scholarly palettes without gold leaks', () {
+  group('Native Scholar Design System — Tokens Suite', () {
+    test('OTColors provides native grouped palettes without color noise', () {
       // 1. Light palette checks
-      expect(OTColors.canvasLight, const Color(0xFFF6F6F3));
+      expect(OTColors.canvasLight, const Color(0xFFF5F5F7));
       expect(OTColors.surfaceLight, const Color(0xFFFFFFFF));
-      expect(OTColors.textPrimaryLight, const Color(0xFF171717));
-      expect(OTColors.textSecondaryLight, const Color(0xFF656560));
+      expect(OTColors.textPrimaryLight, const Color(0xFF1D1D1F));
+      expect(OTColors.textSecondaryLight, const Color(0xFF6E6E73));
 
       // 2. Dark palette checks
-      expect(OTColors.canvasDark, const Color(0xFF111110));
-      expect(OTColors.surfaceDark, const Color(0xFF181817));
-      expect(OTColors.textPrimaryDark, const Color(0xFFF4F4F0));
-      expect(OTColors.textSecondaryDark, const Color(0xFFB2B2AA));
+      expect(OTColors.canvasDark, const Color(0xFF000000));
+      expect(OTColors.surfaceDark, const Color(0xFF1C1C1E));
+      expect(OTColors.textPrimaryDark, const Color(0xFFF5F5F7));
+      expect(OTColors.textSecondaryDark, const Color(0xFFAEAEB2));
 
       // 3. Scholarly pure monochrome accents
-      expect(OTColors.accentLight, const Color(0xFF171717));
-      expect(OTColors.accentDark, const Color(0xFFF4F4F0));
+      expect(OTColors.accentLight, const Color(0xFF1D1D1F));
+      expect(OTColors.accentDark, const Color(0xFFF5F5F7));
 
       // 4. Adaptive context helpers
       expect(OTColors.canvas(false), OTColors.canvasLight);
@@ -46,15 +46,15 @@ void main() {
 
     test('OTTypography strictly separates Brand, Interface, and Arabic layers',
         () {
-      // 1. Brand / Editorial layer (Newsreader)
+      // 1. Native interface display layer (Outfit)
       final brand = OTTypography.brandLogo();
-      expect(brand.fontSize, 22);
+      expect(brand.fontSize, 21);
       expect(brand.fontWeight, FontWeight.w600);
 
       final hero = OTTypography.editorialHero();
-      expect(hero.fontSize, 26);
-      expect(hero.fontWeight, FontWeight.w600);
-      expect(hero.height, 1.25);
+      expect(hero.fontSize, 25);
+      expect(hero.fontWeight, FontWeight.w700);
+      expect(hero.height, 1.18);
 
       final corpus = OTTypography.corpusTitle();
       expect(corpus.fontSize, 18);
@@ -98,19 +98,19 @@ void main() {
 
     test('OTRadius enforces disciplined curvature without bubble-boxing', () {
       expect(OTRadius.input, 14.0);
-      expect(OTRadius.row, 10.0);
-      expect(OTRadius.card, 16.0);
-      expect(OTRadius.feature, 22.0);
-      expect(OTRadius.sheet, 24.0);
+      expect(OTRadius.row, 12.0);
+      expect(OTRadius.card, 20.0);
+      expect(OTRadius.feature, 26.0);
+      expect(OTRadius.sheet, 28.0);
       expect(OTRadius.dialog, 20.0);
-      expect(OTRadius.chip, 999.0);
-      expect(OTRadius.button, 999.0);
+      expect(OTRadius.chip, 10.0);
+      expect(OTRadius.button, 14.0);
 
       expect(OTRadius.inputBorder, BorderRadius.circular(14.0));
-      expect(OTRadius.cardBorder, BorderRadius.circular(16.0));
+      expect(OTRadius.cardBorder, BorderRadius.circular(20.0));
       expect(OTRadius.dialogBorder, BorderRadius.circular(20.0));
-      expect(OTRadius.chipBorder, BorderRadius.circular(999.0));
-      expect(OTRadius.buttonBorder, BorderRadius.circular(999.0));
+      expect(OTRadius.chipBorder, BorderRadius.circular(10.0));
+      expect(OTRadius.buttonBorder, BorderRadius.circular(14.0));
     });
 
     test('OTMotion provides quiet, restrained animations and easing', () {

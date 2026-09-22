@@ -1,4 +1,5 @@
 import '../core/localization.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/scholarly_fonts.dart';
@@ -206,59 +207,64 @@ class _MainShellScreenState extends State<MainShellScreen> {
               children: screens,
             ),
             extendBody: true,
-            bottomNavigationBar: Container(
-              decoration: BoxDecoration(
-                color: surface,
-                border: Border(
-                  top: BorderSide(
-                    color: border,
-                    width: 0.8,
+            bottomNavigationBar: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: surface.withValues(alpha: 0.9),
+                    border: Border(
+                      top: BorderSide(
+                        color: border.withValues(alpha: 0.65),
+                        width: 0.5,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              child: SafeArea(
-                top: false,
-                child: SizedBox(
-                  height: 64,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _GoogleNavBarItem(
-                          icon: Icons.home_outlined,
-                          activeIcon: Icons.home_rounded,
-                          label: AppCopy.navHome,
-                          isSelected: _currentIndex == 0,
-                          onTap: () => _onTabSelected(0),
-                        ),
+                  child: SafeArea(
+                    top: false,
+                    child: SizedBox(
+                      height: 62,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.home_outlined,
+                              activeIcon: Icons.home_rounded,
+                              label: AppCopy.navHome,
+                              isSelected: _currentIndex == 0,
+                              onTap: () => _onTabSelected(0),
+                            ),
+                          ),
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.auto_awesome_outlined,
+                              activeIcon: Icons.auto_awesome_rounded,
+                              label: AppCopy.navStudies,
+                              isSelected: _currentIndex == 1,
+                              onTap: () => _onTabSelected(1),
+                            ),
+                          ),
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.edit_note_rounded,
+                              activeIcon: Icons.edit_note_rounded,
+                              label: AppCopy.navSaved,
+                              isSelected: _currentIndex == 2,
+                              onTap: () => _onTabSelected(2),
+                            ),
+                          ),
+                          Expanded(
+                            child: _GoogleNavBarItem(
+                              icon: Icons.settings_outlined,
+                              activeIcon: Icons.settings_rounded,
+                              label: AppCopy.navSettings,
+                              isSelected: _currentIndex == 3,
+                              onTap: () => _onTabSelected(3),
+                            ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: _GoogleNavBarItem(
-                          icon: Icons.auto_awesome_outlined,
-                          activeIcon: Icons.auto_awesome_rounded,
-                          label: AppCopy.navStudies,
-                          isSelected: _currentIndex == 1,
-                          onTap: () => _onTabSelected(1),
-                        ),
-                      ),
-                      Expanded(
-                        child: _GoogleNavBarItem(
-                          icon: Icons.edit_note_rounded,
-                          activeIcon: Icons.edit_note_rounded,
-                          label: AppCopy.navSaved,
-                          isSelected: _currentIndex == 2,
-                          onTap: () => _onTabSelected(2),
-                        ),
-                      ),
-                      Expanded(
-                        child: _GoogleNavBarItem(
-                          icon: Icons.settings_outlined,
-                          activeIcon: Icons.settings_rounded,
-                          label: AppCopy.navSettings,
-                          isSelected: _currentIndex == 3,
-                          onTap: () => _onTabSelected(3),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -368,17 +374,7 @@ class _GoogleNavBarItem extends StatelessWidget {
                 color: labelColor,
               ),
             ),
-            const SizedBox(height: 4),
-            AnimatedContainer(
-              duration: OTMotion.fast,
-              curve: OTMotion.curve,
-              width: isSelected ? 16 : 4,
-              height: 2,
-              decoration: BoxDecoration(
-                color: isSelected ? activeFg : Colors.transparent,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
+            const SizedBox(height: 2),
           ],
         ),
       ),

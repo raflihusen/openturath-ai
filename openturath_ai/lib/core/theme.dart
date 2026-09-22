@@ -26,8 +26,8 @@ class AppTheme {
 
   // ── 1b. Token Navigasi & Status ───────────────────────────────────────────
   // Status kritis memakai merah bata redup dari OTColors, bukan merah neon iOS.
-  static const Color navBarDark = Color(0xCC111110);
-  static const Color navBarLight = Color(0xD9F6F6F3);
+  static const Color navBarDark = Color(0xE6000000);
+  static const Color navBarLight = Color(0xEBFFFFFF);
   static const Color navBarBorderDark = OTColors.borderDark;
   static const Color navBarBorderLight = OTColors.borderLight;
   static const double dividerIndent = 54.0;
@@ -52,8 +52,8 @@ class AppTheme {
   static const Color queryBoxBorderDark = OTColors.borderDark;
   static const Color surfaceElevated = OTColors.surfaceSubtleDark;
   static const Color scholarlyIndigo = OTColors.textPrimaryDark;
-  static const Color readingCanvasParchmentLight = Color(0xFFF6F6F3);
-  static const Color readingCanvasParchmentDark = Color(0xFF181817);
+  static const Color readingCanvasParchmentLight = Color(0xFFFFFFFF);
+  static const Color readingCanvasParchmentDark = Color(0xFF1C1C1E);
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
   static const Color lmLightCanvas = canvasLight;
@@ -117,14 +117,14 @@ class AppTheme {
 
   // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
   static const double radiusXS = 8.0; // Kecil: chip / badge / tag
-  static const double radiusCard = 16.0; // Sedang: card / dialog / bottom sheet
+  static const double radiusCard = 20.0;
   static const double radiusM = 16.0; // Alias untuk kompatibilitas
   static const double radiusS = 8.0; // Diharmonisasi ke 8.0
-  static const double radiusL = 16.0; // Diharmonisasi ke 16.0
-  static const double radiusXL = 16.0; // Diharmonisasi ke 16.0
+  static const double radiusL = 20.0;
+  static const double radiusXL = 26.0;
   static const double radiusFull = 100.0; // Bulat: pill / button / avatar
-  static const double radiusPill = 100.0; // Stadium Pills & Buttons
-  static const double radiusQuery = 100.0; // Chat Query Stadium Pill
+  static const double radiusPill = 14.0;
+  static const double radiusQuery = 14.0;
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
   static const LinearGradient bgGradient = LinearGradient(
@@ -205,7 +205,6 @@ class AppTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusL),
-          side: const BorderSide(color: borderDark, width: 1),
         ),
         clipBehavior: Clip.antiAlias,
       ),
@@ -274,15 +273,16 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderDark, width: 1),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderDark, width: 1),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: accentDark, width: 1.5),
+          borderSide:
+              const BorderSide(color: OTColors.borderStrongDark, width: 1),
         ),
       ),
       tooltipTheme: TooltipThemeData(
@@ -376,7 +376,6 @@ class AppTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusL),
-          side: const BorderSide(color: borderLight, width: 1),
         ),
         clipBehavior: Clip.antiAlias,
       ),
@@ -444,15 +443,16 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderLight, width: 1),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderLight, width: 1),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: accentLight, width: 1.5),
+          borderSide:
+              const BorderSide(color: OTColors.borderStrongLight, width: 1),
         ),
       ),
       tooltipTheme: TooltipThemeData(
