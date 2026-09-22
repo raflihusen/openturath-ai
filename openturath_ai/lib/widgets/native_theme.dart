@@ -16,8 +16,9 @@ class NativeTheme extends StatelessWidget {
     return Theme(
         data: base.copyWith(
           scaffoldBackgroundColor: NativeColors.canvas(dark),
+          textTheme: base.textTheme.apply(fontFamily: Loc.isArabic ? 'NativeArabic' : 'NativeInter', bodyColor: ink, displayColor: ink),
           colorScheme: base.colorScheme.copyWith(
-              primary: ink,
+              primary: NativeColors.accent(dark),
               onPrimary: NativeColors.onAccent(dark),
               surface: surface,
               onSurface: ink,
@@ -28,20 +29,20 @@ class NativeTheme extends StatelessWidget {
               centerTitle: false,
               elevation: 0,
               scrolledUnderElevation: 0,
-              titleTextStyle: NativeType.title(dark, size: 24)),
+              titleTextStyle: NativeType.title(dark, size: 26)),
           filledButtonTheme: FilledButtonThemeData(
               style: FilledButton.styleFrom(
-                  backgroundColor: ink,
+                  backgroundColor: NativeColors.actionFill(dark),
                   foregroundColor: NativeColors.onAccent(dark),
                   minimumSize: const Size(48, 48),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-                  textStyle: NativeType.body(dark, size: 15),
+                  textStyle: NativeType.body(dark, size: 17),
                   shape: const StadiumBorder(),
                   elevation: 0)),
           outlinedButtonTheme: OutlinedButtonThemeData(
               style: OutlinedButton.styleFrom(
-                  foregroundColor: ink,
+                  foregroundColor: NativeColors.accent(dark),
                   minimumSize: const Size(48, 48),
                   shape: const StadiumBorder(),
                   padding:

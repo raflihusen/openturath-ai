@@ -15,8 +15,8 @@ abstract final class NativeFonts {
       TextDecoration? decoration}) {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
-        fontFamily: arabic ? 'NativeArabic' : 'NativeOutfit',
-        fontFamilyFallback: const ['NativeArabic', 'NativeOutfit'],
+        fontFamily: arabic ? 'NativeArabic' : 'NativeInter',
+        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
@@ -40,8 +40,8 @@ abstract final class NativeFonts {
       TextDecoration? decoration}) {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
-        fontFamily: arabic ? 'NativeArabic' : 'NativeNewsreader',
-        fontFamilyFallback: const ['NativeArabic', 'NativeOutfit'],
+        fontFamily: arabic ? 'NativeArabic' : 'NativeInter',
+        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
@@ -65,7 +65,7 @@ abstract final class NativeFonts {
       TextDecoration? decoration}) {
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: 'NativeArabic',
-        fontFamilyFallback: const ['NativeOutfit'],
+        fontFamilyFallback: const ['NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
@@ -89,7 +89,7 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: arabic ? 'NativeArabic' : 'monospace',
-        fontFamilyFallback: const ['NativeArabic', 'NativeOutfit'],
+        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
@@ -114,7 +114,7 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: arabic ? 'NativeArabic' : 'monospace',
-        fontFamilyFallback: const ['NativeArabic', 'NativeOutfit'],
+        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
@@ -139,7 +139,7 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: arabic ? 'NativeArabic' : 'monospace',
-        fontFamilyFallback: const ['NativeArabic', 'NativeOutfit'],
+        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,

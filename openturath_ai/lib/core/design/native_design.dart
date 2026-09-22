@@ -4,24 +4,24 @@ import 'native_fonts.dart';
 
 /// Native-only design vocabulary. The AI room keeps its original tokens.
 abstract final class NativeColors {
-  static const canvasLight = Color(0xFFF9F9F8);
+  static const canvasLight = Color(0xFFF5F5F7);
   static const canvasDark = Color(0xFF101010);
   static const surfaceLight = Color(0xFFFFFFFF);
   static const surfaceDark = Color(0xFF1A1A1A);
-  static const surfaceSubtleLight = Color(0xFFF0F0ED);
+  static const surfaceSubtleLight = Color(0xFFEBEBF0);
   static const surfaceSubtleDark = Color(0xFF252523);
-  static const textPrimaryLight = Color(0xFF191919);
-  static const textPrimaryDark = Color(0xFFF2F2EF);
-  static const textSecondaryLight = Color(0xFF60605B);
-  static const textSecondaryDark = Color(0xFFB6B6AF);
+  static const textPrimaryLight = Color(0xFF1D1D1F);
+  static const textPrimaryDark = Color(0xFFF5F5F7);
+  static const textSecondaryLight = Color(0xFF616168);
+  static const textSecondaryDark = Color(0xFFC4C4CC);
   static const textTertiaryLight = Color(0xFF70706A);
   static const textTertiaryDark = Color(0xFFA0A099);
   static const borderLight = Color(0x14191919);
   static const borderDark = Color(0x1FFFFFFF);
   static const borderStrongLight = Color(0xFF787872);
   static const borderStrongDark = Color(0xFF92928B);
-  static const accentLight = textPrimaryLight;
-  static const accentDark = textPrimaryDark;
+  static const accentLight = Color(0xFF0066CC);
+  static const accentDark = Color(0xFF2997FF);
   static const destructiveLight = Color(0xFF8C2F2F);
   static const destructiveDark = Color(0xFFE49A93);
   static Color canvas(bool dark) => dark ? canvasDark : canvasLight;
@@ -37,8 +37,9 @@ abstract final class NativeColors {
   static Color border(bool dark) => dark ? borderDark : borderLight;
   static Color borderStrong(bool dark) =>
       dark ? borderStrongDark : borderStrongLight;
-  static Color accent(bool dark) => textPrimary(dark);
-  static Color onAccent(bool dark) => canvas(dark);
+  static Color accent(bool dark) => dark ? accentDark : accentLight;
+  static Color onAccent(bool dark) => Colors.white;
+  static Color actionFill(bool dark) => const Color(0xFF0066CC);
   static Color inverseSurface(bool dark) =>
       dark ? surfaceLight : textPrimaryLight;
   static Color destructive(bool dark) =>
@@ -46,23 +47,23 @@ abstract final class NativeColors {
   static Color marja(bool dark) =>
       dark ? const Color(0xFFA7BDA6) : const Color(0xFF405C42);
   static Color collection(bool dark) =>
-      dark ? const Color(0xFF171917) : const Color(0xFFF7F5F0);
+      dark ? const Color(0xFF202024) : const Color(0xFFFFFFFF);
   static Color brass(bool dark) =>
-      dark ? const Color(0xFFC7AD78) : const Color(0xFF765C2E);
+      accent(dark);
 }
 
 abstract final class NativeType {
-  static TextStyle title(bool dark, {double size = 28}) =>
-      NativeFonts.newsreader(
+  static TextStyle title(bool dark, {double size = 24}) =>
+      NativeFonts.outfit(
           fontSize: size,
           fontWeight: FontWeight.w600,
           letterSpacing: -.35,
           height: 1.2,
           color: NativeColors.textPrimary(dark));
-  static TextStyle body(bool dark, {double size = 16}) => NativeFonts.outfit(
+  static TextStyle body(bool dark, {double size = 17}) => NativeFonts.outfit(
       fontSize: size, height: 1.5, color: NativeColors.textPrimary(dark));
   static TextStyle meta(bool dark) => NativeFonts.outfit(
-      fontSize: 13, height: 1.45, color: NativeColors.textSecondary(dark));
+      fontSize: 14, height: 1.45, color: NativeColors.textSecondary(dark));
   static TextStyle arabic(bool dark, {double size = 26}) =>
       NativeFonts.scheherazadeNew(
           fontSize: size,

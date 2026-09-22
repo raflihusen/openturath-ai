@@ -54,6 +54,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   fonts:
+    - family: NativeInter
+      fonts:
+        - asset: assets/native_fonts/NativeInter.ttf
     - family: NativeOutfit
       fonts:
         - asset: assets/native_fonts/NativeOutfit.ttf

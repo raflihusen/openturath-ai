@@ -57,12 +57,10 @@ class NativeSection extends StatelessWidget {
         color: collection
             ? NativeColors.collection(dark)
             : NativeColors.surface(dark),
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(collection ? 40 : 28),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
           side: BorderSide(
-              color: collection
-                  ? NativeColors.brass(dark).withValues(alpha: .35)
-                  : NativeColors.border(dark),
+              color: NativeColors.border(dark),
               width: .8),
         ),
       ),
@@ -109,7 +107,7 @@ class NativeSearch extends StatelessWidget {
                 ),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(100),
             borderSide: BorderSide(color: NativeColors.border(dark))),
