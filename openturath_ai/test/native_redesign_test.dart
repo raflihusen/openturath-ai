@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/models/open_turath_book.dart';
+import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,6 +18,7 @@ import 'package:openturath_ai/widgets/tahawwulat_flagship_card.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
+    await (FontLoader('MaterialIcons')..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
     for (final pair in [('NativeArabic', 'NativeArabic'), ('NativeNewsreader', 'NativeNewsreader'), ('NativeOutfit', 'NativeOutfit')]) {
       await (FontLoader(pair.$1)..addFont(rootBundle.load('assets/native_fonts/${pair.$2}.ttf'))).load();
     }
@@ -79,6 +82,48 @@ void main() {
         });
       }
     }
+  }
+
+  const book = OpenTurathBook(id: 7, deathYear: 676, section: 'الفقه', shortName: 'المنهاج', title: 'مِنْهَاجُ الطَّالِبِينَ', author: 'النووي', editor: '', publisher: 'دار العلم', edition: '1440', volumes: '2', sourceFolder: 'fiqh', pages: '500');
+
+  test('reference identity is locale-independent and citation follows locale', () {
+    final ids = <String>{};
+    for (final locale in ['id', 'en', 'ar']) {
+      AppConfig.localeNotifier.value = locale;
+      ids.add(nativeBookReferenceId(book));
+      expect(nativeBookCitation(book), contains('${NativeCopy.text('author')}: النووي'));
+      expect(nativeBookCitation(book), isNot(contains('Tahqiq/Editor')));
+    }
+    expect(ids.length, 1);
+  });
+
+  for (final locale in ['id', 'en', 'ar']) {
+    testWidgets('catalog Arabic normalization and empty state $locale at 200 percent', (tester) async {
+      tester.view.physicalSize = const Size(320, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      AppConfig.localeNotifier.value = locale;
+      await tester.pumpWidget(MaterialApp(
+        locale: Locale(locale), supportedLocales: Loc.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        builder: (context, child) => LocaleScope(child: MediaQuery(data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(2)), child: child!)),
+        home: const NativeTheme(child: OpenTurathBookLibraryPage(books: [book], collectionName: 'الفقه')),
+      ));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await tester.enterText(find.byType(TextField), 'منهاج');
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text(book.title), 240);
+      expect(find.text(book.title), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(find.byType(TextField), -240);
+      await tester.enterText(find.byType(TextField), 'nomatch');
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text(NativeCopy.text('noBooks')), 240);
+      expect(find.text(NativeCopy.text('noBooks')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   }
 
   testWidgets('native loading honors reduced motion and releases slow timer', (tester) async {
