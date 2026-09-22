@@ -114,13 +114,13 @@ void main() {
       expect(tester.takeException(), isNull);
       await tester.enterText(find.byType(TextField), 'منهاج');
       await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(find.text(book.title), 240);
+      await tester.scrollUntilVisible(find.text(book.title), 240, scrollable: find.byType(Scrollable).first);
       expect(find.text(book.title), findsOneWidget);
       expect(tester.takeException(), isNull);
-      await tester.scrollUntilVisible(find.byType(TextField), -240);
+      await tester.scrollUntilVisible(find.byType(TextField), -240, scrollable: find.byType(Scrollable).first);
       await tester.enterText(find.byType(TextField), 'nomatch');
       await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(find.text(NativeCopy.text('noBooks')), 240);
+      await tester.scrollUntilVisible(find.text(NativeCopy.text('noBooks')), 240, scrollable: find.byType(Scrollable).first);
       expect(find.text(NativeCopy.text('noBooks')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

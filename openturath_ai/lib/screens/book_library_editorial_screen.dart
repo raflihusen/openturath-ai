@@ -10,7 +10,7 @@ import '../core/design/native_design.dart';
 
 import '../core/app_snackbar.dart';
 
-import '../core/design/native_typography.dart';
+
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
@@ -332,7 +332,9 @@ class _FilterChip extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        constraints: const BoxConstraints(minHeight: 48),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? ink : surface,
           borderRadius: BorderRadius.circular(999),
@@ -352,12 +354,7 @@ class _FilterChip extends StatelessWidget {
 }
 
 class _BookEditorialItem extends StatelessWidget {
-  const _BookEditorialItem({
-    required this.book,
-    required this.index,
-    required this.onTap,
-  });
-
+  const _BookEditorialItem({required this.book, required this.index, required this.onTap});
   final OpenTurathBook book;
   final int index;
   final VoidCallback onTap;
@@ -365,119 +362,31 @@ class _BookEditorialItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = NativeColors.textPrimary(isDark);
-    final textSecondary = NativeColors.textSecondary(isDark);
-    final border = NativeColors.border(isDark);
-
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: border, width: 0.8)),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 36,
-              child: Text(
-                index.toString().padLeft(2, '0'),
-                style: NativeFonts.outfit(
-                  color: textSecondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        book.deathLabel,
-                        style: NativeTypography.caption(color: textSecondary),
-                      ),
-                      const Spacer(),
-                      Text(
-                        book.section,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: NativeTypography.caption(color: textSecondary),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  // Judul Arab Asli
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        book.title,
-                        textAlign: TextAlign.right,
-                        style: NativeFonts.scheherazadeNew(
-                          color: ink,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          height: 1.9,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    Loc.tr('authorCredit', [book.author]),
-                    style: NativeFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: textSecondary,
-                    ),
-                  ),
-                  if (book.editor.isNotEmpty && book.editor != '-') ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      Loc.tr('editorCredit', [book.editor]),
-                      style: NativeFonts.outfit(
-                        fontSize: 12,
-                        color: textSecondary,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.layers_outlined,
-                          size: 13, color: textSecondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        book.volumeLabel,
-                        style: NativeFonts.outfit(
-                            fontSize: 11, color: textSecondary),
-                      ),
-                      const SizedBox(width: 14),
-                      Icon(Icons.format_list_numbered_rounded,
-                          size: 13, color: textSecondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        book.pagesLabel,
-                        style: NativeFonts.outfit(
-                            fontSize: 11, color: textSecondary),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-          ],
-        ),
-      ),
-    );
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(onTap: onTap, child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: NativeColors.border(dark), width: .8))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Wrap(spacing: 16, runSpacing: 6, children: [
+          Text(book.section, style: NativeType.meta(dark)),
+          if (book.deathYear != null) Text(book.deathLabel, style: NativeType.meta(dark)),
+        ]),
+        const SizedBox(height: 12),
+        Align(alignment: Alignment.centerRight, child: Text(book.title, textDirection: TextDirection.rtl,
+          textAlign: TextAlign.right, style: NativeType.arabic(dark, size: 24))),
+        const SizedBox(height: 8),
+        Text(Loc.tr('authorCredit', [book.author]), style: NativeType.body(dark, size: 15)),
+        if (book.editor.isNotEmpty && book.editor != '-') ...[
+          const SizedBox(height: 4),
+          Text(Loc.tr('editorCredit', [book.editor]), style: NativeType.meta(dark)),
+        ],
+        const SizedBox(height: 12),
+        Wrap(spacing: 16, runSpacing: 6, children: [
+          Text(book.volumeLabel, style: NativeType.meta(dark)),
+          Text(book.pagesLabel, style: NativeType.meta(dark)),
+        ]),
+      ]),
+    ));
   }
 }
 
