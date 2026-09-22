@@ -773,7 +773,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-/// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
+/// Kartu anggota: merangkum identitas, status, dan asisten yang dapat
 /// dipakai tanpa menyamarkan halaman pengaturan sebagai layar perbankan.
 class _MembershipPass extends StatelessWidget {
   final String holderName;
