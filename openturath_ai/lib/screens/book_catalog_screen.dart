@@ -5,14 +5,15 @@ import '../core/app_copy.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_layout.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
-import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
 import '../widgets/book_row_item.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/ot_mobile_primitives.dart';
 
 /// Halaman Katalog Kitab (Full-Screen Route).
 /// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
@@ -266,131 +267,26 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: Column(
-          children: [
-            // ── SEARCH CONTAINER ──
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: OTSpacing.lg,
-                vertical: OTSpacing.sm,
-              ),
-              child: Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: border, width: 0.8),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.search_rounded, size: 20, color: textSecondary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchCtrl,
-                        onChanged: _onSearchChanged,
-                        style: ScholarlyFonts.outfit(
-                            fontSize: 13.5, color: textPrimary),
-                        decoration: InputDecoration(
-                          hintText: 'Cari kitab, pengarang, atau penahkik…',
-                          hintStyle: ScholarlyFonts.outfit(
-                            fontSize: 13.5,
-                            color: textSecondary.withValues(alpha: 0.7),
-                          ),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          focusedErrorBorder: InputBorder.none,
-                          filled: false,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ),
-                    if (_searchQuery.isNotEmpty)
-                      GestureDetector(
-                        onTap: () {
-                          _searchCtrl.clear();
-                          setState(() {
-                            _searchQuery = '';
-                            _applyFilters();
-                          });
-                        },
-                        child: Icon(Icons.close_rounded,
-                            size: 18, color: textSecondary),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-
-            // ── DYNAMIC HORIZONTAL FILTER CHIPS ──
-            _buildFilterChipsBar(
-              isDark: isDark,
-              surface: surface,
-              border: border,
-              textPrimary: textPrimary,
-              textSecondary: textSecondary,
-              primaryAccent: primaryAccent,
-            ),
-
-            const SizedBox(height: OTSpacing.sm),
-
-            // ── RESULTS COUNT HEADER ──
-            if (!_isLoading && _filteredBooks != null && _allBooks != null)
+        child: OTConstrainedContent(
+          maxWidth: OTLayout.catalogueWidth,
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              // ── SEARCH CONTAINER ──
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: OTSpacing.lg,
-                  vertical: 4,
+                  vertical: OTSpacing.sm,
                 ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
-                      style:
-                          OTTypography.caption(color: textSecondary).copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (_selectedSection != null ||
-                        _selectedEra != null ||
-                        _selectedType != null ||
-                        _selectedCentury != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: primaryAccent.withValues(
-                              alpha: isDark ? 0.12 : 0.06),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          [
-                            if (_selectedSection != null)
-                              _cleanSectionLabel(_selectedSection!),
-                            if (_selectedEra != null) _selectedEra!,
-                            if (_selectedType != null) _selectedType!,
-                            if (_selectedCentury != null) _selectedCentury!,
-                          ].join(' · '),
-                          style: OTTypography.caption(color: primaryAccent)
-                              .copyWith(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                  ],
+                child: OTSearchField(
+                  controller: _searchCtrl,
+                  hintText: 'Cari kitab, pengarang, atau penahkik',
+                  onChanged: _onSearchChanged,
                 ),
               ),
 
-            // ── MAIN CONTENT LIST / EMPTY / ERROR / LOADING ──
-            Expanded(
-              child: _buildContent(
+              // ── DYNAMIC HORIZONTAL FILTER CHIPS ──
+              _buildFilterChipsBar(
                 isDark: isDark,
                 surface: surface,
                 border: border,
@@ -398,8 +294,71 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 textSecondary: textSecondary,
                 primaryAccent: primaryAccent,
               ),
-            ),
-          ],
+
+              const SizedBox(height: OTSpacing.sm),
+
+              // ── RESULTS COUNT HEADER ──
+              if (!_isLoading && _filteredBooks != null && _allBooks != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: OTSpacing.lg,
+                    vertical: 4,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
+                        style:
+                            OTTypography.caption(color: textSecondary).copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (_selectedSection != null ||
+                          _selectedEra != null ||
+                          _selectedType != null ||
+                          _selectedCentury != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: primaryAccent.withValues(
+                                alpha: isDark ? 0.12 : 0.06),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            [
+                              if (_selectedSection != null)
+                                _cleanSectionLabel(_selectedSection!),
+                              if (_selectedEra != null) _selectedEra!,
+                              if (_selectedType != null) _selectedType!,
+                              if (_selectedCentury != null) _selectedCentury!,
+                            ].join(' · '),
+                            style: OTTypography.caption(color: primaryAccent)
+                                .copyWith(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+              // ── MAIN CONTENT LIST / EMPTY / ERROR / LOADING ──
+              Expanded(
+                child: _buildContent(
+                  isDark: isDark,
+                  surface: surface,
+                  border: border,
+                  textPrimary: textPrimary,
+                  textSecondary: textSecondary,
+                  primaryAccent: primaryAccent,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
