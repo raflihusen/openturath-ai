@@ -8,6 +8,9 @@ import '../core/app_copy.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_layout.dart';
+import '../core/design/ot_radius.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
@@ -20,10 +23,7 @@ import '../services/update_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/update_ready_banner.dart';
 import '../widgets/update_ready_dialog.dart';
-import '../widgets/specialist_card.dart';
-import '../widgets/library_bottom_sheet.dart';
-import '../widgets/apple_interactive_wrapper.dart';
-import '../widgets/staggered_entrance.dart';
+import '../widgets/ot_mobile_primitives.dart';
 import 'main_shell_screen.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -160,16 +160,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
   ];
 
+  void _openField(String fieldId) {
+    final shell = MainShellController.of(context);
+    if (shell != null) {
+      shell.switchTab(1, fieldId: fieldId);
+      return;
+    }
+    NavigationGuard.safePushNamed(
+      context,
+      AppRoutes.specialistList,
+      arguments: {'fieldId': fieldId},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
     final accent = OTColors.accent(isDark);
 
     return StreamBuilder<UserModel?>(
@@ -199,384 +209,131 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics()),
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 96),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ── 1. Header Centered: OpenTurath ──
-                    Center(
-                      child: Text(
-                        'OpenTurath',
-                        style: ScholarlyFonts.newsreader(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.4,
-                          color: textPrimary,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // Banner pembaruan jika tersedia
-                    const UpdateReadyBanner(),
-
-                    // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
-                    // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
-                    ListenableBuilder(
-                      listenable: AgentSessionManager.instance,
-                      builder: (context, _) {
-                        final activeAgent =
-                            AgentSessionManager.instance.activeTab?.agent;
-                        final lastAgent = _lastOpenedAgentId == null
-                            ? null
-                            : _agents.cast<AgentModel?>().firstWhere(
-                                  (agent) => agent?.id == _lastOpenedAgentId,
-                                  orElse: () => null,
-                                );
-                        final target = activeAgent ?? lastAgent;
-                        final hasLiveSession = activeAgent != null;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _StudyEntryCard(
-                              name: user.name,
-                              agent: target,
-                              hasLiveSession: hasLiveSession,
-                              isDark: isDark,
-                              onPrimary: () {
-                                if (target != null) {
-                                  _openNotebook(target, user);
-                                  return;
-                                }
-                                final shell = MainShellController.of(context);
-                                if (shell != null) {
-                                  shell.switchTab(1);
-                                } else {
-                                  NavigationGuard.safePushNamed(
-                                      context, AppRoutes.specialistList);
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            _ScholarlyDatePanel(
-                              masehiDate: HijriDateUtils.formatMasehiOnly(),
-                              hijriDate: HijriDateUtils.formatHijriOnly(),
-                              surface: surface,
-                              border: border,
-                              textPrimary: textPrimary,
-                              textSecondary: textSecondary,
-                              accent: accent,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // ── 3. Ergonomic Search Bar (Stadium Pill) ──
-                    Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: border, width: 1.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search_rounded,
-                              size: 20, color: textSecondary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              onChanged: (val) =>
-                                  setState(() => _searchQuery = val.trim()),
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: 13.5, color: textPrimary),
-                              decoration: InputDecoration(
-                                hintText: AppCopy.dashboardSearchHint,
-                                hintStyle: ScholarlyFonts.outfit(
-                                    fontSize: 13.5, color: textSecondary),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                filled: false,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
+                child: OTConstrainedContent(
+                  maxWidth: OTLayout.readableWidth,
+                  padding: EdgeInsets.fromLTRB(
+                    OTLayout.pageInset(context),
+                    OTSpacing.base,
+                    OTLayout.pageInset(context),
+                    104,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('OpenTurath',
+                          style: OTTypography.brandLogo(color: textPrimary)),
+                      const SizedBox(height: OTSpacing.base),
+                      const UpdateReadyBanner(),
+                      ListenableBuilder(
+                        listenable: AgentSessionManager.instance,
+                        builder: (context, _) {
+                          final activeAgent =
+                              AgentSessionManager.instance.activeTab?.agent;
+                          final lastAgent = _lastOpenedAgentId == null
+                              ? null
+                              : _agents.cast<AgentModel?>().firstWhere(
+                                    (agent) => agent?.id == _lastOpenedAgentId,
+                                    orElse: () => null,
+                                  );
+                          final target = activeAgent ?? lastAgent;
+                          return Column(
+                            children: [
+                              _StudyEntryCard(
+                                name: user.name,
+                                agent: target,
+                                hasLiveSession: activeAgent != null,
+                                isDark: isDark,
+                                onPrimary: () {
+                                  if (target != null) {
+                                    _openNotebook(target, user);
+                                  } else {
+                                    _openField('fiqh');
+                                  }
+                                },
                               ),
-                            ),
-                          ),
-                          if (_searchQuery.isNotEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                _searchController.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                              child: Icon(Icons.close_rounded,
-                                  size: 18, color: textSecondary),
-                            ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 22),
-
-                    // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
-                    if (_searchQuery.isNotEmpty) ...[
-                      Text(
-                        AppCopy.searchResults,
-                        style: ScholarlyFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Builder(
-                        builder: (context) {
-                          final q = _searchQuery.toLowerCase();
-                          final matches = _agents.where((a) {
-                            if (a.kind == CorpusKind.scholar) return false;
-                            final title = a.title.toLowerCase();
-                            final arabic = a.titleArabic;
-                            final subtitle = a.subtitleAcademic.toLowerCase();
-                            final category = a.category.toLowerCase();
-                            final books = a.referenceBooks?.any(
-                                    (b) => b.title.toLowerCase().contains(q)) ??
-                                false;
-                            return title.contains(q) ||
-                                arabic.contains(q) ||
-                                subtitle.contains(q) ||
-                                category.contains(q) ||
-                                books;
-                          }).toList();
-
-                          if (matches.isEmpty) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 36),
-                              child: Center(
-                                child: Text(
-                                  AppCopy.noAssistantsFound,
-                                  style: ScholarlyFonts.outfit(
-                                      fontSize: 13.5, color: textSecondary),
-                                ),
+                              const SizedBox(height: OTSpacing.sm),
+                              _ScholarlyDatePanel(
+                                masehiDate: HijriDateUtils.formatMasehiOnly(),
+                                hijriDate: HijriDateUtils.formatHijriOnly(),
+                                isDark: isDark,
                               ),
-                            );
-                          }
-
-                          return ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: matches.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 10),
-                            itemBuilder: (context, idx) {
-                              final agent = matches[idx];
-                              return SpecialistCard(
-                                title: agent.title,
-                                titleArabic: agent.titleArabic,
-                                serial: (idx + 1).toString().padLeft(2, '0'),
-                                scopeLabel: agent.subtitleAcademic,
-                                statusLabel: agent.isComingSoon
-                                    ? AppCopy.comingSoon
-                                    : null,
-                                onOpen: () => _openNotebook(agent, user),
-                                onOpenLibrary: agent.catalogId != null
-                                    ? () => showResearchLibrary(context,
-                                        agent: agent)
-                                    : null,
-                              );
-                            },
+                            ],
                           );
                         },
                       ),
-                    ] else ...[
-                      const OTStaggeredEntrance(
-                        index: 0,
-                        child: _GrandCorpusScale(),
+                      const SizedBox(height: OTSpacing.xl),
+                      OTSearchField(
+                        controller: _searchController,
+                        hintText: 'Cari asisten atau bidang kajian',
+                        onChanged: (value) =>
+                            setState(() => _searchQuery = value.trim()),
                       ),
-
-                      const SizedBox(height: 28),
-
-                      // ── Bidang kajian: pintu masuk utama ke studi ──
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            AppCopy.chooseField,
-                            style: ScholarlyFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.2,
-                              color: textPrimary,
-                            ),
+                      const SizedBox(height: OTSpacing.xl),
+                      if (_searchQuery.isNotEmpty)
+                        _DashboardSearchResults(
+                          query: _searchQuery,
+                          agents: _agents,
+                          user: user,
+                          onOpen: _openNotebook,
+                        )
+                      else ...[
+                        OTSectionHeader(
+                          title: 'Pilih bidang kajian',
+                          description:
+                              'Mulai dari bidang yang ingin Anda telaah.',
+                          actionLabel: AppCopy.seeAll,
+                          onAction: () {
+                            final shell = MainShellController.of(context);
+                            if (shell != null) {
+                              shell.switchTab(1);
+                            } else {
+                              NavigationGuard.safePushNamed(
+                                  context, AppRoutes.specialistList);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: OTSpacing.sm),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: OTColors.surface(isDark),
+                            borderRadius: OTRadius.cardBorder,
+                            border: Border.all(color: OTColors.border(isDark)),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              final shell = MainShellController.of(context);
-                              if (shell != null) {
-                                shell.switchTab(1);
-                              } else {
-                                NavigationGuard.safePushNamed(
-                                    context, AppRoutes.specialistList);
-                              }
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: OTSpacing.base),
+                            child: Column(
                               children: [
-                                Text(
-                                  AppCopy.seeAll,
-                                  style: ScholarlyFonts.outfit(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: textPrimary,
+                                for (var index = 0;
+                                    index < _curatedDisciplines.length;
+                                    index++)
+                                  OTEditorialRow(
+                                    title: _curatedDisciplines[index].name,
+                                    subtitle: AppCopy.assistantsAvailableCount(
+                                        _curatedDisciplines[index]
+                                            .specialistCount),
+                                    leading: SizedBox(
+                                      width: 54,
+                                      child: Text(
+                                        _curatedDisciplines[index].arabic,
+                                        textDirection: TextDirection.rtl,
+                                        style: OTTypography.arabicReading(
+                                          color: OTColors.textSecondary(isDark),
+                                        ).copyWith(fontSize: 17),
+                                      ),
+                                    ),
+                                    onTap: () => _openField(
+                                        _curatedDisciplines[index].fieldId),
+                                    showDivider:
+                                        index != _curatedDisciplines.length - 1,
                                   ),
-                                ),
-                                const SizedBox(width: 2),
-                                Icon(Icons.chevron_right_rounded,
-                                    size: 16, color: textPrimary),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      // Setiap bidang tampil sebagai kartu direktori keilmuan adaptif berkelas.
-                      GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          mainAxisExtent: 156,
                         ),
-                        itemCount: _curatedDisciplines.length,
-                        itemBuilder: (context, index) {
-                          final disc = _curatedDisciplines[index];
-                          return AppleInteractiveWrapper(
-                            onTap: () {
-                              final shell = MainShellController.of(context);
-                              if (shell != null) {
-                                shell.switchTab(1, fieldId: disc.fieldId);
-                              } else {
-                                NavigationGuard.safePushNamed(
-                                  context,
-                                  AppRoutes.specialistList,
-                                  arguments: {'fieldId': disc.fieldId},
-                                );
-                              }
-                            },
-                            pressedScale: 0.96,
-                            hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(18),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: surface,
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(color: border, width: 1.0),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    right: 12,
-                                    top: 30,
-                                    child: IgnorePointer(
-                                      child: Text(
-                                        disc.arabic,
-                                        textDirection: TextDirection.rtl,
-                                        style: OTTypography.arabicDisplay(
-                                          color: textPrimary.withValues(
-                                              alpha: 0.07),
-                                          height: 1.9,
-                                        ).copyWith(fontSize: 30),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              (index + 1)
-                                                  .toString()
-                                                  .padLeft(2, '0'),
-                                              style: ScholarlyFonts.outfit(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w700,
-                                                letterSpacing: 1.1,
-                                                color: textSecondary,
-                                              ),
-                                            ),
-                                            Icon(
-                                              Icons.north_east_rounded,
-                                              size: 17,
-                                              color: textSecondary.withValues(
-                                                  alpha: 0.72),
-                                            ),
-                                          ],
-                                        ),
-                                        const Spacer(),
-                                        Text(
-                                          disc.name,
-                                          style: ScholarlyFonts.newsreader(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: -0.25,
-                                            color: textPrimary,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          AppCopy.assistantsAvailableCount(
-                                              disc.specialistCount),
-                                          style: ScholarlyFonts.outfit(
-                                            fontSize: 11.5,
-                                            color: textSecondary,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        Container(
-                                          height: 2,
-                                          width: 32 + (index % 3) * 12,
-                                          decoration: BoxDecoration(
-                                            color: textPrimary.withValues(
-                                                alpha: 0.72),
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -587,156 +344,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-class _GrandCorpusScale extends StatelessWidget {
-  const _GrandCorpusScale();
+class _DashboardSearchResults extends StatelessWidget {
+  const _DashboardSearchResults({
+    required this.query,
+    required this.agents,
+    required this.user,
+    required this.onOpen,
+  });
 
-  static const _metrics = <({String value, String label})>[
-    (value: '1,1 M', label: 'Kata'),
-    (value: '4,1 Jt', label: 'Halaman'),
-    (value: '11.901+', label: 'Jilid'),
-    (value: '20', label: 'Disiplin'),
-  ];
+  final String query;
+  final List<AgentModel> agents;
+  final UserModel user;
+  final void Function(AgentModel agent, UserModel user) onOpen;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final ink = OTColors.textPrimary(isDark);
-    final muted = OTColors.textSecondary(isDark);
-    final inverseSurface =
-        isDark ? OTColors.textPrimaryDark : OTColors.textPrimaryLight;
-    final inverseInk =
-        isDark ? OTColors.textPrimaryLight : OTColors.textPrimaryDark;
-    final inverseMuted =
-        isDark ? OTColors.textSecondaryLight : OTColors.textSecondaryDark;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final normalizedQuery = query.toLowerCase();
+    final matches = agents.where((agent) {
+      if (agent.kind == CorpusKind.scholar) return false;
+      final books = agent.referenceBooks?.any(
+            (book) => book.title.toLowerCase().contains(normalizedQuery),
+          ) ??
+          false;
+      return agent.title.toLowerCase().contains(normalizedQuery) ||
+          agent.titleArabic.contains(query) ||
+          agent.subtitleAcademic.toLowerCase().contains(normalizedQuery) ||
+          agent.category.toLowerCase().contains(normalizedQuery) ||
+          books;
+    }).toList();
 
-    return Semantics(
-      container: true,
-      label: 'Skala pustaka OpenTurath, 5.370 kitab klasik',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Skala Pustaka',
-                style: OTTypography.sectionTitle(color: ink),
-              ),
-              const Spacer(),
-              Text(
-                'TERKURASI',
-                style: OTTypography.metadataTag(color: muted),
-              ),
-            ],
+    if (matches.isEmpty) {
+      return const OTEmptyState(
+        icon: Icons.search_off_rounded,
+        title: 'Belum menemukan hasil',
+        message: 'Coba nama bidang, asisten, atau judul kitab yang lain.',
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        OTSectionHeader(
+          title: 'Hasil pencarian',
+          description: '${matches.length} asisten ditemukan',
+        ),
+        const SizedBox(height: OTSpacing.sm),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: OTColors.surface(dark),
+            borderRadius: OTRadius.cardBorder,
+            border: Border.all(color: OTColors.border(dark)),
           ),
-          const SizedBox(height: 14),
-          Container(
-            height: 224,
-            decoration: BoxDecoration(
-              color: inverseSurface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: border),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: OTSpacing.base),
+            child: Column(
               children: [
-                Positioned(
-                  right: 18,
-                  top: -18,
-                  child: IgnorePointer(
-                    child: Text(
-                      'كتب',
+                for (var index = 0; index < matches.length; index++)
+                  OTEditorialRow(
+                    title: matches[index].title,
+                    subtitle: matches[index].subtitleAcademic,
+                    leading: Text(
+                      matches[index].titleArabic,
                       textDirection: TextDirection.rtl,
-                      style: OTTypography.arabicDisplay(
-                        color: inverseInk.withValues(alpha: 0.065),
-                        height: 1.9,
-                      ).copyWith(fontSize: 126),
+                      style: OTTypography.arabicReading(
+                        color: OTColors.textSecondary(dark),
+                      ).copyWith(fontSize: 16),
                     ),
+                    trailing: matches[index].isComingSoon
+                        ? const OTStatusPill(label: 'Segera')
+                        : Icon(Icons.arrow_forward_rounded,
+                            size: 19, color: OTColors.textTertiary(dark)),
+                    onTap: () => onOpen(matches[index], user),
+                    showDivider: index != matches.length - 1,
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(22),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'KHAZANAH KLASIK',
-                        style: OTTypography.metadataTag(color: inverseMuted)
-                            .copyWith(letterSpacing: 1.7),
-                      ),
-                      const Spacer(),
-                      Text(
-                        '5.370',
-                        style: OTTypography.displayLarge(color: inverseInk)
-                            .copyWith(
-                          fontSize: 60,
-                          height: 0.95,
-                          letterSpacing: -2.2,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Kitab Klasik',
-                        style: OTTypography.corpusTitle(color: inverseInk)
-                            .copyWith(fontSize: 20),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Dari karya awal Islam hingga turats abad ke-14 H.',
-                        style: OTTypography.caption(color: inverseMuted),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
-          const SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _metrics.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              mainAxisExtent: 82,
-            ),
-            itemBuilder: (context, index) {
-              final metric = _metrics[index];
-              return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                decoration: BoxDecoration(
-                  color: surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: border),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      metric.value,
-                      style: OTTypography.corpusTitle(color: ink)
-                          .copyWith(fontSize: 19),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(metric.label,
-                        style: OTTypography.caption(color: muted)),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '2.876 partisi terverifikasi · Abad 1 H–14 H',
-            style: OTTypography.caption(color: muted),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -773,8 +459,6 @@ class _StudyEntryCard extends StatelessWidget {
         ? AppCopy.continueStudy
         : AppCopy.startStudy;
 
-    final categoryLabel = AppCopy.studyBookCategory;
-
     final surface = OTColors.surface(isDark);
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
@@ -785,123 +469,69 @@ class _StudyEntryCard extends StatelessWidget {
       label: '$title. $subtitle',
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: OTRadius.featureBorder,
         child: InkWell(
           onTap: onPrimary,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: OTRadius.featureBorder,
           child: Ink(
             decoration: BoxDecoration(
               color: surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: OTRadius.featureBorder,
               border: Border.all(color: border, width: 1.0),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Stack(
+            child: Padding(
+              padding: const EdgeInsets.all(OTSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Positioned(
-                    right: 14,
-                    top: 28,
-                    child: IgnorePointer(
-                      child: Text(
-                        'تراث',
-                        textDirection: TextDirection.rtl,
-                        style: OTTypography.arabicDisplay(
-                          color: textPrimary.withValues(alpha: 0.055),
-                          height: 1.9,
-                        ).copyWith(fontSize: 64),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
                           displayName == null
                               ? AppCopy.ahlanDefault
                               : AppCopy.ahlanWithName(displayName),
-                          style: ScholarlyFonts.outfit(
-                            color: textSecondary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 22),
-                        Text(
-                          hasLiveSession || hasHistory
-                              ? Loc.tr('ui_fb007d4dc4')
-                              : categoryLabel,
-                          style: ScholarlyFonts.outfit(
-                            color: textSecondary,
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.1,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          Loc.text(title),
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: ScholarlyFonts.newsreader(
-                            color: textPrimary,
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: -0.4,
-                            height: 1.25,
-                          ),
+                          style: OTTypography.bodyMedium(color: textSecondary),
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          subtitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: ScholarlyFonts.outfit(
-                            color: textSecondary,
-                            fontSize: 12.5,
-                            height: 1.35,
-                          ),
-                        ),
-                        const SizedBox(height: 18),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 7),
-                              decoration: BoxDecoration(
-                                color: OTColors.accent(isDark),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    primaryLabel,
-                                    style: ScholarlyFonts.outfit(
-                                      color: isDark
-                                          ? OTColors.canvasDark
-                                          : Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Icon(
-                                    Icons.arrow_forward_rounded,
-                                    size: 13,
-                                    color: isDark
-                                        ? OTColors.canvasDark
-                                        : Colors.white,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                      OTStatusPill(
+                        label: hasLiveSession
+                            ? 'Sedang terbuka'
+                            : hasHistory
+                                ? 'Terakhir dibuka'
+                                : 'Mulai di sini',
+                        icon: hasLiveSession
+                            ? Icons.circle
+                            : Icons.bookmark_border_rounded,
+                        emphasized: hasLiveSession,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: OTSpacing.xl),
+                  Text(
+                    Loc.text(title),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: OTTypography.editorialHero(color: textPrimary),
+                  ),
+                  const SizedBox(height: OTSpacing.sm),
+                  Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: OTTypography.body(color: textSecondary),
+                  ),
+                  const SizedBox(height: OTSpacing.xl),
+                  Row(
+                    children: [
+                      FilledButton.icon(
+                        onPressed: onPrimary,
+                        icon: const Icon(Icons.arrow_forward_rounded, size: 17),
+                        label: Text(primaryLabel),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -917,30 +547,28 @@ class _ScholarlyDatePanel extends StatelessWidget {
   const _ScholarlyDatePanel({
     required this.masehiDate,
     required this.hijriDate,
-    required this.surface,
-    required this.border,
-    required this.textPrimary,
-    required this.textSecondary,
-    required this.accent,
+    required this.isDark,
   });
 
   final String masehiDate;
   final String hijriDate;
-  final Color surface;
-  final Color border;
-  final Color textPrimary;
-  final Color textSecondary;
-  final Color accent;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
+    final surface = OTColors.surfaceSubtle(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      padding: const EdgeInsets.symmetric(
+        horizontal: OTSpacing.base,
+        vertical: OTSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border, width: 1.0),
+        borderRadius: OTRadius.inputBorder,
       ),
       child: Row(
         children: [
@@ -950,7 +578,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 14,
-                  color: accent.withValues(alpha: 0.8),
+                  color: textSecondary,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -995,7 +623,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                 Icon(
                   Icons.nightlight_outlined,
                   size: 14,
-                  color: accent.withValues(alpha: 0.8),
+                  color: textSecondary,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
