@@ -217,8 +217,9 @@ void main() {
             expect(find.text('INTERNAL_EDITION_NOT_FOR_UI'), findsNothing);
             if (page == 'home' && scale == 1) {
               expect(find.text(NativeCopy.text('field_fiqh')), findsOneWidget);
-              if (locale == 'ar')
+              if (locale == 'ar') {
                 expect(find.text('Fikih & Fatwa'), findsNothing);
+              }
             }
             if (scale == 1 && const bool.fromEnvironment('CAPTURE_REVISION')) {
               final boundary = capture.currentContext!.findRenderObject()!
