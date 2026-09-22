@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
+import '../core/localization.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
@@ -18,20 +19,21 @@ class CorpusKindControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final border = NativeColors.border(isDark);
 
     return Container(
-      height: 44,
+      height: MediaQuery.textScalerOf(context).scale(52).clamp(52, 110),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: border, width: 0.8)),
       ),
       child: Row(
         children: [
           _CorpusKindTab(
-            label: 'Bidang ilmu',
+            label: NativeCopy.text('disciplines'),
             selected: value == CorpusKind.discipline,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -39,7 +41,7 @@ class CorpusKindControl extends StatelessWidget {
           ),
           const SizedBox(width: 24),
           _CorpusKindTab(
-            label: 'Khazanah ulama',
+            label: NativeCopy.text('scholars'),
             selected: value == CorpusKind.scholar,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -88,7 +90,7 @@ class _CorpusKindTab extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             AnimatedContainer(
-              duration: OTMotion.fast,
+              duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.fast,
               curve: OTMotion.curve,
               height: 2,
               width: selected ? 28 : 0,

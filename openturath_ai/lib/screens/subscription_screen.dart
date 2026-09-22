@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
+import '../widgets/native_components.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
@@ -25,6 +26,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   int _tahawwulatIndex = 0;
   bool _processing = false;
   bool _initialized = false;
+  bool _isTahawwulat = true;
 
   List<AgentModel> get _specialists => AgentModel.defaultAgents.where((a) =>
     a.kind == CorpusKind.discipline && a.isActive && a.id != 'fiqh_tahawwulat').toList();
@@ -36,6 +38,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     _initialized = true;
     final args = ModalRoute.of(context)?.settings.arguments;
     final agent = args is Map ? args['agent'] : null;
+    if (agent is AgentModel) _isTahawwulat = agent.id.startsWith('fiqh_tahawwulat');
     if (agent is AgentModel && _specialists.any((a) => a.id == agent.id)) {
       _selectedAgentId = agent.id;
     }
@@ -85,10 +88,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Widget _card({required Widget child, bool flagship = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final border = OTColors.border(dark);
+    final border = NativeColors.border(dark);
     return Container(
       decoration: BoxDecoration(
-        color: OTColors.surface(dark),
+        color: NativeColors.surface(dark),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border, width: 1.0),
       ),
@@ -99,10 +102,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   void _showDisciplinePickerModal(BuildContext context, List<AgentModel> specialists) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(dark);
-    final muted = OTColors.textSecondary(dark);
-    final border = OTColors.border(dark);
-    final surface = OTColors.surface(dark);
+    final ink = NativeColors.textPrimary(dark);
+    final muted = NativeColors.textSecondary(dark);
+    final border = NativeColors.border(dark);
+    final surface = NativeColors.surface(dark);
 
     showModalBottomSheet<void>(
       context: context,
@@ -194,11 +197,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? OTColors.accent(dark).withValues(alpha: 0.1)
+                                    ? NativeColors.accent(dark).withValues(alpha: 0.1)
                                     : surface,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: isSelected ? OTColors.accent(dark) : border,
+                                  color: isSelected ? NativeColors.accent(dark) : border,
                                   width: isSelected ? 1.5 : 1,
                                 ),
                               ),
@@ -218,7 +221,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     ),
                                   ),
                                   if (isSelected)
-                                    Icon(Icons.check_circle_rounded, color: OTColors.accent(dark), size: 20),
+                                    Icon(Icons.check_circle_rounded, color: NativeColors.accent(dark), size: 20),
                                 ],
                               ),
                             ),
@@ -240,231 +243,56 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(dark);
-    final muted = OTColors.textSecondary(dark);
-    final border = OTColors.border(dark);
-    final flagship = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
-    final offer = ProductPricing.tahawwulat[_tahawwulatIndex];
     final specialists = _specialists;
-    final selected = specialists.firstWhere((a) => a.id == _selectedAgentId,
-      orElse: () => specialists.first);
-
+    final flagship = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
+    final selected = _isTahawwulat ? flagship : specialists.firstWhere((a) => a.id == _selectedAgentId, orElse: () => specialists.first);
+    final offer = _isTahawwulat ? ProductPricing.tahawwulat[_tahawwulatIndex] : ProductPricing.specialist;
     return Scaffold(
-      backgroundColor: OTColors.canvas(dark),
-      appBar: AppBar(title: Text(AppCopy.subscription), backgroundColor: OTColors.canvas(dark)),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 760),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(Loc.tr('launchOffer'), style: OTTypography.pageTitle(color: ink)),
-                  const SizedBox(height: 8),
-                  Text(AppCopy.manualRenewalNotice, style: OTTypography.body(color: muted)),
-                  const SizedBox(height: 24),
-
-                  // Fikih Tahawwulat Sovereign Card
-                  _card(
-                    flagship: true,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(AppCopy.planTahawwulat, style: OTTypography.pageTitle(color: ink)),
-                                  const SizedBox(height: 6),
-                                  Text(Loc.tr('tahawwulatBenefit'), style: OTTypography.body(color: muted)),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Tier Selector Cards
-                        Row(
-                          children: [
-                            for (var i = 0; i < ProductPricing.tahawwulat.length; i++) ...[
-                              if (i > 0) const SizedBox(width: 8),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: _processing ? null : () => setState(() => _tahawwulatIndex = i),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      color: _tahawwulatIndex == i
-                                          ? (dark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))
-                                          : (dark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.02)),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: _tahawwulatIndex == i ? ink : border,
-                                        width: _tahawwulatIndex == i ? 1.2 : 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          ProductPricing.tahawwulat[i].title,
-                                          style: OTTypography.captionMedium(
-                                            color: _tahawwulatIndex == i ? ink : muted,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          ProductPricing.rupiah(ProductPricing.tahawwulat[i].amount),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: ink,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        PromoPrice(amount: offer.amount, regularAmount: offer.regularAmount, period: offer.period),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: _processing ? null : () => _checkout(flagship, offer),
-                            child: Text(Loc.tr('continuePayment')),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Individual Study Guide (Discipline Specialist) Card
-                  _card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(Loc.tr('specialistAccess'), style: OTTypography.pageTitle(color: ink)),
-                        const SizedBox(height: 16),
-
-                        // Interactive Tactile Discipline Card
-                        InkWell(
-                          onTap: _processing ? null : () => _showDisciplinePickerModal(context, specialists),
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: dark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.02),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: border),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        selected.title,
-                                        style: OTTypography.bodyMedium(color: ink),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: OTColors.surfaceSubtle(dark),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: border),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        Loc.tr('chooseField'),
-                                        style: OTTypography.captionMedium(color: ink).copyWith(fontSize: 12),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Icon(Icons.unfold_more_rounded, size: 16, color: muted),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Quick horizontal chips for top disciplines
-                        SizedBox(
-                          height: 36,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: specialists.length > 8 ? 8 : specialists.length,
-                            separatorBuilder: (_, __) => const SizedBox(width: 8),
-                            itemBuilder: (ctx, i) {
-                              final spec = specialists[i];
-                              final isSel = spec.id == selected.id;
-                              return ChoiceChip(
-                                label: Text(spec.title),
-                                selected: isSel,
-                                onSelected: _processing ? null : (_) => setState(() => _selectedAgentId = spec.id),
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        PromoPrice(
-                          amount: ProductPricing.specialist.amount,
-                          regularAmount: ProductPricing.specialist.regularAmount,
-                          period: ProductPricing.specialist.period,
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: _processing ? null : () => _checkout(selected, ProductPricing.specialist),
-                            child: Text(Loc.tr('continuePayment')),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  if (_processing)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  TextButton.icon(
-                    onPressed: _processing ? null : () => RedeemCodeSheet.show(context),
-                    icon: const Icon(Icons.confirmation_number_outlined),
-                    label: Text(Loc.tr('redeemAccess')),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: NativeColors.canvas(dark),
+      appBar: AppBar(title: Text(AppCopy.subscription)),
+      body: SafeArea(child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 760),
+        child: ListView(padding: const EdgeInsets.all(20), children: [
+          Text(NativeCopy.text('selectedAccess'), style: NativeType.title(dark, size: 30)),
+          const SizedBox(height: 12),
+          Text(AppCopy.manualRenewalNotice, style: NativeType.body(dark)),
+          const SizedBox(height: 24),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            ChoiceChip(label: Text(AppCopy.planTahawwulat), selected: _isTahawwulat,
+              onSelected: _processing ? null : (_) => setState(() => _isTahawwulat = true)),
+            ChoiceChip(label: Text(Loc.tr('specialistAccess')), selected: !_isTahawwulat,
+              onSelected: _processing ? null : (_) => setState(() => _isTahawwulat = false)),
+          ]),
+          const SizedBox(height: 20),
+          NativeSection(collection: _isTahawwulat, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            if (_isTahawwulat) ...[
+              Text(NativeCopy.text('exclusive'), style: NativeType.meta(dark).copyWith(color: NativeColors.brass(dark))),
+              const SizedBox(height: 12),
+            ],
+            Text(Loc.isArabic ? selected.titleArabic : selected.title, style: NativeType.title(dark)),
+            const SizedBox(height: 10),
+            Text(_isTahawwulat ? NativeCopy.text('allFive') : Loc.text(selected.subtitleAcademic), style: NativeType.body(dark)),
+            const SizedBox(height: 20),
+            if (_isTahawwulat)
+              Wrap(spacing: 8, runSpacing: 8, children: [
+                for (var i = 0; i < ProductPricing.tahawwulat.length; i++)
+                  ChoiceChip(label: Text(ProductPricing.tahawwulat[i].title), selected: _tahawwulatIndex == i,
+                    onSelected: _processing ? null : (_) => setState(() => _tahawwulatIndex = i)),
+              ])
+            else
+              OutlinedButton.icon(onPressed: _processing ? null : () => _showDisciplinePickerModal(context, specialists),
+                icon: const Icon(Icons.unfold_more_rounded), label: Text(Loc.tr('chooseField'))),
+            const SizedBox(height: 24),
+            PromoPrice(amount: offer.amount, regularAmount: offer.regularAmount, period: offer.period),
+            const SizedBox(height: 24),
+            FilledButton(onPressed: _processing ? null : () => _checkout(selected, offer),
+              child: Text(_processing ? NativeCopy.text('loading') : Loc.tr('continuePayment'))),
+          ])),
+          const SizedBox(height: 16),
+          TextButton.icon(onPressed: _processing ? null : () => RedeemCodeSheet.show(context),
+            icon: const Icon(Icons.confirmation_number_outlined), label: Text(Loc.tr('redeemAccess'))),
+        ]),
+      ))),
     );
   }
 }

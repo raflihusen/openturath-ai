@@ -7,7 +7,8 @@ import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
+import '../widgets/native_components.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
@@ -178,11 +179,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     final isGeneralTab = widget.field == null;
     final title = isGeneralTab ? AppCopy.navStudies : widget.field!.name;
@@ -209,7 +210,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           title: Text(
             Loc.text(title),
             style: OTTypography.corpusTitle(color: textPrimary)
-                .copyWith(fontSize: 20),
+                .copyWith(fontSize: 28),
           ),
           centerTitle: false,
           backgroundColor: canvas,
@@ -239,53 +240,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                     horizontal: OTSpacing.lg, vertical: OTSpacing.sm),
                 child: Column(
                   children: [
-                    Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: border, width: 1.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search_rounded,
-                              size: 20, color: textSecondary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              controller: _searchCtrl,
-                              onChanged: _onSearchChanged,
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: 13.5, color: textPrimary),
-                              decoration: InputDecoration(
-                                hintText: Loc.tr('ui_55fddd168e'),
-                                hintStyle: ScholarlyFonts.outfit(
-                                    fontSize: 13.5, color: textSecondary),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                filled: false,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                          ),
-                          if (_searchQuery.isNotEmpty)
-                            GestureDetector(
-                              onTap: () {
-                                _searchCtrl.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                              child: Icon(Icons.close_rounded,
-                                  size: 18, color: textSecondary),
-                            ),
-                        ],
-                      ),
-                    ),
+                    NativeSearch(controller: _searchCtrl, hint: NativeCopy.text('searchAssistants'), onChanged: _onSearchChanged),
                     if (isGeneralTab) ...[
                       const SizedBox(height: OTSpacing.md),
                       // Dual Taxonomy Switcher
@@ -306,7 +261,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               // Discipline Filter Chips (only in discipline mode)
               if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
                 SizedBox(
-                  height: Loc.isArabic ? 60 : 48,
+                  height: MediaQuery.textScalerOf(context).scale(52).clamp(52, 110),
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
@@ -352,7 +307,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 child: _corpusKind == CorpusKind.scholar
                     ? const ScholarsComingSoon()
                     : _isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: NativeLoading())
                     : filtered.isEmpty
                         ? Center(
                             child: Padding(
