@@ -97,13 +97,21 @@ class BookRowItem extends StatelessWidget {
                     ),
                     if (facts.isNotEmpty) ...[
                       const SizedBox(height: OTSpacing.xs),
-                      Text(
-                        facts.join(' · '),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: OTTypography.caption(
-                          color: OTColors.textSecondary(dark),
-                        ),
+                      Wrap(
+                        spacing: OTSpacing.sm,
+                        runSpacing: OTSpacing.xs,
+                        children: facts
+                            .map(
+                              (fact) => Text(
+                                fact,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: OTTypography.caption(
+                                  color: OTColors.textSecondary(dark),
+                                ),
+                              ),
+                            )
+                            .toList(),
                       ),
                     ],
                   ],
