@@ -9,6 +9,7 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
+import '../core/constants.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
@@ -481,10 +482,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           button[aria-label*="Option" i],
           button.mat-tonal-button, a[aria-label*="Google" i],
           [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
-          [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i],
-          div.chat-input-container + div,
-          div[class*="input-container" i] + div,
-          div[class*="query-container" i] + div,
           footer, div[class*="footer" i],
           [data-ot-hidden] {
             display: none !important;
@@ -778,9 +775,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     try {
       final controller = widget.session.webController!;
       final url = await controller.getUrl();
-      final isLogin = url?.host == 'accounts.google.com' ||
-          url?.host == 'accounts.youtube.com' ||
-          url?.host == 'consent.google.com';
+      final host = url?.host.toLowerCase() ?? '';
+      final path = url?.path.toLowerCase() ?? '';
+      final isLogin = host.contains('accounts.google') ||
+          host == 'accounts.youtube.com' ||
+          host == 'consent.google.com' ||
+          (host.contains('notebook') &&
+              (path.contains('/login') ||
+                  path.contains('/signin') ||
+                  path.contains('/servicelogin')));
       if (isLogin) {
         _readinessTimer?.cancel();
         if (mounted) {
@@ -1091,8 +1094,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               javaScriptEnabled: true,
               domStorageEnabled: true,
               databaseEnabled: true,
-              useWideViewPort: true,
-              loadWithOverviewMode: true,
+              useWideViewPort: false,
+              loadWithOverviewMode: false,
               cacheEnabled: true,
               clearCache: false,
               transparentBackground: false,
@@ -1111,9 +1114,38 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
               algorithmicDarkeningAllowed: true,
-              userAgent:
-                  'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
+              userAgent: AppConstants.chromeMobileUserAgent,
             ),
+            onReceivedError: (controller, request, error) {
+              if (request.isForMainFrame == true && mounted) {
+                _readinessTimer?.cancel();
+                setState(() {
+                  session.isWebLoading = false;
+                  session.isSessionReady = false;
+                  session.isTimeoutError = true;
+                  session.errorMessage =
+                      'Gagal memuat asisten turats (${error.description}). Silakan periksa koneksi internet Anda.';
+                });
+              }
+            },
+            onReceivedHttpError: (controller, request, errorResponse) {
+              final code = errorResponse.statusCode;
+              if (request.isForMainFrame == true &&
+                  mounted &&
+                  code != null &&
+                  code >= 400) {
+                if (code == 401 || code == 403) {
+                  _readinessTimer?.cancel();
+                  setState(() {
+                    session.isWebLoading = false;
+                    session.isSessionReady = false;
+                    session.isGooglePermissionError = true;
+                    session.errorMessage =
+                        'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda untuk mengakses asisten.';
+                  });
+                }
+              }
+            },
             onRenderProcessGone: (controller, detail) async {
               debugPrint('[OpenTurath] WebView render process gone (didCrash: ${detail.didCrash})');
               if (mounted) {

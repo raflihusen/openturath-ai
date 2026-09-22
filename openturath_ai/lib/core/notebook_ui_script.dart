@@ -127,169 +127,161 @@ const notebookUiScript = r'''
       const style = document.createElement('style'); style.id = 'ot-conversation-ui';
       style.textContent = `
         [data-ot-hidden],
-        .tab-bar, app-tab-bar, .tabs-container, nav[class*="tab"], div[class*="tab-bar"],
-        [role="tablist"], mat-tab-header, .mobile-tab-bar, .mobile-tabs, .mobile-navigation,
-        mat-progress-spinner, mat-spinner, .mdc-circular-progress, [role="progressbar"],
-        svg.spinner, div[class*="spinner" i], div[class*="skeleton" i], div[class*="shimmer" i],
-        div[class*="placeholder-bar" i],
+        top-bar, .top-bar, header, .header, .app-header, app-header,
+        mat-toolbar, [role="banner"], .header-container, .header-row,
+        .mobile-header, div[class*="mobile-header" i],
+        labs-tailwind-logo, a.logo-link, .logo-container,
+        a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
+        .title-input, input.title-input, .title-container, .notebook-title,
+        .notebook-header, app-notebook-header, app-project-header,
+        .title-card, mat-card.title-card,
+        .project-header, div[class*="project-header" i], div.source-badge-container,
+        .pro-badge,
+        #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
+        button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
         button[aria-label*="More" i], button[aria-label*="Opsi" i],
         button[aria-label*="options" i], button[aria-label*="Notebook options" i],
-        div.chat-input-container + div,
-        div[class*="input-container" i] + div,
-        div[class*="query-container" i] + div,
-    top-bar, .top-bar, header, .header, .app-header, app-header,
-    mat-toolbar, [role="banner"], .header-container, .header-row,
-    .mobile-header, div[class*="mobile-header" i],
-    labs-tailwind-logo, a.logo-link, .logo-container,
-    a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
-    .title-input, input.title-input, .title-container, .notebook-title,
-    .notebook-header, app-notebook-header, app-project-header,
-    .notebook-guide, notebook-guide, .notebook-overview, notebook-overview,
-    .notebook-cover, .notebook-cover-container, .notebook-title-card,
-    .project-header, div[class*="project-header" i], .chat-header, .chat-panel-header,
-    .header-content, .title-card, mat-card.title-card, div[class*="title-card" i],
-    div[class*="notebook-header" i], div.source-badge-container,
-    #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
-    button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-    button[aria-label*="More" i], button[aria-label*="Opsi" i],
-    button[aria-label*="options" i], button[aria-label*="Notebook options" i],
-    button[aria-label*="Option" i],
-    button.mat-tonal-button, a[aria-label*="Google" i],
-    [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
-    [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i],
-    .loading-notebook, [class*="skeleton"] {
-      display:none!important;
-      visibility:hidden!important;
-      height:0px!important;
-      max-height:0px!important;
-      overflow:hidden!important;
-      margin:0px!important;
-      padding:0px!important;
-      opacity:0!important;
-      pointer-events:none!important;
-      border:none!important;
+        button[aria-label*="Option" i],
+        button.mat-tonal-button, a[aria-label*="Google" i],
+        [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
+        [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i] {
+          display: none !important;
+          visibility: hidden !important;
+          height: 0px !important;
+          max-height: 0px !important;
+          overflow: hidden !important;
+          margin: 0px !important;
+          padding: 0px !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          border: none !important;
+        }
+        .chat-panel-content, .chat-view, .conversation-container, .message-list, main, app-chat-view {
+          padding-top: 8px !important;
+          padding-bottom: 24px !important;
+          margin-top: 0px !important;
+        }
+        .chat-disclaimer, .query-disclaimer, .model-disclaimer,
+        [class*="disclaimer" i], [aria-label*="disclaimer" i],
+        [data-testid*="disclaimer" i] {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 0.65 !important;
+          font-size: 11px !important;
+          line-height: 1.4 !important;
+          text-align: center !important;
+          margin: 4px 0 8px 0 !important;
+          pointer-events: auto !important;
+          height: auto !important;
+          max-height: none !important;
+        }
+      `;
+      (document.head || document.documentElement).appendChild(style);
     }
-    .chat-disclaimer, .query-disclaimer, .model-disclaimer,
-    [class*="disclaimer" i], [aria-label*="disclaimer" i],
-    [data-testid*="disclaimer" i] {
-      display:block!important;
-      visibility:visible!important;
-      opacity:0.65!important;
-      font-size:11px!important;
-      line-height:1.4!important;
-      text-align:center!important;
-      margin:4px 0 8px 0!important;
-      pointer-events:auto!important;
-      height:auto!important;
-      max-height:none!important;
+    // Sembunyikan header dan Google account bar secara presisi
+    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i]').forEach(el => {
+      hide(el);
+      el.style.setProperty('display', 'none', 'important');
+      el.style.setProperty('visibility', 'hidden', 'important');
+      el.style.setProperty('height', '0px', 'important');
+    });
+    // Pastikan tab Chat terpilih jika berada di tampilan tab responsive
+    try {
+      const tabs = [...document.querySelectorAll('[role="tab"], .mat-mdc-tab, button')];
+      const chatTab = tabs.find(t => {
+        const txt = (t.innerText || t.getAttribute('aria-label') || '').trim().toLowerCase();
+        return (txt === 'chat' || txt === 'obrolan' || txt === 'percakapan') && t.offsetParent !== null;
+      });
+      if (chatTab && chatTab.getAttribute('aria-selected') !== 'true') {
+        chatTab.click();
+      }
+    } catch(_) {}
+    // Auto-dismiss dialog pengumuman Google
+    document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane, [class*="announcement"]').forEach(dialog => {
+      const t = text(dialog).toLowerCase();
+      if (!t.includes('more flexibility and control') && !t.includes('limits refresh every 5 hours') && !t.includes('gemini notebook')) return;
+      if (!dialog.hasAttribute('data-ot-dismissed')) {
+        dialog.setAttribute('data-ot-dismissed', '');
+        const close = [...dialog.querySelectorAll('button, [role="button"]')].find(b => /^(close|dismiss|got it|tutup|mengerti|done|ok)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
+        if (close) { close.click(); return; }
+      }
+      const pane = dialog.closest('.cdk-overlay-pane') || dialog;
+      hide(pane);
+      const wrapper = pane.parentElement;
+      if (wrapper?.classList.contains('cdk-global-overlay-wrapper')) {
+        hide(wrapper);
+        const backdrop = wrapper.previousElementSibling;
+        if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
+      }
+    });
+    // Perbarui placeholder input ke bahasa santri alami
+    const targetPlaceholder = 'Ajukan pertanyaan atau masalah';
+    document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]').forEach(input => {
+      if (input.placeholder && input.placeholder !== targetPlaceholder) {
+        input.placeholder = targetPlaceholder;
+      }
+      if (input.getAttribute('data-placeholder') && input.getAttribute('data-placeholder') !== targetPlaceholder) {
+        input.setAttribute('data-placeholder', targetPlaceholder);
+      }
+      if (input.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(input.getAttribute('aria-label'))) {
+        input.setAttribute('aria-label', targetPlaceholder);
+      }
+    });
+    document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {
+      if (el.closest(answerSelector)) return;
+      const t = text(el).toLowerCase();
+      if (t.includes('start typing') || t.includes('ask a question') || t.includes('tanyakan') || t.includes('ketik pesan') || t.includes('ajukan')) {
+        if (el.innerText !== targetPlaceholder && el.children.length === 0) {
+          el.innerText = targetPlaceholder;
+        }
+      }
+    });
+    // Tampilkan disclaimer dengan nama OpenTurath AI (menggantikan Gemini Notebook / NotebookLM)
+    function replaceBrandInText(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (/gemini(\s+notebook)?|notebooklm/i.test(node.nodeValue)) {
+          node.nodeValue = node.nodeValue
+            .replace(/gemini\s+notebook/gi, 'OpenTurath AI')
+            .replace(/notebooklm/gi, 'OpenTurath AI')
+            .replace(/gemini/gi, 'OpenTurath AI');
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE && !node.matches(answerSelector)) {
+        for (let child of node.childNodes) {
+          replaceBrandInText(child);
+        }
+      }
     }
-  `;
-  (document.head || document.documentElement).appendChild(style);
-}
-// Sembunyikan header dan Google account bar secara agresif
-document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i]').forEach(el => {
-  hide(el);
-  el.style.setProperty('display', 'none', 'important');
-  el.style.setProperty('visibility', 'hidden', 'important');
-  el.style.setProperty('height', '0px', 'important');
-});
-// Sembunyikan tab strip Sources | Chat | Studio
-document.querySelectorAll('nav, div, [role="tablist"], ul').forEach(el => {
-  const t = (el.innerText || '').toLowerCase();
-  if ((t.includes('sources') || t.includes('sumber')) && (t.includes('studio') || t.includes('chat'))) {
-    if (!el.closest(answerSelector) && el.children.length <= 6) hide(el);
+    document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i], [aria-label*="disclaimer" i], div, p, span, small').forEach(el => {
+      if (el.closest(answerSelector)) return;
+      const t = (el.innerText || '').toLowerCase();
+      if (t.length < 300 && (/gemini/i.test(t) || /notebooklm/i.test(t) || /tidak akurat|inaccurate/i.test(t))) {
+        replaceBrandInText(el);
+      }
+    });
   }
-});
-// Sembunyikan card overview / cover di awal percakapan
-document.querySelectorAll('h1, h2, h3, [class*="notebook-title"], [class*="title-card"], [class*="project-title"]').forEach(el => {
-  if (el.closest(answerSelector)) return;
-  let card = el;
-  for (let i = 0; card && i < 6; i++, card = card.parentElement) {
-    if (card.querySelector('textarea, [contenteditable="true"]') || card.querySelector(answerSelector)) break;
-    if (/\b\d+\s+(sources|sumber)\b/i.test(text(card)) && text(card).length < 2000) { hide(card); break; }
-  }
-});
-// Auto-dismiss dialog pengumuman Google
-document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane, [class*="announcement"]').forEach(dialog => {
-  const t = text(dialog).toLowerCase();
-  if (!t.includes('more flexibility and control') && !t.includes('limits refresh every 5 hours') && !t.includes('gemini notebook')) return;
-  if (!dialog.hasAttribute('data-ot-dismissed')) {
-    dialog.setAttribute('data-ot-dismissed', '');
-    const close = [...dialog.querySelectorAll('button, [role="button"]')].find(b => /^(close|dismiss|got it|tutup|mengerti|done|ok)$/i.test((b.getAttribute('aria-label') || text(b)).trim()));
-    if (close) { close.click(); return; }
-  }
-  const pane = dialog.closest('.cdk-overlay-pane') || dialog;
-  hide(pane);
-  const wrapper = pane.parentElement;
-  if (wrapper?.classList.contains('cdk-global-overlay-wrapper')) {
-    hide(wrapper);
-    const backdrop = wrapper.previousElementSibling;
-    if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
-  }
-});
-// Perbarui placeholder input ke bahasa santri alami
-const targetPlaceholder = 'Ajukan pertanyaan atau masalah';
-document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]').forEach(input => {
-  if (input.placeholder && input.placeholder !== targetPlaceholder) {
-    input.placeholder = targetPlaceholder;
-  }
-  if (input.getAttribute('data-placeholder') && input.getAttribute('data-placeholder') !== targetPlaceholder) {
-    input.setAttribute('data-placeholder', targetPlaceholder);
-  }
-  if (input.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(input.getAttribute('aria-label'))) {
-    input.setAttribute('aria-label', targetPlaceholder);
-  }
-});
-document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {
-  if (el.closest(answerSelector)) return;
-  const t = text(el).toLowerCase();
-  if (t.includes('start typing') || t.includes('ask a question') || t.includes('tanyakan') || t.includes('ketik pesan') || t.includes('ajukan')) {
-    if (el.innerText !== targetPlaceholder && el.children.length === 0) {
-      el.innerText = targetPlaceholder;
+  window.otOpenLanguageSettings = function() {
+    const btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]');
+    if (btn) {
+      btn.click();
+    } else {
+      const anyBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i]');
+      if (anyBtn) anyBtn.click();
     }
-  }
-});
-// Tampilkan disclaimer dengan nama OpenTurath AI (menggantikan Gemini Notebook / NotebookLM)
-function replaceBrandInText(node) {
-  if (node.nodeType === Node.TEXT_NODE) {
-    if (/gemini(\s+notebook)?|notebooklm/i.test(node.nodeValue)) {
-      node.nodeValue = node.nodeValue
-        .replace(/gemini\s+notebook/gi, 'OpenTurath AI')
-        .replace(/notebooklm/gi, 'OpenTurath AI')
-        .replace(/gemini/gi, 'OpenTurath AI');
+  };
+  function ready() {
+    clean();
+    if (accessDenied()) return false;
+    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
+    if (input && input.offsetParent !== null) return true;
+    const hasMessage = document.querySelector(answerSelector) || document.querySelector('.chat-message, .chat-response, app-chat-response, app-chat-message, [role="article"]');
+    if (hasMessage && hasMessage.offsetParent !== null) return true;
+    const chatContainer = document.querySelector('.chat-input-container, .query-box, app-chat-guide, .chat-guide, notebook-guide');
+    if (chatContainer && chatContainer.offsetParent !== null) {
+      const innerInput = chatContainer.querySelector('textarea, [contenteditable="true"], [role="textbox"], input');
+      if (innerInput) return true;
     }
-  } else if (node.nodeType === Node.ELEMENT_NODE && !node.matches(answerSelector)) {
-    for (let child of node.childNodes) {
-      replaceBrandInText(child);
-    }
+    return false;
   }
-}
-document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i], [aria-label*="disclaimer" i], div, p, span, small').forEach(el => {
-  if (el.closest(answerSelector)) return;
-  const t = (el.innerText || '').toLowerCase();
-  if (t.length < 300 && (/gemini/i.test(t) || /notebooklm/i.test(t) || /tidak akurat|inaccurate/i.test(t))) {
-    replaceBrandInText(el);
-  }
-});
-}
-window.otOpenLanguageSettings = function() {
-  const btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]');
-  if (btn) {
-    btn.click();
-  } else {
-    const anyBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i]');
-    if (anyBtn) anyBtn.click();
-  }
-};
-function ready() {
-  clean();
-  if (accessDenied()) return false;
-  const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
-  if (input) return true;
-  if (document.querySelector(answerSelector) || document.querySelector('.chat-message, .chat-response')) return true;
-  const bodyText = (document.body?.innerText || '').toLowerCase();
-  return bodyText.length > 50 && !/loading notebook|memuat notebook/i.test(bodyText);
-}
 function accessDenied() {
   const body = (document.body?.innerText || '').toLowerCase();
   const title = (document.title || '').toLowerCase();

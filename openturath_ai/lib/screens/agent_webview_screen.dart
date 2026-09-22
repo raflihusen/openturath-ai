@@ -162,15 +162,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           button.mat-tonal-button, a[aria-label*="Google" i],
           [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
           [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i],
-          /* Spinner, Circular Progress & Skeleton Placeholder */
-          mat-progress-spinner, mat-spinner, .mdc-circular-progress,
-          [role="progressbar"], svg.spinner, div[class*="spinner" i],
-          div[class*="skeleton" i], div[class*="shimmer" i],
-          div[class*="placeholder-bar" i],
-          /* Disclaimer Google NotebookLM & Gemini */
-          div.chat-input-container + div,
-          div[class*="input-container" i] + div,
-          div[class*="query-container" i] + div,
+          /* Sembunyikan elemen internal bertanda khusus */
           [data-ot-hidden] {
             display: none !important;
             visibility: hidden !important;
@@ -543,19 +535,31 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     _checkingReady = true;
     try {
       final url = await _webController!.getUrl();
-      final isLogin = url?.host == 'accounts.google.com' || url?.host == 'accounts.youtube.com' || url?.host == 'consent.google.com';
-      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.ready() : false');
-      _readySamples = result == true ? _readySamples + 1 : 0;
-      if (!mounted) return;
-      final elapsedMs = _loadingStarted != null ? DateTime.now().difference(_loadingStarted!).inMilliseconds : 0;
+      final host = url?.host.toLowerCase() ?? '';
+      final path = url?.path.toLowerCase() ?? '';
+      final isLogin = host.contains('accounts.google') ||
+          host == 'accounts.youtube.com' ||
+          host == 'consent.google.com' ||
+          (host.contains('notebook') &&
+              (path.contains('/login') ||
+                  path.contains('/signin') ||
+                  path.contains('/servicelogin')));
       if (isLogin) {
         _readinessTimer?.cancel();
         setState(() {
           _isWebViewLoading = false;
-          _errorMessage = 'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda.';
+          _errorMessage =
+              'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda.';
         });
         return;
       }
+      final result = await _webController!.evaluateJavascript(
+          source: 'window.otNotebook ? window.otNotebook.ready() : false');
+      _readySamples = result == true ? _readySamples + 1 : 0;
+      if (!mounted) return;
+      final elapsedMs = _loadingStarted != null
+          ? DateTime.now().difference(_loadingStarted!).inMilliseconds
+          : 0;
       if (_readySamples >= 2 && elapsedMs >= 2000) {
         _readinessTimer?.cancel();
         setState(() => _isWebViewLoading = false);

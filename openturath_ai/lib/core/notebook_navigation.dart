@@ -1,7 +1,13 @@
 class NotebookNavigation {
   static const hosts = {
-    'notebooklm.google.com', 'notebook.google.com',
-    'accounts.google.com', 'accounts.youtube.com', 'consent.google.com',
+    'notebooklm.google.com',
+    'notebook.google.com',
+    'accounts.google.com',
+    'accounts.google.co.id',
+    'myaccount.google.com',
+    'accounts.youtube.com',
+    'consent.google.com',
+    'ogs.google.com',
   };
   static bool allowed(Uri uri) => uri.scheme == 'https' && uri.userInfo.isEmpty &&
     uri.port == 443 && hosts.contains(uri.host.toLowerCase());

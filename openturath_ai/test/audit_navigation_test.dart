@@ -2,7 +2,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/notebook_navigation.dart';
 void main() {
   test('A11 exact HTTPS authentication hosts allowed', () {
-    for (final host in ['notebooklm.google.com', 'accounts.google.com', 'accounts.youtube.com']) {
+    for (final host in [
+      'notebooklm.google.com',
+      'notebook.google.com',
+      'accounts.google.com',
+      'accounts.google.co.id',
+      'myaccount.google.com',
+      'accounts.youtube.com',
+    ]) {
       expect(NotebookNavigation.allowed(Uri.parse('https://$host/')), isTrue);
     }
   });
