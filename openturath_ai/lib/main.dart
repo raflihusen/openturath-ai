@@ -192,7 +192,7 @@ class OpenTurathApp extends StatelessWidget {
                     case AppRoutes.bookDetail:
                       final book =
                           settings.arguments as CanonicalBookPresentation;
-                      page = BookDetailScreen(book: book);
+                      page = BookDetailScreen(book: book, localizedControls: true);
                       break;
                     default:
                       page = const SplashScreen();

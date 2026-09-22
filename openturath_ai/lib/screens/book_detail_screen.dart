@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
+import '../core/localization.dart';
 import '../core/design/native_design.dart';
 import '../core/design/native_typography.dart';
 import '../core/design/ot_spacing.dart';
@@ -16,11 +17,13 @@ import '../services/research_notes_service.dart';
 class BookDetailScreen extends StatefulWidget {
   final CanonicalBookPresentation book;
   final AgentModel? agent;
+  final bool localizedControls;
 
   const BookDetailScreen({
     super.key,
     required this.book,
     this.agent,
+    this.localizedControls = false,
   });
 
   @override
@@ -29,6 +32,7 @@ class BookDetailScreen extends StatefulWidget {
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
   final ResearchNotesService _notesService = ResearchNotesService();
+  String _label(String key, String legacy) => widget.localizedControls ? NativeCopy.text(key) : legacy;
   bool _isSaving = false;
   bool _isSaved = false;
 
@@ -62,7 +66,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaved = false;
             _isSaving = false;
           });
-          AppSnackBar.show(context, message: 'تمت إزالة الكتاب من الملاحظات');
+          AppSnackBar.show(context, message: _label('removedReference', 'تمت إزالة الكتاب من الملاحظات'));
         }
       } else {
         final agent = _resolveTargetAgent();
@@ -121,13 +125,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaving = false;
           });
           HapticFeedback.mediumImpact();
-          AppSnackBar.success(context, 'تم حفظ بيانات الكتاب في الملاحظات');
+          AppSnackBar.success(context, _label('saved', 'تم حفظ بيانات الكتاب في الملاحظات'));
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.error(context, 'تعذر تحديث الملاحظات');
+        AppSnackBar.error(context, _label('saveFailed', 'تعذر تحديث الملاحظات'));
       }
     }
   }
@@ -169,7 +173,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     Clipboard.setData(ClipboardData(text: citation));
     HapticFeedback.selectionClick();
-    AppSnackBar.success(context, 'تم نسخ بطاقة الكتاب بنجاح');
+    AppSnackBar.success(context, _label('copied', 'تم نسخ بطاقة الكتاب بنجاح'));
   }
 
   String _translateType(String? type) {
@@ -222,6 +226,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = NativeColors.surface(isDark);
     final background = NativeColors.canvas(isDark);
@@ -231,7 +236,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final surfaceSubtle = NativeColors.surfaceSubtle(isDark);
 
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: widget.localizedControls ? Directionality.of(context) : TextDirection.rtl,
       child: Scaffold(
         backgroundColor: background,
         appBar: AppBar(
@@ -240,11 +245,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-            tooltip: 'رجوع',
+            tooltip: _label('back', 'رجوع'),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            'بطاقة الكتاب',
+            _label('sources', 'بطاقة الكتاب'),
             style: NativeTypography.arabicReading(color: textPrimary).copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -260,12 +265,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     ? (isDark ? Colors.white : Colors.black)
                     : textSecondary,
               ),
-              tooltip: _isSaved ? 'إزالة من الملاحظات' : 'حفظ في الملاحظات',
-              onPressed: _toggleSaveBook,
+              tooltip: _isSaved ? _label('removeReference', 'إزالة من الملاحظات') : _label('saveReference', 'حفظ في الملاحظات'),
+              onPressed: _isSaving ? null : _toggleSaveBook,
             ),
             IconButton(
               icon: Icon(Icons.share_outlined, color: textSecondary),
-              tooltip: 'نسخ بطاقة الكتاب',
+              tooltip: _label('copyReference', 'نسخ بطاقة الكتاب'),
               onPressed: _copyScholarlyCitation,
             ),
             const SizedBox(width: 8),
@@ -387,7 +392,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader('المؤلف والوفاة', textSecondary),
+                      _buildSectionHeader(_label('authorPeriod', 'المؤلف والوفاة'), textSecondary),
                       const SizedBox(height: 10),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -465,13 +470,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader('التصنيف والمصنف', textSecondary),
+                      _buildSectionHeader(_label('classification', 'التصنيف والمصنف'), textSecondary),
                       const SizedBox(height: 12),
                       if (widget.book.sectionArabic != null &&
                           widget.book.sectionArabic!.isNotEmpty) ...[
                         _buildMetaRow(
                           icon: Icons.category_outlined,
-                          label: 'القسم العلمي',
+                          label: _label('disciplines', 'القسم العلمي'),
                           value: widget.book.sectionArabic!,
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -482,7 +487,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           widget.book.reviewedTypeLabel!.isNotEmpty) ...[
                         _buildMetaRow(
                           icon: Icons.menu_book_outlined,
-                          label: 'نوع المصنف',
+                          label: _label('workType', 'نوع المصنف'),
                           value: _translateType(widget.book.reviewedTypeLabel),
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -493,7 +498,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           widget.book.reviewedEraLabel!.isNotEmpty) ...[
                         _buildMetaRow(
                           icon: Icons.history_edu_rounded,
-                          label: 'عصر المؤلف',
+                          label: _label('authorEra', 'عصر المؤلف'),
                           value: _translateEra(widget.book.reviewedEraLabel),
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -502,7 +507,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       ],
                       _buildMetaRow(
                         icon: Icons.auto_stories_outlined,
-                        label: 'عدد الأجزاء',
+                        label: _label('volumes', 'عدد الأجزاء'),
                         value: _formatVolumes(),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
@@ -513,7 +518,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         const Divider(height: 16, thickness: 0.5),
                         _buildMetaRow(
                           icon: Icons.article_outlined,
-                          label: 'عدد الصفحات',
+                          label: _label('pages', 'عدد الصفحات'),
                           value: '${widget.book.pagesDescription} صفحة',
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -523,7 +528,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         const Divider(height: 16, thickness: 0.5),
                         _buildMetaRow(
                           icon: Icons.verified_outlined,
-                          label: 'رتبة الاعتماد',
+                          label: _label('authority', 'رتبة الاعتماد'),
                           value: 'معتمد في المذهب والفتوى',
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -544,11 +549,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionHeader(
-                          'بيانات الطبع والتحقيق', textSecondary),
+                          _label('edition', 'بيانات الطبع والتحقيق'), textSecondary),
                       const SizedBox(height: 12),
                       _buildMetaRow(
                         icon: Icons.business_outlined,
-                        label: 'دار النشر',
+                        label: _label('publisher', 'دار النشر'),
                         value: widget.book.publisher ?? 'غير مدون',
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
@@ -556,7 +561,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       const Divider(height: 16, thickness: 0.5),
                       _buildMetaRow(
                         icon: Icons.edit_note_rounded,
-                        label: 'المحقق',
+                        label: _label('editor', 'المحقق'),
                         value: widget.book.muhaqqiq ?? 'غير مدون',
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
@@ -566,7 +571,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         const Divider(height: 16, thickness: 0.5),
                         _buildMetaRow(
                           icon: Icons.calendar_today_outlined,
-                          label: 'سنة الطبع',
+                          label: _label('year', 'سنة الطبع'),
                           value: widget.book.printYear!,
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -606,7 +611,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget _buildSectionHeader(String title, Color color) {
     return Text(
       title,
-      style: NativeTypography.arabicReading(color: color).copyWith(
+      style: (widget.localizedControls ? NativeTypography.bodyMedium(color: color) : NativeTypography.arabicReading(color: color)).copyWith(
         fontSize: 13,
         fontWeight: FontWeight.w700,
       ),
@@ -620,29 +625,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     required Color textPrimary,
     required Color textSecondary,
   }) {
-    return Row(
-      children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
         Icon(icon, size: 18, color: textSecondary),
         const SizedBox(width: 8),
-        Text(
-          label,
-          style: NativeTypography.arabicReading(color: textSecondary).copyWith(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const Spacer(),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.start,
-            style: NativeTypography.arabicReading(color: textPrimary).copyWith(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    );
+        Expanded(child: Text(label, style: NativeTypography.body(color: textSecondary))),
+      ]),
+      const SizedBox(height: 6),
+      Text(value, style: NativeTypography.arabicReading(color: textPrimary).copyWith(fontSize: 18, height: 1.9)),
+    ]);
   }
 }

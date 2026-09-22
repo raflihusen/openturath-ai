@@ -74,6 +74,14 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
+    'removeReference': ['Hapus dari catatan', 'Remove from notes', 'إزالة من الملاحظات'],
+    'removedReference': ['Rujukan dihapus dari catatan.', 'Reference removed from notes.', 'تمت إزالة المرجع من الملاحظات.'],
+    'authorPeriod': ['Pengarang dan masa hidup', 'Author and lifetime', 'المؤلف والوفاة'],
+    'classification': ['Klasifikasi naskah', 'Work classification', 'التصنيف والمصنف'],
+    'workType': ['Jenis naskah', 'Type of work', 'نوع المصنف'],
+    'authorEra': ['Masa pengarang', 'Author’s period', 'عصر المؤلف'],
+    'authority': ['Status rujukan', 'Reference status', 'رتبة الاعتماد'],
+    'shortTitle': ['Judul ringkas', 'Short title', 'العنوان المختصر'],
     'noNotesResults': [
       'Tidak ada catatan yang cocok.',
       'No matching notes.',
