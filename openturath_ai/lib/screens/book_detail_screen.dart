@@ -347,7 +347,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -372,7 +374,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               ),
                             ),
                           ),
-                          const Spacer(),
                           if (!widget.localizedControls)
                             Directionality(
                               textDirection: TextDirection.ltr,
@@ -391,6 +392,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       const SizedBox(height: OTSpacing.md),
                       Text(
                         widget.book.titleArabic,
+                        textDirection: TextDirection.rtl,
                         textAlign: TextAlign.right,
                         style:
                             NativeTypography.arabicDisplay(color: textPrimary)
