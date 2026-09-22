@@ -174,6 +174,34 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   }
 
   @override
+  Widget build(BuildContext context) => NativeAssistantPage(
+    field: widget.field, filtered: _computeFilteredAgents(), user: _authService.cachedCurrentUser,
+    searchController: _searchCtrl, searchQuery: _searchQuery, corpusKind: _corpusKind,
+    selectedFieldId: _selectedFieldId, isLoading: _isLoading,
+    onSearch: _onSearchChanged, onOpen: _openAgent, onSubAgent: _openTahawwulatSubAgent,
+    onKind: (value) => setState(() { _corpusKind = value; _selectedFieldId = null; }),
+    onField: (value) => setState(() => _selectedFieldId = value),
+  );
+}
+
+class NativeAssistantPage extends StatelessWidget {
+  const NativeAssistantPage({super.key, this.field, required this.filtered, this.user,
+    required this.searchController, required this.searchQuery, required this.corpusKind,
+    this.selectedFieldId, this.isLoading = false, required this.onSearch, required this.onOpen,
+    required this.onSubAgent, required this.onKind, required this.onField});
+  final FieldModel? field;
+  final List<AgentModel> filtered;
+  final UserModel? user;
+  final TextEditingController searchController;
+  final String searchQuery;
+  final CorpusKind corpusKind;
+  final String? selectedFieldId;
+  final bool isLoading;
+  final ValueChanged<String> onSearch, onField;
+  final ValueChanged<AgentModel> onOpen;
+  final void Function(AgentModel, SubAgentModel) onSubAgent;
+  final ValueChanged<CorpusKind> onKind;
+@override
   Widget build(BuildContext context) {
     Loc.watch(context);
     final theme = Theme.of(context);
@@ -184,9 +212,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final textPrimary = NativeColors.textPrimary(isDark);
     final textSecondary = NativeColors.textSecondary(isDark);
 
-    final isGeneralTab = widget.field == null;
-    final title = isGeneralTab ? AppCopy.navStudies : widget.field!.name;
-    final filtered = _computeFilteredAgents();
+    final isGeneralTab = field == null;
+    final title = isGeneralTab ? AppCopy.navStudies : field!.name;
+
     final shell = MainShellController.of(context);
 
     return PopScope(
@@ -240,9 +268,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 child: Column(
                   children: [
                     NativeSearch(
-                        controller: _searchCtrl,
+                        controller: searchController,
                         hint: NativeCopy.text('searchAssistants'),
-                        onChanged: _onSearchChanged),
+                        onChanged: onSearch),
 
                   ],
                 ),
@@ -253,28 +281,28 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 child: Row(children: [
                   Expanded(child: PopupMenuButton<CorpusKind>(
                     tooltip: NativeCopy.text('disciplines'),
-                    initialValue: _corpusKind,
-                    onSelected: (value) => setState(() { _corpusKind = value; _selectedFieldId = null; }),
+                    initialValue: corpusKind,
+                    onSelected: onKind,
                     itemBuilder: (_) => [
                       PopupMenuItem(value: CorpusKind.discipline, child: Text(NativeCopy.text('disciplines'))),
                       PopupMenuItem(value: CorpusKind.scholar, child: Text(NativeCopy.text('scholars'))),
                     ],
                     child: Padding(padding: const EdgeInsets.symmetric(vertical: 14),
-                      child: Row(children: [Expanded(child: Text(NativeCopy.text(_corpusKind == CorpusKind.discipline ? 'disciplines' : 'scholars'), style: NativeType.body(isDark, size: 14))), const Icon(Icons.expand_more, size: 18)])),
+                      child: Row(children: [Expanded(child: Text(NativeCopy.text(corpusKind == CorpusKind.discipline ? 'disciplines' : 'scholars'), style: NativeType.body(isDark, size: 14))), const Icon(Icons.expand_more, size: 18)])),
                   )),
-                  if (_corpusKind == CorpusKind.discipline) ...[
+                  if (corpusKind == CorpusKind.discipline) ...[
                     const SizedBox(width: 20),
                     Expanded(child: PopupMenuButton<String>(
                       tooltip: AppCopy.chooseField,
-                      initialValue: _selectedFieldId ?? 'all',
-                      onSelected: (value) => setState(() => _selectedFieldId = value),
+                      initialValue: selectedFieldId ?? 'all',
+                      onSelected: onField,
                       itemBuilder: (_) => [
                         PopupMenuItem(value: 'all', child: Text(AppCopy.allCategories)),
                         for (final field in FieldModel.defaultFields) PopupMenuItem(value: field.id, child: Text(Loc.text(field.name))),
                       ],
                       child: Padding(padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Row(children: [
-                          Expanded(child: Text(Loc.text(FieldModel.defaultFields.where((f) => f.id == _selectedFieldId).firstOrNull?.name ?? AppCopy.allCategories), style: NativeType.body(isDark, size: 14).copyWith(color: NativeColors.accent(isDark)))),
+                          Expanded(child: Text(Loc.text(FieldModel.defaultFields.where((f) => f.id == selectedFieldId).firstOrNull?.name ?? AppCopy.allCategories), style: NativeType.body(isDark, size: 14).copyWith(color: NativeColors.accent(isDark)))),
                           Icon(Icons.expand_more, size: 18, color: NativeColors.accent(isDark)),
                         ])),
                     )),
@@ -283,9 +311,9 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               ),
               // Content List
               Expanded(
-                child: _corpusKind == CorpusKind.scholar
+                child: corpusKind == CorpusKind.scholar
                     ? const ScholarsComingSoon()
-                    : _isLoading
+                    : isLoading
                         ? const Center(child: NativeLoading())
                         : filtered.isEmpty
                             ? Center(
@@ -298,7 +326,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                           size: 40, color: textSecondary),
                                       const SizedBox(height: OTSpacing.sm),
                                       Text(
-                                        _searchQuery.isNotEmpty
+                                        searchQuery.isNotEmpty
                                             ? AppCopy.noAssistantsFound
                                             : AppCopy.noAssistantsFound,
                                         style: NativeTypography.body(
@@ -313,7 +341,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 builder: (context) {
                                   final sorted =
                                       List<AgentModel>.from(filtered);
-                                  if (_searchQuery.isEmpty) {
+                                  if (searchQuery.isEmpty) {
                                     sorted.sort((a, b) {
                                       if (a.id == 'fiqh_tahawwulat') return -1;
                                       if (b.id == 'fiqh_tahawwulat') return 1;
@@ -347,16 +375,15 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                     itemBuilder: (context, index) {
                                       final agent = sorted[index];
                                       if (agent.id == 'fiqh_tahawwulat') {
-                                        final user =
-                                            _authService.cachedCurrentUser;
+                                        
                                         final isSubscribed = user != null &&
                                             user.hasAccessToAgent(agent.id);
                                         return TahawwulatFlagshipCard(
                                           agent: agent,
                                           isSubscribed: isSubscribed,
-                                          onOpenMain: () => _openAgent(agent),
+                                          onOpenMain: () => onOpen(agent),
                                           onOpenSubAgent: (sub) =>
-                                              _openTahawwulatSubAgent(
+                                              onSubAgent(
                                                   agent, sub),
                                           onOpenLibrary: agent.catalogId != null
                                               ? () => openNativeLibrary(context,
@@ -377,7 +404,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                         statusLabel: agent.isComingSoon
                                             ? AppCopy.comingSoon
                                             : null,
-                                        onOpen: () => _openAgent(agent),
+                                        onOpen: () => onOpen(agent),
                                         onOpenLibrary: agent.catalogId != null
                                             ? () => openNativeLibrary(context,
                                                 agent: agent)
@@ -394,5 +421,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       ),
     );
   }
+
 
 }
