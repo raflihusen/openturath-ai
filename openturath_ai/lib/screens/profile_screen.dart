@@ -813,47 +813,6 @@ class _MembershipPass extends StatelessWidget {
   }
 }
 
-class _PassMeta extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color valueColor;
-
-  const _PassMeta({
-    required this.label,
-    required this.value,
-    required this.valueColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: NativeFonts.outfit(
-            color: Colors.white.withValues(alpha: 0.58),
-            fontSize: 9.5,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.9,
-          ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          value,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: NativeFonts.outfit(
-            color: valueColor,
-            fontSize: 12.5,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _AccessPortfolioRow extends StatelessWidget {
   const _AccessPortfolioRow({
     required this.title,

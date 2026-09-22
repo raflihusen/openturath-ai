@@ -412,13 +412,13 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: NativeColors.marja(isDark).withAlpha(30),
+                                color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark).withAlpha(30),
                                 borderRadius: BorderRadius.circular(AppTheme.radiusXS),
                               ),
                               child: Icon(
                                 Icons.lock_rounded,
                                 size: 18,
-                                color: NativeColors.marja(isDark),
+                                color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -683,14 +683,14 @@ class _CelebratorySuccessView extends StatelessWidget {
                             height: 88,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: NativeColors.marja(isDark).withValues(alpha: 0.16),
+                              color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.16),
                               border: Border.all(
-                                color: NativeColors.marja(isDark),
+                                color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark),
                                 width: 3,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: NativeColors.marja(isDark).withValues(alpha: 0.03),
+                                  color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark).withValues(alpha: 0.03),
                                   blurRadius: 12,
                                   spreadRadius: 0,
                                 ),
@@ -699,7 +699,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                             child: Icon(
                               Icons.check_rounded,
                               size: 50,
-                              color: NativeColors.marja(isDark),
+                              color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark),
                             ),
                           ),
                         );
@@ -745,7 +745,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                               style: ScholarlyFonts.outfit(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
-                                color: NativeColors.marja(isDark),
+                                color: NativeColors.marja(Theme.of(context).brightness == Brightness.dark),
                               ),
                             ),
                           ),

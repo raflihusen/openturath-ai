@@ -7,7 +7,6 @@ import '../core/design/native_design.dart';
 
 import '../core/app_snackbar.dart';
 
-import '../core/design/ot_radius.dart';
 import '../core/design/native_typography.dart';
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';

@@ -1,7 +1,6 @@
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../core/design/native_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';

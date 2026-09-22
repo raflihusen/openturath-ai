@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../core/design/native_fonts.dart';
 import '../core/localization.dart';
 import '../core/design/native_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -314,8 +313,8 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
           IconButton(tooltip: Loc.text('Daftar Poin'), icon: const Icon(Icons.format_list_bulleted), onPressed: () => _applyFormat('\n- ', '', defaultText: Loc.text('poin catatan'))),
           IconButton(tooltip: Loc.text('Kutipan'), icon: const Icon(Icons.format_quote), onPressed: () => _applyFormat('\n> ', '', defaultText: Loc.text('kutipan ibarah'))),
           IconButton(tooltip: Loc.text('Judul Bab'), icon: const Icon(Icons.title), onPressed: () => _applyFormat('\n# ', '', defaultText: Loc.text('Judul Bab'))),
-          IconButton(tooltip: Loc.text('Orientasi Kiri ke Kanan (LTR)'), icon: const Icon(Icons.format_textdirection_l_to_r), onPressed: () => setState(() => _textDirection = TextDirection.ltr)),
-          IconButton(tooltip: Loc.text('Orientasi Kanan ke Kiri / Arab (RTL)'), icon: const Icon(Icons.format_textdirection_r_to_l), onPressed: () => setState(() => _textDirection = TextDirection.rtl)),
+          IconButton(tooltip: Loc.text('Orientasi Kiri ke Kanan (LTR)'), icon: const Icon(Icons.format_textdirection_l_to_r), onPressed: () => _applyDirection(TextDirection.ltr)),
+          IconButton(tooltip: Loc.text('Orientasi Kanan ke Kiri / Arab (RTL)'), icon: const Icon(Icons.format_textdirection_r_to_l), onPressed: () => _applyDirection(TextDirection.rtl)),
         ])),
         Divider(color: NativeColors.border(dark)),
         Expanded(child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(

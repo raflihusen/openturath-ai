@@ -86,20 +86,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
 
 
-  Widget _card({required Widget child, bool flagship = false}) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final border = NativeColors.border(dark);
-    return Container(
-      decoration: BoxDecoration(
-        color: NativeColors.surface(dark),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border, width: 1.0),
-      ),
-      padding: const EdgeInsets.all(20),
-      child: child,
-    );
-  }
-
   void _showDisciplinePickerModal(BuildContext context, List<AgentModel> specialists) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = NativeColors.textPrimary(dark);

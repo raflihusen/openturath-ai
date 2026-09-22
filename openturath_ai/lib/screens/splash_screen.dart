@@ -4,7 +4,6 @@ import '../core/design/native_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
-import '../core/theme.dart';
 import '../widgets/native_components.dart';
 import '../core/design/native_design.dart';
 

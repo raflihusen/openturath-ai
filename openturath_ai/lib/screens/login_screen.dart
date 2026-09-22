@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
 import '../core/routes.dart';
-import '../core/theme.dart';
 import '../core/design/native_design.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
@@ -244,7 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             TextSpan(
                               text: AppCopy.termsOfService,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: textPrimary,
                                 decoration: TextDecoration.underline,
                                 fontWeight: FontWeight.w500,
@@ -254,7 +253,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const TextSpan(text: ' & '),
                             TextSpan(
                               text: AppCopy.privacyPolicy,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: textPrimary,
                                 decoration: TextDecoration.underline,
                                 fontWeight: FontWeight.w500,

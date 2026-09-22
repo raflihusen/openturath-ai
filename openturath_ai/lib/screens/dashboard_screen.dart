@@ -283,8 +283,8 @@ class _RecentNotesState extends State<_RecentNotes> {
       if (snapshot.hasError) return NativeEmpty(title: NativeCopy.text('error'), onAction: _changed);
       if (!snapshot.hasData) return const NativeLoading();
       final notes = [...snapshot.data!]..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));
-      if (notes.isEmpty) return NativeEmpty(title: NativeCopy.text('notesEmpty'), detail: NativeCopy.text('notesHint'),
-        action: AppCopy.navSaved, onAction: () => MainShellController.of(context)?.switchTab(2));
+      if (notes.isEmpty) { return NativeEmpty(title: NativeCopy.text('notesEmpty'), detail: NativeCopy.text('notesHint'),
+        action: AppCopy.navSaved, onAction: () => MainShellController.of(context)?.switchTab(2)); }
       return NativeSection(padding: EdgeInsets.zero, child: Column(children: [
         for (final note in notes.take(2)) NativePress(onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(
           builder: (_) => NoteReaderScreen(item: note))), child: Padding(padding: const EdgeInsets.all(20),
