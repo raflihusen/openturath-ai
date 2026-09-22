@@ -102,14 +102,9 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
         case _BookVolumeFilter.all:
           return true;
         case _BookVolumeFilter.singleVolume:
-          final vols = book.volumes.trim();
-          return vols == '1' || vols.toLowerCase().contains('jilid tunggal');
+          return nativeVolumeCount(book.volumes) == 1;
         case _BookVolumeFilter.multiVolume:
-          final vols = book.volumes.trim();
-          final numVol = int.tryParse(vols);
-          return (numVol != null && numVol > 1) ||
-              vols.contains('+') ||
-              vols.contains('-');
+          return (nativeVolumeCount(book.volumes) ?? 0) > 1;
       }
     }).toList();
   }
@@ -607,37 +602,10 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF222220)
-                                      : const Color(0xFFEEEEEB),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  book.section.toUpperCase(),
-                                  style: NativeFonts.outfit(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: textSecondary,
-                                  ),
-                                ),
-                              ),
-                              const Spacer(),
-                              Text(
-                                book.deathLabel,
-                                style: NativeFonts.outfit(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
+                          Wrap(spacing: 12, runSpacing: 6, children: [
+                            Text(book.section, style: NativeType.meta(isDark)),
+                            if (book.deathYear != null) Text(book.deathLabel, style: NativeType.meta(isDark)),
+                          ]),
                           const SizedBox(height: 20),
                           Directionality(
                             textDirection: TextDirection.rtl,
@@ -647,7 +615,7 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                                 book.title,
                                 textAlign: TextAlign.right,
                                 style: NativeFonts.scheherazadeNew(
-                                  fontSize: 32,
+                                  fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   color: ink,
                                   height: 1.9,
@@ -671,7 +639,7 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                     Text(
                       NativeCopy.text('edition'),
                       style: NativeFonts.outfit(
-                        fontSize: 11,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
                         color: textSecondary,
@@ -701,10 +669,7 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                           _DetailRow(
                               label: NativeCopy.text('pages'),
                               value: book.pagesLabel),
-                          _DetailRow(
-                              label: NativeCopy.text('sources'),
-                              value: book.sourceFolder,
-                              isLast: true),
+
                         ],
                       ),
                     ),
@@ -771,44 +736,15 @@ class _DetailRow extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = NativeColors.textPrimary(isDark);
-    final textSecondary = NativeColors.textSecondary(isDark);
     final border = NativeColors.border(isDark);
 
-    final displayValue = value.trim().isEmpty ? '-' : value.trim();
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: border, width: 0.8)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: MediaQuery.sizeOf(context).width < 400 ? 100 : 130,
-            child: Text(
-              label,
-              style: NativeFonts.outfit(
-                fontSize: 12,
-                color: textSecondary,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              displayValue,
-              style: NativeFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: ink,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    if (value.trim().isEmpty || value.trim() == '-') return const SizedBox.shrink();
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text(label, style: NativeType.meta(isDark)),
+        const SizedBox(height: 6),
+        SelectableText(value.trim(), style: NativeType.body(isDark)),
+        if (!isLast) ...[const SizedBox(height: 14), Divider(color: border)],
+      ]));
   }
 }

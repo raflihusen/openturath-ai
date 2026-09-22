@@ -18,13 +18,13 @@ import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
-import '../widgets/corpus_kind_control.dart';
+
 import '../widgets/specialist_card.dart';
 import '../widgets/scholars_coming_soon.dart';
 import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import 'native_library_page.dart';
-import '../widgets/apple_interactive_wrapper.dart';
+
 import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -179,8 +179,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = NativeColors.canvas(isDark);
-    final surface = NativeColors.surface(isDark);
-    final border = NativeColors.border(isDark);
+
+
     final textPrimary = NativeColors.textPrimary(isDark);
     final textSecondary = NativeColors.textSecondary(isDark);
 
@@ -243,68 +243,44 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                         controller: _searchCtrl,
                         hint: NativeCopy.text('searchAssistants'),
                         onChanged: _onSearchChanged),
-                    if (isGeneralTab) ...[
-                      const SizedBox(height: OTSpacing.md),
-                      // Dual Taxonomy Switcher
-                      CorpusKindControl(
-                        value: _corpusKind,
-                        onChanged: (k) {
-                          setState(() {
-                            _corpusKind = k;
-                            _selectedFieldId = null;
-                          });
-                        },
-                      ),
-                    ],
+
                   ],
                 ),
               ),
 
-              // Discipline Filter Chips (only in discipline mode)
-              if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
-                SizedBox(
-                  height:
-                      MediaQuery.textScalerOf(context).scale(52).clamp(52, 110),
-                  child: ListView(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: OTSpacing.lg),
-                    children: [
-                      _filterChip(
-                        label: AppCopy.allCategories,
-                        isSelected: _selectedFieldId == null ||
-                            _selectedFieldId == 'all',
-                        onTap: () => setState(() => _selectedFieldId = 'all'),
-                        isDark: isDark,
-                        border: border,
-                        surface: surface,
-                        textPrimary: textPrimary,
-                        textSecondary: textSecondary,
-                      ),
-                      const SizedBox(width: 8),
-                      ...FieldModel.defaultFields.map((field) {
-                        return Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 8),
-                          child: _filterChip(
-                            label: field.name,
-                            isSelected: _selectedFieldId == field.id,
-                            onTap: () =>
-                                setState(() => _selectedFieldId = field.id),
-                            isDark: isDark,
-                            border: border,
-                            surface: surface,
-                            textPrimary: textPrimary,
-                            textSecondary: textSecondary,
-                          ),
-                        );
-                      }),
+              if (isGeneralTab) Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(children: [
+                  Expanded(child: PopupMenuButton<CorpusKind>(
+                    tooltip: NativeCopy.text('disciplines'),
+                    initialValue: _corpusKind,
+                    onSelected: (value) => setState(() { _corpusKind = value; _selectedFieldId = null; }),
+                    itemBuilder: (_) => [
+                      PopupMenuItem(value: CorpusKind.discipline, child: Text(NativeCopy.text('disciplines'))),
+                      PopupMenuItem(value: CorpusKind.scholar, child: Text(NativeCopy.text('scholars'))),
                     ],
-                  ),
-                ),
-                const SizedBox(height: OTSpacing.sm),
-              ],
-
+                    child: Padding(padding: const EdgeInsets.symmetric(vertical: 14),
+                      child: Row(children: [Expanded(child: Text(NativeCopy.text(_corpusKind == CorpusKind.discipline ? 'disciplines' : 'scholars'), style: NativeType.body(isDark, size: 14))), const Icon(Icons.expand_more, size: 18)])),
+                  )),
+                  if (_corpusKind == CorpusKind.discipline) ...[
+                    const SizedBox(width: 20),
+                    Expanded(child: PopupMenuButton<String>(
+                      tooltip: AppCopy.chooseField,
+                      initialValue: _selectedFieldId ?? 'all',
+                      onSelected: (value) => setState(() => _selectedFieldId = value),
+                      itemBuilder: (_) => [
+                        PopupMenuItem(value: 'all', child: Text(AppCopy.allCategories)),
+                        for (final field in FieldModel.defaultFields) PopupMenuItem(value: field.id, child: Text(Loc.text(field.name))),
+                      ],
+                      child: Padding(padding: const EdgeInsets.symmetric(vertical: 14),
+                        child: Row(children: [
+                          Expanded(child: Text(Loc.text(FieldModel.defaultFields.where((f) => f.id == _selectedFieldId).firstOrNull?.name ?? AppCopy.allCategories), style: NativeType.body(isDark, size: 14).copyWith(color: NativeColors.accent(isDark)))),
+                          Icon(Icons.expand_more, size: 18, color: NativeColors.accent(isDark)),
+                        ])),
+                    )),
+                  ],
+                ]),
+              ),
               // Content List
               Expanded(
                 child: _corpusKind == CorpusKind.scholar
@@ -419,47 +395,4 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     );
   }
 
-  Widget _filterChip({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    required bool isDark,
-    required Color border,
-    required Color surface,
-    required Color textPrimary,
-    required Color textSecondary,
-  }) {
-    final activeBg = textPrimary;
-    final activeFg = isDark ? Colors.black : Colors.white;
-
-    return AppleInteractiveWrapper(
-      onTap: onTap,
-      pressedScale: 0.94,
-      hapticType: HapticFeedbackType.selection,
-      borderRadius: BorderRadius.circular(20),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? activeBg : surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? activeBg : border,
-            width: 0.8,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          Loc.text(label),
-          style: NativeTypography.caption(
-                  color: isSelected ? activeFg : textSecondary)
-              .copyWith(
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
-  }
 }
