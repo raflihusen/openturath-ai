@@ -57,6 +57,13 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
+    'updateDesktop': ['Versi terbaru tersedia. Buka tautan untuk memperbarui.', 'A new version is available. Open the link to update.', 'يتوفر إصدار جديد. افتح الرابط للتحديث.'],
+    'updateMobile': ['Pembaruan selesai diunduh dan siap dipasang.', 'The update has downloaded and is ready to install.', 'اكتمل تنزيل التحديث وهو جاهز للتثبيت.'],
+    'updateNow': ['Perbarui', 'Update', 'تحديث'],
+    'installNow': ['Pasang pembaruan', 'Install update', 'تثبيت التحديث'],
+    'later': ['Nanti saja', 'Later', 'لاحقًا'],
+    'arabicQuote': ['Kutipan Arab', 'Arabic quotation', 'اقتباس عربي'],
+    'pages': ['Halaman', 'Pages', 'الصفحات'],
     'collection': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'exclusive': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'fivePaths': ['Lima pintu telaah', 'Five paths of study', 'خمسة مسارات للدراسة'],
@@ -94,7 +101,7 @@ abstract final class NativeCopy {
     'multiVolume': ['Beberapa jilid', 'Multiple volumes', 'عدة مجلدات'],
     'noBooks': ['Tidak ada kitab yang cocok.', 'No matching works.', 'لم نعثر على كتب مطابقة.'],
     'searchHint': ['Coba judul atau nama pengarang lain.', 'Try another title or author.', 'جرّب عنوانًا أو اسم مؤلف آخر.'],
-    'results': ['{0} dari {1} kitab', '{0} of {1} works', '{0} من {1} كتابًا'],
+    'results': ['{0} dari {1} kitab', '{0} of {1} works', 'الكتب: {0} / {1}'],
     'disciplines': ['Bidang ilmu', 'Disciplines', 'المجالات العلمية'],
     'scholars': ['Khazanah ulama', 'Scholarly collections', 'تراث العلماء'],
     'yourStudy': ['Ruang belajar Anda', 'Your study space', 'مساحة دراستك'],

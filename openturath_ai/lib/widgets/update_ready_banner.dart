@@ -46,7 +46,7 @@ class UpdateReadyBanner extends StatelessWidget {
             children: [
               Container(
                 width: 40,
-                height: 40,
+                height: MediaQuery.textScalerOf(context).scale(48).clamp(48, 120),
                 decoration: BoxDecoration(
                   color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
                   shape: BoxShape.circle,
@@ -63,7 +63,7 @@ class UpdateReadyBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isDesktop ? 'Pembaruan v$version Tersedia' : 'Pembaruan v$version Siap Dipasang',
+                      Loc.tr(isDesktop ? 'updateAvailable' : 'updateReady', [version]),
                       style: NativeFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -72,9 +72,7 @@ class UpdateReadyBanner extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      isDesktop
-                          ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
-                          : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
+                      NativeCopy.text(isDesktop ? 'updateDesktop' : 'updateMobile'),
                       style: NativeFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
@@ -92,14 +90,14 @@ class UpdateReadyBanner extends StatelessWidget {
                   backgroundColor: NativeColors.accent(isDark),
                   foregroundColor: NativeColors.onAccent(isDark),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  minimumSize: const Size(64, 36),
+                  minimumSize: const Size(64, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                   ),
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop ? 'Perbarui' : 'Pasang',
+                  NativeCopy.text(isDesktop ? 'updateNow' : 'installNow'),
                   style: NativeFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,

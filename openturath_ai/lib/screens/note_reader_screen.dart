@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:intl/intl.dart' show Bidi;
 import '../core/design/native_fonts.dart';
 import '../core/localization.dart';
 
@@ -98,7 +99,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: SelectionArea(
+        child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760), child: SelectionArea(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(
                 OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
@@ -132,7 +133,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
               Divider(color: secondary.withValues(alpha: .25)),
               const SizedBox(height: 20),
               Directionality(
-                textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(displayContent) ? TextDirection.rtl : Directionality.of(context),
+                textDirection: Bidi.detectRtlDirectionality(displayContent) ? TextDirection.rtl : TextDirection.ltr,
                 child: MarkdownBody(
                 data: displayContent,
                 selectable: true,
@@ -162,7 +163,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
               )),
             ],
           ),
-        ),
+        ))),
       ),
     );
   }

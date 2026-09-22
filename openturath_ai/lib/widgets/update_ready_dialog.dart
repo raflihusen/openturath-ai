@@ -36,7 +36,7 @@ class UpdateReadyDialog extends StatelessWidget {
     final isDesktop = !kIsWeb && !Platform.isAndroid && !Platform.isIOS;
     final info = updateService.updateInfo;
     final version = info?.latestVersion ?? '';
-    final releaseNotes = info?.releaseNotes ?? 'Penyempurnaan stabilitas telaah dan sistem keilmuan.';
+    final releaseNotes = info?.releaseNotes ?? '';
 
     return Dialog(
       backgroundColor: surface,
@@ -45,7 +45,7 @@ class UpdateReadyDialog extends StatelessWidget {
         side: BorderSide(color: border, width: 1),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Padding(
+      child: SingleChildScrollView(child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -100,9 +100,7 @@ class UpdateReadyDialog extends StatelessWidget {
 
             // Penjelasan Status Unduhan
             Text(
-              isDesktop
-                  ? 'Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.'
-                  : 'Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.',
+              NativeCopy.text(isDesktop ? 'updateDesktop' : 'updateMobile'),
               style: NativeFonts.outfit(
                 fontSize: 13,
                 height: 1.5,
@@ -143,7 +141,7 @@ class UpdateReadyDialog extends StatelessWidget {
             // Tombol Aksi Pasang & Muat Ulang
             SizedBox(
               width: double.infinity,
-              height: 46,
+              height: MediaQuery.textScalerOf(context).scale(48).clamp(48, 120),
               child: FilledButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -158,7 +156,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop ? 'Perbarui Sekarang' : 'Pasang & Muat Ulang Sekarang',
+                  NativeCopy.text(isDesktop ? 'updateNow' : 'installNow'),
                   style: NativeFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -171,7 +169,7 @@ class UpdateReadyDialog extends StatelessWidget {
             // Tombol Nanti Saja
             SizedBox(
               width: double.infinity,
-              height: 40,
+              height: MediaQuery.textScalerOf(context).scale(48).clamp(48, 120),
               child: TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(
@@ -181,7 +179,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Nanti Saja',
+                  NativeCopy.text('later'),
                   style: NativeFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -191,7 +189,7 @@ class UpdateReadyDialog extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }
