@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../localization.dart';
-import '../scholarly_fonts.dart';
+import 'native_fonts.dart';
 
 /// Native-only design vocabulary. The AI room keeps its original tokens.
 abstract final class NativeColors {
@@ -42,14 +42,14 @@ abstract final class NativeColors {
 }
 
 abstract final class NativeType {
-  static TextStyle title(bool dark, {double size = 28}) => ScholarlyFonts.newsreader(
+  static TextStyle title(bool dark, {double size = 28}) => NativeFonts.newsreader(
     fontSize: size, fontWeight: FontWeight.w600, letterSpacing: -.35,
     height: 1.2, color: NativeColors.textPrimary(dark));
-  static TextStyle body(bool dark, {double size = 16}) => ScholarlyFonts.outfit(
+  static TextStyle body(bool dark, {double size = 16}) => NativeFonts.outfit(
     fontSize: size, height: 1.5, color: NativeColors.textPrimary(dark));
-  static TextStyle meta(bool dark) => ScholarlyFonts.outfit(
+  static TextStyle meta(bool dark) => NativeFonts.outfit(
     fontSize: 13, height: 1.45, color: NativeColors.textSecondary(dark));
-  static TextStyle arabic(bool dark, {double size = 26}) => ScholarlyFonts.scheherazadeNew(
+  static TextStyle arabic(bool dark, {double size = 26}) => NativeFonts.scheherazadeNew(
     fontSize: size, height: 1.9, fontWeight: FontWeight.w600,
     color: NativeColors.textPrimary(dark));
 }

@@ -52,6 +52,17 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: NativeOutfit
+      fonts:
+        - asset: assets/native_fonts/NativeOutfit.ttf
+    - family: NativeNewsreader
+      fonts:
+        - asset: assets/native_fonts/NativeNewsreader.ttf
+          weight: 600
+    - family: NativeArabic
+      fonts:
+        - asset: assets/native_fonts/NativeArabic.ttf
   assets:
     - assets/images/
     - assets/animations/
