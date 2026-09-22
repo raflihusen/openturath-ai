@@ -5,6 +5,7 @@ import '../core/design/native_design.dart';
 import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'native_components.dart';
+import 'native_theme.dart';
 import 'openturath_brand.dart';
 import 'tahawwulat_introduction_sheet.dart';
 
@@ -19,13 +20,13 @@ class TahawwulatFlagshipCard extends StatelessWidget {
   final VoidCallback? onOpenIntroduction;
 
   void _explore(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => TahawwulatCollectionPage(
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => NativeTheme(child: TahawwulatCollectionPage(
       agent: agent, isSubscribed: isSubscribed,
       onOpenMain: () { Navigator.of(context).pop(); onOpenMain(); },
       onOpenSubAgent: (sub) { Navigator.of(context).pop(); onOpenSubAgent(sub); },
       onOpenLibrary: onOpenLibrary == null ? null : () { Navigator.of(context).pop(); onOpenLibrary!(); },
       onOpenIntroduction: onOpenIntroduction,
-    )));
+    ))));
   }
 
   @override

@@ -228,7 +228,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       NativePress(onTap: () => _browse(fieldId: field.id), child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                         child: Row(children: [
-                          Expanded(child: Text(field.name, style: NativeType.body(dark))),
+                          Expanded(child: Text(Loc.text(field.name), style: NativeType.body(dark))),
                           const Icon(Icons.chevron_right_rounded, size: 20),
                         ]))),
                     ],

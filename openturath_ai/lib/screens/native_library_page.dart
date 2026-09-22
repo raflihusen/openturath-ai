@@ -5,12 +5,13 @@ import '../models/agent_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/open_turath_catalog_repository.dart';
 import '../widgets/native_components.dart';
+import '../widgets/native_theme.dart';
 import 'book_library_editorial_screen.dart';
 import 'book_catalog_screen.dart';
 import 'library_metadata_overview_screen.dart';
 
 Future<void> openNativeLibrary(BuildContext context, {required AgentModel agent}) =>
-    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => NativeLibraryPage(agent: agent)));
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => NativeTheme(child: NativeLibraryPage(agent: agent))));
 
 class NativeLibraryPage extends StatefulWidget {
   const NativeLibraryPage({super.key, required this.agent});

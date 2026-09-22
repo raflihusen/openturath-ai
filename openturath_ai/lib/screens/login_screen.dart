@@ -197,12 +197,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                           ),
                           child: _isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 20,
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Color(0xFF0E0E10),
+                                    color: NativeColors.onAccent(dark),
                                   ),
                                 )
                               : Row(
@@ -210,15 +210,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   children: [
                                     _GoogleGVector(),
                                     const SizedBox(width: 12),
-                                    Text(
+                                    Flexible(child: Text(
                                       AppCopy.continueWithGoogle,
                                       style: NativeFonts.outfit(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: -0.1,
-                                        color: const Color(0xFF0E0E10),
+                                        color: NativeColors.onAccent(dark),
                                       ),
-                                    ),
+                                    )),
                                   ],
                                 ),
                         ),

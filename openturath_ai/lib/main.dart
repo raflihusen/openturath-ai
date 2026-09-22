@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
 import 'widgets/native_theme.dart';
+import 'models/field_model.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell_screen.dart';
@@ -148,7 +149,10 @@ class OpenTurathApp extends StatelessWidget {
                     page = const MainShellScreen();
                     break;
                   case AppRoutes.specialistList:
-                    page = const SpecialistListScreen();
+                    final args = settings.arguments;
+                    final fieldId = args is Map ? args['fieldId'] : null;
+                    final matches = FieldModel.defaultFields.where((field) => field.id == fieldId);
+                    page = SpecialistListScreen(field: matches.firstOrNull);
                     break;
                   case AppRoutes.bookmark:
                     page = const BookmarkScreen();
