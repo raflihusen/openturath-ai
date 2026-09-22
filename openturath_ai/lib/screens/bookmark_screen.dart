@@ -7,7 +7,7 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
 import '../core/bookmark_content.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
@@ -138,9 +138,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   Future<void> _deleteBookmark(BookmarkModel item) async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final surface = NativeColors.surface(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     final confirm = await showDialog<bool>(
       context: context,
@@ -168,13 +168,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
+                backgroundColor: NativeColors.destructive(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(
                 AppCopy.delete,
-                style: OTTypography.button(color: OTColors.onAccent(isDark)),
+                style: OTTypography.button(color: NativeColors.onAccent(isDark)),
               ),
             ),
           ],
@@ -190,7 +190,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           message: AppCopy.bookmarkDeleted,
           action: SnackBarAction(
             label: AppCopy.undo,
-            textColor: OTColors.accent(isDark),
+            textColor: NativeColors.accent(isDark),
             onPressed: () => _bookmarkService.addBookmark(item),
           ),
         );
@@ -275,14 +275,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final accent = OTColors.accent(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final surfaceSubtle = NativeColors.surfaceSubtle(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final accent = NativeColors.accent(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -336,7 +337,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                   vertical: OTSpacing.xs + 2,
                 ),
                 child: Container(
-                  height: 44,
+                  constraints: const BoxConstraints(minHeight: 48),
                   decoration: BoxDecoration(
                     color: surfaceSubtle,
                     borderRadius: OTRadius.inputBorder,
@@ -400,7 +401,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
             // ── Horizontal Filter Pills (Pengelompokan Keilmuan) ──
             Container(
-              height: 38,
+              height: MediaQuery.textScalerOf(context).scale(48).clamp(48, 100),
               margin: const EdgeInsets.only(bottom: 8),
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
@@ -421,7 +422,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       });
                     },
                     child: AnimatedContainer(
-                      duration: OTMotion.fast,
+                      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.fast,
                       curve: OTMotion.curve,
                       padding: const EdgeInsets.symmetric(
                         horizontal: OTSpacing.md + 2,
@@ -802,6 +803,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final item = widget.item;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isBookRef = item.documentKind == BookmarkDocumentKind.bookReference;
@@ -823,14 +825,14 @@ class _BookmarkCardState extends State<_BookmarkCard> {
         : item.fullAnswer;
 
     return AnimatedContainer(
-      duration: OTMotion.normal,
+      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.normal,
       curve: OTMotion.curve,
       child: InkWell(
         onTap: widget.onOpen,
         borderRadius: OTRadius.cardBorder,
         child: Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: OTSpacing.md + 2, vertical: 12),
+              horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
             color: widget.surface,
             borderRadius: OTRadius.cardBorder,

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/scholarly_fonts.dart';
+import '../core/localization.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/bookmark_content.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/note_clipboard_content.dart';
 import '../models/bookmark_model.dart';
@@ -58,11 +59,12 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final primary = OTColors.textPrimary(isDark);
-    final secondary = OTColors.textSecondary(isDark);
-    final subtle = OTColors.surfaceSubtle(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final primary = NativeColors.textPrimary(isDark);
+    final secondary = NativeColors.textSecondary(isDark);
+    final subtle = NativeColors.surfaceSubtle(isDark);
     final displayTitle = _item.documentKind == BookmarkDocumentKind.aiAnswer
         ? aiAnswerTitle(_item.fullAnswer, _item.agentTitle)
         : _item.title;
@@ -75,7 +77,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
         backgroundColor: canvas,
         surfaceTintColor: Colors.transparent,
         title: Text(AppCopy.savedCollection,
-            style: GoogleFonts.newsreader(
+            style: ScholarlyFonts.newsreader(
                 color: primary, fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
@@ -102,14 +104,14 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                 OTSpacing.lg, OTSpacing.md, OTSpacing.lg, OTSpacing.xl),
             children: [
               Text(_kindLabel(_item),
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: secondary,
                       letterSpacing: .6)),
               const SizedBox(height: 8),
               Text(displayTitle,
-                  style: GoogleFonts.newsreader(
+                  style: ScholarlyFonts.newsreader(
                       fontSize: 29,
                       height: 1.15,
                       fontWeight: FontWeight.w700,
@@ -123,29 +125,31 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                 Text(
                   _item.agentTitle
                       .replaceFirst(RegExp(r'^AI\s+', caseSensitive: false), ''),
-                  style: GoogleFonts.outfit(fontSize: 13, color: secondary),
+                  style: ScholarlyFonts.outfit(fontSize: 13, color: secondary),
                 ),
               ],
               const SizedBox(height: 20),
               Divider(color: secondary.withValues(alpha: .25)),
               const SizedBox(height: 20),
-              MarkdownBody(
+              Directionality(
+                textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(displayContent) ? TextDirection.rtl : Directionality.of(context),
+                child: MarkdownBody(
                 data: displayContent,
                 selectable: true,
                 styleSheet: MarkdownStyleSheet(
-                  p: GoogleFonts.outfit(
-                      fontSize: 16, height: 1.72, color: primary),
-                  h1: GoogleFonts.newsreader(
+                  p: (RegExp(r'[\u0600-\u06FF]').hasMatch(displayContent) ? ScholarlyFonts.scheherazadeNew : ScholarlyFonts.outfit)(
+                      fontSize: 18, height: 1.9, color: primary),
+                  h1: ScholarlyFonts.newsreader(
                       fontSize: 25,
                       height: 1.2,
                       fontWeight: FontWeight.w700,
                       color: primary),
-                  h2: GoogleFonts.newsreader(
+                  h2: ScholarlyFonts.newsreader(
                       fontSize: 20,
                       height: 1.25,
                       fontWeight: FontWeight.w700,
                       color: primary),
-                  blockquote: GoogleFonts.outfit(
+                  blockquote: ScholarlyFonts.outfit(
                       fontSize: 15,
                       height: 1.6,
                       fontStyle: FontStyle.italic,
@@ -155,7 +159,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                       border:
                           Border(left: BorderSide(color: secondary, width: 3))),
                 ),
-              ),
+              )),
             ],
           ),
         ),

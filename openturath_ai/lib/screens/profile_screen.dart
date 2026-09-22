@@ -11,7 +11,8 @@ import '../core/app_copy.dart';
 import '../core/hijri_date_utils.dart';
 import '../widgets/openturath_brand.dart';
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
+import '../widgets/native_components.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
@@ -53,9 +54,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _logout() async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final surface = NativeColors.surface(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     final confirm = await showDialog<bool>(
       context: context,
@@ -81,12 +82,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
+                backgroundColor: NativeColors.destructive(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.logoutButton,
-                  style: OTTypography.button(color: OTColors.onAccent(isDark))),
+                  style: OTTypography.button(color: NativeColors.onAccent(isDark))),
             ),
           ],
         );
@@ -109,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _deleteAccount() async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
+    final surface = NativeColors.surface(isDark);
 
     final confirm = await showDialog<bool>(
       context: context,
@@ -120,13 +121,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: Row(
             children: [
               Icon(Icons.warning_amber_rounded,
-                  color: OTColors.destructive(isDark), size: 24),
+                  color: NativeColors.destructive(isDark), size: 24),
               const SizedBox(width: OTSpacing.sm),
               Expanded(
                 child: Text(
                   AppCopy.deleteAccountTitle,
                   style: OTTypography.cardTitle(
-                          color: OTColors.destructive(isDark))
+                          color: NativeColors.destructive(isDark))
                       .copyWith(fontSize: 18),
                 ),
               ),
@@ -134,24 +135,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           content: Text(
             AppCopy.deleteAccountBody,
-            style: OTTypography.body(color: OTColors.textSecondary(isDark)),
+            style: OTTypography.body(color: NativeColors.textSecondary(isDark)),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text(AppCopy.cancel,
                   style: OTTypography.button(
-                      color: OTColors.textSecondary(isDark))),
+                      color: NativeColors.textSecondary(isDark))),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: OTColors.destructive(isDark),
+                backgroundColor: NativeColors.destructive(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.deleteAccountButton,
-                  style: OTTypography.button(color: OTColors.onAccent(isDark))),
+                  style: OTTypography.button(color: NativeColors.onAccent(isDark))),
             ),
           ],
         );
@@ -196,9 +197,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showAccessPortfolio(UserModel? user, MembershipPassSummary summary) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final surface = OTColors.surface(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final surface = NativeColors.surface(isDark);
     final entries = (user?.entitlements.entries ??
             const <MapEntry<String, ModuleEntitlement>>[])
         .where((entry) => summary.agentIds.contains(entry.key))
@@ -269,11 +270,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     return Scaffold(
       backgroundColor: canvas,
@@ -281,7 +282,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: canvas,
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         title: Text(
           AppCopy.navSettings,
           style: ScholarlyFonts.newsreader(
@@ -362,7 +363,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(3),
                                   decoration: BoxDecoration(
-                                    color: OTColors.surfaceSubtle(isDark),
+                                    color: NativeColors.surfaceSubtle(isDark),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(
@@ -478,7 +479,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Icon(
                               Icons.logout_rounded,
-                              color: OTColors.destructive(isDark),
+                              color: NativeColors.destructive(isDark),
                               size: 20,
                             ),
                             const SizedBox(width: 14),
@@ -489,7 +490,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: ScholarlyFonts.outfit(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
-                                color: OTColors.destructive(isDark),
+                                color: NativeColors.destructive(isDark),
                               ),
                             ),
                           ],
@@ -513,14 +514,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 16,
                             child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: OTColors.destructive(isDark)),
+                                color: NativeColors.destructive(isDark)),
                           )
                         : Text(
                             AppCopy.deleteAccountButton,
                             style: ScholarlyFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
-                              color: OTColors.destructive(isDark),
+                              color: NativeColors.destructive(isDark),
                             ),
                           ),
                   ),
@@ -785,239 +786,30 @@ class _MembershipPass extends StatelessWidget {
     this.onViewAccess,
   });
 
-  String _expiryLabel() {
-    if (summary.expiresAt == null) return '—';
-    const shortMonths = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MEI',
-      'JUN',
-      'JUL',
-      'AGU',
-      'SEP',
-      'OKT',
-      'NOV',
-      'DES',
-    ];
-    return '${summary.expiresAt!.day.toString().padLeft(2, '0')} ${shortMonths[summary.expiresAt!.month - 1]} ${summary.expiresAt!.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final cardColor =
-        isDark ? const Color(0xFF181714) : const Color(0xFF24221D);
-    const foreground = Colors.white;
-    final muted = Colors.white.withValues(alpha: 0.62);
-    final isOpen = summary.isOpen;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Semantics(
-          label:
-              'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            child: InkWell(
-              onTap: onViewAccess ?? onManage,
-              borderRadius: BorderRadius.circular(16),
-              child: Ink(
-                height: 198,
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.14), width: 0.8),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Stack(
-                    children: [
-                      // Ornamen geometris halus: memberi karakter tanpa
-                      // menyamai visual kartu bank atau mengganggu teks.
-                      Positioned(
-                        right: -52,
-                        top: -76,
-                        child: Container(
-                          width: 190,
-                          height: 190,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.12),
-                              width: 1.2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 20,
-                        top: 30,
-                        child: Container(
-                          width: 74,
-                          height: 74,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.08),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: -36,
-                        bottom: -56,
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.035),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'OpenTurath',
-                                  style: ScholarlyFonts.newsreader(
-                                    color: foreground,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 21,
-                                    letterSpacing: -0.4,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: isOpen
-                                        ? Colors.white.withValues(alpha: 0.16)
-                                        : Colors.white.withValues(alpha: 0.08),
-                                    borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.14)),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        isOpen
-                                            ? Icons.workspace_premium_rounded
-                                            : Icons.lock_outline_rounded,
-                                        color: foreground,
-                                        size: 13,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        summary.badge,
-                                        style: ScholarlyFonts.outfit(
-                                          color: foreground,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            Text(
-                              'Untuk',
-                              style: ScholarlyFonts.outfit(
-                                color: muted,
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              holderName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                color: foreground,
-                                fontSize: 19,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.3,
-                              ),
-                            ),
-                            const SizedBox(height: 1),
-                            Text(
-                              email,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                  color: muted, fontSize: 11.5),
-                            ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: _PassMeta(
-                                    label: AppCopy.navStudies,
-                                    value: summary.accessLabel,
-                                    valueColor: foreground,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  flex: 2,
-                                  child: _PassMeta(
-                                    label: summary.expiryLabel.isEmpty
-                                        ? AppCopy.validUntil
-                                        : summary.expiryLabel,
-                                    value: summary.expiresAt == null
-                                        ? '—'
-                                        : _expiryLabel(),
-                                    valueColor: foreground,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        FilledButton.icon(
-          onPressed: onManage,
-          style: FilledButton.styleFrom(
-            backgroundColor: OTColors.accent(isDark),
-            foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-            minimumSize: const Size.fromHeight(48),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          ),
-          icon: const Icon(Icons.tune_rounded, size: 18),
-          label: Text(
-            summary.ctaLabel,
-            style: OTTypography.button(),
-          ),
-        ),
+    return NativeSection(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(holderName, style: NativeType.title(isDark, size: 28)),
+      const SizedBox(height: 6),
+      Text(email, textDirection: TextDirection.ltr, style: NativeType.meta(isDark)),
+      const SizedBox(height: 24),
+      Divider(color: NativeColors.border(isDark)),
+      const SizedBox(height: 20),
+      Text(summary.badge, style: NativeType.meta(isDark)),
+      const SizedBox(height: 8),
+      Text(summary.accessLabel, style: NativeType.body(isDark)),
+      if (summary.expiresAt != null) ...[
+        const SizedBox(height: 8),
+        Text('${summary.expiryLabel.isEmpty ? AppCopy.validUntil : summary.expiryLabel} · ${MaterialLocalizations.of(context).formatMediumDate(summary.expiresAt!)}',
+          style: NativeType.meta(isDark)),
       ],
-    );
+      const SizedBox(height: 20),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        FilledButton(onPressed: onManage, child: Text(summary.ctaLabel)),
+        if (onViewAccess != null) TextButton(onPressed: onViewAccess, child: Text(AppCopy.navStudies)),
+      ]),
+    ]));
   }
 }
 
@@ -1120,8 +912,8 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     return AppleInteractiveWrapper(
       onTap: onTap,
