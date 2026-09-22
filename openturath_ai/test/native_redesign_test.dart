@@ -26,7 +26,8 @@ void main() {
     for (final pair in [
       ('NativeArabic', 'NativeArabic'),
       ('NativeNewsreader', 'NativeNewsreader'),
-      ('NativeOutfit', 'NativeOutfit')
+      ('NativeOutfit', 'NativeOutfit'),
+      ('NativeInter', 'NativeInter')
     ]) {
       await (FontLoader(pair.$1)
             ..addFont(rootBundle.load('assets/native_fonts/${pair.$2}.ttf')))
@@ -205,7 +206,7 @@ void main() {
         }),
       ]),
     ));
-    expect(nativeColor, NativeColors.textPrimary(false));
+    expect(nativeColor, NativeColors.accent(false));
     expect(siblingColor, Colors.purple);
   });
 
