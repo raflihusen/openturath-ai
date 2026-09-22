@@ -192,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: FilledButton(
                             onPressed: _isLoading ? null : _signIn,
                             style: FilledButton.styleFrom(
-                              backgroundColor: textPrimary,
+                              backgroundColor: NativeColors.actionFill(dark),
                               foregroundColor: NativeColors.onAccent(dark),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),

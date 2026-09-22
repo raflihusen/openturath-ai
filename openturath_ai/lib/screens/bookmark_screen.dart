@@ -170,7 +170,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: NativeColors.destructive(isDark),
+                backgroundColor: NativeColors.destructiveFill(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),

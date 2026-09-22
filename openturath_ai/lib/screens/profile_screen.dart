@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: NativeColors.destructive(isDark),
+                backgroundColor: NativeColors.destructiveFill(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
@@ -150,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: NativeColors.destructive(isDark),
+                backgroundColor: NativeColors.destructiveFill(isDark),
                 shape:
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),

@@ -95,7 +95,7 @@ class UpdateReadyBanner extends StatelessWidget {
               FilledButton(
                 onPressed: () => updateService.installNow(),
                 style: FilledButton.styleFrom(
-                  backgroundColor: NativeColors.accent(isDark),
+                  backgroundColor: NativeColors.actionFill(isDark),
                   foregroundColor: NativeColors.onAccent(isDark),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

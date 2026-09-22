@@ -158,7 +158,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   updateService.installNow();
                 },
                 style: FilledButton.styleFrom(
-                  backgroundColor: NativeColors.accent(isDark),
+                  backgroundColor: NativeColors.actionFill(isDark),
                   foregroundColor: NativeColors.onAccent(isDark),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppTheme.radiusPill),
