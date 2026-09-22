@@ -161,13 +161,18 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         message:
                             'Coba judul, nama pengarang, atau penerbit yang lain.',
                       )
-                    : ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.only(bottom: 40),
-                        itemCount: visibleBooks.length,
-                        itemBuilder: (context, index) => _BookRow(
-                          book: visibleBooks[index],
-                          onTap: () => _openBook(visibleBooks[index]),
+                    : OTGroupedSection(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: OTSpacing.base,
+                        ),
+                        child: ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(bottom: 40),
+                          itemCount: visibleBooks.length,
+                          itemBuilder: (context, index) => _BookRow(
+                            book: visibleBooks[index],
+                            onTap: () => _openBook(visibleBooks[index]),
+                          ),
                         ),
                       ),
               ),
@@ -353,7 +358,7 @@ Bidang: ${book.section}''';
     return Scaffold(
       backgroundColor: OTColors.canvas(dark),
       appBar: AppBar(
-        title: const Text('Detail kitab'),
+        title: const Text('Kitab'),
         backgroundColor: OTColors.canvas(dark),
         scrolledUnderElevation: 0,
         actions: [
@@ -374,45 +379,66 @@ Bidang: ${book.section}''';
         child: OTConstrainedContent(
           child: ListView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.only(top: OTSpacing.lg, bottom: 40),
+            padding: const EdgeInsets.only(top: OTSpacing.sm, bottom: 40),
             children: [
-              Text(
-                book.section.toUpperCase(),
-                style: OTTypography.metadataTag(
-                  color: OTColors.textSecondary(dark),
-                ),
-              ),
-              const SizedBox(height: OTSpacing.md),
-              Text(
-                book.title,
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.right,
-                style: OTTypography.arabicReading(
-                  color: OTColors.textPrimary(dark),
-                ).copyWith(fontSize: 32, height: 1.6),
-              ),
-              const SizedBox(height: OTSpacing.sm),
-              Text(
-                book.author,
-                style: OTTypography.sectionTitle(
-                  color: OTColors.textPrimary(dark),
-                ),
-              ),
-              const SizedBox(height: OTSpacing.xs),
-              Text(
-                book.deathLabel,
-                style: OTTypography.caption(
-                  color: OTColors.textSecondary(dark),
+              OTGroupedSection(
+                padding: const EdgeInsets.all(OTSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.section.toUpperCase(),
+                      style: OTTypography.metadataTag(
+                        color: OTColors.textSecondary(dark),
+                      ),
+                    ),
+                    const SizedBox(height: OTSpacing.md),
+                    Text(
+                      book.title,
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                      style: OTTypography.arabicReading(
+                        color: OTColors.textPrimary(dark),
+                      ).copyWith(fontSize: 27, height: 1.4),
+                    ),
+                    const SizedBox(height: OTSpacing.md),
+                    Text(
+                      book.author,
+                      style: OTTypography.bodyMedium(
+                        color: OTColors.textPrimary(dark),
+                      ).copyWith(fontSize: 16),
+                    ),
+                    const SizedBox(height: OTSpacing.xs),
+                    Text(
+                      book.deathLabel,
+                      style: OTTypography.caption(
+                        color: OTColors.textSecondary(dark),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: OTSpacing.xl),
               const OTSectionHeader(title: 'Data penerbitan'),
-              const SizedBox(height: OTSpacing.xs),
-              _BookDetailRow(label: 'Tahqiq', value: book.editor),
-              _BookDetailRow(label: 'Penerbit', value: book.publisher),
-              _BookDetailRow(label: 'Cetakan', value: book.edition),
-              _BookDetailRow(label: 'Jilid', value: book.volumeLabel),
-              _BookDetailRow(label: 'Halaman', value: book.pagesLabel),
+              const SizedBox(height: OTSpacing.sm),
+              OTGroupedSection(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: OTSpacing.base,
+                ),
+                child: Column(
+                  children: [
+                    _BookDetailRow(label: 'Tahqiq', value: book.editor),
+                    _BookDetailRow(label: 'Penerbit', value: book.publisher),
+                    _BookDetailRow(label: 'Cetakan', value: book.edition),
+                    _BookDetailRow(label: 'Jilid', value: book.volumeLabel),
+                    _BookDetailRow(
+                      label: 'Halaman',
+                      value: book.pagesLabel,
+                      showDivider: false,
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: OTSpacing.xl),
               OutlinedButton.icon(
                 onPressed: () => _handleCopyCitation(context),
@@ -428,16 +454,25 @@ Bidang: ${book.section}''';
 }
 
 class _BookDetailRow extends StatelessWidget {
-  const _BookDetailRow({required this.label, required this.value});
+  const _BookDetailRow({
+    required this.label,
+    required this.value,
+    this.showDivider = true,
+  });
 
   final String label;
   final String value;
+  final bool showDivider;
 
   @override
   Widget build(BuildContext context) {
     final displayValue = value.trim().isEmpty || value.trim() == '-'
         ? 'Belum tercatat'
         : value.trim();
-    return OTEditorialRow(title: label, subtitle: displayValue);
+    return OTEditorialRow(
+      title: label,
+      subtitle: displayValue,
+      showDivider: showDivider,
+    );
   }
 }

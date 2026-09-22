@@ -4,6 +4,7 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_layout.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
@@ -103,20 +104,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   Widget _card({required Widget child, bool flagship = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return DecoratedBox(
+    return Container(
+      padding: const EdgeInsets.all(OTSpacing.lg),
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color:
-                flagship ? OTColors.borderStrong(dark) : OTColors.border(dark),
-            width: flagship ? 1.4 : 1,
-          ),
-        ),
+        color: OTColors.surface(dark),
+        borderRadius: OTRadius.cardBorder,
+        boxShadow: flagship && !dark
+            ? const [
+                BoxShadow(
+                  color: Color(0x16000000),
+                  blurRadius: 28,
+                  offset: Offset(0, 12),
+                ),
+              ]
+            : null,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: OTSpacing.lg),
-        child: child,
-      ),
+      child: child,
     );
   }
 
@@ -279,7 +282,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
-    final border = OTColors.border(dark);
     final flagship =
         AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
     final offer = ProductPricing.tahawwulat[_tahawwulatIndex];
@@ -324,8 +326,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(AppCopy.planTahawwulat,
-                                    style: OTTypography.pageTitle(color: ink)),
+                                Text(
+                                  AppCopy.planTahawwulat,
+                                  style: OTTypography.editorialHero(color: ink),
+                                ),
                                 const SizedBox(height: 6),
                                 Text(Loc.tr('tahawwulatBenefit'),
                                     style: OTTypography.body(color: muted)),
@@ -337,68 +341,71 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       const SizedBox(height: 20),
 
                       // Tier Selector Cards
-                      Row(
-                        children: [
-                          for (var i = 0;
-                              i < ProductPricing.tahawwulat.length;
-                              i++) ...[
-                            if (i > 0) const SizedBox(width: 8),
-                            Expanded(
-                              child: InkWell(
-                                onTap: _processing
-                                    ? null
-                                    : () =>
-                                        setState(() => _tahawwulatIndex = i),
-                                borderRadius: BorderRadius.circular(10),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 8),
-                                  decoration: BoxDecoration(
-                                    color: _tahawwulatIndex == i
-                                        ? (dark
-                                            ? Colors.white
-                                                .withValues(alpha: 0.08)
-                                            : Colors.black
-                                                .withValues(alpha: 0.05))
-                                        : (dark
-                                            ? Colors.white
-                                                .withValues(alpha: 0.02)
-                                            : Colors.black
-                                                .withValues(alpha: 0.02)),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color:
-                                          _tahawwulatIndex == i ? ink : border,
-                                      width: _tahawwulatIndex == i ? 1.2 : 1,
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: OTColors.surfaceSubtle(dark),
+                          borderRadius: OTRadius.inputBorder,
+                        ),
+                        child: Row(
+                          children: [
+                            for (var i = 0;
+                                i < ProductPricing.tahawwulat.length;
+                                i++) ...[
+                              if (i > 0) const SizedBox(width: 8),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: _processing
+                                      ? null
+                                      : () =>
+                                          setState(() => _tahawwulatIndex = i),
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: _tahawwulatIndex == i
+                                          ? OTColors.surface(dark)
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: _tahawwulatIndex == i
+                                          ? const [
+                                              BoxShadow(
+                                                color: Color(0x14000000),
+                                                blurRadius: 8,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ]
+                                          : null,
                                     ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        ProductPricing.tahawwulat[i].title,
-                                        style: OTTypography.captionMedium(
-                                          color: _tahawwulatIndex == i
-                                              ? ink
-                                              : muted,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          ProductPricing.tahawwulat[i].title,
+                                          style: OTTypography.captionMedium(
+                                            color: _tahawwulatIndex == i
+                                                ? ink
+                                                : muted,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        ProductPricing.rupiah(ProductPricing
-                                            .tahawwulat[i].amount),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: ink,
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          ProductPricing.rupiah(ProductPricing
+                                              .tahawwulat[i].amount),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: ink,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
                       const SizedBox(height: 20),
                       PromoPrice(
@@ -425,8 +432,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(Loc.tr('specialistAccess'),
-                          style: OTTypography.pageTitle(color: ink)),
+                      Text(
+                        Loc.tr('specialistAccess'),
+                        style: OTTypography.sectionTitle(color: ink),
+                      ),
                       const SizedBox(height: 16),
 
                       // Interactive Tactile Discipline Card
@@ -439,11 +448,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: dark
-                                ? Colors.white.withValues(alpha: 0.04)
-                                : Colors.black.withValues(alpha: 0.02),
+                            color: OTColors.surfaceSubtle(dark),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: border),
                           ),
                           child: Row(
                             children: [
@@ -468,7 +474,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 decoration: BoxDecoration(
                                   color: OTColors.surfaceSubtle(dark),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: border),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
