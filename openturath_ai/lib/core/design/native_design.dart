@@ -57,6 +57,8 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
+    'noNotesResults': ['Tidak ada catatan yang cocok.', 'No matching notes.', 'لا توجد ملاحظات مطابقة.'],
+    'resetSearch': ['Hapus filter', 'Clear filters', 'مسح عوامل التصفية'],
     'updateDesktop': ['Versi terbaru tersedia. Buka tautan untuk memperbarui.', 'A new version is available. Open the link to update.', 'يتوفر إصدار جديد. افتح الرابط للتحديث.'],
     'updateMobile': ['Pembaruan selesai diunduh dan siap dipasang.', 'The update has downloaded and is ready to install.', 'اكتمل تنزيل التحديث وهو جاهز للتثبيت.'],
     'updateNow': ['Perbarui', 'Update', 'تحديث'],

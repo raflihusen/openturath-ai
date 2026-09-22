@@ -22,7 +22,6 @@ import '../models/book_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/canonical_library_service.dart';
 import '../widgets/note_editor_sheet.dart';
-import 'main_shell_screen.dart';
 import 'note_reader_screen.dart';
 
 class BookmarkScreen extends StatefulWidget {
@@ -215,15 +214,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     }
     buffer.write('— ');
     if (item.bookReference.isNotEmpty) {
-      buffer.write('Kitab ${item.bookReference}');
+      buffer.write('${NativeCopy.text('sources')}: ${item.bookReference}');
       if (item.pageNumber.isNotEmpty) {
-        buffer.write(' (Hal. ${item.pageNumber})');
+        buffer.write(' (${NativeCopy.text('pages')}: ${item.pageNumber})');
       }
     } else {
       buffer.write(item.title);
     }
     if (item.author != null && item.author!.isNotEmpty) {
-      buffer.write(', karya ${item.author}');
+      buffer.write(', ${NativeCopy.text('author')}: ${item.author}');
     }
     buffer.write('.');
 
@@ -506,7 +505,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           ),
                                           const SizedBox(height: OTSpacing.lg),
                                           Text(
-                                            AppCopy.noSavedTitle,
+                                            _allBookmarks.isEmpty ? NativeCopy.text('notesEmpty') : NativeCopy.text('noNotesResults'),
                                             style: NativeTypography.cardTitle(
                                                     color: textPrimary)
                                                 .copyWith(
@@ -516,7 +515,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           const SizedBox(
                                               height: OTSpacing.xs + 2),
                                           Text(
-                                            AppCopy.noSavedDescription,
+                                            _allBookmarks.isEmpty ? NativeCopy.text('notesHint') : NativeCopy.text('searchHint'),
                                             textAlign: TextAlign.center,
                                             style: NativeTypography.body(
                                                     color: textSecondary)
@@ -528,15 +527,17 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           OutlinedButton.icon(
                                             onPressed: () {
                                               OTMotion.light();
-                                              final shell =
-                                                  MainShellController.of(
-                                                      context);
-                                              shell?.switchTab(1);
+                                              if (_allBookmarks.isEmpty) {
+                                                _openNoteEditor();
+                                              } else {
+                                                _searchCtrl.clear();
+                                                setState(() { _searchQuery = ''; _selectedCategory = 'Semua'; _filter(); });
+                                              }
                                             },
                                             icon: const Icon(
                                                 Icons.menu_book_outlined,
                                                 size: 16),
-                                            label: Text(AppCopy.startStudy),
+                                            label: Text(_allBookmarks.isEmpty ? NativeCopy.text('write') : NativeCopy.text('resetSearch')),
                                             style: OutlinedButton.styleFrom(
                                               foregroundColor: textPrimary,
                                               side: BorderSide(
@@ -644,30 +645,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
   // lewat ketukan kartu agar satu tangan tetap nyaman dipakai pada ponsel.
   final bool _isExpanded = false;
 
-  String _formatRelativeTime(DateTime dt) {
-    final now = DateTime.now();
-    final diff = now.difference(dt);
-    if (diff.inSeconds < 60) return 'Baru saja';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m lalu';
-    if (diff.inHours < 24) return '${diff.inHours}j lalu';
-    if (diff.inDays == 1) return 'Kemarin';
-    if (diff.inDays < 7) return '${diff.inDays}h lalu';
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des'
-    ];
-    return '${dt.day} ${months[dt.month - 1]}';
-  }
+  String _formatRelativeTime(DateTime dt) => MaterialLocalizations.of(context).formatMediumDate(dt);
 
   String _cleanSingleLine(String text) {
     final lines =
@@ -845,7 +823,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Metadata Bar: Pill Asisten / Keilmuan berdampingan rapi dengan keterangan waktu
-              Row(
+              Wrap(spacing: 8, runSpacing: 6, crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(

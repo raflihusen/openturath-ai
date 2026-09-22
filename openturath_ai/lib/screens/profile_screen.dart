@@ -457,6 +457,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
+                Text(AppCopy.supportAndPolicySection, style: NativeType.title(isDark, size: 22)),
+                const SizedBox(height: 12),
+                NativeSection(padding: EdgeInsets.zero, child: Column(children: [
+                  ListTile(leading: const Icon(Icons.headset_mic_outlined), title: Text(AppCopy.supportAndContact),
+                    onTap: () => LegalDocumentSheet.showContactSupport(context)),
+                  ListTile(leading: const Icon(Icons.description_outlined), title: Text(AppCopy.termsOfService),
+                    onTap: () => LegalDocumentSheet.showTermsOfService(context)),
+                  ListTile(leading: const Icon(Icons.privacy_tip_outlined), title: Text(AppCopy.privacyPolicy),
+                    onTap: () => LegalDocumentSheet.showPrivacyPolicy(context)),
+                  ListTile(leading: const Icon(Icons.payment_outlined), title: Text(AppCopy.paymentAndRefund),
+                    onTap: () => LegalDocumentSheet.showRefundPolicy(context)),
+                  ListTile(leading: const Icon(Icons.menu_book_outlined), title: Text(AppCopy.aiGuideline),
+                    onTap: () => LegalDocumentSheet.showAiGuideline(context)),
+                ])),
+                const SizedBox(height: 24),
                 // ── Card 5: Log out ──
                 Container(
                   decoration: BoxDecoration(
