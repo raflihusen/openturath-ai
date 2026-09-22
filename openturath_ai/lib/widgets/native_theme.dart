@@ -53,7 +53,7 @@ class NativeTheme extends StatelessWidget {
                   textStyle: NativeType.body(dark, size: 15))),
           textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                  foregroundColor: ink,
+                  foregroundColor: NativeColors.accent(dark),
                   minimumSize: const Size(48, 48),
                   textStyle: NativeType.body(dark, size: 14))),
           iconButtonTheme: IconButtonThemeData(

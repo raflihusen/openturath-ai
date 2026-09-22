@@ -908,6 +908,9 @@ class NativeProfilePage extends StatelessWidget {
     final inactiveFg = textSecondary;
 
     return ChoiceChip(
+      surfaceTintColor: Colors.transparent,
+      color: WidgetStateProperty.resolveWith((states) =>
+          states.contains(WidgetState.selected) ? activeBg : Colors.transparent),
       selected: isSelected,
       showCheckmark: false,
       avatar: Icon(icon, size: 18, color: isSelected ? activeFg : inactiveFg),
