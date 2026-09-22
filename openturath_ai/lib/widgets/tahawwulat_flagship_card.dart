@@ -53,30 +53,45 @@ class TahawwulatFlagshipCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return NativeSection(collection: true, padding: const EdgeInsets.all(20),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          OpenTurathMark(size: 24, color: NativeColors.textPrimary(dark)),
-          const SizedBox(width: 10),
-          Expanded(child: Text(NativeCopy.text('exclusive'), style: NativeType.meta(dark))),
-          if (isSubscribed) Tooltip(message: NativeCopy.text('active'), child: Icon(Icons.check_circle_outline, size: 20, color: NativeColors.accent(dark))),
-        ]),
-        const SizedBox(height: 12),
-        Text(AppCopy.planTahawwulat, style: NativeType.title(dark, size: 24)),
-        const SizedBox(height: 6),
-        Text(NativeCopy.text('chooseRole'), style: NativeType.meta(dark)),
-        const SizedBox(height: 8),
-        Wrap(spacing: 4, runSpacing: 0, children: [
-          for (final sub in agent.subAgents ?? <SubAgentModel>[])
-            TextButton(onPressed: () => onOpenSubAgent(sub),
-              child: Text(sub.name, style: NativeType.body(dark, size: 13).copyWith(color: NativeColors.accent(dark)))),
-        ]),
-        const Divider(height: 12),
-        Wrap(spacing: 8, children: [
-          TextButton(onPressed: () => _explore(context), child: Text(NativeCopy.text('explore'))),
-          TextButton(onPressed: onOpenMain, child: Text(NativeCopy.text(isSubscribed ? 'open' : 'access'))),
-        ]),
-      ]));
+    return NativeSection(
+        collection: true,
+        padding: const EdgeInsets.all(20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            OpenTurathMark(size: 24, color: NativeColors.textPrimary(dark)),
+            const SizedBox(width: 10),
+            Expanded(
+                child: Text(NativeCopy.text('exclusive'),
+                    style: NativeType.meta(dark))),
+            if (isSubscribed)
+              Tooltip(
+                  message: NativeCopy.text('active'),
+                  child: Icon(Icons.check_circle_outline,
+                      size: 20, color: NativeColors.accent(dark))),
+          ]),
+          const SizedBox(height: 12),
+          Text(AppCopy.planTahawwulat, style: NativeType.title(dark, size: 24)),
+          const SizedBox(height: 6),
+          Text(NativeCopy.text('chooseRole'), style: NativeType.meta(dark)),
+          const SizedBox(height: 8),
+          Wrap(spacing: 4, runSpacing: 0, children: [
+            for (final sub in agent.subAgents ?? <SubAgentModel>[])
+              TextButton(
+                  onPressed: () => onOpenSubAgent(sub),
+                  child: Text(sub.name,
+                      style: NativeType.body(dark, size: 13)
+                          .copyWith(color: NativeColors.accent(dark)))),
+          ]),
+          const Divider(height: 12),
+          Wrap(spacing: 8, children: [
+            TextButton(
+                onPressed: () => _explore(context),
+                child: Text(NativeCopy.text('explore'))),
+            TextButton(
+                onPressed: onOpenMain,
+                child: Text(NativeCopy.text(isSubscribed ? 'open' : 'access'))),
+          ]),
+        ]));
   }
 }
 

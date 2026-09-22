@@ -22,11 +22,13 @@ int? nativeVolumeCount(String value) {
   const eastern = '٠١٢٣٤٥٦٧٨٩';
   const persian = '۰۱۲۳۴۵۶۷۸۹';
   for (var i = 0; i < 10; i++) {
-    normalized = normalized.replaceAll(eastern[i], '$i').replaceAll(persian[i], '$i');
+    normalized =
+        normalized.replaceAll(eastern[i], '$i').replaceAll(persian[i], '$i');
   }
   if (normalized.isEmpty || normalized == '-') return null;
   if (normalized.toLowerCase() == 'jilid tunggal') return 1;
-  final match = RegExp(r'^(\d+)(?:\s*(?:jilid|volumes?|مجلدات?|أجزاء|جزء))?$').firstMatch(normalized);
+  final match = RegExp(r'^(\d+)(?:\s*(?:jilid|volumes?|مجلدات?|أجزاء|جزء))?$')
+      .firstMatch(normalized);
   return match == null ? null : int.tryParse(match[1]!);
 }
 
@@ -604,7 +606,9 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                         children: [
                           Wrap(spacing: 12, runSpacing: 6, children: [
                             Text(book.section, style: NativeType.meta(isDark)),
-                            if (book.deathYear != null) Text(book.deathLabel, style: NativeType.meta(isDark)),
+                            if (book.deathYear != null)
+                              Text(book.deathLabel,
+                                  style: NativeType.meta(isDark)),
                           ]),
                           const SizedBox(height: 20),
                           Directionality(
@@ -669,7 +673,6 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
                           _DetailRow(
                               label: NativeCopy.text('pages'),
                               value: book.pagesLabel),
-
                         ],
                       ),
                     ),
@@ -725,12 +728,10 @@ class _DetailRow extends StatelessWidget {
   const _DetailRow({
     required this.label,
     required this.value,
-
   });
 
   final String label;
   final String value;
-
 
   @override
   Widget build(BuildContext context) {
@@ -738,13 +739,17 @@ class _DetailRow extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final border = NativeColors.border(isDark);
 
-    if (value.trim().isEmpty || value.trim() == '-') return const SizedBox.shrink();
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(label, style: NativeType.meta(isDark)),
-        const SizedBox(height: 6),
-        SelectableText(value.trim(), style: NativeType.body(isDark)),
-        const SizedBox(height: 14), Divider(color: border),
-      ]));
+    if (value.trim().isEmpty || value.trim() == '-')
+      return const SizedBox.shrink();
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text(label, style: NativeType.meta(isDark)),
+          const SizedBox(height: 6),
+          SelectableText(value.trim(), style: NativeType.body(isDark)),
+          const SizedBox(height: 14),
+          Divider(color: border),
+        ]));
   }
 }

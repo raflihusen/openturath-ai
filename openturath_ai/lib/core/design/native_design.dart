@@ -49,18 +49,16 @@ abstract final class NativeColors {
       dark ? const Color(0xFFA7BDA6) : const Color(0xFF405C42);
   static Color collection(bool dark) =>
       dark ? const Color(0xFF202024) : const Color(0xFFFFFFFF);
-  static Color brass(bool dark) =>
-      accent(dark);
+  static Color brass(bool dark) => accent(dark);
 }
 
 abstract final class NativeType {
-  static TextStyle title(bool dark, {double size = 24}) =>
-      NativeFonts.outfit(
-          fontSize: size,
-          fontWeight: FontWeight.w600,
-          letterSpacing: -.35,
-          height: 1.2,
-          color: NativeColors.textPrimary(dark));
+  static TextStyle title(bool dark, {double size = 24}) => NativeFonts.outfit(
+      fontSize: size,
+      fontWeight: FontWeight.w600,
+      letterSpacing: -.35,
+      height: 1.2,
+      color: NativeColors.textPrimary(dark));
   static TextStyle body(bool dark, {double size = 17}) => NativeFonts.outfit(
       fontSize: size, height: 1.5, color: NativeColors.textPrimary(dark));
   static TextStyle meta(bool dark) => NativeFonts.outfit(
@@ -76,26 +74,82 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
-    'field_fiqh_tahawwulat': ['Fikih Tahawwulat', 'Fiqh Tahawwulat', 'فقه التحولات'],
+    'field_fiqh_tahawwulat': [
+      'Fikih Tahawwulat',
+      'Fiqh Tahawwulat',
+      'فقه التحولات'
+    ],
     'field_fiqh': ['Fikih & Fatwa', 'Fiqh & Fatwa', 'الفقه والفتوى'],
-    'field_hadith': ['Hadis & Ulumul Hadis', 'Hadith & Hadith Sciences', 'الحديث وعلومه'],
-    'field_tafsir': ['Tafsir & Qiraat', 'Tafsir & Quranic Readings', 'التفسير والقراءات'],
-    'field_aqidah': ['Akidah & Ushuluddin', 'Creed & Theology', 'العقيدة وأصول الدين'],
-    'field_usul': ['Usul Fikih & Kaidah', 'Legal Theory & Maxims', 'أصول الفقه والقواعد'],
-    'field_lughah': ['Bahasa & Sastra Arab', 'Arabic Language & Literature', 'اللغة العربية وآدابها'],
-    'field_tarikh': ['Sejarah, Sirah & Rijal', 'History, Sirah & Biography', 'التاريخ والسيرة والتراجم'],
-    'field_tasawwuf': ['Tasawuf & Akhlak', 'Spirituality & Ethics', 'التصوف والأخلاق'],
-    'field_bibliografi': ['Bibliografi & Faharis', 'Bibliography & Indexes', 'الببليوغرافيا والفهارس'],
+    'field_hadith': [
+      'Hadis & Ulumul Hadis',
+      'Hadith & Hadith Sciences',
+      'الحديث وعلومه'
+    ],
+    'field_tafsir': [
+      'Tafsir & Qiraat',
+      'Tafsir & Quranic Readings',
+      'التفسير والقراءات'
+    ],
+    'field_aqidah': [
+      'Akidah & Ushuluddin',
+      'Creed & Theology',
+      'العقيدة وأصول الدين'
+    ],
+    'field_usul': [
+      'Usul Fikih & Kaidah',
+      'Legal Theory & Maxims',
+      'أصول الفقه والقواعد'
+    ],
+    'field_lughah': [
+      'Bahasa & Sastra Arab',
+      'Arabic Language & Literature',
+      'اللغة العربية وآدابها'
+    ],
+    'field_tarikh': [
+      'Sejarah, Sirah & Rijal',
+      'History, Sirah & Biography',
+      'التاريخ والسيرة والتراجم'
+    ],
+    'field_tasawwuf': [
+      'Tasawuf & Akhlak',
+      'Spirituality & Ethics',
+      'التصوف والأخلاق'
+    ],
+    'field_bibliografi': [
+      'Bibliografi & Faharis',
+      'Bibliography & Indexes',
+      'الببليوغرافيا والفهارس'
+    ],
     'workMatn': ['Matan', 'Source text', 'متن'],
     'workSharh': ['Syarah', 'Commentary', 'شرح'],
     'workHashiya': ['Hasyiyah', 'Marginal commentary', 'حاشية'],
     'workSummary': ['Ringkasan', 'Abridgment', 'مختصر'],
-    'workEncyclopedia': ['Ensiklopedia fikih', 'Fiqh encyclopedia', 'موسوعة فقهية'],
+    'workEncyclopedia': [
+      'Ensiklopedia fikih',
+      'Fiqh encyclopedia',
+      'موسوعة فقهية'
+    ],
     'workPoem': ['Nazham', 'Didactic poem', 'منظومة علمية'],
-    'eraEarly': ['Mutaqaddimin (hingga 400 H)', 'Early period (through 400 AH)', 'عصر المتقدمين (حتى ٤٠٠ هـ)'],
-    'eraMiddle': ['Mutawassithin (400–800 H)', 'Middle period (400–800 AH)', 'عصر المتوسطين (٤٠٠ - ٨٠٠ هـ)'],
-    'eraLate': ['Mutaakhkhirin (800–1200 H)', 'Later period (800–1200 AH)', 'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)'],
-    'eraModern': ['Kontemporer (setelah 1200 H)', 'Contemporary (after 1200 AH)', 'العصر المعاصر (بعد ١٢٠٠ هـ)'],
+    'eraEarly': [
+      'Mutaqaddimin (hingga 400 H)',
+      'Early period (through 400 AH)',
+      'عصر المتقدمين (حتى ٤٠٠ هـ)'
+    ],
+    'eraMiddle': [
+      'Mutawassithin (400–800 H)',
+      'Middle period (400–800 AH)',
+      'عصر المتوسطين (٤٠٠ - ٨٠٠ هـ)'
+    ],
+    'eraLate': [
+      'Mutaakhkhirin (800–1200 H)',
+      'Later period (800–1200 AH)',
+      'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)'
+    ],
+    'eraModern': [
+      'Kontemporer (setelah 1200 H)',
+      'Contemporary (after 1200 AH)',
+      'العصر المعاصر (بعد ١٢٠٠ هـ)'
+    ],
     'removeReference': [
       'Hapus dari catatan',
       'Remove from notes',

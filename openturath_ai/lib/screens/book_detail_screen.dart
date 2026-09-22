@@ -184,7 +184,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String _translateType(String? type) {
     if (widget.localizedControls && type != null) {
       final lower = type.toLowerCase();
-      for (final entry in {'matn': 'workMatn', 'matan': 'workMatn', 'syarah': 'workSharh', 'sharh': 'workSharh', 'hasyiyah': 'workHashiya', 'hashiyah': 'workHashiya', 'mukhtasar': 'workSummary', 'ringkasan': 'workSummary', 'ensiklopedi': 'workEncyclopedia', 'nazham': 'workPoem'}.entries) {
+      for (final entry in {
+        'matn': 'workMatn',
+        'matan': 'workMatn',
+        'syarah': 'workSharh',
+        'sharh': 'workSharh',
+        'hasyiyah': 'workHashiya',
+        'hashiyah': 'workHashiya',
+        'mukhtasar': 'workSummary',
+        'ringkasan': 'workSummary',
+        'ensiklopedi': 'workEncyclopedia',
+        'nazham': 'workPoem'
+      }.entries) {
         if (lower.contains(entry.key)) return NativeCopy.text(entry.value);
       }
       return Loc.text(type);
@@ -207,7 +218,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String _translateEra(String? era) {
     if (widget.localizedControls && era != null) {
       final lower = era.toLowerCase();
-      for (final entry in {'mutaqaddim': 'eraEarly', 'awal': 'eraEarly', 'mutawassith': 'eraMiddle', 'pertengahan': 'eraMiddle', "muta'akhkhir": 'eraLate', 'mutaakhir': 'eraLate', 'lanjut': 'eraLate', "mu'ashir": 'eraModern', 'modern': 'eraModern', 'kontemporer': 'eraModern'}.entries) {
+      for (final entry in {
+        'mutaqaddim': 'eraEarly',
+        'awal': 'eraEarly',
+        'mutawassith': 'eraMiddle',
+        'pertengahan': 'eraMiddle',
+        "muta'akhkhir": 'eraLate',
+        'mutaakhir': 'eraLate',
+        'lanjut': 'eraLate',
+        "mu'ashir": 'eraModern',
+        'modern': 'eraModern',
+        'kontemporer': 'eraModern'
+      }.entries) {
         if (lower.contains(entry.key)) return NativeCopy.text(entry.value);
       }
       return Loc.text(era);
@@ -235,8 +257,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   String _formatVolumes() {
     if (widget.localizedControls) {
-      final volumes = widget.book.volumesDescription ?? widget.book.volumesCount?.toString();
-      return volumes == null ? Loc.tr('unknownMetadata') : Loc.tr('volumeCount', [volumes]);
+      final volumes = widget.book.volumesDescription ??
+          widget.book.volumesCount?.toString();
+      return volumes == null
+          ? Loc.tr('unknownMetadata')
+          : Loc.tr('volumeCount', [volumes]);
     }
     final vd = widget.book.volumesDescription;
     if (vd != null && vd.isNotEmpty) {
@@ -337,7 +362,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   width: 0.6),
                             ),
                             child: Text(
-                              widget.book.sectionArabic ?? _label('sources', 'نص محقق معتمد'),
+                              widget.book.sectionArabic ??
+                                  _label('sources', 'نص محقق معتمد'),
                               style:
                                   NativeTypography.caption(color: textSecondary)
                                       .copyWith(
@@ -347,18 +373,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ),
                           ),
                           const Spacer(),
-                          if (!widget.localizedControls) Directionality(
-                            textDirection: TextDirection.ltr,
-                            child: Text(
-                              widget.book.editionId,
-                              style:
-                                  NativeTypography.caption(color: textSecondary)
-                                      .copyWith(
-                                fontFamily: 'Courier',
-                                fontSize: 11,
+                          if (!widget.localizedControls)
+                            Directionality(
+                              textDirection: TextDirection.ltr,
+                              child: Text(
+                                widget.book.editionId,
+                                style: NativeTypography.caption(
+                                        color: textSecondary)
+                                    .copyWith(
+                                  fontFamily: 'Courier',
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: OTSpacing.md),
@@ -469,9 +496,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
-                                    widget.localizedControls ? (widget.book.verifiedDeathYearHijri == null ? Loc.tr('unknownMetadata') : Loc.tr('deathYear', ['${widget.book.verifiedDeathYearHijri}'])) : widget.book.verifiedDeathYearHijri != null
-                                        ? 'سنة الوفاة: ${widget.book.verifiedDeathYearHijri} هـ'
-                                        : 'سنة الوفاة: غير مدونة',
+                                    widget.localizedControls
+                                        ? (widget.book.verifiedDeathYearHijri ==
+                                                null
+                                            ? Loc.tr('unknownMetadata')
+                                            : Loc.tr('deathYear', [
+                                                '${widget.book.verifiedDeathYearHijri}'
+                                              ]))
+                                        : widget.book.verifiedDeathYearHijri !=
+                                                null
+                                            ? 'سنة الوفاة: ${widget.book.verifiedDeathYearHijri} هـ'
+                                            : 'سنة الوفاة: غير مدونة',
                                     style: NativeTypography.arabicReading(
                                             color: textSecondary)
                                         .copyWith(
@@ -550,7 +585,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         _buildMetaRow(
                           icon: Icons.article_outlined,
                           label: _label('pages', 'عدد الصفحات'),
-                          value: widget.localizedControls ? Loc.tr('pageCount', [widget.book.pagesDescription!]) : '${widget.book.pagesDescription} صفحة',
+                          value: widget.localizedControls
+                              ? Loc.tr(
+                                  'pageCount', [widget.book.pagesDescription!])
+                              : '${widget.book.pagesDescription} صفحة',
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
                         ),
@@ -586,7 +624,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       _buildMetaRow(
                         icon: Icons.business_outlined,
                         label: _label('publisher', 'دار النشر'),
-                        value: widget.book.publisher ?? Loc.tr('unknownMetadata'),
+                        value:
+                            widget.book.publisher ?? Loc.tr('unknownMetadata'),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),
@@ -594,7 +633,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       _buildMetaRow(
                         icon: Icons.edit_note_rounded,
                         label: _label('editor', 'المحقق'),
-                        value: widget.book.muhaqqiq ?? Loc.tr('unknownMetadata'),
+                        value:
+                            widget.book.muhaqqiq ?? Loc.tr('unknownMetadata'),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),

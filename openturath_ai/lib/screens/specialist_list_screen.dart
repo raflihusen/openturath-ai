@@ -175,20 +175,41 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
 
   @override
   Widget build(BuildContext context) => NativeAssistantPage(
-    field: widget.field, filtered: _computeFilteredAgents(), user: _authService.cachedCurrentUser,
-    searchController: _searchCtrl, searchQuery: _searchQuery, corpusKind: _corpusKind,
-    selectedFieldId: _selectedFieldId, isLoading: _isLoading,
-    onSearch: _onSearchChanged, onOpen: _openAgent, onSubAgent: _openTahawwulatSubAgent,
-    onKind: (value) => setState(() { _corpusKind = value; _selectedFieldId = null; }),
-    onField: (value) => setState(() => _selectedFieldId = value),
-  );
+        field: widget.field,
+        filtered: _computeFilteredAgents(),
+        user: _authService.cachedCurrentUser,
+        searchController: _searchCtrl,
+        searchQuery: _searchQuery,
+        corpusKind: _corpusKind,
+        selectedFieldId: _selectedFieldId,
+        isLoading: _isLoading,
+        onSearch: _onSearchChanged,
+        onOpen: _openAgent,
+        onSubAgent: _openTahawwulatSubAgent,
+        onKind: (value) => setState(() {
+          _corpusKind = value;
+          _selectedFieldId = null;
+        }),
+        onField: (value) => setState(() => _selectedFieldId = value),
+      );
 }
 
 class NativeAssistantPage extends StatelessWidget {
-  const NativeAssistantPage({super.key, this.field, required this.filtered, this.user,
-    required this.searchController, required this.searchQuery, required this.corpusKind,
-    this.selectedFieldId, this.isLoading = false, required this.onSearch, required this.onOpen,
-    required this.onSubAgent, required this.onKind, required this.onField});
+  const NativeAssistantPage(
+      {super.key,
+      this.field,
+      required this.filtered,
+      this.user,
+      required this.searchController,
+      required this.searchQuery,
+      required this.corpusKind,
+      this.selectedFieldId,
+      this.isLoading = false,
+      required this.onSearch,
+      required this.onOpen,
+      required this.onSubAgent,
+      required this.onKind,
+      required this.onField});
   final FieldModel? field;
   final List<AgentModel> filtered;
   final UserModel? user;
@@ -201,19 +222,20 @@ class NativeAssistantPage extends StatelessWidget {
   final ValueChanged<AgentModel> onOpen;
   final void Function(AgentModel, SubAgentModel) onSubAgent;
   final ValueChanged<CorpusKind> onKind;
-@override
+  @override
   Widget build(BuildContext context) {
     Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = NativeColors.canvas(isDark);
 
-
     final textPrimary = NativeColors.textPrimary(isDark);
     final textSecondary = NativeColors.textSecondary(isDark);
 
     final isGeneralTab = field == null;
-    final title = isGeneralTab ? AppCopy.navStudies : NativeCopy.text('field_${field!.id}');
+    final title = isGeneralTab
+        ? AppCopy.navStudies
+        : NativeCopy.text('field_${field!.id}');
 
     final shell = MainShellController.of(context);
 
@@ -271,44 +293,76 @@ class NativeAssistantPage extends StatelessWidget {
                         controller: searchController,
                         hint: NativeCopy.text('searchAssistants'),
                         onChanged: onSearch),
-
                   ],
                 ),
               ),
 
-              if (isGeneralTab) Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(children: [
-                  Expanded(child: PopupMenuButton<CorpusKind>(
-                    tooltip: NativeCopy.text('disciplines'),
-                    initialValue: corpusKind,
-                    onSelected: onKind,
-                    itemBuilder: (_) => [
-                      PopupMenuItem(value: CorpusKind.discipline, child: Text(NativeCopy.text('disciplines'))),
-                      PopupMenuItem(value: CorpusKind.scholar, child: Text(NativeCopy.text('scholars'))),
-                    ],
-                    child: Padding(padding: const EdgeInsets.symmetric(vertical: 14),
-                      child: Row(children: [Expanded(child: Text(NativeCopy.text(corpusKind == CorpusKind.discipline ? 'disciplines' : 'scholars'), style: NativeType.body(isDark, size: 14))), const Icon(Icons.expand_more, size: 18)])),
-                  )),
-                  if (corpusKind == CorpusKind.discipline) ...[
-                    const SizedBox(width: 20),
-                    Expanded(child: PopupMenuButton<String>(
-                      tooltip: AppCopy.chooseField,
-                      initialValue: selectedFieldId ?? 'all',
-                      onSelected: onField,
+              if (isGeneralTab)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(children: [
+                    Expanded(
+                        child: PopupMenuButton<CorpusKind>(
+                      tooltip: NativeCopy.text('disciplines'),
+                      initialValue: corpusKind,
+                      onSelected: onKind,
                       itemBuilder: (_) => [
-                        PopupMenuItem(value: 'all', child: Text(AppCopy.allCategories)),
-                        for (final field in FieldModel.defaultFields) PopupMenuItem(value: field.id, child: Text(NativeCopy.text('field_${field.id}'))),
+                        PopupMenuItem(
+                            value: CorpusKind.discipline,
+                            child: Text(NativeCopy.text('disciplines'))),
+                        PopupMenuItem(
+                            value: CorpusKind.scholar,
+                            child: Text(NativeCopy.text('scholars'))),
                       ],
-                      child: Padding(padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Row(children: [
-                          Expanded(child: Text(selectedFieldId == null ? AppCopy.allCategories : NativeCopy.text('field_$selectedFieldId'), style: NativeType.body(isDark, size: 14).copyWith(color: NativeColors.accent(isDark)))),
-                          Icon(Icons.expand_more, size: 18, color: NativeColors.accent(isDark)),
-                        ])),
+                      child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          child: Row(children: [
+                            Expanded(
+                                child: Text(
+                                    NativeCopy.text(
+                                        corpusKind == CorpusKind.discipline
+                                            ? 'disciplines'
+                                            : 'scholars'),
+                                    style: NativeType.body(isDark, size: 14))),
+                            const Icon(Icons.expand_more, size: 18)
+                          ])),
                     )),
-                  ],
-                ]),
-              ),
+                    if (corpusKind == CorpusKind.discipline) ...[
+                      const SizedBox(width: 20),
+                      Expanded(
+                          child: PopupMenuButton<String>(
+                        tooltip: AppCopy.chooseField,
+                        initialValue: selectedFieldId ?? 'all',
+                        onSelected: onField,
+                        itemBuilder: (_) => [
+                          PopupMenuItem(
+                              value: 'all', child: Text(AppCopy.allCategories)),
+                          for (final field in FieldModel.defaultFields)
+                            PopupMenuItem(
+                                value: field.id,
+                                child:
+                                    Text(NativeCopy.text('field_${field.id}'))),
+                        ],
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            child: Row(children: [
+                              Expanded(
+                                  child: Text(
+                                      selectedFieldId == null
+                                          ? AppCopy.allCategories
+                                          : NativeCopy.text(
+                                              'field_$selectedFieldId'),
+                                      style: NativeType.body(isDark, size: 14)
+                                          .copyWith(
+                                              color: NativeColors.accent(
+                                                  isDark)))),
+                              Icon(Icons.expand_more,
+                                  size: 18, color: NativeColors.accent(isDark)),
+                            ])),
+                      )),
+                    ],
+                  ]),
+                ),
               // Content List
               Expanded(
                 child: corpusKind == CorpusKind.scholar
@@ -375,7 +429,6 @@ class NativeAssistantPage extends StatelessWidget {
                                     itemBuilder: (context, index) {
                                       final agent = sorted[index];
                                       if (agent.id == 'fiqh_tahawwulat') {
-                                        
                                         final isSubscribed = user != null &&
                                             user!.hasAccessToAgent(agent.id);
                                         return TahawwulatFlagshipCard(
@@ -383,8 +436,7 @@ class NativeAssistantPage extends StatelessWidget {
                                           isSubscribed: isSubscribed,
                                           onOpenMain: () => onOpen(agent),
                                           onOpenSubAgent: (sub) =>
-                                              onSubAgent(
-                                                  agent, sub),
+                                              onSubAgent(agent, sub),
                                           onOpenLibrary: agent.catalogId != null
                                               ? () => openNativeLibrary(context,
                                                   agent: agent)
@@ -421,6 +473,4 @@ class NativeAssistantPage extends StatelessWidget {
       ),
     );
   }
-
-
 }

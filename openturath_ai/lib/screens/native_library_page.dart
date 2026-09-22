@@ -36,7 +36,8 @@ class _NativeLibraryPageState extends State<NativeLibraryPage> {
       final repo = OpenTurathCatalogRepository.instance;
       final key = repo.resolveNativeCatalogKey(widget.agent.id);
       if (key == null) throw StateError('No catalog mapped to this assistant');
-      final metadata = await repo.getMetadataForModule(key, allowFallback: false);
+      final metadata =
+          await repo.getMetadataForModule(key, allowFallback: false);
       final books = metadata == null
           ? <OpenTurathBook>[]
           : await repo.loadBooksForModule(key, allowFallback: false);
@@ -53,7 +54,11 @@ class _NativeLibraryPageState extends State<NativeLibraryPage> {
           if (snapshot.hasData) {
             final data = snapshot.data!;
             if (data.metadata == null) {
-              return Scaffold(appBar: AppBar(title: Text(NativeCopy.text('sources'))), body: NativeEmpty(title: NativeCopy.text('error'), onAction: () => setState(_load)));
+              return Scaffold(
+                  appBar: AppBar(title: Text(NativeCopy.text('sources'))),
+                  body: NativeEmpty(
+                      title: NativeCopy.text('error'),
+                      onAction: () => setState(_load)));
             }
             return OpenTurathBookLibraryPage(
                 books: data.books,

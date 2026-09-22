@@ -277,22 +277,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
     return StreamBuilder<UserModel?>(
-      stream: _authService.userStream, initialData: _authService.cachedCurrentUser,
-      builder: (context, snapshot) {
-        final user = snapshot.data ?? _authService.cachedCurrentUser;
-        final fbUser = FirebaseAuth.instance.currentUser;
-        final summary = resolveMembershipPass(user);
-        return NativeProfilePage(
-          displayName: user?.name.isNotEmpty == true ? user!.name : (fbUser?.displayName ?? Loc.text('Pengguna')),
-          email: user?.email ?? fbUser?.email ?? '', membership: summary, version: _appVersion,
-          isLoggingOut: _isLoggingOut, isDeletingAccount: _isDeletingAccount,
-          onManage: () => _openSubscription(user),
-          onViewAccess: () => _showAccessPortfolio(user, summary),
-          onLanguage: () => _showLanguageModal(context, dark, NativeColors.textPrimary(dark), NativeColors.textSecondary(dark), NativeColors.surface(dark), NativeColors.border(dark)),
-          onAbout: () => _showAboutModal(context, dark, NativeColors.textPrimary(dark), NativeColors.textSecondary(dark), NativeColors.surface(dark), NativeColors.border(dark)),
-          onLogout: _logout, onDelete: _deleteAccount,
-        );
-      });
+        stream: _authService.userStream,
+        initialData: _authService.cachedCurrentUser,
+        builder: (context, snapshot) {
+          final user = snapshot.data ?? _authService.cachedCurrentUser;
+          final fbUser = FirebaseAuth.instance.currentUser;
+          final summary = resolveMembershipPass(user);
+          return NativeProfilePage(
+            displayName: user?.name.isNotEmpty == true
+                ? user!.name
+                : (fbUser?.displayName ?? Loc.text('Pengguna')),
+            email: user?.email ?? fbUser?.email ?? '',
+            membership: summary,
+            version: _appVersion,
+            isLoggingOut: _isLoggingOut,
+            isDeletingAccount: _isDeletingAccount,
+            onManage: () => _openSubscription(user),
+            onViewAccess: () => _showAccessPortfolio(user, summary),
+            onLanguage: () => _showLanguageModal(
+                context,
+                dark,
+                NativeColors.textPrimary(dark),
+                NativeColors.textSecondary(dark),
+                NativeColors.surface(dark),
+                NativeColors.border(dark)),
+            onAbout: () => _showAboutModal(
+                context,
+                dark,
+                NativeColors.textPrimary(dark),
+                NativeColors.textSecondary(dark),
+                NativeColors.surface(dark),
+                NativeColors.border(dark)),
+            onLogout: _logout,
+            onDelete: _deleteAccount,
+          );
+        });
   }
 
   void _showAboutModal(
@@ -475,8 +494,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ]),
             ));
   }
-
-
 }
 
 /// Kartu akses anggota: merangkum identitas, status, dan ruang AI yang dapat
@@ -502,9 +519,17 @@ class _MembershipPass extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     return NativeAccountSummary(
-      name: holderName, email: email, status: summary.badge, access: summary.accessLabel,
-      manageLabel: summary.ctaLabel, onManage: onManage, onAccess: onViewAccess, accessLabel: AppCopy.navStudies,
-      expiry: summary.expiresAt == null ? null : '${summary.expiryLabel.isEmpty ? AppCopy.validUntil : summary.expiryLabel} · ${MaterialLocalizations.of(context).formatShortDate(summary.expiresAt!)}',
+      name: holderName,
+      email: email,
+      status: summary.badge,
+      access: summary.accessLabel,
+      manageLabel: summary.ctaLabel,
+      onManage: onManage,
+      onAccess: onViewAccess,
+      accessLabel: AppCopy.navStudies,
+      expiry: summary.expiresAt == null
+          ? null
+          : '${summary.expiryLabel.isEmpty ? AppCopy.validUntil : summary.expiryLabel} · ${MaterialLocalizations.of(context).formatShortDate(summary.expiresAt!)}',
     );
   }
 }
@@ -598,266 +623,277 @@ class _SettingsTile extends StatelessWidget {
     );
   }
 }
+
 class NativeProfilePage extends StatelessWidget {
-  const NativeProfilePage({super.key, required this.displayName, required this.email,
-    required this.membership, required this.version, required this.onManage,
-    required this.onViewAccess, required this.onLanguage, required this.onAbout,
-    required this.onLogout, required this.onDelete, this.isLoggingOut = false, this.isDeletingAccount = false});
+  const NativeProfilePage(
+      {super.key,
+      required this.displayName,
+      required this.email,
+      required this.membership,
+      required this.version,
+      required this.onManage,
+      required this.onViewAccess,
+      required this.onLanguage,
+      required this.onAbout,
+      required this.onLogout,
+      required this.onDelete,
+      this.isLoggingOut = false,
+      this.isDeletingAccount = false});
   final String displayName, email, version;
   final MembershipPassSummary membership;
-  final VoidCallback onManage, onViewAccess, onLanguage, onAbout, onLogout, onDelete;
+  final VoidCallback onManage,
+      onViewAccess,
+      onLanguage,
+      onAbout,
+      onLogout,
+      onDelete;
   final bool isLoggingOut, isDeletingAccount;
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = NativeColors.canvas(isDark), surface = NativeColors.surface(isDark), border = NativeColors.border(isDark);
-    final textPrimary = NativeColors.textPrimary(isDark), textSecondary = NativeColors.textSecondary(isDark);
-            final content = ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
-              physics: const BouncingScrollPhysics(),
-              children: [
-                _MembershipPass(
-                  holderName: displayName,
-                  email: email,
-                  summary: membership,
-                  isDark: isDark,
-                  onManage: onManage,
-                  onViewAccess:
-                      membership.isOpen && membership.agentIds.isNotEmpty
-                          ? onViewAccess
-                          : null,
-                ),
+    final canvas = NativeColors.canvas(isDark),
+        surface = NativeColors.surface(isDark),
+        border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark),
+        textSecondary = NativeColors.textSecondary(isDark);
+    final content = ListView(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        _MembershipPass(
+          holderName: displayName,
+          email: email,
+          summary: membership,
+          isDark: isDark,
+          onManage: onManage,
+          onViewAccess: membership.isOpen && membership.agentIds.isNotEmpty
+              ? onViewAccess
+              : null,
+        ),
 
-                const SizedBox(height: 16),
+        const SizedBox(height: 16),
 
-                // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Column(
-                    children: [
-                      ValueListenableBuilder<ThemeMode>(
-                        valueListenable: AppConfig.themeNotifier,
-                        builder: (context, currentMode, _) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.palette_outlined,
-                                        size: 20, color: textSecondary),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      AppCopy.appearance,
-                                      style: NativeFonts.outfit(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: textPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                Container(
-                                  padding: const EdgeInsets.all(3),
-                                  decoration: BoxDecoration(
-                                    color: NativeColors.surfaceSubtle(isDark),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Wrap(
-                                    spacing: 4,
-                                    runSpacing: 4,
-                                    children: [
-                                      _buildThemeOption(
-                                        title: AppCopy.modeSystem,
-                                        icon: Icons.brightness_auto_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.system,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.system),
-                                      ),
-                                      _buildThemeOption(
-                                        title: AppCopy.modeLight,
-                                        icon: Icons.light_mode_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.light,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.light),
-                                      ),
-                                      _buildThemeOption(
-                                        title: AppCopy.modeDark,
-                                        icon: Icons.dark_mode_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.dark,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.dark),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.translate_rounded,
-                        title: AppCopy.language,
-                        subtitle: Loc.languageNames[Loc.language]!,
-                        trailing: Icon(Icons.chevron_right_rounded,
-                            color: textSecondary, size: 20),
-                        onTap: onLanguage,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 4: Tentang OpenTurath ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: _SettingsTile(
-                    icon: Icons.info_outline_rounded,
-                    title: AppCopy.aboutTitle,
-                    subtitle: AppCopy.versionWithTagline(version),
-                    trailing: Icon(Icons.chevron_right_rounded,
-                        color: textSecondary, size: 20),
-                    onTap: onAbout,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                Text(AppCopy.supportAndPolicySection,
-                    style: NativeType.title(isDark, size: 22)),
-                const SizedBox(height: 12),
-                NativeSection(
-                    padding: EdgeInsets.zero,
-                    child: Column(children: [
-                      ListTile(
-                          leading: const Icon(Icons.headset_mic_outlined),
-                          title: Text(AppCopy.supportAndContact),
-                          onTap: () =>
-                              LegalDocumentSheet.showContactSupport(context)),
-                      ListTile(
-                          leading: const Icon(Icons.description_outlined),
-                          title: Text(AppCopy.termsOfService),
-                          onTap: () =>
-                              LegalDocumentSheet.showTermsOfService(context)),
-                      ListTile(
-                          leading: const Icon(Icons.privacy_tip_outlined),
-                          title: Text(AppCopy.privacyPolicy),
-                          onTap: () =>
-                              LegalDocumentSheet.showPrivacyPolicy(context)),
-                      ListTile(
-                          leading: const Icon(Icons.payment_outlined),
-                          title: Text(AppCopy.paymentAndRefund),
-                          onTap: () =>
-                              LegalDocumentSheet.showRefundPolicy(context)),
-                      ListTile(
-                          leading: const Icon(Icons.menu_book_outlined),
-                          title: Text(AppCopy.aiGuideline),
-                          onTap: () =>
-                              LegalDocumentSheet.showAiGuideline(context)),
-                    ])),
-                const SizedBox(height: 24),
-                // ── Card 5: Log out ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(16),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: (isLoggingOut || isDeletingAccount)
-                          ? null
-                          : onLogout,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 15),
-                        child: Row(
+        // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
+        Container(
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: 1.0),
+          ),
+          child: Column(
+            children: [
+              ValueListenableBuilder<ThemeMode>(
+                valueListenable: AppConfig.themeNotifier,
+                builder: (context, currentMode, _) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Icon(
-                              Icons.logout_rounded,
-                              color: NativeColors.destructive(isDark),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 14),
+                            Icon(Icons.palette_outlined,
+                                size: 20, color: textSecondary),
+                            const SizedBox(width: 10),
                             Text(
-                              isLoggingOut
-                                  ? AppCopy.loggingOut
-                                  : AppCopy.logoutButton,
+                              AppCopy.appearance,
                               style: NativeFonts.outfit(
-                                fontSize: 14.5,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: NativeColors.destructive(isDark),
+                                color: textPrimary,
                               ),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: NativeColors.surfaceSubtle(isDark),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Wrap(
+                            spacing: 4,
+                            runSpacing: 4,
+                            children: [
+                              _buildThemeOption(
+                                title: AppCopy.modeSystem,
+                                icon: Icons.brightness_auto_rounded,
+                                isSelected: currentMode == ThemeMode.system,
+                                isDark: isDark,
+                                textPrimary: textPrimary,
+                                textSecondary: textSecondary,
+                                onTap: () =>
+                                    AppConfig.setThemeMode(ThemeMode.system),
+                              ),
+                              _buildThemeOption(
+                                title: AppCopy.modeLight,
+                                icon: Icons.light_mode_rounded,
+                                isSelected: currentMode == ThemeMode.light,
+                                isDark: isDark,
+                                textPrimary: textPrimary,
+                                textSecondary: textSecondary,
+                                onTap: () =>
+                                    AppConfig.setThemeMode(ThemeMode.light),
+                              ),
+                              _buildThemeOption(
+                                title: AppCopy.modeDark,
+                                icon: Icons.dark_mode_rounded,
+                                isSelected: currentMode == ThemeMode.dark,
+                                isDark: isDark,
+                                textPrimary: textPrimary,
+                                textSecondary: textSecondary,
+                                onTap: () =>
+                                    AppConfig.setThemeMode(ThemeMode.dark),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              Divider(height: 1, color: border),
+              _SettingsTile(
+                icon: Icons.translate_rounded,
+                title: AppCopy.language,
+                subtitle: Loc.languageNames[Loc.language]!,
+                trailing: Icon(Icons.chevron_right_rounded,
+                    color: textSecondary, size: 20),
+                onTap: onLanguage,
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // ── Card 4: Tentang OpenTurath ──
+        Container(
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: 1.0),
+          ),
+          child: _SettingsTile(
+            icon: Icons.info_outline_rounded,
+            title: AppCopy.aboutTitle,
+            subtitle: AppCopy.versionWithTagline(version),
+            trailing: Icon(Icons.chevron_right_rounded,
+                color: textSecondary, size: 20),
+            onTap: onAbout,
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        Text(AppCopy.supportAndPolicySection,
+            style: NativeType.title(isDark, size: 22)),
+        const SizedBox(height: 12),
+        NativeSection(
+            padding: EdgeInsets.zero,
+            child: Column(children: [
+              ListTile(
+                  leading: const Icon(Icons.headset_mic_outlined),
+                  title: Text(AppCopy.supportAndContact),
+                  onTap: () => LegalDocumentSheet.showContactSupport(context)),
+              ListTile(
+                  leading: const Icon(Icons.description_outlined),
+                  title: Text(AppCopy.termsOfService),
+                  onTap: () => LegalDocumentSheet.showTermsOfService(context)),
+              ListTile(
+                  leading: const Icon(Icons.privacy_tip_outlined),
+                  title: Text(AppCopy.privacyPolicy),
+                  onTap: () => LegalDocumentSheet.showPrivacyPolicy(context)),
+              ListTile(
+                  leading: const Icon(Icons.payment_outlined),
+                  title: Text(AppCopy.paymentAndRefund),
+                  onTap: () => LegalDocumentSheet.showRefundPolicy(context)),
+              ListTile(
+                  leading: const Icon(Icons.menu_book_outlined),
+                  title: Text(AppCopy.aiGuideline),
+                  onTap: () => LegalDocumentSheet.showAiGuideline(context)),
+            ])),
+        const SizedBox(height: 24),
+        // ── Card 5: Log out ──
+        Container(
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: 1.0),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: (isLoggingOut || isDeletingAccount) ? null : onLogout,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.logout_rounded,
+                      color: NativeColors.destructive(isDark),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 14),
+                    Text(
+                      isLoggingOut ? AppCopy.loggingOut : AppCopy.logoutButton,
+                      style: NativeFonts.outfit(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w600,
+                        color: NativeColors.destructive(isDark),
                       ),
                     ),
-                  ),
+                  ],
                 ),
+              ),
+            ),
+          ),
+        ),
 
-                const SizedBox(height: 20),
+        const SizedBox(height: 20),
 
-                // ── Quiet Google Play Compliance: Delete Account ──
-                Center(
-                  child: TextButton(
-                    onPressed: (isLoggingOut || isDeletingAccount)
-                        ? null
-                        : onDelete,
-                    child: isDeletingAccount
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: NativeColors.destructive(isDark)),
-                          )
-                        : Text(
-                            AppCopy.deleteAccountButton,
-                            style: NativeFonts.outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              color: NativeColors.destructive(isDark),
-                            ),
-                          ),
+        // ── Quiet Google Play Compliance: Delete Account ──
+        Center(
+          child: TextButton(
+            onPressed: (isLoggingOut || isDeletingAccount) ? null : onDelete,
+            child: isDeletingAccount
+                ? SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: NativeColors.destructive(isDark)),
+                  )
+                : Text(
+                    AppCopy.deleteAccountButton,
+                    style: NativeFonts.outfit(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w500,
+                      color: NativeColors.destructive(isDark),
+                    ),
                   ),
-                ),
-              ],
-            );
-    return Scaffold(backgroundColor: canvas,
-      appBar: AppBar(title: Text(AppCopy.navSettings)),
-      body: SafeArea(top: false, child: Align(alignment: Alignment.topCenter,
-        child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 760), child: content))));
+          ),
+        ),
+      ],
+    );
+    return Scaffold(
+        backgroundColor: canvas,
+        appBar: AppBar(title: Text(AppCopy.navSettings)),
+        body: SafeArea(
+            top: false,
+            child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: content))));
   }
+
   Widget _buildThemeOption({
     required String title,
     required IconData icon,
@@ -872,19 +908,21 @@ class NativeProfilePage extends StatelessWidget {
     final inactiveFg = textSecondary;
 
     return ChoiceChip(
-        selected: isSelected,
-        showCheckmark: false,
-        avatar: Icon(icon, size: 18, color: isSelected ? activeFg : inactiveFg),
-        selectedColor: activeBg,
-        backgroundColor: Colors.transparent,
-        side: BorderSide.none,
-        label: Text(Loc.text(title), style: NativeFonts.outfit(
-          fontSize: 14, fontWeight: FontWeight.w500,
-          color: isSelected ? activeFg : inactiveFg)),
-        onSelected: (_) {
-          HapticFeedback.selectionClick();
-          onTap();
-        },
+      selected: isSelected,
+      showCheckmark: false,
+      avatar: Icon(icon, size: 18, color: isSelected ? activeFg : inactiveFg),
+      selectedColor: activeBg,
+      backgroundColor: Colors.transparent,
+      side: BorderSide.none,
+      label: Text(Loc.text(title),
+          style: NativeFonts.outfit(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: isSelected ? activeFg : inactiveFg)),
+      onSelected: (_) {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
     );
   }
 }

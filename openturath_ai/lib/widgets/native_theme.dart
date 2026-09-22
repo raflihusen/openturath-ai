@@ -16,7 +16,10 @@ class NativeTheme extends StatelessWidget {
     return Theme(
         data: base.copyWith(
           scaffoldBackgroundColor: NativeColors.canvas(dark),
-          textTheme: base.textTheme.apply(fontFamily: Loc.isArabic ? 'NativeArabic' : 'NativeInter', bodyColor: ink, displayColor: ink),
+          textTheme: base.textTheme.apply(
+              fontFamily: Loc.isArabic ? 'NativeArabic' : 'NativeInter',
+              bodyColor: ink,
+              displayColor: ink),
           colorScheme: base.colorScheme.copyWith(
               primary: NativeColors.accent(dark),
               onPrimary: NativeColors.onAccent(dark),

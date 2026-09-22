@@ -29,7 +29,9 @@ class SpecialistCard extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: Container(
-          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: NativeColors.border(dark)))),
+          decoration: BoxDecoration(
+              border:
+                  Border(bottom: BorderSide(color: NativeColors.border(dark)))),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             NativePress(
