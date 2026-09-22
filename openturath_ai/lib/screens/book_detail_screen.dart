@@ -365,7 +365,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ),
                             child: Text(
                               widget.book.sectionArabic ??
-                                  _label('classificationMissing', 'نص محقق معتمد'),
+                                  _label(
+                                      'classificationMissing', 'نص محقق معتمد'),
                               style:
                                   NativeTypography.caption(color: textSecondary)
                                       .copyWith(
@@ -600,7 +601,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         _buildMetaRow(
                           icon: Icons.verified_outlined,
                           label: _label('authority', 'رتبة الاعتماد'),
-                          value: _label('authorityRecognized', 'معتمد في المذهب والفتوى'),
+                          value: _label(
+                              'authorityRecognized', 'معتمد في المذهب والفتوى'),
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
                         ),

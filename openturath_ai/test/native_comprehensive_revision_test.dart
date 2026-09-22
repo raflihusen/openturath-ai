@@ -100,16 +100,24 @@ void main() {
       pages: '500');
 
   for (final locale in ['id', 'en', 'ar']) {
-    testWidgets('five direct role actions preserve identity in $locale', (tester) async {
+    testWidgets('five direct role actions preserve identity in $locale',
+        (tester) async {
       AppConfig.localeNotifier.value = locale;
-      final agent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
+      final agent =
+          AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
       final opened = <String>[];
       await tester.pumpWidget(MaterialApp(
-        locale: Locale(locale), supportedLocales: Loc.supportedLocales,
+        locale: Locale(locale),
+        supportedLocales: Loc.supportedLocales,
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: NativeTheme(child: Scaffold(body: SingleChildScrollView(
-          child: TahawwulatFlagshipCard(agent: agent, isSubscribed: true,
-            onOpenMain: () {}, onOpenSubAgent: (sub) => opened.add(sub.id)),
+        home: NativeTheme(
+            child: Scaffold(
+                body: SingleChildScrollView(
+          child: TahawwulatFlagshipCard(
+              agent: agent,
+              isSubscribed: true,
+              onOpenMain: () {},
+              onOpenSubAgent: (sub) => opened.add(sub.id)),
         ))),
       ));
       for (final sub in agent.subAgents!) {
@@ -209,7 +217,8 @@ void main() {
             expect(find.text('INTERNAL_EDITION_NOT_FOR_UI'), findsNothing);
             if (page == 'home' && scale == 1) {
               expect(find.text(NativeCopy.text('field_fiqh')), findsOneWidget);
-              if (locale == 'ar') expect(find.text('Fikih & Fatwa'), findsNothing);
+              if (locale == 'ar')
+                expect(find.text('Fikih & Fatwa'), findsNothing);
             }
             if (scale == 1 && const bool.fromEnvironment('CAPTURE_REVISION')) {
               final boundary = capture.currentContext!.findRenderObject()!
