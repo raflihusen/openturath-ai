@@ -6,6 +6,7 @@ import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/design/ot_motion.dart';
 import 'package:openturath_ai/core/design/ot_spacing.dart';
+import 'package:openturath_ai/core/design/ot_layout.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +44,8 @@ void main() {
       expect(OTColors.accent(true), OTColors.accentDark);
     });
 
-    test('OTTypography strictly separates Brand, Interface, and Arabic layers', () {
+    test('OTTypography strictly separates Brand, Interface, and Arabic layers',
+        () {
       // 1. Brand / Editorial layer (Newsreader)
       final brand = OTTypography.brandLogo();
       expect(brand.fontSize, 22);
@@ -68,7 +70,7 @@ void main() {
       expect(card.fontWeight, FontWeight.w600);
 
       final body = OTTypography.body();
-      expect(body.fontSize, 14);
+      expect(body.fontSize, 15);
       expect(body.fontWeight, FontWeight.w400);
 
       final caption = OTTypography.caption();
@@ -96,7 +98,9 @@ void main() {
 
     test('OTRadius enforces disciplined curvature without bubble-boxing', () {
       expect(OTRadius.input, 14.0);
+      expect(OTRadius.row, 10.0);
       expect(OTRadius.card, 16.0);
+      expect(OTRadius.feature, 22.0);
       expect(OTRadius.sheet, 24.0);
       expect(OTRadius.dialog, 20.0);
       expect(OTRadius.chip, 999.0);
@@ -110,12 +114,12 @@ void main() {
     });
 
     test('OTMotion provides quiet, restrained animations and easing', () {
-      expect(OTMotion.fast, const Duration(milliseconds: 180));
-      expect(OTMotion.normal, const Duration(milliseconds: 220));
+      expect(OTMotion.fast, const Duration(milliseconds: 140));
+      expect(OTMotion.normal, const Duration(milliseconds: 180));
       expect(OTMotion.sheet, const Duration(milliseconds: 280));
       expect(OTMotion.transition, const Duration(milliseconds: 320));
 
-      expect(OTMotion.curve, Curves.easeOutCubic);
+      expect(OTMotion.curve, const Cubic(0.16, 1, 0.3, 1));
       expect(OTMotion.sheetCurve, Curves.easeOutQuart);
     });
 
@@ -146,6 +150,13 @@ void main() {
       ]) {
         expect(val % 4.0, 0.0);
       }
+    });
+
+    test('OTLayout keeps mobile ergonomics and readable widths explicit', () {
+      expect(OTLayout.minimumTouchTarget, 48);
+      expect(OTLayout.readableWidth, 680);
+      expect(OTLayout.catalogueWidth, 960);
+      expect(OTLayout.compactBreakpoint, 600);
     });
   });
 }

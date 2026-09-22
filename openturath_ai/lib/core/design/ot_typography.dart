@@ -112,9 +112,10 @@ class OTTypography {
       );
 
   static TextStyle pageTitle({Color? color}) => _newsreader(
-        fontSize: 26,
+        fontSize: 28,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.6,
+        height: 1.12,
         color: color,
       );
 
@@ -170,16 +171,23 @@ class OTTypography {
       );
 
   static TextStyle body({Color? color}) => _outfit(
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w400,
-        height: 1.45,
+        height: 1.5,
         color: color,
       );
 
   static TextStyle bodyMedium({Color? color}) => _outfit(
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w500,
-        height: 1.4,
+        height: 1.45,
+        color: color,
+      );
+
+  static TextStyle readingBody({Color? color}) => _outfit(
+        fontSize: 17,
+        fontWeight: FontWeight.w400,
+        height: 1.78,
         color: color,
       );
 
