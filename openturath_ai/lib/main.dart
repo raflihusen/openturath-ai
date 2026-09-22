@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/theme.dart';
 import 'core/routes.dart';
+import 'widgets/native_theme.dart';
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell_screen.dart';
@@ -187,10 +188,13 @@ class OpenTurathApp extends StatelessWidget {
                 // Default Material 3 Expressive transition: FadeUpTransition (fade + subtle 30px slide-up)
                 return PageRouteBuilder(
                   settings: settings,
-                  pageBuilder: (context, animation, secondaryAnimation) => page,
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      page is MainShellScreen || page is GoogleSessionAuthScreen
+                        ? page : NativeTheme(child: page),
                   transitionDuration: const Duration(milliseconds: 320),
                   reverseTransitionDuration: const Duration(milliseconds: 240),
                   transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    if (MediaQuery.disableAnimationsOf(context)) return child;
                     final curvedAnimation = CurvedAnimation(
                       parent: animation,
                       curve: Curves.easeOutCubic,

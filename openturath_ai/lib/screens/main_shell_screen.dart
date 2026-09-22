@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/app_config.dart';
 import '../core/app_copy.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
+import '../widgets/native_theme.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_radius.dart';
@@ -67,11 +68,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
   void _onTabSelected(int index, {String? fieldId, CorpusKind? kind}) {
     AppSnackBar.clear(context);
     if (_pageController.hasClients && _currentIndex != index) {
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-      );
+      _pageController.jumpToPage(index);
     }
     setState(() {
       _currentIndex = index;
@@ -89,13 +86,13 @@ class _MainShellScreenState extends State<MainShellScreen> {
         : null;
 
     return [
-      const DashboardScreen(),
-      SpecialistListScreen(
+      const NativeTheme(child: DashboardScreen()),
+      NativeTheme(child: SpecialistListScreen(
         key: ValueKey('${_selectedFieldId}_${_selectedKind?.name}'),
         field: field,
-      ),
-      const BookmarkScreen(),
-      const ProfileScreen(),
+      )),
+      const NativeTheme(child: BookmarkScreen()),
+      const NativeTheme(child: ProfileScreen()),
     ];
   }
 
@@ -103,11 +100,11 @@ class _MainShellScreenState extends State<MainShellScreen> {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final accent = OTColors.accent(isDark);
-    final unselected = OTColors.textTertiary(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final border = NativeColors.border(isDark);
+    final accent = NativeColors.accent(isDark);
+    final unselected = NativeColors.textTertiary(isDark);
 
     final isWideScreen = MediaQuery.of(context).size.width >= 768;
     final screens = _buildScreens();
@@ -219,7 +216,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
               child: SafeArea(
                 top: false,
                 child: SizedBox(
-                  height: 64,
+                  height: MediaQuery.textScalerOf(context).scale(64).clamp(64, 110),
                   child: Row(
                     children: [
                       Expanded(
@@ -294,7 +291,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
             child: Stack(
               children: [
                 // 1. Dashboard latar belakang (Stationary - bebas GPU overhead)
-                baseScaffold,
+                TickerMode(enabled: !sessionManager.isOpen, child: baseScaffold),
 
                 // 2. Ruang AI Multi-Tab (Instant zero-glitch display dengan retensi memori penuh)
                 Positioned.fill(
@@ -335,8 +332,8 @@ class _GoogleNavBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeFg = OTColors.accent(isDark);
-    final unselected = OTColors.textTertiary(isDark);
+    final activeFg = NativeColors.accent(isDark);
+    final unselected = NativeColors.textTertiary(isDark);
     final labelColor = isSelected ? activeFg : unselected;
 
     return InkWell(
@@ -362,7 +359,7 @@ class _GoogleNavBarItem extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: ScholarlyFonts.outfit(
-                fontSize: 11.5,
+                fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 letterSpacing: -0.1,
                 color: labelColor,
@@ -370,7 +367,7 @@ class _GoogleNavBarItem extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             AnimatedContainer(
-              duration: OTMotion.fast,
+              duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : OTMotion.fast,
               curve: OTMotion.curve,
               width: isSelected ? 16 : 4,
               height: 2,
@@ -409,7 +406,7 @@ class _RailItem extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final activeFg = OTColors.accent(isDark);
+    final activeFg = NativeColors.accent(isDark);
 
     return InkWell(
       onTap: () {

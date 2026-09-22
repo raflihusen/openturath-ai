@@ -57,7 +57,7 @@ abstract final class NativeType {
 /// Separate keys and defaults: changing native copy must not change AI chrome.
 abstract final class NativeCopy {
   static const values = <String, List<String>>{
-    'collection': ['Collection particulière', 'Special collection', 'مجموعة خاصة'],
+    'collection': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'exclusive': ['Koleksi istimewa', 'Special collection', 'مجموعة خاصة'],
     'fivePaths': ['Lima pintu telaah', 'Five paths of study', 'خمسة مسارات للدراسة'],
     'chooseRole': ['Pilih asisten sesuai kebutuhan kajian Anda.', 'Choose an assistant for your study needs.', 'اختر المساعد المناسب لاحتياجات دراستك.'],
