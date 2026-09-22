@@ -14,39 +14,56 @@ void main() {
   group('1. Asset Files & Animation Integrity Tests', () {
     test('All Lottie JSON animation files are valid and parseable', () {
       final dir = Directory('assets/animations');
-      expect(dir.existsSync(), isTrue, reason: 'assets/animations directory must exist');
+      expect(dir.existsSync(), isTrue,
+          reason: 'assets/animations directory must exist');
 
-      final files = dir.listSync().whereType<File>().where((f) => f.path.endsWith('.json'));
-      expect(files.isNotEmpty, isTrue, reason: 'Must contain Lottie JSON animation files');
+      final files = dir
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.json'));
+      expect(files.isNotEmpty, isTrue,
+          reason: 'Must contain Lottie JSON animation files');
 
       for (final file in files) {
         final content = file.readAsStringSync();
-        expect(content.isNotEmpty, isTrue, reason: '${file.path} must not be empty');
+        expect(content.isNotEmpty, isTrue,
+            reason: '${file.path} must not be empty');
 
         final dynamic decoded = jsonDecode(content);
-        expect(decoded, isA<Map<String, dynamic>>(), reason: '${file.path} must be valid JSON object');
+        expect(decoded, isA<Map<String, dynamic>>(),
+            reason: '${file.path} must be valid JSON object');
         final map = decoded as Map<String, dynamic>;
-        expect(map.containsKey('v') || map.containsKey('layers') || map.containsKey('fr'), isTrue,
+        expect(
+            map.containsKey('v') ||
+                map.containsKey('layers') ||
+                map.containsKey('fr'),
+            isTrue,
             reason: '${file.path} must have valid Lottie animation structure');
       }
     });
 
     test('All SVG vector files are valid XML and well-formed', () {
       final dir = Directory('assets/images');
-      expect(dir.existsSync(), isTrue, reason: 'assets/images directory must exist');
+      expect(dir.existsSync(), isTrue,
+          reason: 'assets/images directory must exist');
 
-      final files = dir.listSync().whereType<File>().where((f) => f.path.endsWith('.svg'));
+      final files = dir
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.svg'));
       expect(files.isNotEmpty, isTrue, reason: 'Must contain SVG files');
 
       for (final file in files) {
         final content = file.readAsStringSync().trim();
-        expect(content.isNotEmpty, isTrue, reason: '${file.path} must not be empty');
+        expect(content.isNotEmpty, isTrue,
+            reason: '${file.path} must not be empty');
         expect(content.contains('<svg') && content.contains('</svg>'), isTrue,
             reason: '${file.path} must contain valid <svg> tags');
       }
     });
 
-    test('Core official Google NotebookLM SVGs and Lottie files are present', () {
+    test('Core official Google NotebookLM SVGs and Lottie files are present',
+        () {
       const requiredFiles = [
         'assets/images/notebooklm_round.svg',
         'assets/images/gemini_notebook_with_text_only_light.svg',
@@ -56,8 +73,10 @@ void main() {
 
       for (final path in requiredFiles) {
         final file = File(path);
-        expect(file.existsSync(), isTrue, reason: 'Required official asset $path must exist on disk');
-        expect(file.lengthSync() > 100, isTrue, reason: 'Asset $path must not be an empty dummy stub');
+        expect(file.existsSync(), isTrue,
+            reason: 'Required official asset $path must exist on disk');
+        expect(file.lengthSync() > 100, isTrue,
+            reason: 'Asset $path must not be an empty dummy stub');
       }
     });
 
@@ -81,35 +100,41 @@ void main() {
       expect(AppTheme.citationBgDark, equals(OTColors.surfaceSubtleDark));
     });
 
-    test('Radius tokens conform to Apple HIG 3-token system', () {
-      expect(AppTheme.radiusPill, equals(100.0));
+    test('Radius tokens keep controls disciplined and reserve full rounding',
+        () {
+      expect(AppTheme.radiusPill, equals(14.0));
       expect(AppTheme.radiusFull, equals(100.0));
       expect(AppTheme.radiusXS, equals(8.0));
-      expect(AppTheme.radiusCard, equals(16.0));
+      expect(AppTheme.radiusCard, equals(20.0));
       expect(AppTheme.radiusM, equals(16.0));
       expect(AppTheme.radiusS, equals(8.0));
     });
   });
 
   group('3. Agent Catalog & Module Entitlements Tests', () {
-    test('Default catalog contains core Turats disciplines with full metadata', () {
+    test('Default catalog contains core Turats disciplines with full metadata',
+        () {
       final agents = AgentModel.defaultAgents;
       expect(agents.length, greaterThanOrEqualTo(5));
 
       for (final a in agents) {
         expect(a.id, isNotEmpty, reason: 'Agent ID must not be empty');
         expect(a.title, isNotEmpty, reason: 'Agent Title must not be empty');
-        expect(a.titleArabic, isNotEmpty, reason: 'Agent Arabic Title must not be empty');
-        expect(a.category, isNotEmpty, reason: 'Agent Category must not be empty');
+        expect(a.titleArabic, isNotEmpty,
+            reason: 'Agent Arabic Title must not be empty');
+        expect(a.category, isNotEmpty,
+            reason: 'Agent Category must not be empty');
 
         if (a.isActive) {
-          expect(a.price1m, isNotNull, reason: 'Active agent must have pricing configured');
+          expect(a.price1m, isNotNull,
+              reason: 'Active agent must have pricing configured');
           expect(a.price1m! > 0, isTrue);
         }
       }
     });
 
-    test('Active agent books contain valid titles, authors, and descriptions', () {
+    test('Active agent books contain valid titles, authors, and descriptions',
+        () {
       final activeAgents = AgentModel.defaultAgents.where((a) => a.isActive);
       expect(activeAgents.isNotEmpty, isTrue);
 
@@ -153,7 +178,8 @@ void main() {
     });
 
     test('Arabic search correctly finds substrings regardless of voweling', () {
-      const text = 'مَتْنُ سَفِينَةِ النَّجَاةِ فِي أُصُولِ الدِّينِ وَالْفِقْهِ';
+      const text =
+          'مَتْنُ سَفِينَةِ النَّجَاةِ فِي أُصُولِ الدِّينِ وَالْفِقْهِ';
       expect(ArabicUtils.matches(text, 'سفينة'), isTrue);
       expect(ArabicUtils.matches(text, 'النجاة'), isTrue);
       expect(ArabicUtils.matches(text, 'اصول'), isTrue);
@@ -178,7 +204,8 @@ void main() {
       ];
 
       for (final key in keys) {
-        expect(Loc.tr(key), isNotEmpty, reason: 'Key "$key" must be translated');
+        expect(Loc.tr(key), isNotEmpty,
+            reason: 'Key "$key" must be translated');
       }
     });
   });
