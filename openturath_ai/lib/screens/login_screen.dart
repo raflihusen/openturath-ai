@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/native_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
@@ -148,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       AppCopy.appName,
                       textAlign: TextAlign.center,
-                      style: ScholarlyFonts.newsreader(
+                      style: NativeFonts.newsreader(
                         fontSize: 32,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.6,
@@ -165,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Text(
                       AppCopy.appTagline,
                       textAlign: TextAlign.center,
-                      style: ScholarlyFonts.newsreader(
+                      style: NativeFonts.newsreader(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                         fontStyle: FontStyle.italic,
@@ -213,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     const SizedBox(width: 12),
                                     Text(
                                       AppCopy.continueWithGoogle,
-                                      style: ScholarlyFonts.outfit(
+                                      style: NativeFonts.outfit(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: -0.1,
@@ -236,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Text.rich(
                         TextSpan(
                           text: '${AppCopy.termsAgreementPrefix}\n',
-                          style: ScholarlyFonts.outfit(
+                          style: NativeFonts.outfit(
                             color: textMuted,
                             fontSize: 12,
                             height: 1.5,

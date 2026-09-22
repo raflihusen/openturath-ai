@@ -1,7 +1,7 @@
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/native_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -13,7 +13,7 @@ import '../widgets/openturath_brand.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/native_design.dart';
 import '../widgets/native_components.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/user_model.dart';
@@ -66,18 +66,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
             AppCopy.logoutDialogTitle,
-            style: OTTypography.cardTitle(color: textPrimary)
+            style: NativeTypography.cardTitle(color: textPrimary)
                 .copyWith(fontSize: 18),
           ),
           content: Text(
             AppCopy.logoutDialogBody,
-            style: OTTypography.body(color: textSecondary),
+            style: NativeTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text(AppCopy.cancel,
-                  style: OTTypography.button(color: textSecondary)),
+                  style: NativeTypography.button(color: textSecondary)),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
@@ -87,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.logoutButton,
-                  style: OTTypography.button(color: NativeColors.onAccent(isDark))),
+                  style: NativeTypography.button(color: NativeColors.onAccent(isDark))),
             ),
           ],
         );
@@ -126,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Expanded(
                 child: Text(
                   AppCopy.deleteAccountTitle,
-                  style: OTTypography.cardTitle(
+                  style: NativeTypography.cardTitle(
                           color: NativeColors.destructive(isDark))
                       .copyWith(fontSize: 18),
                 ),
@@ -135,13 +135,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           content: Text(
             AppCopy.deleteAccountBody,
-            style: OTTypography.body(color: NativeColors.textSecondary(isDark)),
+            style: NativeTypography.body(color: NativeColors.textSecondary(isDark)),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text(AppCopy.cancel,
-                  style: OTTypography.button(
+                  style: NativeTypography.button(
                       color: NativeColors.textSecondary(isDark))),
             ),
             FilledButton(
@@ -152,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
               ),
               child: Text(AppCopy.deleteAccountButton,
-                  style: OTTypography.button(color: NativeColors.onAccent(isDark))),
+                  style: NativeTypography.button(color: NativeColors.onAccent(isDark))),
             ),
           ],
         );
@@ -226,11 +226,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(99)))),
               const SizedBox(height: 18),
               Text(Loc.tr('ui_6a2b35b4ca'),
-                  style: OTTypography.cardTitle(color: textPrimary)
+                  style: NativeTypography.cardTitle(color: textPrimary)
                       .copyWith(fontSize: 19)),
               const SizedBox(height: 5),
               Text(Loc.tr('ui_b92aed18d1'),
-                  style: OTTypography.caption(color: textSecondary)),
+                  style: NativeTypography.caption(color: textSecondary)),
               const SizedBox(height: 16),
               if (summary.agentIds.contains('all_access') ||
                   summary.agentIds.contains('all_ai'))
@@ -285,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: false,
         title: Text(
           AppCopy.navSettings,
-          style: ScholarlyFonts.newsreader(
+          style: NativeFonts.newsreader(
             fontSize: 24,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.4,
@@ -351,7 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     const SizedBox(width: 10),
                                     Text(
                                       AppCopy.appearance,
-                                      style: ScholarlyFonts.outfit(
+                                      style: NativeFonts.outfit(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: textPrimary,
@@ -487,7 +487,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _isLoggingOut
                                   ? AppCopy.loggingOut
                                   : AppCopy.logoutButton,
-                              style: ScholarlyFonts.outfit(
+                              style: NativeFonts.outfit(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
                                 color: NativeColors.destructive(isDark),
@@ -518,7 +518,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           )
                         : Text(
                             AppCopy.deleteAccountButton,
-                            style: ScholarlyFonts.outfit(
+                            style: NativeFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w500,
                               color: NativeColors.destructive(isDark),
@@ -552,7 +552,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         title: Text(
           AppCopy.aboutTitle,
-          style: OTTypography.corpusTitle(color: textPrimary)
+          style: NativeTypography.corpusTitle(color: textPrimary)
               .copyWith(fontSize: 20),
         ),
         content: SingleChildScrollView(
@@ -563,24 +563,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               Text(
                 AppCopy.versionWithTagline(_appVersion),
-                style: OTTypography.captionMedium(color: textSecondary),
+                style: NativeTypography.captionMedium(color: textSecondary),
               ),
               const SizedBox(height: 12),
               Text(
                 AppCopy.aboutDescription,
-                style: OTTypography.body(color: textPrimary),
+                style: NativeTypography.body(color: textPrimary),
               ),
               const SizedBox(height: 12),
               Text(
                 AppCopy.aboutScholarlyPrinciple,
-                style: OTTypography.caption(color: textSecondary),
+                style: NativeTypography.caption(color: textSecondary),
               ),
               const SizedBox(height: 16),
               const Center(child: OpenTurathMark(size: 64)),
               const SizedBox(height: 12),
-              Text(Loc.tr('brandPhilosophyTitle'), style: OTTypography.cardTitle(color: textPrimary)),
+              Text(Loc.tr('brandPhilosophyTitle'), style: NativeTypography.cardTitle(color: textPrimary)),
               const SizedBox(height: 8),
-              Text(Loc.tr('brandPhilosophy'), style: OTTypography.body(color: textSecondary)),
+              Text(Loc.tr('brandPhilosophy'), style: NativeTypography.body(color: textSecondary)),
               const SizedBox(height: 16),
               Divider(height: 1, color: border),
               const SizedBox(height: 8),
@@ -646,7 +646,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               shape:
                   RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
-            child: Text(AppCopy.close, style: OTTypography.button()),
+            child: Text(AppCopy.close, style: NativeTypography.button()),
           ),
         ],
       ),
@@ -672,7 +672,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Expanded(
               child: Text(
                 Loc.text(title),
-                style: OTTypography.captionMedium(color: textPrimary),
+                style: NativeTypography.captionMedium(color: textPrimary),
               ),
             ),
             Icon(Icons.chevron_right_rounded, size: 16, color: textSecondary),
@@ -753,7 +753,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(width: 6),
               Text(
                 Loc.text(title),
-                style: ScholarlyFonts.outfit(
+                style: NativeFonts.outfit(
                   fontSize: 12,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected ? activeFg : inactiveFg,
@@ -831,7 +831,7 @@ class _PassMeta extends StatelessWidget {
       children: [
         Text(
           label,
-          style: ScholarlyFonts.outfit(
+          style: NativeFonts.outfit(
             color: Colors.white.withValues(alpha: 0.58),
             fontSize: 9.5,
             fontWeight: FontWeight.w600,
@@ -843,7 +843,7 @@ class _PassMeta extends StatelessWidget {
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: ScholarlyFonts.outfit(
+          style: NativeFonts.outfit(
             color: valueColor,
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
@@ -885,9 +885,9 @@ class _AccessPortfolioRow extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                Text(Loc.text(title), style: OTTypography.bodyMedium(color: color)),
+                Text(Loc.text(title), style: NativeTypography.bodyMedium(color: color)),
                 const SizedBox(height: 2),
-                Text(subtitle, style: OTTypography.caption(color: muted)),
+                Text(subtitle, style: NativeTypography.caption(color: muted)),
               ])),
         ]),
       );
@@ -931,11 +931,11 @@ class _SettingsTile extends StatelessWidget {
         ),
         title: Text(
           Loc.text(title),
-          style: OTTypography.bodyMedium(color: textPrimary),
+          style: NativeTypography.bodyMedium(color: textPrimary),
         ),
         subtitle: Text(
           subtitle,
-          style: OTTypography.caption(color: textSecondary),
+          style: NativeTypography.caption(color: textSecondary),
         ),
         trailing: trailing,
       ),

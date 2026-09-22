@@ -4,7 +4,7 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/native_design.dart';
 import '../widgets/native_components.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
 import '../models/agent_model.dart';
@@ -157,7 +157,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             children: [
                               Text(
                                 Loc.tr('chooseField'),
-                                style: OTTypography.cardTitle(color: ink),
+                                style: NativeTypography.cardTitle(color: ink),
                               ),
                               IconButton(
                                 icon: Icon(Icons.close_rounded, color: muted),
@@ -213,7 +213,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       children: [
                                         Text(
                                           a.title,
-                                          style: OTTypography.bodyMedium(color: ink).copyWith(
+                                          style: NativeTypography.bodyMedium(color: ink).copyWith(
                                             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                                           ),
                                         ),

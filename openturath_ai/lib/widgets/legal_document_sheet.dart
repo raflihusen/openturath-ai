@@ -1,9 +1,9 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/design/native_fonts.dart';
 
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
 import '../core/legal_copy.dart';
 
 /// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
@@ -94,11 +94,11 @@ class LegalDocumentSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final canvas = NativeColors.canvas(isDark);
+    final surface = NativeColors.surface(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
@@ -134,7 +134,7 @@ class LegalDocumentSheet extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.newsreader(
+                      style: NativeFonts.newsreader(
                         fontSize: 21,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.3,
@@ -144,7 +144,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: GoogleFonts.outfit(
+                      style: NativeFonts.outfit(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w400,
                         color: textSecondary,
@@ -181,7 +181,7 @@ class LegalDocumentSheet extends StatelessWidget {
                   children: [
                     Text(
                       sec.title,
-                      style: GoogleFonts.newsreader(
+                      style: NativeFonts.newsreader(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
@@ -191,7 +191,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       sec.content,
-                      style: GoogleFonts.outfit(
+                      style: NativeFonts.outfit(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w400,
                         height: 1.55,
@@ -221,7 +221,7 @@ class LegalDocumentSheet extends StatelessWidget {
               ),
               child: Text(
                 'Tutup',
-                style: GoogleFonts.outfit(
+                style: NativeFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: canvas,

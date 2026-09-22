@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/native_fonts.dart';
 import '../core/localization.dart';
 import '../core/arabic_utils.dart';
 import '../core/design/native_design.dart';
@@ -8,7 +8,7 @@ import '../core/design/native_design.dart';
 import '../core/app_snackbar.dart';
 
 import '../core/design/ot_radius.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_typography.dart';
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
@@ -136,7 +136,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     const SizedBox(height: 20),
                     Text(
                       NativeCopy.text('catalog'),
-                      style: ScholarlyFonts.newsreader(
+                      style: NativeFonts.newsreader(
                         color: ink,
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
@@ -146,7 +146,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     const SizedBox(height: 4),
                     Text(
                       widget.collectionName,
-                      style: ScholarlyFonts.outfit(
+                      style: NativeFonts.outfit(
                         color: textSecondary,
                         fontSize: 13,
                       ),
@@ -157,11 +157,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     TextField(
                       controller: _searchController,
                       focusNode: _searchFocusNode,
-                      style: ScholarlyFonts.outfit(color: ink, fontSize: 14),
+                      style: NativeFonts.outfit(color: ink, fontSize: 14),
                       decoration: InputDecoration(
                         hintText:
                             NativeCopy.text('searchBooks'),
-                        hintStyle: ScholarlyFonts.outfit(
+                        hintStyle: NativeFonts.outfit(
                             color: textSecondary, fontSize: 13),
                         prefixIcon: Icon(Icons.search_rounded,
                             color: textSecondary, size: 20),
@@ -229,7 +229,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       children: [
                         Text(
                           NativeCopy.text('results', ['${visibleBooks.length}', '${widget.books.length}']),
-                          style: ScholarlyFonts.outfit(
+                          style: NativeFonts.outfit(
                             fontSize: 12,
                             color: textSecondary,
                           ),
@@ -254,7 +254,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       const SizedBox(height: 12),
                       Text(
                         NativeCopy.text('noBooks'),
-                        style: ScholarlyFonts.outfit(
+                        style: NativeFonts.outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: ink,
@@ -263,7 +263,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       const SizedBox(height: 4),
                       Text(
                         NativeCopy.text('searchHint'),
-                        style: ScholarlyFonts.outfit(
+                        style: NativeFonts.outfit(
                           fontSize: 12,
                           color: textSecondary,
                         ),
@@ -338,7 +338,7 @@ class _FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: ScholarlyFonts.outfit(
+          style: NativeFonts.outfit(
             color: isSelected ? NativeColors.canvas(isDark) : ink,
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -382,7 +382,7 @@ class _BookEditorialItem extends StatelessWidget {
               width: 36,
               child: Text(
                 index.toString().padLeft(2, '0'),
-                style: ScholarlyFonts.outfit(
+                style: NativeFonts.outfit(
                   color: textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -397,14 +397,14 @@ class _BookEditorialItem extends StatelessWidget {
                     children: [
                       Text(
                         book.deathLabel,
-                        style: OTTypography.caption(color: textSecondary),
+                        style: NativeTypography.caption(color: textSecondary),
                       ),
                       const Spacer(),
                       Text(
                         book.section,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: OTTypography.caption(color: textSecondary),
+                        style: NativeTypography.caption(color: textSecondary),
                       ),
                     ],
                   ),
@@ -417,7 +417,7 @@ class _BookEditorialItem extends StatelessWidget {
                       child: Text(
                         book.title,
                         textAlign: TextAlign.right,
-                        style: ScholarlyFonts.scheherazadeNew(
+                        style: NativeFonts.scheherazadeNew(
                           color: ink,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -429,7 +429,7 @@ class _BookEditorialItem extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     Loc.tr('authorCredit', [book.author]),
-                    style: ScholarlyFonts.outfit(
+                    style: NativeFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       color: textSecondary,
@@ -439,7 +439,7 @@ class _BookEditorialItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       Loc.tr('editorCredit', [book.editor]),
-                      style: ScholarlyFonts.outfit(
+                      style: NativeFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
@@ -453,7 +453,7 @@ class _BookEditorialItem extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         book.volumeLabel,
-                        style: ScholarlyFonts.outfit(
+                        style: NativeFonts.outfit(
                             fontSize: 11, color: textSecondary),
                       ),
                       const SizedBox(width: 14),
@@ -462,7 +462,7 @@ class _BookEditorialItem extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         book.pagesLabel,
-                        style: ScholarlyFonts.outfit(
+                        style: NativeFonts.outfit(
                             fontSize: 11, color: textSecondary),
                       ),
                     ],
@@ -559,7 +559,7 @@ Bidang: ${book.section}''';
                     const SizedBox(width: 8),
                     Text(
                       'Rujukan Kitab',
-                      style: ScholarlyFonts.outfit(
+                      style: NativeFonts.outfit(
                         color: ink,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -612,7 +612,7 @@ Bidang: ${book.section}''';
                                 ),
                                 child: Text(
                                   book.section.toUpperCase(),
-                                  style: ScholarlyFonts.outfit(
+                                  style: NativeFonts.outfit(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: textSecondary,
@@ -622,7 +622,7 @@ Bidang: ${book.section}''';
                               const Spacer(),
                               Text(
                                 book.deathLabel,
-                                style: ScholarlyFonts.outfit(
+                                style: NativeFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: textSecondary,
@@ -638,7 +638,7 @@ Bidang: ${book.section}''';
                               child: Text(
                                 book.title,
                                 textAlign: TextAlign.right,
-                                style: ScholarlyFonts.scheherazadeNew(
+                                style: NativeFonts.scheherazadeNew(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: ink,
@@ -650,7 +650,7 @@ Bidang: ${book.section}''';
                           const SizedBox(height: 12),
                           Text(
                             book.author,
-                            style: ScholarlyFonts.newsreader(
+                            style: NativeFonts.newsreader(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: ink,
@@ -662,7 +662,7 @@ Bidang: ${book.section}''';
                     const SizedBox(height: 24),
                     Text(
                       NativeCopy.text('edition'),
-                      style: ScholarlyFonts.outfit(
+                      style: NativeFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
@@ -703,7 +703,7 @@ Bidang: ${book.section}''';
                         icon: const Icon(Icons.content_copy_rounded, size: 18),
                         label: Text(
                           NativeCopy.text('copyReference'),
-                          style: ScholarlyFonts.outfit(
+                          style: NativeFonts.outfit(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -764,7 +764,7 @@ class _DetailRow extends StatelessWidget {
             width: MediaQuery.sizeOf(context).width < 400 ? 100 : 130,
             child: Text(
               label,
-              style: ScholarlyFonts.outfit(
+              style: NativeFonts.outfit(
                 fontSize: 12,
                 color: textSecondary,
               ),
@@ -773,7 +773,7 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: Text(
               displayValue,
-              style: ScholarlyFonts.outfit(
+              style: NativeFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: ink,

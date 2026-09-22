@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/native_fonts.dart';
 import '../core/localization.dart';
 import '../core/design/native_design.dart';
 import 'package:shared_preferences/shared_preferences.dart';

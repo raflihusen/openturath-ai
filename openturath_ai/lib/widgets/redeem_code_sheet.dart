@@ -2,8 +2,8 @@ import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_design.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../services/subscription_service.dart';
@@ -106,11 +106,11 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final bgSurface = OTColors.surface(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final borderColor = OTColors.border(isDark);
-    final canvas = OTColors.canvas(isDark);
+    final bgSurface = NativeColors.surface(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final borderColor = NativeColors.border(isDark);
+    final canvas = NativeColors.canvas(isDark);
 
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
@@ -141,7 +141,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
               children: [
                 Text(
                   Loc.tr('ui_6f8fc6f8d5'),
-                  style: OTTypography.cardTitle(color: textPrimary).copyWith(
+                  style: NativeTypography.cardTitle(color: textPrimary).copyWith(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -155,7 +155,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             const SizedBox(height: 4),
             Text(
               Loc.tr('ui_75edf97617'),
-              style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
+              style: NativeTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
             TextField(
@@ -169,14 +169,14 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
               onChanged: (_) {
                 if (_inlineError != null) setState(() => _inlineError = null);
               },
-              style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+              style: NativeTypography.bodyMedium(color: textPrimary).copyWith(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
               decoration: InputDecoration(
                 hintText: Loc.tr('ui_259e2d8b2c'),
-                hintStyle: OTTypography.body(color: textSecondary).copyWith(
+                hintStyle: NativeTypography.body(color: textSecondary).copyWith(
                   letterSpacing: 0,
                   fontSize: 14,
                 ),
@@ -216,7 +216,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                     ? AppLoader(dotSize: 6, color: canvas)
                     : Text(
                         Loc.tr('ui_6f8fc6f8d5'),
-                        style: OTTypography.button(color: canvas),
+                        style: NativeTypography.button(color: canvas),
                       ),
               ),
             ),

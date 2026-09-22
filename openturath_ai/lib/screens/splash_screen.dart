@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/design/native_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen>
                 children: [
                   Text(
                     'OpenTurath',
-                    style: GoogleFonts.newsreader(
+                    style: NativeFonts.newsreader(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.6,

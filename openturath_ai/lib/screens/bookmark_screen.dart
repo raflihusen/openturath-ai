@@ -3,14 +3,14 @@ import '../widgets/native_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/design/native_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
 import '../core/bookmark_content.dart';
 import '../core/design/native_design.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
@@ -152,19 +152,19 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           shape: RoundedRectangleBorder(borderRadius: OTRadius.dialogBorder),
           title: Text(
             AppCopy.deleteNoteTitle,
-            style: OTTypography.screenTitle(color: textPrimary)
+            style: NativeTypography.screenTitle(color: textPrimary)
                 .copyWith(fontSize: 18),
           ),
           content: Text(
             AppCopy.deleteNoteDesc,
-            style: OTTypography.body(color: textSecondary),
+            style: NativeTypography.body(color: textSecondary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text(
                 AppCopy.cancel,
-                style: OTTypography.button(color: textSecondary),
+                style: NativeTypography.button(color: textSecondary),
               ),
             ),
             FilledButton(
@@ -176,7 +176,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
               child: Text(
                 AppCopy.delete,
-                style: OTTypography.button(color: NativeColors.onAccent(isDark)),
+                style: NativeTypography.button(color: NativeColors.onAccent(isDark)),
               ),
             ),
           ],
@@ -295,7 +295,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         scrolledUnderElevation: 0,
         title: Text(
           AppCopy.savedCollection,
-          style: OTTypography.corpusTitle(color: textPrimary).copyWith(
+          style: NativeTypography.corpusTitle(color: textPrimary).copyWith(
             fontSize: 22,
             fontWeight: FontWeight.w600,
           ),
@@ -354,10 +354,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         _filter();
                       });
                     },
-                    style: OTTypography.body(color: textPrimary),
+                    style: NativeTypography.body(color: textPrimary),
                     decoration: InputDecoration(
                       hintText: AppCopy.searchSavedHint,
-                      hintStyle: OTTypography.body(color: textSecondary),
+                      hintStyle: NativeTypography.body(color: textSecondary),
                       prefixIcon: Icon(
                         Icons.search_rounded,
                         size: 18,
@@ -393,7 +393,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   AppCopy.savedNotesCount(_filteredBookmarks.length),
-                  style: OTTypography.caption(color: textSecondary).copyWith(
+                  style: NativeTypography.caption(color: textSecondary).copyWith(
                     fontSize: 12,
                     letterSpacing: 0.2,
                   ),
@@ -443,7 +443,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       child: Center(
                         child: Text(
                           cat,
-                          style: OTTypography.caption(
+                          style: NativeTypography.caption(
                             color: isSelected ? canvas : textSecondary,
                           ).copyWith(
                             fontSize: 12,
@@ -506,7 +506,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           const SizedBox(height: OTSpacing.lg),
                                           Text(
                                             AppCopy.noSavedTitle,
-                                            style: OTTypography.cardTitle(
+                                            style: NativeTypography.cardTitle(
                                                     color: textPrimary)
                                                 .copyWith(
                                               fontSize: 16,
@@ -517,7 +517,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                           Text(
                                             AppCopy.noSavedDescription,
                                             textAlign: TextAlign.center,
-                                            style: OTTypography.body(
+                                            style: NativeTypography.body(
                                                     color: textSecondary)
                                                 .copyWith(
                                               fontSize: 13,
@@ -549,7 +549,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                                 borderRadius:
                                                     OTRadius.buttonBorder,
                                               ),
-                                              textStyle: OTTypography.button(),
+                                              textStyle: NativeTypography.button(),
                                             ),
                                           ),
                                         ],
@@ -855,7 +855,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     ),
                     child: Text(
                       pillLabel,
-                      style: OTTypography.captionMedium(color: widget.accent)
+                      style: NativeTypography.captionMedium(color: widget.accent)
                           .copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
@@ -875,7 +875,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                   const SizedBox(width: 8),
                   Text(
                     _formatRelativeTime(item.effectiveTime),
-                    style: OTTypography.caption(
+                    style: NativeTypography.caption(
                       color: widget.textSecondary.withValues(alpha: 0.8),
                     ).copyWith(fontSize: 11),
                   ),
@@ -889,7 +889,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                 text: displayTitle,
                 query: widget.searchQuery,
                 baseStyle:
-                    OTTypography.cardTitle(color: widget.textPrimary).copyWith(
+                    NativeTypography.cardTitle(color: widget.textPrimary).copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -907,7 +907,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       ? parseAiAnswerContent(readableAnswer).preview
                       : _getSnippet(readableAnswer, widget.searchQuery),
                   query: widget.searchQuery,
-                  baseStyle: OTTypography.caption(color: widget.textSecondary)
+                  baseStyle: NativeTypography.caption(color: widget.textSecondary)
                       .copyWith(
                     fontSize: 12,
                   ),
@@ -937,7 +937,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           '${item.bookReference}${item.pageNumber.isNotEmpty ? " · Hlm. ${item.pageNumber}" : ""}',
                       query: widget.searchQuery,
                       baseStyle:
-                          OTTypography.captionMedium(color: widget.textPrimary),
+                          NativeTypography.captionMedium(color: widget.textPrimary),
                       isDark: isDark,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -962,7 +962,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       text: item.arabicExcerpt,
                       query: widget.searchQuery,
                       isRtl: true,
-                      baseStyle: GoogleFonts.scheherazadeNew(
+                      baseStyle: NativeFonts.scheherazadeNew(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         height: 1.8,
@@ -981,7 +981,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 600)
                           : item.fullAnswer.trim(),
                       query: widget.searchQuery,
-                      baseStyle: GoogleFonts.outfit(
+                      baseStyle: NativeFonts.outfit(
                         fontSize: 13,
                         height: 1.5,
                         color: widget.textSecondary,
@@ -994,17 +994,17 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           ? _cleanExcerpt(item.fullAnswer, 300)
                           : item.fullAnswer.trim(),
                       styleSheet: MarkdownStyleSheet(
-                        p: GoogleFonts.outfit(
+                        p: NativeFonts.outfit(
                           fontSize: 13,
                           height: 1.5,
                           color: widget.textSecondary,
                         ),
-                        strong: GoogleFonts.outfit(
+                        strong: NativeFonts.outfit(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: widget.textPrimary,
                         ),
-                        blockquote: GoogleFonts.outfit(
+                        blockquote: NativeFonts.outfit(
                           fontSize: 12.5,
                           fontStyle: FontStyle.italic,
                           color: widget.textSecondary,
@@ -1027,7 +1027,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         side: BorderSide(color: widget.border, width: 0.8),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
-                        textStyle: OTTypography.captionMedium(),
+                        textStyle: NativeTypography.captionMedium(),
                         shape: RoundedRectangleBorder(
                             borderRadius: OTRadius.buttonBorder),
                       ),
@@ -1050,7 +1050,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                         side: BorderSide(color: widget.border, width: 0.8),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
-                        textStyle: OTTypography.captionMedium(),
+                        textStyle: NativeTypography.captionMedium(),
                         shape: RoundedRectangleBorder(
                             borderRadius: OTRadius.buttonBorder),
                       ),
@@ -1067,7 +1067,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 8),
-                          textStyle: OTTypography.captionMedium(),
+                          textStyle: NativeTypography.captionMedium(),
                           shape: RoundedRectangleBorder(
                               borderRadius: OTRadius.buttonBorder),
                         ),

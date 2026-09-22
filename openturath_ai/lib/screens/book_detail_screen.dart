@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_design.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
@@ -223,12 +223,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final background = OTColors.canvas(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
+    final surface = NativeColors.surface(isDark);
+    final background = NativeColors.canvas(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final surfaceSubtle = NativeColors.surfaceSubtle(isDark);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -245,7 +245,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           ),
           title: Text(
             'بطاقة الكتاب',
-            style: OTTypography.arabicReading(color: textPrimary).copyWith(
+            style: NativeTypography.arabicReading(color: textPrimary).copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
@@ -306,7 +306,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ),
                             child: Text(
                               widget.book.sectionArabic ?? 'نص محقق معتمد',
-                              style: OTTypography.caption(color: textSecondary)
+                              style: NativeTypography.caption(color: textSecondary)
                                   .copyWith(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 11,
@@ -318,7 +318,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             textDirection: TextDirection.ltr,
                             child: Text(
                               widget.book.editionId,
-                              style: OTTypography.caption(color: textSecondary)
+                              style: NativeTypography.caption(color: textSecondary)
                                   .copyWith(
                                 fontFamily: 'Courier',
                                 fontSize: 11,
@@ -331,7 +331,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       Text(
                         widget.book.titleArabic,
                         textAlign: TextAlign.right,
-                        style: OTTypography.arabicDisplay(color: textPrimary)
+                        style: NativeTypography.arabicDisplay(color: textPrimary)
                             .copyWith(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
@@ -347,7 +347,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           'المختصر: ${widget.book.shortTitleArabic!}',
                           textAlign: TextAlign.right,
                           style:
-                              OTTypography.arabicReading(color: textSecondary)
+                              NativeTypography.arabicReading(color: textSecondary)
                                   .copyWith(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -362,7 +362,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           child: Text(
                             widget.book.titleLatin!,
                             textAlign: TextAlign.right,
-                            style: OTTypography.body(color: textSecondary)
+                            style: NativeTypography.body(color: textSecondary)
                                 .copyWith(
                               fontStyle: FontStyle.italic,
                               fontSize: 13,
@@ -401,7 +401,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               children: [
                                 Text(
                                   widget.book.authorArabic,
-                                  style: OTTypography.arabicReading(
+                                  style: NativeTypography.arabicReading(
                                           color: textPrimary)
                                       .copyWith(
                                     fontSize: 18,
@@ -414,7 +414,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     textDirection: TextDirection.ltr,
                                     child: Text(
                                       widget.book.authorLatin!,
-                                      style: OTTypography.caption(
+                                      style: NativeTypography.caption(
                                           color: textSecondary),
                                     ),
                                   ),
@@ -435,7 +435,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     widget.book.verifiedDeathYearHijri != null
                                         ? 'سنة الوفاة: ${widget.book.verifiedDeathYearHijri} هـ'
                                         : 'سنة الوفاة: غير مدونة',
-                                    style: OTTypography.arabicReading(
+                                    style: NativeTypography.arabicReading(
                                             color: textSecondary)
                                         .copyWith(
                                       fontSize: 12.5,
@@ -603,7 +603,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget _buildSectionHeader(String title, Color color) {
     return Text(
       title,
-      style: OTTypography.arabicReading(color: color).copyWith(
+      style: NativeTypography.arabicReading(color: color).copyWith(
         fontSize: 13,
         fontWeight: FontWeight.w700,
       ),
@@ -623,7 +623,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         const SizedBox(width: 8),
         Text(
           label,
-          style: OTTypography.arabicReading(color: textSecondary).copyWith(
+          style: NativeTypography.arabicReading(color: textSecondary).copyWith(
             fontSize: 13.5,
             fontWeight: FontWeight.w500,
           ),
@@ -633,7 +633,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           child: Text(
             value,
             textAlign: TextAlign.start,
-            style: OTTypography.arabicReading(color: textPrimary).copyWith(
+            style: NativeTypography.arabicReading(color: textPrimary).copyWith(
               fontSize: 13.5,
               fontWeight: FontWeight.w600,
             ),

@@ -1,7 +1,7 @@
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/native_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/arabic_utils.dart';
@@ -9,7 +9,7 @@ import '../core/routes.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/native_design.dart';
 import '../widgets/native_components.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
 import '../models/field_model.dart';
@@ -209,7 +209,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         appBar: AppBar(
           title: Text(
             Loc.text(title),
-            style: OTTypography.corpusTitle(color: textPrimary)
+            style: NativeTypography.corpusTitle(color: textPrimary)
                 .copyWith(fontSize: 28),
           ),
           centerTitle: false,
@@ -323,7 +323,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                         ? AppCopy.noAssistantsFound
                                         : AppCopy.noAssistantsFound,
                                     style:
-                                        OTTypography.body(color: textSecondary),
+                                        NativeTypography.body(color: textSecondary),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -436,7 +436,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         child: Text(
           Loc.text(label),
           style:
-              OTTypography.caption(color: isSelected ? activeFg : textSecondary)
+              NativeTypography.caption(color: isSelected ? activeFg : textSecondary)
                   .copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 12,

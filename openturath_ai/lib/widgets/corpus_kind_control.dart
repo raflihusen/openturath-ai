@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/design/native_design.dart';
 import '../core/localization.dart';
 import '../core/design/ot_motion.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_typography.dart';
 import '../models/agent_model.dart';
 
 /// Pengalih direktori yang sengaja datar: ini navigasi, bukan kartu.
@@ -84,7 +84,7 @@ class _CorpusKindTab extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: OTTypography.bodyMedium(
+              style: NativeTypography.bodyMedium(
                 color: selected ? textPrimary : textSecondary,
               ),
             ),

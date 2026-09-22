@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_fonts.dart';
+import '../core/design/native_design.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/catalog_card_content.dart';
 import '../models/book_model.dart';
@@ -24,11 +24,11 @@ class BookRowItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final surfaceSubtle = OTColors.surfaceSubtle(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final surface = NativeColors.surface(isDark);
+    final surfaceSubtle = NativeColors.surfaceSubtle(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
 
     // Format jilid bersih tanpa duplikasi kata
     String? formattedVolumes;
@@ -80,7 +80,7 @@ class BookRowItem extends StatelessWidget {
                       ),
                       child: Text(
                         '#${book.editionId}',
-                        style: GoogleFonts.firaCode(
+                        style: NativeFonts.firaCode(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w600,
                           color: textSecondary,
@@ -94,7 +94,7 @@ class BookRowItem extends StatelessWidget {
                           book.sectionArabic!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.outfit(
+                          style: NativeFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                             color: textSecondary,
@@ -116,7 +116,7 @@ class BookRowItem extends StatelessWidget {
                         ),
                         child: Text(
                           'w. ${book.verifiedDeathYearHijri} H',
-                          style: GoogleFonts.outfit(
+                          style: NativeFonts.outfit(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
@@ -138,7 +138,7 @@ class BookRowItem extends StatelessWidget {
                         child: Text(
                           book.titleArabic,
                           textAlign: TextAlign.right,
-                          style: OTTypography.arabicReading(
+                          style: NativeTypography.arabicReading(
                             color: textPrimary,
                           ).copyWith(
                             fontSize: 18,
@@ -174,7 +174,7 @@ class BookRowItem extends StatelessWidget {
                         book.authorArabic,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.outfit(
+                        style: NativeFonts.outfit(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                           color: textSecondary,
@@ -194,7 +194,7 @@ class BookRowItem extends StatelessWidget {
                       fact,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.outfit(
+                      style: NativeFonts.outfit(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w500,
                         color: textSecondary,

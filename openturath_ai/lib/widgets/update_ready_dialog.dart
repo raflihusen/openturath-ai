@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/design/native_fonts.dart';
 import '../core/theme.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
 import '../services/update_service.dart';
 
 /// Modal dialog elegan yang muncul otomatis saat pembaruan selesai diunduh di latar belakang
@@ -59,7 +59,7 @@ class UpdateReadyDialog extends StatelessWidget {
               ),
               child: Icon(
                 Icons.system_update_rounded,
-                color: OTColors.textPrimary(isDark),
+                color: NativeColors.textPrimary(isDark),
                 size: 26,
               ),
             ),
@@ -68,7 +68,7 @@ class UpdateReadyDialog extends StatelessWidget {
             // Judul Pembaruan
             Text(
               isDesktop ? 'Pembaruan Tersedia' : 'Pembaruan Telah Siap',
-              style: GoogleFonts.newsreader(
+              style: NativeFonts.newsreader(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -86,7 +86,7 @@ class UpdateReadyDialog extends StatelessWidget {
               ),
               child: Text(
                 'Versi $version',
-                style: GoogleFonts.outfit(
+                style: NativeFonts.outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: textSecondary,
@@ -101,7 +101,7 @@ class UpdateReadyDialog extends StatelessWidget {
               isDesktop
                   ? 'Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.'
                   : 'Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.',
-              style: GoogleFonts.outfit(
+              style: NativeFonts.outfit(
                 fontSize: 13,
                 height: 1.5,
                 color: textSecondary,
@@ -125,7 +125,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   releaseNotes,
-                  style: GoogleFonts.outfit(
+                  style: NativeFonts.outfit(
                     fontSize: 12,
                     color: textSecondary,
                     height: 1.4,
@@ -148,8 +148,8 @@ class UpdateReadyDialog extends StatelessWidget {
                   updateService.installNow();
                 },
                 style: FilledButton.styleFrom(
-                  backgroundColor: OTColors.accent(isDark),
-                  foregroundColor: OTColors.onAccent(isDark),
+                  backgroundColor: NativeColors.accent(isDark),
+                  foregroundColor: NativeColors.onAccent(isDark),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                   ),
@@ -157,7 +157,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   isDesktop ? 'Perbarui Sekarang' : 'Pasang & Muat Ulang Sekarang',
-                  style: GoogleFonts.outfit(
+                  style: NativeFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -180,7 +180,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   'Nanti Saja',
-                  style: GoogleFonts.outfit(
+                  style: NativeFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),

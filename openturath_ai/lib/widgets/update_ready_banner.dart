@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/design/native_fonts.dart';
 import '../core/theme.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
 import '../services/update_service.dart';
 
 class UpdateReadyBanner extends StatelessWidget {
@@ -51,7 +51,7 @@ class UpdateReadyBanner extends StatelessWidget {
                 ),
                 child: Icon(
                   Icons.system_update_rounded,
-                  color: OTColors.textPrimary(isDark),
+                  color: NativeColors.textPrimary(isDark),
                   size: 20,
                 ),
               ),
@@ -62,7 +62,7 @@ class UpdateReadyBanner extends StatelessWidget {
                   children: [
                     Text(
                       isDesktop ? 'Pembaruan v$version Tersedia' : 'Pembaruan v$version Siap Dipasang',
-                      style: GoogleFonts.outfit(
+                      style: NativeFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
@@ -73,7 +73,7 @@ class UpdateReadyBanner extends StatelessWidget {
                       isDesktop
                           ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
                           : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
-                      style: GoogleFonts.outfit(
+                      style: NativeFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
@@ -87,8 +87,8 @@ class UpdateReadyBanner extends StatelessWidget {
               FilledButton(
                 onPressed: () => updateService.installNow(),
                 style: FilledButton.styleFrom(
-                  backgroundColor: OTColors.accent(isDark),
-                  foregroundColor: OTColors.onAccent(isDark),
+                  backgroundColor: NativeColors.accent(isDark),
+                  foregroundColor: NativeColors.onAccent(isDark),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   minimumSize: const Size(64, 36),
                   shape: RoundedRectangleBorder(
@@ -98,7 +98,7 @@ class UpdateReadyBanner extends StatelessWidget {
                 ),
                 child: Text(
                   isDesktop ? 'Perbarui' : 'Pasang',
-                  style: GoogleFonts.outfit(
+                  style: NativeFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),

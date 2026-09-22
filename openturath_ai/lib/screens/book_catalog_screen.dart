@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../core/design/native_fonts.dart';
 
 import '../core/app_copy.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
-import '../core/design/ot_colors.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_design.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
@@ -218,12 +218,12 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final background = OTColors.canvas(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final primaryAccent = OTColors.accent(isDark);
+    final surface = NativeColors.surface(isDark);
+    final background = NativeColors.canvas(isDark);
+    final border = NativeColors.border(isDark);
+    final textPrimary = NativeColors.textPrimary(isDark);
+    final textSecondary = NativeColors.textSecondary(isDark);
+    final primaryAccent = NativeColors.accent(isDark);
 
     return Scaffold(
       backgroundColor: background,
@@ -241,12 +241,12 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           children: [
             Text(
               AppCopy.referenceBooks,
-              style: OTTypography.screenTitle(color: textPrimary)
+              style: NativeTypography.screenTitle(color: textPrimary)
                   .copyWith(fontSize: 18),
             ),
             Text(
               _resolveSubtitle(),
-              style: OTTypography.caption(color: textSecondary)
+              style: NativeTypography.caption(color: textSecondary)
                   .copyWith(fontSize: 11),
             ),
           ],
@@ -257,7 +257,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               onPressed: _clearFilters,
               child: Text(
                 'Hapus filter',
-                style: OTTypography.button(color: primaryAccent)
+                style: NativeTypography.button(color: primaryAccent)
                     .copyWith(fontSize: 13),
               ),
             ),
@@ -290,11 +290,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       child: TextField(
                         controller: _searchCtrl,
                         onChanged: _onSearchChanged,
-                        style: GoogleFonts.outfit(
+                        style: NativeFonts.outfit(
                             fontSize: 13.5, color: textPrimary),
                         decoration: InputDecoration(
                           hintText: 'Cari kitab, pengarang, atau penahkik…',
-                          hintStyle: GoogleFonts.outfit(
+                          hintStyle: NativeFonts.outfit(
                             fontSize: 13.5,
                             color: textSecondary.withValues(alpha: 0.7),
                           ),
@@ -351,7 +351,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                     Text(
                       'Menampilkan ${_formatNumber(_filteredBooks!.length)} dari ${_formatNumber(_allBooks!.length)} kitab',
                       style:
-                          OTTypography.caption(color: textSecondary).copyWith(
+                          NativeTypography.caption(color: textSecondary).copyWith(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -377,7 +377,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                             if (_selectedType != null) _selectedType!,
                             if (_selectedCentury != null) _selectedCentury!,
                           ].join(' · '),
-                          style: OTTypography.caption(color: primaryAccent)
+                          style: NativeTypography.caption(color: primaryAccent)
                               .copyWith(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -465,11 +465,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               shrinkWrap: true,
               children: [
                 Text('Saring koleksi',
-                    style: OTTypography.screenTitle(color: textPrimary)),
+                    style: NativeTypography.screenTitle(color: textPrimary)),
                 const SizedBox(height: 16),
                 if (_availableSections.length > 1) ...[
                   Text('Bidang',
-                      style: OTTypography.captionMedium(color: textSecondary)),
+                      style: NativeTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
                       children: _availableSections
@@ -489,7 +489,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   const SizedBox(height: 16),
                 ],
                 Text('Era',
-                    style: OTTypography.captionMedium(color: textSecondary)),
+                    style: NativeTypography.captionMedium(color: textSecondary)),
                 Wrap(
                     spacing: 8,
                     children: eraChoices
@@ -516,7 +516,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 if (_hasTypes) ...[
                   const SizedBox(height: 16),
                   Text('Jenis kitab',
-                      style: OTTypography.captionMedium(color: textSecondary)),
+                      style: NativeTypography.captionMedium(color: textSecondary)),
                   Wrap(
                       spacing: 8,
                       children: _types
@@ -749,7 +749,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               Text(
                 _errorMessage!,
                 textAlign: TextAlign.center,
-                style: OTTypography.body(color: textPrimary),
+                style: NativeTypography.body(color: textPrimary),
               ),
               const SizedBox(height: 16),
               AppleInteractiveWrapper(
@@ -763,7 +763,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   ),
                   child: Text(
                     AppCopy.tryAgain,
-                    style: OTTypography.button(color: Colors.white),
+                    style: NativeTypography.button(color: Colors.white),
                   ),
                 ),
               ),
@@ -784,7 +784,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               const SizedBox(height: 12),
               Text(
                 'Belum ada kitab yang cocok',
-                style: OTTypography.bodyMedium(color: textPrimary).copyWith(
+                style: NativeTypography.bodyMedium(color: textPrimary).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -792,7 +792,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               Text(
                 'Coba gunakan kata kunci lain, nama pengarang, atau penahkik.',
                 textAlign: TextAlign.center,
-                style: OTTypography.caption(color: textSecondary),
+                style: NativeTypography.caption(color: textSecondary),
               ),
               if (_hasActiveFilters) ...[
                 const SizedBox(height: 16),
@@ -807,7 +807,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                     ),
                     child: Text(
                       'Hapus filter',
-                      style: OTTypography.button(color: textPrimary)
+                      style: NativeTypography.button(color: textPrimary)
                           .copyWith(fontSize: 13),
                     ),
                   ),
@@ -889,7 +889,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: OTTypography.caption(
+            style: NativeTypography.caption(
                     color: isSelected ? activeFg : textSecondary)
                 .copyWith(
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
