@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import '../widgets/native_theme.dart';
 import 'package:flutter/services.dart';
 import '../core/design/native_fonts.dart';
 import '../core/localization.dart';
@@ -289,7 +292,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (_) =>
-                                  OpenTurathBookDetailPage(book: book),
+                                  NativeTheme(child: OpenTurathBookDetailPage(book: book)),
                             ),
                           );
                         },
@@ -479,7 +482,7 @@ class _BookEditorialItem extends StatelessWidget {
 }
 
 /// Halaman Detail Kitab & Metadata Rujukan Ilmiah
-class OpenTurathBookDetailPage extends StatelessWidget {
+class OpenTurathBookDetailPage extends StatefulWidget {
   const OpenTurathBookDetailPage({
     super.key,
     required this.book,
@@ -487,18 +490,58 @@ class OpenTurathBookDetailPage extends StatelessWidget {
 
   final OpenTurathBook book;
 
+  @override
+  State<OpenTurathBookDetailPage> createState() => _OpenTurathBookDetailPageState();
+}
+
+String nativeBookReferenceId(OpenTurathBook book) => 'book_editorial_${sha256.convert(utf8.encode(jsonEncode([book.id, book.title, book.author, book.editor, book.publisher, book.edition, book.volumes, book.sourceFolder])))}';
+
+String nativeBookCitation(OpenTurathBook book) => [
+  '[OpenTurath]',
+  '${NativeCopy.text('sources')}: ${book.title}',
+  '${NativeCopy.text('author')}: ${book.author} (${book.deathLabel})',
+  if (book.editor.isNotEmpty) '${NativeCopy.text('editor')}: ${book.editor}',
+  if (book.publisher.isNotEmpty) '${NativeCopy.text('publisher')}: ${book.publisher}',
+  if (book.edition.isNotEmpty) '${NativeCopy.text('edition')}: ${book.edition}',
+  '${NativeCopy.text('volumes')}: ${book.volumeLabel}',
+  '${NativeCopy.text('pages')}: ${book.pagesLabel}',
+  if (book.section.isNotEmpty) '${NativeCopy.text('disciplines')}: ${book.section}',
+].join('\n');
+
+class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
+  OpenTurathBook get book => widget.book;
+  bool _saving = false;
+  bool _saved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _readSaved();
+  }
+
+  Future<void> _readSaved() async {
+    try {
+      final saved = await BookmarkService().isBookmarked(nativeBookReferenceId(book));
+      if (mounted) setState(() => _saved = saved);
+    } catch (_) {
+      // Saving remains available even if the initial storage read fails.
+    }
+  }
+
   Future<void> _handleBookmark(BuildContext context) async {
+    if (_saving || _saved) return;
+    setState(() => _saving = true);
+    try {
     final uid = AuthService().currentUser?.uid;
     final bookmark = BookmarkModel(
-      id: 'book_${book.id}_${DateTime.now().millisecondsSinceEpoch}',
+      id: nativeBookReferenceId(book),
       title: book.title,
       agentId: 'pustaka_turats',
       agentTitle: book.section,
       fieldName: book.section,
       fieldId: 'pustaka',
       arabicExcerpt: book.title,
-      fullAnswer:
-          'Kitab ${book.title} karya ${book.author} (${book.deathLabel}). Tahqiq: ${book.editor}. Penerbit: ${book.publisher} (${book.edition}). Jilid: ${book.volumeLabel} (${book.pagesLabel}).',
+      fullAnswer: nativeBookCitation(book),
       bookReference: '${book.title} - ${book.author}',
       pageNumber: book.pagesLabel,
       author: book.author,
@@ -509,18 +552,18 @@ class OpenTurathBookDetailPage extends StatelessWidget {
 
     await BookmarkService().addBookmark(bookmark, userId: uid);
     if (context.mounted) {
+      setState(() => _saved = true);
       AppSnackBar.success(context, NativeCopy.text('saved'));
+    }
+    } catch (_) {
+      if (context.mounted) AppSnackBar.error(context, NativeCopy.text('saveFailed'));
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
   Future<void> _handleCopyCitation(BuildContext context) async {
-    final citation = '''[Rujukan Turats OpenTurath AI]
-Kitab: ${book.title}
-Pengarang: ${book.author} (${book.deathLabel})
-Tahqiq/Editor: ${book.editor}
-Penerbit: ${book.publisher} (${book.edition})
-Volume: ${book.volumeLabel} | Halaman: ${book.pagesLabel}
-Bidang: ${book.section}''';
+    final citation = nativeBookCitation(book);
 
     await Clipboard.setData(ClipboardData(text: citation));
     if (context.mounted) {
@@ -552,29 +595,28 @@ Bidang: ${book.section}''';
                     IconButton(
                       icon:
                           Icon(Icons.arrow_back_rounded, color: ink, size: 22),
-                      tooltip: 'Kembali',
+                      tooltip: NativeCopy.text('back'),
                       onPressed: () => Navigator.of(context).maybePop(),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      'Rujukan Kitab',
+                    Expanded(child: Text(
+                      NativeCopy.text('sources'),
                       style: NativeFonts.outfit(
                         color: ink,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
-                    ),
-                    const Spacer(),
+                    )),
                     IconButton(
                       icon: Icon(Icons.copy_rounded, color: ink, size: 20),
                       tooltip: NativeCopy.text('copyReference'),
                       onPressed: () => _handleCopyCitation(context),
                     ),
                     IconButton(
-                      icon: Icon(Icons.bookmark_add_outlined,
+                      icon: Icon(_saved ? Icons.bookmark_added_outlined : Icons.bookmark_add_outlined,
                           color: ink, size: 20),
-                      tooltip: NativeCopy.text('saveReference'),
-                      onPressed: () => _handleBookmark(context),
+                      tooltip: NativeCopy.text(_saved ? 'saved' : 'saveReference'),
+                      onPressed: _saving || _saved ? null : () => _handleBookmark(context),
                     ),
                   ],
                 ),
@@ -686,7 +728,7 @@ Bidang: ${book.section}''';
                           _DetailRow(
                               label: NativeCopy.text('volumes'), value: book.volumeLabel),
                           _DetailRow(
-                              label: Loc.tr('pageCount', ['']), value: book.pagesLabel),
+                              label: NativeCopy.text('pages'), value: book.pagesLabel),
                           _DetailRow(
                               label: NativeCopy.text('sources'),
                               value: book.sourceFolder,
@@ -695,6 +737,12 @@ Bidang: ${book.section}''';
                       ),
                     ),
                     const SizedBox(height: 28),
+                    FilledButton.icon(
+                      onPressed: _saving || _saved ? null : () => _handleBookmark(context),
+                      icon: Icon(_saved ? Icons.bookmark_added_outlined : Icons.bookmark_add_outlined),
+                      label: Text(NativeCopy.text(_saving ? 'loading' : _saved ? 'saved' : 'saveReference')),
+                    ),
+                    const SizedBox(height: 12),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
