@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class UpdateReadyDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
@@ -67,7 +69,7 @@ class UpdateReadyDialog extends StatelessWidget {
 
             // Judul Pembaruan
             Text(
-              isDesktop ? 'Pembaruan Tersedia' : 'Pembaruan Telah Siap',
+              Loc.tr(isDesktop ? 'updateAvailable' : 'updateReady', [version]),
               style: NativeFonts.newsreader(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -85,7 +87,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: Text(
-                'Versi $version',
+                'v$version',
                 style: NativeFonts.outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

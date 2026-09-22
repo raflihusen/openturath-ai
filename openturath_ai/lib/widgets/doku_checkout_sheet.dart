@@ -10,9 +10,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/constants.dart';
 import '../core/checkout_completion.dart';
 import '../core/theme.dart';
-import '../core/design/ot_colors.dart';
+import '../core/design/native_design.dart';
 import '../services/subscription_service.dart';
-import 'app_loader.dart';
+import 'native_components.dart';
 import 'promo_price.dart';
 
 /// DokuCheckoutSheet: In-App Modal Pembayaran DOKU dengan Deteksi Otomatis
@@ -201,7 +201,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           _confirmationContext = ctx;
           return AlertDialog(
           backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
           title: Text(
             Loc.tr('ui_56a2f9f730'),
             style: ScholarlyFonts.outfit(
@@ -232,7 +232,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
               child: Text(
                 Loc.tr('close'),
                 style: ScholarlyFonts.outfit(
-                  color: OTColors.destructive(isDark),
+                  color: NativeColors.destructive(isDark),
                 ),
               ),
             ),
@@ -370,17 +370,17 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
         height: screenHeight * 0.92,
         decoration: BoxDecoration(
           color: surfaceColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24.0)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(isDark ? 100 : 40),
-              blurRadius: 24,
+              color: Colors.black.withValues(alpha: .03),
+              blurRadius: 12,
               offset: const Offset(0, -4),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24.0)),
           child: Stack(
             children: [
               // ── 1. Main Sheet Content (Header + WebView) ──
@@ -412,13 +412,13 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withAlpha(30),
+                                color: NativeColors.marja(isDark).withAlpha(30),
                                 borderRadius: BorderRadius.circular(AppTheme.radiusXS),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.lock_rounded,
                                 size: 18,
-                                color: Color(0xFF10B981),
+                                color: NativeColors.marja(isDark),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -674,7 +674,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                     TweenAnimationBuilder<double>(
                       tween: Tween<double>(begin: 0.0, end: 1.0),
                       duration: const Duration(milliseconds: 750),
-                      curve: Curves.elasticOut,
+                      curve: const Cubic(.16, 1, .3, 1),
                       builder: (context, scale, _) {
                         return Transform.scale(
                           scale: scale,
@@ -683,23 +683,23 @@ class _CelebratorySuccessView extends StatelessWidget {
                             height: 88,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF10B981).withValues(alpha: 0.16),
+                              color: NativeColors.marja(isDark).withValues(alpha: 0.16),
                               border: Border.all(
-                                color: const Color(0xFF10B981),
+                                color: NativeColors.marja(isDark),
                                 width: 3,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                                  blurRadius: 28,
-                                  spreadRadius: 4,
+                                  color: NativeColors.marja(isDark).withValues(alpha: 0.03),
+                                  blurRadius: 12,
+                                  spreadRadius: 0,
                                 ),
                               ],
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.check_rounded,
                               size: 50,
-                              color: Color(0xFF10B981),
+                              color: NativeColors.marja(isDark),
                             ),
                           ),
                         );
@@ -745,7 +745,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                               style: ScholarlyFonts.outfit(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
-                                color: const Color(0xFF10B981),
+                                color: NativeColors.marja(isDark),
                               ),
                             ),
                           ),
@@ -778,7 +778,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
                     // Unified AppLoader
-                    AppLoader(color: accent, dotSize: 8, spacing: 4),
+                    const NativeLoading(),
                   ],
                 ),
               ),
@@ -789,4 +789,3 @@ class _CelebratorySuccessView extends StatelessWidget {
     );
   }
 }
-

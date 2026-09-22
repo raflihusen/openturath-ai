@@ -5,6 +5,7 @@ import '../core/design/native_fonts.dart';
 
 import '../core/design/native_design.dart';
 import '../core/legal_copy.dart';
+import '../core/localization.dart';
 
 /// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
 /// Mengadopsi prinsip desain "The Quiet Scholar" dengan keterbacaan tinggi,
@@ -91,6 +92,7 @@ class LegalDocumentSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -133,7 +135,7 @@ class LegalDocumentSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      Loc.text(title),
                       style: NativeFonts.newsreader(
                         fontSize: 21,
                         fontWeight: FontWeight.w600,
@@ -143,7 +145,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      subtitle,
+                      Loc.isArabic || Loc.language == 'en' ? Loc.tr('policyOriginal') : subtitle,
                       style: NativeFonts.outfit(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w400,

@@ -1,3 +1,4 @@
+import '../core/localization.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class UpdateReadyBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final updateService = UpdateService();
 
     return AnimatedBuilder(
