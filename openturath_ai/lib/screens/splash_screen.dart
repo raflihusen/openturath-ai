@@ -5,7 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
-import '../widgets/app_loader.dart';
+import '../widgets/native_components.dart';
+import '../core/design/native_design.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -75,24 +76,24 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppTheme.canvasDark;
-    const textPrimary = AppTheme.textPrimaryDark;
-    const accent = AppTheme.textSecondaryDark;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final bg = NativeColors.canvas(dark);
+    final textPrimary = NativeColors.textPrimary(dark);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
         systemNavigationBarColor: bg,
-        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarIconBrightness: dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: bg,
         body: Center(
           child: FadeTransition(
-            opacity: _fadeAnimation,
+            opacity: MediaQuery.disableAnimationsOf(context) ? const AlwaysStoppedAnimation(1.0) : _fadeAnimation,
             child: ScaleTransition(
-              scale: _scaleAnimation,
+              scale: MediaQuery.disableAnimationsOf(context) ? const AlwaysStoppedAnimation(1.0) : _scaleAnimation,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -106,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
                   const SizedBox(height: 28),
-                  const AppLoader(color: accent, dotSize: 7, spacing: 3.5),
+                  const NativeLoading(),
                 ],
               ),
             ),

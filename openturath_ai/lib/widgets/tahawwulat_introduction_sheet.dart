@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/localization.dart';
+import '../core/design/native_design.dart';
+import 'native_components.dart';
 
 import '../core/design/ot_colors.dart';
 import '../models/agent_model.dart';
@@ -67,7 +70,7 @@ class TahawwulatIntroductionSheet extends StatefulWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       enableDrag: true,
-      builder: (ctx) => TahawwulatIntroductionSheet(
+      builder: (ctx) => _LocalizedTahawwulatIntroduction(
         agent: agent,
         onSelectSubAgent: onSelectSubAgent,
         onOpenMain: onOpenMain,
@@ -1925,5 +1928,46 @@ class _TahawwulatIntroductionSheetState
         color: OTColors.border(isDark).withValues(alpha: 0.7),
       ),
     );
+  }
+}
+class _LocalizedTahawwulatIntroduction extends StatelessWidget {
+  const _LocalizedTahawwulatIntroduction({this.agent, this.onSelectSubAgent, this.onOpenMain});
+  final AgentModel? agent;
+  final ValueChanged<SubAgentModel>? onSelectSubAgent;
+  final VoidCallback? onOpenMain;
+  @override
+  Widget build(BuildContext context) {
+    Loc.watch(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return SafeArea(child: FractionallySizedBox(heightFactor: .92, child: Container(
+      decoration: BoxDecoration(color: NativeColors.canvas(dark), borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
+      child: Column(children: [
+        Align(alignment: AlignmentDirectional.centerEnd, child: CloseButton(onPressed: () => Navigator.pop(context))),
+        Expanded(child: ListView(padding: const EdgeInsets.fromLTRB(24, 0, 24, 32), children: [
+          Text(Loc.tr('introTitle'), style: NativeType.title(dark, size: 30)),
+          const SizedBox(height: 24),
+          for (final section in ['introFoundation', 'introMethod', 'introReferences']) ...[
+            Text(Loc.tr(section), style: NativeType.title(dark, size: 22)),
+            const SizedBox(height: 10),
+            Text(Loc.tr('${section}Body'), style: NativeType.body(dark)),
+            const SizedBox(height: 24),
+          ],
+          if (agent != null) ...[
+            Text(NativeCopy.text('fivePaths'), style: NativeType.title(dark, size: 22)),
+            const SizedBox(height: 12),
+            for (final sub in agent!.subAgents ?? <SubAgentModel>[])
+              NativePress(onTap: onSelectSubAgent == null ? null : () { Navigator.pop(context); onSelectSubAgent!(sub); },
+                child: Padding(padding: const EdgeInsets.symmetric(vertical: 16), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(sub.name, style: NativeType.title(dark, size: 20)),
+                  const SizedBox(height: 6), Text(NativeCopy.role(sub.id), style: NativeType.meta(dark)),
+                ]))),
+          ],
+          const SizedBox(height: 16),
+          OutlinedButton(onPressed: () => showModalBottomSheet<void>(context: context, isScrollControlled: true,
+            builder: (_) => TahawwulatIntroductionSheet(agent: agent)),
+            child: Text(Loc.tr('originalArticle'))),
+        ])),
+      ]),
+    )));
   }
 }

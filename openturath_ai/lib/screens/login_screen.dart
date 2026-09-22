@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
+import '../core/design/native_design.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
@@ -86,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _stagger({required int delayMs, required Widget child}) {
+    if (MediaQuery.disableAnimationsOf(context)) return child;
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
       duration: Duration(milliseconds: 350 + delayMs),
@@ -106,16 +108,17 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    const bg = AppTheme.canvasDark;
-    const textPrimary = AppTheme.textPrimaryDark;
-    const textMuted = AppTheme.textSecondaryDark;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final bg = NativeColors.canvas(dark);
+    final textPrimary = NativeColors.textPrimary(dark);
+    final textMuted = NativeColors.textSecondary(dark);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
         systemNavigationBarColor: bg,
-        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarIconBrightness: dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: bg,
@@ -135,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // ── 1. Visual Symbol: Arch Artwork dengan Fade Bawah Mulus ──
                   _stagger(
                     delayMs: 40,
-                    child: const OpenTurathMark(size: 148, color: AppTheme.textPrimaryDark),
+                    child: OpenTurathMark(size: 80, color: textPrimary),
                   ),
                   const LanguageSwitcher(),
 
@@ -160,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _stagger(
                     delayMs: 140,
                     child: Text(
-                      'AI for Islamic Scholarship',
+                      AppCopy.appTagline,
                       textAlign: TextAlign.center,
                       style: ScholarlyFonts.newsreader(
                         fontSize: 16,
@@ -172,22 +175,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 56),
+                  const SizedBox(height: 32),
 
                   // ── 4. High-Contrast Solid White Action Pill ──
                   _stagger(
                     delayMs: 200,
                     child: AppleInteractiveWrapper(
                       onTap: _isLoading ? null : _signIn,
-                      hapticType: HapticFeedbackType.medium,
+                      hapticType: HapticFeedbackType.selection,
                       child: SizedBox(
-                        height: 52,
+                        height: MediaQuery.textScalerOf(context).scale(52).clamp(52, 120),
                         width: double.infinity,
                         child: FilledButton(
                           onPressed: _isLoading ? null : _signIn,
                           style: FilledButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF0E0E10),
+                            backgroundColor: textPrimary,
+                            foregroundColor: NativeColors.onAccent(dark),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100),
                             ),
