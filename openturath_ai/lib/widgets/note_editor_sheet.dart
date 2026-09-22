@@ -275,9 +275,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     try {
       await _saveNote();
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(NativeCopy.text('saveFailed'))));
+      }
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

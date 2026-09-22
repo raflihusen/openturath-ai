@@ -42,8 +42,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     _initialized = true;
     final args = ModalRoute.of(context)?.settings.arguments;
     final agent = args is Map ? args['agent'] : null;
-    if (agent is AgentModel)
+    if (agent is AgentModel) {
       _isTahawwulat = agent.id.startsWith('fiqh_tahawwulat');
+    }
     if (agent is AgentModel && _specialists.any((a) => a.id == agent.id)) {
       _selectedAgentId = agent.id;
     }

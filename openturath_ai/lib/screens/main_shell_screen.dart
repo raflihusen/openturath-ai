@@ -1,12 +1,12 @@
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../core/scholarly_fonts.dart';
+import '../core/design/native_fonts.dart';
 import '../core/app_config.dart';
 import '../core/app_copy.dart';
 import '../core/design/native_design.dart';
 import '../widgets/native_theme.dart';
-import '../core/design/ot_typography.dart';
+import '../core/design/native_typography.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_radius.dart';
 import '../models/agent_model.dart';
@@ -361,7 +361,7 @@ class _GoogleNavBarItem extends StatelessWidget {
               Loc.text(label),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: ScholarlyFonts.outfit(
+              style: NativeFonts.outfit(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 letterSpacing: -0.1,
@@ -437,7 +437,7 @@ class _RailItem extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               Loc.text(label),
-              style: OTTypography.captionMedium(
+              style: NativeTypography.captionMedium(
                 color: isSelected ? activeFg : unselected,
               ),
             ),

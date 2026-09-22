@@ -212,8 +212,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       .instance.activeTab?.agent;
                                   for (final agent in _agents) {
                                     if (target == null &&
-                                        agent.id == _lastOpenedAgentId)
+                                        agent.id == _lastOpenedAgentId) {
                                       target = agent;
+                                    }
                                   }
                                   final selected = target;
                                   return NativeSection(
@@ -416,9 +417,10 @@ class _RecentNotesState extends State<_RecentNotes> {
     return FutureBuilder<List<BookmarkModel>>(
         future: _notes,
         builder: (context, snapshot) {
-          if (snapshot.hasError)
+          if (snapshot.hasError) {
             return NativeEmpty(
                 title: NativeCopy.text('error'), onAction: _changed);
+          }
           if (!snapshot.hasData) return const NativeLoading();
           final notes = [...snapshot.data!]
             ..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));

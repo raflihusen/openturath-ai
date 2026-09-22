@@ -499,8 +499,9 @@ class _OpenTurathBookDetailPageState extends State<OpenTurathBookDetailPage> {
         AppSnackBar.success(context, NativeCopy.text('saved'));
       }
     } catch (_) {
-      if (context.mounted)
+      if (context.mounted) {
         AppSnackBar.error(context, NativeCopy.text('saveFailed'));
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }

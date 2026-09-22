@@ -50,8 +50,9 @@ class _NativeLibraryPageState extends State<NativeLibraryPage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!;
-            if (data.metadata == null)
+            if (data.metadata == null) {
               return BookCatalogScreen(agent: widget.agent);
+            }
             return OpenTurathBookLibraryPage(
                 books: data.books,
                 collectionName: Loc.isArabic
