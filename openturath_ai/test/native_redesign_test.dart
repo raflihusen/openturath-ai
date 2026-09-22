@@ -70,7 +70,7 @@ void main() {
           }
           for (final sub in agent.subAgents!) {
             final label = find.text(sub.name);
-            await tester.ensureVisible(label);
+            await tester.scrollUntilVisible(label, 240, maxScrolls: 60);
             await tester.pumpAndSettle();
             await tester.tap(label);
             expect(selected, sub.id);
