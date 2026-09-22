@@ -115,6 +115,17 @@ class OpenTurathCatalogRepository {
     'bibliografi_faharis': 'assets/data/26_KATALOG_BIBLIOGRAFI_DAN_FAHARIS.json',
   };
 
+  /// Native catalog routes must never silently substitute an unrelated corpus.
+  /// Longest known prefix resolves a persona to its actual parent collection.
+  String? resolveNativeCatalogKey(String key) {
+    final normalized = key.replaceAll('-', '_').toLowerCase();
+    if (_moduleToCatalogFile.containsKey(normalized)) return normalized;
+    final parents = _moduleToCatalogFile.keys
+        .where((candidate) => normalized.startsWith('${candidate}_')).toList()
+      ..sort((a, b) => b.length.compareTo(a.length));
+    return parents.firstOrNull;
+  }
+
   Map<String, AiLibraryMetadata>? _metadataCache;
   final Map<String, List<OpenTurathBook>> _booksCache = {};
 
@@ -143,7 +154,7 @@ class OpenTurathCatalogRepository {
   }
 
   /// Mengambil metadata untuk modul atau asisten tertentu
-  Future<AiLibraryMetadata?> getMetadataForModule(String key) async {
+  Future<AiLibraryMetadata?> getMetadataForModule(String key, {bool allowFallback = true}) async {
     final all = await loadAllMetadata();
     if (all.containsKey(key)) return all[key];
 
@@ -157,12 +168,15 @@ class OpenTurathCatalogRepository {
       }
     }
 
-    return all['fiqh_syafii'];
+    return allowFallback ? all['fiqh_syafii'] : null;
   }
 
   /// Memuat daftar kitab untuk modul atau asisten tertentu dari katalog JSON
-  Future<List<OpenTurathBook>> loadBooksForModule(String moduleKey) async {
+  Future<List<OpenTurathBook>> loadBooksForModule(String moduleKey, {bool allowFallback = true}) async {
     final cleanKey = moduleKey.replaceAll('-', '_').toLowerCase();
+    if (!allowFallback && !_moduleToCatalogFile.containsKey(cleanKey)) {
+      throw StateError('Unknown catalog: $moduleKey');
+    }
     final catalogPath = _moduleToCatalogFile[cleanKey] ??
         _moduleToCatalogFile['fiqh_syafii']!;
 
@@ -176,6 +190,7 @@ class OpenTurathCatalogRepository {
       _booksCache[catalogPath] = books;
       return books;
     } catch (_) {
+      if (!allowFallback) rethrow;
       return const [];
     }
   }

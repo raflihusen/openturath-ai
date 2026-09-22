@@ -7,7 +7,7 @@ import '../services/open_turath_catalog_repository.dart';
 import '../widgets/native_components.dart';
 import '../widgets/native_theme.dart';
 import 'book_library_editorial_screen.dart';
-import 'book_catalog_screen.dart';
+
 import 'library_metadata_overview_screen.dart';
 
 Future<void> openNativeLibrary(BuildContext context,
@@ -34,10 +34,12 @@ class _NativeLibraryPageState extends State<NativeLibraryPage> {
   void _load() {
     _data = () async {
       final repo = OpenTurathCatalogRepository.instance;
-      final metadata = await repo.getMetadataForModule(widget.agent.id);
+      final key = repo.resolveNativeCatalogKey(widget.agent.id);
+      if (key == null) throw StateError('No catalog mapped to this assistant');
+      final metadata = await repo.getMetadataForModule(key, allowFallback: false);
       final books = metadata == null
           ? <OpenTurathBook>[]
-          : await repo.loadBooksForModule(widget.agent.id);
+          : await repo.loadBooksForModule(key, allowFallback: false);
       return (metadata: metadata, books: books);
     }();
   }
@@ -51,13 +53,13 @@ class _NativeLibraryPageState extends State<NativeLibraryPage> {
           if (snapshot.hasData) {
             final data = snapshot.data!;
             if (data.metadata == null) {
-              return BookCatalogScreen(agent: widget.agent);
+              return Scaffold(appBar: AppBar(title: Text(NativeCopy.text('sources'))), body: NativeEmpty(title: NativeCopy.text('error'), onAction: () => setState(_load)));
             }
             return OpenTurathBookLibraryPage(
                 books: data.books,
                 collectionName: Loc.isArabic
-                    ? widget.agent.titleArabic
-                    : widget.agent.title,
+                    ? data.metadata!.namaArab
+                    : Loc.text(Loc.cleanTitle(data.metadata!.nama)),
                 onAbout: () => Navigator.of(context).push(
                     AiLibraryOverviewPage.route(metadata: data.metadata!)));
           }
