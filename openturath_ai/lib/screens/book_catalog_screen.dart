@@ -794,6 +794,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           return BookRowItem(
             book: book,
             searchQuery: _searchQuery,
+            isFirst: index == 0,
+            isLast: index == _filteredBooks!.length - 1,
             onTap: () => _openBookDetail(book),
           );
         },

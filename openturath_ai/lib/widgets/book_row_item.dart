@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/catalog_card_content.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_typography.dart';
 import '../models/book_model.dart';
@@ -13,11 +14,15 @@ class BookRowItem extends StatelessWidget {
     required this.book,
     required this.onTap,
     this.searchQuery,
+    this.isFirst = false,
+    this.isLast = false,
   });
 
   final CanonicalBookPresentation book;
   final VoidCallback onTap;
   final String? searchQuery;
+  final bool isFirst;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +43,31 @@ class BookRowItem extends StatelessWidget {
       onTap: onTap,
       pressedScale: 0.99,
       hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.zero,
+      borderRadius: BorderRadius.vertical(
+        top: isFirst ? const Radius.circular(OTRadius.card) : Radius.zero,
+        bottom: isLast ? const Radius.circular(OTRadius.card) : Radius.zero,
+      ),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: OTColors.border(dark)),
+          color: OTColors.surface(dark),
+          borderRadius: BorderRadius.vertical(
+            top: isFirst ? const Radius.circular(OTRadius.card) : Radius.zero,
+            bottom: isLast ? const Radius.circular(OTRadius.card) : Radius.zero,
           ),
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: OTColors.border(dark),
+                    width: 0.7,
+                  ),
+                ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: OTSpacing.base),
+          padding: const EdgeInsets.symmetric(
+            horizontal: OTSpacing.base,
+            vertical: OTSpacing.base,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
