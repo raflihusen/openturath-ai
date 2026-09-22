@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:openturath_ai/models/open_turath_book.dart';
+import 'package:openturath_ai/models/book_model.dart';
+import 'package:openturath_ai/screens/book_detail_screen.dart';
 import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -180,6 +182,54 @@ void main() {
           find.text(NativeCopy.text('noBooks')), 240,
           scrollable: find.byType(Scrollable).first);
       expect(find.text(NativeCopy.text('noBooks')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('native theme does not change the parent or sibling theme',
+      (tester) async {
+    Color? nativeColor;
+    Color? siblingColor;
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple)
+              .copyWith(primary: Colors.purple)),
+      home: Column(children: [
+        NativeTheme(child: Builder(builder: (context) {
+          nativeColor = Theme.of(context).colorScheme.primary;
+          return const SizedBox.shrink();
+        })),
+        Builder(builder: (context) {
+          siblingColor = Theme.of(context).colorScheme.primary;
+          return const SizedBox.shrink();
+        }),
+      ]),
+    ));
+    expect(nativeColor, NativeColors.textPrimary(false));
+    expect(siblingColor, Colors.purple);
+  });
+
+  for (final locale in ['id', 'en', 'ar']) {
+    testWidgets('canonical native controls follow $locale', (tester) async {
+      AppConfig.localeNotifier.value = locale;
+      await tester.pumpWidget(MaterialApp(
+        locale: Locale(locale),
+        supportedLocales: Loc.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        builder: (context, child) => LocaleScope(child: child!),
+        home: const NativeTheme(
+            child: BookDetailScreen(
+          localizedControls: true,
+          book: CanonicalBookPresentation(
+              editionId: 'test_native_edition',
+              titleArabic: 'كتاب العلم',
+              authorArabic: 'المؤلف'),
+        )),
+      ));
+      await tester.pump();
+      expect(find.byTooltip(NativeCopy.text('back')), findsOneWidget);
+      expect(find.byTooltip(NativeCopy.text('copyReference')), findsOneWidget);
+      expect(find.text(NativeCopy.text('sources')), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }

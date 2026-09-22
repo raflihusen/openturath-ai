@@ -32,7 +32,8 @@ class BookDetailScreen extends StatefulWidget {
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
   final ResearchNotesService _notesService = ResearchNotesService();
-  String _label(String key, String legacy) => widget.localizedControls ? NativeCopy.text(key) : legacy;
+  String _label(String key, String legacy) =>
+      widget.localizedControls ? NativeCopy.text(key) : legacy;
   bool _isSaving = false;
   bool _isSaved = false;
 
@@ -66,7 +67,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaved = false;
             _isSaving = false;
           });
-          AppSnackBar.show(context, message: _label('removedReference', 'تمت إزالة الكتاب من الملاحظات'));
+          AppSnackBar.show(context,
+              message:
+                  _label('removedReference', 'تمت إزالة الكتاب من الملاحظات'));
         }
       } else {
         final agent = _resolveTargetAgent();
@@ -125,13 +128,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaving = false;
           });
           HapticFeedback.mediumImpact();
-          AppSnackBar.success(context, _label('saved', 'تم حفظ بيانات الكتاب في الملاحظات'));
+          AppSnackBar.success(
+              context, _label('saved', 'تم حفظ بيانات الكتاب في الملاحظات'));
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.error(context, _label('saveFailed', 'تعذر تحديث الملاحظات'));
+        AppSnackBar.error(
+            context, _label('saveFailed', 'تعذر تحديث الملاحظات'));
       }
     }
   }
@@ -236,7 +241,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final surfaceSubtle = NativeColors.surfaceSubtle(isDark);
 
     return Directionality(
-      textDirection: widget.localizedControls ? Directionality.of(context) : TextDirection.rtl,
+      textDirection: widget.localizedControls
+          ? Directionality.of(context)
+          : TextDirection.rtl,
       child: Scaffold(
         backgroundColor: background,
         appBar: AppBar(
@@ -265,7 +272,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     ? (isDark ? Colors.white : Colors.black)
                     : textSecondary,
               ),
-              tooltip: _isSaved ? _label('removeReference', 'إزالة من الملاحظات') : _label('saveReference', 'حفظ في الملاحظات'),
+              tooltip: _isSaved
+                  ? _label('removeReference', 'إزالة من الملاحظات')
+                  : _label('saveReference', 'حفظ في الملاحظات'),
               onPressed: _isSaving ? null : _toggleSaveBook,
             ),
             IconButton(
@@ -392,7 +401,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader(_label('authorPeriod', 'المؤلف والوفاة'), textSecondary),
+                      _buildSectionHeader(
+                          _label('authorPeriod', 'المؤلف والوفاة'),
+                          textSecondary),
                       const SizedBox(height: 10),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,7 +481,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader(_label('classification', 'التصنيف والمصنف'), textSecondary),
+                      _buildSectionHeader(
+                          _label('classification', 'التصنيف والمصنف'),
+                          textSecondary),
                       const SizedBox(height: 12),
                       if (widget.book.sectionArabic != null &&
                           widget.book.sectionArabic!.isNotEmpty) ...[
@@ -549,7 +562,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionHeader(
-                          _label('edition', 'بيانات الطبع والتحقيق'), textSecondary),
+                          _label('edition', 'بيانات الطبع والتحقيق'),
+                          textSecondary),
                       const SizedBox(height: 12),
                       _buildMetaRow(
                         icon: Icons.business_outlined,
@@ -611,7 +625,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget _buildSectionHeader(String title, Color color) {
     return Text(
       title,
-      style: (widget.localizedControls ? NativeTypography.bodyMedium(color: color) : NativeTypography.arabicReading(color: color)).copyWith(
+      style: (widget.localizedControls
+              ? NativeTypography.bodyMedium(color: color)
+              : NativeTypography.arabicReading(color: color))
+          .copyWith(
         fontSize: 13,
         fontWeight: FontWeight.w700,
       ),
@@ -629,10 +646,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       Row(children: [
         Icon(icon, size: 18, color: textSecondary),
         const SizedBox(width: 8),
-        Expanded(child: Text(label, style: NativeTypography.body(color: textSecondary))),
+        Expanded(
+            child: Text(label,
+                style: NativeTypography.body(color: textSecondary))),
       ]),
       const SizedBox(height: 6),
-      Text(value, style: NativeTypography.arabicReading(color: textPrimary).copyWith(fontSize: 18, height: 1.9)),
+      Text(value,
+          style: NativeTypography.arabicReading(color: textPrimary)
+              .copyWith(fontSize: 18, height: 1.9)),
     ]);
   }
 }
