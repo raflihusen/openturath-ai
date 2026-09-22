@@ -377,7 +377,7 @@ class NativeAssistantPage extends StatelessWidget {
                                       if (agent.id == 'fiqh_tahawwulat') {
                                         
                                         final isSubscribed = user != null &&
-                                            user.hasAccessToAgent(agent.id);
+                                            user!.hasAccessToAgent(agent.id);
                                         return TahawwulatFlagshipCard(
                                           agent: agent,
                                           isSubscribed: isSubscribed,
