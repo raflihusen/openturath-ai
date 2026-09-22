@@ -87,35 +87,43 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.only(top: OTSpacing.lg, bottom: 40),
             children: [
-              Text(
-                metadata.kategori.toUpperCase(),
-                style: OTTypography.metadataTag(
-                  color: OTColors.textSecondary(dark),
-                ),
-              ),
-              const SizedBox(height: OTSpacing.md),
-              Text(
-                metadata.namaArab,
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.right,
-                style: OTTypography.arabicReading(
-                  color: OTColors.textPrimary(dark),
-                ).copyWith(fontSize: 30, height: 1.45),
-              ),
-              const SizedBox(height: OTSpacing.sm),
-              Text(
-                _readerTitle(metadata.nama),
-                style: OTTypography.pageTitle(
-                  color: OTColors.textPrimary(dark),
-                ),
-              ),
-              const SizedBox(height: OTSpacing.sm),
-              Text(
-                metadata.headlineAplikasi.isNotEmpty
-                    ? metadata.headlineAplikasi
-                    : 'Kumpulan kitab rujukan untuk mendampingi kajian Anda.',
-                style: OTTypography.body(
-                  color: OTColors.textSecondary(dark),
+              OTGroupedSection(
+                padding: const EdgeInsets.all(OTSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      metadata.kategori.toUpperCase(),
+                      style: OTTypography.metadataTag(
+                        color: OTColors.textSecondary(dark),
+                      ),
+                    ),
+                    const SizedBox(height: OTSpacing.md),
+                    Text(
+                      metadata.namaArab,
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                      style: OTTypography.arabicReading(
+                        color: OTColors.textPrimary(dark),
+                      ).copyWith(fontSize: 27, height: 1.4),
+                    ),
+                    const SizedBox(height: OTSpacing.sm),
+                    Text(
+                      _readerTitle(metadata.nama),
+                      style: OTTypography.editorialHero(
+                        color: OTColors.textPrimary(dark),
+                      ),
+                    ),
+                    const SizedBox(height: OTSpacing.sm),
+                    Text(
+                      metadata.headlineAplikasi.isNotEmpty
+                          ? metadata.headlineAplikasi
+                          : 'Kumpulan kitab rujukan untuk mendampingi kajian Anda.',
+                      style: OTTypography.body(
+                        color: OTColors.textSecondary(dark),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: OTSpacing.xl),
@@ -177,14 +185,25 @@ class _LibraryFacts extends StatelessWidget {
       ('Halaman', _format(metadata.totalHalaman)),
     ];
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (var i = 0; i < values.length; i++) ...[
-          if (i > 0) const SizedBox(width: OTSpacing.md),
-          Expanded(child: _Fact(label: values[i].$1, value: values[i].$2)),
+    return OTGroupedSection(
+      padding: const EdgeInsets.all(OTSpacing.base),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var i = 0; i < values.length; i++) ...[
+            if (i > 0)
+              Container(
+                width: 0.7,
+                height: 44,
+                margin: const EdgeInsets.symmetric(horizontal: OTSpacing.sm),
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? OTColors.borderSubtleDark
+                    : OTColors.borderSubtleLight,
+              ),
+            Expanded(child: _Fact(label: values[i].$1, value: values[i].$2)),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -198,35 +217,25 @@ class _Fact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: OTColors.borderStrong(dark), width: 1.2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: OTTypography.sectionTitle(
+            color: OTColors.textPrimary(dark),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: OTSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              value,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: OTTypography.sectionTitle(
-                color: OTColors.textPrimary(dark),
-              ),
-            ),
-            const SizedBox(height: OTSpacing.xs),
-            Text(
-              label,
-              style: OTTypography.caption(
-                color: OTColors.textSecondary(dark),
-              ),
-            ),
-          ],
+        const SizedBox(height: OTSpacing.xs),
+        Text(
+          label,
+          style: OTTypography.caption(
+            color: OTColors.textSecondary(dark),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

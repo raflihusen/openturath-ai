@@ -283,24 +283,30 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   ),
                                 ],
                               )
-                            : ListView.builder(
-                                physics: const AlwaysScrollableScrollPhysics(
-                                  parent: BouncingScrollPhysics(),
+                            : OTGroupedSection(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: OTSpacing.base,
                                 ),
-                                padding: const EdgeInsets.only(bottom: 108),
-                                itemCount: _filteredBookmarks.length,
-                                itemBuilder: (context, index) {
-                                  final item = _filteredBookmarks[index];
-                                  return _NoteIndexRow(
-                                    item: item,
-                                    source: _bookmarkDiscipline(item),
-                                    onOpen: () => _openItem(item),
-                                    onEdit: () => _openEditor(item),
-                                    onCopy: () => _copy(item),
-                                    onCopyReference: () => _copyReference(item),
-                                    onDelete: () => _delete(item),
-                                  );
-                                },
+                                child: ListView.builder(
+                                  physics: const AlwaysScrollableScrollPhysics(
+                                    parent: BouncingScrollPhysics(),
+                                  ),
+                                  padding: const EdgeInsets.only(bottom: 108),
+                                  itemCount: _filteredBookmarks.length,
+                                  itemBuilder: (context, index) {
+                                    final item = _filteredBookmarks[index];
+                                    return _NoteIndexRow(
+                                      item: item,
+                                      source: _bookmarkDiscipline(item),
+                                      onOpen: () => _openItem(item),
+                                      onEdit: () => _openEditor(item),
+                                      onCopy: () => _copy(item),
+                                      onCopyReference: () =>
+                                          _copyReference(item),
+                                      onDelete: () => _delete(item),
+                                    );
+                                  },
+                                ),
                               ),
                       ),
               ),
@@ -362,7 +368,11 @@ class _NoteIndexRow extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: OTColors.border(dark)),
+            bottom: BorderSide(
+              color:
+                  dark ? OTColors.borderSubtleDark : OTColors.borderSubtleLight,
+              width: 0.7,
+            ),
           ),
         ),
         child: Padding(

@@ -329,8 +329,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     decoration: BoxDecoration(
                       color: surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: border, width: 1.0),
+                      borderRadius: OTRadius.cardBorder,
                     ),
                     child: Column(
                       children: [
@@ -433,8 +432,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     decoration: BoxDecoration(
                       color: surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: border, width: 1.0),
+                      borderRadius: OTRadius.cardBorder,
                     ),
                     child: _SettingsTile(
                       icon: Icons.info_outline_rounded,
@@ -459,14 +457,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Container(
                     decoration: BoxDecoration(
                       color: surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: border, width: 1.0),
+                      borderRadius: OTRadius.cardBorder,
                     ),
                     child: Material(
                       color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: OTRadius.cardBorder,
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: OTRadius.cardBorder,
                         onTap: (_isLoggingOut || _isDeletingAccount)
                             ? null
                             : _logout,
@@ -827,20 +824,25 @@ class _MembershipPass extends StatelessWidget {
               'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
           child: Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: OTRadius.featureBorder,
             child: InkWell(
               onTap: onViewAccess ?? onManage,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: OTRadius.featureBorder,
               child: Ink(
                 height: 198,
                 decoration: BoxDecoration(
                   color: cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.14), width: 0.8),
+                  borderRadius: OTRadius.featureBorder,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x22000000),
+                      blurRadius: 30,
+                      offset: Offset(0, 14),
+                    ),
+                  ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: OTRadius.featureBorder,
                   child: Stack(
                     children: [
                       // Ornamen geometris halus: memberi karakter tanpa
@@ -895,7 +897,7 @@ class _MembershipPass extends StatelessWidget {
                               children: [
                                 Text(
                                   'OpenTurath',
-                                  style: ScholarlyFonts.newsreader(
+                                  style: ScholarlyFonts.outfit(
                                     color: foreground,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 21,
