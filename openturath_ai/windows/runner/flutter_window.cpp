@@ -1,6 +1,8 @@
 #include "flutter_window.h"
 
 #include <optional>
+#include <algorithm>
+#include <flutter_windows.h>
 
 #include "flutter/generated_plugin_registrant.h"
 
@@ -51,6 +53,19 @@ LRESULT
 FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
                               WPARAM const wparam,
                               LPARAM const lparam) noexcept {
+  if (message == WM_GETMINMAXINFO) {
+    const auto monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO info{sizeof(MONITORINFO)};
+    if (GetMonitorInfo(monitor, &info)) {
+      const auto dpi = FlutterDesktopGetDpiForMonitor(monitor);
+      auto* limits = reinterpret_cast<MINMAXINFO*>(lparam);
+      limits->ptMinTrackSize.x = (std::min)(MulDiv(860, dpi, 96),
+          static_cast<int>(info.rcWork.right - info.rcWork.left));
+      limits->ptMinTrackSize.y = (std::min)(MulDiv(600, dpi, 96),
+          static_cast<int>(info.rcWork.bottom - info.rcWork.top));
+    }
+    return 0;
+  }
   // Give Flutter, including plugins, an opportunity to handle window messages.
   if (flutter_controller_) {
     std::optional<LRESULT> result =
@@ -63,7 +78,7 @@ FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
 
   switch (message) {
     case WM_FONTCHANGE:
-      flutter_controller_->engine()->ReloadSystemFonts();
+      if (flutter_controller_) flutter_controller_->engine()->ReloadSystemFonts();
       break;
   }
 

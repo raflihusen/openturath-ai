@@ -297,6 +297,7 @@ class AppTheme {
         ),
       ),
       dialogTheme: DialogThemeData(
+        constraints: const BoxConstraints(maxWidth: 560),
         backgroundColor: surfaceCardDark,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: ScholarlyFonts.outfit(
@@ -466,6 +467,7 @@ class AppTheme {
         ),
       ),
       dialogTheme: DialogThemeData(
+        constraints: const BoxConstraints(maxWidth: 560),
         backgroundColor: surfaceCardLight,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: ScholarlyFonts.outfit(

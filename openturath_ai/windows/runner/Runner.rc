@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "openturath_ai" "\0"
+            VALUE "CompanyName", "OpenTurath AI" "\0"
+            VALUE "FileDescription", "OpenTurath AI" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "openturath_ai" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 OpenTurath AI. All rights reserved." "\0"
             VALUE "OriginalFilename", "openturath_ai.exe" "\0"
-            VALUE "ProductName", "openturath_ai" "\0"
+            VALUE "ProductName", "OpenTurath AI" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
