@@ -327,8 +327,45 @@ const notebookUiScript = r'''
       }, 120);
       return true;
     }
-    return false;
+  window.otSendPrompt = function(promptText) {
+    if (!promptText || typeof promptText !== 'string') return false;
+    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
+    if (!input) return false;
+    input.focus();
+    if (input.tagName.toLowerCase() === 'textarea' || input.tagName.toLowerCase() === 'input') {
+      input.value = promptText;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      input.innerText = promptText;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    setTimeout(() => {
+      const sendBtn = document.querySelector('button[aria-label*="send" i], button[aria-label*="kirim" i], [data-action*="send" i], button.send-button, form button[type="submit"]');
+      if (sendBtn && !sendBtn.disabled) {
+        sendBtn.click();
+      } else {
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }));
+      }
+    }, 60);
+    return true;
   };
+  function conversationList() {
+    const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
+    const nodes = [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
+    const list = [];
+    const seen = new Set();
+    nodes.forEach(node => {
+      const val = answerText(node);
+      if (!val || seen.has(val)) return;
+      const isQuestion = node.matches(questionSelector) || !!node.closest(questionSelector);
+      list.push({ isUser: isQuestion, text: val });
+      seen.add(val);
+    });
+    return JSON.stringify(list);
+  }
+  window.otGetConversationList = conversationList;
+
   function ready() {
     clean();
     if (accessDenied()) return false;
@@ -351,8 +388,38 @@ function accessDenied() {
   const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="access-denied" i]');
   return hasTextMatch || hasElementMatch;
 }
-window.otNotebook = {clean, ready, latest, conversation, accessDenied, setTheme: syncTheme};
+window.otNotebook = {clean, ready, latest, conversation, conversationList, accessDenied, setTheme: syncTheme};
 let scheduled = false;
+let isGenerating = false;
+let lastAnswerText = '';
+
+function checkGenerationState() {
+  const stopBtn = document.querySelector('button[aria-label*="Stop" i], button[aria-label*="Hentikan" i], [data-action*="stop" i]');
+  const currentlyGenerating = !!(stopBtn && stopBtn.offsetParent !== null);
+  const currentAnswer = latest();
+
+  if (currentlyGenerating && !isGenerating) {
+    isGenerating = true;
+    lastAnswerText = currentAnswer;
+    if (window.flutter_inappwebview?.callHandler) {
+      window.flutter_inappwebview.callHandler('otAnswerState', { state: 'generating', text: currentAnswer });
+    }
+  } else if (isGenerating) {
+    if (currentAnswer && currentAnswer !== lastAnswerText) {
+      lastAnswerText = currentAnswer;
+      if (window.flutter_inappwebview?.callHandler) {
+        window.flutter_inappwebview.callHandler('otAnswerChunk', { text: currentAnswer });
+      }
+    }
+    if (!currentlyGenerating) {
+      isGenerating = false;
+      if (window.flutter_inappwebview?.callHandler) {
+        window.flutter_inappwebview.callHandler('otAnswerState', { state: 'completed', text: currentAnswer });
+      }
+    }
+  }
+}
+
 const observer = new MutationObserver((mutations) => {
   for (const m of mutations) {
     for (const node of m.addedNodes) {
@@ -363,7 +430,11 @@ const observer = new MutationObserver((mutations) => {
   }
   if (scheduled) return;
   scheduled = true;
-  requestAnimationFrame(() => { scheduled = false; clean(); });
+  requestAnimationFrame(() => {
+    scheduled = false;
+    clean();
+    checkGenerationState();
+  });
 });
 observer.observe(document, {subtree:true, childList:true, characterData:true});
 clean();
