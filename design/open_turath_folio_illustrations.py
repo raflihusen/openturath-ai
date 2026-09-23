@@ -390,6 +390,117 @@ def screen_notes(draw, x, y):
     arrow(draw, x+346, oy+657)
 
 
+def screen_room(draw, x, y):
+    phone(draw, x, y, "07 / RUANG AI")
+    ox, oy = x+24, y+55
+    tx(draw, ox, oy, "‹", 25)
+    tx(draw, ox+26, oy+2, "Fikih Syafi'i", 20, "display")
+    right(draw, x+356, oy+8, "···", 22, "strong")
+    rule(draw, ox, oy+42, x+356, oy+42, INK)
+    tx(draw, ox, oy+58, "RUANG KAJIAN", 9, "strong", MUTED)
+    right(draw, x+356, oy+58, "Sesi aktif 01 / 03", 10, "ui", MUTED)
+    box(draw, ox, oy+87, 174, 45, INK, 13)
+    tx(draw, ox+14, oy+99, "Fikih Syafi'i", 11, "strong", WHITE)
+    box(draw, ox+187, oy+87, 145, 45, WHITE, 13, LINE)
+    tx(draw, ox+202, oy+99, "Fikih Tahawwulat", 10, "ui", MUTED)
+    tx(draw, ox, oy+157, "Matan · Syarah · Hasyiyah Mu'tabarah", 11, "ui", MUTED)
+    # The external conversation is deliberately represented as a bounded
+    # surface, so the concept does not fabricate NotebookLM interactions.
+    box(draw, ox, oy+189, 332, 397, WHITE, 16, LINE)
+    rule(draw, ox+16, oy+235, ox+316, oy+235, LINE)
+    tx(draw, ox+16, oy+204, "PERCAKAPAN", 9, "strong", MUTED)
+    right(draw, ox+315, oy+204, "NotebookLM", 9, "ui", MUTED)
+    tx(draw, ox+166, oy+341, "Area percakapan", 24, "display", INK, "mt")
+    tx(draw, ox+166, oy+375, "Konten dimuat dari ruang AI terhubung.", 11, "ui", MUTED, "mt")
+    box(draw, ox+38, oy+429, 256, 44, SOFT, 999)
+    tx(draw, ox+166, oy+440, "Ajukan pertanyaan pada asisten", 11, "ui", MUTED, "mt")
+    box(draw, ox, oy+610, 158, 48, WHITE, 14, LINE)
+    tx(draw, ox+79, oy+622, "Lihat pustaka", 11, "strong", INK, "mt")
+    box(draw, ox+170, oy+610, 162, 48, WHITE, 14, LINE)
+    tx(draw, ox+251, oy+622, "Simpan jawaban", 11, "strong", INK, "mt")
+    rule(draw, x, y+746, x+380, y+746, LINE)
+    tx(draw, ox, y+762, "Kontrol native OpenTurath", 10, "ui", MUTED)
+
+
+def screen_access(draw, x, y):
+    phone(draw, x, y, "08 / AKSES")
+    ox, oy = x+24, y+55
+    tx(draw, ox, oy, "‹", 25)
+    tx(draw, ox+26, oy+4, "AKSES ASISTEN", 10, "strong", MUTED)
+    tx(draw, ox, oy+48, "Pilih ruang yang", 29, "display")
+    tx(draw, ox, oy+80, "ingin Anda dalami.", 29, "display")
+    tx(draw, ox, oy+126, "FIKIH & FATWA  /  01 DARI 06", 10, "strong", MUTED)
+    box(draw, ox, oy+151, 332, 193, INK, 16)
+    tx(draw, ox+20, oy+170, "Fikih Syafi'i", 27, "display", WHITE)
+    tx(draw, ox+20, oy+211, "Telaah mazhab dengan asisten spesialis.", 11, "ui", "#C8C8C0")
+    rule(draw, ox+20, oy+242, ox+312, oy+242, "#4B4B47")
+    tx(draw, ox+20, oy+256, "Asisten", 9, "strong", "#A8A8A0")
+    tx(draw, ox+20, oy+275, "Al-Muhaqqiq", 15, "display", WHITE)
+    tx(draw, ox+173, oy+256, "PUSTAKA", 9, "strong", "#A8A8A0")
+    tx(draw, ox+173, oy+275, "87 kitab katalog", 14, "display", WHITE)
+    tx(draw, ox, oy+373, "MASA AKSES", 10, "strong", MUTED)
+    durations = ["1 bulan", "6 bulan", "1 tahun"]
+    for i, label in enumerate(durations):
+        xx = ox+i*114
+        selected = i == 1
+        box(draw, xx, oy+397, 104, 53, INK if selected else WHITE, 14,
+            INK if selected else LINE)
+        tx(draw, xx+52, oy+412, label, 12, "strong" if selected else "ui",
+           WHITE if selected else INK, "mt")
+    tx(draw, ox, oy+478, "YANG ANDA DAPAT", 10, "strong", MUTED)
+    benefits = [
+        "Akses ke ruang AI Fikih Syafi'i",
+        "Jelajahi katalog kitab rujukannya",
+        "Simpan jawaban dan rujukan dalam catatan",
+    ]
+    for i, value in enumerate(benefits):
+        yy = oy+508+i*38
+        circle(draw, ox+6, yy+8, 3, INK)
+        tx(draw, ox+19, yy, value, 11, "ui")
+    rule(draw, ox, oy+632, x+356, oy+632, LINE)
+    tx(draw, ox, oy+643, "Harga dan hak akses mengikuti penawaran terkini.", 10, "ui", MUTED)
+    box(draw, ox, oy+677, 332, 47, INK, 999)
+    tx(draw, ox+166, oy+688, "Lanjutkan ke penawaran", 12, "strong", WHITE, "mt")
+
+
+def screen_settings(draw, x, y):
+    phone(draw, x, y, "09 / PENGATURAN", "Pengaturan")
+    ox, oy = x+24, y+55
+    tx(draw, ox, oy, "Pengaturan", 31, "display")
+    tx(draw, ox, oy+47, "Akun, akses, dan kenyamanan membaca.", 12, "ui", MUTED)
+    box(draw, ox, oy+83, 332, 184, INK, 16)
+    tx(draw, ox+19, oy+102, "OPEN TURATH / KEANGGOTAAN", 9, "strong", "#B2B2AA")
+    tx(draw, ox+19, oy+134, "M Fulan", 27, "display", WHITE)
+    tx(draw, ox+19, oy+174, "Lihat bidang dan asisten yang aktif", 11, "ui", "#C8C8C0")
+    rule(draw, ox+19, oy+210, ox+313, oy+210, "#4B4B47")
+    tx(draw, ox+19, oy+226, "Kelola akses", 11, "strong", WHITE)
+    arrow(draw, ox+296, oy+233, WHITE)
+    tx(draw, ox, oy+295, "TAMPILAN MEMBACA", 10, "strong", MUTED)
+    rule(draw, ox, oy+318, x+356, oy+318, INK)
+    tx(draw, ox, oy+337, "Tema", 18, "display")
+    box(draw, ox, oy+373, 332, 44, SOFT, 13)
+    for i, label in enumerate(("Sistem", "Terang", "Gelap")):
+        xx = ox+4+i*109
+        if i == 1:
+            box(draw, xx, oy+377, 105, 36, WHITE, 10, LINE)
+        tx(draw, xx+52, oy+387, label, 11, "strong" if i == 1 else "ui",
+           INK if i == 1 else MUTED, "mt")
+    rule(draw, ox, oy+442, x+356, oy+442, LINE)
+    tx(draw, ox, oy+457, "Bahasa", 18, "display")
+    right(draw, x+347, oy+466, "Indonesia", 11, "ui", MUTED)
+    chevron(draw, x+352, oy+468, MUTED)
+    rule(draw, ox, oy+502, x+356, oy+502, LINE)
+    tx(draw, ox, oy+519, "Ukuran teks", 18, "display")
+    right(draw, x+350, oy+528, "Standar", 11, "ui", MUTED)
+    rule(draw, ox, oy+564, x+356, oy+564, LINE)
+    tx(draw, ox, oy+590, "AKUN & INFORMASI", 10, "strong", MUTED)
+    for i, label in enumerate(("Riwayat akses", "Tentang OpenTurath")):
+        yy = oy+618+i*48
+        rule(draw, ox, yy+39, x+356, yy+39, LINE)
+        tx(draw, ox, yy, label, 13, "ui")
+        chevron(draw, x+350, yy+10, MUTED)
+
+
 def add_arabic(im, items):
     """Shape short Arabic titles with Cocoa on a transparent bitmap layer."""
     if not items:
@@ -429,6 +540,13 @@ def main():
     screen_notes(db, 985, 165)
     b = add_arabic(b, ar)
     b.save(OUT / "open_turath_folio_02.png", optimize=True)
+
+    c, dc = board("Satu bahasa hingga ruang terdalam", "Ruang AI → akses → pengaturan. Kejelasan fungsi, hak akses, dan kenyamanan membaca memakai sistem yang sama.",
+                  ["RUANG AI & KONTROL NATIVE", "PILIH AKSES BERDASAR ISI", "PENGATURAN TERPADU"])
+    screen_room(dc, 75, 165)
+    screen_access(dc, 530, 165)
+    screen_settings(dc, 985, 165)
+    c.save(OUT / "open_turath_folio_03.png", optimize=True)
 
 
 if __name__ == "__main__":
