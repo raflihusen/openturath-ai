@@ -208,7 +208,7 @@ Skema backend yang harus disediakan sebelum mengganti kode: `android`, `macos`, 
 #### D-07 — launcher native dan berbagi teks berhenti diam-diam di desktop
 
 **Lokasi:** `lib/services/native_agent_launcher.dart:24-50,52-64`.  
-**Mekanisme:** MethodChannel Android sudah aman. Namun `launchNotebook` mencoba `externalNonBrowserApplication` pada semua OS dan mengembalikan `false` jika browser adalah satu-satunya handler; `shareText` langsung `false` di desktop.  
+**Mekanisme:** MethodChannel Android sudah aman. Namun `launchNotebook` mencoba `externalNonBrowserApplication` pada semua OS dan mengembalikan `false` jika browser adalah satu-satunya handler; `shareText` langsung `false` di desktop. Pencarian referensi dalam `lib/` tidak menemukan pemanggil `NativeAgentLauncher`, jadi ini risiko laten bila fitur dihubungkan, bukan kegagalan alur pengguna yang telah terbukti.  
 **Patch pengganti dua metode:**
 
 ```dart
@@ -284,18 +284,18 @@ Tambahkan `dart:io`, `dart:math`, dan `shared_preferences` sesuai kebutuhan. Jik
 
 **Lokasi:** 12 pemanggilan `showModalBottomSheet` di `lib/`, antara lain `lib/widgets/redeem_code_sheet.dart:20-26`, `lib/screens/library_screen.dart:91-99`, `lib/widgets/agent_multi_tab_room.dart:100`, `lib/screens/book_catalog_screen.dart:455`.  
 **Mekanisme:** sebagian sheet tidak membatasi lebar. Pada 24–34 inci, konten melebar atau berada jauh dari titik fokus.  
-**Patch pembungkus untuk setiap builder sheet:**
+**Patch pada setiap pemanggilan sheet yang belum membatasi lebar:**
 
 ```dart
-builder: (ctx) => Center(
-  child: ConstrainedBox(
-    constraints: const BoxConstraints(maxWidth: 560),
-    child: RedeemCodeSheet(onSuccess: onSuccess),
-  ),
-),
+return showModalBottomSheet<void>(
+  context: context,
+  isScrollControlled: true,
+  constraints: const BoxConstraints(maxWidth: 560),
+  builder: (ctx) => RedeemCodeSheet(onSuccess: onSuccess),
+);
 ```
 
-Untuk sheet yang sudah memakai `SafeArea`/scroll, terapkan `ConstrainedBox` pada konten paling luar, bukan pada `Scaffold` aplikasi. Uji keyboard inset dan tinggi jendela 600 px.
+Untuk sheet yang sudah memakai `SafeArea`/scroll, pertahankan pembungkus itu dan tambahkan hanya `constraints` pada pemanggilan. Uji keyboard inset dan tinggi jendela 600 px.
 
 #### D-10 — rail ada, tetapi workbench dan shortcut desktop belum lengkap
 
@@ -382,4 +382,3 @@ Shortcut perlu satu lapisan `CallbackShortcuts`/`Actions` di shell, sementara `F
 - Tidak ada eksekusi aplikasi macOS/Windows, pengujian kuki, validasi dialog Google, screenshot ergonomi, maupun build release di audit ini. Klaim bahwa JS `otCopiedAnswer`, `notebookUiScript`, dan `applyTurathFontScale` identik di WKWebView dan WebView2 belum terbukti; kode handler di `agent_multi_tab_room.dart:1160-1211` sudah memeriksa host HTTPS dan panjang teks, tetapi perilaku engine perlu uji runtime.
 - `shouldOverrideUrlLoading` pada `agent_multi_tab_room.dart:1257-1264` dan `google_session_auth_screen.dart:245-251` memakai allowlist `NotebookNavigation.allowed` (`lib/core/notebook_navigation.dart:1-15`). Uji redirect Google dan tautan eksternal pada kedua engine; jangan memperluas allowlist tanpa audit domain.
 - Patch contoh D-04/D-05/D-09/D-10/D-11 adalah potongan yang dapat ditempatkan pada lokasi disebutkan; integrasi final tetap harus dijalankan melalui analyzer/build dan uji OS target. D-01/D-02/D-06 membutuhkan kontrak backend, Firebase app, dan domain rilis resmi; mengarang nilai tersebut akan menghasilkan patch yang tidak aman.
-
