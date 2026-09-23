@@ -5,10 +5,13 @@ import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../models/turath_chat_message.dart';
+import 'native_turath_chat_view.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -309,9 +312,32 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 );
               } else if (val == 'font') {
                 _showFontScaleDialog(context, activeTab);
+              } else if (val == 'toggle_view') {
+                setState(() => activeTab.isNativeView = !activeTab.isNativeView);
               }
             },
             itemBuilder: (ctx) => [
+              PopupMenuItem(
+                value: 'toggle_view',
+                child: Row(
+                  children: [
+                    Icon(
+                      activeTab.isNativeView
+                          ? Icons.web_rounded
+                          : Icons.auto_awesome_rounded,
+                      color: textPrimary,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      activeTab.isNativeView
+                          ? 'Beralih ke Tampilan Web'
+                          : 'Beralih ke Mode Native',
+                      style: OTTypography.body(color: textPrimary),
+                    ),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'language',
                 child: Row(
@@ -929,6 +955,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             widget.session.isSessionReady = true;
             widget.session.isTimeoutError = false;
           });
+          _syncInitialHistory();
         }
       } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 25) {
         _readinessTimer?.cancel();
@@ -945,6 +972,83 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     } catch (_) {
     } finally {
       _checkingReady = false;
+    }
+  }
+
+  Future<void> _syncInitialHistory() async {
+    final controller = widget.session.webController;
+    if (controller == null) return;
+    try {
+      final dynamic raw = await controller.evaluateJavascript(
+        source:
+            'window.otGetConversationList ? window.otGetConversationList() : "[]"',
+      );
+      dynamic decoded = raw;
+      if (raw is String) {
+        try {
+          decoded = jsonDecode(raw);
+        } catch (_) {
+          decoded = [];
+        }
+      }
+      if (decoded != null && decoded is List && mounted) {
+        final messages = <TurathChatMessage>[];
+        for (var i = 0; i < decoded.length; i++) {
+          final item = decoded[i];
+          if (item is Map) {
+            final text = item['text']?.toString() ?? '';
+            final isUser = item['isUser'] == true;
+            if (text.isNotEmpty) {
+              messages.add(TurathChatMessage(
+                id: 'history_$i',
+                text: text,
+                isUser: isUser,
+                timestamp: DateTime.now()
+                    .subtract(Duration(minutes: decoded.length - i)),
+              ));
+            }
+          }
+        }
+        if (messages.isNotEmpty) {
+          setState(() {
+            widget.session.chatMessages
+              ..clear()
+              ..addAll(messages);
+          });
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _sendNativePrompt(String text) async {
+    final controller = widget.session.webController;
+    if (controller == null || text.trim().isEmpty) return;
+
+    final trimmed = text.trim();
+    final userMsg = TurathChatMessage(
+      id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+      text: trimmed,
+      isUser: true,
+      timestamp: DateTime.now(),
+    );
+
+    setState(() {
+      widget.session.chatMessages.add(userMsg);
+      widget.session.isGenerating = true;
+    });
+
+    try {
+      final escaped = jsonEncode(trimmed);
+      await controller.evaluateJavascript(
+        source: 'window.otSendPrompt ? window.otSendPrompt($escaped) : false',
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          widget.session.isGenerating = false;
+        });
+        AppSnackBar.error(context, 'Gagal mengirim telaah ke asisten.');
+      }
     }
   }
 
@@ -1195,7 +1299,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       color: canvas,
       child: Stack(
         children: [
-          InAppWebView(
+          IgnorePointer(
+            ignoring: session.isNativeView,
+            child: InAppWebView(
             webViewEnvironment: DesktopWebViewRuntime.environment,
             keepAlive: session.keepAlive,
             initialUrlRequest: URLRequest(url: initialUri),
@@ -1327,6 +1433,77 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   return false;
                 },
               );
+              controller.addJavaScriptHandler(
+                handlerName: 'otAnswerState',
+                callback: (args) {
+                  if (!mounted || args.isEmpty) return;
+                  final first = args.first;
+                  String? state;
+                  String? currentText;
+                  if (first is Map) {
+                    state = first['state']?.toString();
+                    currentText = first['text']?.toString();
+                  } else {
+                    state = first?.toString();
+                  }
+
+                  if (state == 'generating') {
+                    setState(() {
+                      session.isGenerating = true;
+                    });
+                  } else if (state == 'completed') {
+                    setState(() {
+                      session.isGenerating = false;
+                      if (currentText != null && currentText.isNotEmpty) {
+                        if (session.chatMessages.isNotEmpty &&
+                            !session.chatMessages.last.isUser) {
+                          final last = session.chatMessages.last;
+                          session.chatMessages[session.chatMessages.length - 1] =
+                              last.copyWith(text: currentText);
+                        } else {
+                          session.chatMessages.add(TurathChatMessage(
+                            id: 'bot_${DateTime.now().millisecondsSinceEpoch}',
+                            text: currentText,
+                            isUser: false,
+                            timestamp: DateTime.now(),
+                          ));
+                        }
+                      }
+                    });
+                  }
+                },
+              );
+              controller.addJavaScriptHandler(
+                handlerName: 'otAnswerChunk',
+                callback: (args) {
+                  if (!mounted || args.isEmpty) return;
+                  final first = args.first;
+                  String text = '';
+                  if (first is Map) {
+                    text = first['text']?.toString() ?? '';
+                  } else if (first is String) {
+                    text = first;
+                  }
+                  if (text.isEmpty) return;
+
+                  setState(() {
+                    session.isGenerating = false;
+                    if (session.chatMessages.isNotEmpty &&
+                        !session.chatMessages.last.isUser) {
+                      final last = session.chatMessages.last;
+                      session.chatMessages[session.chatMessages.length - 1] =
+                          last.copyWith(text: text);
+                    } else {
+                      session.chatMessages.add(TurathChatMessage(
+                        id: 'bot_${DateTime.now().millisecondsSinceEpoch}',
+                        text: text,
+                        isUser: false,
+                        timestamp: DateTime.now(),
+                      ));
+                    }
+                  });
+                },
+              );
               if (!session.isSessionReady) {
                 _startReadinessCheck();
               }
@@ -1392,8 +1569,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               return NavigationActionPolicy.CANCEL;
             },
           ),
+        ),
 
-          // Fullscreen pulsing loader hanya saat inisialisasi awal
+        if (session.isNativeView)
+          Positioned.fill(
+            child: NativeTurathChatView(
+              agent: session.agent,
+              messages: session.chatMessages,
+              isGenerating: session.isGenerating,
+              onSend: _sendNativePrompt,
+              onSwitchToWeb: () {
+                setState(() => session.isNativeView = false);
+              },
+            ),
+          ),
+
+        // Fullscreen pulsing loader hanya saat inisialisasi awal
           if (!session.isSessionReady && session.isWebLoading)
             Positioned.fill(
               child: AppLoader.fullscreen(

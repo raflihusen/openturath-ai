@@ -491,18 +491,21 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 ),
               ),
               const SizedBox(width: 8),
-              Material(
-                color: _canSend ? textPrimary : textSecondary.withAlpha(60),
-                shape: const CircleBorder(),
-                child: InkWell(
-                  onTap: _canSend ? _handleSend : null,
-                  customBorder: const CircleBorder(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.arrow_upward_rounded,
-                      size: 18,
-                      color: _canSend ? canvas : textSecondary.withAlpha(120),
+              Tooltip(
+                message: 'Kirim telaah',
+                child: Material(
+                  color: _canSend ? textPrimary : textSecondary.withAlpha(60),
+                  shape: const CircleBorder(),
+                  child: InkWell(
+                    onTap: _canSend ? _handleSend : null,
+                    customBorder: const CircleBorder(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Icon(
+                        Icons.arrow_upward_rounded,
+                        size: 18,
+                        color: _canSend ? canvas : textSecondary.withAlpha(120),
+                      ),
                     ),
                   ),
                 ),
