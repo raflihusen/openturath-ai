@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../models/agent_model.dart';
+import '../models/turath_chat_message.dart';
 import '../models/user_model.dart';
 
 /// Represents a single active AI specialist tab in memory.
@@ -19,8 +20,12 @@ class AgentSessionTab {
   bool isGooglePermissionError = false;
   double fontScale = 1.0;
   bool hasAcknowledgedAdab = false;
-
   bool hasInjectedEarlyScript = false;
+
+  /// Mode tampilan: true untuk 100% Native Flutter UI, false untuk Headless WebView inspection.
+  bool isNativeView = true;
+  final List<TurathChatMessage> chatMessages = [];
+  bool isGenerating = false;
 
   AgentSessionTab({
     required this.agent,
@@ -32,6 +37,8 @@ class AgentSessionTab {
     try {
       await webController?.stopLoading();
       webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
+      webController?.removeJavaScriptHandler(handlerName: 'otAnswerState');
+      webController?.removeJavaScriptHandler(handlerName: 'otAnswerChunk');
     } catch (_) {}
     if (webController != null) {
       // Dispose only after the corresponding platform view has left the tree.
