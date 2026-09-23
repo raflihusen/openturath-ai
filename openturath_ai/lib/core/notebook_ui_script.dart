@@ -327,6 +327,8 @@ const notebookUiScript = r'''
       }, 120);
       return true;
     }
+    return false;
+  };
   window.otSendPrompt = function(promptText) {
     if (!promptText || typeof promptText !== 'string') return false;
     const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
