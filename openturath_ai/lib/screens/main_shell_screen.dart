@@ -110,35 +110,36 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
   @override
   Widget build(BuildContext context) => DesktopShortcuts(
-    onFind: () {
-      _showPage(0);
-      if (_pageController.hasClients) _pageController.jumpToPage(0);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _dashboardSearchFocus.requestFocus();
-      });
-    },
-    onNewTab: () => _showPage(1),
-    onSettings: () => _showPage(3),
-    onCloseTab: () {
-      final manager = AgentSessionManager.instance;
-      if (manager.isOpen) manager.closeTab(manager.activeIndex);
-    },
-    onReload: () async {
-      final manager = AgentSessionManager.instance;
-      if (!manager.isOpen) return;
-      try {
-        await manager.activeTab?.webController?.reload();
-      } catch (_) {
-        if (context.mounted) AppSnackBar.warning(context, 'Sesi belum dapat dimuat ulang.');
-      }
-    },
-    onEscape: () {
-      final manager = AgentSessionManager.instance;
-      if (manager.isOpen) manager.closeRoom();
-      FocusScope.of(context).unfocus();
-    },
-    child: _buildShell(context),
-  );
+        onFind: () {
+          _showPage(0);
+          if (_pageController.hasClients) _pageController.jumpToPage(0);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _dashboardSearchFocus.requestFocus();
+          });
+        },
+        onNewTab: () => _showPage(1),
+        onSettings: () => _showPage(3),
+        onCloseTab: () {
+          final manager = AgentSessionManager.instance;
+          if (manager.isOpen) manager.closeTab(manager.activeIndex);
+        },
+        onReload: () async {
+          final manager = AgentSessionManager.instance;
+          if (!manager.isOpen) return;
+          try {
+            await manager.activeTab?.webController?.reload();
+          } catch (_) {
+            if (context.mounted)
+              AppSnackBar.warning(context, 'Sesi belum dapat dimuat ulang.');
+          }
+        },
+        onEscape: () {
+          final manager = AgentSessionManager.instance;
+          if (manager.isOpen) manager.closeRoom();
+          FocusScope.of(context).unfocus();
+        },
+        child: _buildShell(context),
+      );
 
   Widget _buildShell(BuildContext context) {
     Loc.watch(context);
@@ -334,7 +335,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
             child: Stack(
               children: [
                 // 1. Dashboard latar belakang (Stationary - bebas GPU overhead)
-                ExcludeFocus(excluding: sessionManager.isOpen, child: baseScaffold),
+                ExcludeFocus(
+                    excluding: sessionManager.isOpen, child: baseScaffold),
 
                 // 2. Ruang AI Multi-Tab (Instant zero-glitch display dengan retensi memori penuh)
                 Positioned.fill(
@@ -343,7 +345,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
                     maintainState: true,
                     maintainAnimation: true,
                     maintainSize: true,
-                    child: ExcludeFocus(excluding: !sessionManager.isOpen, child: child!),
+                    child: ExcludeFocus(
+                        excluding: !sessionManager.isOpen, child: child!),
                   ),
                 ),
               ],

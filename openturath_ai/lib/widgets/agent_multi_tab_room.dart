@@ -193,10 +193,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     onPressed: () {
                       Navigator.pop(ctx);
                       session.webController?.evaluateJavascript(
-                        source: 'if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
+                        source:
+                            'if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
                       );
                     },
-                    icon: Icon(Icons.translate_rounded, size: 18, color: textPrimary),
+                    icon: Icon(Icons.translate_rounded,
+                        size: 18, color: textPrimary),
                     label: Text(
                       'Ganti Bahasa Output (50+ Bahasa)',
                       style: GoogleFonts.outfit(
@@ -273,10 +275,14 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               icon: const Icon(Icons.open_in_browser_rounded),
               onPressed: () async {
                 final url = activeTab.resolvedUrl;
-                final opened = url != null && await NativeAgentLauncher.launchNotebook(url);
+                final opened = url != null &&
+                    await NativeAgentLauncher.launchNotebook(url);
                 if (!opened && context.mounted) {
-                  AppSnackBar.warning(context, url == null
-                      ? 'Tunggu hingga asisten selesai dihubungkan.' : 'Browser belum dapat dibuka.');
+                  AppSnackBar.warning(
+                      context,
+                      url == null
+                          ? 'Tunggu hingga asisten selesai dihubungkan.'
+                          : 'Browser belum dapat dibuka.');
                 }
               },
             ),
@@ -371,24 +377,33 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                 AppSnackBar.clear(context);
                                 _sessionManager.selectTab(index);
                               },
-                              borderRadius: const BorderRadius.horizontal(left: Radius.circular(8)),
+                              borderRadius: const BorderRadius.horizontal(
+                                  left: Radius.circular(8)),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
                                       Icons.chat_bubble_outline_rounded,
                                       size: 13,
-                                      color: isActive ? textPrimary : textSecondary,
+                                      color: isActive
+                                          ? textPrimary
+                                          : textSecondary,
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      session.agent.title.replaceFirst('AI ', ''),
+                                      session.agent.title
+                                          .replaceFirst('AI ', ''),
                                       style: GoogleFonts.outfit(
                                         fontSize: 12,
-                                        fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                                        color: isActive ? textPrimary : textSecondary,
+                                        fontWeight: isActive
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                        color: isActive
+                                            ? textPrimary
+                                            : textSecondary,
                                       ),
                                     ),
                                   ],
@@ -434,21 +449,25 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
       ),
       body: Row(children: [
         if (AppPlatform.isDesktop && MediaQuery.sizeOf(context).width >= 1100)
-          SizedBox(width: 300, child: DesktopReferencePanel(
-            key: ValueKey(activeTab.agent.id), agent: activeTab.agent)),
+          SizedBox(
+              width: 300,
+              child: DesktopReferencePanel(
+                  key: ValueKey(activeTab.agent.id), agent: activeTab.agent)),
         if (AppPlatform.isDesktop && MediaQuery.sizeOf(context).width >= 1100)
           const VerticalDivider(width: 1),
-        Expanded(key: const ValueKey('study-webviews'), child: IndexedStack(
-        index: _sessionManager.activeIndex,
-        children: [
-          for (int i = 0; i < sessions.length; i++)
-            _SingleAgentTabWebView(
-              key: ValueKey('agent_tab_${sessions[i].agent.id}'),
-              session: sessions[i],
-              isActive: i == _sessionManager.activeIndex,
-            ),
-        ],
-      )),
+        Expanded(
+            key: const ValueKey('study-webviews'),
+            child: IndexedStack(
+              index: _sessionManager.activeIndex,
+              children: [
+                for (int i = 0; i < sessions.length; i++)
+                  _SingleAgentTabWebView(
+                    key: ValueKey('agent_tab_${sessions[i].agent.id}'),
+                    session: sessions[i],
+                    isActive: i == _sessionManager.activeIndex,
+                  ),
+              ],
+            )),
       ]),
     );
   }
@@ -670,12 +689,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       if (AppPlatform.isAndroid) {
-        unawaited(widget.session.webController?.resume().catchError((Object _) {}) ?? Future<void>.value());
+        unawaited(
+            widget.session.webController?.resume().catchError((Object _) {}) ??
+                Future<void>.value());
       }
       _verifySurfaceHealth();
     } else if (state == AppLifecycleState.paused) {
       if (AppPlatform.isAndroid) {
-        unawaited(widget.session.webController?.pause().catchError((Object _) {}) ?? Future<void>.value());
+        unawaited(
+            widget.session.webController?.pause().catchError((Object _) {}) ??
+                Future<void>.value());
       }
     }
   }
@@ -1022,8 +1045,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                             },
                           );
                         },
-                        icon: const Icon(Icons.card_membership_rounded,
-                            size: 18),
+                        icon:
+                            const Icon(Icons.card_membership_rounded, size: 18),
                         label: Text(
                           'Langganan Sekarang',
                           style: ScholarlyFonts.outfit(
@@ -1072,9 +1095,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
       final icon = isGoogleErr
           ? Icons.account_circle_outlined
-          : (isTimeout
-              ? Icons.wifi_off_rounded
-              : Icons.info_outline_rounded);
+          : (isTimeout ? Icons.wifi_off_rounded : Icons.info_outline_rounded);
 
       final retryLabel = isGoogleErr ? 'Ganti Akun Google' : 'Coba lagi';
 
@@ -1120,7 +1141,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       child: Stack(
         children: [
           InAppWebView(
-                      webViewEnvironment: DesktopWebViewRuntime.environment,
+            webViewEnvironment: DesktopWebViewRuntime.environment,
             keepAlive: session.keepAlive,
             initialUrlRequest: URLRequest(url: initialUri),
             initialUserScripts:
@@ -1149,7 +1170,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
               algorithmicDarkeningAllowed: true,
-              userAgent: AppPlatform.isDesktop ? null : AppConstants.chromeMobileUserAgent,
+              userAgent: AppPlatform.isDesktop
+                  ? null
+                  : AppConstants.chromeMobileUserAgent,
             ),
             onReceivedError: (controller, request, error) {
               if (request.isForMainFrame == true && mounted) {
@@ -1182,7 +1205,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             onRenderProcessGone: (controller, detail) async {
-              debugPrint('[OpenTurath] WebView render process gone (didCrash: ${detail.didCrash})');
+              debugPrint(
+                  '[OpenTurath] WebView render process gone (didCrash: ${detail.didCrash})');
               if (mounted) {
                 setState(() {
                   widget.session.isWebLoading = true;
@@ -1198,14 +1222,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 handlerName: 'otCopiedAnswer',
                 callback: (args) async {
                   try {
-                  final url = await controller.getUrl();
-                  if (url?.scheme != 'https' ||
-                      !['notebooklm.google.com', 'notebook.google.com']
-                          .contains(url?.host) ||
-                      args.isEmpty ||
-                      args.first is! String) {
-                    return false;
-                  }
+                    final url = await controller.getUrl();
+                    if (url?.scheme != 'https' ||
+                        !['notebooklm.google.com', 'notebook.google.com']
+                            .contains(url?.host) ||
+                        args.isEmpty ||
+                        args.first is! String) {
+                      return false;
+                    }
                     final text = (args.first as String).trim();
                     if (text.isNotEmpty && text.length <= 200000) {
                       final now = DateTime.now();
@@ -1263,36 +1287,40 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             onLoadStop: (controller, uri) async {
-              if (!mounted || uri == null || !NotebookNavigation.notebook(uri.uriValue)) return;
+              if (!mounted ||
+                  uri == null ||
+                  !NotebookNavigation.notebook(uri.uriValue)) return;
               try {
-              await controller.evaluateJavascript(
+                await controller.evaluateJavascript(
+                    source:
+                        'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
+                await _applyThemeCss(isDark);
+                await controller.evaluateJavascript(
                   source:
-                      'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
-              await _applyThemeCss(isDark);
-              await controller.evaluateJavascript(
-                source:
-                    'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
-              );
-              final denied = await controller.evaluateJavascript(
-                  source:
-                      'window.otNotebook ? window.otNotebook.accessDenied() : false');
-              if (!mounted) return;
-              if (denied == true) {
-                _handleAccessDenied(session);
-                return;
-              }
+                      'if (typeof applyTurathFontScale === "function") { applyTurathFontScale(${session.fontScale}); }',
+                );
+                final denied = await controller.evaluateJavascript(
+                    source:
+                        'window.otNotebook ? window.otNotebook.accessDenied() : false');
+                if (!mounted) return;
+                if (denied == true) {
+                  _handleAccessDenied(session);
+                  return;
+                }
               } catch (_) {
                 // A navigation or closed tab can invalidate an in-flight script.
               }
             },
             onProgressChanged: (controller, progress) async {
-              if (mounted && progress >= 35 && !session.hasInjectedEarlyScript) {
+              if (mounted &&
+                  progress >= 35 &&
+                  !session.hasInjectedEarlyScript) {
                 session.hasInjectedEarlyScript = true;
                 try {
-                await controller.evaluateJavascript(
-                    source:
-                        'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
-                await _applyThemeCss(isDark);
+                  await controller.evaluateJavascript(
+                      source:
+                          'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
+                  await _applyThemeCss(isDark);
                 } catch (_) {
                   session.hasInjectedEarlyScript = false;
                 }

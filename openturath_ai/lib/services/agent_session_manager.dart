@@ -38,7 +38,9 @@ class AgentSessionTab {
       SchedulerBinding.instance.addPostFrameCallback((_) async {
         try {
           await InAppWebViewController.disposeKeepAlive(keepAlive);
-        } catch (_) { /* A disposed/unsupported platform view is already released. */ }
+        } catch (_) {
+          /* A disposed/unsupported platform view is already released. */
+        }
       });
       SchedulerBinding.instance.scheduleFrame();
     }

@@ -55,7 +55,8 @@ class DokuService {
     required String invoiceNumber,
   }) async {
     try {
-      final result = await _functions.call(AppConstants.fnCheckPaymentStatus, {'invoiceNumber': invoiceNumber});
+      final result = await _functions.call(
+          AppConstants.fnCheckPaymentStatus, {'invoiceNumber': invoiceNumber});
       return Map<String, dynamic>.from(result as Map);
     } catch (e) {
       return {

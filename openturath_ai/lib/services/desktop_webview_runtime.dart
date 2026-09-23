@@ -10,16 +10,20 @@ class DesktopWebViewRuntime {
   static String? problem;
   static Future<void>? _preparing;
 
-  static Future<void> prepare() => _preparing ??= _prepare().whenComplete(() => _preparing = null);
+  static Future<void> prepare() =>
+      _preparing ??= _prepare().whenComplete(() => _preparing = null);
 
   static Future<void> _prepare() async {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows || environment != null) return;
+    if (kIsWeb ||
+        defaultTargetPlatform != TargetPlatform.windows ||
+        environment != null) return;
     problem = null;
     try {
       final version = await WebViewEnvironment.getAvailableVersion()
           .timeout(const Duration(seconds: 10));
       if (version == null || version.isEmpty) {
-        problem = 'Pasang Microsoft Edge WebView2 Runtime untuk membuka ruang telaah di aplikasi.';
+        problem =
+            'Pasang Microsoft Edge WebView2 Runtime untuk membuka ruang telaah di aplikasi.';
         return;
       }
       final support = await getApplicationSupportDirectory();
@@ -29,16 +33,24 @@ class DesktopWebViewRuntime {
         settings: WebViewEnvironmentSettings(userDataFolder: profile.path),
       ).timeout(const Duration(seconds: 15));
     } catch (_) {
-      problem = 'Ruang web belum dapat disiapkan. Periksa WebView2 dan izin penyimpanan aplikasi.';
+      problem =
+          'Ruang web belum dapat disiapkan. Periksa WebView2 dan izin penyimpanan aplikasi.';
     }
   }
 
-  static CookieManager get cookies => CookieManager.instance(webViewEnvironment: environment);
+  static CookieManager get cookies =>
+      CookieManager.instance(webViewEnvironment: environment);
 
   static Future<void> clearSession() async {
     // One unsupported method must not prevent the remaining cleanup operations.
-    try { await cookies.deleteAllCookies(); } catch (_) {}
-    try { await InAppWebViewController.clearAllCache(); } catch (_) {}
-    try { await WebStorageManager.instance().deleteAllData(); } catch (_) {}
+    try {
+      await cookies.deleteAllCookies();
+    } catch (_) {}
+    try {
+      await InAppWebViewController.clearAllCache();
+    } catch (_) {}
+    try {
+      await WebStorageManager.instance().deleteAllData();
+    } catch (_) {}
   }
 }

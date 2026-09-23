@@ -23,22 +23,29 @@ class SubscriptionService {
         return serverMessage;
       }
     }
-    if (c.contains('not-found')) return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+    if (c.contains('not-found'))
+      return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
     if (c.contains('already-exists') || c.contains('already-used')) {
       return 'Kode ini sudah pernah ditukarkan sebelumnya.';
     }
-    if (c.contains('deadline-exceeded') || c.contains('expired')) return 'Masa berlaku kode voucher ini telah berakhir.';
+    if (c.contains('deadline-exceeded') || c.contains('expired'))
+      return 'Masa berlaku kode voucher ini telah berakhir.';
     if (c.contains('failed-precondition')) {
       if (serverMessage != null && serverMessage.contains('ponsel')) {
         return serverMessage;
       }
       return 'Kode voucher ini sudah tidak aktif.';
     }
-    if (c.contains('resource-exhausted') || c.contains('quota')) return 'Kuota penukaran untuk kode voucher ini sudah habis.';
-    if (c.contains('unauthenticated')) return 'Silakan masuk ke akun Anda lalu coba kembali.';
-    if (c.contains('invalid-argument')) return 'Format penulisan kode voucher belum sesuai.';
-    if (c.contains('permission-denied')) return 'Kode voucher ini tidak dapat digunakan untuk akun Anda.';
-    if (c.contains('unavailable')) return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
+    if (c.contains('resource-exhausted') || c.contains('quota'))
+      return 'Kuota penukaran untuk kode voucher ini sudah habis.';
+    if (c.contains('unauthenticated'))
+      return 'Silakan masuk ke akun Anda lalu coba kembali.';
+    if (c.contains('invalid-argument'))
+      return 'Format penulisan kode voucher belum sesuai.';
+    if (c.contains('permission-denied'))
+      return 'Kode voucher ini tidak dapat digunakan untuk akun Anda.';
+    if (c.contains('unavailable'))
+      return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
     return 'Kode voucher belum dapat diaktifkan. Silakan periksa kembali kode Anda.';
   }
 
@@ -49,7 +56,8 @@ class SubscriptionService {
   }) async {
     try {
       final normalized = normalizeCode(code);
-      final fingerprint = customFingerprint ?? await DeviceService().getDeviceFingerprint();
+      final fingerprint =
+          customFingerprint ?? await DeviceService().getDeviceFingerprint();
       final data = await const CallableGateway().call('redeemCode', {
         'code': normalized,
         'deviceId': fingerprint.deviceId,
@@ -68,9 +76,15 @@ class SubscriptionService {
           (serverMsg.contains('perangkat') || serverMsg.contains('ponsel'))) {
         return {'success': false, 'message': serverMsg};
       }
-      return {'success': false, 'message': redeemErrorMessage(e.code, serverMsg)};
+      return {
+        'success': false,
+        'message': redeemErrorMessage(e.code, serverMsg)
+      };
     } catch (e) {
-      return {'success': false, 'message': 'Koneksi bermasalah. Periksa internet Anda lalu coba lagi.'};
+      return {
+        'success': false,
+        'message': 'Koneksi bermasalah. Periksa internet Anda lalu coba lagi.'
+      };
     }
   }
 
@@ -144,11 +158,13 @@ class SubscriptionService {
 
     // Panggil checkPaymentStatus Cloud Function yang inquiry langsung ke API DOKU (server-to-server)
     // Server-side function yang memverifikasi signature dan keaslian status transaksi dari DOKU
-    final res = await _dokuService.checkPaymentStatus(invoiceNumber: cleanInvoice);
-    
+    final res =
+        await _dokuService.checkPaymentStatus(invoiceNumber: cleanInvoice);
+
     // Validasi ketat respon server Cloud Function: hanya status final yang dianggap lunas
     final rawStatus = (res['status'] ?? '').toString().toUpperCase().trim();
-    final isSuccess = rawStatus == 'SUCCESS' || rawStatus == 'SETTLED' || rawStatus == 'PAID';
+    final isSuccess =
+        rawStatus == 'SUCCESS' || rawStatus == 'SETTLED' || rawStatus == 'PAID';
     if (isSuccess) {
       return {
         'success': true,

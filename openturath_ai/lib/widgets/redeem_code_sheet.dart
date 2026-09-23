@@ -87,7 +87,9 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
 
     final success = result['success'] == true;
     final message = (result['message'] as String?) ??
-        (success ? 'Akses berhasil diaktifkan' : 'Kode tidak valid atau sudah kedaluwarsa');
+        (success
+            ? 'Akses berhasil diaktifkan'
+            : 'Kode tidak valid atau sudah kedaluwarsa');
 
     if (success) {
       AppSnackBar.show(
@@ -148,7 +150,8 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                  icon:
+                      Icon(Icons.close_rounded, size: 20, color: textSecondary),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -156,7 +159,8 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             const SizedBox(height: 4),
             Text(
               Loc.tr('ui_75edf97617'),
-              style: OTTypography.body(color: textSecondary).copyWith(fontSize: 12.5),
+              style: OTTypography.body(color: textSecondary)
+                  .copyWith(fontSize: 12.5),
             ),
             const SizedBox(height: OTSpacing.md),
             TextField(
@@ -185,7 +189,8 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
                 errorStyle: const TextStyle(fontSize: 12),
                 filled: true,
                 fillColor: canvas,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: OTRadius.inputBorder,
                   borderSide: BorderSide(color: borderColor, width: 0.8),

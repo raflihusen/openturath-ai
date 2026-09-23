@@ -25,10 +25,12 @@ class CallableGateway {
         client.close();
       }
     }
-    final result = await FirebaseFunctions.instance.httpsCallable(
-      name,
-      options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
-    ).call(data);
+    final result = await FirebaseFunctions.instance
+        .httpsCallable(
+          name,
+          options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+        )
+        .call(data);
     return result.data;
   }
 }
@@ -56,18 +58,21 @@ class CallableHttpTransport {
       final idToken = await token().timeout(timeout);
       if (idToken == null || idToken.isEmpty) {
         throw FirebaseFunctionsException(
-          code: 'unauthenticated', message: 'Silakan masuk kembali ke akun Anda.',
+          code: 'unauthenticated',
+          message: 'Silakan masuk kembali ke akun Anda.',
         );
       }
       // No automatic retry: checkout/redeem/quota calls may mutate server state.
-      final response = await client.post(
-        Uri.https('$region-$projectId.cloudfunctions.net', '/$name'),
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Authorization': 'Bearer $idToken',
-        },
-        body: jsonEncode({'data': data}),
-      ).timeout(timeout);
+      final response = await client
+          .post(
+            Uri.https('$region-$projectId.cloudfunctions.net', '/$name'),
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Authorization': 'Bearer $idToken',
+            },
+            body: jsonEncode({'data': data}),
+          )
+          .timeout(timeout);
       if (response.bodyBytes.length > 2 * 1024 * 1024) {
         throw const FormatException('Callable response is too large');
       }
@@ -79,14 +84,17 @@ class CallableHttpTransport {
       if (error is Map) {
         throw FirebaseFunctionsException(
           code: (error['status'] as String? ?? 'INTERNAL')
-              .toLowerCase().replaceAll('_', '-'),
-          message: error['message'] as String? ?? 'Layanan belum dapat dihubungi.',
+              .toLowerCase()
+              .replaceAll('_', '-'),
+          message:
+              error['message'] as String? ?? 'Layanan belum dapat dihubungi.',
           details: error['details'],
         );
       }
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw FirebaseFunctionsException(
-          code: 'unavailable', message: 'Layanan belum dapat dihubungi.',
+          code: 'unavailable',
+          message: 'Layanan belum dapat dihubungi.',
         );
       }
       if (decoded.containsKey('result')) return decoded['result'];
@@ -96,15 +104,18 @@ class CallableHttpTransport {
       rethrow;
     } on TimeoutException {
       throw FirebaseFunctionsException(
-        code: 'deadline-exceeded', message: 'Server belum merespons. Coba kembali.',
+        code: 'deadline-exceeded',
+        message: 'Server belum merespons. Coba kembali.',
       );
     } on FormatException {
       throw FirebaseFunctionsException(
-        code: 'internal', message: 'Respons layanan tidak dapat dibaca.',
+        code: 'internal',
+        message: 'Respons layanan tidak dapat dibaca.',
       );
     } on http.ClientException {
       throw FirebaseFunctionsException(
-        code: 'unavailable', message: 'Periksa koneksi internet Anda.',
+        code: 'unavailable',
+        message: 'Periksa koneksi internet Anda.',
       );
     }
   }

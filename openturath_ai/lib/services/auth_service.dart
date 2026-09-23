@@ -15,10 +15,13 @@ import 'desktop_webview_runtime.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS))
+    clientId: (!kIsWeb &&
+            (defaultTargetPlatform == TargetPlatform.iOS ||
+                defaultTargetPlatform == TargetPlatform.macOS))
         ? '255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com'
         : null,
-    serverClientId: '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
+    serverClientId:
+        '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
   );
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
@@ -98,8 +101,7 @@ class AuthService {
           idToken: googleAuth.idToken,
         );
 
-        final userCredential =
-            await _auth.signInWithCredential(credential);
+        final userCredential = await _auth.signInWithCredential(credential);
         firebaseUser = userCredential.user;
       }
 
@@ -203,7 +205,8 @@ class AuthService {
   static String? _cachedGuestUid;
 
   UserModel _localGuestUser() {
-    _cachedGuestUid ??= 'guest_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}';
+    _cachedGuestUid ??=
+        'guest_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}';
     return UserModel(
       uid: _cachedGuestUid!,
       name: 'Peneliti Tamu',
@@ -258,15 +261,21 @@ class AuthService {
   Stream<UserModel?> get userStream => _cachedUserStream ??= _buildUserStream();
 
   Stream<UserModel?> _buildUserStream() => sessionUserStream<UserModel>(
-    auth: _auth.authStateChanges().map((user) => user?.uid),
-    cached: _getCachedUser,
-    watch: (uid) => _db.collection(AppConstants.colUsers).doc(uid).snapshots().map((doc) {
-      if (!doc.exists) return null;
-      final user = UserModel.fromFirestore(doc);
-      if (_auth.currentUser?.uid == uid) { unawaited(_cacheUserLocally(user)); }
-      return user;
-    }),
-  );
+        auth: _auth.authStateChanges().map((user) => user?.uid),
+        cached: _getCachedUser,
+        watch: (uid) => _db
+            .collection(AppConstants.colUsers)
+            .doc(uid)
+            .snapshots()
+            .map((doc) {
+          if (!doc.exists) return null;
+          final user = UserModel.fromFirestore(doc);
+          if (_auth.currentUser?.uid == uid) {
+            unawaited(_cacheUserLocally(user));
+          }
+          return user;
+        }),
+      );
 
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
@@ -347,8 +356,8 @@ class AuthService {
     } catch (_) {
       try {
         if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
-        await _googleSignIn.signOut();
-      }
+          await _googleSignIn.signOut();
+        }
       } catch (_) {}
     }
 

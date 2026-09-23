@@ -64,20 +64,25 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     final shouldSignOut = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+        backgroundColor:
+            isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
         title: Text(
           AppCopy.cancelSignInTitle,
           style: ScholarlyFonts.outfit(
             fontWeight: FontWeight.w600,
-            color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
+            color:
+                isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
           ),
         ),
         content: Text(
           AppCopy.googleSessionSignInSameAccountDesc,
           style: ScholarlyFonts.outfit(
             fontSize: 13,
-            color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
+            color: isDark
+                ? AppTheme.textSecondaryDark
+                : AppTheme.textSecondaryLight,
           ),
         ),
         actions: [
@@ -95,7 +100,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(
               backgroundColor: OTColors.destructive(isDark),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
             ),
             child: Text(
               AppCopy.exit,
@@ -116,31 +122,46 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!AppPlatform.isDesktop) return DesktopWebViewGate(builder: _buildContent);
+    if (!AppPlatform.isDesktop)
+      return DesktopWebViewGate(builder: _buildContent);
     return Scaffold(
       appBar: AppBar(title: const Text('Sesi NotebookLM')),
-      body: Center(child: ConstrainedBox(
+      body: Center(
+          child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
-        child: Padding(padding: const EdgeInsets.all(24), child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Buka NotebookLM di browser dan gunakan akun Google Anda. '
-                'Sesi browser terpisah dari ruang web di aplikasi.'),
-            const SizedBox(height: 20),
-            FilledButton(onPressed: () async {
-              try {
-                if (!await launchUrl(Uri.parse('https://notebooklm.google.com/'),
-                    mode: LaunchMode.externalApplication)) { throw StateError('Browser unavailable'); }
-              } catch (_) {
-                if (context.mounted) { ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Browser belum dapat dibuka.')),
-                ); }
-              }
-            }, child: const Text('Buka NotebookLM')),
-            TextButton(onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.dashboard),
-                child: const Text('Kembali ke ruang telaah')),
-          ],
-        )),
+        child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                    'Buka NotebookLM di browser dan gunakan akun Google Anda. '
+                    'Sesi browser terpisah dari ruang web di aplikasi.'),
+                const SizedBox(height: 20),
+                FilledButton(
+                    onPressed: () async {
+                      try {
+                        if (!await launchUrl(
+                            Uri.parse('https://notebooklm.google.com/'),
+                            mode: LaunchMode.externalApplication)) {
+                          throw StateError('Browser unavailable');
+                        }
+                      } catch (_) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Browser belum dapat dibuka.')),
+                          );
+                        }
+                      }
+                    },
+                    child: const Text('Buka NotebookLM')),
+                TextButton(
+                    onPressed: () => Navigator.pushReplacementNamed(
+                        context, AppRoutes.dashboard),
+                    child: const Text('Kembali ke ruang telaah')),
+              ],
+            )),
       )),
     );
   }
@@ -149,10 +170,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final surface =
+        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
     if (_isSessionReady) {
@@ -225,7 +249,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.fromLTRB(16, 8, 16, 10),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
                   color: surface,
                   borderRadius: BorderRadius.circular(AppTheme.radiusCard),
@@ -258,10 +283,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InAppWebView(
-                      webViewEnvironment: DesktopWebViewRuntime.environment,
+                    webViewEnvironment: DesktopWebViewRuntime.environment,
                     initialUrlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
                     initialSettings: InAppWebViewSettings(
-                      userAgent: AppPlatform.isDesktop ? null : _chromeUserAgent,
+                      userAgent:
+                          AppPlatform.isDesktop ? null : _chromeUserAgent,
                       javaScriptEnabled: true,
                       domStorageEnabled: true,
                       databaseEnabled: true,
@@ -271,20 +297,24 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       supportMultipleWindows: false,
                       useShouldOverrideUrlLoading: true,
                       javaScriptCanOpenWindowsAutomatically: false,
-                      mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                      mixedContentMode:
+                          MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       allowFileAccess: false,
                       allowContentAccess: false,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
                       algorithmicDarkeningAllowed: false,
                     ),
-                    shouldOverrideUrlLoading: (controller, navigationAction) async {
+                    shouldOverrideUrlLoading:
+                        (controller, navigationAction) async {
                       final uri = navigationAction.request.url;
                       if (uri == null) return NavigationActionPolicy.CANCEL;
 
                       return NotebookNavigation.allowed(uri)
-                          ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL;
+                          ? NavigationActionPolicy.ALLOW
+                          : NavigationActionPolicy.CANCEL;
                     },
-                    onWebViewCreated: (controller) => _webController = controller,
+                    onWebViewCreated: (controller) =>
+                        _webController = controller,
                     onProgressChanged: (controller, progress) {
                       if (mounted) _loadProgress.value = progress / 100;
                     },

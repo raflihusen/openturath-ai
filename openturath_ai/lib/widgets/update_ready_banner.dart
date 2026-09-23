@@ -22,10 +22,13 @@ class UpdateReadyBanner extends StatelessWidget {
 
         final isDesktop = !kIsWeb && !Platform.isAndroid && !Platform.isIOS;
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+        final surface =
+            isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
         final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-        final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-        final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+        final textPrimary =
+            isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+        final textSecondary =
+            isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
         final info = updateService.updateInfo;
         final version = info?.latestVersion ?? '';
 
@@ -46,7 +49,9 @@ class UpdateReadyBanner extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
+                  color: isDark
+                      ? AppTheme.borderDark
+                      : AppTheme.pillSecondaryBgLight,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -61,7 +66,9 @@ class UpdateReadyBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isDesktop ? 'Pembaruan v$version Tersedia' : 'Pembaruan v$version Siap Dipasang',
+                      isDesktop
+                          ? 'Pembaruan v$version Tersedia'
+                          : 'Pembaruan v$version Siap Dipasang',
                       style: GoogleFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -89,14 +96,16 @@ class UpdateReadyBanner extends StatelessWidget {
                   final opened = await updateService.installNow();
                   if (!opened && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Pembaruan belum dapat dibuka. Silakan coba kembali.'),
+                      content: Text(
+                          'Pembaruan belum dapat dibuka. Silakan coba kembali.'),
                     ));
                   }
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: OTColors.accent(isDark),
                   foregroundColor: OTColors.onAccent(isDark),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   minimumSize: const Size(64, 36),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppTheme.radiusPill),

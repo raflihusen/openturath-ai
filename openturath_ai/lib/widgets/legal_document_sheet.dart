@@ -1,4 +1,5 @@
 library;
+
 import '../widgets/adaptive_sheet.dart';
 
 import 'package:flutter/material.dart';
@@ -27,7 +28,8 @@ class LegalDocumentSheet extends StatelessWidget {
     return _show(
       context,
       title: LegalCopy.termsTitle,
-      subtitle: 'Versi ${LegalCopy.documentVersion} · Berlaku mulai ${LegalCopy.effectiveDate}',
+      subtitle:
+          'Versi ${LegalCopy.documentVersion} · Berlaku mulai ${LegalCopy.effectiveDate}',
       sections: LegalCopy.termsSections,
     );
   }
@@ -37,7 +39,8 @@ class LegalDocumentSheet extends StatelessWidget {
     return _show(
       context,
       title: LegalCopy.privacyTitle,
-      subtitle: 'Versi ${LegalCopy.documentVersion} · Sesuai UU No. 27 Tahun 2022',
+      subtitle:
+          'Versi ${LegalCopy.documentVersion} · Sesuai UU No. 27 Tahun 2022',
       sections: LegalCopy.privacySections,
     );
   }

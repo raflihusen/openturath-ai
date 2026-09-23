@@ -40,16 +40,21 @@ class DeviceService {
   static Future<String>? _installationId;
 
   static Future<String> _persistentId() => _installationId ??= (() async {
-    final prefs = await SharedPreferences.getInstance();
-    final existing = prefs.getString('ot_installation_identity_v1');
-    if (existing != null && existing.isNotEmpty) return existing;
-    final random = Random.secure();
-    final id = base64UrlEncode(List.generate(32, (_) => random.nextInt(256)));
-    if (!await prefs.setString('ot_installation_identity_v1', id)) {
-      throw StateError('Identitas perangkat belum dapat disimpan.');
-    }
-    return id;
-  })().catchError((Object error) { _installationId = null; throw error; });
+        final prefs = await SharedPreferences.getInstance();
+        final existing = prefs.getString('ot_installation_identity_v1');
+        if (existing != null && existing.isNotEmpty) return existing;
+        final random = Random.secure();
+        final id =
+            base64UrlEncode(List.generate(32, (_) => random.nextInt(256)));
+        if (!await prefs.setString('ot_installation_identity_v1', id)) {
+          throw StateError('Identitas perangkat belum dapat disimpan.');
+        }
+        return id;
+      })()
+          .catchError((Object error) {
+        _installationId = null;
+        throw error;
+      });
 
   static const String _salt = 'OT_AI_HW_SALT_2026_980031db';
 
@@ -132,10 +137,15 @@ class DeviceService {
       }
       if (Platform.isWindows) {
         final info = await _deviceInfo.windowsInfo;
-        final rawId = info.deviceId.trim().isEmpty ? await _persistentId() : info.deviceId;
+        final rawId = info.deviceId.trim().isEmpty
+            ? await _persistentId()
+            : info.deviceId;
         return DeviceFingerprint(
-          deviceId: computeHash(rawId: rawId, brand: 'windows', model: 'windows-pc'),
-          brand: 'windows', model: info.productName, isPhysicalDevice: true,
+          deviceId:
+              computeHash(rawId: rawId, brand: 'windows', model: 'windows-pc'),
+          brand: 'windows',
+          model: info.productName,
+          isPhysicalDevice: true,
         );
       }
     } catch (e) {

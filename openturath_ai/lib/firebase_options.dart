@@ -68,7 +68,8 @@ class DefaultFirebaseOptions {
     projectId: 'open-turath',
     storageBucket: 'open-turath.firebasestorage.app',
     iosBundleId: 'com.example.openturathAi',
-    iosClientId: '255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com',
+    iosClientId:
+        '255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

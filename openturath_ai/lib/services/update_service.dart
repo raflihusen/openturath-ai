@@ -79,7 +79,8 @@ class UpdateService extends ChangeNotifier {
   UpdateInfo? get updateInfo => _updateInfo;
 
   bool get isUpdateReady {
-    if (_status != UpdateStatus.readyToInstall || _updateInfo == null) return false;
+    if (_status != UpdateStatus.readyToInstall || _updateInfo == null)
+      return false;
     if (AppPlatform.isDesktop) {
       // Desktop: siap membuka URL unduhan desktop
       return true;
@@ -98,8 +99,12 @@ class UpdateService extends ChangeNotifier {
 
   /// Memulai pengecekan versi dan unduhan otomatis di background
   Future<void> checkForUpdatesSilently() async {
-    if (kIsWeb || (!AppPlatform.isDesktop && !AppPlatform.isAndroid) ||
-        _isChecking || _isDownloading) { return; }
+    if (kIsWeb ||
+        (!AppPlatform.isDesktop && !AppPlatform.isAndroid) ||
+        _isChecking ||
+        _isDownloading) {
+      return;
+    }
     _isChecking = true;
 
     try {
@@ -160,14 +165,16 @@ class UpdateService extends ChangeNotifier {
         // Android: Periksa apakah APK versi tersebut SUDAH pernah terunduh di cache (F44)
         final localFile = await _getLocalApkFile(latestCode);
         bool isCachedValid = false;
-        if (await localFile.exists() && (await localFile.length()) > 5 * 1024 * 1024) {
+        if (await localFile.exists() &&
+            (await localFile.length()) > 5 * 1024 * 1024) {
           if (sha256Hash != null && sha256Hash.isNotEmpty) {
             try {
               final cachedSha = await _computeFileSha256(localFile);
               if (cachedSha.toLowerCase() == sha256Hash.toLowerCase()) {
                 isCachedValid = true;
               } else {
-                debugPrint('[UpdateService] Cached APK hash mismatch: $cachedSha vs $sha256Hash');
+                debugPrint(
+                    '[UpdateService] Cached APK hash mismatch: $cachedSha vs $sha256Hash');
                 await localFile.delete();
               }
             } catch (e) {
@@ -207,7 +214,8 @@ class UpdateService extends ChangeNotifier {
   }
 
   /// Unduh APK di latar belakang tanpa mengganggu user dengan mutex dan try-finally sink
-  Future<void> _startSilentDownload(String url, File targetFile, String? expectedSha256) async {
+  Future<void> _startSilentDownload(
+      String url, File targetFile, String? expectedSha256) async {
     if (_isDownloading) return;
     _isDownloading = true;
 
@@ -253,7 +261,8 @@ class UpdateService extends ChangeNotifier {
 
       // Validasi integritas ukuran file
       final tempLength = await tempFile.length();
-      if (tempLength < 5 * 1024 * 1024 || (contentLength > 0 && tempLength < contentLength)) {
+      if (tempLength < 5 * 1024 * 1024 ||
+          (contentLength > 0 && tempLength < contentLength)) {
         debugPrint('[UpdateService] Unduhan tidak lengkap ($tempLength bytes)');
         if (await tempFile.exists()) await tempFile.delete();
         _status = UpdateStatus.idle;
@@ -265,7 +274,8 @@ class UpdateService extends ChangeNotifier {
       if (expectedSha256 != null && expectedSha256.isNotEmpty) {
         final calculatedSha256 = await _computeFileSha256(tempFile);
         if (calculatedSha256.toLowerCase() != expectedSha256.toLowerCase()) {
-          debugPrint('[UpdateService] SHA256 checksum mismatch: $calculatedSha256 vs $expectedSha256');
+          debugPrint(
+              '[UpdateService] SHA256 checksum mismatch: $calculatedSha256 vs $expectedSha256');
           if (await tempFile.exists()) await tempFile.delete();
           _status = UpdateStatus.idle;
           notifyListeners();
@@ -286,7 +296,8 @@ class UpdateService extends ChangeNotifier {
       );
       _status = UpdateStatus.readyToInstall;
       notifyListeners();
-      debugPrint('[UpdateService] Background download complete: ${targetFile.path}');
+      debugPrint(
+          '[UpdateService] Background download complete: ${targetFile.path}');
     } catch (e) {
       debugPrint('[UpdateService] Background download error: $e');
       _status = UpdateStatus.idle;
@@ -305,7 +316,8 @@ class UpdateService extends ChangeNotifier {
       if (await updateDir.exists()) {
         final list = updateDir.listSync();
         for (final entity in list) {
-          if (entity.path != currentPath && (entity.path.endsWith('.apk') || entity.path.endsWith('.tmp'))) {
+          if (entity.path != currentPath &&
+              (entity.path.endsWith('.apk') || entity.path.endsWith('.tmp'))) {
             try {
               entity.deleteSync();
             } catch (_) {}
@@ -334,7 +346,9 @@ class UpdateService extends ChangeNotifier {
       try {
         return await launchUrl(Uri.parse(_updateInfo!.apkUrl),
             mode: LaunchMode.externalApplication);
-      } catch (_) { return false; }
+      } catch (_) {
+        return false;
+      }
     }
     if (!AppPlatform.isAndroid) return false;
     final filePath = _updateInfo!.localFilePath;
@@ -349,6 +363,8 @@ class UpdateService extends ChangeNotifier {
       final result = await OpenFilex.open(filePath,
           type: 'application/vnd.android.package-archive');
       return result.type == ResultType.done;
-    } catch (_) { return false; }
+    } catch (_) {
+      return false;
+    }
   }
 }

@@ -244,7 +244,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: _entitlementTitle(entry.key),
                       subtitle: entry.value.expiry == null
                           ? Loc.tr('activeSubscription')
-                          : Loc.tr('expiryDate', [_formatAccessDate(entry.value.expiry!)]),
+                          : Loc.tr('expiryDate',
+                              [_formatAccessDate(entry.value.expiry!)]),
                       color: textPrimary,
                       muted: textSecondary,
                     )),
@@ -253,7 +254,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  static String _formatAccessDate(DateTime value) => HijriDateUtils.formatMasehiOnly(value.toLocal());
+  static String _formatAccessDate(DateTime value) =>
+      HijriDateUtils.formatMasehiOnly(value.toLocal());
 
   static String _entitlementTitle(String key) => Loc.text(switch (key) {
         'fiqh_tahawwulat' => 'Fikih Tahawwulat',
@@ -578,9 +580,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               const Center(child: OpenTurathMark(size: 64)),
               const SizedBox(height: 12),
-              Text(Loc.tr('brandPhilosophyTitle'), style: OTTypography.cardTitle(color: textPrimary)),
+              Text(Loc.tr('brandPhilosophyTitle'),
+                  style: OTTypography.cardTitle(color: textPrimary)),
               const SizedBox(height: 8),
-              Text(Loc.tr('brandPhilosophy'), style: OTTypography.body(color: textSecondary)),
+              Text(Loc.tr('brandPhilosophy'),
+                  style: OTTypography.body(color: textSecondary)),
               const SizedBox(height: 16),
               Divider(height: 1, color: border),
               const SizedBox(height: 8),
@@ -690,22 +694,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Color surface,
     Color border,
   ) {
-    showDialog<void>(context: context, builder: (ctx) => AlertDialog(
-      title: Text(AppCopy.language),
-      content: Column(mainAxisSize: MainAxisSize.min, children: [
-        for (final entry in Loc.languageNames.entries)
-          ListTile(title: Text(entry.value),
-            trailing: entry.key == Loc.language ? const Icon(Icons.check_rounded) : null,
-            onTap: () async {
-              Navigator.of(ctx).pop();
-              try {
-                await AppConfig.setLocale(entry.key);
-              } catch (_) {
-                // The in-memory preference is still applied.
-              }
-            }),
-      ]),
-    ));
+    showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text(AppCopy.language),
+              content: Column(mainAxisSize: MainAxisSize.min, children: [
+                for (final entry in Loc.languageNames.entries)
+                  ListTile(
+                      title: Text(entry.value),
+                      trailing: entry.key == Loc.language
+                          ? const Icon(Icons.check_rounded)
+                          : null,
+                      onTap: () async {
+                        Navigator.of(ctx).pop();
+                        try {
+                          await AppConfig.setLocale(entry.key);
+                        } catch (_) {
+                          // The in-memory preference is still applied.
+                        }
+                      }),
+              ]),
+            ));
   }
 
   Widget _buildThemeOption({
@@ -1094,7 +1103,8 @@ class _AccessPortfolioRow extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                Text(Loc.text(title), style: OTTypography.bodyMedium(color: color)),
+                Text(Loc.text(title),
+                    style: OTTypography.bodyMedium(color: color)),
                 const SizedBox(height: 2),
                 Text(subtitle, style: OTTypography.caption(color: muted)),
               ])),

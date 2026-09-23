@@ -30,7 +30,8 @@ class AppleInteractiveWrapper extends StatefulWidget {
   });
 
   @override
-  State<AppleInteractiveWrapper> createState() => _AppleInteractiveWrapperState();
+  State<AppleInteractiveWrapper> createState() =>
+      _AppleInteractiveWrapperState();
 }
 
 enum HapticFeedbackType {
@@ -112,7 +113,8 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
   Widget build(BuildContext context) {
     Loc.watch(context);
     final hasAction = widget.onTap != null || widget.onLongPress != null;
-    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
     Widget result = reduceMotion
         ? widget.child
@@ -143,32 +145,37 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
           duration: reduceMotion ? Duration.zero : widget.duration,
           foregroundDecoration: BoxDecoration(
             borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
-            color: _hovered ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.05) : null,
-            border: _focused ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
+            color: _hovered
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.05)
+                : null,
+            border: _focused
+                ? Border.all(
+                    color: Theme.of(context).colorScheme.primary, width: 2)
+                : null,
           ),
           child: Semantics(
-        button: true,
-        enabled: true,
-        label: widget.semanticLabel,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: reduceMotion ? null : _handleTapDown,
-          onTapUp: reduceMotion ? null : _handleTapUp,
-          onTapCancel: reduceMotion ? null : _handleTapCancel,
-          onTap: () {
-            _triggerHaptic();
-            widget.onTap?.call();
-          },
-          onLongPress: widget.onLongPress != null
-              ? () {
-                  _triggerHaptic();
-                  widget.onLongPress?.call();
-                }
-              : null,
-          child: result,
+            button: true,
+            enabled: true,
+            label: widget.semanticLabel,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapDown: reduceMotion ? null : _handleTapDown,
+              onTapUp: reduceMotion ? null : _handleTapUp,
+              onTapCancel: reduceMotion ? null : _handleTapCancel,
+              onTap: () {
+                _triggerHaptic();
+                widget.onTap?.call();
+              },
+              onLongPress: widget.onLongPress != null
+                  ? () {
+                      _triggerHaptic();
+                      widget.onLongPress?.call();
+                    }
+                  : null,
+              child: result,
+            ),
+          ),
         ),
-      ),
-      ),
       );
     }
 

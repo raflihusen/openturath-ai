@@ -271,8 +271,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 18),
 
-
-
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     ListenableBuilder(
                       listenable: _searchFocusNode,

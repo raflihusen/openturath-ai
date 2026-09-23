@@ -16,14 +16,20 @@ Future<T?> showAdaptiveSheet<T>({
 }) {
   if (!AppPlatform.isDesktop) {
     return showModalBottomSheet<T>(
-      context: context, builder: builder,
-      isScrollControlled: isScrollControlled, backgroundColor: backgroundColor,
-      shape: shape, useRootNavigator: useRootNavigator, enableDrag: enableDrag,
-      isDismissible: isDismissible, showDragHandle: showDragHandle,
+      context: context,
+      builder: builder,
+      isScrollControlled: isScrollControlled,
+      backgroundColor: backgroundColor,
+      shape: shape,
+      useRootNavigator: useRootNavigator,
+      enableDrag: enableDrag,
+      isDismissible: isDismissible,
+      showDragHandle: showDragHandle,
     );
   }
   return showDialog<T>(
-    context: context, useRootNavigator: useRootNavigator,
+    context: context,
+    useRootNavigator: useRootNavigator,
     barrierDismissible: isDismissible,
     builder: (dialogContext) => Dialog(
       backgroundColor: backgroundColor,
@@ -41,7 +47,9 @@ Future<T?> showAdaptiveSheet<T>({
         return SizedBox(
           width: width,
           height: isScrollControlled ? height : null,
-          child: isScrollControlled ? content : SingleChildScrollView(child: content),
+          child: isScrollControlled
+              ? content
+              : SingleChildScrollView(child: content),
         );
       }),
     ),

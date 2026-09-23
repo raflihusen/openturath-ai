@@ -109,7 +109,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (_webController == null) return;
     try {
       await _webController!.evaluateJavascript(
-        source: 'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($_fontScale); }',
+        source:
+            'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($_fontScale); }',
       );
     } catch (_) {}
   }
@@ -131,7 +132,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   }
 
   static Future<void> _stopWebView(InAppWebViewController controller) async {
-    try { await controller.stopLoading(); } catch (_) {}
+    try {
+      await controller.stopLoading();
+    } catch (_) {}
   }
 
   static const String _turatsMasterScript = r"""
@@ -250,7 +253,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       _webController?.setSettings(
         settings: InAppWebViewSettings(
           forceDark: currentIsDark ? ForceDark.ON : ForceDark.OFF,
-          forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+          forceDarkStrategy:
+              ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
           algorithmicDarkeningAllowed: true,
         ),
       );
@@ -392,7 +396,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           _isPaywallRequired = true;
           _isLoadingUrl = false;
           _isWebViewLoading = false;
-          _errorMessage = AppCopy.accessUnavailableFor(_agent?.title ?? AppCopy.studySpace);
+          _errorMessage =
+              AppCopy.accessUnavailableFor(_agent?.title ?? AppCopy.studySpace);
         });
       }
     } catch (_) {}
@@ -401,7 +406,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _applyHideScript() async {
     if (_webController == null) return;
     try {
-      await _webController!.evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
+      await _webController!
+          .evaluateJavascript(source: _turatsMasterScript + notebookUiScript);
       await _applyThemeCss();
     } catch (_) {}
   }
@@ -475,17 +481,21 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   Future<void> _saveCopiedAnswer(String text, String ownerUid) async {
     text = text.trim();
-    if (text.isEmpty || text.length > 200000 || _authService.currentUser?.uid != ownerUid) return;
+    if (text.isEmpty ||
+        text.length > 200000 ||
+        _authService.currentUser?.uid != ownerUid) return;
     final agent = _agent;
     if (agent == null) return;
-    await _bookmarkService.addBookmark(copiedAnswerBookmark(text, agent), userId: ownerUid);
+    await _bookmarkService.addBookmark(copiedAnswerBookmark(text, agent),
+        userId: ownerUid);
   }
 
   Future<void> _copyAnswerToClipboard() async {
     if (_webController == null || _isCopying) return;
     setState(() => _isCopying = true);
     try {
-      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
+      final result = await _webController!.evaluateJavascript(
+          source: 'window.otNotebook ? window.otNotebook.latest() : ""');
       final text = result is String ? result.trim() : '';
       if (text.isEmpty) {
         if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToCopy);
@@ -509,7 +519,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (uid == null) return;
     setState(() => _isCopying = true);
     try {
-      final result = await _webController!.evaluateJavascript(source: 'window.otNotebook ? window.otNotebook.latest() : ""');
+      final result = await _webController!.evaluateJavascript(
+          source: 'window.otNotebook ? window.otNotebook.latest() : ""');
       final text = result is String ? result.trim() : '';
       if (text.isEmpty) {
         if (mounted) AppSnackBar.warning(context, AppCopy.noAnswerToSave);
@@ -526,12 +537,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     }
   }
 
-
   void _startReadinessCheck() {
     _readinessTimer?.cancel();
     _loadingStarted = DateTime.now();
     _readySamples = 0;
-    _readinessTimer = Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+    _readinessTimer =
+        Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
   }
 
   Future<void> _checkReady() async {
@@ -575,11 +586,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         });
       }
     } catch (_) {
-      if (mounted && _loadingStarted != null && DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
+      if (mounted &&
+          _loadingStarted != null &&
+          DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
         _readinessTimer?.cancel();
-        setState(() { _isWebViewLoading = false; _errorMessage = AppCopy.cannotLoad; });
+        setState(() {
+          _isWebViewLoading = false;
+          _errorMessage = AppCopy.cannotLoad;
+        });
       }
-    } finally { _checkingReady = false; }
+    } finally {
+      _checkingReady = false;
+    }
   }
 
   Future<void> _handleBackPress() async {
@@ -620,7 +638,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         setState(() {
           _user = refreshedUser;
         });
-        if (_isPaywallRequired && refreshedUser.hasAccessToAgent(_agent?.id ?? '')) {
+        if (_isPaywallRequired &&
+            refreshedUser.hasAccessToAgent(_agent?.id ?? '')) {
           _fetchAgentUrl();
         }
       }
@@ -633,10 +652,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     }
   }
 
-
-
   @override
-  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+  Widget build(BuildContext context) =>
+      DesktopWebViewGate(builder: _buildContent);
 
   Widget _buildContent(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -684,7 +702,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     onTap: _navigateToSubscription,
                     borderRadius: OTRadius.chipBorder,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: surfaceSubtle,
                         borderRadius: OTRadius.chipBorder,
@@ -697,7 +716,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                           const SizedBox(width: 3),
                           Text(
                             '${_user!.questionsRemaining}',
-                            style: OTTypography.caption(color: textPrimary).copyWith(
+                            style: OTTypography.caption(color: textPrimary)
+                                .copyWith(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -709,12 +729,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 ),
               ),
             IconButton(
-              icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 21),
+              icon:
+                  Icon(Icons.menu_book_outlined, color: textPrimary, size: 21),
               tooltip: AppCopy.referenceBooks,
               onPressed: () => showResearchLibrary(context, agent: _agent),
             ),
             IconButton(
-              icon: Icon(Icons.more_horiz_rounded, color: textPrimary, size: 22),
+              icon:
+                  Icon(Icons.more_horiz_rounded, color: textPrimary, size: 22),
               tooltip: AppCopy.studyOptions,
               onPressed: _showOverflowMenu,
             ),
@@ -728,13 +750,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               // ── 1. WebView Layer (Safe Below App Bar) ──
               if (_agentUrl != null)
                 Container(
-                  color: isDark ? const Color(0xFF0E0E10) : const Color(0xFFFFFFFF),
+                  color: isDark
+                      ? const Color(0xFF0E0E10)
+                      : const Color(0xFFFFFFFF),
                   child: InAppWebView(
-                      webViewEnvironment: DesktopWebViewRuntime.environment,
+                    webViewEnvironment: DesktopWebViewRuntime.environment,
                     initialUrlRequest: URLRequest(url: WebUri(_agentUrl!)),
-                    initialUserScripts: UnmodifiableListView<UserScript>([_cloakScript]),
+                    initialUserScripts:
+                        UnmodifiableListView<UserScript>([_cloakScript]),
                     initialSettings: InAppWebViewSettings(
-                      userAgent: AppPlatform.isDesktop ? null : AppConstants.chromeMobileUserAgent,
+                      userAgent: AppPlatform.isDesktop
+                          ? null
+                          : AppConstants.chromeMobileUserAgent,
                       javaScriptEnabled: true,
                       domStorageEnabled: true,
                       databaseEnabled: true,
@@ -744,7 +771,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       clearCache: false,
                       clearSessionCache: false,
                       useHybridComposition: true,
-                      mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                      mixedContentMode:
+                          MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       allowFileAccess: false,
                       allowContentAccess: false,
                       javaScriptCanOpenWindowsAutomatically: false,
@@ -755,230 +783,246 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       mediaPlaybackRequiresUserGesture: false,
                       allowsInlineMediaPlayback: true,
                       forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
-                      forceDarkStrategy: ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
+                      forceDarkStrategy: ForceDarkStrategy
+                          .PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
                       algorithmicDarkeningAllowed: true,
                       transparentBackground: false,
                     ),
-                onWebViewCreated: (controller) {
-                  _webController = controller;
-                  final ownerUid = _authService.currentUser?.uid;
-                  controller.addJavaScriptHandler(handlerName: 'otCopiedAnswer', callback: (args) async {
-                    final url = await controller.getUrl();
-                    if (ownerUid == null || url?.scheme != 'https' || !['notebooklm.google.com', 'notebook.google.com'].contains(url?.host) || args.isEmpty || args.first is! String) return false;
-                    try {
-                      final text = (args.first as String).trim();
-                      if (text.isEmpty || text.length > 200000) return false;
-                      final now = DateTime.now();
-                      if (_lastCopiedToastAt != null &&
-                          now.difference(_lastCopiedToastAt!) <
-                              const Duration(milliseconds: 3500)) {
-                        return true;
-                      }
-                      _lastCopiedToastAt = now;
+                    onWebViewCreated: (controller) {
+                      _webController = controller;
+                      final ownerUid = _authService.currentUser?.uid;
+                      controller.addJavaScriptHandler(
+                          handlerName: 'otCopiedAnswer',
+                          callback: (args) async {
+                            final url = await controller.getUrl();
+                            if (ownerUid == null ||
+                                url?.scheme != 'https' ||
+                                ![
+                                  'notebooklm.google.com',
+                                  'notebook.google.com'
+                                ].contains(url?.host) ||
+                                args.isEmpty ||
+                                args.first is! String) return false;
+                            try {
+                              final text = (args.first as String).trim();
+                              if (text.isEmpty || text.length > 200000)
+                                return false;
+                              final now = DateTime.now();
+                              if (_lastCopiedToastAt != null &&
+                                  now.difference(_lastCopiedToastAt!) <
+                                      const Duration(milliseconds: 3500)) {
+                                return true;
+                              }
+                              _lastCopiedToastAt = now;
 
-                      await Clipboard.setData(ClipboardData(text: text));
-                      if (context.mounted) {
-                        AppSnackBar.success(
-                          context,
-                          AppCopy.answerCopied,
-                          duration: const Duration(milliseconds: 2500),
-                          action: SnackBarAction(
-                            label: 'Simpan',
-                            textColor: OTColors.onInverseSurface,
-                            onPressed: () => unawaited(_saveCopiedAnswer(text, ownerUid)),
-                          ),
+                              await Clipboard.setData(
+                                  ClipboardData(text: text));
+                              if (context.mounted) {
+                                AppSnackBar.success(
+                                  context,
+                                  AppCopy.answerCopied,
+                                  duration: const Duration(milliseconds: 2500),
+                                  action: SnackBarAction(
+                                    label: 'Simpan',
+                                    textColor: OTColors.onInverseSurface,
+                                    onPressed: () => unawaited(
+                                        _saveCopiedAnswer(text, ownerUid)),
+                                  ),
+                                );
+                              }
+                              return true;
+                            } catch (_) {
+                              if (context.mounted)
+                                AppSnackBar.error(context, AppCopy.saveFailed);
+                              return false;
+                            }
+                          });
+                      _startReadinessCheck();
+                    },
+                    onLoadStart: (controller, url) {
+                      if (mounted) setState(() => _isWebViewLoading = true);
+                      _startReadinessCheck();
+                    },
+                    onPermissionRequest: (controller, request) async =>
+                        PermissionResponse(
+                      resources: request.resources,
+                      action: PermissionResponseAction.DENY,
+                    ),
+                    shouldOverrideUrlLoading:
+                        (controller, navigationAction) async {
+                      final uri = navigationAction.request.url;
+                      return uri != null && NotebookNavigation.allowed(uri)
+                          ? NavigationActionPolicy.ALLOW
+                          : NavigationActionPolicy.CANCEL;
+                    },
+                    onLoadStop: (controller, url) async {
+                      await _applyHideScript();
+                      await _applyCurrentFontScale();
+                      await _detectGoogleAccessDenied();
+                      await _checkReady();
+                    },
+                    onProgressChanged: (controller, progress) async {
+                      if (progress >= 25) {
+                        await _applyHideScript();
+                        await _detectGoogleAccessDenied();
+                      }
+                      if (progress >= 45) {
+                        await _detectGoogleAccessDenied();
+                      }
+                    },
+                    onReceivedError: (controller, request, error) {
+                      if (request.isForMainFrame == true) {
+                        TelemetryService.instance.reportError(
+                          'WebView Main Frame Error: ${error.description} (code ${error.type})',
+                          null,
+                          context: 'webview_main_frame_error',
+                          severity: 'error',
+                          extra: {
+                            'agentId': _agent?.id ?? '',
+                            'url': request.url.toString(),
+                          },
                         );
                       }
-                      return true;
-                    } catch (_) {
-                      if (context.mounted) AppSnackBar.error(context, AppCopy.saveFailed);
-                      return false;
-                    }
-                  });
-                  _startReadinessCheck();
-                },
-                onLoadStart: (controller, url) {
-                  if (mounted) setState(() => _isWebViewLoading = true);
-                  _startReadinessCheck();
-                },
-                onPermissionRequest: (controller, request) async => PermissionResponse(
-                  resources: request.resources, action: PermissionResponseAction.DENY,
+                      if (mounted && (request.isForMainFrame == true)) {
+                        setState(() {
+                          _isWebViewLoading = false;
+                          _errorMessage = AppCopy.cannotLoad;
+                        });
+                      }
+                    },
+                  ),
                 ),
-                shouldOverrideUrlLoading: (controller, navigationAction) async {
-                  final uri = navigationAction.request.url;
-                  return uri != null && NotebookNavigation.allowed(uri)
-                    ? NavigationActionPolicy.ALLOW : NavigationActionPolicy.CANCEL;
-                },
-                onLoadStop: (controller, url) async {
-                  await _applyHideScript();
-                  await _applyCurrentFontScale();
-                  await _detectGoogleAccessDenied();
-                  await _checkReady();
-                },
-                onProgressChanged: (controller, progress) async {
-                  if (progress >= 25) {
-                    await _applyHideScript();
-                    await _detectGoogleAccessDenied();
-                  }
-                  if (progress >= 45) {
-                    await _detectGoogleAccessDenied();
 
-                  }
-                },
-                onReceivedError: (controller, request, error) {
-                  if (request.isForMainFrame == true) {
-                    TelemetryService.instance.reportError(
-                      'WebView Main Frame Error: ${error.description} (code ${error.type})',
-                      null,
-                      context: 'webview_main_frame_error',
-                      severity: 'error',
-                      extra: {
-                        'agentId': _agent?.id ?? '',
-                        'url': request.url.toString(),
-                      },
-                    );
-                  }
-                  if (mounted && (request.isForMainFrame == true)) {
-                    setState(() {
-                      _isWebViewLoading = false;
-                      _errorMessage = AppCopy.cannotLoad;
-                    });
-                  }
-                },
-              ),
-            ),
-
-            // ── Loading Indicator Screen (Unified Three Dots Minimal Pulse) ──
-            if (_isLoadingUrl || (_isWebViewLoading && _errorMessage == null))
-              Positioned.fill(
-                child: AppLoader.fullscreen(
-                  title: _agent?.title ?? AppCopy.openStudy,
-                  subtitle: AppCopy.loadingReferences,
-                  onCancel: _handleBackPress,
+              // ── Loading Indicator Screen (Unified Three Dots Minimal Pulse) ──
+              if (_isLoadingUrl || (_isWebViewLoading && _errorMessage == null))
+                Positioned.fill(
+                  child: AppLoader.fullscreen(
+                    title: _agent?.title ?? AppCopy.openStudy,
+                    subtitle: AppCopy.loadingReferences,
+                    onCancel: _handleBackPress,
+                  ),
                 ),
-              ),
 
-            // ── 2. Error / Paywall State Screen ──
-            if (_errorMessage != null && !_isLoadingUrl)
-              Positioned.fill(
-                child: Container(
-                  color: canvas,
-                  child: _isPaywallRequired
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 32, vertical: 24),
-                            child: ConstrainedBox(
-                              constraints:
-                                  const BoxConstraints(maxWidth: 400),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    width: 72,
-                                    height: 72,
-                                    decoration: BoxDecoration(
-                                      color: OTColors.surface(isDark),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: OTColors.border(isDark),
-                                          width: 1.2),
-                                    ),
-                                    child: Icon(
-                                      Icons.workspace_premium_outlined,
-                                      size: 34,
-                                      color: OTColors.accent(isDark),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Text(
-                                    'Akses Langganan Diperlukan',
-                                    textAlign: TextAlign.center,
-                                    style: ScholarlyFonts.newsreader(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      color: textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    _errorMessage ??
-                                        'Untuk membuka dan menelaah kitab bersama ${_agent?.title ?? 'asisten ini'}, silakan aktifkan paket langganan Anda.',
-                                    textAlign: TextAlign.center,
-                                    style: ScholarlyFonts.outfit(
-                                      fontSize: 13.5,
-                                      height: 1.45,
-                                      color: textSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 24),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 46,
-                                    child: FilledButton.icon(
-                                      onPressed: _navigateToSubscription,
-                                      icon: const Icon(
-                                          Icons.card_membership_rounded,
-                                          size: 18),
-                                      label: Text(
-                                        'Langganan Sekarang',
-                                        style: ScholarlyFonts.outfit(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14.5,
-                                        ),
+              // ── 2. Error / Paywall State Screen ──
+              if (_errorMessage != null && !_isLoadingUrl)
+                Positioned.fill(
+                  child: Container(
+                    color: canvas,
+                    child: _isPaywallRequired
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 32, vertical: 24),
+                              child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 400),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 72,
+                                      height: 72,
+                                      decoration: BoxDecoration(
+                                        color: OTColors.surface(isDark),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: OTColors.border(isDark),
+                                            width: 1.2),
                                       ),
-                                      style: FilledButton.styleFrom(
-                                        backgroundColor:
-                                            OTColors.accent(isDark),
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(24),
-                                        ),
+                                      child: Icon(
+                                        Icons.workspace_premium_outlined,
+                                        size: 34,
+                                        color: OTColors.accent(isDark),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    height: 44,
-                                    child: TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context),
-                                      child: Text(
-                                        AppCopy.backToHome,
-                                        style: ScholarlyFonts.outfit(
-                                          fontWeight: FontWeight.w500,
-                                          color: textSecondary,
+                                    const SizedBox(height: 20),
+                                    Text(
+                                      'Akses Langganan Diperlukan',
+                                      textAlign: TextAlign.center,
+                                      style: ScholarlyFonts.newsreader(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _errorMessage ??
+                                          'Untuk membuka dan menelaah kitab bersama ${_agent?.title ?? 'asisten ini'}, silakan aktifkan paket langganan Anda.',
+                                      textAlign: TextAlign.center,
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: 13.5,
+                                        height: 1.45,
+                                        color: textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 46,
+                                      child: FilledButton.icon(
+                                        onPressed: _navigateToSubscription,
+                                        icon: const Icon(
+                                            Icons.card_membership_rounded,
+                                            size: 18),
+                                        label: Text(
+                                          'Langganan Sekarang',
+                                          style: ScholarlyFonts.outfit(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14.5,
+                                          ),
+                                        ),
+                                        style: FilledButton.styleFrom(
+                                          backgroundColor:
+                                              OTColors.accent(isDark),
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(24),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 10),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 44,
+                                      child: TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text(
+                                          AppCopy.backToHome,
+                                          style: ScholarlyFonts.outfit(
+                                            fontWeight: FontWeight.w500,
+                                            color: textSecondary,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
+                          )
+                        : AppErrorState(
+                            title: AppCopy.cannotLoadStudy,
+                            message: _errorMessage!,
+                            icon: Icons.info_outline_rounded,
+                            onRetry: _fetchAgentUrl,
+                            retryLabel: AppCopy.tryAgain,
+                            onBack: () => Navigator.pop(context),
+                            backLabel: AppCopy.backToHome,
                           ),
-                        )
-                      : AppErrorState(
-                          title: AppCopy.cannotLoadStudy,
-                          message: _errorMessage!,
-                          icon: Icons.info_outline_rounded,
-                          onRetry: _fetchAgentUrl,
-                          retryLabel: AppCopy.tryAgain,
-                          onBack: () => Navigator.pop(context),
-                          backLabel: AppCopy.backToHome,
-                        ),
+                  ),
                 ),
-              ),
 
-            // ── 3. Solid Exit Overlay (Mencegah glitch/tearing SurfaceView Android saat pop) ──
-            if (_isExiting)
-              Positioned.fill(
-                child: Container(
-                  color: canvas,
+              // ── 3. Solid Exit Overlay (Mencegah glitch/tearing SurfaceView Android saat pop) ──
+              if (_isExiting)
+                Positioned.fill(
+                  child: Container(
+                    color: canvas,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -999,10 +1043,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   Future<void> _showAdabTalaqqiDialog() async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final surface =
+        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
 
     await showDialog<void>(
       context: context,
@@ -1010,7 +1057,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       builder: (dialogCtx) {
         return Dialog(
           backgroundColor: surface,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.radiusCard),
             side: BorderSide(color: border, width: 1.0),
@@ -1027,7 +1075,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isDark ? AppTheme.borderDark : AppTheme.pillSecondaryBgLight,
+                        color: isDark
+                            ? AppTheme.borderDark
+                            : AppTheme.pillSecondaryBgLight,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -1049,11 +1099,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                      icon: Icon(Icons.close_rounded,
+                          size: 20, color: textSecondary),
                       onPressed: () => Navigator.pop(dialogCtx),
                       splashRadius: 20,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                      constraints:
+                          const BoxConstraints(minWidth: 32, minHeight: 32),
                     ),
                   ],
                 ),
@@ -1111,12 +1163,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(dialogCtx),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : const Color(0xFF18181B),
-                      foregroundColor: isDark ? const Color(0xFF0E0E10) : Colors.white,
+                      backgroundColor:
+                          isDark ? Colors.white : const Color(0xFF18181B),
+                      foregroundColor:
+                          isDark ? const Color(0xFF0E0E10) : Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusPill),
                       ),
                     ),
                     child: Text(
@@ -1166,7 +1221,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 2),
-          child: Icon(icon, size: 16, color: isDark ? Colors.white : const Color(0xFF18181B)),
+          child: Icon(icon,
+              size: 16, color: isDark ? Colors.white : const Color(0xFF18181B)),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -1232,12 +1288,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ),
             Text(
               AppCopy.studyOptions,
-              style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
+              style: OTTypography.corpusTitle(color: textPrimary)
+                  .copyWith(fontSize: 18),
             ),
             const SizedBox(height: 12),
             ListTile(
-              leading: Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-              title: Text('Ukuran teks (${(_fontScale * 100).round()}%)', style: OTTypography.bodyMedium(color: textPrimary)),
+              leading:
+                  Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
+              title: Text('Ukuran teks (${(_fontScale * 100).round()}%)',
+                  style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showFontScalePicker();
@@ -1245,8 +1304,12 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ),
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
-              leading: Icon(_hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded, color: _hasCopied ? OTColors.marja(isDark) : textPrimary, size: 20),
-              title: Text(AppCopy.copyAnswerAction, style: OTTypography.bodyMedium(color: textPrimary)),
+              leading: Icon(
+                  _hasCopied ? Icons.check_circle_rounded : Icons.copy_rounded,
+                  color: _hasCopied ? OTColors.marja(isDark) : textPrimary,
+                  size: 20),
+              title: Text(AppCopy.copyAnswerAction,
+                  style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
@@ -1255,8 +1318,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     },
             ),
             ListTile(
-              leading: Icon(Icons.bookmark_border_rounded, color: textPrimary, size: 20),
-              title: Text(AppCopy.saveAnswerMenu, style: OTTypography.bodyMedium(color: textPrimary)),
+              leading: Icon(Icons.bookmark_border_rounded,
+                  color: textPrimary, size: 20),
+              title: Text(AppCopy.saveAnswerMenu,
+                  style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: _isCopying
                   ? null
                   : () {
@@ -1308,7 +1373,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   const SizedBox(height: 16),
                   Text(
                     AppCopy.studyOptions,
-                    style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 17),
+                    style: OTTypography.corpusTitle(color: textPrimary)
+                        .copyWith(fontSize: 17),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -1316,12 +1382,20 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     style: OTTypography.caption(color: textSecondary),
                   ),
                   const SizedBox(height: 14),
-                  _buildScaleOption(ctx, label: 'Kecil (85%)', scale: 0.85, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Standar (100%)', scale: 1.0, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Sedang (120%)', scale: 1.20, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Besar (140%)', scale: 1.40, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Sangat besar (165%)', scale: 1.65, isDark: isDark),
-                  _buildScaleOption(ctx, label: 'Maksimal (200%)', scale: 2.00, isDark: isDark),
+                  _buildScaleOption(ctx,
+                      label: 'Kecil (85%)', scale: 0.85, isDark: isDark),
+                  _buildScaleOption(ctx,
+                      label: 'Standar (100%)', scale: 1.0, isDark: isDark),
+                  _buildScaleOption(ctx,
+                      label: 'Sedang (120%)', scale: 1.20, isDark: isDark),
+                  _buildScaleOption(ctx,
+                      label: 'Besar (140%)', scale: 1.40, isDark: isDark),
+                  _buildScaleOption(ctx,
+                      label: 'Sangat besar (165%)',
+                      scale: 1.65,
+                      isDark: isDark),
+                  _buildScaleOption(ctx,
+                      label: 'Maksimal (200%)', scale: 2.00, isDark: isDark),
                   const SizedBox(height: 8),
                 ],
               ),
@@ -1353,7 +1427,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       ),
       title: Text(
         label,
-        style: OTTypography.body(color: isSelected ? accent : textPrimary).copyWith(
+        style: OTTypography.body(color: isSelected ? accent : textPrimary)
+            .copyWith(
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
         ),
       ),
@@ -1367,4 +1442,3 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     );
   }
 }
-

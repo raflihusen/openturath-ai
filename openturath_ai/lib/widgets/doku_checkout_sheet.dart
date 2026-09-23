@@ -105,19 +105,19 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           .limit(1)
           .snapshots()
           .listen(
-            (snap) {
-              if (snap.docs.isNotEmpty) {
-                final data = snap.docs.first.data() as Map<String, dynamic>?;
-                final status = (data?['status'] ?? '').toString().toLowerCase();
-                if (status == 'paid' || status == 'success') {
-                  _triggerSuccess();
-                }
-              }
-            },
-            onError: (_) {
-              // Jika query ditolak atau gagal, biarkan fail-safe polling tetap berjalan
-            },
-          );
+        (snap) {
+          if (snap.docs.isNotEmpty) {
+            final data = snap.docs.first.data() as Map<String, dynamic>?;
+            final status = (data?['status'] ?? '').toString().toLowerCase();
+            if (status == 'paid' || status == 'success') {
+              _triggerSuccess();
+            }
+          }
+        },
+        onError: (_) {
+          // Jika query ditolak atau gagal, biarkan fail-safe polling tetap berjalan
+        },
+      );
     }
 
     // 2. Active inquiry polling setiap 2 detik sebagai fail-safe
@@ -147,12 +147,16 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     await _completion.finish(
       dismissConfirmation: () {
         final dialogContext = _confirmationContext;
-        if (dialogContext != null && dialogContext.mounted && ModalRoute.of(dialogContext)?.isCurrent == true) {
+        if (dialogContext != null &&
+            dialogContext.mounted &&
+            ModalRoute.of(dialogContext)?.isCurrent == true) {
           Navigator.of(dialogContext).pop(false);
         }
       },
       closeCheckout: () {
-        if (mounted && !_hasPopped && ModalRoute.of(context)?.isCurrent == true) {
+        if (mounted &&
+            !_hasPopped &&
+            ModalRoute.of(context)?.isCurrent == true) {
           _hasPopped = true;
           Navigator.of(context).pop(true);
         }
@@ -204,43 +208,49 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
         builder: (ctx) {
           _confirmationContext = ctx;
           return AlertDialog(
-          backgroundColor: isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
-          title: Text(
-            Loc.tr('ui_56a2f9f730'),
-            style: ScholarlyFonts.outfit(
-              fontWeight: FontWeight.w600,
-              color: isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight,
-            ),
-          ),
-          content: Text(
-            Loc.tr('ui_85f60bf7af'),
-            style: ScholarlyFonts.outfit(
-              fontSize: 13,
-              color: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(
-                Loc.tr('ui_5bcbc797a7'),
-                style: ScholarlyFonts.outfit(
-                  color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
-                  fontWeight: FontWeight.w600,
-                ),
+            backgroundColor:
+                isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusCard)),
+            title: Text(
+              Loc.tr('ui_56a2f9f730'),
+              style: ScholarlyFonts.outfit(
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? AppTheme.textPrimaryDark
+                    : AppTheme.textPrimaryLight,
               ),
             ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(
-                Loc.tr('close'),
-                style: ScholarlyFonts.outfit(
-                  color: OTColors.destructive(isDark),
-                ),
+            content: Text(
+              Loc.tr('ui_85f60bf7af'),
+              style: ScholarlyFonts.outfit(
+                fontSize: 13,
+                color: isDark
+                    ? AppTheme.textSecondaryDark
+                    : AppTheme.textSecondaryLight,
               ),
             ),
-          ],
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(
+                  Loc.tr('ui_5bcbc797a7'),
+                  style: ScholarlyFonts.outfit(
+                    color: isDark ? AppTheme.accentDark : AppTheme.accentLight,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: Text(
+                  Loc.tr('close'),
+                  style: ScholarlyFonts.outfit(
+                    color: OTColors.destructive(isDark),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       );
@@ -259,7 +269,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     if (uri.scheme != 'https') return false;
 
     final host = uri.host.toLowerCase();
-    
+
     // Domain aplikasi OpenTurath
     if (host == 'openturath-ai.web.app' ||
         host == 'openturath.ai' ||
@@ -350,18 +360,22 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
   @override
   Widget build(BuildContext context) => DesktopWebViewGate(
-    builder: _buildContent,
-    externalUrl: _isAllowedPaymentDestination(Uri.parse(widget.paymentUrl))
-        ? Uri.parse(widget.paymentUrl) : null,
-    onClose: () => Navigator.of(context).pop(false),
-  );
+        builder: _buildContent,
+        externalUrl: _isAllowedPaymentDestination(Uri.parse(widget.paymentUrl))
+            ? Uri.parse(widget.paymentUrl)
+            : null,
+        onClose: () => Navigator.of(context).pop(false),
+      );
 
   Widget _buildContent(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
+    final surfaceColor =
+        isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
+    final textPrimary =
+        isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
+    final textSecondary =
+        isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
     final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
 
@@ -381,7 +395,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
         height: screenHeight * 0.92,
         decoration: BoxDecoration(
           color: surfaceColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(AppTheme.radiusCard)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(isDark ? 100 : 40),
@@ -391,7 +406,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusCard)),
+          borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(AppTheme.radiusCard)),
           child: Stack(
             children: [
               // ── 1. Main Sheet Content (Header + WebView) ──
@@ -399,10 +415,12 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                 children: [
                   // Top Drag Handle & Title Bar
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: surfaceColor,
-                      border: Border(bottom: BorderSide(color: border, width: 1)),
+                      border:
+                          Border(bottom: BorderSide(color: border, width: 1)),
                     ),
                     child: Column(
                       children: [
@@ -414,7 +432,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             margin: const EdgeInsets.only(bottom: 12),
                             decoration: BoxDecoration(
                               color: border,
-                              borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+                              borderRadius:
+                                  BorderRadius.circular(AppTheme.radiusPill),
                             ),
                           ),
                         ),
@@ -424,7 +443,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF10B981).withAlpha(30),
-                                borderRadius: BorderRadius.circular(AppTheme.radiusXS),
+                                borderRadius:
+                                    BorderRadius.circular(AppTheme.radiusXS),
                               ),
                               child: const Icon(
                                 Icons.lock_rounded,
@@ -438,7 +458,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    widget.planTitle != null && widget.planTitle!.isNotEmpty
+                                    widget.planTitle != null &&
+                                            widget.planTitle!.isNotEmpty
                                         ? widget.planTitle!
                                         : Loc.tr('ui_f0874594eb'),
                                     style: ScholarlyFonts.outfit(
@@ -449,9 +470,13 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  if (widget.amount != null && widget.regularAmount != null)
-                                    PromoPrice(amount: widget.amount!, regularAmount: widget.regularAmount!,
-                                      period: widget.periodLabel, compact: true),
+                                  if (widget.amount != null &&
+                                      widget.regularAmount != null)
+                                    PromoPrice(
+                                        amount: widget.amount!,
+                                        regularAmount: widget.regularAmount!,
+                                        period: widget.periodLabel,
+                                        compact: true),
                                   if (widget.invoiceNumber.isNotEmpty)
                                     Text(
                                       widget.invoiceNumber,
@@ -461,7 +486,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                         color: textSecondary,
                                       ),
                                     )
-                                  else if (widget.amount != null && widget.amount! > 0)
+                                  else if (widget.amount != null &&
+                                      widget.amount! > 0)
                                     Text(
                                       'Rp ${widget.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
                                       style: ScholarlyFonts.outfit(
@@ -494,21 +520,26 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                   ? const SizedBox(
                                       width: 16,
                                       height: 16,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     )
-                                  : Icon(Icons.sync_rounded, size: 20, color: textSecondary),
+                                  : Icon(Icons.sync_rounded,
+                                      size: 20, color: textSecondary),
                               tooltip: Loc.tr('ui_1c93ce4af4'),
                             ),
                             // Close Button
                             IconButton(
                               onPressed: () async {
                                 final shouldPop = await _handleWillPop();
-                                if (shouldPop && context.mounted && !_hasPopped) {
+                                if (shouldPop &&
+                                    context.mounted &&
+                                    !_hasPopped) {
                                   _hasPopped = true;
                                   Navigator.of(context).pop(false);
                                 }
                               },
-                              icon: Icon(Icons.close_rounded, size: 22, color: textSecondary),
+                              icon: Icon(Icons.close_rounded,
+                                  size: 22, color: textSecondary),
                               tooltip: Loc.tr('close'),
                             ),
                           ],
@@ -530,7 +561,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                   Expanded(
                     child: InAppWebView(
                       webViewEnvironment: DesktopWebViewRuntime.environment,
-                      initialUrlRequest: URLRequest(url: WebUri(widget.paymentUrl)),
+                      initialUrlRequest:
+                          URLRequest(url: WebUri(widget.paymentUrl)),
                       initialSettings: InAppWebViewSettings(
                         javaScriptEnabled: true,
                         domStorageEnabled: true,
@@ -538,7 +570,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                         sharedCookiesEnabled: true,
                         thirdPartyCookiesEnabled: true,
                         useHybridComposition: true,
-                        mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                        mixedContentMode:
+                            MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                         allowFileAccess: false,
                         allowContentAccess: true,
                         javaScriptCanOpenWindowsAutomatically: true,
@@ -558,9 +591,11 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                           });
                         }
                       },
-                      shouldOverrideUrlLoading: (controller, navigationAction) async {
+                      shouldOverrideUrlLoading:
+                          (controller, navigationAction) async {
                         final webUri = navigationAction.request.url;
-                        if (webUri == null) return NavigationActionPolicy.CANCEL;
+                        if (webUri == null)
+                          return NavigationActionPolicy.CANCEL;
 
                         final uri = Uri.tryParse(webUri.toString());
                         if (uri == null) return NavigationActionPolicy.CANCEL;
@@ -569,18 +604,25 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                         if (uri.scheme != 'http' && uri.scheme != 'https') {
                           if (_isAllowedExternalScheme(uri)) {
                             try {
-                              await launchUrl(uri, mode: AppPlatform.isDesktop ? LaunchMode.externalApplication : LaunchMode.externalNonBrowserApplication);
+                              await launchUrl(uri,
+                                  mode: AppPlatform.isDesktop
+                                      ? LaunchMode.externalApplication
+                                      : LaunchMode
+                                          .externalNonBrowserApplication);
                             } catch (e) {
-                              debugPrint('[DokuCheckout] Gagal membuka external payment app: $e');
+                              debugPrint(
+                                  '[DokuCheckout] Gagal membuka external payment app: $e');
                             }
                           } else {
-                            debugPrint('[DokuCheckout] External scheme ditolak karena tidak masuk allowlist: ${uri.scheme}');
+                            debugPrint(
+                                '[DokuCheckout] External scheme ditolak karena tidak masuk allowlist: ${uri.scheme}');
                           }
                           return NavigationActionPolicy.CANCEL;
                         }
 
                         if (!_isAllowedPaymentDestination(uri)) {
-                          debugPrint('[DokuCheckout] Navigation to untrusted destination rejected: $webUri');
+                          debugPrint(
+                              '[DokuCheckout] Navigation to untrusted destination rejected: $webUri');
                           return NavigationActionPolicy.CANCEL;
                         }
 
@@ -612,7 +654,8 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
 
                         // Deteksi instan jika DOM DOKU menampilkan halaman Payment Successful
                         try {
-                          final isPaidDom = await controller.evaluateJavascript(source: """
+                          final isPaidDom =
+                              await controller.evaluateJavascript(source: """
                             (function() {
                               var text = (document.body ? document.body.innerText : '') || '';
                               if (text.includes('Payment Successful') || 
@@ -695,14 +738,16 @@ class _CelebratorySuccessView extends StatelessWidget {
                             height: 88,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF10B981).withValues(alpha: 0.16),
+                              color: const Color(0xFF10B981)
+                                  .withValues(alpha: 0.16),
                               border: Border.all(
                                 color: const Color(0xFF10B981),
                                 width: 3,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                                  color: const Color(0xFF10B981)
+                                      .withValues(alpha: 0.3),
                                   blurRadius: 28,
                                   spreadRadius: 4,
                                 ),
@@ -801,4 +846,3 @@ class _CelebratorySuccessView extends StatelessWidget {
     );
   }
 }
-

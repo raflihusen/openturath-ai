@@ -97,10 +97,13 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
 
   @override
   Widget build(BuildContext context) => DesktopShortcuts(
-    onFind: _searchFocusNode.requestFocus,
-    onEscape: () { _searchController.clear(); _searchFocusNode.unfocus(); },
-    child: _buildContent(context),
-  );
+        onFind: _searchFocusNode.requestFocus,
+        onEscape: () {
+          _searchController.clear();
+          _searchFocusNode.unfocus();
+        },
+        child: _buildContent(context),
+      );
 
   Widget _buildContent(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

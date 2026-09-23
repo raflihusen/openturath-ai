@@ -14,13 +14,15 @@ class AgentService {
   // ── Ambil URL agent dari Cloud Function secara aman (Server-Side Entitlement) ────
   Future<String?> getAgentUrl(String agentId) async {
     try {
-      final result = await _functions.call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
+      final result = await _functions
+          .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
       final data = Map<String, dynamic>.from(result as Map);
       final url = data['url'] as String?;
       if (url != null && url.isNotEmpty) {
         return url;
       }
-      throw const AgentAccessException('empty-url', 'URL asisten belum tersedia untuk bidang ini.');
+      throw const AgentAccessException(
+          'empty-url', 'URL asisten belum tersedia untuk bidang ini.');
     } on FirebaseFunctionsException catch (e) {
       if (e.code == 'permission-denied') {
         throw AgentAccessException(
@@ -28,7 +30,8 @@ class AgentService {
           e.message ?? 'Langganan diperlukan untuk membuka asisten ini.',
         );
       }
-      throw AgentAccessException(e.code, e.message ?? 'Tidak dapat terhubung ke server.');
+      throw AgentAccessException(
+          e.code, e.message ?? 'Tidak dapat terhubung ke server.');
     } catch (e) {
       if (e is AgentAccessException) rethrow;
       throw AgentAccessException('unknown-error', e.toString());
@@ -38,7 +41,8 @@ class AgentService {
   // ── Catat pertanyaan trial secara atomik di Cloud Functions ───
   Future<TrialUsage> recordQuestion(String agentId) async {
     try {
-      final result = await _functions.call('recordQuestion', {'agentId': agentId});
+      final result =
+          await _functions.call('recordQuestion', {'agentId': agentId});
       final data = Map<String, dynamic>.from(result as Map);
       return TrialUsage(
         isPremium: data['isPremium'] == true,
@@ -46,7 +50,8 @@ class AgentService {
         questionsRemaining: (data['questionsRemaining'] as num?)?.toInt(),
       );
     } on FirebaseFunctionsException catch (e) {
-      throw AgentAccessException(e.code, e.message ?? 'Gagal mencatat kuota pertanyaan.');
+      throw AgentAccessException(
+          e.code, e.message ?? 'Gagal mencatat kuota pertanyaan.');
     } catch (e) {
       if (e is AgentAccessException) rethrow;
       throw AgentAccessException('record-error', e.toString());

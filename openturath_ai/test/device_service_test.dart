@@ -17,7 +17,8 @@ void main() {
       expect(RegExp(r'^[a-f0-9]{64}$').hasMatch(hash), isTrue);
     });
 
-    test('computeHash is case-insensitive for brand and model normalization', () {
+    test('computeHash is case-insensitive for brand and model normalization',
+        () {
       final hash1 = DeviceService.computeHash(
         rawId: 'android_id_123',
         brand: 'SAMSUNG',
@@ -47,7 +48,9 @@ void main() {
       expect(hashA, isNot(equals(hashB)));
     });
 
-    test('getDeviceFingerprint returns a non-empty fingerprint safely in test environment', () async {
+    test(
+        'getDeviceFingerprint returns a non-empty fingerprint safely in test environment',
+        () async {
       final service = DeviceService();
       final fp = await service.getDeviceFingerprint();
 
