@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 library;
 
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ class LegalDocumentSheet extends StatelessWidget {
     required String subtitle,
     required List<LegalSection> sections,
   }) {
-    return showModalBottomSheet(
+    return showAdaptiveSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

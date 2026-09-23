@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -939,7 +940,7 @@ class _DashboardAnnouncementCarouselState
   }
 
   void _showDetailModal(_AnnouncementSlide slide) {
-    showModalBottomSheet(
+    showAdaptiveSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
@@ -1204,7 +1205,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
-    showModalBottomSheet<void>(
+    showAdaptiveSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
@@ -1276,7 +1277,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
-    showModalBottomSheet<void>(
+    showAdaptiveSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,

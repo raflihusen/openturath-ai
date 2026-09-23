@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -452,7 +453,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         widget.agent!.catalogId == 'canonical_syafii' ||
         widget.agent!.fieldId == 'fiqh';
     final eraChoices = isSyafii && _hasEras ? _eras : _centuries;
-    return showModalBottomSheet<void>(
+    return showAdaptiveSheet<void>(
       context: context,
       backgroundColor: surface,
       showDragHandle: true,

@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,7 @@ class RedeemCodeSheet extends StatefulWidget {
   });
 
   static Future<void> show(BuildContext context, {VoidCallback? onSuccess}) {
-    return showModalBottomSheet(
+    return showAdaptiveSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -88,7 +89,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     final textSecondary = OTColors.textSecondary(isDark);
     final border = OTColors.border(isDark);
 
-    showModalBottomSheet<void>(
+    showAdaptiveSheet<void>(
       context: context,
       useRootNavigator: true,
       backgroundColor: surface,

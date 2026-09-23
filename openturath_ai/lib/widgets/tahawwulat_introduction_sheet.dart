@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -62,7 +63,7 @@ class TahawwulatIntroductionSheet extends StatefulWidget {
     void Function(SubAgentModel subAgent)? onSelectSubAgent,
     VoidCallback? onOpenMain,
   }) {
-    return showModalBottomSheet<void>(
+    return showAdaptiveSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,

@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -203,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const <MapEntry<String, ModuleEntitlement>>[])
         .where((entry) => summary.agentIds.contains(entry.key))
         .toList();
-    showModalBottomSheet<void>(
+    showAdaptiveSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => Container(

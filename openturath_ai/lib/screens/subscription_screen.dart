@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../core/app_copy.dart';
@@ -154,7 +155,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final border = OTColors.border(dark);
     final surface = OTColors.surface(dark);
 
-    showModalBottomSheet<void>(
+    showAdaptiveSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: surface,

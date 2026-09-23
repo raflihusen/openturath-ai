@@ -18,7 +18,10 @@ class DesktopGoogleSignIn {
 
   static bool validCallback({required String? origin, required String state,
       required String expectedState}) =>
-      origin == page.origin && state == expectedState && state.length >= 40;
+      // HTTPS-to-loopback form posts may carry an opaque Origin. The random
+      // single-use state binds either allowed origin to this login attempt.
+      (origin == page.origin || origin == 'null') &&
+      state == expectedState && state.length == 43;
 
   static Future<OAuthCredential?> _signIn() async {
     final probe = http.Client();
@@ -43,7 +46,8 @@ class DesktopGoogleSignIn {
         request.response.headers.set('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'");
         if (request.method != 'POST' || request.uri.path != '/callback' ||
             request.headers.contentType?.mimeType != 'application/x-www-form-urlencoded' ||
-            request.headers.value('origin') != page.origin || result.isCompleted) {
+            (request.headers.value('origin') != page.origin &&
+             request.headers.value('origin') != 'null') || result.isCompleted) {
           request.response.statusCode = HttpStatus.forbidden;
           await request.response.close();
           return;

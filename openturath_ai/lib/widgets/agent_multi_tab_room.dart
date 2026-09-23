@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
@@ -101,7 +102,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
     final textSecondary = OTColors.textSecondary(isDark);
     final border = OTColors.border(isDark);
 
-    showModalBottomSheet(
+    showAdaptiveSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(

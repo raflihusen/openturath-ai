@@ -1,3 +1,4 @@
+import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
@@ -53,7 +54,7 @@ class DokuCheckoutSheet extends StatefulWidget {
     int? regularAmount,
     String periodLabel = '',
   }) {
-    return showModalBottomSheet<bool>(
+    return showAdaptiveSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
