@@ -143,9 +143,16 @@ class UpdateReadyDialog extends StatelessWidget {
               width: double.infinity,
               height: 46,
               child: FilledButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  updateService.installNow();
+                onPressed: () async {
+                  final opened = await updateService.installNow();
+                  if (!context.mounted) return;
+                  if (opened) {
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Pembaruan belum dapat dibuka. Silakan coba kembali.'),
+                    ));
+                  }
                 },
                 style: FilledButton.styleFrom(
                   backgroundColor: OTColors.accent(isDark),
@@ -156,7 +163,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   elevation: 0,
                 ),
                 child: Text(
-                  isDesktop ? 'Perbarui Sekarang' : 'Pasang & Muat Ulang Sekarang',
+                  isDesktop ? 'Unduh Pembaruan' : 'Pasang & Muat Ulang Sekarang',
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,

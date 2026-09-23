@@ -85,7 +85,14 @@ class UpdateReadyBanner extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               FilledButton(
-                onPressed: () => updateService.installNow(),
+                onPressed: () async {
+                  final opened = await updateService.installNow();
+                  if (!opened && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Pembaruan belum dapat dibuka. Silakan coba kembali.'),
+                    ));
+                  }
+                },
                 style: FilledButton.styleFrom(
                   backgroundColor: OTColors.accent(isDark),
                   foregroundColor: OTColors.onAccent(isDark),

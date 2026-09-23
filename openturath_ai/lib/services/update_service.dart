@@ -1,3 +1,6 @@
+import 'package:path/path.dart' as p;
+import '../core/app_platform.dart';
+import '../core/platform_release.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -77,7 +80,7 @@ class UpdateService extends ChangeNotifier {
 
   bool get isUpdateReady {
     if (_status != UpdateStatus.readyToInstall || _updateInfo == null) return false;
-    if (!kIsWeb && !Platform.isAndroid) {
+    if (AppPlatform.isDesktop) {
       // Desktop: siap membuka URL unduhan desktop
       return true;
     }
@@ -95,7 +98,8 @@ class UpdateService extends ChangeNotifier {
 
   /// Memulai pengecekan versi dan unduhan otomatis di background
   Future<void> checkForUpdatesSilently() async {
-    if (_isChecking || _isDownloading) return;
+    if (kIsWeb || (!AppPlatform.isDesktop && !AppPlatform.isAndroid) ||
+        _isChecking || _isDownloading) return;
     _isChecking = true;
 
     try {
@@ -119,11 +123,18 @@ class UpdateService extends ChangeNotifier {
       }
 
       final data = doc.data()!;
-      final latestCode = (data['latest_version_code'] as num?)?.toInt() ?? 0;
-      final latestVersion = (data['latest_version'] as String?) ?? packageInfo.version;
-      final apkUrl = (data['apk_url'] as String?) ?? '';
-      final releaseNotes = (data['release_notes'] as String?) ?? 'Pembaruan aplikasi OpenTurath AI';
-      final sha256Hash = (data['sha256'] as String?)?.trim();
+      final release = PlatformRelease.parse(data, defaultTargetPlatform);
+      if (release == null) {
+        _updateInfo = null;
+        _status = UpdateStatus.idle;
+        notifyListeners();
+        return;
+      }
+      final latestCode = release.build;
+      final latestVersion = release.version;
+      final apkUrl = release.url.toString();
+      final releaseNotes = release.notes;
+      final sha256Hash = release.sha256;
 
       // Jika versi di server lebih baru dari versi yang sedang terpasang
       if (latestCode > currentCode && apkUrl.isNotEmpty) {
@@ -135,11 +146,11 @@ class UpdateService extends ChangeNotifier {
           sha256Hash: sha256Hash,
         );
 
-        if (!kIsWeb && !Platform.isAndroid) {
+        if (AppPlatform.isDesktop) {
           // macOS / Windows Desktop: tampilkan banner siap update (buka URL)
           _updateInfo = _updateInfo!.copyWith(
-            isDownloaded: true,
-            downloadProgress: 1.0,
+            isDownloaded: false,
+            downloadProgress: 0.0,
           );
           _status = UpdateStatus.readyToInstall;
           notifyListeners();
@@ -290,7 +301,7 @@ class UpdateService extends ChangeNotifier {
   Future<void> _cleanOldUpdates(String currentPath) async {
     try {
       final dir = await getApplicationSupportDirectory();
-      final updateDir = Directory('${dir.path}/updates');
+      final updateDir = Directory(p.join(dir.path, 'updates'));
       if (await updateDir.exists()) {
         final list = updateDir.listSync();
         for (final entity in list) {
@@ -307,46 +318,37 @@ class UpdateService extends ChangeNotifier {
   /// Lokasi file APK di penyimpanan privat aplikasi
   Future<File> _getLocalApkFile(int versionCode) async {
     final dir = await getApplicationSupportDirectory();
-    final updateDir = Directory('${dir.path}/updates');
+    final updateDir = Directory(p.join(dir.path, 'updates'));
     if (!await updateDir.exists()) {
       await updateDir.create(recursive: true);
     }
-    return File('${updateDir.path}/OpenTurath_v$versionCode.apk');
+    return File(p.join(updateDir.path, 'OpenTurath_v$versionCode.apk'));
   }
 
   /// Tombol "Pasang Sekarang" dipanggil:
   /// - Android: Langsung buka Package Installer sistem
   /// - Desktop (macOS/Windows): Buka tautan pembaruan langsung di browser
-  Future<void> installNow() async {
-    if (!isUpdateReady || _updateInfo == null) return;
-
-    if (!kIsWeb && !Platform.isAndroid) {
-      final downloadUrl = _updateInfo!.apkUrl;
-      final uri = Uri.tryParse(downloadUrl);
-      if (uri != null) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      }
-      return;
+  Future<bool> installNow() async {
+    if (!isUpdateReady || _updateInfo == null) return false;
+    if (AppPlatform.isDesktop) {
+      try {
+        return await launchUrl(Uri.parse(_updateInfo!.apkUrl),
+            mode: LaunchMode.externalApplication);
+      } catch (_) { return false; }
     }
-
+    if (!AppPlatform.isAndroid) return false;
     final filePath = _updateInfo!.localFilePath;
-    if (filePath == null) return;
-
+    if (filePath == null) return false;
     final file = File(filePath);
     if (!await file.exists()) {
       _status = UpdateStatus.idle;
       notifyListeners();
-      return;
+      return false;
     }
-
     try {
-      final result = await OpenFilex.open(
-        filePath,
-        type: 'application/vnd.android.package-archive',
-      );
-      debugPrint('[UpdateService] OpenFilex result: ${result.type} - ${result.message}');
-    } catch (e) {
-      debugPrint('[UpdateService] Install error: $e');
-    }
+      final result = await OpenFilex.open(filePath,
+          type: 'application/vnd.android.package-archive');
+      return result.type == ResultType.done;
+    } catch (_) { return false; }
   }
 }
