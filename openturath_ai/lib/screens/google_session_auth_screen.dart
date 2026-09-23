@@ -130,11 +130,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             FilledButton(onPressed: () async {
               try {
                 if (!await launchUrl(Uri.parse('https://notebooklm.google.com/'),
-                    mode: LaunchMode.externalApplication)) throw StateError('Browser unavailable');
+                    mode: LaunchMode.externalApplication)) { throw StateError('Browser unavailable'); }
               } catch (_) {
-                if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
+                if (context.mounted) { ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Browser belum dapat dibuka.')),
-                );
+                ); }
               }
             }, child: const Text('Buka NotebookLM')),
             TextButton(onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.dashboard),

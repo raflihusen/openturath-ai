@@ -9,8 +9,6 @@ import 'package:openturath_ai/widgets/apple_interactive_wrapper.dart';
 void main() {
   for (final platform in [TargetPlatform.windows, TargetPlatform.macOS]) {
     testWidgets('Search shortcut and Escape work with focused text input on $platform', (tester) async {
-      debugDefaultTargetPlatformOverride = platform;
-      addTearDown(() => debugDefaultTargetPlatformOverride = null);
       final focus = FocusNode();
       final controller = TextEditingController();
       addTearDown(focus.dispose); addTearDown(controller.dispose);
@@ -30,12 +28,10 @@ void main() {
       await tester.pump();
       expect(controller.text, isEmpty);
       expect(focus.hasFocus, isFalse);
-    });
+    }, variant: TargetPlatformVariant({platform}));
   }
   for (final size in [const Size(860, 600), const Size(1920, 1080)]) {
     testWidgets('Desktop sheet stays centered, bounded and scrollable at $size', (tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-      addTearDown(() => debugDefaultTargetPlatformOverride = null);
       tester.view.physicalSize = size; tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize); addTearDown(tester.view.resetDevicePixelRatio);
       await tester.pumpWidget(MaterialApp(home: Scaffold(body: Builder(builder: (context) => TextButton(
@@ -57,11 +53,9 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pumpAndSettle();
       expect(find.byType(Dialog), findsNothing);
-    });
+    }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
   }
   testWidgets('Interactive cards support keyboard activation', (tester) async {
-    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-    addTearDown(() => debugDefaultTargetPlatformOverride = null);
     var activations = 0;
     await tester.pumpWidget(MaterialApp(home: Scaffold(body: AppleInteractiveWrapper(
       onTap: () => activations++, child: const Text('Kitab'),
@@ -70,5 +64,5 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.enter); await tester.pump();
     expect(activations, 1);
     expect(tester.takeException(), isNull);
-  });
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 }

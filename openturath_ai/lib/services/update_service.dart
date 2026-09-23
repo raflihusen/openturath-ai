@@ -99,7 +99,7 @@ class UpdateService extends ChangeNotifier {
   /// Memulai pengecekan versi dan unduhan otomatis di background
   Future<void> checkForUpdatesSilently() async {
     if (kIsWeb || (!AppPlatform.isDesktop && !AppPlatform.isAndroid) ||
-        _isChecking || _isDownloading) return;
+        _isChecking || _isDownloading) { return; }
     _isChecking = true;
 
     try {

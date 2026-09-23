@@ -39,10 +39,10 @@ class PlatformRelease {
     final urlValue = release['url'] ?? release['apk_url'];
     final version = release['version'] ?? release['latest_version'];
     if (build == null || build <= 0 || urlValue is! String || version is! String ||
-        version.isEmpty) return null;
+        version.isEmpty) { return null; }
     final uri = Uri.tryParse(urlValue);
     if (uri == null || uri.scheme != 'https' || uri.userInfo.isNotEmpty ||
-        uri.port != 443 || !allowedHosts.contains(uri.host)) return null;
+        uri.port != 443 || !allowedHosts.contains(uri.host)) { return null; }
     final path = uri.path.toLowerCase();
     final extensions = switch (platform) {
       TargetPlatform.android => ['.apk'],

@@ -336,12 +336,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   width: 0.8,
                                 ),
                               ),
-                              child: Row(
+                              child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.workspace_premium_rounded, size: 14, color: Colors.white),
-                                  const SizedBox(width: 5),
-                                  const Text(
+                                  Icon(Icons.workspace_premium_rounded, size: 14, color: Colors.white),
+                                  SizedBox(width: 5),
+                                  Text(
                                     'KORPUS UTAMA · 5 BILIK AI',
                                     style: TextStyle(
                                       fontSize: 10,
