@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../models/agent_model.dart';
 import '../models/user_model.dart';
@@ -32,6 +33,15 @@ class AgentSessionTab {
       await webController?.stopLoading();
       webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
     } catch (_) {}
+    if (webController != null) {
+      // Dispose only after the corresponding platform view has left the tree.
+      SchedulerBinding.instance.addPostFrameCallback((_) async {
+        try {
+          await InAppWebViewController.disposeKeepAlive(keepAlive: keepAlive);
+        } catch (_) { /* A disposed/unsupported platform view is already released. */ }
+      });
+      SchedulerBinding.instance.scheduleFrame();
+    }
     webController = null;
     isSessionReady = false;
     isWebLoading = false;

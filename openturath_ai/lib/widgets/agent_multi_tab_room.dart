@@ -1,3 +1,4 @@
+import 'desktop_reference_panel.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
@@ -431,7 +432,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               )
             : null,
       ),
-      body: IndexedStack(
+      body: Row(children: [
+        if (AppPlatform.isDesktop && MediaQuery.sizeOf(context).width >= 1100)
+          SizedBox(width: 300, child: DesktopReferencePanel(
+            key: ValueKey(activeTab.agent.id), agent: activeTab.agent)),
+        if (AppPlatform.isDesktop && MediaQuery.sizeOf(context).width >= 1100)
+          const VerticalDivider(width: 1),
+        Expanded(key: const ValueKey('study-webviews'), child: IndexedStack(
         index: _sessionManager.activeIndex,
         children: [
           for (int i = 0; i < sessions.length; i++)
@@ -441,7 +448,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               isActive: i == _sessionManager.activeIndex,
             ),
         ],
-      ),
+      )),
+      ]),
     );
   }
 }

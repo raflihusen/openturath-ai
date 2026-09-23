@@ -349,7 +349,12 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
   }
 
   @override
-  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+  Widget build(BuildContext context) => DesktopWebViewGate(
+    builder: _buildContent,
+    externalUrl: _isAllowedPaymentDestination(Uri.parse(widget.paymentUrl))
+        ? Uri.parse(widget.paymentUrl) : null,
+    onClose: () => Navigator.of(context).pop(false),
+  );
 
   Widget _buildContent(BuildContext context) {
     Loc.watch(context);
