@@ -933,6 +933,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         }
         return;
       }
+      final hasScript = await controller.evaluateJavascript(
+        source:
+            'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
+      );
+      if (hasScript != true) {
+        if (!mounted) return;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        await controller.evaluateJavascript(
+          source:
+              'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript',
+        );
+        await _applyThemeCss(isDark);
+      }
       final isDenied = await controller.evaluateJavascript(
           source:
               'window.otNotebook ? window.otNotebook.accessDenied() : false');
@@ -957,7 +970,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           });
           _syncInitialHistory();
         }
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 25) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
         _readinessTimer?.cancel();
         if (mounted) {
           setState(() {

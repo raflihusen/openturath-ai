@@ -608,6 +608,19 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         });
         return;
       }
+      final hasScript = await _webController!.evaluateJavascript(
+        source:
+            'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
+      );
+      if (hasScript != true) {
+        if (!mounted) return;
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        await _webController!.evaluateJavascript(
+          source:
+              'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript',
+        );
+        await _applyThemeCss();
+      }
       final result = await _webController!.evaluateJavascript(
           source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
@@ -618,7 +631,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       if (_readySamples >= 2 && elapsedMs >= 2000) {
         _readinessTimer?.cancel();
         setState(() => _isWebViewLoading = false);
-      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 25) {
+      } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
         _readinessTimer?.cancel();
         setState(() {
           _isWebViewLoading = false;

@@ -205,17 +205,17 @@ const notebookUiScript = r'''
       (document.head || document.documentElement).appendChild(style);
     }
     // Sembunyikan header, kartu cover/guide, dan Google account bar secara presisi
-    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i], app-notebook-guide, notebook-guide, app-guide-intro, app-chat-intro, app-project-summary, .notebook-guide, .guide-header, .hero-container, .cover-image-container').forEach(el => {
+    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i], app-guide-intro, app-chat-intro, app-project-summary, .guide-header, .hero-container, .cover-image-container').forEach(el => {
       hide(el);
       el.style.setProperty('display', 'none', 'important');
       el.style.setProperty('visibility', 'hidden', 'important');
       el.style.setProperty('height', '0px', 'important');
     });
     // Hapus kartu intro/cover yang memuat ringkasan sumber di atas timeline obrolan
-    document.querySelectorAll('mat-card, .mat-mdc-card, div[class*="card" i], div[class*="guide" i], div[class*="header" i], div[class*="summary" i], div[class*="hero" i], div[class*="cover" i]').forEach(card => {
+    document.querySelectorAll('app-project-summary, .project-summary, app-guide-intro, .guide-header, .hero-container, .cover-image-container, mat-card, .mat-mdc-card').forEach(card => {
       if (card.closest(answerSelector) || card.closest(questionSelector) || card.querySelector(answerSelector)) return;
       const txt = (card.innerText || '').toLowerCase();
-      if (txt.includes('sources') || txt.includes('sumber') || txt.includes('super ai') || txt.includes('bridging turath') || txt.includes('berbasis turath') || txt.includes('openturath') || card.querySelector('img')) {
+      if (txt.includes('sources') || txt.includes('sumber') || txt.includes('super ai') || txt.includes('bridging turath') || txt.includes('berbasis turath') || txt.includes('openturath')) {
         hide(card);
         card.style.setProperty('display', 'none', 'important');
         card.style.setProperty('height', '0px', 'important');
@@ -370,13 +370,14 @@ const notebookUiScript = r'''
     clean();
     if (accessDenied()) return false;
     const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
-    if (input && input.offsetParent !== null) return true;
+    if (input) return true;
     const hasMessage = document.querySelector(answerSelector) || document.querySelector('.chat-message, .chat-response, app-chat-response, app-chat-message, [role="article"]');
-    if (hasMessage && hasMessage.offsetParent !== null) return true;
-    const chatContainer = document.querySelector('.chat-input-container, .query-box, app-chat-guide, .chat-guide, notebook-guide');
-    if (chatContainer && chatContainer.offsetParent !== null) {
-      const innerInput = chatContainer.querySelector('textarea, [contenteditable="true"], [role="textbox"], input');
-      if (innerInput) return true;
+    if (hasMessage) return true;
+    const chatContainer = document.querySelector('.chat-input-container, .query-box, app-chat-guide, .chat-guide, notebook-guide, app-notebook-guide');
+    if (chatContainer) return true;
+    const bodyText = (document.body?.innerText || '').toLowerCase();
+    if (bodyText.length > 50 && !/loading notebook|memuat notebook/i.test(bodyText)) {
+      return true;
     }
     return false;
   }
