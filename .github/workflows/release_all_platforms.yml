@@ -8,11 +8,32 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
+  validate:
+    name: Analyze and regression tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.4'
+          channel: 'stable'
+          cache: true
+      - run: flutter pub get --enforce-lockfile
+        working-directory: openturath_ai
+      - run: flutter analyze --no-pub
+        working-directory: openturath_ai
+      - run: flutter test --no-pub
+        working-directory: openturath_ai
+
   # ════════════════════════════════════════════════════════════════
   # 1. BUILD WINDOWS EXE (Installer & Portable Zip)
   # ════════════════════════════════════════════════════════════════
   build-windows-exe:
+    needs: validate
     name: Build Windows EXE
     runs-on: windows-latest
     env:
@@ -25,7 +46,11 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.38.4'
           cache: true
+
+      - name: Setup NuGet for WebView2 native dependencies
+        uses: NuGet/setup-nuget@v2
 
       - name: Enable Windows Desktop
         run: flutter config --enable-windows-desktop
@@ -33,7 +58,7 @@ jobs:
       - name: Get dependencies
         run: |
           cd openturath_ai
-          flutter pub get
+          flutter pub get --enforce-lockfile
 
       - name: Build Windows Release
         env:
@@ -43,12 +68,13 @@ jobs:
           flutter build windows --release
 
       - name: Compress Windows Release Bundle
-        run: |
-          Compress-Archive -Path openturath_ai\build\windows\x64\runner\Release\* -DestinationPath openturath_ai\build\windows\OpenTurath_AI_Windows_x64.zip
+        shell: pwsh
+        run: ./openturath_ai/tool/package_windows.ps1
 
       - name: Upload Windows EXE Artifact
         uses: actions/upload-artifact@v4
         with:
+          if-no-files-found: error
           name: OpenTurath-AI-Windows-x64
           path: openturath_ai/build/windows/OpenTurath_AI_Windows_x64.zip
 
@@ -56,6 +82,7 @@ jobs:
   # 2. BUILD MACOS DMG (Disk Image Installer)
   # ════════════════════════════════════════════════════════════════
   build-macos-dmg:
+    needs: validate
     name: Build macOS DMG
     runs-on: macos-latest
     steps:
@@ -66,6 +93,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.38.4'
           cache: true
 
       - name: Enable macOS Desktop
@@ -74,24 +102,21 @@ jobs:
       - name: Get dependencies
         run: |
           cd openturath_ai
-          flutter pub get
+          flutter pub get --enforce-lockfile
 
       - name: Build macOS Release
         run: |
           cd openturath_ai
           flutter build macos --release
+          git diff --exit-code -- macos/Runner/Release.entitlements
 
       - name: Package DMG Installer
-        run: |
-          cd openturath_ai/build/macos/Build/Products/Release
-          mkdir -p dmg_folder
-          cp -r openturath_ai.app dmg_folder/
-          ln -s /Applications dmg_folder/Applications
-          hdiutil create -volname "OpenTurath AI" -srcfolder dmg_folder -ov -format UDZO OpenTurath_AI_macOS.dmg
+        run: bash openturath_ai/tool/package_macos.sh
 
       - name: Upload macOS DMG Artifact
         uses: actions/upload-artifact@v4
         with:
+          if-no-files-found: error
           name: OpenTurath-AI-macOS-DMG
           path: openturath_ai/build/macos/Build/Products/Release/OpenTurath_AI_macOS.dmg
 
@@ -99,6 +124,7 @@ jobs:
   # 3. BUILD ANDROID APK
   # ════════════════════════════════════════════════════════════════
   build-apk:
+    needs: validate
     name: Build Android APK
     runs-on: ubuntu-latest
     steps:
@@ -115,6 +141,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.38.4'
           cache: true
 
       - name: Grant Executable Permission to Gradlew
@@ -123,7 +150,7 @@ jobs:
       - name: Get dependencies
         run: |
           cd openturath_ai
-          flutter pub get
+          flutter pub get --enforce-lockfile
 
       - name: Build APK Release
         run: |
@@ -133,5 +160,6 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
+          if-no-files-found: error
           name: OpenTurath-AI-Android-APK
           path: openturath_ai/build/app/outputs/flutter-apk/app-release.apk
