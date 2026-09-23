@@ -319,6 +319,7 @@ class AuthService {
 
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     await user.delete();
+    AgentSessionManager.instance.closeAll();
     try {
       await DesktopWebViewRuntime.clearSession();
     } catch (_) {}
@@ -340,7 +341,9 @@ class AuthService {
 
     // 5. Putuskan hubungan Google Sign In
     try {
-      await _googleSignIn.disconnect();
+      if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
+        await _googleSignIn.disconnect();
+      }
     } catch (_) {
       try {
         if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {

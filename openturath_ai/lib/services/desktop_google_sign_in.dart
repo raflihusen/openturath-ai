@@ -78,8 +78,10 @@ class DesktopGoogleSignIn {
               GoogleAuthProvider.credential(idToken: idToken));
         }
       } catch (_) {
-        request.response.statusCode = HttpStatus.badRequest;
-        await request.response.close();
+        try {
+          request.response.statusCode = HttpStatus.badRequest;
+          await request.response.close();
+        } catch (_) { /* Browser disconnected or response already closed. */ }
       }
     }, onError: (Object error, StackTrace stack) {
       if (!result.isCompleted) result.completeError(error, stack);

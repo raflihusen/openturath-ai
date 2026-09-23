@@ -1197,6 +1197,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               controller.addJavaScriptHandler(
                 handlerName: 'otCopiedAnswer',
                 callback: (args) async {
+                  try {
                   final url = await controller.getUrl();
                   if (url?.scheme != 'https' ||
                       !['notebooklm.google.com', 'notebook.google.com']
@@ -1205,7 +1206,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       args.first is! String) {
                     return false;
                   }
-                  try {
                     final text = (args.first as String).trim();
                     if (text.isNotEmpty && text.length <= 200000) {
                       final now = DateTime.now();
@@ -1263,6 +1263,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             onLoadStop: (controller, uri) async {
+              if (!mounted || uri == null || !NotebookNavigation.notebook(uri.uriValue)) return;
+              try {
               await controller.evaluateJavascript(
                   source:
                       'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
@@ -1279,14 +1281,21 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 _handleAccessDenied(session);
                 return;
               }
+              } catch (_) {
+                // A navigation or closed tab can invalidate an in-flight script.
+              }
             },
             onProgressChanged: (controller, progress) async {
-              if (progress >= 35 && !session.hasInjectedEarlyScript) {
+              if (mounted && progress >= 35 && !session.hasInjectedEarlyScript) {
                 session.hasInjectedEarlyScript = true;
+                try {
                 await controller.evaluateJavascript(
                     source:
                         'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript');
                 await _applyThemeCss(isDark);
+                } catch (_) {
+                  session.hasInjectedEarlyScript = false;
+                }
               }
             },
             shouldOverrideUrlLoading: (controller, action) async {
