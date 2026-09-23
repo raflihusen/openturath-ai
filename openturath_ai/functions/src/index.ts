@@ -1442,8 +1442,8 @@ export const dailyRevoke = functions
           const expired: string[] = [];
           for (const [key, value] of Object.entries(entitlements)) {
             const ent = value as any;
-            const expiry = ent?.expiry?.toDate ? ent.expiry.toDate() : new Date(ent?.expiry ?? "");
-            if (ent?.status === "active" && expiry <= new Date()) {
+            const expiry = ent?.expiry?.toDate ? ent.expiry.toDate() : new Date(ent?.expiry ?? ent?.expires_at ?? "");
+            if (expiry && !isNaN(expiry.getTime()) && expiry <= new Date() && ent?.status !== "expired") {
               entitlements[key] = { ...ent, status: "expired" };
               expired.push(key);
             }
@@ -1638,7 +1638,7 @@ async function notifySubscriptionServer(
           "Content-Type": "application/json",
           "X-Internal-Secret": internalSecret
         },
-        timeout: 10000,
+        timeout: 60000,
         maxRedirects: 0,
       });
       console.log(`Successfully notified subscription server: ${action} ${email} for ${service}`);

@@ -1209,7 +1209,7 @@ exports.dailyRevoke = functions
             break;
         for (const doc of page.docs) {
             await db.runTransaction(async (t) => {
-                var _a, _b, _c, _d;
+                var _a, _b, _c, _d, _e;
                 const snap = await t.get(doc.ref);
                 if (!snap.exists)
                     return;
@@ -1218,14 +1218,14 @@ exports.dailyRevoke = functions
                 const expired = [];
                 for (const [key, value] of Object.entries(entitlements)) {
                     const ent = value;
-                    const expiry = ((_a = ent === null || ent === void 0 ? void 0 : ent.expiry) === null || _a === void 0 ? void 0 : _a.toDate) ? ent.expiry.toDate() : new Date((_b = ent === null || ent === void 0 ? void 0 : ent.expiry) !== null && _b !== void 0 ? _b : "");
-                    if ((ent === null || ent === void 0 ? void 0 : ent.status) === "active" && expiry <= new Date()) {
+                    const expiry = ((_a = ent === null || ent === void 0 ? void 0 : ent.expiry) === null || _a === void 0 ? void 0 : _a.toDate) ? ent.expiry.toDate() : new Date((_c = (_b = ent === null || ent === void 0 ? void 0 : ent.expiry) !== null && _b !== void 0 ? _b : ent === null || ent === void 0 ? void 0 : ent.expires_at) !== null && _c !== void 0 ? _c : "");
+                    if (expiry && !isNaN(expiry.getTime()) && expiry <= new Date() && (ent === null || ent === void 0 ? void 0 : ent.status) !== "expired") {
                         entitlements[key] = Object.assign(Object.assign({}, ent), { status: "expired" });
                         expired.push(key);
                     }
                 }
-                const legacyExpiry = ((_c = data.subscription_expiry) === null || _c === void 0 ? void 0 : _c.toDate)
-                    ? data.subscription_expiry.toDate() : new Date((_d = data.subscription_expiry) !== null && _d !== void 0 ? _d : "");
+                const legacyExpiry = ((_d = data.subscription_expiry) === null || _d === void 0 ? void 0 : _d.toDate)
+                    ? data.subscription_expiry.toDate() : new Date((_e = data.subscription_expiry) !== null && _e !== void 0 ? _e : "");
                 const legacyExpired = ["all_access", "all_ai_1m", "all_ai_6m", "all_ai_1y", "full"].includes(data.plan)
                     && legacyExpiry <= new Date();
                 if (!expired.length && !legacyExpired)
@@ -1420,7 +1420,7 @@ async function notifySubscriptionServer(email, name, plan, action, serviceName) 
                     "Content-Type": "application/json",
                     "X-Internal-Secret": internalSecret
                 },
-                timeout: 10000,
+                timeout: 60000,
                 maxRedirects: 0,
             });
             console.log(`Successfully notified subscription server: ${action} ${email} for ${service}`);

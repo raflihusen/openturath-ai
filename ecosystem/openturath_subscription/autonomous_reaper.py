@@ -31,6 +31,11 @@ def load_dotenv():
                         val = val[1:-1]
                     os.environ[key] = val
                     
+    if not os.getenv("TELEGRAM_BOT_TOKEN"):
+        os.environ["TELEGRAM_BOT_TOKEN"] = "8935430311:AAHajFoTtJBirH3DfyIh6za5-SVTQRBa_RI"
+    if not os.getenv("TELEGRAM_CHAT_ID"):
+        os.environ["TELEGRAM_CHAT_ID"] = "2015667548"
+
 load_dotenv()
 
 from google.cloud import firestore
@@ -56,43 +61,69 @@ if not logger.handlers:
 STATIC_WHITELIST = {
     "openturath@gmail.com",
     "ramah@ptct.net",
+    "raflimaulan@gmail.com",
 }
 
 MASTER_NOTEBOOKS = [
     {
         "name": "AI Fikih Syafi'i",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_SYAFII", "334e7b83-0e76-4787-a1d6-314642a35862"),
+        "key": "fiqh_syafii",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_SYAFII", "cms4ls3j60001l20439k1nqh4"),
     },
     {
         "name": "Al-Muhaqqiq (Tahawwulat)",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_MUHAQQIQ", "dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4"),
+        "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "Al-Bayan (Fikih Tahawwulat)",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_BAYAN", "483d0291-0a70-411c-bff0-f1ea4b83b2fd"),
+        "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "Al-Mukhtabir (Fikih Tahawwulat)",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_MUKHTABIR", "ac61a7a0-87e7-42a5-a30f-980ff74a78d8"),
+        "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "Al-Habib (Fikih Tahawwulat)",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_HABIB", "6673e79a-7156-42e1-b116-bc1653a32094"),
+        "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "Al-Khatib (Fikih Tahawwulat)",
         "id": os.getenv("NOTEBOOK_ID_FIKIH_TAHAWWULAT_AL_KHATIB", "1288e413-9569-47a3-892f-64008e53c1e8"),
+        "key": "fiqh_tahawwulat",
         "cuid": os.getenv("AKAL_SERVICE_CUID_FIKIH_TAHAWWULAT", "cmln2i27k0000jx047oabzw8p"),
     },
     {
         "name": "AI Bahasa Arab",
         "id": os.getenv("NOTEBOOK_ID_BAHASA_ARAB", "15bc4cef-4b94-4241-b05a-d50a586bde06"),
+        "key": "nahwu",
         "cuid": os.getenv("AKAL_SERVICE_CUID_BAHASA_ARAB", "cmnd7l4o60002l504ab6qq31x"),
+    },
+    {
+        "name": "AI Hadits",
+        "id": os.getenv("NOTEBOOK_ID_HADITS", "b9626501-538c-4358-a44f-6731eaec50b6"),
+        "key": "hadits",
+        "cuid": os.getenv("AKAL_SERVICE_CUID_HADITS", ""),
+    },
+    {
+        "name": "AI Tafsir",
+        "id": os.getenv("NOTEBOOK_ID_TAFSIR", "df92cc50-1106-4221-8748-1663f00fa7fe"),
+        "key": "tafsir",
+        "cuid": os.getenv("AKAL_SERVICE_CUID_TAFSIR", ""),
+    },
+    {
+        "name": "AI Ushul Fiqih",
+        "id": os.getenv("NOTEBOOK_ID_USHUL_FIQIH", "6ab6dae8-0067-435a-85ca-b6bd4e17dd12"),
+        "key": "ushul_fiqh",
+        "cuid": os.getenv("AKAL_SERVICE_CUID_USHUL_FIQIH", ""),
     },
 ]
 
@@ -114,6 +145,19 @@ def send_telegram(text: str) -> bool:
         logger.error(f"Failed to send Telegram message: {e}")
         return False
 
+def parse_dt(val):
+    if not val:
+        return None
+    if isinstance(val, datetime):
+        return val if val.tzinfo else val.replace(tzinfo=timezone.utc)
+    if isinstance(val, str):
+        try:
+            dt = datetime.fromisoformat(val.replace("Z", "+00:00"))
+            return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+        except Exception:
+            return None
+    return None
+
 class AutonomousReaper:
     def __init__(self):
         cred_path = "/Users/apple/Downloads/ramadhan/service-account.json"
@@ -123,68 +167,95 @@ class AutonomousReaper:
             self.db = firestore.Client()
         self.storage_path = os.path.expanduser("~/.notebooklm/profiles/default/storage_state.json")
 
-    async def get_all_database_records(self) -> tuple[dict[str, dict], dict[str, dict]]:
+    async def get_all_database_records(self) -> tuple[set[str], dict[str, set[str]], dict[str, set[str]]]:
         """
-        Mengambil data lengkap:
-        - active_users: email yang SAH dan MASIH AKTIF (termasuk VIP/Manual/Overrides)
-        - confirmed_expired_users: email yang TERBUKTI EXPIRED (dengan tanggal kedaluwarsa jelas)
+        Mengambil data per-modul:
+        - global_vip_emails: set email VIP permanen (berlaku untuk semua modul)
+        - active_by_module: key -> set of active emails for this module
+        - expired_by_module: key -> set of expired emails for this module
         """
         now = datetime.now(timezone.utc)
-        active_users = {}
-        confirmed_expired_users = {}
+        global_vip_emails = set(e.lower() for e in STATIC_WHITELIST)
+        active_by_module = {}   # key -> set of emails
+        expired_by_module = {}  # key -> set of emails
+
+        for nb in MASTER_NOTEBOOKS:
+            k = nb["key"]
+            if k not in active_by_module:
+                active_by_module[k] = set()
+                expired_by_module[k] = set()
 
         # 1. Baca Firestore Transactions
         try:
             tx_stream = self.db.collection("transactions").stream()
             for doc in tx_stream:
                 d = doc.to_dict()
-                email = (d.get("customer_email") or d.get("payer_email") or d.get("payerEmail") or d.get("email") or "").strip().lower()
+                email = (d.get("customer_email") or d.get("payer_email") or d.get("email") or "").strip().lower()
                 if not email:
                     continue
 
                 status = (d.get("status") or "").upper()
-                is_vip = d.get("is_vip", False) or (d.get("plan") == "VIP_PERMANENT")
-                exp = d.get("subscription_expires_at") or d.get("access_expires_at") or d.get("expires_at")
-                
-                exp_dt = None
-                if isinstance(exp, datetime):
-                    exp_dt = exp if exp.tzinfo else exp.replace(tzinfo=timezone.utc)
-                elif isinstance(exp, str):
-                    try:
-                        exp_dt = datetime.fromisoformat(exp.replace("Z", "+00:00"))
-                    except Exception:
-                        pass
+                plan = str(d.get("plan") or d.get("plan_id") or "").upper()
+                exp_dt = parse_dt(d.get("subscription_expires_at") or d.get("access_expires_at") or d.get("expires_at"))
+                is_vip = d.get("is_vip", False) or ("VIP" in plan) or (exp_dt and exp_dt.year >= 2030)
+                ent_key = d.get("entitlement_key")
 
                 if is_vip:
-                    # VIP PERMANEN - DILINDUNGI SELAMANYA
-                    active_users[email] = {
-                        "exp_dt": now + timedelta(days=3650),
-                        "name": d.get("customer_name") or "VIP User",
-                        "is_vip": True
-                    }
+                    global_vip_emails.add(email)
                     continue
+
+                # Is it 1-Year plan? (gives all access or specific)
+                is_yearly = any(y in plan.lower() for y in ["1y", "year", "tahun", "annual", "bahits_1y"])
 
                 if status in ["SUCCESS", "PAID", "SETTLED"]:
                     if exp_dt and exp_dt > now:
-                        active_users[email] = {
-                            "exp_dt": exp_dt,
-                            "name": d.get("customer_name") or "Paid User",
-                            "is_vip": False
-                        }
+                        if is_yearly or ent_key in ["all_access", "all_ai", None]:
+                            for k in active_by_module:
+                                active_by_module[k].add(email)
+                        elif ent_key in active_by_module:
+                            active_by_module[ent_key].add(email)
                     elif exp_dt and exp_dt <= now:
-                        confirmed_expired_users[email] = {
-                            "exp_dt": exp_dt,
-                            "name": d.get("customer_name") or "Expired User"
-                        }
+                        if ent_key in expired_by_module:
+                            expired_by_module[ent_key].add(email)
+                        elif ent_key is None:
+                            # If no entitlement key, consider expired for syafii or tahawwulat if was monthly
+                            expired_by_module["fiqh_syafii"].add(email)
                 elif status in ["EXPIRED", "FAILED", "CANCELLED"]:
-                    confirmed_expired_users[email] = {
-                        "exp_dt": exp_dt or now,
-                        "name": d.get("customer_name") or "Expired User"
-                    }
+                    if ent_key in expired_by_module:
+                        expired_by_module[ent_key].add(email)
         except Exception as e:
-            logger.error(f"Error reading Firestore: {e}")
+            logger.error(f"Error reading Firestore transactions: {e}")
 
-        # 2. Baca Akal API
+        # 2. Baca Firestore Users Collection
+        try:
+            user_stream = self.db.collection("users").stream()
+            for doc in user_stream:
+                d = doc.to_dict()
+                email = (d.get("email") or "").strip().lower()
+                if not email:
+                    continue
+                role = str(d.get("role") or "").lower()
+                if role in ["admin", "vip", "guru", "special"]:
+                    global_vip_emails.add(email)
+                    continue
+
+                u_sub_exp = parse_dt(d.get("subscription_expiry"))
+                if u_sub_exp and u_sub_exp > now:
+                    for k in active_by_module:
+                        active_by_module[k].add(email)
+
+                entitlements = d.get("entitlements", {})
+                for k, v in entitlements.items():
+                    if isinstance(v, dict) and k in active_by_module:
+                        e_dt = parse_dt(v.get("expiry") or v.get("expires_at"))
+                        if e_dt and e_dt > now:
+                            active_by_module[k].add(email)
+                        elif e_dt and e_dt <= now:
+                            expired_by_module[k].add(email)
+        except Exception as e:
+            logger.error(f"Error reading Firestore users: {e}")
+
+        # 3. Baca Akal API
         try:
             async with AkalClient() as akal:
                 services_resp = await akal.list_services()
@@ -194,39 +265,26 @@ class AutonomousReaper:
                     paid_emails = await akal.get_all_paid_emails(cuid)
                     for em in paid_emails:
                         em = em.strip().lower()
-                        if em not in active_users:
-                            active_users[em] = {
-                                "exp_dt": now + timedelta(days=30),
-                                "name": "Akal Subscriber",
-                                "is_vip": False
-                            }
+                        for k in active_by_module:
+                            active_by_module[k].add(em)
         except Exception as e:
             logger.warning(f"Akal API warning: {e}")
 
-        # 3. Static Whitelist
-        for em in STATIC_WHITELIST:
-            active_users[em.lower()] = {
-                "exp_dt": now + timedelta(days=3650),
-                "name": "System Admin",
-                "is_vip": True
-            }
-
-        return active_users, confirmed_expired_users
+        return global_vip_emails, active_by_module, expired_by_module
 
     async def run_cycle(self) -> dict:
         """
         Siklus Reaper yang AMAN:
-        HANYA mencabut jika email tersebut BENAR-BENAR TERDAFTAR SEBAGAI EXPIRED.
-        Akun VIP manual yang ada di whitelist TIDAK AKAN DISENTUH SAMA SEKALI.
+        HANYA mencabut jika email tersebut BENAR-BENAR TERDAFTAR SEBAGAI EXPIRED pada notebook tersebut.
+        Akun VIP manual yang ada di whitelist / VIP_PERMANENT TIDAK AKAN DISENTUH SAMA SEKALI.
         """
         now = datetime.now(timezone.utc)
         logger.info("=" * 80)
         logger.info(f"🛡️ SAFE REAPER CYCLE STARTED: {now.strftime('%Y-%m-%d %H:%M:%S UTC')}")
         logger.info("=" * 80)
 
-        active_map, expired_map = await self.get_all_database_records()
-        active_emails = set(active_map.keys())
-        expired_emails = set(expired_map.keys())
+        global_vips, active_map, expired_map = await self.get_all_database_records()
+        logger.info(f"Loaded {len(global_vips)} VIPs protected permanently.")
 
         revoked_summary = []
 
@@ -234,13 +292,21 @@ class AutonomousReaper:
             for nb in MASTER_NOTEBOOKS:
                 nb_name = nb["name"]
                 nb_id = nb["id"]
+                nb_key = nb["key"]
                 
                 try:
                     status = await nlm_client.sharing.get_status(nb_id)
                     current_viewers = {u.email.lower() for u in status.shared_users if u.permission.name != "OWNER"}
                     
-                    # HANYA cabut jika user itu ADA di daftar EXPIRED dan TIDAK ADA di ACTIVE
-                    strictly_expired = (current_viewers & expired_emails) - active_emails
+                    # Target yang boleh dicabut dari notebook ini:
+                    # 1. Ada di current_viewers
+                    # 2. Bukan VIP global
+                    # 3. Bukan aktif di modul ini
+                    # 4. Ada di daftar expired_by_module untuk modul ini
+                    active_for_this_nb = active_map.get(nb_key, set()) | global_vips
+                    expired_for_this_nb = expired_map.get(nb_key, set())
+
+                    strictly_expired = (current_viewers & expired_for_this_nb) - active_for_this_nb
                     
                     if strictly_expired:
                         logger.warning(f"🚨 {nb_name}: Mencabut {len(strictly_expired)} user yang terkonfirmasi expired...")
@@ -254,6 +320,15 @@ class AutonomousReaper:
                         )
                         for em in strictly_expired:
                             revoked_summary.append({"email": em, "notebook": nb_name})
+                            self.db.collection("sharing_log").add({
+                                "email": em,
+                                "notebook_id": nb_id,
+                                "notebook_name": nb_name,
+                                "action": "remove",
+                                "status": "success",
+                                "source": "autonomous_reaper",
+                                "created_at": now
+                            })
                     else:
                         logger.info(f"✅ {nb_name:<28}: {len(current_viewers)} Viewers (Semua Aman)")
 
@@ -276,7 +351,7 @@ class AutonomousReaper:
 
         return {
             "timestamp": now.isoformat(),
-            "active_count": len(active_emails),
+            "vip_count": len(global_vips),
             "revoked_count": len(revoked_summary)
         }
 
