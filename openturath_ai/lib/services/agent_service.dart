@@ -1,9 +1,10 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import '../models/agent_model.dart';
+import 'callable_gateway.dart';
 import '../core/constants.dart';
 
 class AgentService {
-  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+  final CallableGateway _functions = const CallableGateway();
 
   // ── Ambil daftar semua agent dari Firestore / model lokal ────
   Future<List<AgentModel>> getAgents() async {
@@ -13,9 +14,8 @@ class AgentService {
   // ── Ambil URL agent dari Cloud Function secara aman (Server-Side Entitlement) ────
   Future<String?> getAgentUrl(String agentId) async {
     try {
-      final callable = _functions.httpsCallable(AppConstants.fnGetAgentUrl);
-      final result = await callable.call({'agentId': agentId});
-      final data = Map<String, dynamic>.from(result.data);
+      final result = await _functions.call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
+      final data = Map<String, dynamic>.from(result as Map);
       final url = data['url'] as String?;
       if (url != null && url.isNotEmpty) {
         return url;
@@ -38,9 +38,8 @@ class AgentService {
   // ── Catat pertanyaan trial secara atomik di Cloud Functions ───
   Future<TrialUsage> recordQuestion(String agentId) async {
     try {
-      final callable = _functions.httpsCallable('recordQuestion');
-      final result = await callable.call({'agentId': agentId});
-      final data = Map<String, dynamic>.from(result.data);
+      final result = await _functions.call('recordQuestion', {'agentId': agentId});
+      final data = Map<String, dynamic>.from(result as Map);
       return TrialUsage(
         isPremium: data['isPremium'] == true,
         questionsUsed: (data['questionsUsed'] as num?)?.toInt() ?? 0,

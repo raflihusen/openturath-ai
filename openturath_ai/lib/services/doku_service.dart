@@ -1,4 +1,4 @@
-import 'package:cloud_functions/cloud_functions.dart';
+import 'callable_gateway.dart';
 import '../core/constants.dart';
 import '../core/product_pricing.dart';
 
@@ -7,7 +7,7 @@ import '../core/product_pricing.dart';
 /// dieksekusi secara eksklusif oleh Cloud Functions (server-side),
 /// sehingga tidak ada Secret Key yang tersimpan di dalam client/APK.
 class DokuService {
-  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+  final CallableGateway _functions = const CallableGateway();
 
   /// Buat sesi pembayaran checkout resmi melalui Cloud Function createCheckout
   Future<Map<String, dynamic>> createCheckoutSession({
@@ -21,11 +21,7 @@ class DokuService {
     required String phone,
   }) async {
     try {
-      final callable = _functions.httpsCallable(
-        AppConstants.fnCreatePayment,
-        options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
-      );
-      final result = await callable.call({
+      final result = await _functions.call(AppConstants.fnCreatePayment, {
         'uid': uid,
         'agentId': agentId,
         'plan': plan,
@@ -38,7 +34,7 @@ class DokuService {
         'phone': phone,
       });
 
-      final data = Map<String, dynamic>.from(result.data as Map);
+      final data = Map<String, dynamic>.from(result as Map);
       return {
         'redirectUrl': data['paymentUrl'] ?? data['redirectUrl'],
         'paymentUrl': data['paymentUrl'] ?? data['redirectUrl'],
@@ -59,12 +55,8 @@ class DokuService {
     required String invoiceNumber,
   }) async {
     try {
-      final callable = _functions.httpsCallable(
-        AppConstants.fnCheckPaymentStatus,
-        options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
-      );
-      final result = await callable.call({'invoiceNumber': invoiceNumber});
-      return Map<String, dynamic>.from(result.data as Map);
+      final result = await _functions.call(AppConstants.fnCheckPaymentStatus, {'invoiceNumber': invoiceNumber});
+      return Map<String, dynamic>.from(result as Map);
     } catch (e) {
       return {
         'success': false,

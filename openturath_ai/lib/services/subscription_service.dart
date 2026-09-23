@@ -4,6 +4,7 @@ import '../core/constants.dart';
 import '../models/user_model.dart';
 import 'device_service.dart';
 import 'doku_service.dart';
+import 'callable_gateway.dart';
 
 class SubscriptionService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -49,15 +50,13 @@ class SubscriptionService {
     try {
       final normalized = normalizeCode(code);
       final fingerprint = customFingerprint ?? await DeviceService().getDeviceFingerprint();
-      final callable = FirebaseFunctions.instance.httpsCallable('redeemCode');
-      final result = await callable.call({
+      final data = await const CallableGateway().call('redeemCode', {
         'code': normalized,
         'deviceId': fingerprint.deviceId,
         'deviceModel': fingerprint.model,
         'deviceBrand': fingerprint.brand,
         'isPhysicalDevice': fingerprint.isPhysicalDevice,
       });
-      final data = result.data;
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }
@@ -78,9 +77,7 @@ class SubscriptionService {
   // ── Sinkronkan Transaksi GoAkal Secara Otomatis ───────────────
   Future<Map<String, dynamic>> syncAkalPurchases() async {
     try {
-      final callable = FirebaseFunctions.instance.httpsCallable('syncAkalPurchases');
-      final result = await callable.call();
-      final data = result.data;
+      final data = await const CallableGateway().call('syncAkalPurchases');
       if (data is Map) {
         return Map<String, dynamic>.from(data);
       }

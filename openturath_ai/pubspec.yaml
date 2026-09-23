@@ -36,6 +36,8 @@ dependencies:
   flutter_svg: ^2.0.10+1
 
   # Utils
+  http: ^1.6.0
+  path: ^1.9.1
   shared_preferences: ^2.2.3
   url_launcher: ^6.3.0
   package_info_plus: ^8.0.2
