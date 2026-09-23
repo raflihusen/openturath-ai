@@ -1,3 +1,6 @@
+import '../services/desktop_webview_runtime.dart';
+import '../widgets/desktop_webview_gate.dart';
+import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
@@ -643,10 +646,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      widget.session.webController?.resume();
+      if (AppPlatform.isAndroid) {
+        unawaited(widget.session.webController?.resume().catchError((Object _) {}) ?? Future<void>.value());
+      }
       _verifySurfaceHealth();
     } else if (state == AppLifecycleState.paused) {
-      widget.session.webController?.pause();
+      if (AppPlatform.isAndroid) {
+        unawaited(widget.session.webController?.pause().catchError((Object _) {}) ?? Future<void>.value());
+      }
     }
   }
 
@@ -904,7 +911,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+
+  Widget _buildContent(BuildContext context) {
     super.build(context);
     final session = widget.session;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -1086,6 +1095,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       child: Stack(
         children: [
           InAppWebView(
+                      webViewEnvironment: DesktopWebViewRuntime.environment,
             keepAlive: session.keepAlive,
             initialUrlRequest: URLRequest(url: initialUri),
             initialUserScripts:
@@ -1114,7 +1124,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
               algorithmicDarkeningAllowed: true,
-              userAgent: AppConstants.chromeMobileUserAgent,
+              userAgent: AppPlatform.isDesktop ? null : AppConstants.chromeMobileUserAgent,
             ),
             onReceivedError: (controller, request, error) {
               if (request.isForMainFrame == true && mounted) {

@@ -1,3 +1,6 @@
+import '../services/desktop_webview_runtime.dart';
+import '../widgets/desktop_webview_gate.dart';
+import '../core/app_platform.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -111,7 +114,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+
+  Widget _buildContent(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = isDark ? AppTheme.canvasDark : AppTheme.canvasLight;
@@ -224,9 +229,10 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InAppWebView(
+                      webViewEnvironment: DesktopWebViewRuntime.environment,
                     initialUrlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
                     initialSettings: InAppWebViewSettings(
-                      userAgent: _chromeUserAgent,
+                      userAgent: AppPlatform.isDesktop ? null : _chromeUserAgent,
                       javaScriptEnabled: true,
                       domStorageEnabled: true,
                       databaseEnabled: true,
@@ -257,7 +263,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                       if (!mounted || url == null) return;
                       final urlStr = url.toString();
 
-                      final cookieManager = CookieManager.instance();
+                      final cookieManager = DesktopWebViewRuntime.cookies;
                       final cookies = await cookieManager.getCookies(
                         url: WebUri("https://notebook.google.com"),
                       );

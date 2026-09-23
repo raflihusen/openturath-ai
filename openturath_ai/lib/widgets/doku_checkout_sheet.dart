@@ -1,3 +1,6 @@
+import '../services/desktop_webview_runtime.dart';
+import '../widgets/desktop_webview_gate.dart';
+import '../core/app_platform.dart';
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -345,7 +348,9 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+
+  Widget _buildContent(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surfaceColor = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
@@ -518,6 +523,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                   // WebView DOKU
                   Expanded(
                     child: InAppWebView(
+                      webViewEnvironment: DesktopWebViewRuntime.environment,
                       initialUrlRequest: URLRequest(url: WebUri(widget.paymentUrl)),
                       initialSettings: InAppWebViewSettings(
                         javaScriptEnabled: true,

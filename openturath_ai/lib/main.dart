@@ -1,3 +1,5 @@
+import 'core/app_platform.dart';
+import 'services/desktop_webview_runtime.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
@@ -28,10 +30,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ── Kunci orientasi: hanya portrait ──
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  if (AppPlatform.isAndroid) {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp, DeviceOrientation.portraitDown,
+    ]);
+  }
+  await DesktopWebViewRuntime.prepare();
 
   // Load configuration
   try {

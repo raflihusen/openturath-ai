@@ -1,3 +1,6 @@
+import '../services/desktop_webview_runtime.dart';
+import '../widgets/desktop_webview_gate.dart';
+import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
@@ -632,7 +635,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+
+  Widget _buildContent(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
@@ -724,10 +729,11 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 Container(
                   color: isDark ? const Color(0xFF0E0E10) : const Color(0xFFFFFFFF),
                   child: InAppWebView(
+                      webViewEnvironment: DesktopWebViewRuntime.environment,
                     initialUrlRequest: URLRequest(url: WebUri(_agentUrl!)),
                     initialUserScripts: UnmodifiableListView<UserScript>([_cloakScript]),
                     initialSettings: InAppWebViewSettings(
-                      userAgent: AppConstants.chromeMobileUserAgent,
+                      userAgent: AppPlatform.isDesktop ? null : AppConstants.chromeMobileUserAgent,
                       javaScriptEnabled: true,
                       domStorageEnabled: true,
                       databaseEnabled: true,

@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../core/constants.dart';
 import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 import 'desktop_google_sign_in.dart';
+import 'desktop_webview_runtime.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -277,11 +277,7 @@ class AuthService {
     } catch (_) {}
 
     try {
-      final cookieManager = CookieManager.instance();
-      await cookieManager.deleteAllCookies();
-      await cookieManager.removeSessionCookies();
-      await InAppWebViewController.clearAllCache();
-      await WebStorageManager.instance().deleteAllData();
+      await DesktopWebViewRuntime.clearSession();
     } catch (_) {}
 
     try {
@@ -324,9 +320,7 @@ class AuthService {
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     await user.delete();
     try {
-      await CookieManager.instance().deleteAllCookies();
-      await InAppWebViewController.clearAllCache();
-      await WebStorageManager.instance().deleteAllData();
+      await DesktopWebViewRuntime.clearSession();
     } catch (_) {}
 
     // 4. Bersihkan ONLY preferensi spesifik user UID ini (F08 & F41: dilarang prefs.clear())
