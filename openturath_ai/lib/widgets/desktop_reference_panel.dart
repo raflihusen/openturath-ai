@@ -69,12 +69,14 @@ class _DesktopReferencePanelState extends State<DesktopReferencePanel> {
                               }),
                           child: const Text('Muat ulang daftar kitab')));
                 }
-                if (!snapshot.hasData)
+                if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
+                }
                 final books =
                     _service.filterBooks(snapshot.data!, _search.text);
-                if (books.isEmpty)
+                if (books.isEmpty) {
                   return const Center(child: Text('Kitab tidak ditemukan.'));
+                }
                 return ListView.separated(
                   primary: false,
                   itemCount: books.length,

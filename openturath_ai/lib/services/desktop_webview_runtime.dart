@@ -16,7 +16,9 @@ class DesktopWebViewRuntime {
   static Future<void> _prepare() async {
     if (kIsWeb ||
         defaultTargetPlatform != TargetPlatform.windows ||
-        environment != null) return;
+        environment != null) {
+      return;
+    }
     problem = null;
     try {
       final version = await WebViewEnvironment.getAvailableVersion()

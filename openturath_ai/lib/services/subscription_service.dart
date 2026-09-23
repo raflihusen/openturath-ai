@@ -23,29 +23,36 @@ class SubscriptionService {
         return serverMessage;
       }
     }
-    if (c.contains('not-found'))
+    if (c.contains('not-found')) {
       return 'Kode voucher tidak ditemukan. Periksa kembali penulisan kode Anda.';
+    }
     if (c.contains('already-exists') || c.contains('already-used')) {
       return 'Kode ini sudah pernah ditukarkan sebelumnya.';
     }
-    if (c.contains('deadline-exceeded') || c.contains('expired'))
+    if (c.contains('deadline-exceeded') || c.contains('expired')) {
       return 'Masa berlaku kode voucher ini telah berakhir.';
+    }
     if (c.contains('failed-precondition')) {
       if (serverMessage != null && serverMessage.contains('ponsel')) {
         return serverMessage;
       }
       return 'Kode voucher ini sudah tidak aktif.';
     }
-    if (c.contains('resource-exhausted') || c.contains('quota'))
+    if (c.contains('resource-exhausted') || c.contains('quota')) {
       return 'Kuota penukaran untuk kode voucher ini sudah habis.';
-    if (c.contains('unauthenticated'))
+    }
+    if (c.contains('unauthenticated')) {
       return 'Silakan masuk ke akun Anda lalu coba kembali.';
-    if (c.contains('invalid-argument'))
+    }
+    if (c.contains('invalid-argument')) {
       return 'Format penulisan kode voucher belum sesuai.';
-    if (c.contains('permission-denied'))
+    }
+    if (c.contains('permission-denied')) {
       return 'Kode voucher ini tidak dapat digunakan untuk akun Anda.';
-    if (c.contains('unavailable'))
+    }
+    if (c.contains('unavailable')) {
       return 'Layanan belum dapat dihubungi. Periksa koneksi lalu coba lagi.';
+    }
     return 'Kode voucher belum dapat diaktifkan. Silakan periksa kembali kode Anda.';
   }
 

@@ -129,8 +129,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
           try {
             await manager.activeTab?.webController?.reload();
           } catch (_) {
-            if (context.mounted)
+            if (context.mounted) {
               AppSnackBar.warning(context, 'Sesi belum dapat dimuat ulang.');
+            }
           }
         },
         onEscape: () {

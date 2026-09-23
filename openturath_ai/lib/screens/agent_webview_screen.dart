@@ -483,7 +483,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     text = text.trim();
     if (text.isEmpty ||
         text.length > 200000 ||
-        _authService.currentUser?.uid != ownerUid) return;
+        _authService.currentUser?.uid != ownerUid) {
+      return;
+    }
     final agent = _agent;
     if (agent == null) return;
     await _bookmarkService.addBookmark(copiedAnswerBookmark(text, agent),
@@ -802,11 +804,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                   'notebook.google.com'
                                 ].contains(url?.host) ||
                                 args.isEmpty ||
-                                args.first is! String) return false;
+                                args.first is! String) {
+                              return false;
+                            }
                             try {
                               final text = (args.first as String).trim();
-                              if (text.isEmpty || text.length > 200000)
+                              if (text.isEmpty || text.length > 200000) {
                                 return false;
+                              }
                               final now = DateTime.now();
                               if (_lastCopiedToastAt != null &&
                                   now.difference(_lastCopiedToastAt!) <
@@ -832,8 +837,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                               }
                               return true;
                             } catch (_) {
-                              if (context.mounted)
+                              if (context.mounted) {
                                 AppSnackBar.error(context, AppCopy.saveFailed);
+                              }
                               return false;
                             }
                           });

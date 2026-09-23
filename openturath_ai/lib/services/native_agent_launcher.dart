@@ -56,8 +56,9 @@ class NativeAgentLauncher {
             : LaunchMode.externalApplication,
       );
       if (launched) return true;
-      if (Platform.isAndroid)
+      if (Platform.isAndroid) {
         return await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
     } catch (_) {}
 
     return false;

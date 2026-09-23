@@ -122,8 +122,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!AppPlatform.isDesktop)
+    if (!AppPlatform.isDesktop) {
       return DesktopWebViewGate(builder: _buildContent);
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Sesi NotebookLM')),
       body: Center(

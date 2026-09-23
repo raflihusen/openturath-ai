@@ -68,8 +68,9 @@ class DesktopGoogleSignIn {
         await for (final chunk
             in request.timeout(const Duration(seconds: 10))) {
           bytes.addAll(chunk);
-          if (bytes.length > 32768)
+          if (bytes.length > 32768) {
             throw const FormatException('Request too large');
+          }
         }
         final fields = Uri.splitQueryString(utf8.decode(bytes));
         if (!validCallback(

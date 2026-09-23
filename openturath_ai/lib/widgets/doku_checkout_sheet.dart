@@ -594,8 +594,9 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                       shouldOverrideUrlLoading:
                           (controller, navigationAction) async {
                         final webUri = navigationAction.request.url;
-                        if (webUri == null)
+                        if (webUri == null) {
                           return NavigationActionPolicy.CANCEL;
+                        }
 
                         final uri = Uri.tryParse(webUri.toString());
                         if (uri == null) return NavigationActionPolicy.CANCEL;

@@ -79,8 +79,9 @@ class UpdateService extends ChangeNotifier {
   UpdateInfo? get updateInfo => _updateInfo;
 
   bool get isUpdateReady {
-    if (_status != UpdateStatus.readyToInstall || _updateInfo == null)
+    if (_status != UpdateStatus.readyToInstall || _updateInfo == null) {
       return false;
+    }
     if (AppPlatform.isDesktop) {
       // Desktop: siap membuka URL unduhan desktop
       return true;

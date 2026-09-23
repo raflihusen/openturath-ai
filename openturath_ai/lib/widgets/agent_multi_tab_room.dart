@@ -1289,7 +1289,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onLoadStop: (controller, uri) async {
               if (!mounted ||
                   uri == null ||
-                  !NotebookNavigation.notebook(uri.uriValue)) return;
+                  !NotebookNavigation.notebook(uri.uriValue)) {
+                return;
+              }
               try {
                 await controller.evaluateJavascript(
                     source:
