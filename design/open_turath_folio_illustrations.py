@@ -40,7 +40,7 @@ def font(name: str, size: float) -> ImageFont.FreeTypeFont:
 def box(draw, x, y, w, h, fill, radius=0, outline=None, width=1):
     rect = (round(x*S), round(y*S), round((x+w)*S), round((y+h)*S))
     if radius:
-        draw.rounded_rectangle(rect, radius=round(radius*S), fill=fill,
+        draw.rounded_rectangle(rect, radius=round(min(radius, w/2, h/2)*S), fill=fill,
                                outline=outline, width=round(width*S))
     else:
         draw.rectangle(rect, fill=fill, outline=outline, width=round(width*S))
@@ -104,6 +104,14 @@ def search_icon(draw, x, y):
     rule(draw, x+4, y+4, x+8, y+8, MUTED, 1.4)
 
 
+def sparkle(draw, x, y, size=10, color=INK):
+    points = [(x, y-size), (x+size*.22, y-size*.22), (x+size, y),
+              (x+size*.22, y+size*.22), (x, y+size),
+              (x-size*.22, y+size*.22), (x-size, y),
+              (x-size*.22, y-size*.22)]
+    draw.polygon([(round(px*S), round(py*S)) for px, py in points], fill=color)
+
+
 def nav(draw, x, y, active):
     rule(draw, x, y, x+380, y, LINE)
     labels = ["Beranda", "Asisten", "Catatan", "Pengaturan"]
@@ -117,7 +125,7 @@ def nav(draw, x, y, active):
             rule(draw, cx-5, y+24, cx-5, y+33, c, 1.5)
             rule(draw, cx+5, y+24, cx+5, y+33, c, 1.5)
         elif i == 1:
-            tx(draw, cx, y+12, "✦", 21, "ui", c, anchor="mt")
+            sparkle(draw, cx, y+26, 9, c)
         elif i == 2:
             for q, ww in enumerate((12, 9, 11)):
                 rule(draw, cx-6, y+20+q*5, cx-6+ww, y+20+q*5, c, 1.4)
@@ -223,7 +231,7 @@ def screen_field(draw, x, y):
     # An assistant is a dossier with a real scope and corpus, not a repeated row.
     box(draw, ox, oy+239, 332, 197, INK, 16)
     tx(draw, ox+19, oy+257, "01 / 06   ·   MAZHAB", 10, "strong", "#B2B2AA")
-    right(draw, ox+309, oy+258, "✦", 21, "ui", WHITE)
+    sparkle(draw, ox+298, oy+273, 8, WHITE)
     tx(draw, ox+19, oy+286, "Fikih Syafi'i", 27, "display", WHITE)
     tx(draw, ox+19, oy+323, "Matan · Syarah · Hasyiyah Mu'tabarah", 11, "ui", "#C8C8C0")
     rule(draw, ox+19, oy+354, ox+313, oy+354, "#4B4B47")
@@ -259,28 +267,30 @@ def screen_assistant(draw, x, y):
     tx(draw, ox+135, oy+135, "1.099", 31, "display")
     tx(draw, ox+228, oy+149, "transkrip", 11, "ui", MUTED)
     tx(draw, ox, oy+194, "LIMA PERAN, SATU BIDANG", 10, "strong", MUTED)
-    role_rows = [
-        ("01", "Al-Muhaqqiq", "Telusur matan & ibarah"),
-        ("02", "Al-Bayan", "Uraikan konsep & istilah"),
-        ("03", "Al-Mukhtabir", "Uji pemahaman interaktif"),
-        ("04", "Al-Habib", "Khazanah muhadharah"),
-        ("05", "Al-Khatib", "Susun materi dakwah"),
+    box(draw, ox, oy+218, 332, 167, WHITE, 16, LINE)
+    box(draw, ox, oy+218, 5, 167, INK, 2)
+    tx(draw, ox+17, oy+233, "01 / 05   ·   PERAN AKTIF", 9, "strong", MUTED)
+    tx(draw, ox+17, oy+257, "Al-Muhaqqiq", 27, "display")
+    tx(draw, ox+17, oy+293, "Telusuri matan, ibarah, dan sumbernya.", 12, "ui", MUTED)
+    rule(draw, ox+17, oy+325, ox+313, oy+325, LINE)
+    tx(draw, ox+17, oy+336, "COBA TANYAKAN", 9, "strong", MUTED)
+    wrapped(draw, ox+17, oy+355, "Apa yang dimaksud Rukun Keempat?", 285, 12, "ui", INK, 1.25, 1)
+    tx(draw, ox, oy+400, "PILIH PERAN LAIN", 9, "strong", MUTED)
+    roles = [
+        ("02", "Al-Bayan", "Konsep & istilah"),
+        ("03", "Al-Mukhtabir", "Uji pemahaman"),
+        ("04", "Al-Habib", "Muhadharah"),
+        ("05", "Al-Khatib", "Materi dakwah"),
     ]
-    for i, (no, name, desc) in enumerate(role_rows):
-        yy = oy+225+i*64
-        if i == 0:
-            box(draw, ox, yy-5, 332, 59, WHITE, 14, LINE)
-        else:
-            rule(draw, ox, yy+56, x+356, yy+56, LINE)
-        tx(draw, ox+12, yy+3, no, 10, "strong", FAINT)
-        tx(draw, ox+46, yy-2, name, 18, "display")
-        tx(draw, ox+46, yy+25, desc, 11, "ui", MUTED)
-        chevron(draw, x+345, yy+18, MUTED)
-    box(draw, ox, oy+566, 332, 72, SOFT, 14)
-    tx(draw, ox+15, oy+578, "COBA PERTANYAAN", 9, "strong", MUTED)
-    wrapped(draw, ox+15, oy+600, "Apa yang dimaksud Rukun Keempat dalam Fikih Tahawwulat?", 298, 12, "ui", INK, 1.25, 2)
-    box(draw, ox, oy+650, 332, 45, INK, 999)
-    tx(draw, ox+166, oy+662, "Buka ruang asisten   →", 12, "strong", WHITE, "mt")
+    for i, (no, name, desc) in enumerate(roles):
+        col, row = i%2, i//2
+        xx, yy = ox+col*166, oy+425+row*83
+        rule(draw, xx, yy, xx+150, yy, LINE)
+        tx(draw, xx, yy+11, no, 9, "strong", FAINT)
+        tx(draw, xx, yy+26, name, 17, "display")
+        tx(draw, xx, yy+54, desc, 10, "ui", MUTED)
+    box(draw, ox, oy+615, 332, 45, INK, 999)
+    tx(draw, ox+166, oy+627, "Buka ruang asisten   →", 12, "strong", WHITE, "mt")
 
 
 def screen_library(draw, x, y, arabic):
@@ -295,7 +305,9 @@ def screen_library(draw, x, y, arabic):
     search_icon(draw, ox+19, oy+205)
     tx(draw, ox+39, oy+196, "Cari judul, pengarang, atau istilah", 11, "ui", FAINT)
     tx(draw, ox, oy+254, "URUTAN: TAHUN WAFAT", 10, "strong", MUTED)
-    right(draw, x+356, oy+254, "Saring  ≡", 11, "strong")
+    right(draw, x+337, oy+254, "Saring", 11, "strong")
+    for j, ww in enumerate((12, 8, 5)):
+        rule(draw, x+343, oy+260+j*4, x+343+ww, oy+260+j*4, INK)
     rule(draw, ox, oy+278, x+356, oy+278, INK)
     entries = [
         ("01", "الأم", "Imam asy-Syafi'i · w. 204 H", "8 jilid   /   2.267 hlm."),
@@ -309,9 +321,8 @@ def screen_library(draw, x, y, arabic):
         tx(draw, ox+36, yy+53, meta, 12, "ui", MUTED)
         tx(draw, ox+36, yy+77, count, 10, "ui", FAINT)
         rule(draw, ox, yy+111, x+356, yy+111, LINE)
-    box(draw, ox, oy+679, 332, 1, LINE)
-    tx(draw, ox, oy+689, "Tampilkan 84 kitab lainnya", 11, "strong")
-    arrow(draw, x+347, oy+696)
+    tx(draw, ox, oy+654, "Tampilkan 84 kitab lainnya", 11, "strong")
+    arrow(draw, x+347, oy+662)
 
 
 def screen_book(draw, x, y, arabic):
@@ -338,10 +349,10 @@ def screen_book(draw, x, y, arabic):
         tx(draw, ox, yy, label, 9, "strong", MUTED)
         tx(draw, ox, yy+23, value, 13, "ui", INK)
         rule(draw, ox, yy+62, x+356, yy+62, LINE)
-    box(draw, ox, oy+624, 332, 47, INK, 999)
-    tx(draw, ox+166, oy+636, "Salin sitasi lengkap", 12, "strong", WHITE, "mt")
-    box(draw, ox, oy+681, 332, 41, WHITE, 999, LINE)
-    tx(draw, ox+166, oy+691, "Simpan sebagai rujukan", 11, "strong", INK, "mt")
+    box(draw, ox, oy+580, 332, 45, INK, 999)
+    tx(draw, ox+166, oy+591, "Salin sitasi lengkap", 12, "strong", WHITE, "mt")
+    box(draw, ox, oy+636, 332, 40, WHITE, 999, LINE)
+    tx(draw, ox+166, oy+646, "Simpan sebagai rujukan", 11, "strong", INK, "mt")
 
 
 def screen_notes(draw, x, y):
@@ -354,7 +365,9 @@ def screen_notes(draw, x, y):
     search_icon(draw, ox+19, oy+104)
     tx(draw, ox+39, oy+95, "Cari isi catatan atau rujukan", 11, "ui", FAINT)
     tx(draw, ox, oy+158, "SEMUA BIDANG", 10, "strong", MUTED)
-    right(draw, x+356, oy+158, "Fikih & Fatwa   ⌄", 11, "ui", INK)
+    right(draw, x+346, oy+158, "Fikih & Fatwa", 11, "ui", INK)
+    rule(draw, x+348, oy+164, x+352, oy+168, INK)
+    rule(draw, x+352, oy+168, x+356, oy+164, INK)
     rule(draw, ox, oy+184, x+356, oy+184, INK)
     # Mixed document types map to the existing BookmarkDocumentKind model.
     tx(draw, ox, oy+204, "01 / RUJUKAN KITAB", 9, "strong", MUTED)
@@ -373,8 +386,8 @@ def screen_notes(draw, x, y):
     tx(draw, ox, oy+570, "Titik telaah berikutnya", 21, "display")
     wrapped(draw, ox, oy+606, "Bandingkan uraian dalam Al-Umm dengan syarah yang tersedia di katalog.", 305, 11, "ui", MUTED, 1.38, 2)
     rule(draw, ox, oy+670, x+356, oy+670, LINE)
-    tx(draw, ox, oy+680, "Semua dokumen tersimpan", 11, "strong")
-    arrow(draw, x+346, oy+687)
+    tx(draw, ox, oy+650, "Semua dokumen tersimpan", 11, "strong")
+    arrow(draw, x+346, oy+657)
 
 
 def add_arabic(im, items):
