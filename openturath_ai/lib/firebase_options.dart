@@ -23,11 +23,13 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-      case TargetPlatform.macOS:
         return ios;
+      case TargetPlatform.macOS:
+        return macos;
       case TargetPlatform.windows:
-      case TargetPlatform.linux:
         return windows;
+      case TargetPlatform.linux:
+        throw UnsupportedError('Firebase belum dikonfigurasi untuk Linux.');
       default:
         return android;
     }
@@ -58,11 +60,23 @@ class DefaultFirebaseOptions {
     storageBucket: 'open-turath.firebasestorage.app',
   );
 
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBBz789Y0qGeGmKIGGyWt02cKKX9_MUHiU',
-    appId: '1:255541559800:android:dbc2844e0ea68e02d2960d',
+  // Values verified with `firebase apps:sdkconfig` for the registered apps.
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyB-ABXjjHM5GNNoScOLziz4G20nDFx6jSk',
+    appId: '1:255541559800:ios:c789f7f14e7fb46cd2960d',
     messagingSenderId: '255541559800',
     projectId: 'open-turath',
+    storageBucket: 'open-turath.firebasestorage.app',
+    iosBundleId: 'com.example.openturathAi',
+    iosClientId: '255541559800-fen41rigfp5o3fsntiieaien3v915ptd.apps.googleusercontent.com',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyC9b5YVceixZZL6AkLnsroBC9qvSt06bQ0',
+    appId: '1:255541559800:web:a1f71cf6ae35aa2ed2960d',
+    messagingSenderId: '255541559800',
+    projectId: 'open-turath',
+    authDomain: 'open-turath.firebaseapp.com',
     storageBucket: 'open-turath.firebasestorage.app',
   );
 }

@@ -1,3 +1,4 @@
+import '../core/app_platform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -56,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
         final prefs = await SharedPreferences.getInstance()
             .timeout(const Duration(seconds: 3));
         final isSessionReady = prefs.getBool('google_session_ready') ?? false;
-        if (!isSessionReady) {
+        if (!isSessionReady && !AppPlatform.isDesktop) {
           targetRoute = AppRoutes.googleSessionAuth;
         } else {
           targetRoute = AppRoutes.dashboard;

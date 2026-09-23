@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import '../core/app_platform.dart';
 import '../core/localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final user = await _authService.signInWithGoogle();
       if (!mounted || user == null) return;
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
+      if (AppPlatform.isDesktop) {
         Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
       } else {
         Navigator.pushReplacementNamed(context, AppRoutes.googleSessionAuth);
@@ -78,7 +79,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       final message = e.toString().contains('network') || e.toString().contains('SocketException')
           ? AppCopy.networkError
-          : AppCopy.googleSignInFailed;
+          : (e is FirebaseAuthException && e.code.startsWith('desktop-')
+              ? e.message ?? AppCopy.googleSignInFailed : AppCopy.googleSignInFailed);
       AppSnackBar.error(context, message);
     } finally {
       if (mounted) setState(() => _isLoading = false);

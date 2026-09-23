@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="id" data-auth="openturath-desktop-auth-v1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Masuk — OpenTurath AI</title>
+<style>
+  body { margin:0; background:#f6f4ef; color:#262622; font:17px/1.6 system-ui,sans-serif; }
+  main { max-width:440px; margin:14vh auto; padding:32px; }
+  h1 { font:36px/1.2 Georgia,serif; } button { padding:13px 20px; border:1px solid #aaa;
+    border-radius:8px; font:inherit; cursor:pointer; background:#fff; margin:8px 8px 0 0; }
+  button:focus-visible { outline:3px solid #617264; outline-offset:3px; }
+  #message { min-height:3em; } button:disabled { opacity:.5; cursor:wait; }
+</style>
+<main><p>OpenTurath AI</p><h1>Masuk ke ruang telaah</h1>
+<p>Pilih akun Google yang Anda gunakan di OpenTurath. Setelah selesai, kembali ke aplikasi.</p>
+<button id="login" disabled>Masuk dengan Google</button><button id="cancel" disabled>Batal</button>
+<p id="message" role="status" aria-live="polite">Menyiapkan halaman masuk…</p></main>
+<script type="module" src="/desktop-auth.js"></script>
+</html>

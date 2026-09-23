@@ -10,6 +10,7 @@ import '../models/user_model.dart';
 import '../core/constants.dart';
 import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
+import 'desktop_google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -80,11 +81,9 @@ class AuthService {
       User? firebaseUser;
 
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-        // Windows Desktop: Gunakan FirebaseAuth OAuth Provider
-        final provider = GoogleAuthProvider();
-        provider.addScope('email');
-        provider.addScope('profile');
-        final userCredential = await _auth.signInWithProvider(provider);
+        final credential = await DesktopGoogleSignIn.signIn();
+        if (credential == null) return null;
+        final userCredential = await _auth.signInWithCredential(credential);
         firebaseUser = userCredential.user;
       } else {
         // Mobile (Android / iOS), macOS & Web: Gunakan GoogleSignIn SDK resmi
@@ -286,7 +285,9 @@ class AuthService {
     } catch (_) {}
 
     try {
-      await _googleSignIn.signOut();
+      if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
+        await _googleSignIn.signOut();
+      }
     } catch (_) {}
 
     try {
@@ -348,7 +349,9 @@ class AuthService {
       await _googleSignIn.disconnect();
     } catch (_) {
       try {
+        if (kIsWeb || defaultTargetPlatform != TargetPlatform.windows) {
         await _googleSignIn.signOut();
+      }
       } catch (_) {}
     }
 
