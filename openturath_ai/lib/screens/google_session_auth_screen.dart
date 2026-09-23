@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
@@ -114,7 +115,35 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+  Widget build(BuildContext context) {
+    if (!AppPlatform.isDesktop) return DesktopWebViewGate(builder: _buildContent);
+    return Scaffold(
+      appBar: AppBar(title: const Text('Sesi NotebookLM')),
+      body: Center(child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Padding(padding: const EdgeInsets.all(24), child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Buka NotebookLM di browser dan gunakan akun Google Anda. '
+                'Sesi browser terpisah dari ruang web di aplikasi.'),
+            const SizedBox(height: 20),
+            FilledButton(onPressed: () async {
+              try {
+                if (!await launchUrl(Uri.parse('https://notebooklm.google.com/'),
+                    mode: LaunchMode.externalApplication)) throw StateError('Browser unavailable');
+              } catch (_) {
+                if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Browser belum dapat dibuka.')),
+                );
+              }
+            }, child: const Text('Buka NotebookLM')),
+            TextButton(onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.dashboard),
+                child: const Text('Kembali ke ruang telaah')),
+          ],
+        )),
+      )),
+    );
+  }
 
   Widget _buildContent(BuildContext context) {
     Loc.watch(context);

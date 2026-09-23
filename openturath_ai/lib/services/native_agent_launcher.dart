@@ -23,6 +23,11 @@ class NativeAgentLauncher {
   /// Mengembalikan `true` jika berhasil diluncurkan langsung ke aplikasi native.
   static Future<bool> launchNotebook(String url) async {
     final cleanUrl = url.replaceAll('/preview', '');
+    final uri = Uri.tryParse(cleanUrl);
+    if (uri == null || uri.scheme != 'https' || uri.userInfo.isNotEmpty ||
+        !const {'notebooklm.google.com', 'notebook.google.com'}.contains(uri.host)) {
+      return false;
+    }
 
     // 1. Prioritaskan peluncuran Intent langsung ke com.google.android.apps.labs.language.tailwind
     if (Platform.isAndroid) {
@@ -38,12 +43,13 @@ class NativeAgentLauncher {
 
     // 2. Coba peluncuran non-browser via url_launcher
     try {
-      final uri = Uri.parse(cleanUrl);
       final bool launched = await launchUrl(
         uri,
-        mode: LaunchMode.externalNonBrowserApplication,
+        mode: Platform.isAndroid ? LaunchMode.externalNonBrowserApplication
+            : LaunchMode.externalApplication,
       );
       if (launched) return true;
+      if (Platform.isAndroid) return await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {}
 
     return false;
@@ -51,7 +57,12 @@ class NativeAgentLauncher {
 
   /// Membuka Share Sheet native Android untuk membagikan modul AI
   static Future<bool> shareText({required String text, String title = 'Bagikan Modul'}) async {
-    if (!Platform.isAndroid) return false;
+    if (!Platform.isAndroid) {
+      try {
+        await Clipboard.setData(ClipboardData(text: text));
+        return true;
+      } catch (_) { return false; }
+    }
     try {
       final bool? success = await _channel.invokeMethod<bool>('shareText', {
         'text': text,

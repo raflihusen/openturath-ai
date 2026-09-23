@@ -22,6 +22,7 @@ import '../core/design/ot_typography.dart';
 import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../services/agent_service.dart';
+import '../services/native_agent_launcher.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
@@ -264,6 +265,19 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           overflow: TextOverflow.ellipsis,
         ),
         actions: [
+          if (AppPlatform.isDesktop)
+            IconButton(
+              tooltip: 'Buka NotebookLM di browser',
+              icon: const Icon(Icons.open_in_browser_rounded),
+              onPressed: () async {
+                final url = activeTab.resolvedUrl;
+                final opened = url != null && await NativeAgentLauncher.launchNotebook(url);
+                if (!opened && context.mounted) {
+                  AppSnackBar.warning(context, url == null
+                      ? 'Tunggu hingga asisten selesai dihubungkan.' : 'Browser belum dapat dibuka.');
+                }
+              },
+            ),
           IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
@@ -911,10 +925,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   @override
-  Widget build(BuildContext context) => DesktopWebViewGate(builder: _buildContent);
+  Widget build(BuildContext context) {
+    super.build(context);
+    return DesktopWebViewGate(builder: _buildContent);
+  }
 
   Widget _buildContent(BuildContext context) {
-    super.build(context);
     final session = widget.session;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);

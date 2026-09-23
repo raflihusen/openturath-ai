@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
+import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DeviceFingerprint {
   final String deviceId;
@@ -35,6 +37,19 @@ class DeviceService {
   DeviceService._internal();
 
   final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
+  static Future<String>? _installationId;
+
+  static Future<String> _persistentId() => _installationId ??= (() async {
+    final prefs = await SharedPreferences.getInstance();
+    final existing = prefs.getString('ot_installation_identity_v1');
+    if (existing != null && existing.isNotEmpty) return existing;
+    final random = Random.secure();
+    final id = base64UrlEncode(List.generate(32, (_) => random.nextInt(256)));
+    if (!await prefs.setString('ot_installation_identity_v1', id)) {
+      throw StateError('Identitas perangkat belum dapat disimpan.');
+    }
+    return id;
+  })().catchError((Object error) { _installationId = null; throw error; });
 
   static const String _salt = 'OT_AI_HW_SALT_2026_980031db';
 
@@ -103,7 +118,7 @@ class DeviceService {
 
       if (Platform.isMacOS) {
         final macInfo = await _deviceInfo.macOsInfo;
-        final rawId = macInfo.systemGUID ?? 'macos_device';
+        final rawId = macInfo.systemGUID ?? await _persistentId();
         const brand = 'apple';
         final model = macInfo.model;
         final hash = computeHash(rawId: rawId, brand: brand, model: model);
@@ -115,12 +130,20 @@ class DeviceService {
           isPhysicalDevice: true,
         );
       }
+      if (Platform.isWindows) {
+        final info = await _deviceInfo.windowsInfo;
+        final rawId = info.deviceId.trim().isEmpty ? await _persistentId() : info.deviceId;
+        return DeviceFingerprint(
+          deviceId: computeHash(rawId: rawId, brand: 'windows', model: 'windows-pc'),
+          brand: 'windows', model: info.productName, isPhysicalDevice: true,
+        );
+      }
     } catch (e) {
       debugPrint('[DeviceService] Warning failed to inspect device info: $e');
     }
 
     // Fallback darurat (misalnya unit test harness lokal tanpa platform channel)
-    const fallbackId = 'ot_fallback_dev_0000000000000000';
+    final fallbackId = await _persistentId();
     final fallbackHash = computeHash(
       rawId: fallbackId,
       brand: 'generic',

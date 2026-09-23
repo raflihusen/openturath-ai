@@ -563,7 +563,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                         if (uri.scheme != 'http' && uri.scheme != 'https') {
                           if (_isAllowedExternalScheme(uri)) {
                             try {
-                              await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
+                              await launchUrl(uri, mode: AppPlatform.isDesktop ? LaunchMode.externalApplication : LaunchMode.externalNonBrowserApplication);
                             } catch (e) {
                               debugPrint('[DokuCheckout] Gagal membuka external payment app: $e');
                             }

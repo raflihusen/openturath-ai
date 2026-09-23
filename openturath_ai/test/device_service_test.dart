@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/services/device_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences.setMockInitialValues({});
   group('DeviceService & Fingerprint Hashing', () {
     test('computeHash produces valid 64-char lowercase hex string', () {
       final hash = DeviceService.computeHash(

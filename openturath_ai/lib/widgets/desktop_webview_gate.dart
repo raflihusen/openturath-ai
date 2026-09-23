@@ -28,9 +28,11 @@ class _DesktopWebViewGateState extends State<DesktopWebViewGate> {
               );
               if (!opened) throw StateError('Browser unavailable');
             } catch (_) {
-              if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Browser belum dapat dibuka.')),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Browser belum dapat dibuka.')),
+                );
+              }
             }
           }, child: const Text('Unduh WebView2')),
           TextButton(onPressed: _busy ? null : () async {
