@@ -4,7 +4,7 @@ Tanggal: 23 September 2026. Target: Windows x64, macOS Apple Silicon dan Intel.
 
 ## Kesimpulan
 
-Perbaikan aplikasi, konfigurasi native, pengujian, dan pengemasan sudah dibuat serta dicatat dalam checkpoint Git. Analyzer terakhir sebelum koreksi kecil Esc beranda: **tanpa masalah**. Seluruh suite: **186 tes lulus**. Ini belum merupakan sertifikasi bahwa seluruh fungsi berjalan pada binary desktop: build macOS terhenti sebelum kompilasi karena `xcodebuild` tidak tersedia, dan host Windows tidak tersedia dalam sesi ini.
+Perbaikan aplikasi, konfigurasi native, pengujian, dan pengemasan sudah dibuat serta dicatat dalam checkpoint Git. Analyzer setelah koreksi Esc beranda: **tanpa masalah** (5,1 detik). Seluruh suite: **186 tes lulus**; setelah koreksi terakhir, 11 tes beranda/interaksi terkait juga lulus. Ini belum merupakan sertifikasi bahwa seluruh fungsi berjalan pada binary desktop: build macOS terhenti sebelum kompilasi karena `xcodebuild` tidak tersedia, dan host Windows tidak tersedia dalam sesi ini.
 
 Laporan ini melengkapi audit awal `AUDIT_FORENSIK_DESKTOP_OPENTURATH_2026-09-23.md`. Patch di repositori adalah implementasi aktual; contoh patch dalam audit awal bukan konfigurasi akhir.
 
@@ -55,7 +55,7 @@ Laporan ini melengkapi audit awal `AUDIT_FORENSIK_DESKTOP_OPENTURATH_2026-09-23.
 
 ## Aktivasi yang masih diperlukan
 
-1. **Hosting login Windows.** Halaman `https://open-turath.web.app/desktop-auth.html` beserta JS dan header no-store harus dipublikasikan. Kode aplikasi mengecek ketersediaannya dan menampilkan pesan jelas jika belum tersedia. Pada saat laporan ini dibuat, belum ada deployment yang dijalankan dalam pekerjaan ini.
+1. **Hosting login Windows — sudah aktif.** Pengguna menyetujui publikasi. Halaman `https://open-turath.web.app/desktop-auth.html` dan JS diterbitkan pada 23 September 2026, 04:12:35 UTC. Keduanya merespons HTTP 200, sesuai berkas lokal, dengan Cache-Control no-store dan X-Frame-Options DENY. Google provider aktif dan domain hosting masuk authorizedDomains. Login lengkap dengan akun pada aplikasi Windows tetap perlu diuji.
 2. **Xcode lengkap.** Pasang Xcode, pilih developer directory dan selesaikan first launch; saat ini yang aktif hanya Command Line Tools.
 3. **Build Windows.** Jalankan workflow pada runner Windows atau mesin dengan Visual Studio desktop C++, Windows SDK, Flutter 3.38.4 dan NuGet.
 4. **Pengujian perangkat nyata.** Login baru/batal/timeout/restart/logout/ganti akun, buka tiga tab dan tutup, offline lalu online, salin/simpan catatan, tebus kode, checkout batal/pending/berhasil, buka tautan pembaruan sesuai OS, skala Windows 100/125/150/200%, keyboard ketika fokus di native WebView, macOS Intel dan Apple Silicon.
@@ -91,5 +91,16 @@ Skrip pengemasan Windows memerlukan internet untuk mengunduh prasyarat bertanda 
 ## Kontrak update desktop
 
 Dokumen Firestore `app_config/version` dapat mempertahankan field Android yang lama dan menambahkan `platforms.windows` serta `platforms.macos`, masing-masing berisi `build`, `version`, `url`, `notes`, dan opsional `sha256`. Build masing-masing dibandingkan dengan nomor build aplikasi yang terpasang. URL harus HTTPS pada host OpenTurath yang diizinkan dan ekstensi yang sesuai OS.
+
+## Bukti publikasi halaman login
+
+- Versi aktif baru: `sites/open-turath/versions/be002e08b8bb99d0`.
+- Versi sebelumnya untuk pemulihan: `sites/open-turath/versions/44e174319f5382fc`.
+- Release: `sites/open-turath/channels/live/releases/1790136755580000`.
+- Manifest sebelumnya 19 berkas, manifest baru 21 berkas. Pembandingan API sesudah publikasi membuktikan seluruh 19 hash lama tetap identik; konfigurasi yang sudah ada juga tetap sama.
+- Hanya `/desktop-auth.html`, `/desktop-auth.js`, dan header khusus keduanya yang ditambahkan.
+- Pemeriksaan Chrome: halaman login tampil dan tombol Batal kembali ke listener loopback. Hasil diagnostik: method POST, path /callback, Origin null, state cocok, cancel=1, tanpa token. Ini membuktikan penanganan opaque origin diperlukan; state acak tetap wajib.
+- Tidak menjalankan sign-in akun atau transaksi pembayaran sungguhan saat pengujian browser ini.
+- Publikasi terarah tersedia melalui `openturath_ai/tool/deploy_desktop_login.cjs`; tanpa argumen hanya meninjau rencana. `--publish` diperlukan secara eksplisit untuk membuat release hosting. Skrip mempertahankan manifest aktif dan berhenti bila release berubah selama persiapan.
 
 Tidak ada penulisan metadata versi, upload APK, atau pemanggilan `publish_auto_update.py` dalam pekerjaan ini. Perubahan source dan artefak build internal tidak menyiarkan rilis publik.
