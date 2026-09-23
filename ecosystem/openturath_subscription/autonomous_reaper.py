@@ -59,9 +59,33 @@ if not logger.handlers:
     )
 
 STATIC_WHITELIST = {
+    # System & Owner
     "openturath@gmail.com",
     "ramah@ptct.net",
     "raflimaulan@gmail.com",
+    "mas.raflihusen@gmail.com",
+
+    # Verified Tamu Spesial (Konfirmasi Pengguna)
+    "alkhateeb23@gmail.com",
+    "omarasb1441@gmail.com",
+    "prilatief@gmail.com",
+
+    # Asatidz & Masyayikh & VIP Manual Permanen
+    "aaadman40@gmail.com",
+    "abo.omar5539@gmail.com",
+    "abualgilani2024@gmail.com",
+    "ahobh4241@gmail.com",
+    "alhamodi65@gmail.com",
+    "ali.bafdhl36@gmail.com",
+    "alshykhkmalbahrmz@gmail.com",
+    "atinrahmak@gmail.com",
+    "hafamfb551985@gmail.com",
+    "loyos839@gmail.com",
+    "mohammedhalahdal@gmail.com",
+    "mostajadt25@gmail.com",
+    "nona.alyaziza@gmail.com",
+    "omar739037802@gmail.com",
+    "yasser110271@gmail.com",
 }
 
 MASTER_NOTEBOOKS = [
@@ -165,7 +189,34 @@ class AutonomousReaper:
             self.db = firestore.Client.from_service_account_json(cred_path)
         else:
             self.db = firestore.Client()
-        self.storage_path = os.path.expanduser("~/.notebooklm/profiles/default/storage_state.json")
+        
+        # Prioritas lokasi auth NotebookLM:
+        # 1. ~/.notebooklm/profiles/default/storage_state.json (Host / local run)
+        # 2. ./storage_state.json (Container workspace /app/storage_state.json)
+        # 3. /app/storage_state.json
+        # 4. Generate otomatis dari NOTEBOOKLM_AUTH_JSON
+        default_storage = os.path.expanduser("~/.notebooklm/profiles/default/storage_state.json")
+        local_storage = os.path.join(os.path.dirname(os.path.abspath(__file__)), "storage_state.json")
+        app_storage = "/app/storage_state.json"
+        auth_json = os.getenv("NOTEBOOKLM_AUTH_JSON", "")
+
+        if os.path.exists(default_storage):
+            self.storage_path = default_storage
+        elif os.path.exists(local_storage):
+            self.storage_path = local_storage
+        elif os.path.exists(app_storage):
+            self.storage_path = app_storage
+        elif auth_json:
+            try:
+                with open(local_storage, "w", encoding="utf-8") as f:
+                    f.write(auth_json)
+                self.storage_path = local_storage
+                logger.info(f"Generated {local_storage} from NOTEBOOKLM_AUTH_JSON.")
+            except Exception as e:
+                logger.error(f"Failed to generate {local_storage}: {e}")
+                self.storage_path = default_storage
+        else:
+            self.storage_path = default_storage
 
     async def get_all_database_records(self) -> tuple[set[str], dict[str, set[str]], dict[str, set[str]]]:
         """

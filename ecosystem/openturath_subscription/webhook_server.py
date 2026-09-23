@@ -1022,20 +1022,28 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 logger.error(f"   ❌ Keep-Alive exception: {e}")
                 self._send_json(500, {"success": False, "error": str(e)})
         elif self.path.startswith("/cron/reap"):
-            cron_secret = os.getenv("CRON_SECRET", "")
+            cron_secret = os.getenv("CRON_SECRET", "") or os.getenv("INTERNAL_SECRET", "")
             if cron_secret:
                 auth_header = self.headers.get("Authorization", "")
-                param_secret = self.headers.get("X-Cron-Secret", "")
-                if not (auth_header == f"Bearer {cron_secret}" or param_secret == cron_secret):
+                param_secret = self.headers.get("X-Cron-Secret", "") or self.headers.get("X-Internal-Secret", "")
+                is_authorized = (
+                    auth_header == f"Bearer {cron_secret}" or 
+                    param_secret == cron_secret or
+                    hmac.compare_digest(param_secret, cron_secret)
+                )
+                if not is_authorized:
+                    logger.warning("🚨 Unauthorized /cron/reap attempt")
                     self._send_json(401, {"error": "Unauthorized cron trigger"})
                     return
             try:
+                logger.info("⚡ Executing scheduled autonomous reaper cycle via /cron/reap...")
                 from autonomous_reaper import AutonomousReaper
                 reaper = AutonomousReaper()
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 result = loop.run_until_complete(reaper.run_cycle())
                 loop.close()
+                logger.info("✅ Scheduled autonomous reaper cycle finished successfully.")
                 self._send_json(200, {"success": True, "reaper_result": result})
             except Exception as e:
                 logger.error(f"❌ Error in /cron/reap: {e}")

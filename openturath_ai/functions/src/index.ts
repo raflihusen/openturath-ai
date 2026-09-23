@@ -1423,6 +1423,31 @@ export const onUserCreate = functions.firestore
 // ================================================================
 // FUNCTION 4: dailyRevoke (Cron Job — tiap tengah malam)
 // ================================================================
+const PERMANENT_VIP_EMAILS = new Set([
+  "openturath@gmail.com",
+  "ramah@ptct.net",
+  "raflimaulan@gmail.com",
+  "mas.raflihusen@gmail.com",
+  "alkhateeb23@gmail.com",
+  "omarasb1441@gmail.com",
+  "prilatief@gmail.com",
+  "aaadman40@gmail.com",
+  "abo.omar5539@gmail.com",
+  "abualgilani2024@gmail.com",
+  "ahobh4241@gmail.com",
+  "alhamodi65@gmail.com",
+  "ali.bafdhl36@gmail.com",
+  "alshykhkmalbahrmz@gmail.com",
+  "atinrahmak@gmail.com",
+  "hafamfb551985@gmail.com",
+  "loyos839@gmail.com",
+  "mohammedhalahdal@gmail.com",
+  "mostajadt25@gmail.com",
+  "nona.alyaziza@gmail.com",
+  "omar739037802@gmail.com",
+  "yasser110271@gmail.com",
+]);
+
 export const dailyRevoke = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
   .pubsub.schedule("0 0 * * *").timeZone("Asia/Jakarta")
@@ -1438,6 +1463,16 @@ export const dailyRevoke = functions
           const snap = await t.get(doc.ref);
           if (!snap.exists) return;
           const data = snap.data()!;
+
+          // PROTEKSI VIP PERMANEN: Kebal terhadap segala pencabutan akses otomatis
+          const userEmail = (data.email || "").toLowerCase().trim();
+          if (
+            data.is_vip === true ||
+            ["vip", "admin", "guru", "special"].includes(String(data.role || "").toLowerCase()) ||
+            PERMANENT_VIP_EMAILS.has(userEmail)
+          ) {
+            return;
+          }
           const entitlements = { ...(data.entitlements || {}) };
           const expired: string[] = [];
           for (const [key, value] of Object.entries(entitlements)) {
@@ -1522,7 +1557,10 @@ export const processProvisioningOutbox = functions
         const keys = scope === "all_access" || scope === "all_ai" ? PROVISIONED_KEYS : [scope];
         for (const key of keys) {
           if (!PROVISIONED_KEYS.includes(key)) throw new Error("Unsupported provisioning scope");
-          const desired = data && getEntitlementAccess(data,key).active;
+          const isVip = data?.is_vip === true ||
+            ["vip", "admin", "guru", "special"].includes(String(data?.role || "").toLowerCase()) ||
+            PERMANENT_VIP_EMAILS.has(email);
+          const desired = isVip || Boolean(data && getEntitlementAccess(data,key).active);
           await notifySubscriptionServer(email,data?.name||job.name||"Peneliti",desired ? "premium" : "trial",
             desired ? "add" : "remove",getServiceTitleForEntitlement(key));
         }
