@@ -223,10 +223,10 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   Widget build(BuildContext context) => DesktopShortcuts(
     onFind: _searchFocusNode.requestFocus,
     onEscape: () { _searchCtrl.clear(); _onSearchChanged(''); _searchFocusNode.unfocus(); },
-    child: _buildContent(context),
+    child: _buildScreen(context),
   );
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildScreen(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final background = OTColors.canvas(isDark);

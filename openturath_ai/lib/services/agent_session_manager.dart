@@ -37,7 +37,7 @@ class AgentSessionTab {
       // Dispose only after the corresponding platform view has left the tree.
       SchedulerBinding.instance.addPostFrameCallback((_) async {
         try {
-          await InAppWebViewController.disposeKeepAlive(keepAlive: keepAlive);
+          await InAppWebViewController.disposeKeepAlive(keepAlive);
         } catch (_) { /* A disposed/unsupported platform view is already released. */ }
       });
       SchedulerBinding.instance.scheduleFrame();
