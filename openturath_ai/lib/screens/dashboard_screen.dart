@@ -1,3 +1,4 @@
+import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'dart:async';
@@ -157,7 +158,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopShortcuts(
+        onFind: _searchFocusNode.requestFocus,
+        onEscape: () {
+          _searchController.clear();
+          setState(() => _searchQuery = '');
+          _searchFocusNode.unfocus();
+        },
+        child: _buildDashboard(context),
+      );
+
+  Widget _buildDashboard(BuildContext context) {
     Loc.watch(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
