@@ -302,11 +302,28 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             onSelected: (val) {
               if (val == 'conversation') {
                 _copyActiveConversation(activeTab);
+              } else if (val == 'language') {
+                activeTab.webController?.evaluateJavascript(
+                  source:
+                      'if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
+                );
               } else if (val == 'font') {
                 _showFontScaleDialog(context, activeTab);
               }
             },
             itemBuilder: (ctx) => [
+              PopupMenuItem(
+                value: 'language',
+                child: Row(
+                  children: [
+                    Icon(Icons.translate_rounded,
+                        color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text('Bahasa Output',
+                        style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'conversation',
                 child: Row(
@@ -516,10 +533,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
           .title-input, input.title-input, .title-container, .notebook-title,
           .notebook-header, app-notebook-header, app-project-header,
-          .title-card, mat-card.title-card,
+          .title-card, mat-card.title-card, .mat-mdc-card.title-card,
           div[class*="title-card" i], div[class*="notebook-header" i],
           .project-header, div[class*="project-header" i], div.source-badge-container,
           .pro-badge,
+          /* Sembunyikan kartu keterangan, hero cover, dan panduan notebook di atas chat */
+          app-notebook-guide, notebook-guide, app-guide-intro, app-chat-intro,
+          app-project-summary, app-notebook-overview, app-notebook-title,
+          .notebook-guide, .guide-header, .guide-container, .notebook-guide-container,
+          .hero-container, .cover-image-container, .project-info, .notebook-metadata,
+          .project-summary, .notebook-summary, .summary-card, .guide-card,
+          div:has(> img[alt*="cover" i]), div[class*="hero" i], div[class*="cover" i],
+          div[class*="guide" i]:not(.chat-view):not(.conversation-container),
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
           button[aria-label*="More" i], button[aria-label*="Opsi" i],
@@ -541,6 +566,24 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             opacity: 0 !important;
             pointer-events: none !important;
             border: none !important;
+          }
+          /* Border dan drop-shadow tegas untuk lingkaran kolom input (Light & Dark) */
+          .chat-input-container, div[class*="query-box" i], div[class*="chat-input" i],
+          div[class*="input-container" i], div[class*="prompt-box" i], app-chat-input,
+          form:has(textarea), div:has(> textarea), div:has(> [contenteditable="true"]) {
+            border: 1.5px solid #CBD5E1 !important;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            background-color: #FFFFFF !important;
+            border-radius: 28px !important;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+          }
+          :root.dark .chat-input-container, :root.dark div[class*="query-box" i],
+          :root.dark div[class*="chat-input" i], :root.dark div[class*="input-container" i],
+          .dark .chat-input-container, .dark div[class*="query-box" i],
+          .dark div:has(> textarea), .dark div:has(> [contenteditable="true"]) {
+            border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+            box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45) !important;
+            background-color: #26272B !important;
           }
           .chat-disclaimer, .query-disclaimer, .model-disclaimer,
           [class*="disclaimer" i], [aria-label*="disclaimer" i],
@@ -566,13 +609,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       }
 
       window.otOpenLanguageSettings = function() {
-        var btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]');
-        if (btn) {
-          btn.click();
-        } else {
-          var anyBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i]');
-          if (anyBtn) anyBtn.click();
+        var directBtn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i], [data-action*="settings" i]');
+        if (directBtn) {
+          directBtn.click();
+          return true;
         }
+        var menuBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i], button[aria-label*="Opsi" i], [aria-label*="Menu" i]');
+        if (menuBtn) {
+          menuBtn.click();
+          setTimeout(function() {
+            var items = Array.from(document.querySelectorAll('[role="menuitem"], button, mat-list-item, div'));
+            var settingItem = items.find(function(el) {
+              var t = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
+              return t.includes('setting') || t.includes('setelan') || t.includes('bahasa') || t.includes('language');
+            });
+            if (settingItem) settingItem.click();
+          }, 120);
+          return true;
+        }
+        return false;
       };
 
       window.applyTurathFontScale = function(value) {

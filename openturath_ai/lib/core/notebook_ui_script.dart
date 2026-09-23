@@ -134,9 +134,17 @@ const notebookUiScript = r'''
         a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
         .title-input, input.title-input, .title-container, .notebook-title,
         .notebook-header, app-notebook-header, app-project-header,
-        .title-card, mat-card.title-card,
+        .title-card, mat-card.title-card, .mat-mdc-card.title-card,
         .project-header, div[class*="project-header" i], div.source-badge-container,
         .pro-badge,
+        /* Sembunyikan kartu keterangan, hero cover, dan panduan notebook di atas chat */
+        app-notebook-guide, notebook-guide, app-guide-intro, app-chat-intro,
+        app-project-summary, app-notebook-overview, app-notebook-title,
+        .notebook-guide, .guide-header, .guide-container, .notebook-guide-container,
+        .hero-container, .cover-image-container, .project-info, .notebook-metadata,
+        .project-summary, .notebook-summary, .summary-card, .guide-card,
+        div:has(> img[alt*="cover" i]), div[class*="hero" i], div[class*="cover" i],
+        div[class*="guide" i]:not(.chat-view):not(.conversation-container),
         #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
         button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
         button[aria-label*="More" i], button[aria-label*="Opsi" i],
@@ -161,6 +169,24 @@ const notebookUiScript = r'''
           padding-bottom: 24px !important;
           margin-top: 0px !important;
         }
+        /* Border dan drop-shadow tegas untuk lingkaran kolom input (Light & Dark) */
+        .chat-input-container, div[class*="query-box" i], div[class*="chat-input" i],
+        div[class*="input-container" i], div[class*="prompt-box" i], app-chat-input,
+        form:has(textarea), div:has(> textarea), div:has(> [contenteditable="true"]) {
+          border: 1.5px solid #CBD5E1 !important;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+          background-color: #FFFFFF !important;
+          border-radius: 28px !important;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        :root.dark .chat-input-container, :root.dark div[class*="query-box" i],
+        :root.dark div[class*="chat-input" i], :root.dark div[class*="input-container" i],
+        .dark .chat-input-container, .dark div[class*="query-box" i],
+        .dark div:has(> textarea), .dark div:has(> [contenteditable="true"]) {
+          border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+          box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45) !important;
+          background-color: #26272B !important;
+        }
         .chat-disclaimer, .query-disclaimer, .model-disclaimer,
         [class*="disclaimer" i], [aria-label*="disclaimer" i],
         [data-testid*="disclaimer" i] {
@@ -178,12 +204,23 @@ const notebookUiScript = r'''
       `;
       (document.head || document.documentElement).appendChild(style);
     }
-    // Sembunyikan header dan Google account bar secara presisi
-    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i]').forEach(el => {
+    // Sembunyikan header, kartu cover/guide, dan Google account bar secara presisi
+    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i], app-notebook-guide, notebook-guide, app-guide-intro, app-chat-intro, app-project-summary, .notebook-guide, .guide-header, .hero-container, .cover-image-container').forEach(el => {
       hide(el);
       el.style.setProperty('display', 'none', 'important');
       el.style.setProperty('visibility', 'hidden', 'important');
       el.style.setProperty('height', '0px', 'important');
+    });
+    // Hapus kartu intro/cover yang memuat ringkasan sumber di atas timeline obrolan
+    document.querySelectorAll('mat-card, .mat-mdc-card, div[class*="card" i], div[class*="guide" i], div[class*="header" i], div[class*="summary" i], div[class*="hero" i], div[class*="cover" i]').forEach(card => {
+      if (card.closest(answerSelector) || card.closest(questionSelector) || card.querySelector(answerSelector)) return;
+      const txt = (card.innerText || '').toLowerCase();
+      if (txt.includes('sources') || txt.includes('sumber') || txt.includes('super ai') || txt.includes('bridging turath') || txt.includes('berbasis turath') || txt.includes('openturath') || card.querySelector('img')) {
+        hide(card);
+        card.style.setProperty('display', 'none', 'important');
+        card.style.setProperty('height', '0px', 'important');
+        card.style.setProperty('visibility', 'hidden', 'important');
+      }
     });
     // Pastikan tab Chat terpilih jika berada di tampilan tab responsive
     try {
@@ -214,19 +251,31 @@ const notebookUiScript = r'''
         if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
       }
     });
-    // Perbarui placeholder input ke bahasa santri alami
+    // Perbarui placeholder input ke bahasa santri alami dan perkuat styling lingkarannya
     const targetPlaceholder = 'Ajukan pertanyaan atau masalah';
-    document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]').forEach(input => {
-      if (input.placeholder && input.placeholder !== targetPlaceholder) {
-        input.placeholder = targetPlaceholder;
+    const inputElement = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
+    if (inputElement) {
+      if (inputElement.placeholder && inputElement.placeholder !== targetPlaceholder) {
+        inputElement.placeholder = targetPlaceholder;
       }
-      if (input.getAttribute('data-placeholder') && input.getAttribute('data-placeholder') !== targetPlaceholder) {
-        input.setAttribute('data-placeholder', targetPlaceholder);
+      if (inputElement.getAttribute('data-placeholder') && inputElement.getAttribute('data-placeholder') !== targetPlaceholder) {
+        inputElement.setAttribute('data-placeholder', targetPlaceholder);
       }
-      if (input.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(input.getAttribute('aria-label'))) {
-        input.setAttribute('aria-label', targetPlaceholder);
+      if (inputElement.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(inputElement.getAttribute('aria-label'))) {
+        inputElement.setAttribute('aria-label', targetPlaceholder);
       }
-    });
+      let pill = inputElement.closest('form') || inputElement.closest('.chat-input-container') || inputElement.closest('div[class*="box" i]') || inputElement.parentElement;
+      while (pill && pill !== document.body && !pill.classList.contains('chat-input-container') && getComputedStyle(pill).borderRadius === '0px') {
+        pill = pill.parentElement;
+      }
+      if (!pill || pill === document.body) pill = inputElement.parentElement;
+      if (pill) {
+        pill.style.setProperty('border', window._otIsDark ? '1.5px solid rgba(255, 255, 255, 0.22)' : '1.5px solid #CBD5E1', 'important');
+        pill.style.setProperty('box-shadow', window._otIsDark ? '0 4px 20px rgba(0, 0, 0, 0.45)' : '0 4px 18px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)', 'important');
+        pill.style.setProperty('background-color', window._otIsDark ? '#26272B' : '#FFFFFF', 'important');
+        pill.style.setProperty('border-radius', '28px', 'important');
+      }
+    }
     document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {
       if (el.closest(answerSelector)) return;
       const t = text(el).toLowerCase();
@@ -260,13 +309,25 @@ const notebookUiScript = r'''
     });
   }
   window.otOpenLanguageSettings = function() {
-    const btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]');
-    if (btn) {
-      btn.click();
-    } else {
-      const anyBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i]');
-      if (anyBtn) anyBtn.click();
+    const directBtn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i], [data-action*="settings" i]');
+    if (directBtn) {
+      directBtn.click();
+      return true;
     }
+    const menuBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i], button[aria-label*="Opsi" i], [aria-label*="Menu" i]');
+    if (menuBtn) {
+      menuBtn.click();
+      setTimeout(() => {
+        const items = [...document.querySelectorAll('[role="menuitem"], button, mat-list-item, div')];
+        const settingItem = items.find(el => {
+          const t = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
+          return t.includes('setting') || t.includes('setelan') || t.includes('bahasa') || t.includes('language');
+        });
+        if (settingItem) settingItem.click();
+      }, 120);
+      return true;
+    }
+    return false;
   };
   function ready() {
     clean();
