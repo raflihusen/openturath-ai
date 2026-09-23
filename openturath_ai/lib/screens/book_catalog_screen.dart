@@ -1,3 +1,4 @@
+import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class BookCatalogScreen extends StatefulWidget {
 }
 
 class _BookCatalogScreenState extends State<BookCatalogScreen> {
+  final FocusNode _searchFocusNode = FocusNode();
   final TextEditingController _searchCtrl = TextEditingController();
   final CanonicalLibraryService _service = CanonicalLibraryService.instance;
   Timer? _debounce;
@@ -84,6 +86,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
 
   @override
   void dispose() {
+    _searchFocusNode.dispose();
     _searchCtrl.dispose();
     _debounce?.cancel();
     super.dispose();
@@ -217,7 +220,13 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopShortcuts(
+    onFind: _searchFocusNode.requestFocus,
+    onEscape: () { _searchCtrl.clear(); _onSearchChanged(''); _searchFocusNode.unfocus(); },
+    child: _buildContent(context),
+  );
+
+  Widget _buildContent(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final background = OTColors.canvas(isDark);
@@ -290,6 +299,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                     Expanded(
                       child: TextField(
                         controller: _searchCtrl,
+                        focusNode: _searchFocusNode,
                         onChanged: _onSearchChanged,
                         style: GoogleFonts.outfit(
                             fontSize: 13.5, color: textPrimary),

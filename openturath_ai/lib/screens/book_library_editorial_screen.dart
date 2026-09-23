@@ -1,3 +1,4 @@
+import '../widgets/desktop_shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -95,7 +96,13 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopShortcuts(
+    onFind: _searchFocusNode.requestFocus,
+    onEscape: () { _searchController.clear(); _searchFocusNode.unfocus(); },
+    child: _buildContent(context),
+  );
+
+  Widget _buildContent(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surface = OTColors.surface(isDark);

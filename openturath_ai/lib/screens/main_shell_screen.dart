@@ -1,3 +1,4 @@
+import '../widgets/desktop_shortcuts.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +47,7 @@ class MainShellScreen extends StatefulWidget {
 }
 
 class _MainShellScreenState extends State<MainShellScreen> {
+  final FocusNode _dashboardSearchFocus = FocusNode();
   late int _currentIndex;
   late final PageController _pageController;
   String? _selectedFieldId;
@@ -60,6 +62,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
 
   @override
   void dispose() {
+    _dashboardSearchFocus.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -89,7 +92,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         : null;
 
     return [
-      const DashboardScreen(),
+      DashboardScreen(searchFocusNode: _dashboardSearchFocus),
       SpecialistListScreen(
         key: ValueKey('${_selectedFieldId}_${_selectedKind?.name}'),
         field: field,
@@ -99,8 +102,45 @@ class _MainShellScreenState extends State<MainShellScreen> {
     ];
   }
 
+  void _showPage(int index) {
+    AgentSessionManager.instance.closeRoom();
+    FocusScope.of(context).unfocus();
+    _onTabSelected(index);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => DesktopShortcuts(
+    onFind: () {
+      _showPage(0);
+      if (_pageController.hasClients) _pageController.jumpToPage(0);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _dashboardSearchFocus.requestFocus();
+      });
+    },
+    onNewTab: () => _showPage(1),
+    onSettings: () => _showPage(3),
+    onCloseTab: () {
+      final manager = AgentSessionManager.instance;
+      if (manager.isOpen) manager.closeTab(manager.activeIndex);
+    },
+    onReload: () async {
+      final manager = AgentSessionManager.instance;
+      if (!manager.isOpen) return;
+      try {
+        await manager.activeTab?.webController?.reload();
+      } catch (_) {
+        if (context.mounted) AppSnackBar.warning(context, 'Sesi belum dapat dimuat ulang.');
+      }
+    },
+    onEscape: () {
+      final manager = AgentSessionManager.instance;
+      if (manager.isOpen) manager.closeRoom();
+      FocusScope.of(context).unfocus();
+    },
+    child: _buildShell(context),
+  );
+
+  Widget _buildShell(BuildContext context) {
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
@@ -294,7 +334,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
             child: Stack(
               children: [
                 // 1. Dashboard latar belakang (Stationary - bebas GPU overhead)
-                baseScaffold,
+                ExcludeFocus(excluding: sessionManager.isOpen, child: baseScaffold),
 
                 // 2. Ruang AI Multi-Tab (Instant zero-glitch display dengan retensi memori penuh)
                 Positioned.fill(
@@ -303,7 +343,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                     maintainState: true,
                     maintainAnimation: true,
                     maintainSize: true,
-                    child: child!,
+                    child: ExcludeFocus(excluding: !sessionManager.isOpen, child: child!),
                   ),
                 ),
               ],

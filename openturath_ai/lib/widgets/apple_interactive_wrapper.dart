@@ -1,3 +1,4 @@
+import '../core/app_platform.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,8 @@ enum HapticFeedbackType {
 
 class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
     with SingleTickerProviderStateMixin {
+  bool _hovered = false;
+  bool _focused = false;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -71,7 +74,7 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
   }
 
   void _triggerHaptic() {
-    if (!widget.enableHaptic) return;
+    if (!widget.enableHaptic || AppPlatform.isDesktop) return;
     switch (widget.hapticType) {
       case HapticFeedbackType.light:
         HapticFeedback.lightImpact();
@@ -125,7 +128,25 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
           );
 
     if (hasAction) {
-      result = Semantics(
+      result = FocusableActionDetector(
+        mouseCursor: SystemMouseCursors.click,
+        onShowHoverHighlight: (value) => setState(() => _hovered = value),
+        onShowFocusHighlight: (value) => setState(() => _focused = value),
+        actions: {
+          ActivateIntent: CallbackAction<ActivateIntent>(onInvoke: (_) {
+            _triggerHaptic();
+            widget.onTap?.call();
+            return null;
+          }),
+        },
+        child: AnimatedContainer(
+          duration: reduceMotion ? Duration.zero : widget.duration,
+          foregroundDecoration: BoxDecoration(
+            borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
+            color: _hovered ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.05) : null,
+            border: _focused ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2) : null,
+          ),
+          child: Semantics(
         button: true,
         enabled: true,
         label: widget.semanticLabel,
@@ -140,12 +161,14 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
           },
           onLongPress: widget.onLongPress != null
               ? () {
-                  HapticFeedback.mediumImpact();
+                  _triggerHaptic();
                   widget.onLongPress?.call();
                 }
               : null,
           child: result,
         ),
+      ),
+      ),
       );
     }
 

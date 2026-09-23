@@ -29,7 +29,8 @@ import 'main_shell_screen.dart';
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
 /// penanggalan ganda Hijriah, pencarian naskah seketika, dan portal keilmuan interaktif.
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({super.key, this.searchFocusNode});
+  final FocusNode? searchFocusNode;
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -39,7 +40,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final AuthService _authService = AuthService();
   final AgentService _agentService = AgentService();
   final TextEditingController _searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
+  late final FocusNode _searchFocusNode = widget.searchFocusNode ?? FocusNode();
   late final UpdateService _updateService;
   bool _hasShownUpdateDialog = false;
 
@@ -83,7 +84,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void dispose() {
     _updateService.removeListener(_onUpdateServiceChanged);
-    _searchFocusNode.dispose();
+    if (widget.searchFocusNode == null) _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }
