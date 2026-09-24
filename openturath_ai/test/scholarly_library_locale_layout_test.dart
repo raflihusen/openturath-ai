@@ -129,4 +129,33 @@ void main() {
     expect(find.text('Source collection'), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  for (final language in Loc.supportedCodes) {
+    testWidgets('book list and edition fit 320 px in $language', (tester) async {
+      tester.view.physicalSize = const Size(320, 700);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(localized(
+        language,
+        const OpenTurathBookLibraryPage(
+          books: [book],
+          collectionName: 'الحديث الشريف',
+        ),
+      ));
+      expect(find.text(Loc.tr('bookCatalog')), findsOneWidget);
+      expect(find.text(book.title), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      await tester.pumpWidget(localized(
+        language,
+        const OpenTurathBookDetailPage(book: book),
+      ));
+      expect(find.text(Loc.tr('bookReferenceLabel')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
 }
