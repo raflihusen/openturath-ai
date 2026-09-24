@@ -4,6 +4,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/catalog_card_content.dart';
+import '../core/localization.dart';
 import '../models/book_model.dart';
 import 'apple_interactive_wrapper.dart';
 
@@ -23,6 +24,7 @@ class BookRowItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
@@ -36,9 +38,9 @@ class BookRowItem extends StatelessWidget {
       final v = book.volumesDescription!;
       formattedVolumes = (v.contains('جزء') || v.contains('مجلد') || v.contains('jilid') || v.contains('Jilid'))
           ? v
-          : '$v jilid';
+          : Loc.tr('volumeCount', [v]);
     } else if (book.volumesCount != null && book.volumesCount! > 0) {
-      formattedVolumes = '${book.volumesCount} jilid';
+      formattedVolumes = Loc.tr('volumeCount', ['${book.volumesCount}']);
     }
 
     final facts = catalogCardFacts(
@@ -46,6 +48,7 @@ class BookRowItem extends StatelessWidget {
       publisher: book.publisher,
       printYear: book.printYear,
       muhaqqiq: book.muhaqqiq,
+      editorLabel: Loc.tr('ui_ad39f1c3af'),
     );
 
     return Padding(
@@ -115,7 +118,7 @@ class BookRowItem extends StatelessWidget {
                           border: Border.all(color: border.withValues(alpha: 0.7), width: 0.5),
                         ),
                         child: Text(
-                          'w. ${book.verifiedDeathYearHijri} H',
+                          Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}']),
                           style: GoogleFonts.outfit(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
