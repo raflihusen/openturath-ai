@@ -194,7 +194,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     if (l.contains('manzhumah') || l.contains('nazham')) {
       return Loc.tr('bookTypePoem');
     }
-    return type;
+    return Loc.text(type);
   }
 
   String _translateEra(String? era) {
@@ -216,7 +216,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         l.contains('modern')) {
       return Loc.tr('bookEraModern');
     }
-    return era;
+    return Loc.text(era);
   }
 
   String _formatVolumes() {
