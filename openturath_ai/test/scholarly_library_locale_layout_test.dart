@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -149,12 +148,7 @@ void main() {
       ));
       expect(find.text(Loc.tr('bookCatalog')), findsOneWidget);
       expect(find.text(book.title), findsOneWidget);
-      final layoutError = tester.takeException();
-      if (layoutError is FlutterError) {
-        debugPrint(layoutError.toStringDeep());
-        debugDumpRenderTree();
-      }
-      expect(layoutError, isNull);
+      expect(tester.takeException(), isNull);
 
       await tester.pumpWidget(localized(
         language,
