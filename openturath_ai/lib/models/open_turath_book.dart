@@ -1,4 +1,5 @@
 import '../core/book_study_level.dart';
+import '../core/catalog_section_label.dart';
 import '../core/localization.dart';
 import 'dart:convert';
 
@@ -26,6 +27,7 @@ class OpenTurathBook {
   final int id;
   final int? deathYear;
   final String section;
+  String get localizedSection => CatalogSectionLabel.of(section);
   final String shortName;
   final String title;
   final String author;
