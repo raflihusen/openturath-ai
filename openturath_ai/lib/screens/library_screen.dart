@@ -150,19 +150,21 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   if (book.verifiedDeathYearHijri != null)
                     _detailRow(
                         Loc.tr('ui_872fd06ff7'),
-                        '${book.verifiedDeathYearHijri} H',
+                        Loc.tr('deathYear', [
+                          '${book.verifiedDeathYearHijri}'
+                        ]),
                         textPrimary,
                         textSecondary),
                   if (book.reviewedTypeLabel != null)
-                    _detailRow(Loc.tr('ui_47b35543e3'), book.reviewedTypeLabel!,
+                    _detailRow(Loc.tr('ui_47b35543e3'), Loc.text(book.reviewedTypeLabel!),
                         textPrimary, textSecondary),
                   if (book.reviewedEraLabel != null)
-                    _detailRow(Loc.tr('ui_85e181b57a'), book.reviewedEraLabel!,
+                    _detailRow(Loc.tr('ui_85e181b57a'), Loc.text(book.reviewedEraLabel!),
                         textPrimary, textSecondary),
                   if (book.volumesCount != null)
                     _detailRow(
                         Loc.tr('ui_7e06fac12c'),
-                        '${book.volumesCount} Jilid',
+                        Loc.tr('volumeCount', ['${book.volumesCount}']),
                         textPrimary,
                         textSecondary),
                   if (book.publisher != null && book.publisher!.isNotEmpty)
@@ -229,8 +231,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
         backgroundColor: canvas,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
+        leading: BackButton(
+          color: textPrimary,
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
