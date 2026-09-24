@@ -1,4 +1,5 @@
 import 'callable_gateway.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import '../core/constants.dart';
 import '../core/product_pricing.dart';
 
@@ -44,6 +45,8 @@ class DokuService {
         'amount': data['amount'],
         'pricingRevision': data['pricingRevision'],
       };
+    } on FirebaseFunctionsException {
+      rethrow;
     } catch (e) {
       throw Exception('Gagal membuat sesi pembayaran DOKU: $e');
     }
