@@ -7,6 +7,8 @@ import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
+import '../core/localization.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/bookmark_model.dart';
 import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
@@ -106,6 +108,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
       );
 
   Widget _buildContent(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surface = OTColors.surface(isDark);
@@ -132,15 +135,15 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         IconButton(
                           icon: Icon(Icons.arrow_back_rounded,
                               color: ink, size: 22),
-                          tooltip: 'Kembali',
+                          tooltip: Loc.tr('back'),
                           onPressed: () => Navigator.of(context).maybePop(),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Katalog kitab',
-                      style: GoogleFonts.newsreader(
+                      Loc.tr('bookCatalog'),
+                      style: ScholarlyFonts.newsreader(
                         color: ink,
                         fontSize: 28,
                         fontWeight: FontWeight.w600,
@@ -162,8 +165,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       focusNode: _searchFocusNode,
                       style: GoogleFonts.outfit(color: ink, fontSize: 14),
                       decoration: InputDecoration(
-                        hintText:
-                            'Cari judul kitab, pengarang, muhaqqiq, atau bidang...',
+                        hintText: Loc.tr('ui_0ae09a2807'),
                         hintStyle: GoogleFonts.outfit(
                             color: textSecondary, fontSize: 13),
                         prefixIcon: Icon(Icons.search_rounded,
@@ -203,14 +205,14 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       child: Row(
                         children: [
                           _FilterChip(
-                            label: 'Semua Kitab',
+                            label: Loc.tr('allBooks'),
                             isSelected: _filter == _BookVolumeFilter.all,
                             onTap: () =>
                                 setState(() => _filter = _BookVolumeFilter.all),
                           ),
                           const SizedBox(width: 8),
                           _FilterChip(
-                            label: 'Satu jilid',
+                            label: Loc.tr('singleVolume'),
                             isSelected:
                                 _filter == _BookVolumeFilter.singleVolume,
                             onTap: () => setState(
@@ -218,7 +220,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           ),
                           const SizedBox(width: 8),
                           _FilterChip(
-                            label: 'Beberapa jilid',
+                            label: Loc.tr('multipleVolumes'),
                             isSelected:
                                 _filter == _BookVolumeFilter.multiVolume,
                             onTap: () => setState(
@@ -231,7 +233,10 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     Row(
                       children: [
                         Text(
-                          'Menampilkan ${visibleBooks.length} dari ${widget.books.length} kitab',
+                          Loc.tr('booksShown', [
+                            '${visibleBooks.length}',
+                            '${widget.books.length}',
+                          ]),
                           style: GoogleFonts.outfit(
                             fontSize: 12,
                             color: textSecondary,
@@ -256,7 +261,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                           size: 48, color: textSecondary),
                       const SizedBox(height: 12),
                       Text(
-                        'Tidak ditemukan kitab yang sesuai',
+                        Loc.tr('ui_54db73b3af'),
                         style: GoogleFonts.outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -265,7 +270,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Coba cari dengan kata kunci judul atau nama pengarang lain',
+                        Loc.tr('ui_f7c779cb7d'),
                         style: GoogleFonts.outfit(
                           fontSize: 12,
                           color: textSecondary,
@@ -429,7 +434,7 @@ class _BookEditorialItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'Karya ${book.author}',
+                    Loc.tr('authorCredit', [book.author]),
                     style: GoogleFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -439,7 +444,7 @@ class _BookEditorialItem extends StatelessWidget {
                   if (book.editor.isNotEmpty && book.editor != '-') ...[
                     const SizedBox(height: 2),
                     Text(
-                      'Tahqiq: ${book.editor}',
+                      Loc.tr('editorCredit', [book.editor]),
                       style: GoogleFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
@@ -499,8 +504,10 @@ class OpenTurathBookDetailPage extends StatelessWidget {
       fieldName: book.section,
       fieldId: 'pustaka',
       arabicExcerpt: book.title,
-      fullAnswer:
-          'Kitab ${book.title} karya ${book.author} (${book.deathLabel}). Tahqiq: ${book.editor}. Penerbit: ${book.publisher} (${book.edition}). Jilid: ${book.volumeLabel} (${book.pagesLabel}).',
+      fullAnswer: '${book.title}. ${Loc.tr('authorCredit', [book.author])}. '
+          '${Loc.tr('editorCredit', [book.editor])}. '
+          '${Loc.tr('bookPublisher')}: ${book.publisher} (${book.edition}). '
+          '${book.volumeLabel}; ${book.pagesLabel}.',
       bookReference: '${book.title} - ${book.author}',
       pageNumber: book.pagesLabel,
       author: book.author,
@@ -511,27 +518,28 @@ class OpenTurathBookDetailPage extends StatelessWidget {
 
     await BookmarkService().addBookmark(bookmark, userId: uid);
     if (context.mounted) {
-      AppSnackBar.success(context, 'Kitab rujukan disimpan ke Catatan');
+      AppSnackBar.success(context, Loc.tr('ui_225b7ddde1'));
     }
   }
 
   Future<void> _handleCopyCitation(BuildContext context) async {
-    final citation = '''[Rujukan Turats OpenTurath AI]
-Kitab: ${book.title}
-Pengarang: ${book.author} (${book.deathLabel})
-Tahqiq/Editor: ${book.editor}
-Penerbit: ${book.publisher} (${book.edition})
-Volume: ${book.volumeLabel} | Halaman: ${book.pagesLabel}
-Bidang: ${book.section}''';
+    final citation = '''[OpenTurath AI]
+${Loc.tr('bookReferenceLabel')}: ${book.title}
+${Loc.tr('authorCredit', [book.author])} (${book.deathLabel})
+${Loc.tr('ui_ad39f1c3af')}: ${book.editor}
+${Loc.tr('bookPublisher')}: ${book.publisher} (${book.edition})
+${book.volumeLabel} | ${book.pagesLabel}
+${Loc.tr('bookScienceSection')}: ${book.section}''';
 
     await Clipboard.setData(ClipboardData(text: citation));
     if (context.mounted) {
-      AppSnackBar.success(context, 'Sitasi rujukan kitab berhasil disalin');
+      AppSnackBar.success(context, Loc.tr('ui_e150b5de89'));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
     final surface = OTColors.surface(isDark);
@@ -553,12 +561,12 @@ Bidang: ${book.section}''';
                     IconButton(
                       icon:
                           Icon(Icons.arrow_back_rounded, color: ink, size: 22),
-                      tooltip: 'Kembali',
+                      tooltip: Loc.tr('back'),
                       onPressed: () => Navigator.of(context).maybePop(),
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Rujukan Kitab',
+                      Loc.tr('bookReferenceLabel'),
                       style: GoogleFonts.outfit(
                         color: ink,
                         fontSize: 16,
@@ -568,13 +576,13 @@ Bidang: ${book.section}''';
                     const Spacer(),
                     IconButton(
                       icon: Icon(Icons.copy_rounded, color: ink, size: 20),
-                      tooltip: 'Salin Sitasi',
+                      tooltip: Loc.tr('bookCitationCopy'),
                       onPressed: () => _handleCopyCitation(context),
                     ),
                     IconButton(
                       icon: Icon(Icons.bookmark_add_outlined,
                           color: ink, size: 20),
-                      tooltip: 'Simpan ke Catatan',
+                      tooltip: Loc.tr('bookSave'),
                       onPressed: () => _handleBookmark(context),
                     ),
                   ],
@@ -661,7 +669,7 @@ Bidang: ${book.section}''';
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'METADATA NASKAH RUJUKAN',
+                      Loc.tr('bookRecordMetadata'),
                       style: GoogleFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -676,24 +684,48 @@ Bidang: ${book.section}''';
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: border),
                       ),
-                      child: Column(
-                        children: [
-                          _DetailRow(
-                              label: 'Muhaqqiq / Editor', value: book.editor),
-                          _DetailRow(
-                              label: 'Penerbit Naskah', value: book.publisher),
-                          _DetailRow(
-                              label: 'Tahun / Cetakan', value: book.edition),
-                          _DetailRow(
-                              label: 'Jumlah Jilid', value: book.volumeLabel),
-                          _DetailRow(
-                              label: 'Jumlah Halaman', value: book.pagesLabel),
-                          _DetailRow(
-                              label: 'Folder Korpus',
-                              value: book.sourceFolder,
-                              isLast: true),
-                        ],
-                      ),
+                      child: Builder(builder: (context) {
+                        final rows = <({String label, String value})>[
+                          if (book.editor.isNotEmpty && book.editor != '-')
+                            (
+                              label: Loc.tr('ui_ad39f1c3af'),
+                              value: book.editor
+                            ),
+                          if (book.publisher.isNotEmpty &&
+                              book.publisher != '-')
+                            (
+                              label: Loc.tr('bookPublisher'),
+                              value: book.publisher
+                            ),
+                          if (book.edition.isNotEmpty && book.edition != '-')
+                            (label: Loc.tr('bookEdition'), value: book.edition),
+                          if (book.volumes.isNotEmpty && book.volumes != '-')
+                            (
+                              label: Loc.tr('bookVolumes'),
+                              value: book.volumeLabel
+                            ),
+                          if (book.pages.isNotEmpty && book.pages != '-')
+                            (
+                              label: Loc.tr('bookPages'),
+                              value: book.pagesLabel
+                            ),
+                        ];
+                        return Column(
+                          children: [
+                            for (var i = 0; i < rows.length; i++)
+                              _DetailRow(
+                                label: rows[i].label,
+                                value: rows[i].value,
+                                isLast: i == rows.length - 1,
+                              ),
+                            if (rows.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(18),
+                                child: Text(Loc.tr('unknownMetadata')),
+                              ),
+                          ],
+                        );
+                      }),
                     ),
                     const SizedBox(height: 28),
                     SizedBox(
@@ -702,7 +734,7 @@ Bidang: ${book.section}''';
                         onPressed: () => _handleCopyCitation(context),
                         icon: const Icon(Icons.content_copy_rounded, size: 18),
                         label: Text(
-                          'Salin Sitasi Lengkap ke Papan Klip',
+                          Loc.tr('ui_3f42b695cf'),
                           style: GoogleFonts.outfit(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
