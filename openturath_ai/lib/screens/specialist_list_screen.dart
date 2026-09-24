@@ -20,6 +20,7 @@ import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/corpus_kind_control.dart';
 import '../widgets/specialist_card.dart';
+import '../widgets/assistant_dossier_card.dart';
 import '../widgets/scholars_coming_soon.dart';
 import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
@@ -47,6 +48,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   String _searchQuery = '';
   bool _isLoading = true;
   CorpusKind _corpusKind = CorpusKind.discipline;
+  String? _selectedAgentId = 'fiqh_syafii';
 
   @override
   void initState() {
@@ -113,6 +115,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           ArabicUtils.matches(agent.subtitleAcademic, _searchQuery) ||
           ArabicUtils.matches(agent.description, _searchQuery);
     }).toList();
+  }
+
+  void _selectAgent(AgentModel agent) {
+    setState(() => _selectedAgentId = agent.id);
+    OTMotion.light();
   }
 
   void _openAgent(AgentModel agent) {
@@ -259,7 +266,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               style: ScholarlyFonts.outfit(
                                   fontSize: 13.5, color: textPrimary),
                               decoration: InputDecoration(
-                                hintText: Loc.tr('ui_55fddd168e'),
+                                hintText: Loc.tr('assistantSearch'),
                                 hintStyle: ScholarlyFonts.outfit(
                                     fontSize: 13.5, color: textSecondary),
                                 border: InputBorder.none,
@@ -388,55 +395,147 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 });
                               }
 
-                              return ListView.separated(
+                              final selected = sorted.where(
+                                (agent) => agent.id == _selectedAgentId,
+                              ).firstOrNull ?? sorted.first;
+                              final others = sorted.where(
+                                (agent) => agent.id != selected.id,
+                              ).toList();
+                              final flagship = _allAgents.where(
+                                (agent) => agent.id == 'fiqh_tahawwulat',
+                              ).firstOrNull;
+
+                              return ListView(
                                 physics: const BouncingScrollPhysics(
                                     parent: AlwaysScrollableScrollPhysics()),
-                                padding: const EdgeInsets.fromLTRB(OTSpacing.lg,
-                                    OTSpacing.xs, OTSpacing.lg, 28),
-                                itemCount: sorted.length,
-                                separatorBuilder: (_, index) {
-                                  final touchesFlagship = sorted[index].id ==
-                                          'fiqh_tahawwulat' ||
-                                      sorted[index + 1].id == 'fiqh_tahawwulat';
-                                  return SizedBox(
-                                    height: touchesFlagship ? OTSpacing.md : 0,
-                                  );
-                                },
-                                itemBuilder: (context, index) {
-                                  final agent = sorted[index];
-                                  if (agent.id == 'fiqh_tahawwulat') {
-                                    final user = _authService.cachedCurrentUser;
-                                    final isSubscribed = user != null &&
-                                        user.hasAccessToAgent(agent.id);
-                                    return TahawwulatFlagshipCard(
-                                      agent: agent,
-                                      isSubscribed: isSubscribed,
-                                      onOpenMain: () => _openAgent(agent),
+                                padding: const EdgeInsets.fromLTRB(
+                                    OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 28),
+                                children: [
+                                  if (isGeneralTab && _searchQuery.isEmpty) ...[
+                                    Text(
+                                      Loc.tr('assistantIntro'),
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: 14,
+                                        height: 1.5,
+                                        color: textSecondary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 22),
+                                  ],
+                                  if (flagship != null && isGeneralTab &&
+                                      _searchQuery.isEmpty &&
+                                      (_selectedFieldId == null ||
+                                          _selectedFieldId == 'all' ||
+                                          _selectedFieldId == flagship.fieldId)) ...[
+                                    Material(
+                                      color: OTColors.primaryContainer(isDark),
+                                      borderRadius: BorderRadius.circular(28),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(28),
+                                        onTap: () => _selectAgent(flagship),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(21),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                Loc.tr('assistantFeatured'),
+                                                style: ScholarlyFonts.outfit(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: OTColors.onPrimaryContainer(isDark),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 11),
+                                              Text(
+                                                flagship.title,
+                                                style: ScholarlyFonts.newsreader(
+                                                  fontSize: 26,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: OTColors.onPrimaryContainer(isDark),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 6),
+                                              Text(
+                                                Loc.tr('assistantFeaturedDesc'),
+                                                style: ScholarlyFonts.outfit(
+                                                  fontSize: 13,
+                                                  height: 1.5,
+                                                  color: OTColors.onPrimaryContainer(isDark),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 11),
+                                              Text(
+                                                Loc.tr('assistantFeaturedAction'),
+                                                style: ScholarlyFonts.outfit(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: OTColors.onPrimaryContainer(isDark),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 25),
+                                  ],
+                                  _sectionLabel(
+                                    Loc.tr('assistantSelected'),
+                                    Loc.tr('assistantSelectedHint'),
+                                    textPrimary,
+                                    textSecondary,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  if (selected.id == 'fiqh_tahawwulat')
+                                    TahawwulatFlagshipCard(
+                                      agent: selected,
+                                      isSubscribed: _authService.cachedCurrentUser
+                                              ?.hasAccessToAgent(selected.id) ?? false,
+                                      onOpenMain: () => _openAgent(selected),
                                       onOpenSubAgent: (sub) =>
-                                          _openTahawwulatSubAgent(agent, sub),
-                                      onOpenLibrary: agent.catalogId != null
+                                          _openTahawwulatSubAgent(selected, sub),
+                                      onOpenLibrary: selected.catalogId != null
                                           ? () => showResearchLibrary(context,
-                                              agent: agent)
+                                              agent: selected)
                                           : null,
-                                    );
-                                  }
-                                  return SpecialistCard(
-                                    title: agent.title,
-                                    titleArabic: agent.titleArabic,
-                                    fieldId: agent.fieldId,
-                                    emoji: agent.emoji,
-                                    scopeLabel: agent.subtitleAcademic,
-                                    referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
-                                    statusLabel: agent.isComingSoon
-                                        ? AppCopy.comingSoon
-                                        : null,
-                                    onOpen: () => _openAgent(agent),
-                                    onOpenLibrary: agent.catalogId != null
-                                        ? () => showResearchLibrary(context,
-                                            agent: agent)
-                                        : null,
-                                  );
-                                },
+                                    )
+                                  else
+                                    AssistantDossierCard(
+                                      agent: selected,
+                                      position: sorted.indexOf(selected) + 1,
+                                      total: sorted.length,
+                                      onOpen: () => _openAgent(selected),
+                                      onOpenLibrary: selected.catalogId != null
+                                          ? () => showResearchLibrary(context,
+                                              agent: selected)
+                                          : null,
+                                    ),
+                                  if (others.isNotEmpty) ...[
+                                    const SizedBox(height: 26),
+                                    _sectionLabel(Loc.tr('assistantMore'), '',
+                                        textPrimary, textSecondary),
+                                    const SizedBox(height: 10),
+                                    ...others.map((agent) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: SpecialistCard(
+                                        title: agent.title,
+                                        titleArabic: agent.titleArabic,
+                                        fieldId: agent.fieldId,
+                                        emoji: agent.emoji,
+                                        scopeLabel: agent.subtitleAcademic,
+                                        statusLabel: agent.isComingSoon
+                                            ? AppCopy.comingSoon : null,
+                                        onOpen: () => _selectAgent(agent),
+                                        onOpenLibrary: agent.catalogId != null
+                                            ? () => showResearchLibrary(context,
+                                                agent: agent)
+                                            : null,
+                                      ),
+                                    )),
+                                  ],
+                                ],
                               );
                             },
                           ),
@@ -445,6 +544,22 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _sectionLabel(String title, String hint, Color ink, Color muted) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(title, style: ScholarlyFonts.outfit(
+            fontSize: 18, fontWeight: FontWeight.w600, color: ink,
+          )),
+        ),
+        if (hint.isNotEmpty)
+          Text(hint, style: ScholarlyFonts.outfit(
+            fontSize: 11, color: muted,
+          )),
+      ],
     );
   }
 
