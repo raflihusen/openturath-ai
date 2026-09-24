@@ -605,6 +605,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   Timer? _readinessTimer;
+  Timer? _inputRetryTimer;
   DateTime? _loadingStarted;
   int _readySamples = 0;
   bool _checkingReady = false;
@@ -624,6 +625,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _readinessTimer?.cancel();
+    _inputRetryTimer?.cancel();
     if (mounted) {
       AppSnackBar.clear(context);
     }
@@ -732,10 +734,29 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
   void _startReadinessCheck() {
     _readinessTimer?.cancel();
+    _inputRetryTimer?.cancel();
     _loadingStarted = DateTime.now();
     _readySamples = 0;
     _readinessTimer =
         Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+    _inputRetryTimer = Timer(const Duration(seconds: 15), _recoverMissingInput);
+  }
+
+  Future<void> _recoverMissingInput() async {
+    final controller = widget.session.webController;
+    if (!mounted || controller == null) return;
+    try {
+      final url = await controller.getUrl();
+      if (url == null || !NotebookNavigation.notebook(url.uriValue)) return;
+      final inputReady = await controller.evaluateJavascript(
+        source: 'window.otNotebook?.inputReady() === true',
+      );
+      if (inputReady != true) {
+        await controller.evaluateJavascript(source: notebookUiScript);
+      }
+    } catch (_) {
+      // Navigasi atau penutupan tab dapat membatalkan pemeriksaan ini.
+    }
   }
 
   void _handleAccessDenied(AgentSessionTab session) {
@@ -826,6 +847,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           : 0;
       if (_readySamples >= 2 && elapsedMs >= 1500) {
         _readinessTimer?.cancel();
+        await controller.evaluateJavascript(
+          source: 'window.otNotebook?.activate()',
+        );
+        if (!mounted) return;
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
