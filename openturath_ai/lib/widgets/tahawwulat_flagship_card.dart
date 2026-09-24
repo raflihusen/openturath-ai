@@ -79,32 +79,20 @@ class TahawwulatFlagshipCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      'KOLEKSI UTAMA',
-                      style: GoogleFonts.outfit(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.8,
-                        color: _silver,
+                    Expanded(
+                      child: Text(
+                        'KOLEKSI UTAMA · ${subAgents.length} ASISTEN',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                          color: _silver,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Container(
-                      width: 18,
-                      height: 0.8,
-                      color: Colors.white.withValues(alpha: 0.30),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      '${subAgents.length} ASISTEN',
-                      style: GoogleFonts.outfit(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 1.25,
-                        color: _muted,
-                      ),
-                    ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 9,
