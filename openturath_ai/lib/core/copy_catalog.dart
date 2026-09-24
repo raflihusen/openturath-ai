@@ -20,6 +20,7 @@ const copyCatalog = <String, List<String>>{
   "assistantMore": ["Asisten lainnya", "Other assistants", "مساعدون آخرون"],
   "assistantAvailable": ["Tersedia", "Available", "متاح"],
   "assistantSearch": ["Cari asisten atau kitab rujukan", "Search assistants or references", "ابحث عن مساعد أو كتاب مرجعي"],
+  "clearSearch": ["Hapus pencarian", "Clear search", "مسح البحث"],
   "assistantLibrary": ["Lihat pustaka", "View library", "عرض المكتبة"],
   "planFeaturedLabel": ["KOLEKSI UTAMA · 5 ASISTEN", "MAIN COLLECTION · 5 ASSISTANTS", "المجموعة الرئيسية · ٥ مساعدين"],
   "planExclusive": ["Eksklusif", "Exclusive", "حصري"],
