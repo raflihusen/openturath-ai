@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/models/agent_model.dart';
 import 'package:openturath_ai/models/sub_agent_model.dart';
 import 'package:openturath_ai/widgets/tahawwulat_flagship_card.dart';
+import 'package:openturath_ai/widgets/promo_price.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +53,38 @@ void main() {
     await tester.ensureVisible(find.text('Al-Muhaqqiq'));
     await tester.tap(find.text('Al-Muhaqqiq'));
     expect(opened?.name, 'Al-Muhaqqiq');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('harga paket utama tetap terbaca pada kartu gelap',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: ColoredBox(
+          color: Color(0xFF18181B),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: PromoPrice(
+              amount: 300000,
+              regularAmount: 1000000,
+              period: '/bulan',
+              foregroundColor: Colors.white,
+              secondaryColor: Color(0xFFB8B8BE),
+            ),
+          ),
+        ),
+      ),
+    ));
+
+    final amount = tester.widget<Text>(find.text('Rp 300.000'));
+    expect(amount.style?.color, Colors.white);
     expect(tester.takeException(), isNull);
   });
 }
