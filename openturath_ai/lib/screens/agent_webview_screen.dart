@@ -68,6 +68,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   double _fontScale = 1.0;
   bool _isCopying = false;
   Timer? _readinessTimer;
+  Timer? _inputRetryTimer;
   DateTime? _loadingStarted;
   int _readySamples = 0;
   bool _checkingReady = false;
@@ -120,6 +121,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   @override
   void dispose() {
     _readinessTimer?.cancel();
+    _inputRetryTimer?.cancel();
     if (mounted) {
       AppSnackBar.clear(context);
     }
@@ -475,10 +477,29 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   void _startReadinessCheck() {
     _readinessTimer?.cancel();
+    _inputRetryTimer?.cancel();
     _loadingStarted = DateTime.now();
     _readySamples = 0;
     _readinessTimer =
         Timer.periodic(const Duration(milliseconds: 500), (_) => _checkReady());
+    _inputRetryTimer = Timer(const Duration(seconds: 15), _recoverMissingInput);
+  }
+
+  Future<void> _recoverMissingInput() async {
+    final controller = _webController;
+    if (!mounted || controller == null) return;
+    try {
+      final url = await controller.getUrl();
+      if (url == null || !NotebookNavigation.notebook(url.uriValue)) return;
+      final inputReady = await controller.evaluateJavascript(
+        source: 'window.otNotebook?.inputReady() === true',
+      );
+      if (inputReady != true) {
+        await controller.evaluateJavascript(source: notebookUiScript);
+      }
+    } catch (_) {
+      // Navigasi atau penutupan WebView dapat membatalkan pemeriksaan ini.
+    }
   }
 
   Future<void> _checkReady() async {
@@ -526,6 +547,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           : 0;
       if (_readySamples >= 2 && elapsedMs >= 2000) {
         _readinessTimer?.cancel();
+        await _webController!.evaluateJavascript(
+          source: 'window.otNotebook?.activate()',
+        );
+        if (!mounted) return;
         setState(() => _isWebViewLoading = false);
       } else if (DateTime.now().difference(_loadingStarted!).inSeconds >= 45) {
         _readinessTimer?.cancel();
