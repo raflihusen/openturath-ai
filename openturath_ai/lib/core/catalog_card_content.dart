@@ -5,6 +5,7 @@ List<String> catalogCardFacts({
   required String? publisher,
   required String? printYear,
   required String? muhaqqiq,
+  String editorLabel = 'Tahqiq',
 }) {
   bool usable(String? value) {
     final normalized = value?.trim();
@@ -21,7 +22,7 @@ List<String> catalogCardFacts({
     if (usable(printYear)) printYear!.trim(),
   ];
   if (facts.length < 3 && usable(muhaqqiq)) {
-    facts.add('Tahqiq: ${muhaqqiq!.trim()}');
+    facts.add('$editorLabel: ${muhaqqiq!.trim()}');
   }
   return facts.take(3).toList(growable: false);
 }
