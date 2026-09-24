@@ -587,7 +587,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             styleEl.id = canvasStyleId;
             (document.head || document.documentElement).appendChild(styleEl);
           }
-          styleEl.textContent = ${isDark ? "'html, body { background-color: #202124 !important; color: #E4E4E7 !important; }'" : "'html, body { background-color: #FFFFFF !important; color: #18181B !important; }'"};
+          styleEl.textContent = ${isDark ? "'html, body { background-color: #18181B !important; color: #E4E4E7 !important; }'" : "'html, body { background-color: #FFFFFF !important; color: #18181B !important; }'"};
 
           if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
             window.otNotebook.setTheme($isDark);
@@ -720,7 +720,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               styleEl.id = canvasStyleId;
               (document.head || document.documentElement).appendChild(styleEl);
             }
-            styleEl.textContent = ${isDark ? "'html, body { background-color: #202124 !important; color: #E4E4E7 !important; }'" : "'html, body { background-color: #FFFFFF !important; color: #18181B !important; }'"};
+            styleEl.textContent = ${isDark ? "'html, body { background-color: #18181B !important; color: #E4E4E7 !important; }'" : "'html, body { background-color: #FFFFFF !important; color: #18181B !important; }'"};
 
             if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
               window.otNotebook.setTheme($isDark);

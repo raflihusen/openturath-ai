@@ -397,7 +397,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 table, tr, td, th, mat-card, .mat-mdc-card, app-chat-message, app-chat-response,
                 .chat-message-container, .notebook-content, .scrollable-content,
                 .sources-panel, .studio-panel, div.content-container {
-                  background-color: #0E0E10 !important;
+                  background-color: #18181B !important;
                   color: #E4E4E7 !important;
                 }
                 table, th, td {
