@@ -168,49 +168,6 @@ const notebookUiScript = r'''
           padding-top: 8px !important;
           padding-bottom: 24px !important;
           margin-top: 0px !important;
-        }
-        /* Border dan drop-shadow tegas untuk lingkaran kolom input (Light & Dark) */
-        .chat-input-container, div[class*="query-box" i], div[class*="chat-input" i],
-        div[class*="input-container" i], div[class*="prompt-box" i], app-chat-input,
-        form:has(textarea), div:has(> textarea), div:has(> [contenteditable="true"]) {
-          border: 2px solid #94A3B8 !important;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08) !important;
-          background-color: #FFFFFF !important;
-          border-radius: 28px !important;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-        }
-        .chat-input-container:focus-within, div[class*="query-box" i]:focus-within,
-        div[class*="chat-input" i]:focus-within, form:has(textarea:focus),
-        div:has(> textarea:focus), div:has(> [contenteditable="true"]:focus) {
-          border-color: #475569 !important;
-          box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-        }
-        :root.dark .chat-input-container, :root.dark div[class*="query-box" i],
-        :root.dark div[class*="chat-input" i], :root.dark div[class*="input-container" i],
-        .dark .chat-input-container, .dark div[class*="query-box" i],
-        .dark div:has(> textarea), .dark div:has(> [contenteditable="true"]) {
-          border: 1.8px solid rgba(255, 255, 255, 0.38) !important;
-          box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55) !important;
-          background-color: #26272B !important;
-          border-radius: 28px !important;
-        }
-        :root.dark .chat-input-container:focus-within, :root.dark div[class*="query-box" i]:focus-within,
-        .dark .chat-input-container:focus-within, .dark div[class*="query-box" i]:focus-within {
-          border-color: rgba(255, 255, 255, 0.65) !important;
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75) !important;
-        }
-        .chat-input-container textarea, div[class*="query-box" i] textarea,
-        div[class*="chat-input" i] textarea, [contenteditable="true"] {
-          border: none !important;
-          outline: none !important;
-          box-shadow: none !important;
-          background: transparent !important;
-        }
-        .mat-mdc-text-field-wrapper, .mat-mdc-form-field-flex {
-          background: transparent !important;
-          border: none !important;
-          box-shadow: none !important;
-        }
         .chat-disclaimer, .query-disclaimer, .model-disclaimer,
         [class*="disclaimer" i], [aria-label*="disclaimer" i],
         [data-testid*="disclaimer" i] {
@@ -275,46 +232,19 @@ const notebookUiScript = r'''
         if (backdrop?.classList.contains('cdk-overlay-backdrop')) hide(backdrop);
       }
     });
-    // Perbarui placeholder input ke bahasa santri alami dan perkuat styling lingkarannya
+    // Perbarui placeholder input ke bahasa santri alami
     const targetPlaceholder = 'Ajukan pertanyaan atau masalah';
-    const inputElement = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
-    if (inputElement) {
-      if (inputElement.placeholder && inputElement.placeholder !== targetPlaceholder) {
-        inputElement.placeholder = targetPlaceholder;
+    document.querySelectorAll('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]').forEach(input => {
+      if (input.placeholder && input.placeholder !== targetPlaceholder) {
+        input.placeholder = targetPlaceholder;
       }
-      if (inputElement.getAttribute('data-placeholder') && inputElement.getAttribute('data-placeholder') !== targetPlaceholder) {
-        inputElement.setAttribute('data-placeholder', targetPlaceholder);
+      if (input.getAttribute('data-placeholder') && input.getAttribute('data-placeholder') !== targetPlaceholder) {
+        input.setAttribute('data-placeholder', targetPlaceholder);
       }
-      if (inputElement.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(inputElement.getAttribute('aria-label'))) {
-        inputElement.setAttribute('aria-label', targetPlaceholder);
+      if (input.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(input.getAttribute('aria-label'))) {
+        input.setAttribute('aria-label', targetPlaceholder);
       }
-      let pill = null;
-      let cur = inputElement;
-      for (let i = 0; i < 6; i++) {
-        if (!cur || cur === document.body) break;
-        const sendBtn = cur.querySelector('button[aria-label*="send" i], button[aria-label*="kirim" i], [data-action*="send" i], button.send-button, form button[type="submit"]');
-        if (sendBtn && sendBtn !== cur) {
-          pill = cur;
-          break;
-        }
-        if (cur.classList.contains('chat-input-container') || cur.classList.contains('query-box') || cur.tagName.toLowerCase() === 'form') {
-          pill = cur;
-          break;
-        }
-        cur = cur.parentElement;
-      }
-      if (!pill) {
-        pill = inputElement.closest('form') || inputElement.closest('.chat-input-container') || inputElement.closest('[class*="query-box" i]') || inputElement.parentElement;
-      }
-      if (pill && pill !== document.body) {
-        const isDark = !!window._otIsDark;
-        pill.style.setProperty('border', isDark ? '1.8px solid rgba(255, 255, 255, 0.38)' : '2px solid #94A3B8', 'important');
-        pill.style.setProperty('box-shadow', isDark ? '0 6px 24px rgba(0, 0, 0, 0.55)' : '0 4px 20px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08)', 'important');
-        pill.style.setProperty('background-color', isDark ? '#26272B' : '#FFFFFF', 'important');
-        pill.style.setProperty('border-radius', '28px', 'important');
-        pill.style.setProperty('transition', 'border-color 0.2s ease, box-shadow 0.2s ease', 'important');
-      }
-    }
+    });
     document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {
       if (el.closest(answerSelector)) return;
       const t = text(el).toLowerCase();

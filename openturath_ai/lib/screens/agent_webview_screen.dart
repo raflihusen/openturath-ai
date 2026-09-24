@@ -192,48 +192,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             pointer-events: none !important;
             border: none !important;
           }
-          /* Border dan drop-shadow tegas untuk lingkaran kolom input (Light & Dark) */
-          .chat-input-container, div[class*="query-box" i], div[class*="chat-input" i],
-          div[class*="input-container" i], div[class*="prompt-box" i], app-chat-input,
-          form:has(textarea), div:has(> textarea), div:has(> [contenteditable="true"]) {
-            border: 2px solid #94A3B8 !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08) !important;
-            background-color: #FFFFFF !important;
-            border-radius: 28px !important;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-          }
-          .chat-input-container:focus-within, div[class*="query-box" i]:focus-within,
-          div[class*="chat-input" i]:focus-within, form:has(textarea:focus),
-          div:has(> textarea:focus), div:has(> [contenteditable="true"]:focus) {
-            border-color: #475569 !important;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-          }
-          :root.dark .chat-input-container, :root.dark div[class*="query-box" i],
-          :root.dark div[class*="chat-input" i], :root.dark div[class*="input-container" i],
-          .dark .chat-input-container, .dark div[class*="query-box" i],
-          .dark div:has(> textarea), .dark div:has(> [contenteditable="true"]) {
-            border: 1.8px solid rgba(255, 255, 255, 0.38) !important;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55) !important;
-            background-color: #26272B !important;
-            border-radius: 28px !important;
-          }
-          :root.dark .chat-input-container:focus-within, :root.dark div[class*="query-box" i]:focus-within,
-          .dark .chat-input-container:focus-within, .dark div[class*="query-box" i]:focus-within {
-            border-color: rgba(255, 255, 255, 0.65) !important;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75) !important;
-          }
-          .chat-input-container textarea, div[class*="query-box" i] textarea,
-          div[class*="chat-input" i] textarea, [contenteditable="true"] {
-            border: none !important;
-            outline: none !important;
-            box-shadow: none !important;
-            background: transparent !important;
-          }
-          .mat-mdc-text-field-wrapper, .mat-mdc-form-field-flex {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-          }
           ::-webkit-scrollbar { display: none !important; width: 0px !important; }
           html, body, * { scrollbar-width: none !important; }
           /* Padding atas dan bawah agar percakapan tidak terpotong */
