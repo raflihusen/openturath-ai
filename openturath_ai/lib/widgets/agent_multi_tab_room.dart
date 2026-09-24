@@ -1221,10 +1221,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onReceivedHttpError: (controller, request, errorResponse) {
               final code = errorResponse.statusCode;
-              final requestUri = request.url?.uriValue;
+              final requestUri = request.url.uriValue;
               if (request.isForMainFrame == true &&
                   mounted &&
-                  requestUri != null &&
                   NotebookNavigation.notebook(requestUri)) {
                 if (code == 401 || code == 403) {
                   _readinessTimer?.cancel();
