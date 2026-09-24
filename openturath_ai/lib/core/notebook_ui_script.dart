@@ -154,9 +154,6 @@ const notebookUiScript = r'''
         div:has(> img[alt*="cover" i]), div[class*="hero" i], div[class*="cover" i],
         div[class*="guide" i]:not(.chat-view):not(.conversation-container),
         #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
-        button[aria-label*="More" i], button[aria-label*="Opsi" i],
-        button[aria-label*="options" i], button[aria-label*="Notebook options" i],
-        button[aria-label*="Option" i],
         button.mat-tonal-button, a[aria-label*="Google" i],
         [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
         [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i] {
@@ -184,18 +181,33 @@ const notebookUiScript = r'''
           z-index: -1 !important;
         }
         button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-        button[aria-label*="Notebook settings" i] {
+        button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
+        button[aria-label*="More" i], button[aria-label*="Opsi" i],
+        button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+        button[aria-label*="Option" i] {
           position: fixed !important;
           top: -9999px !important;
           left: -9999px !important;
-          opacity: 0 !important;
-          pointer-events: none !important;
+          width: 24px !important;
+          height: 24px !important;
+          opacity: 0.001 !important;
+          pointer-events: auto !important;
+          visibility: visible !important;
           z-index: -1 !important;
         }
         .ot-opening-language [role="menu"],
-        .ot-opening-language .mat-mdc-menu-panel {
+        .ot-opening-language .mat-mdc-menu-panel,
+        .ot-opening-language .cdk-overlay-pane:has([role="menu"]) {
           opacity: 0 !important;
-          pointer-events: none !important;
+        }
+        .cdk-overlay-container {
+          z-index: 99999 !important;
+        }
+        [role="dialog"], mat-dialog-container, .mat-mdc-dialog-container {
+          opacity: 1 !important;
+          visibility: visible !important;
+          display: block !important;
+          z-index: 100000 !important;
         }
         .chat-panel-content, .chat-view, .conversation-container, .message-list, main, app-chat-view {
           padding-top: 8px !important;
@@ -254,9 +266,10 @@ const notebookUiScript = r'''
         chatTab.click();
       }
     } catch(_) {}
-    // Auto-dismiss dialog pengumuman Google
+    // Auto-dismiss dialog pengumuman Google (tapi jangan pernah tutup dialog bahasa!)
     document.querySelectorAll('[role="dialog"], mat-dialog-container, .cdk-overlay-pane, [class*="announcement"]').forEach(dialog => {
       const t = text(dialog).toLowerCase();
+      if (t.includes('language') || t.includes('bahasa') || t.includes('output') || t.includes('لغة')) return;
       if (!t.includes('more flexibility and control') && !t.includes('limits refresh every 5 hours') && !t.includes('gemini notebook')) return;
       if (!dialog.hasAttribute('data-ot-dismissed')) {
         dialog.setAttribute('data-ot-dismissed', '');
@@ -303,41 +316,120 @@ const notebookUiScript = r'''
       }
     });
   }
-  window.otOpenLanguageSettings = async function() {
-    const settings = [...document.querySelectorAll('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]')]
-      .find(button => !button.disabled);
-    if (!settings) return false;
-    const root = document.documentElement;
-    const oldPosition = settings.style.cssText;
-    root.classList.add('ot-opening-language');
-    // Menu Material perlu jangkar di viewport, tetapi tetap tidak terlihat.
-    settings.style.setProperty('top', '8px', 'important');
-    settings.style.setProperty('left', '8px', 'important');
+
+  function triggerClick(el) {
+    if (!el) return;
     try {
-      settings.click();
-      const deadline = Date.now() + 1800;
-      while (Date.now() < deadline) {
-        const panels = [...document.querySelectorAll('[role="menu"], .mat-mdc-menu-panel')];
-        const item = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item')])
-          .find(candidate => /^(output language|bahasa output|bahasa keluaran)$/i.test(
-            (candidate.getAttribute('aria-label') || candidate.innerText || '').trim().replace(/\s+/g, ' ')
-          ));
-        if (item) {
-          item.click();
-          return true;
-        }
-        await new Promise(resolve => setTimeout(resolve, 50));
+      const rect = el.getBoundingClientRect();
+      const x = rect.left + (rect.width > 0 ? rect.width / 2 : 0);
+      const y = rect.top + (rect.height > 0 ? rect.height / 2 : 0);
+      const evtInit = {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        clientX: x,
+        clientY: y
+      };
+      el.dispatchEvent(new PointerEvent('pointerdown', evtInit));
+      el.dispatchEvent(new MouseEvent('mousedown', evtInit));
+      el.dispatchEvent(new PointerEvent('pointerup', evtInit));
+      el.dispatchEvent(new MouseEvent('mouseup', evtInit));
+      el.click();
+    } catch (e) {
+      try { el.click(); } catch (_) {}
+    }
+  }
+
+  function findOutputLanguageItem() {
+    const panels = [...document.querySelectorAll('[role="menu"], .mat-mdc-menu-panel, .cdk-overlay-pane')];
+    if (panels.length === 0) return null;
+    const candidates = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item, div')]);
+    return candidates.find(candidate => {
+      if (!candidate || !document.contains(candidate)) return false;
+      const aria = (candidate.getAttribute('aria-label') || '').toLowerCase();
+      const txt = (candidate.innerText || candidate.textContent || '').toLowerCase();
+      if (aria.includes('output language') || aria.includes('bahasa output') || aria.includes('bahasa keluaran')) return true;
+      if (txt.includes('output language') || txt.includes('bahasa output') || txt.includes('bahasa keluaran')) return true;
+      const icon = candidate.querySelector('mat-icon, i, [data-mat-icon-name]');
+      const iconName = icon ? (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.innerText || '').trim().toLowerCase() : '';
+      if ((iconName === 'language' || iconName === 'public' || iconName === 'translate') && (txt.includes('language') || txt.includes('bahasa') || txt.includes('output') || txt.includes('لغة'))) {
+        return true;
       }
       return false;
-    } finally {
-      settings.style.cssText = oldPosition;
-      root.classList.remove('ot-opening-language');
+    });
+  }
+
+  function findSettingsButton() {
+    let btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i], [data-action*="settings" i]');
+    if (btn) return btn;
+    const icons = document.querySelectorAll('mat-icon, [data-mat-icon-name]');
+    for (const icon of icons) {
+      const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
+      if (name === 'settings' || name.includes('setting')) {
+        const parentBtn = icon.closest('button, [role="button"]');
+        if (parentBtn) return parentBtn;
+      }
     }
+    return document.querySelector('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i]');
+  }
+
+  window.otOpenLanguageSettings = function() {
+    const root = document.documentElement;
+    root.classList.add('ot-opening-language');
+
+    function cleanup() {
+      setTimeout(() => {
+        root.classList.remove('ot-opening-language');
+      }, 500);
+    }
+
+    const immediate = findOutputLanguageItem();
+    if (immediate) {
+      triggerClick(immediate);
+      cleanup();
+      return true;
+    }
+
+    const settings = findSettingsButton();
+    if (!settings) {
+      cleanup();
+      return false;
+    }
+
+    const oldPosition = settings.style.cssText;
+    settings.style.setProperty('top', '8px', 'important');
+    settings.style.setProperty('left', '8px', 'important');
+    settings.style.setProperty('opacity', '0.001', 'important');
+    settings.style.setProperty('pointer-events', 'auto', 'important');
+    settings.style.setProperty('visibility', 'visible', 'important');
+
+    triggerClick(settings);
+
+    const deadline = Date.now() + 2500;
+    const interval = setInterval(() => {
+      const item = findOutputLanguageItem();
+      if (item) {
+        clearInterval(interval);
+        triggerClick(item);
+        settings.style.cssText = oldPosition;
+        cleanup();
+        return;
+      }
+      if (Date.now() > deadline) {
+        clearInterval(interval);
+        settings.style.cssText = oldPosition;
+        cleanup();
+      }
+    }, 25);
+
+    return true;
   };
+  var otOpenLanguageSettings = window.otOpenLanguageSettings;
   window.otSendPrompt = function(promptText) {
     if (!promptText || typeof promptText !== 'string') return false;
     const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
     if (!input) return false;
+    userPausedFollow = false;
     input.focus();
     if (input.tagName.toLowerCase() === 'textarea' || input.tagName.toLowerCase() === 'input') {
       input.value = promptText;
@@ -400,6 +492,41 @@ window.otNotebook = {clean, ready, latest, conversation, conversationList, acces
 let scheduled = false;
 let isGenerating = false;
 let lastAnswerText = '';
+let userPausedFollow = false;
+let followScheduled = false;
+
+function chatScrollHost() {
+  const candidates = document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]');
+  for (const candidate of candidates) {
+    if (candidate.scrollHeight > candidate.clientHeight + 24) return candidate;
+  }
+  return document.scrollingElement;
+}
+
+function followLatestAnswer() {
+  if (userPausedFollow || followScheduled) return;
+  followScheduled = true;
+  requestAnimationFrame(() => {
+    followScheduled = false;
+    if (!userPausedFollow) {
+      const host = chatScrollHost();
+      if (host) host.scrollTop = host.scrollHeight;
+    }
+  });
+}
+
+document.addEventListener('touchstart', event => {
+  const host = chatScrollHost();
+  if (host && host.contains(event.target)) userPausedFollow = true;
+}, {passive: true, capture: true});
+document.addEventListener('wheel', event => {
+  if (event.deltaY < 0) userPausedFollow = true;
+}, {passive: true, capture: true});
+document.addEventListener('click', event => {
+  if (event.target.closest?.('button[type="submit"], button[aria-label*="send" i], button[aria-label*="kirim" i]')) {
+    userPausedFollow = false;
+  }
+}, true);
 
 function checkGenerationState() {
   const stopBtn = document.querySelector('button[aria-label*="Stop" i], button[aria-label*="Hentikan" i], [data-action*="stop" i]');
@@ -409,12 +536,14 @@ function checkGenerationState() {
   if (currentlyGenerating && !isGenerating) {
     isGenerating = true;
     lastAnswerText = currentAnswer;
+    followLatestAnswer();
     if (window.flutter_inappwebview?.callHandler) {
       window.flutter_inappwebview.callHandler('otAnswerState', { state: 'generating', text: currentAnswer });
     }
   } else if (isGenerating) {
     if (currentAnswer && currentAnswer !== lastAnswerText) {
       lastAnswerText = currentAnswer;
+      followLatestAnswer();
       if (window.flutter_inappwebview?.callHandler) {
         window.flutter_inappwebview.callHandler('otAnswerChunk', { text: currentAnswer });
       }
