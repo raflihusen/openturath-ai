@@ -2,16 +2,17 @@ import '../widgets/desktop_shortcuts.dart';
 import '../widgets/adaptive_sheet.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 import '../core/app_copy.dart';
+import '../core/catalog_section_label.dart';
 import '../core/localization.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
@@ -198,11 +199,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   }
 
   String _cleanSectionLabel(String full) {
-    final match = RegExp(r'\((.*?)\)').firstMatch(full);
-    if (match != null && match.group(1) != null) {
-      return match.group(1)!.trim();
-    }
-    return full;
+    return CatalogSectionLabel.of(full);
   }
 
   String _resolveSubtitle() {
@@ -300,11 +297,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         controller: _searchCtrl,
                         focusNode: _searchFocusNode,
                         onChanged: _onSearchChanged,
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 13.5, color: textPrimary),
                         decoration: InputDecoration(
                           hintText: Loc.tr('ui_214d016291'),
-                          hintStyle: GoogleFonts.outfit(
+                          hintStyle: ScholarlyFonts.outfit(
                             fontSize: 13.5,
                             color: textSecondary.withValues(alpha: 0.7),
                           ),
@@ -778,7 +775,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   ),
                   child: Text(
                     AppCopy.tryAgain,
-                    style: OTTypography.button(color: Colors.white),
+                    style: OTTypography.button(
+                        color: OTColors.onAccent(isDark)),
                   ),
                 ),
               ),
@@ -879,8 +877,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     required Color textPrimary,
     required Color textSecondary,
   }) {
-    final activeBg = textPrimary;
-    final activeFg = isDark ? Colors.black : Colors.white;
+    final activeBg = OTColors.primaryContainer(isDark);
+    final activeFg = OTColors.onPrimaryContainer(isDark);
 
     return Padding(
       padding: const EdgeInsetsDirectional.only(end: 6),
