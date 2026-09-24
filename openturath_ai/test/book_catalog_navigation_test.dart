@@ -70,7 +70,7 @@ void main() {
 
       // Card 3: Klasifikasi & Kandungan (التصنيف والمصنف)
       expect(find.text('تصنيف النص'), findsOneWidget);
-      expect(find.text('Asal Mazhab'), findsOneWidget);
+      expect(find.text(Loc.text('Asal Mazhab')), findsOneWidget);
       expect(find.text('المتقدمون'), findsOneWidget);
       expect(find.text('عدد الأجزاء: 8'), findsOneWidget);
 
