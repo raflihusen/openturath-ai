@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pratinjau Asisten OpenTurath</title>
+  <style>
+    @font-face{font-family:Outfit;src:url('../assets/native_fonts/NativeOutfit.ttf') format('truetype')}
+    @font-face{font-family:Arabic;src:url('../assets/native_fonts/NativeArabic.ttf') format('truetype')}
+    *{box-sizing:border-box}
+    :root{--canvas:#f7f7f3;--surface:#fff;--surface-low:#eff0e9;--primary:#3159a5;--on-primary:#fff;--primary-container:#dce6ff;--on-primary-container:#172b54;--ink:#1d2128;--muted:#535a64;--outline:#c9cfd6;--line:#e3e6e5;--shadow:0 18px 48px rgba(28,36,55,.08)}
+    body.dark{--canvas:#12151b;--surface:#1c212a;--surface-low:#262d37;--primary:#a9c5ff;--on-primary:#14294c;--primary-container:#263c65;--on-primary-container:#dae6ff;--ink:#f1f3f8;--muted:#c0c7d2;--outline:#687382;--line:#37404a;--shadow:0 20px 50px rgba(0,0,0,.25)}
+    html{background:#e9ebed}
+    body{margin:0;min-height:100vh;background:var(--canvas);color:var(--ink);font-family:Outfit,system-ui,sans-serif;transition:background .18s,color .18s}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,input:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+    .preview-controls{position:sticky;top:0;z-index:20;display:flex;gap:8px;align-items:center;justify-content:center;padding:10px;background:#e9ebed;color:#262b34;box-shadow:0 1px 0 #d5d9dd}
+    .preview-controls strong{font-size:12px;letter-spacing:.03em;margin-inline-end:8px}
+    .preview-controls button{border:1px solid #bcc3cc;border-radius:12px;background:#fff;color:#202936;min-height:40px;padding:0 13px}
+    .preview-controls button[aria-pressed=true]{background:#243b63;color:#fff;border-color:#243b63}
+    .phone{max-width:430px;min-height:884px;margin:24px auto;background:var(--canvas);border-radius:32px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+    .status{height:34px;padding:13px 26px 0;display:flex;justify-content:space-between;color:var(--muted);font-size:11px;font-weight:600}
+    .app{padding:26px 20px 130px}
+    .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--primary);text-transform:uppercase}
+    h1{font-size:36px;line-height:1.05;margin:12px 0 9px;letter-spacing:-.055em;font-weight:650}
+    .lead{font-size:15px;line-height:1.48;color:var(--muted);margin:0 0 23px;max-width:33ch}
+    .search{display:flex;gap:12px;align-items:center;border-radius:22px;background:var(--surface-low);padding:0 16px;height:56px;margin-bottom:22px}
+    .search svg{flex:none;color:var(--muted)}
+    .search input{width:100%;border:0;outline:none;background:transparent;color:var(--ink);font-size:15px}
+    .search input::placeholder{color:var(--muted);opacity:1}
+    .section-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:20px 0 12px}
+    .section-heading h2{font-size:19px;letter-spacing:-.03em;margin:0;font-weight:650}
+    .section-heading small{color:var(--muted);font-size:12px}
+    .filters{display:flex;gap:8px;overflow:auto;padding:1px 0 13px;scrollbar-width:none}
+    .filters::-webkit-scrollbar{display:none}
+    .chip{min-height:42px;white-space:nowrap;padding:0 16px;border-radius:15px;background:var(--surface);border:1px solid var(--outline);color:var(--ink);font-size:13px;font-weight:550}
+    .chip[aria-pressed=true]{background:var(--primary-container);border-color:var(--primary-container);color:var(--on-primary-container)}
+    .feature{background:var(--primary-container);border-radius:30px;padding:22px 22px 20px;color:var(--on-primary-container);position:relative;overflow:hidden;margin:3px 0 25px}
+    .feature::before{content:'';position:absolute;inline-size:86px;block-size:86px;border:1px solid currentColor;border-radius:26px;opacity:.18;inset-block-start:-29px;inset-inline-end:-21px;transform:rotate(23deg)}
+    .feature .tag{font-size:11px;font-weight:750;letter-spacing:.09em;text-transform:uppercase;opacity:.75}
+    .feature h2{font-size:27px;line-height:1.12;letter-spacing:-.045em;margin:12px 0 8px}
+    .feature p{font-size:14px;line-height:1.47;margin:0 0 16px;max-width:32ch}
+    .feature button{min-height:44px;border:0;background:var(--on-primary-container);color:var(--primary-container);padding:0 17px;border-radius:15px;font-weight:650}
+    .dossier{background:var(--surface);border-radius:26px;padding:22px;margin:0 0 26px;box-shadow:0 2px 15px rgba(28,36,55,.035)}
+    .dossier-top{display:flex;align-items:start;justify-content:space-between;gap:12px}
+    .dossier .number{font-size:12px;color:var(--primary);font-weight:750;letter-spacing:.06em}
+    .dossier .available{font-size:11px;color:var(--primary);background:var(--primary-container);padding:6px 10px;border-radius:9px;font-weight:650}
+    .dossier h3{font-size:27px;line-height:1.08;margin:18px 0 3px;letter-spacing:-.04em}
+    .arabic{font-family:Arabic,serif;line-height:1.85;letter-spacing:0;direction:rtl;unicode-bidi:isolate}
+    .dossier .arabic{font-size:21px;color:var(--muted);margin:0 0 11px}
+    .dossier .scope{font-size:14px;line-height:1.5;color:var(--muted);margin:0 0 18px}
+    .sources{border-top:1px solid var(--line);padding-top:15px;margin-bottom:19px}
+    .sources b{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .sources p{font-size:14px;line-height:1.44;margin:6px 0 0;color:var(--ink)}
+    .actions{display:flex;gap:9px;flex-wrap:wrap}
+    .actions button{min-height:46px;padding:0 16px;border-radius:15px;font-size:13px;font-weight:650}
+    .primary{background:var(--primary);color:var(--on-primary);border:1px solid var(--primary)}
+    .secondary{background:transparent;color:var(--primary);border:1px solid var(--outline)}
+    .list{background:var(--surface);border-radius:23px;overflow:hidden}
+    .agent-row{width:100%;display:flex;text-align:start;gap:12px;align-items:center;border:0;background:transparent;color:var(--ink);min-height:81px;padding:14px 18px;position:relative}
+    .agent-row+ .agent-row::before{content:'';position:absolute;inset-inline:18px;inset-block-start:0;border-top:1px solid var(--line)}
+    .agent-row:hover{background:var(--surface-low)}
+    .agent-row .index{font-size:12px;font-weight:700;color:var(--primary);width:21px;flex:none}
+    .agent-row .row-copy{display:flex;flex-direction:column;min-width:0;flex:1}
+    .agent-row b{font-size:16px;letter-spacing:-.025em}
+    .agent-row small{font-size:12px;color:var(--muted);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:4px}
+    .agent-row svg{flex:none;color:var(--muted)}
+    .empty{padding:28px;color:var(--muted);line-height:1.5;background:var(--surface);border-radius:20px}
+    .bottom{position:absolute;inset-inline:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:12px 15px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+    .nav-item{color:var(--muted);display:flex;align-items:center;flex-direction:column;gap:6px;font-size:11px;font-weight:600;min-height:49px;justify-content:center}
+    .nav-item.current{color:var(--primary)}
+    .nav-icon{height:25px;min-width:49px;display:grid;place-items:center;font-size:18px;line-height:1}
+    .current .nav-icon{background:var(--primary-container);border-radius:15px}
+    dialog{background:var(--surface);color:var(--ink);border:0;border-radius:26px;padding:24px;width:min(90vw,370px);box-shadow:var(--shadow)}
+    dialog::backdrop{background:rgba(9,17,30,.55)}
+    dialog h2{font-size:23px;margin:0 0 10px}
+    dialog p{line-height:1.5;color:var(--muted)}
+    dialog button{min-height:44px;border:0;border-radius:14px;background:var(--primary);color:var(--on-primary);padding:0 18px;font-weight:650}
+    [dir=rtl] .app,[dir=rtl] .agent-row{text-align:right}
+    [dir=rtl] .lead{max-width:36ch}
+    [dir=rtl] h1{letter-spacing:0}
+    [dir=rtl] .eyebrow{letter-spacing:0}
+    [dir=rtl] .dossier h3,[dir=rtl] .feature h2{letter-spacing:0}
+    @media(max-width:460px){html{background:var(--canvas)}.preview-controls{position:relative;flex-wrap:wrap}.phone{margin:0;box-shadow:none;border-radius:0;max-width:none;min-height:100vh}.app{padding-top:19px}}
+  </style>
+</head>
+<body>
+  <div class="preview-controls" aria-label="Kontrol pratinjau">
+    <strong>PROTOTIPE DESAIN</strong>
+    <button type="button" data-lang="id" aria-pressed="true">Indonesia</button>
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+    <button type="button" data-lang="ar" aria-pressed="false">العربية</button>
+    <button type="button" id="themeButton" aria-pressed="false">Gelap</button>
+  </div>
+  <div class="phone" id="phone">
+    <div class="status" aria-hidden="true"><span>9:41</span><span>●●●  Wi-Fi  ▰</span></div>
+    <main class="app">
+      <div class="eyebrow" id="overline"></div>
+      <h1 id="title"></h1>
+      <p class="lead" id="lead"></p>
+      <label class="search">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 5 5"/></svg>
+        <input id="search" type="search" autocomplete="off">
+      </label>
+      <div class="section-heading"><h2 id="browseTitle"></h2><small id="browseHint"></small></div>
+      <div class="filters" id="filters" role="group"></div>
+      <section class="feature" aria-labelledby="featureTitle"><div class="tag" id="featureTag"></div><h2 id="featureTitle"></h2><p id="featureDescription"></p><button type="button" id="featureAction"></button></section>
+      <div class="section-heading"><h2 id="selectedTitle"></h2><small id="selectedHint"></small></div>
+      <section class="dossier" id="dossier" aria-live="polite"></section>
+      <div class="section-heading"><h2 id="moreTitle"></h2></div>
+      <div class="list" id="agentList"></div>
+    </main>
+    <div class="bottom" aria-label="Pratinjau navigasi aplikasi"><span class="nav-item"><span class="nav-icon">⌂</span><span id="navHome"></span></span><span class="nav-item current"><span class="nav-icon">▣</span><span id="navAssistants"></span></span><span class="nav-item"><span class="nav-icon">≡</span><span id="navNotes"></span></span><span class="nav-item"><span class="nav-icon">⚙</span><span id="navSettings"></span></span></div>
+  </div>
+  <dialog id="demoDialog"><h2 id="dialogTitle"></h2><p id="dialogText"></p><button type="button" id="dialogClose"></button></dialog>
+  <script>
+    const copy={
+      id:{overline:'RUANG TELAAH',title:'Asisten',lead:'Pilih bidang dan temukan cara kerja asisten yang sesuai dengan kajian Anda.',search:'Cari asisten atau kitab rujukan',browse:'Bidang ilmu',hint:'Pilih untuk menyaring',all:'Semua',fiqh:'Fikih',hadith:'Hadis',tafsir:'Tafsir',featureTag:'KOLEKSI KHUSUS',featureTitle:'Fikih Tahawwulat',featureDescription:'Lima jalan telaah untuk matan, konsep, latihan, muhadharah, dan dakwah.',featureAction:'Lihat lima asisten',selected:'Pilihan telaah',selectedHint:'Mandat dan rujukan',sources:'Kitab rujukan',open:'Mulai telaah',library:'Lihat pustaka',more:'Asisten lainnya',available:'Tersedia',navHome:'Beranda',navAssistants:'Asisten',navNotes:'Catatan',navSettings:'Pengaturan',empty:'Tidak ada asisten yang cocok. Ubah kata kunci atau bidang.',dialogTitle:'Pratinjau interaksi',dialogAction:'Dalam aplikasi, tindakan ini membuka ruang asisten dengan sesi yang tetap tersimpan.',dialogFeature:'Dalam aplikasi, tindakan ini membuka lima asisten khusus Fikih Tahawwulat.',close:'Tutup',themeDark:'Gelap',themeLight:'Terang'},
+      en:{overline:'STUDY SPACE',title:'Assistants',lead:'Choose a field and find an assistant whose approach fits your study.',search:'Search assistants or references',browse:'Fields of study',hint:'Select to filter',all:'All',fiqh:'Fiqh',hadith:'Hadith',tafsir:'Tafsir',featureTag:'SPECIAL COLLECTION',featureTitle:'Fiqh al-Tahawwulat',featureDescription:'Five paths for source texts, concepts, practice, lectures, and teaching.',featureAction:'See five assistants',selected:'Study path',selectedHint:'Scope and references',sources:'Reference works',open:'Start studying',library:'View library',more:'Other assistants',available:'Available',navHome:'Home',navAssistants:'Assistants',navNotes:'Notes',navSettings:'Settings',empty:'No assistants match. Try another search or field.',dialogTitle:'Interaction preview',dialogAction:'In the app, this opens the assistant and preserves the study session.',dialogFeature:'In the app, this opens the five Fiqh al-Tahawwulat assistants.',close:'Close',themeDark:'Dark',themeLight:'Light'},
+      ar:{overline:'مساحة المطالعة',title:'المساعدون',lead:'اختر مجالًا ثم اطّلع على منهج المساعد ومراجعه قبل بدء الدراسة.',search:'ابحث عن مساعد أو كتاب مرجعي',browse:'مجالات العلم',hint:'اختر للتصفية',all:'الكل',fiqh:'الفقه',hadith:'الحديث',tafsir:'التفسير',featureTag:'مجموعة خاصة',featureTitle:'فقه التحولات',featureDescription:'خمسة مسارات لمطالعة النصوص والمفاهيم والتدريب والمحاضرات والدعوة.',featureAction:'عرض المساعدين الخمسة',selected:'مسار المطالعة',selectedHint:'الاختصاص والمراجع',sources:'الكتب المرجعية',open:'بدء المطالعة',library:'عرض المكتبة',more:'مساعدون آخرون',available:'متاح',navHome:'الرئيسية',navAssistants:'المساعدون',navNotes:'الملاحظات',navSettings:'الإعدادات',empty:'لا يوجد مساعد مطابق. غيّر البحث أو المجال.',dialogTitle:'معاينة التفاعل',dialogAction:'في التطبيق يفتح هذا الإجراء المساعد مع الاحتفاظ بجلسة المطالعة.',dialogFeature:'في التطبيق يفتح هذا الإجراء المساعدين الخمسة في فقه التحولات.',close:'إغلاق',themeDark:'داكن',themeLight:'فاتح'}
+    };
+    // Names, remits, and references below come from AgentModel.defaultAgents.
+    const agents=[
+      {id:'fiqh_syafii',kind:'fiqh',name:{id:"Fikih Syafi'i",en:"Shafi'i Fiqh",ar:'الفقه الشافعي'},arabic:'الفقه الشافعي',scope:{id:'Matan, syarah, dan hasyiyah mu\'tabarah.',en:'Authoritative source texts, commentaries, and glosses.',ar:'المتون والشروح والحواشي المعتمدة.'},sources:['Al-Umm','Al-Majmu\' Syarah Al-Muhadzdzab']},
+      {id:'fiqh_hanafi',kind:'fiqh',name:{id:'Fikih Hanafi',en:'Hanafi Fiqh',ar:'الفقه الحنفي'},arabic:'الفقه الحنفي',scope:{id:'Zhahir Ar-Riwayah, syarah, dan fatwa.',en:'Zahir al-Riwayah, commentaries, and fatwas.',ar:'ظاهر الرواية والشروح والفتاوى.'},sources:['Al-Mabsuth','Radd Al-Muhtar']},
+      {id:'matan_hadith',kind:'hadith',name:{id:'Matan Hadits',en:'Hadith Texts',ar:'متون الحديث'},arabic:'متون الحديث',scope:{id:'Kutubus Sittah, takhrij, dan rijal.',en:'The six collections, sourcing, and narrators.',ar:'الكتب الستة والتخريج والرجال.'},sources:['Shahih Al-Bukhari','Shahih Muslim']},
+      {id:'tafsir',kind:'tafsir',name:{id:"Tafsir Al-Qur'an",en:'Quranic Exegesis',ar:'تفسير القرآن'},arabic:'تفسير القرآن',scope:{id:'Tafsir Thabari, Ibnu Katsir, dan Qurtubi.',en:'Al-Tabari, Ibn Kathir, and Al-Qurtubi.',ar:'تفسير الطبري وابن كثير والقرطبي.'},sources:["Tafsir Al-Qur'an Al-'Azhim","Al-Jami' li Ahkam Al-Qur'an"]}
+    ];
+    let lang='id',kind='all',selected=agents[0],query='';
+    const $=id=>document.getElementById(id);
+    function render(){
+      const t=copy[lang];document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+      const bindings={overline:'overline',title:'title',lead:'lead',browse:'browseTitle',hint:'browseHint',featureTag:'featureTag',featureTitle:'featureTitle',featureDescription:'featureDescription',featureAction:'featureAction',selected:'selectedTitle',selectedHint:'selectedHint',more:'moreTitle',navHome:'navHome',navAssistants:'navAssistants',navNotes:'navNotes',navSettings:'navSettings'};
+      for(const [key,id] of Object.entries(bindings))$(id).textContent=t[key];
+      $('search').placeholder=t.search;$('search').setAttribute('aria-label',t.search);$('themeButton').textContent=document.body.classList.contains('dark')?t.themeLight:t.themeDark;
+      $('filters').innerHTML='';for(const k of ['all','fiqh','hadith','tafsir']){const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t[k];b.setAttribute('aria-pressed',String(kind===k));b.onclick=()=>{kind=k;render()};$('filters').append(b)}
+      $('dossier').innerHTML=`<div class="dossier-top"><span class="number">01 / ${String(agents.length).padStart(2,'0')}</span><span class="available">${t.available}</span></div><h3>${selected.name[lang]}</h3><p class="arabic" lang="ar" dir="rtl">${selected.arabic}</p><p class="scope">${selected.scope[lang]}</p><div class="sources"><b>${t.sources}</b><p>${selected.sources.join(' · ')}</p></div><div class="actions"><button type="button" class="primary" id="openAgent">${t.open}</button><button type="button" class="secondary" id="openLibrary">${t.library}</button></div>`;
+      $('openAgent').onclick=()=>showDialog(t.dialogAction);$('openLibrary').onclick=()=>showDialog(`${t.sources}: ${selected.sources.join(' · ')}`);
+      const results=agents.filter(a=>(kind==='all'||a.kind===kind)&&`${a.name[lang]} ${a.arabic} ${a.sources.join(' ')}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+      const list=$('agentList');list.innerHTML='';if(!results.length){list.innerHTML=`<div class="empty">${t.empty}</div>`;return}
+      for(const [i,a] of results.entries()){const b=document.createElement('button');b.type='button';b.className='agent-row';b.setAttribute('aria-label',a.name[lang]);const num=document.createElement('span');num.className='index';num.textContent=String(i+1).padStart(2,'0');const c=document.createElement('span');c.className='row-copy';const title=document.createElement('b');title.textContent=a.name[lang];const sub=document.createElement('small');sub.textContent=a.scope[lang];c.append(title,sub);b.append(num,c);b.onclick=()=>{selected=a;render();$('dossier').scrollIntoView({behavior:'smooth',block:'center'})};list.append(b)}
+      $('dialogTitle').textContent=t.dialogTitle;$('dialogClose').textContent=t.close;
+    }
+    function showDialog(message){$('dialogText').textContent=message;$('demoDialog').showModal()}
+    $('dialogClose').onclick=()=>$('demoDialog').close();
+    $('featureAction').onclick=()=>showDialog(copy[lang].dialogFeature);
+    $('search').addEventListener('input',e=>{query=e.target.value;render()});
+    document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{lang=b.dataset.lang;document.querySelectorAll('[data-lang]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));render()});
+    $('themeButton').onclick=()=>{document.body.classList.toggle('dark');$('themeButton').setAttribute('aria-pressed',String(document.body.classList.contains('dark')));render()};
+    render();
+  </script>
+</body>
+</html>
