@@ -1,7 +1,6 @@
 import '../widgets/desktop_shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
@@ -77,6 +76,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
             book.editor,
             book.publisher,
             book.section,
+            book.localizedSection,
           ].join(' ').toLowerCase().contains(_query);
 
       if (!matchesQuery) return false;
@@ -153,7 +153,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     const SizedBox(height: 4),
                     Text(
                       widget.collectionName,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         color: textSecondary,
                         fontSize: 13,
                       ),
@@ -163,10 +163,10 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     TextField(
                       controller: _searchController,
                       focusNode: _searchFocusNode,
-                      style: GoogleFonts.outfit(color: ink, fontSize: 14),
+                      style: ScholarlyFonts.outfit(color: ink, fontSize: 14),
                       decoration: InputDecoration(
                         hintText: Loc.tr('ui_0ae09a2807'),
-                        hintStyle: GoogleFonts.outfit(
+                        hintStyle: ScholarlyFonts.outfit(
                             color: textSecondary, fontSize: 13),
                         prefixIcon: Icon(Icons.search_rounded,
                             color: textSecondary, size: 20),
@@ -258,7 +258,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       const SizedBox(height: 12),
                       Text(
                         Loc.tr('ui_54db73b3af'),
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: ink,
@@ -267,7 +267,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       const SizedBox(height: 4),
                       Text(
                         Loc.tr('ui_f7c779cb7d'),
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                           fontSize: 12,
                           color: textSecondary,
                         ),
@@ -341,7 +341,7 @@ class _FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.outfit(
+          style: ScholarlyFonts.outfit(
             color: isSelected ? OTColors.canvas(isDark) : ink,
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -372,20 +372,24 @@ class _BookEditorialItem extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(17),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: border, width: 0.8)),
+          color: OTColors.surface(isDark),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: border, width: 0.8),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 36,
+              width: 30,
               child: Text(
                 index.toString().padLeft(2, '0'),
-                style: GoogleFonts.outfit(
-                  color: textSecondary,
+                style: ScholarlyFonts.outfit(
+                  color: OTColors.accent(isDark),
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -408,7 +412,7 @@ class _BookEditorialItem extends StatelessWidget {
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
-                          book.section,
+                          book.localizedSection,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: OTTypography.caption(color: textSecondary),
@@ -425,7 +429,7 @@ class _BookEditorialItem extends StatelessWidget {
                       child: Text(
                         book.title,
                         textAlign: TextAlign.right,
-                        style: GoogleFonts.scheherazadeNew(
+                        style: ScholarlyFonts.scheherazadeNew(
                           color: ink,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -437,7 +441,7 @@ class _BookEditorialItem extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     Loc.tr('authorCredit', [book.author]),
-                    style: GoogleFonts.outfit(
+                    style: ScholarlyFonts.outfit(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       color: textSecondary,
@@ -447,7 +451,7 @@ class _BookEditorialItem extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       Loc.tr('editorCredit', [book.editor]),
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
@@ -635,8 +639,8 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
-                                  book.section.toUpperCase(),
-                                  style: GoogleFonts.outfit(
+                                  book.localizedSection,
+                                  style: ScholarlyFonts.outfit(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: textSecondary,
@@ -646,7 +650,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                               const Spacer(),
                               Text(
                                 book.deathLabel,
-                                style: GoogleFonts.outfit(
+                                style: ScholarlyFonts.outfit(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: textSecondary,
@@ -662,7 +666,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                               child: Text(
                                 book.title,
                                 textAlign: TextAlign.right,
-                                style: GoogleFonts.scheherazadeNew(
+                                style: ScholarlyFonts.scheherazadeNew(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: ink,
@@ -674,7 +678,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                           const SizedBox(height: 12),
                           Text(
                             book.author,
-                            style: GoogleFonts.newsreader(
+                            style: ScholarlyFonts.newsreader(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: ink,
@@ -686,7 +690,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                     const SizedBox(height: 24),
                     Text(
                       Loc.tr('bookRecordMetadata'),
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,
@@ -751,7 +755,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         icon: const Icon(Icons.content_copy_rounded, size: 18),
                         label: Text(
                           Loc.tr('ui_3f42b695cf'),
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -811,7 +815,7 @@ class _DetailRow extends StatelessWidget {
             width: 130,
             child: Text(
               label,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 12,
                 color: textSecondary,
               ),
@@ -820,7 +824,7 @@ class _DetailRow extends StatelessWidget {
           Expanded(
             child: Text(
               displayValue,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: ink,
