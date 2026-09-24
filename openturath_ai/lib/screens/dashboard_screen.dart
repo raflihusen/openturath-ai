@@ -288,15 +288,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       builder: (context, _) {
                         final isFocused = _searchFocusNode.hasFocus;
                         return Container(
-                          height: 48,
+                          height: 54,
                           padding: const EdgeInsets.only(left: 16, right: 6),
                           decoration: BoxDecoration(
-                            color: surface,
-                            borderRadius: BorderRadius.circular(100),
-                            border: Border.all(
-                              color: isFocused ? accent : border,
-                              width: isFocused ? 1.5 : 1.0,
-                            ),
+                            color: OTColors.surfaceSubtle(isDark),
+                            borderRadius: BorderRadius.circular(22),
+                            border: isFocused
+                                ? Border.all(color: accent, width: 1.5)
+                                : null,
                           ),
                           child: Row(
                             children: [
@@ -330,7 +329,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                               if (_searchQuery.isNotEmpty)
                                 Tooltip(
-                                  message: 'Hapus pencarian',
+                                  message: Loc.tr('clearSearch'),
                                   child: InkWell(
                                     onTap: () {
                                       _searchController.clear();
@@ -610,30 +609,28 @@ class _StudyEntryCard extends StatelessWidget {
 
     final categoryLabel = AppCopy.studyBookCategory;
 
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-    final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
+    final surface = OTColors.primaryContainer(isDark);
+    final textPrimary = OTColors.onPrimaryContainer(isDark);
+    final textSecondary = OTColors.onPrimaryContainer(isDark);
 
     return Semantics(
       button: true,
       label: '$title. $subtitle',
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(28),
         child: InkWell(
           onTap: onPrimary,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(28),
           child: Ink(
             decoration: BoxDecoration(
               color: surface,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: border, width: 1.0),
+              borderRadius: BorderRadius.circular(28),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(17),
+              borderRadius: BorderRadius.circular(28),
               child: Padding(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(22),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -699,9 +696,7 @@ class _StudyEntryCard extends StatelessWidget {
                               Text(
                                 primaryLabel,
                                 style: ScholarlyFonts.outfit(
-                                  color: isDark
-                                      ? OTColors.canvasDark
-                                      : Colors.white,
+                                  color: OTColors.onAccent(isDark),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -710,8 +705,7 @@ class _StudyEntryCard extends StatelessWidget {
                               Icon(
                                 Icons.arrow_forward_rounded,
                                 size: 13,
-                                color:
-                                    isDark ? OTColors.canvasDark : Colors.white,
+                                color: OTColors.onAccent(isDark),
                               ),
                             ],
                           ),
