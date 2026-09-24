@@ -189,13 +189,17 @@ class _TopBar extends StatelessWidget {
           tooltip: Loc.tr('back'),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
-        Text(
-          Loc.tr('libraryOverview'),
-          style: ScholarlyFonts.newsreader(
-            color: ink,
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.5,
+        Expanded(
+          child: Text(
+            Loc.tr('libraryOverview'),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: ScholarlyFonts.newsreader(
+              color: ink,
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.5,
+            ),
           ),
         ),
       ],
@@ -261,7 +265,10 @@ class _HeroLibraryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 10,
+            runSpacing: 6,
+            alignment: WrapAlignment.spaceBetween,
             children: [
               Container(
                 padding:
@@ -282,7 +289,6 @@ class _HeroLibraryCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
               Text(
                 Loc.tr('bookCount', [metadata.totalKitab.toString()]),
                 style: GoogleFonts.outfit(
@@ -447,14 +453,18 @@ class _StatCard extends StatelessWidget {
           Row(
             children: [
               Icon(icon, size: 18, color: textSecondary),
-              const Spacer(),
-              Text(
-                label,
-                style: GoogleFonts.outfit(
-                  color: textSecondary,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.end,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: ScholarlyFonts.outfit(
+                    color: textSecondary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
