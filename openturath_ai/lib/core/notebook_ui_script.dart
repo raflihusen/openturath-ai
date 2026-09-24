@@ -343,19 +343,12 @@ const notebookUiScript = r'''
   function findOutputLanguageItem() {
     const panels = [...document.querySelectorAll('[role="menu"], .mat-mdc-menu-panel, .cdk-overlay-pane')];
     if (panels.length === 0) return null;
-    const candidates = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item, div')]);
+    const candidates = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item')]);
     return candidates.find(candidate => {
       if (!candidate || !document.contains(candidate)) return false;
-      const aria = (candidate.getAttribute('aria-label') || '').toLowerCase();
-      const txt = (candidate.innerText || candidate.textContent || '').toLowerCase();
-      if (aria.includes('output language') || aria.includes('bahasa output') || aria.includes('bahasa keluaran')) return true;
-      if (txt.includes('output language') || txt.includes('bahasa output') || txt.includes('bahasa keluaran')) return true;
-      const icon = candidate.querySelector('mat-icon, i, [data-mat-icon-name]');
-      const iconName = icon ? (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.innerText || '').trim().toLowerCase() : '';
-      if ((iconName === 'language' || iconName === 'public' || iconName === 'translate') && (txt.includes('language') || txt.includes('bahasa') || txt.includes('output') || txt.includes('لغة'))) {
-        return true;
-      }
-      return false;
+      const label = (candidate.getAttribute('aria-label') || candidate.innerText || candidate.textContent || '')
+        .trim().replace(/\s+/g, ' ').toLowerCase();
+      return /^(output language|bahasa output|bahasa keluaran|لغة الإخراج)(?:\s|$)/i.test(label);
     });
   }
 
@@ -370,7 +363,7 @@ const notebookUiScript = r'''
         if (parentBtn) return parentBtn;
       }
     }
-    return document.querySelector('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i]');
+    return null;
   }
 
   window.otOpenLanguageSettings = function() {
