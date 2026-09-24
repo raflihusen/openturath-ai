@@ -196,7 +196,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       Navigator.pop(ctx);
                       session.webController?.evaluateJavascript(
                         source:
-                            'if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
+                            'if (typeof window.otOpenLanguageSettings === "function") { window.otOpenLanguageSettings(); } else if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
                       );
                     },
                     icon: Icon(Icons.translate_rounded,
@@ -543,9 +543,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           div:has(> img[alt*="cover" i]), div[class*="hero" i], div[class*="cover" i],
           div[class*="guide" i]:not(.chat-view):not(.conversation-container),
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
-          button[aria-label*="More" i], button[aria-label*="Opsi" i],
-          button[aria-label*="options" i], button[aria-label*="Notebook options" i],
-          button[aria-label*="Option" i],
           button.mat-tonal-button, a[aria-label*="Google" i],
           [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
           footer, div[class*="footer" i],
@@ -577,13 +574,33 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             z-index: -1 !important;
           }
           button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-          button[aria-label*="Notebook settings" i] {
+          button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
+          button[aria-label*="More" i], button[aria-label*="Opsi" i],
+          button[aria-label*="options" i], button[aria-label*="Notebook options" i],
+          button[aria-label*="Option" i] {
             position: fixed !important;
             top: -9999px !important;
             left: -9999px !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
+            width: 24px !important;
+            height: 24px !important;
+            opacity: 0.001 !important;
+            pointer-events: auto !important;
+            visibility: visible !important;
             z-index: -1 !important;
+          }
+          .ot-opening-language [role="menu"],
+          .ot-opening-language .mat-mdc-menu-panel,
+          .ot-opening-language .cdk-overlay-pane:has([role="menu"]) {
+            opacity: 0 !important;
+          }
+          .cdk-overlay-container {
+            z-index: 99999 !important;
+          }
+          [role="dialog"], mat-dialog-container, .mat-mdc-dialog-container {
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: block !important;
+            z-index: 100000 !important;
           }
           .chat-disclaimer, .query-disclaimer, .model-disclaimer,
           [class*="disclaimer" i], [aria-label*="disclaimer" i],
@@ -607,6 +624,119 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         `;
         (document.head || document.documentElement).appendChild(style);
       }
+
+      function triggerClick(el) {
+        if (!el) return;
+        try {
+          var rect = el.getBoundingClientRect();
+          var x = rect.left + (rect.width > 0 ? rect.width / 2 : 0);
+          var y = rect.top + (rect.height > 0 ? rect.height / 2 : 0);
+          var evtInit = {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+            clientX: x,
+            clientY: y
+          };
+          el.dispatchEvent(new PointerEvent('pointerdown', evtInit));
+          el.dispatchEvent(new MouseEvent('mousedown', evtInit));
+          el.dispatchEvent(new PointerEvent('pointerup', evtInit));
+          el.dispatchEvent(new MouseEvent('mouseup', evtInit));
+          el.click();
+        } catch (e) {
+          try { el.click(); } catch (_) {}
+        }
+      }
+
+      function findOutputLanguageItem() {
+        var panels = Array.from(document.querySelectorAll('[role="menu"], .mat-mdc-menu-panel, .cdk-overlay-pane'));
+        if (panels.length === 0) return null;
+        var candidates = [];
+        panels.forEach(function(p) {
+          candidates = candidates.concat(Array.from(p.querySelectorAll('[role="menuitem"], button, mat-list-item, div')));
+        });
+        return candidates.find(function(candidate) {
+          if (!candidate || !document.contains(candidate)) return false;
+          var aria = (candidate.getAttribute('aria-label') || '').toLowerCase();
+          var txt = (candidate.innerText || candidate.textContent || '').toLowerCase();
+          if (aria.includes('output language') || aria.includes('bahasa output') || aria.includes('bahasa keluaran')) return true;
+          if (txt.includes('output language') || txt.includes('bahasa output') || txt.includes('bahasa keluaran')) return true;
+          var icon = candidate.querySelector('mat-icon, i, [data-mat-icon-name]');
+          var iconName = icon ? (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.innerText || '').trim().toLowerCase() : '';
+          if ((iconName === 'language' || iconName === 'public' || iconName === 'translate') && (txt.includes('language') || txt.includes('bahasa') || txt.includes('output') || txt.includes('لغة'))) {
+            return true;
+          }
+          return false;
+        });
+      }
+
+      function findSettingsButton() {
+        var btn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i], [data-action*="settings" i]');
+        if (btn) return btn;
+        var icons = document.querySelectorAll('mat-icon, [data-mat-icon-name]');
+        for (var i = 0; i < icons.length; i++) {
+          var icon = icons[i];
+          var name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
+          if (name === 'settings' || name.includes('setting')) {
+            var parentBtn = icon.closest('button, [role="button"]');
+            if (parentBtn) return parentBtn;
+          }
+        }
+        return document.querySelector('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i]');
+      }
+
+      window.otOpenLanguageSettings = function() {
+        var root = document.documentElement;
+        root.classList.add('ot-opening-language');
+
+        function cleanup() {
+          setTimeout(function() {
+            root.classList.remove('ot-opening-language');
+          }, 500);
+        }
+
+        var immediate = findOutputLanguageItem();
+        if (immediate) {
+          triggerClick(immediate);
+          cleanup();
+          return true;
+        }
+
+        var settings = findSettingsButton();
+        if (!settings) {
+          cleanup();
+          return false;
+        }
+
+        var oldPosition = settings.style.cssText;
+        settings.style.setProperty('top', '8px', 'important');
+        settings.style.setProperty('left', '8px', 'important');
+        settings.style.setProperty('opacity', '0.001', 'important');
+        settings.style.setProperty('pointer-events', 'auto', 'important');
+        settings.style.setProperty('visibility', 'visible', 'important');
+
+        triggerClick(settings);
+
+        var deadline = Date.now() + 2500;
+        var interval = setInterval(function() {
+          var item = findOutputLanguageItem();
+          if (item) {
+            clearInterval(interval);
+            triggerClick(item);
+            settings.style.cssText = oldPosition;
+            cleanup();
+            return;
+          }
+          if (Date.now() > deadline) {
+            clearInterval(interval);
+            settings.style.cssText = oldPosition;
+            cleanup();
+          }
+        }, 25);
+
+        return true;
+      };
+      var otOpenLanguageSettings = window.otOpenLanguageSettings;
 
       window.applyTurathFontScale = function(value) {
         var scale = Number(value);
