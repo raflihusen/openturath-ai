@@ -835,7 +835,7 @@ class _MembershipPass extends StatelessWidget {
               onTap: onViewAccess ?? onManage,
               borderRadius: BorderRadius.circular(18),
               child: Ink(
-                height: 176,
+                height: MediaQuery.textScalerOf(context).scale(176),
                 decoration: BoxDecoration(
                   color: cardColor,
                   borderRadius: BorderRadius.circular(18),
