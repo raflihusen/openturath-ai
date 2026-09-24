@@ -176,14 +176,18 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String _translateType(String? type) {
     if (type == null || type.isEmpty) return Loc.tr('bookTypeWork');
     final l = type.toLowerCase();
-    if (l.contains('matn') || l.contains('matan'))
+    if (l.contains('matn') || l.contains('matan')) {
       return Loc.tr('bookTypeMatn');
-    if (l.contains('syarah') || l.contains('sharh'))
+    }
+    if (l.contains('syarah') || l.contains('sharh')) {
       return Loc.tr('bookTypeSharh');
-    if (l.contains('hasyiyah') || l.contains('hashiyah'))
+    }
+    if (l.contains('hasyiyah') || l.contains('hashiyah')) {
       return Loc.tr('bookTypeHashiyah');
-    if (l.contains('mukhtasar') || l.contains('ringkasan'))
+    }
+    if (l.contains('mukhtasar') || l.contains('ringkasan')) {
       return Loc.tr('bookTypeSummary');
+    }
     if (l.contains('ensiklopedia') || l.contains('mausuah')) {
       return Loc.tr('bookTypeEncyclopedia');
     }
