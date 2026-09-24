@@ -24,6 +24,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final _service = SubscriptionService();
   String _selectedAgentId = 'fiqh_syafii';
   int _tahawwulatIndex = 0;
+  int _specialistIndex = 0;
   bool _processing = false;
   bool _initialized = false;
 
@@ -379,7 +380,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       size: 14, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text(
-                                    'KORPUS UTAMA · 5 BILIK AI',
+                                    'RUANG KAJIAN UTAMA · 5 ASISTEN SPESIALIS',
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w700,
@@ -415,7 +416,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             style: OTTypography.pageTitle(color: Colors.white)),
                         const SizedBox(height: 6),
                         Text(
-                          'Akses penuh ke 5 persona AI spesialis (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib) yang dilatih dari 50+ kitab otoritatif & ribuan jam transkrip muhadharah Al-Habib Abu Bakar Al-Adni.',
+                          'Akses penuh ke 5 Asisten Penelaah Kitab (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib) yang dilatih dari 50+ kitab otoritatif & ribuan jam transkrip muhadharah Al-Habib Abu Bakar Al-Adni.',
                           style:
                               OTTypography.body(color: const Color(0xFFA1A1AA))
                                   .copyWith(fontSize: 13, height: 1.45),
@@ -493,11 +494,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         // Daftar Benefit Fikih Tahawwulat
                         _benefitRow(
-                          'Akses Eksklusif ke Super AI Fikih Tahawwulat yang Pertama Di Dunia',
+                          'Akses Eksklusif ke Pusat Kajian Fikih Tahawwulat Pertama di Dunia',
                           Colors.white.withValues(alpha: 0.9),
                         ),
                         _benefitRow(
-                          'Akses 5 Persona AI spesialis (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib)',
+                          'Akses 5 Asisten Penelaah Kitab (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib)',
                           Colors.white.withValues(alpha: 0.9),
                         ),
                         _benefitRow(
@@ -638,11 +639,76 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 20),
 
+                        // Tier Selector Cards Spesialis Per Bidang
+                        Row(
+                          children: [
+                            for (var i = 0;
+                                i < ProductPricing.specialists.length;
+                                i++) ...[
+                              if (i > 0) const SizedBox(width: 8),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: _processing
+                                      ? null
+                                      : () =>
+                                          setState(() => _specialistIndex = i),
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                      color: _specialistIndex == i
+                                          ? (dark
+                                              ? const Color(0xFF2A2A34)
+                                              : Colors.black.withValues(alpha: 0.05))
+                                          : (dark
+                                              ? Colors.white.withValues(alpha: 0.03)
+                                              : Colors.black.withValues(alpha: 0.01)),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: _specialistIndex == i
+                                            ? ink
+                                            : border,
+                                        width: _specialistIndex == i ? 1.4 : 1,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          ProductPricing.specialists[i].title,
+                                          style: OTTypography.captionMedium(
+                                            color: _specialistIndex == i
+                                                ? ink
+                                                : muted,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          ProductPricing.rupiah(ProductPricing
+                                              .specialists[i].amount),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: ink,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+
                         PromoPrice(
-                          amount: ProductPricing.specialist.amount,
-                          regularAmount:
-                              ProductPricing.specialist.regularAmount,
-                          period: ProductPricing.specialist.period,
+                          amount: ProductPricing
+                              .specialists[_specialistIndex].amount,
+                          regularAmount: ProductPricing
+                              .specialists[_specialistIndex].regularAmount,
+                          period: ProductPricing
+                              .specialists[_specialistIndex].period,
                         ),
                         const SizedBox(height: 16),
                         Divider(
@@ -651,7 +717,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         // Daftar Benefit Spesialis Per Bidang
                         _benefitRow(
-                          'Akses Penuh AI Spesialis ${selected.title} 24/7',
+                          'Akses Penuh Penelaah Kitab ${selected.title} 24/7',
                           ink,
                         ),
                         _benefitRow(
@@ -674,7 +740,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             onPressed: _processing
                                 ? null
                                 : () => _checkout(
-                                    selected, ProductPricing.specialist),
+                                    selected,
+                                    ProductPricing
+                                        .specialists[_specialistIndex]),
                             style: FilledButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(100)),

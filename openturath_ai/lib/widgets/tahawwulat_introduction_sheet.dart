@@ -93,7 +93,7 @@ class _TahawwulatIntroductionSheetState
     "Manhaj Dakwah & Sikap",
     "Al-Khuwaishah",
     "Kurikulum Pustaka",
-    "5 Bilik AI",
+    "5 Asisten Spesialis",
   ];
 
   @override
@@ -530,20 +530,20 @@ class _TahawwulatIntroductionSheetState
                 ],
 
                 // ════════════════════════════════════════════════════════
-                // TAB 6: 5 BILIK SUPER AI
+                // TAB 6: 5 ASISTEN SPESIALIS
                 // ════════════════════════════════════════════════════════
                 if (_selectedTabIndex == 0 || _selectedTabIndex == 6) ...[
                   _buildSectionHeader(
                     context,
                     tag: "BAB 12",
-                    title: "Arsitektur 5 Bilik Super AI OpenTurath",
+                    title: "Arsitektur 5 Asisten Spesialis OpenTurath",
                     arabic:
                         "الغُرَفُ الخَمْسُ لِلذَّكَاءِ الاصْطِنَاعِيِّ التَّخَصُّصِيِّ",
                   ),
                   const SizedBox(height: 12),
                   _buildBodyText(
                     "Karena disiplin ini sarat dengan peristilahan baru (al-muṣṭalaḥāt al-mubtakarah) serta ribuan jam transkrip lisan mualif, "
-                    "OpenTurath AI menghadirkan 5 Bilik AI Spesialis Terpadu dalam satu ruang kajian:",
+                    "OpenTurath AI menghadirkan 5 Asisten Spesialis Terpadu dalam satu ruang kajian:",
                     isDark,
                   ),
                   const SizedBox(height: 16),
@@ -1753,7 +1753,7 @@ class _TahawwulatIntroductionSheetState
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "Buka Bilik ${room.name}",
+                          "Buka ${room.name}",
                           style: GoogleFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -1816,7 +1816,7 @@ class _TahawwulatIntroductionSheetState
           ),
           const SizedBox(height: 10),
           Text(
-            "Kehadiran teknologi Super AI di OpenTurath AI ini lahir murni sebagai Khadim Khazanah (pelayan ilmu), "
+            "Kehadiran teknologi kecerdasan turats di OpenTurath AI ini lahir murni sebagai Khadim Khazanah (pelayan ilmu), "
             "meruntuhkan dinding kesulitan istilah dan kendala akses agar mutiara warisan kenabian ini dapat dipelajari dengan mudah, jernih, dan beradab.",
             style: GoogleFonts.outfit(
               fontSize: 12,

@@ -24,13 +24,18 @@ abstract final class ProductPricing {
   static const revision = 'perdana-2026-09-20';
   static const specialist = SubscriptionOffer(
     plan: 'tholib_1m', months: 1, regularAmount: 300000, amount: 50000);
+  static const specialists = [
+    specialist,
+    SubscriptionOffer(plan: 'tholib_6m', months: 6, regularAmount: 1200000, amount: 299000),
+    SubscriptionOffer(plan: 'bahits_1y', months: 12, regularAmount: 2400000, amount: 499000),
+  ];
   static const tahawwulat = [
     SubscriptionOffer(plan: 'tholib_1m', months: 1, regularAmount: 1000000, amount: 300000),
     SubscriptionOffer(plan: 'tholib_6m', months: 6, regularAmount: 2995000, amount: 1499000),
     SubscriptionOffer(plan: 'bahits_1y', months: 12, regularAmount: 4995000, amount: 1999000),
   ];
   static List<SubscriptionOffer> forAgent(String agentId) =>
-      agentId.startsWith('fiqh_tahawwulat') ? tahawwulat : const [specialist];
+      agentId.startsWith('fiqh_tahawwulat') ? tahawwulat : specialists;
   static String rupiah(int amount) => 'Rp ${amount.toString().replaceAllMapped(
     RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (match) => '${match[1]}.')}';
 }
