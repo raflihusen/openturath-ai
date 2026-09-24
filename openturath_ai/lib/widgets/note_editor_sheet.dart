@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:intl/intl.dart' show Bidi;
 import '../core/localization.dart';
 import 'native_theme.dart';
 import '../core/design/native_design.dart';
@@ -61,6 +62,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     _bodyController = TextEditingController(
       text: widget.item?.fullAnswer ?? widget.item?.arabicExcerpt ?? '',
     );
+    _textDirection = Bidi.detectRtlDirectionality(_bodyController.text) ||
+            (_bodyController.text.isEmpty && Loc.isArabic)
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
     _titleController.addListener(_scheduleAutoSave);
     _bodyController.addListener(_scheduleAutoSave);
@@ -309,7 +314,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                             ? 'Catatan baru'
                             : 'Edit catatan'),
                         style: NativeType.title(dark, size: 22))),
-                TextButton(
+                FilledButton(
                     onPressed: _submitting ? null : _submit,
                     child: Text(_submitting
                         ? NativeCopy.text('loading')
@@ -392,8 +397,19 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   constraints: const BoxConstraints(maxWidth: 760),
                   child: ListView(padding: const EdgeInsets.all(20), children: [
                     if (_isPreview) ...[
-                      Text(_titleController.text,
-                          style: NativeType.title(dark)),
+                      Directionality(
+                        textDirection:
+                            Bidi.detectRtlDirectionality(_titleController.text)
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
+                        child: Text(
+                          _titleController.text,
+                          style: Bidi.detectRtlDirectionality(
+                                  _titleController.text)
+                              ? NativeType.arabic(dark, size: 28)
+                              : NativeType.title(dark),
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       Directionality(
                           textDirection: _textDirection,
@@ -411,7 +427,18 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                       TextField(
                           controller: _titleController,
                           maxLines: null,
-                          style: NativeType.title(dark),
+                          textDirection: Bidi.detectRtlDirectionality(
+                                      _titleController.text) ||
+                                  (_titleController.text.isEmpty &&
+                                      Loc.isArabic)
+                              ? TextDirection.rtl
+                              : TextDirection.ltr,
+                          style: Bidi.detectRtlDirectionality(
+                                      _titleController.text) ||
+                                  (_titleController.text.isEmpty &&
+                                      Loc.isArabic)
+                              ? NativeType.arabic(dark, size: 28)
+                              : NativeType.title(dark),
                           decoration: InputDecoration(
                               hintText: Loc.text('Judul catatan'),
                               border: InputBorder.none,
