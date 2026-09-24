@@ -38,6 +38,7 @@ const copyCatalog = <String, List<String>>{
   "checkoutLinkUnavailable": ["Tautan pembayaran belum tersedia. Silakan coba kembali.", "The payment link is unavailable. Please try again.", "رابط الدفع غير متاح حاليًا. أعد المحاولة."],
   "navSaved": ["Catatan", "Notes", "الملاحظات"],
   "navSettings": ["Pengaturan", "Settings", "الإعدادات"],
+  "membershipFor": ["Untuk", "For", "لصاحب الحساب"],
   "studySpace": ["Percakapan", "Conversation", "المحادثة"],
   "openStudy": ["Membuka asisten…", "Opening assistant…", "جارٍ فتح المساعد…"],
   "studyOptions": ["Tampilan bacaan", "Reading options", "خيارات القراءة"],
