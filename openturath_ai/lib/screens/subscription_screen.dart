@@ -107,21 +107,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (flagship) {
       return Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF141418),
+          color: const Color(0xFF18181B),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: const Color(0xFF383842),
-            width: 1.3,
+            color: const Color(0xFF343438),
+            width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.35),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(20),
         child: child,
       );
     }
@@ -339,7 +339,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           backgroundColor: OTColors.canvas(dark)),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 48),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 760),
@@ -351,7 +351,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   const SizedBox(height: 8),
                   Text(AppCopy.manualRenewalNotice,
                       style: OTTypography.body(color: muted)),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
                   // ── 1. KARTU HITAM ELEGAN: SUPER AI FIKIH TAHAWWULAT (FLAGSHIP) ──
                   _card(
@@ -359,8 +359,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -380,7 +381,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       size: 14, color: Colors.white),
                                   SizedBox(width: 5),
                                   Text(
-                                    'RUANG KAJIAN UTAMA · 5 ASISTEN SPESIALIS',
+                                    'KOLEKSI UTAMA · 5 ASISTEN',
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w700,
@@ -411,17 +412,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 16),
                         Text(AppCopy.planTahawwulat,
                             style: OTTypography.pageTitle(color: Colors.white)),
                         const SizedBox(height: 6),
                         Text(
-                          'Akses penuh ke 5 Asisten Penelaah Kitab (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib) yang dilatih dari 50+ kitab otoritatif & ribuan jam transkrip muhadharah Al-Habib Abu Bakar Al-Adni.',
+                          'Lima asisten untuk menelaah Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.',
                           style:
                               OTTypography.body(color: const Color(0xFFA1A1AA))
                                   .copyWith(fontSize: 13, height: 1.45),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
 
                         // Tier Selector Cards
                         Row(
@@ -481,11 +482,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             ],
                           ],
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         PromoPrice(
                             amount: offer.amount,
                             regularAmount: offer.regularAmount,
-                            period: offer.period),
+                            period: offer.period,
+                            foregroundColor: Colors.white,
+                            secondaryColor: const Color(0xFFB8B8BE)),
                         const SizedBox(height: 16),
                         Divider(
                             color: Colors.white.withValues(alpha: 0.12),
@@ -494,11 +497,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         // Daftar Benefit Fikih Tahawwulat
                         _benefitRow(
-                          'Akses Eksklusif ke Pusat Kajian Fikih Tahawwulat Pertama di Dunia',
+                          'Akses ruang kajian Fikih Tahawwulat',
                           Colors.white.withValues(alpha: 0.9),
                         ),
                         _benefitRow(
-                          'Akses 5 Asisten Penelaah Kitab (Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, Al-Khatib)',
+                          'Lima asisten: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib',
                           Colors.white.withValues(alpha: 0.9),
                         ),
                         _benefitRow(
@@ -506,7 +509,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           Colors.white.withValues(alpha: 0.9),
                         ),
                         _benefitRow(
-                          'Akses Arsip Muhadharah & Transkrip Al-Habib Abu Bakar Al-Adni',
+                          'Arsip muhadharah dan transkrip sebagai bahan telaah',
                           Colors.white.withValues(alpha: 0.9),
                         ),
 
@@ -519,13 +522,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 : () => _checkout(flagship, offer),
                             style: FilledButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF141418),
+                              foregroundColor: const Color(0xFF18181B),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(100)),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             child: Text(
-                              'Pilih Paket Fikih Tahawwulat (${offer.title})',
+                              'Pilih paket ${offer.title}',
                               style:
                                   const TextStyle(fontWeight: FontWeight.w700),
                             ),
@@ -610,31 +613,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Quick horizontal chips for top disciplines
-                        SizedBox(
-                          height: 36,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount:
-                                specialists.length > 8 ? 8 : specialists.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(width: 8),
-                            itemBuilder: (ctx, i) {
-                              final spec = specialists[i];
-                              final isSel = spec.id == selected.id;
-                              return ChoiceChip(
-                                label: Text(spec.title),
-                                selected: isSel,
-                                onSelected: _processing
-                                    ? null
-                                    : (_) => setState(
-                                        () => _selectedAgentId = spec.id),
-                              );
-                            },
                           ),
                         ),
                         const SizedBox(height: 20),
