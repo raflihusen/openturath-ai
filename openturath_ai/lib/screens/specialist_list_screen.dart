@@ -392,7 +392,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 physics: const BouncingScrollPhysics(
                                     parent: AlwaysScrollableScrollPhysics()),
                                 padding: const EdgeInsets.fromLTRB(OTSpacing.lg,
-                                    OTSpacing.xs, OTSpacing.lg, 96),
+                                    OTSpacing.xs, OTSpacing.lg, 28),
                                 itemCount: sorted.length,
                                 separatorBuilder: (_, index) {
                                   final touchesFlagship = sorted[index].id ==
