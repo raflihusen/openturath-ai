@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/turath_chat_message.dart';
-import 'native_turath_chat_view.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
@@ -308,36 +307,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               } else if (val == 'language') {
                 activeTab.webController?.evaluateJavascript(
                   source:
-                      'if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
+                      'if (typeof window.otOpenLanguageSettings === "function") { window.otOpenLanguageSettings(); } else if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
                 );
               } else if (val == 'font') {
                 _showFontScaleDialog(context, activeTab);
-              } else if (val == 'toggle_view') {
-                setState(() => activeTab.isNativeView = !activeTab.isNativeView);
               }
             },
             itemBuilder: (ctx) => [
-              PopupMenuItem(
-                value: 'toggle_view',
-                child: Row(
-                  children: [
-                    Icon(
-                      activeTab.isNativeView
-                          ? Icons.web_rounded
-                          : Icons.auto_awesome_rounded,
-                      color: textPrimary,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      activeTab.isNativeView
-                          ? 'Beralih ke Tampilan Web'
-                          : 'Beralih ke Mode Native',
-                      style: OTTypography.body(color: textPrimary),
-                    ),
-                  ],
-                ),
-              ),
               PopupMenuItem(
                 value: 'language',
                 child: Row(
@@ -597,19 +573,43 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           .chat-input-container, div[class*="query-box" i], div[class*="chat-input" i],
           div[class*="input-container" i], div[class*="prompt-box" i], app-chat-input,
           form:has(textarea), div:has(> textarea), div:has(> [contenteditable="true"]) {
-            border: 1.5px solid #CBD5E1 !important;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            border: 2px solid #94A3B8 !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08) !important;
             background-color: #FFFFFF !important;
             border-radius: 28px !important;
             transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+          }
+          .chat-input-container:focus-within, div[class*="query-box" i]:focus-within,
+          div[class*="chat-input" i]:focus-within, form:has(textarea:focus),
+          div:has(> textarea:focus), div:has(> [contenteditable="true"]:focus) {
+            border-color: #475569 !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.1) !important;
           }
           :root.dark .chat-input-container, :root.dark div[class*="query-box" i],
           :root.dark div[class*="chat-input" i], :root.dark div[class*="input-container" i],
           .dark .chat-input-container, .dark div[class*="query-box" i],
           .dark div:has(> textarea), .dark div:has(> [contenteditable="true"]) {
-            border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
-            box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45) !important;
+            border: 1.8px solid rgba(255, 255, 255, 0.38) !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55) !important;
             background-color: #26272B !important;
+            border-radius: 28px !important;
+          }
+          :root.dark .chat-input-container:focus-within, :root.dark div[class*="query-box" i]:focus-within,
+          .dark .chat-input-container:focus-within, .dark div[class*="query-box" i]:focus-within {
+            border-color: rgba(255, 255, 255, 0.65) !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75) !important;
+          }
+          .chat-input-container textarea, div[class*="query-box" i] textarea,
+          div[class*="chat-input" i] textarea, [contenteditable="true"] {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+          }
+          .mat-mdc-text-field-wrapper, .mat-mdc-form-field-flex {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
           }
           .chat-disclaimer, .query-disclaimer, .model-disclaimer,
           [class*="disclaimer" i], [aria-label*="disclaimer" i],
@@ -1033,38 +1033,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     } catch (_) {}
   }
 
-  Future<void> _sendNativePrompt(String text) async {
-    final controller = widget.session.webController;
-    if (controller == null || text.trim().isEmpty) return;
-
-    final trimmed = text.trim();
-    final userMsg = TurathChatMessage(
-      id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-      text: trimmed,
-      isUser: true,
-      timestamp: DateTime.now(),
-    );
-
-    setState(() {
-      widget.session.chatMessages.add(userMsg);
-      widget.session.isGenerating = true;
-    });
-
-    try {
-      final escaped = jsonEncode(trimmed);
-      await controller.evaluateJavascript(
-        source: 'window.otSendPrompt ? window.otSendPrompt($escaped) : false',
-      );
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          widget.session.isGenerating = false;
-        });
-        AppSnackBar.error(context, 'Gagal mengirim telaah ke asisten.');
-      }
-    }
-  }
-
   Future<void> _fetchUrl() async {
     final session = widget.session;
     setState(() {
@@ -1312,9 +1280,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       color: canvas,
       child: Stack(
         children: [
-          IgnorePointer(
-            ignoring: session.isNativeView,
-            child: InAppWebView(
+          InAppWebView(
             webViewEnvironment: DesktopWebViewRuntime.environment,
             keepAlive: session.keepAlive,
             initialUrlRequest: URLRequest(url: initialUri),
@@ -1581,20 +1547,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
               return NavigationActionPolicy.CANCEL;
             },
-          ),
-        ),
-
-        if (session.isNativeView)
-          Positioned.fill(
-            child: NativeTurathChatView(
-              agent: session.agent,
-              messages: session.chatMessages,
-              isGenerating: session.isGenerating,
-              onSend: _sendNativePrompt,
-              onSwitchToWeb: () {
-                setState(() => session.isNativeView = false);
-              },
-            ),
           ),
 
         // Fullscreen pulsing loader hanya saat inisialisasi awal

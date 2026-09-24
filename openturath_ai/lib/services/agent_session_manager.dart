@@ -22,8 +22,8 @@ class AgentSessionTab {
   bool hasAcknowledgedAdab = false;
   bool hasInjectedEarlyScript = false;
 
-  /// Mode tampilan: true untuk 100% Native Flutter UI, false untuk Headless WebView inspection.
-  bool isNativeView = true;
+  /// Mode tampilan: false untuk tampilan DOM WebView murni (default), true jika menggunakan overlay native.
+  bool isNativeView = false;
   final List<TurathChatMessage> chatMessages = [];
   bool isGenerating = false;
 

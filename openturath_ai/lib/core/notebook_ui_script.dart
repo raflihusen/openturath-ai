@@ -173,19 +173,43 @@ const notebookUiScript = r'''
         .chat-input-container, div[class*="query-box" i], div[class*="chat-input" i],
         div[class*="input-container" i], div[class*="prompt-box" i], app-chat-input,
         form:has(textarea), div:has(> textarea), div:has(> [contenteditable="true"]) {
-          border: 1.5px solid #CBD5E1 !important;
-          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+          border: 2px solid #94A3B8 !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08) !important;
           background-color: #FFFFFF !important;
           border-radius: 28px !important;
           transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        .chat-input-container:focus-within, div[class*="query-box" i]:focus-within,
+        div[class*="chat-input" i]:focus-within, form:has(textarea:focus),
+        div:has(> textarea:focus), div:has(> [contenteditable="true"]:focus) {
+          border-color: #475569 !important;
+          box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.1) !important;
         }
         :root.dark .chat-input-container, :root.dark div[class*="query-box" i],
         :root.dark div[class*="chat-input" i], :root.dark div[class*="input-container" i],
         .dark .chat-input-container, .dark div[class*="query-box" i],
         .dark div:has(> textarea), .dark div:has(> [contenteditable="true"]) {
-          border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
-          box-shadow: 0 4px 22px rgba(0, 0, 0, 0.45) !important;
+          border: 1.8px solid rgba(255, 255, 255, 0.38) !important;
+          box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55) !important;
           background-color: #26272B !important;
+          border-radius: 28px !important;
+        }
+        :root.dark .chat-input-container:focus-within, :root.dark div[class*="query-box" i]:focus-within,
+        .dark .chat-input-container:focus-within, .dark div[class*="query-box" i]:focus-within {
+          border-color: rgba(255, 255, 255, 0.65) !important;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75) !important;
+        }
+        .chat-input-container textarea, div[class*="query-box" i] textarea,
+        div[class*="chat-input" i] textarea, [contenteditable="true"] {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+          background: transparent !important;
+        }
+        .mat-mdc-text-field-wrapper, .mat-mdc-form-field-flex {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
         }
         .chat-disclaimer, .query-disclaimer, .model-disclaimer,
         [class*="disclaimer" i], [aria-label*="disclaimer" i],
@@ -205,17 +229,17 @@ const notebookUiScript = r'''
       (document.head || document.documentElement).appendChild(style);
     }
     // Sembunyikan header, kartu cover/guide, dan Google account bar secara presisi
-    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i], app-guide-intro, app-chat-intro, app-project-summary, .guide-header, .hero-container, .cover-image-container').forEach(el => {
+    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i], app-notebook-guide, notebook-guide, .notebook-guide, app-guide-intro, app-chat-intro, app-project-summary, app-notebook-overview, app-notebook-title, .guide-header, .hero-container, .cover-image-container, .project-info, .notebook-metadata, .summary-card, .guide-card').forEach(el => {
       hide(el);
       el.style.setProperty('display', 'none', 'important');
       el.style.setProperty('visibility', 'hidden', 'important');
       el.style.setProperty('height', '0px', 'important');
     });
     // Hapus kartu intro/cover yang memuat ringkasan sumber di atas timeline obrolan
-    document.querySelectorAll('app-project-summary, .project-summary, app-guide-intro, .guide-header, .hero-container, .cover-image-container, mat-card, .mat-mdc-card').forEach(card => {
+    document.querySelectorAll('app-notebook-guide, notebook-guide, .notebook-guide, app-project-summary, .project-summary, app-guide-intro, .guide-header, .hero-container, .cover-image-container, mat-card, .mat-mdc-card, div[class*="guide" i]:not(.chat-view):not(.conversation-container), div[class*="summary" i]').forEach(card => {
       if (card.closest(answerSelector) || card.closest(questionSelector) || card.querySelector(answerSelector)) return;
       const txt = (card.innerText || '').toLowerCase();
-      if (txt.includes('sources') || txt.includes('sumber') || txt.includes('super ai') || txt.includes('bridging turath') || txt.includes('berbasis turath') || txt.includes('openturath')) {
+      if (txt.includes('sources') || txt.includes('sumber') || txt.includes('super ai') || txt.includes('bridging turath') || txt.includes('berbasis turath') || txt.includes('openturath') || card.querySelector('img') || card.matches('app-notebook-guide, notebook-guide, .notebook-guide, app-project-summary, .hero-container, .cover-image-container')) {
         hide(card);
         card.style.setProperty('display', 'none', 'important');
         card.style.setProperty('height', '0px', 'important');
@@ -264,16 +288,31 @@ const notebookUiScript = r'''
       if (inputElement.getAttribute('aria-label') && /ask|ketik|type|pertanyaan|masalah/i.test(inputElement.getAttribute('aria-label'))) {
         inputElement.setAttribute('aria-label', targetPlaceholder);
       }
-      let pill = inputElement.closest('form') || inputElement.closest('.chat-input-container') || inputElement.closest('div[class*="box" i]') || inputElement.parentElement;
-      while (pill && pill !== document.body && !pill.classList.contains('chat-input-container') && getComputedStyle(pill).borderRadius === '0px') {
-        pill = pill.parentElement;
+      let pill = null;
+      let cur = inputElement;
+      for (let i = 0; i < 6; i++) {
+        if (!cur || cur === document.body) break;
+        const sendBtn = cur.querySelector('button[aria-label*="send" i], button[aria-label*="kirim" i], [data-action*="send" i], button.send-button, form button[type="submit"]');
+        if (sendBtn && sendBtn !== cur) {
+          pill = cur;
+          break;
+        }
+        if (cur.classList.contains('chat-input-container') || cur.classList.contains('query-box') || cur.tagName.toLowerCase() === 'form') {
+          pill = cur;
+          break;
+        }
+        cur = cur.parentElement;
       }
-      if (!pill || pill === document.body) pill = inputElement.parentElement;
-      if (pill) {
-        pill.style.setProperty('border', window._otIsDark ? '1.5px solid rgba(255, 255, 255, 0.22)' : '1.5px solid #CBD5E1', 'important');
-        pill.style.setProperty('box-shadow', window._otIsDark ? '0 4px 20px rgba(0, 0, 0, 0.45)' : '0 4px 18px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04)', 'important');
-        pill.style.setProperty('background-color', window._otIsDark ? '#26272B' : '#FFFFFF', 'important');
+      if (!pill) {
+        pill = inputElement.closest('form') || inputElement.closest('.chat-input-container') || inputElement.closest('[class*="query-box" i]') || inputElement.parentElement;
+      }
+      if (pill && pill !== document.body) {
+        const isDark = !!window._otIsDark;
+        pill.style.setProperty('border', isDark ? '1.8px solid rgba(255, 255, 255, 0.38)' : '2px solid #94A3B8', 'important');
+        pill.style.setProperty('box-shadow', isDark ? '0 6px 24px rgba(0, 0, 0, 0.55)' : '0 4px 20px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08)', 'important');
+        pill.style.setProperty('background-color', isDark ? '#26272B' : '#FFFFFF', 'important');
         pill.style.setProperty('border-radius', '28px', 'important');
+        pill.style.setProperty('transition', 'border-color 0.2s ease, box-shadow 0.2s ease', 'important');
       }
     }
     document.querySelectorAll('.query-placeholder, [class*="placeholder"]').forEach(el => {

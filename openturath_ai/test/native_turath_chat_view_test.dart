@@ -43,7 +43,7 @@ void main() {
         agent: agentSyafii,
       );
 
-      expect(tab.isNativeView, isTrue);
+      expect(tab.isNativeView, isFalse);
       expect(tab.chatMessages.isEmpty, isTrue);
       expect(tab.isGenerating, isFalse);
     });
