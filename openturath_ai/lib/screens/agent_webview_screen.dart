@@ -295,6 +295,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   Future<void> _detectGoogleAccessDenied() async {
     if (_webController == null) return;
     try {
+      final url = await _webController!.getUrl();
+      if (url == null || !NotebookNavigation.notebook(url.uriValue)) return;
       final res = await _webController!.evaluateJavascript(source: """
         (function() {
           var bodyText = document.body ? (document.body.innerText || '') : '';
@@ -328,12 +330,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             'userEmail': _user?.email ?? '',
           },
         );
+        _readinessTimer?.cancel();
         setState(() {
-          _isPaywallRequired = true;
+          _isPaywallRequired = false;
           _isLoadingUrl = false;
           _isWebViewLoading = false;
           _errorMessage =
-              AppCopy.accessUnavailableFor(_agent?.title ?? AppCopy.studySpace);
+              'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
         });
       }
     } catch (_) {}
