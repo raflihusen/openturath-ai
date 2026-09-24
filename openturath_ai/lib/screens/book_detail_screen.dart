@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
 import '../core/localization.dart';
+import '../core/catalog_section_label.dart';
 import '../core/scholarly_fonts.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
@@ -271,9 +272,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                 _isSaved
                     ? Icons.bookmark_rounded
                     : Icons.bookmark_border_rounded,
-                color: _isSaved
-                    ? (isDark ? Colors.white : Colors.black)
-                    : textSecondary,
+                color: _isSaved ? OTColors.accent(isDark) : textSecondary,
               ),
               tooltip: _isSaved ? Loc.tr('bookRemove') : Loc.tr('bookSave'),
               onPressed: _toggleSaveBook,
@@ -314,20 +313,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 vertical: 3.5,
                               ),
                               decoration: BoxDecoration(
-                                color: surfaceSubtle,
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                    color: border.withValues(alpha: 0.7),
-                                    width: 0.6),
+                                color: OTColors.primaryContainer(isDark),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                widget.book.sectionArabic ??
-                                    Loc.tr('unclassified'),
+                                widget.book.sectionArabic == null
+                                    ? Loc.tr('unclassified')
+                                    : CatalogSectionLabel.of(
+                                        widget.book.sectionArabic!),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style:
-                                    OTTypography.caption(color: textSecondary)
-                                        .copyWith(
+                                style: OTTypography.caption(
+                                        color:
+                                            OTColors.onPrimaryContainer(isDark))
+                                    .copyWith(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 11,
                                 ),
@@ -364,7 +363,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               .copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
-                            height: 1.6,
+                            height: 1.85,
                           ),
                         ),
                       ),
@@ -464,10 +463,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     vertical: 3,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.white.withValues(alpha: 0.06)
-                                        : Colors.black.withValues(alpha: 0.04),
-                                    borderRadius: BorderRadius.circular(6),
+                                    color: surfaceSubtle,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Text(
                                     widget.book.verifiedDeathYearHijri != null
@@ -510,7 +507,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         _buildMetaRow(
                           icon: Icons.category_outlined,
                           label: Loc.tr('bookScienceSection'),
-                          value: widget.book.sectionArabic!,
+                          value: CatalogSectionLabel.of(
+                              widget.book.sectionArabic!),
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
                         ),
@@ -651,23 +649,24 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     required Color textPrimary,
     required Color textSecondary,
   }) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: textSecondary),
-        const SizedBox(width: 8),
-        Expanded(
-          flex: 2,
-          child: Text(
+        Row(children: [
+          Icon(icon, size: 17, color: textSecondary),
+          const SizedBox(width: 8),
+          Expanded(
+              child: Text(
             label,
             style: ScholarlyFonts.outfit(color: textSecondary).copyWith(
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          flex: 3,
+          )),
+        ]),
+        const SizedBox(height: 6),
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 25),
           child: Directionality(
             textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(value)
                 ? TextDirection.rtl
@@ -678,7 +677,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               style: (RegExp(r'[\u0600-\u06FF]').hasMatch(value)
                       ? OTTypography.arabicReading(color: textPrimary)
                       : ScholarlyFonts.outfit(color: textPrimary))
-                  .copyWith(fontSize: 13.5, fontWeight: FontWeight.w600),
+                  .copyWith(fontSize: 14, fontWeight: FontWeight.w600),
             ),
           ),
         ),
