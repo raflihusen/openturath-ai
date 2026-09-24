@@ -199,7 +199,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                             'if (typeof window.otOpenLanguageSettings === "function") { window.otOpenLanguageSettings(); } else if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
                       );
                     },
-                    icon: Icon(Icons.translate_rounded,
+                    icon: Icon(Icons.language_rounded,
                         size: 18, color: textPrimary),
                     label: Text(
                       'Ganti Bahasa Output (50+ Bahasa)',
@@ -318,10 +318,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 value: 'language',
                 child: Row(
                   children: [
-                    Icon(Icons.translate_rounded,
+                    Icon(Icons.language_rounded,
                         color: textPrimary, size: 18),
                     const SizedBox(width: 12),
-                    Text('Bahasa Output',
+                    Text('Bahasa Output (Output Language)',
                         style: OTTypography.body(color: textPrimary)),
                   ],
                 ),

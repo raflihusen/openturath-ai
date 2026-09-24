@@ -1275,8 +1275,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             const SizedBox(height: 12),
             ListTile(
               leading:
-                  Icon(Icons.translate_rounded, color: textPrimary, size: 20),
-              title: Text('Bahasa output (50+ bahasa)',
+                  Icon(Icons.language_rounded, color: textPrimary, size: 20),
+              title: Text('Bahasa Output (Output Language)',
                   style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
