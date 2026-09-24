@@ -2,7 +2,11 @@
 const notebookUiScript = r'''
 (function () {
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
-  if (window.otNotebook) { window.otNotebook.clean(); return; }
+  if (window.otNotebook) {
+    window.otOpenLanguageSettings = window.otNotebook.openLanguageSettings;
+    window.otNotebook.clean();
+    return;
+  }
   const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
   const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
@@ -481,7 +485,7 @@ function accessDenied() {
   const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="access-denied" i]');
   return hasTextMatch || hasElementMatch;
 }
-window.otNotebook = {clean, ready, latest, conversation, conversationList, accessDenied, setTheme: syncTheme};
+window.otNotebook = {clean, ready, latest, conversation, conversationList, accessDenied, setTheme: syncTheme, openLanguageSettings: window.otOpenLanguageSettings};
 let scheduled = false;
 let isGenerating = false;
 let lastAnswerText = '';
