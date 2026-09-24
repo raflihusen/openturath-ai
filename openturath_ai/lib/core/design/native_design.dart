@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import '../localization.dart';
 import 'native_fonts.dart';
+import 'ot_colors.dart';
 
 /// Native-only design vocabulary. The AI room keeps its original tokens.
 abstract final class NativeColors {
-  static const canvasLight = Color(0xFFF5F5F7);
-  static const canvasDark = Color(0xFF101010);
-  static const surfaceLight = Color(0xFFFFFFFF);
-  static const surfaceDark = Color(0xFF1A1A1A);
-  static const surfaceSubtleLight = Color(0xFFEBEBF0);
-  static const surfaceSubtleDark = Color(0xFF252523);
-  static const textPrimaryLight = Color(0xFF1D1D1F);
-  static const textPrimaryDark = Color(0xFFF5F5F7);
-  static const textSecondaryLight = Color(0xFF616168);
-  static const textSecondaryDark = Color(0xFFC4C4CC);
-  static const textTertiaryLight = Color(0xFF70706A);
-  static const textTertiaryDark = Color(0xFFA0A099);
-  static const borderLight = Color(0x14191919);
-  static const borderDark = Color(0x1FFFFFFF);
-  static const borderStrongLight = Color(0xFF787872);
-  static const borderStrongDark = Color(0xFF92928B);
-  static const accentLight = Color(0xFF0066CC);
-  static const accentDark = Color(0xFF2997FF);
+  static const canvasLight = OTColors.canvasLight;
+  static const canvasDark = OTColors.canvasDark;
+  static const surfaceLight = OTColors.surfaceLight;
+  static const surfaceDark = OTColors.surfaceDark;
+  static const surfaceSubtleLight = OTColors.surfaceSubtleLight;
+  static const surfaceSubtleDark = OTColors.surfaceSubtleDark;
+  static const textPrimaryLight = OTColors.textPrimaryLight;
+  static const textPrimaryDark = OTColors.textPrimaryDark;
+  static const textSecondaryLight = OTColors.textSecondaryLight;
+  static const textSecondaryDark = OTColors.textSecondaryDark;
+  static const textTertiaryLight = OTColors.textTertiaryLight;
+  static const textTertiaryDark = OTColors.textTertiaryDark;
+  static const borderLight = OTColors.borderLight;
+  static const borderDark = OTColors.borderDark;
+  static const borderStrongLight = OTColors.borderStrongLight;
+  static const borderStrongDark = OTColors.borderStrongDark;
+  static const accentLight = OTColors.accentLight;
+  static const accentDark = OTColors.accentDark;
   static const destructiveLight = Color(0xFF8C2F2F);
   static const destructiveDark = Color(0xFFE49A93);
   static Color canvas(bool dark) => dark ? canvasDark : canvasLight;
@@ -38,8 +39,8 @@ abstract final class NativeColors {
   static Color borderStrong(bool dark) =>
       dark ? borderStrongDark : borderStrongLight;
   static Color accent(bool dark) => dark ? accentDark : accentLight;
-  static Color onAccent(bool dark) => Colors.white;
-  static Color actionFill(bool dark) => const Color(0xFF0066CC);
+  static Color onAccent(bool dark) => OTColors.onAccent(dark);
+  static Color actionFill(bool dark) => OTColors.accent(dark);
   static Color destructiveFill(bool dark) => const Color(0xFF8C2F2F);
   static Color inverseSurface(bool dark) =>
       dark ? surfaceLight : textPrimaryLight;
