@@ -528,16 +528,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         style.id = styleId;
         style.type = 'text/css';
         style.textContent = `
-          top-bar, .top-bar, header, .header, .app-header, app-header,
-          mat-toolbar, [role="banner"], .header-container, .header-row,
-          .mobile-header, div[class*="mobile-header" i],
           labs-tailwind-logo, a.logo-link, .logo-container,
           a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
           .title-input, input.title-input, .title-container, .notebook-title,
-          .notebook-header, app-notebook-header, app-project-header,
           .title-card, mat-card.title-card, .mat-mdc-card.title-card,
-          div[class*="title-card" i], div[class*="notebook-header" i],
-          .project-header, div[class*="project-header" i], div.source-badge-container,
+          div[class*="title-card" i], div.source-badge-container,
           .pro-badge,
           /* Sembunyikan kartu keterangan, hero cover, dan panduan notebook di atas chat */
           app-notebook-guide, notebook-guide, app-guide-intro, app-chat-intro,
@@ -548,7 +543,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           div:has(> img[alt*="cover" i]), div[class*="hero" i], div[class*="cover" i],
           div[class*="guide" i]:not(.chat-view):not(.conversation-container),
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
-          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
           button[aria-label*="More" i], button[aria-label*="Opsi" i],
           button[aria-label*="options" i], button[aria-label*="Notebook options" i],
           button[aria-label*="Option" i],
@@ -568,6 +562,28 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             opacity: 0 !important;
             pointer-events: none !important;
             border: none !important;
+          }
+          top-bar, .top-bar, header, .header, .app-header, app-header,
+          mat-toolbar, [role="banner"], .header-container, .header-row,
+          .mobile-header, div[class*="mobile-header" i],
+          .notebook-header, app-notebook-header, app-project-header,
+          div[class*="notebook-header" i],
+          .project-header, div[class*="project-header" i] {
+            position: fixed !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -1 !important;
+          }
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button[aria-label*="Notebook settings" i] {
+            position: fixed !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -1 !important;
           }
           .chat-disclaimer, .query-disclaimer, .model-disclaimer,
           [class*="disclaimer" i], [aria-label*="disclaimer" i],
@@ -592,28 +608,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         (document.head || document.documentElement).appendChild(style);
       }
 
-      window.otOpenLanguageSettings = function() {
-        var directBtn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i], [data-action*="settings" i]');
-        if (directBtn) {
-          directBtn.click();
-          return true;
-        }
-        var menuBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i], button[aria-label*="Opsi" i], [aria-label*="Menu" i]');
-        if (menuBtn) {
-          menuBtn.click();
-          setTimeout(function() {
-            var items = Array.from(document.querySelectorAll('[role="menuitem"], button, mat-list-item, div'));
-            var settingItem = items.find(function(el) {
-              var t = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-              return t.includes('setting') || t.includes('setelan') || t.includes('bahasa') || t.includes('language');
-            });
-            if (settingItem) settingItem.click();
-          }, 120);
-          return true;
-        }
-        return false;
-      };
-
       window.applyTurathFontScale = function(value) {
         var scale = Number(value);
         if (!Number.isFinite(scale)) return;
@@ -636,7 +630,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             line-height: inherit !important;
           }
           [lang="ar"], .arabic, [dir="rtl"] {
-            font-family: 'Scheherazade New', 'Traditional Arabic', serif !important;
             font-size: ${Math.round(scale * 19)}px !important;
             line-height: 1.8 !important;
           }

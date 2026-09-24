@@ -150,15 +150,11 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         style.type = 'text/css';
         style.textContent = `
           /* Header, Top Bar, Logo, dan Banner Google NotebookLM */
-          top-bar, .top-bar, header, .header, .app-header, app-header,
-          mat-toolbar, [role="banner"], .header-container, .header-row,
-          .mobile-header, div[class*="mobile-header" i],
           labs-tailwind-logo, a.logo-link, .logo-container,
           a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
           .title-input, input.title-input, .title-container, .notebook-title,
-          .notebook-header, app-notebook-header, app-project-header,
           .title-card, mat-card.title-card, .mat-mdc-card.title-card,
-          .project-header, div[class*="project-header" i], div.source-badge-container,
+          div.source-badge-container,
           .pro-badge,
           /* Sembunyikan kartu keterangan, hero cover, dan panduan notebook di atas chat */
           app-notebook-guide, notebook-guide, app-guide-intro, app-chat-intro,
@@ -170,7 +166,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           div[class*="guide" i]:not(.chat-view):not(.conversation-container),
           /* Google Account Bar, App Launcher & Setelan */
           #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
-          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
           button[aria-label*="More" i], button[aria-label*="Opsi" i],
           button[aria-label*="options" i], button[aria-label*="Notebook options" i],
           button[aria-label*="Option" i],
@@ -192,6 +187,27 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             pointer-events: none !important;
             border: none !important;
           }
+          top-bar, .top-bar, header, .header, .app-header, app-header,
+          mat-toolbar, [role="banner"], .header-container, .header-row,
+          .mobile-header, div[class*="mobile-header" i],
+          .notebook-header, app-notebook-header, app-project-header,
+          .project-header, div[class*="project-header" i] {
+            position: fixed !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -1 !important;
+          }
+          button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+          button[aria-label*="Notebook settings" i] {
+            position: fixed !important;
+            top: -9999px !important;
+            left: -9999px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -1 !important;
+          }
           ::-webkit-scrollbar { display: none !important; width: 0px !important; }
           html, body, * { scrollbar-width: none !important; }
           /* Padding atas dan bawah agar percakapan tidak terpotong */
@@ -203,28 +219,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         `;
         (document.head || document.documentElement).appendChild(style);
       }
-
-      window.otOpenLanguageSettings = function() {
-        var directBtn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i], [data-action*="settings" i]');
-        if (directBtn) {
-          directBtn.click();
-          return true;
-        }
-        var menuBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i], button[aria-label*="Opsi" i], [aria-label*="Menu" i]');
-        if (menuBtn) {
-          menuBtn.click();
-          setTimeout(function() {
-            var items = Array.from(document.querySelectorAll('[role="menuitem"], button, mat-list-item, div'));
-            var settingItem = items.find(function(el) {
-              var t = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-              return t.includes('setting') || t.includes('setelan') || t.includes('bahasa') || t.includes('language');
-            });
-            if (settingItem) settingItem.click();
-          }, 120);
-          return true;
-        }
-        return false;
-      };
 
       // 2. Font Scale Presisi
       window.applyTurathFontScale = function(value) {

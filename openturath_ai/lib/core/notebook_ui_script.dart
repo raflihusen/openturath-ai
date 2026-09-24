@@ -4,6 +4,7 @@ const notebookUiScript = r'''
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
   if (window.otNotebook) { window.otNotebook.clean(); return; }
   const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
+  const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
   const visible = el => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && getComputedStyle(el).display !== 'none';
   const text = el => (el?.innerText || el?.textContent || '').trim();
   function answerText(el) {
@@ -20,7 +21,6 @@ const notebookUiScript = r'''
     return answers.length ? answerText(answers[answers.length - 1]) : '';
   }
   function conversation() {
-    const questionSelector = '.chat-message[data-sender="user"], .user-message, .from-user, .to-model-container, [data-message-author-role="user"], app-chat-query, app-chat-prompt';
     const nodes = [...document.querySelectorAll(questionSelector + ',' + answerSelector)].filter(visible);
     const entries = [];
     const seen = new Set();
@@ -120,6 +120,18 @@ const notebookUiScript = r'''
   window.otSetTheme = syncTheme;
 
   function hide(el) { if (el && !el.hasAttribute('data-ot-hidden')) el.setAttribute('data-ot-hidden', ''); }
+  function replaceBrandInText(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (/gemini(\s+notebook)?|notebooklm/i.test(node.nodeValue)) {
+        node.nodeValue = node.nodeValue
+          .replace(/gemini\s+notebook/gi, 'OpenTurath AI')
+          .replace(/notebooklm/gi, 'OpenTurath AI')
+          .replace(/gemini/gi, 'OpenTurath AI');
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE && !node.matches(answerSelector)) {
+      for (const child of node.childNodes) replaceBrandInText(child);
+    }
+  }
   function clean() {
     if (!document.documentElement) return;
     syncTheme();
@@ -127,15 +139,11 @@ const notebookUiScript = r'''
       const style = document.createElement('style'); style.id = 'ot-conversation-ui';
       style.textContent = `
         [data-ot-hidden],
-        top-bar, .top-bar, header, .header, .app-header, app-header,
-        mat-toolbar, [role="banner"], .header-container, .header-row,
-        .mobile-header, div[class*="mobile-header" i],
         labs-tailwind-logo, a.logo-link, .logo-container,
         a[aria-label*="Homepage" i], a[aria-label*="NotebookLM" i], a[aria-label*="Gemini" i],
         .title-input, input.title-input, .title-container, .notebook-title,
-        .notebook-header, app-notebook-header, app-project-header,
         .title-card, mat-card.title-card, .mat-mdc-card.title-card,
-        .project-header, div[class*="project-header" i], div.source-badge-container,
+        div.source-badge-container,
         .pro-badge,
         /* Sembunyikan kartu keterangan, hero cover, dan panduan notebook di atas chat */
         app-notebook-guide, notebook-guide, app-guide-intro, app-chat-intro,
@@ -146,7 +154,6 @@ const notebookUiScript = r'''
         div:has(> img[alt*="cover" i]), div[class*="hero" i], div[class*="cover" i],
         div[class*="guide" i]:not(.chat-view):not(.conversation-container),
         #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"],
-        button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
         button[aria-label*="More" i], button[aria-label*="Opsi" i],
         button[aria-label*="options" i], button[aria-label*="Notebook options" i],
         button[aria-label*="Option" i],
@@ -164,10 +171,43 @@ const notebookUiScript = r'''
           pointer-events: none !important;
           border: none !important;
         }
+        top-bar, .top-bar, header, .header, .app-header, app-header,
+        mat-toolbar, [role="banner"], .header-container, .header-row,
+        .mobile-header, div[class*="mobile-header" i],
+        .notebook-header, app-notebook-header, app-project-header,
+        .project-header, div[class*="project-header" i] {
+          position: fixed !important;
+          top: -9999px !important;
+          left: -9999px !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          z-index: -1 !important;
+        }
+        button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+        button[aria-label*="Notebook settings" i] {
+          position: fixed !important;
+          top: -9999px !important;
+          left: -9999px !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          z-index: -1 !important;
+        }
+        .ot-opening-language [role="menu"],
+        .ot-opening-language .mat-mdc-menu-panel {
+          opacity: 0 !important;
+          pointer-events: none !important;
+        }
         .chat-panel-content, .chat-view, .conversation-container, .message-list, main, app-chat-view {
           padding-top: 8px !important;
           padding-bottom: 24px !important;
           margin-top: 0px !important;
+        }
+        .chat-message-pair, .to-user-container, .to-model-container {
+          margin-bottom: 18px !important;
+        }
+        .rendered-markdown p + p, .chat-response p + p {
+          margin-top: 1em !important;
+        }
         .chat-disclaimer, .query-disclaimer, .model-disclaimer,
         [class*="disclaimer" i], [aria-label*="disclaimer" i],
         [data-testid*="disclaimer" i] {
@@ -186,7 +226,7 @@ const notebookUiScript = r'''
       (document.head || document.documentElement).appendChild(style);
     }
     // Sembunyikan header, kartu cover/guide, dan Google account bar secara presisi
-    document.querySelectorAll('header, top-bar, .top-bar, app-header, app-notebook-header, app-project-header, .notebook-header, .project-header, #gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], [role="banner"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i], app-notebook-guide, notebook-guide, .notebook-guide, app-guide-intro, app-chat-intro, app-project-summary, app-notebook-overview, app-notebook-title, .guide-header, .hero-container, .cover-image-container, .project-info, .notebook-metadata, .summary-card, .guide-card').forEach(el => {
+    document.querySelectorAll('#gb, #gbwa, .gb_C, .gb_9a, .gb_8, .gb_U, div[id*="gb"], div[class*="gb_"], labs-tailwind-logo, a.logo-link, .logo-container, a[aria-label*="Google" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i], [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i], app-notebook-guide, notebook-guide, .notebook-guide, app-guide-intro, app-chat-intro, app-project-summary, app-notebook-overview, app-notebook-title, .guide-header, .hero-container, .cover-image-container, .project-info, .notebook-metadata, .summary-card, .guide-card').forEach(el => {
       hide(el);
       el.style.setProperty('display', 'none', 'important');
       el.style.setProperty('visibility', 'hidden', 'important');
@@ -255,20 +295,6 @@ const notebookUiScript = r'''
       }
     });
     // Tampilkan disclaimer dengan nama OpenTurath AI (menggantikan Gemini Notebook / NotebookLM)
-    function replaceBrandInText(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        if (/gemini(\s+notebook)?|notebooklm/i.test(node.nodeValue)) {
-          node.nodeValue = node.nodeValue
-            .replace(/gemini\s+notebook/gi, 'OpenTurath AI')
-            .replace(/notebooklm/gi, 'OpenTurath AI')
-            .replace(/gemini/gi, 'OpenTurath AI');
-        }
-      } else if (node.nodeType === Node.ELEMENT_NODE && !node.matches(answerSelector)) {
-        for (let child of node.childNodes) {
-          replaceBrandInText(child);
-        }
-      }
-    }
     document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i], [aria-label*="disclaimer" i], div, p, span, small').forEach(el => {
       if (el.closest(answerSelector)) return;
       const t = (el.innerText || '').toLowerCase();
@@ -277,26 +303,36 @@ const notebookUiScript = r'''
       }
     });
   }
-  window.otOpenLanguageSettings = function() {
-    const directBtn = document.querySelector('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i], [data-action*="settings" i]');
-    if (directBtn) {
-      directBtn.click();
-      return true;
+  window.otOpenLanguageSettings = async function() {
+    const settings = [...document.querySelectorAll('button[aria-label*="Settings" i], button[aria-label*="Setelan" i], button[aria-label*="Notebook settings" i]')]
+      .find(button => !button.disabled);
+    if (!settings) return false;
+    const root = document.documentElement;
+    const oldPosition = settings.style.cssText;
+    root.classList.add('ot-opening-language');
+    // Menu Material perlu jangkar di viewport, tetapi tetap tidak terlihat.
+    settings.style.setProperty('top', '8px', 'important');
+    settings.style.setProperty('left', '8px', 'important');
+    try {
+      settings.click();
+      const deadline = Date.now() + 1800;
+      while (Date.now() < deadline) {
+        const panels = [...document.querySelectorAll('[role="menu"], .mat-mdc-menu-panel')];
+        const item = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item')])
+          .find(candidate => /^(output language|bahasa output|bahasa keluaran)$/i.test(
+            (candidate.getAttribute('aria-label') || candidate.innerText || '').trim().replace(/\s+/g, ' ')
+          ));
+        if (item) {
+          item.click();
+          return true;
+        }
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      return false;
+    } finally {
+      settings.style.cssText = oldPosition;
+      root.classList.remove('ot-opening-language');
     }
-    const menuBtn = document.querySelector('button[aria-label*="options" i], button[aria-label*="More" i], button[aria-label*="Opsi" i], [aria-label*="Menu" i]');
-    if (menuBtn) {
-      menuBtn.click();
-      setTimeout(() => {
-        const items = [...document.querySelectorAll('[role="menuitem"], button, mat-list-item, div')];
-        const settingItem = items.find(el => {
-          const t = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-          return t.includes('setting') || t.includes('setelan') || t.includes('bahasa') || t.includes('language');
-        });
-        if (settingItem) settingItem.click();
-      }, 120);
-      return true;
-    }
-    return false;
   };
   window.otSendPrompt = function(promptText) {
     if (!promptText || typeof promptText !== 'string') return false;
