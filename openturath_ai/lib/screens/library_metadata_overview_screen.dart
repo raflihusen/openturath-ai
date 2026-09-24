@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../core/design/ot_colors.dart';
+import '../core/app_snackbar.dart';
+import '../core/localization.dart';
+import '../core/scholarly_fonts.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'book_library_editorial_screen.dart';
 
@@ -11,6 +15,34 @@ String _readerTitle(String value) {
       .replaceFirst(RegExp(r'^(Super\s+)?AI\s+', caseSensitive: false), '')
       .replaceAll(RegExp(r'\s*\([^)]*\)'), '')
       .trim();
+}
+
+String _collectionTitle(AiLibraryMetadata metadata) {
+  if (Loc.isArabic) return metadata.namaArab;
+  if (Loc.language == 'id') return _readerTitle(metadata.nama);
+  return switch (metadata.keyName) {
+    'fiqh_syafii' => 'Shafi‘i jurisprudence',
+    'hadits' => 'Hadith and Prophetic tradition',
+    'ushul_fiqh' => 'Principles of jurisprudence',
+    'bahasa_arab' => 'Arabic language and literature',
+    'tafsir' => 'Qur’anic exegesis',
+    'fiqh_tahawwulat' => 'Jurisprudence of transformations',
+    'tarikh_sirah' => 'History and Prophetic biography',
+    'fiqh_muqaran' => 'Comparative jurisprudence',
+    'fatawa_masail' => 'Legal opinions and questions',
+    'syarah_hadits' => 'Hadith commentaries',
+    'fiqh_hanafi' => 'Hanafi jurisprudence',
+    'fiqh_maliki' => 'Maliki jurisprudence',
+    'fiqh_hanbali' => 'Hanbali jurisprudence',
+    'tasawwuf' => 'Spiritual ethics',
+    'tajwid_qiraat' => 'Qur’anic recitation',
+    'qawaid_fiqhiyyah' => 'Legal maxims',
+    'musthalah_hadits' => 'Hadith methodology',
+    'aqidah' => 'Theology',
+    'thabaqat_tarajim' => 'Scholarly biographies',
+    'bibliografi_faharis' => 'Bibliography and indexes',
+    _ => metadata.namaArab,
+  };
 }
 
 /// Halaman Ringkasan Pustaka & Pelatihan AI (Monochrome Editorial)
@@ -82,7 +114,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
           MaterialPageRoute<void>(
             builder: (_) => OpenTurathBookLibraryPage(
               books: books,
-              collectionName: widget.metadata.nama,
+              collectionName: _collectionTitle(widget.metadata),
             ),
           ),
         );
@@ -90,12 +122,14 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
     } catch (_) {
       if (mounted) {
         setState(() => _isLoadingBooks = false);
+        AppSnackBar.error(context, Loc.tr('catalogError'));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
 
@@ -115,11 +149,11 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
               ),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1280),
+                  constraints: const BoxConstraints(maxWidth: 760),
                   child: Column(
                     children: [
                       _TopBar(metadata: widget.metadata),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       _ResponsiveMetadataLayout(
                         metadata: widget.metadata,
                         isLoadingBooks: _isLoadingBooks,
@@ -144,6 +178,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(isDark);
 
@@ -151,12 +186,12 @@ class _TopBar extends StatelessWidget {
       children: [
         IconButton(
           icon: Icon(Icons.arrow_back_rounded, color: ink, size: 22),
-          tooltip: 'Kembali',
+          tooltip: Loc.tr('back'),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         Text(
-          'Pustaka rujukan',
-          style: GoogleFonts.newsreader(
+          Loc.tr('libraryOverview'),
+          style: ScholarlyFonts.newsreader(
             color: ink,
             fontSize: 22,
             fontWeight: FontWeight.w600,
@@ -181,42 +216,16 @@ class _ResponsiveMetadataLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth >= 900;
-        final hero = _HeroLibraryCard(
+    return Column(
+      children: [
+        _HeroLibraryCard(
           metadata: metadata,
           isLoadingBooks: isLoadingBooks,
           onOpenCatalog: onOpenCatalog,
-        );
-
-        final stats = _StatsGrid(metadata: metadata);
-
-        if (!isWide) {
-          return Column(
-            children: [
-              hero,
-              const SizedBox(height: 18),
-              stats,
-            ],
-          );
-        }
-
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 5,
-              child: hero,
-            ),
-            const SizedBox(width: 22),
-            Expanded(
-              flex: 6,
-              child: stats,
-            ),
-          ],
-        );
-      },
+        ),
+        const SizedBox(height: 12),
+        _StatsGrid(metadata: metadata),
+      ],
     );
   }
 }
@@ -234,6 +243,7 @@ class _HeroLibraryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final ink = OTColors.textPrimary(isDark);
@@ -242,7 +252,7 @@ class _HeroLibraryCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: surface,
         borderRadius: BorderRadius.circular(14),
@@ -263,7 +273,7 @@ class _HeroLibraryCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  metadata.kategori.toUpperCase(),
+                  Loc.tr('libraryOverview'),
                   style: GoogleFonts.outfit(
                     color: textSecondary,
                     fontSize: 10,
@@ -274,7 +284,7 @@ class _HeroLibraryCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '${metadata.totalKitab} kitab',
+                Loc.tr('bookCount', [metadata.totalKitab.toString()]),
                 style: GoogleFonts.outfit(
                   color: textSecondary,
                   fontSize: 12,
@@ -283,7 +293,7 @@ class _HeroLibraryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 18),
           Directionality(
             textDirection: TextDirection.rtl,
             child: Align(
@@ -300,43 +310,29 @@ class _HeroLibraryCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            _readerTitle(metadata.nama),
-            style: GoogleFonts.newsreader(
-              color: ink,
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.5,
-              height: 1.2,
+          if (!Loc.isArabic) ...[
+            const SizedBox(height: 8),
+            Text(
+              _collectionTitle(metadata),
+              style: ScholarlyFonts.newsreader(
+                color: ink,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.5,
+                height: 1.2,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+          ],
+          const SizedBox(height: 8),
           Text(
-            metadata.headlineAplikasi.isNotEmpty
-                ? metadata.headlineAplikasi
-                : 'Khazanah naskah rujukan mu\'tamad berstempel tahqiq ilmiah untuk rujukan santri dan peneliti turats.',
-            style: GoogleFonts.outfit(
+            Loc.tr('librarySummary'),
+            style: ScholarlyFonts.outfit(
               color: textSecondary,
               fontSize: 14,
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 24),
-          const Divider(height: 1, thickness: 0.8),
           const SizedBox(height: 20),
-          _MetaRow(
-            label: 'Rentang Masa',
-            value: metadata.rentangMasa,
-          ),
-          const SizedBox(height: 10),
-          _MetaRow(
-            label: 'Standar Otoritas',
-            value: metadata.badgeOtoritas.isNotEmpty
-                ? metadata.badgeOtoritas
-                : '100% Kitab Mu\'tamad',
-          ),
-          const SizedBox(height: 28),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -350,8 +346,8 @@ class _HeroLibraryCard extends StatelessWidget {
                   : const Icon(Icons.menu_book_outlined, size: 18),
               label: Text(
                 isLoadingBooks
-                    ? 'Membuka katalog…'
-                    : 'Telusuri ${metadata.totalKitab} kitab',
+                    ? Loc.tr('libraryOpening')
+                    : Loc.tr('openCatalog'),
                 style: GoogleFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -374,110 +370,45 @@ class _HeroLibraryCard extends StatelessWidget {
   }
 }
 
-class _MetaRow extends StatelessWidget {
-  const _MetaRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textSecondary = OTColors.textSecondary(isDark);
-    final ink = OTColors.textPrimary(isDark);
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 120,
-          child: Text(
-            label,
-            style: GoogleFonts.outfit(
-              fontSize: 12,
-              color: textSecondary,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: GoogleFonts.outfit(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: ink,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _StatsGrid extends StatelessWidget {
   const _StatsGrid({required this.metadata});
 
   final AiLibraryMetadata metadata;
 
-  String _formatNumber(int number) {
-    final s = number.toString();
-    final buffer = StringBuffer();
-    for (int i = 0; i < s.length; i++) {
-      if (i > 0 && (s.length - i) % 3 == 0) {
-        buffer.write('.');
-      }
-      buffer.write(s[i]);
-    }
-    return buffer.toString();
-  }
-
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
+    final number = NumberFormat.decimalPattern(Loc.language);
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: _StatCard(
-                label: 'KITAB RUJUKAN',
-                value: _formatNumber(metadata.totalKitab),
-                unit: 'Karya pilihan',
+                label: Loc.tr('libraryWorks'),
+                value: number.format(metadata.totalKitab),
                 icon: Icons.auto_stories_outlined,
               ),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: _StatCard(
-                label: 'JILID',
-                value: metadata.totalJilid,
-                unit: 'Naskah cetak',
-                icon: Icons.library_books_outlined,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 14),
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                label: 'HALAMAN',
-                value: _formatNumber(metadata.totalHalaman),
-                unit: 'Edisi katalog',
-                icon: Icons.article_outlined,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _StatCard(
-                label: 'KATA',
-                value:
-                    '${(metadata.totalKata / 1000000).toStringAsFixed(1)} Jt',
-                unit: 'Teks rujukan',
+                label: Loc.tr('libraryWords'),
+                value: NumberFormat.compact(locale: Loc.language)
+                    .format(metadata.totalKata),
                 icon: Icons.text_fields_outlined,
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 10),
+        Text(
+          Loc.tr('libraryDataNote'),
+          style: ScholarlyFonts.outfit(
+            fontSize: 11,
+            color: OTColors.textSecondary(
+                Theme.of(context).brightness == Brightness.dark),
+          ),
         ),
       ],
     );
@@ -488,13 +419,11 @@ class _StatCard extends StatelessWidget {
   const _StatCard({
     required this.label,
     required this.value,
-    required this.unit,
     required this.icon,
   });
 
   final String label;
   final String value;
-  final String unit;
   final IconData icon;
 
   @override
@@ -506,7 +435,7 @@ class _StatCard extends StatelessWidget {
     final border = OTColors.border(isDark);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       decoration: BoxDecoration(
         color: surface,
         borderRadius: BorderRadius.circular(12),
@@ -530,22 +459,14 @@ class _StatCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 6),
           Text(
             value,
             style: GoogleFonts.newsreader(
               color: ink,
-              fontSize: 28,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
               height: 1.1,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            unit,
-            style: GoogleFonts.outfit(
-              color: textSecondary,
-              fontSize: 12,
             ),
           ),
         ],
