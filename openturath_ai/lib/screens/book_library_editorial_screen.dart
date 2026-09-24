@@ -401,16 +401,22 @@ class _BookEditorialItem extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        book.deathLabel,
-                        style: OTTypography.caption(color: textSecondary),
+                      Flexible(
+                        child: Text(
+                          book.deathLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OTTypography.caption(color: textSecondary),
+                        ),
                       ),
-                      const Spacer(),
-                      Text(
-                        book.section,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: OTTypography.caption(color: textSecondary),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          book.section,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OTTypography.caption(color: textSecondary),
+                        ),
                       ),
                     ],
                   ),
@@ -452,24 +458,35 @@ class _BookEditorialItem extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 8),
-                  Row(
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 4,
                     children: [
-                      Icon(Icons.layers_outlined,
-                          size: 13, color: textSecondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        book.volumeLabel,
-                        style: GoogleFonts.outfit(
-                            fontSize: 11, color: textSecondary),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.layers_outlined,
+                              size: 13, color: textSecondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            book.volumeLabel,
+                            style: ScholarlyFonts.outfit(
+                                fontSize: 11, color: textSecondary),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 14),
-                      Icon(Icons.format_list_numbered_rounded,
-                          size: 13, color: textSecondary),
-                      const SizedBox(width: 4),
-                      Text(
-                        book.pagesLabel,
-                        style: GoogleFonts.outfit(
-                            fontSize: 11, color: textSecondary),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.format_list_numbered_rounded,
+                              size: 13, color: textSecondary),
+                          const SizedBox(width: 4),
+                          Text(
+                            book.pagesLabel,
+                            style: ScholarlyFonts.outfit(
+                                fontSize: 11, color: textSecondary),
+                          ),
+                        ],
                       ),
                     ],
                   ),
