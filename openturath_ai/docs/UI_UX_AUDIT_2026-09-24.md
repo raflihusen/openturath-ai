@@ -9,7 +9,7 @@ Audit ini memeriksa tiga tangkapan layar terbaru, jalur kode Asisten → Pustaka
 | Prioritas | Jenis | Bukti | Status |
 | --- | --- | --- | --- |
 | P0 | Cacat lokalisasi dan RTL | Detail kitab kanonik memaksa seluruh layar ke RTL dan label Arab di semua bahasa; katalog editorial serta filter memakai teks Indonesia langsung. | Diperbaiki untuk dua jalur katalog/detail. Teks sumber Arab tetap RTL dan label UI mengikuti ID/EN/AR. |
-| P0 | Luapan layar kecil | Tes 320 px menemukan luapan judul pustaka Arab, dua baris fakta kitab, dan jumlah hasil Indonesia. | Diperbaiki; tes 320 px ID/EN/AR lulus. |
+| P0 | Luapan layar kecil | Tes 320 px menemukan luapan judul pustaka Arab, dua baris fakta kitab, jumlah hasil Indonesia, serta pasangan label dan ID edisi kanonik. | Diperbaiki; tes 320 px ID/EN/AR lulus. |
 | P1 | Identitas asisten hilang | Kartu menerima peran, disiplin, dan judul rujukan tetapi sebelumnya hanya menampilkan nama serta label “Pustaka” yang berulang. | Peran, simbol disiplin, dan rujukan kini terlihat. Identitas editorial setiap asisten masih perlu telaah bersama pengguna di perangkat. |
 | P1 | Hierarki pustaka berat | Hero panjang diikuti empat kartu angka besar menunda akses ke kitab. Uraian Hadis menyebut 1.141, sementara katalog berisi 1.173 entri. | Ringkasan dipadatkan, angka teknis menjadi dua metrik kecil, uraian klaim diganti, dan metadata Hadis diselaraskan dengan berkas katalog. |
 | P1 | Metadata teknis bocor | Detail edisi menampilkan “Folder Korpus” dengan nilai “-” dan baris kosong lain. | Baris tanpa nilai dan folder teknis disembunyikan. |
@@ -46,3 +46,9 @@ Arah ini sesuai dengan [Flutter internationalization](https://docs.flutter.dev/u
 6. Minta penilaian visual atas layar representatif sebelum menyatakan desain final. Tes widget dan analisis statis hanya membuktikan sebagian perilaku.
 
 Tidak ada APK atau siaran pembaruan publik yang merupakan bagian dari audit ini.
+
+## Hasil verifikasi lokal
+
+- Analisis Flutter menyatakan **No issues found**.
+- Seluruh **204 tes Flutter lulus**, termasuk tes baru untuk asisten, ringkasan pustaka, dua jalur katalog/detail, ID/EN/AR, dan lebar 320 px.
+- Render pratinjau otomatis dengan GoogleFonts tanpa akses font jaringan gagal menampilkan huruf secara setia. Karena itu hasil widget tidak diberi status penerimaan visual pada perangkat.
