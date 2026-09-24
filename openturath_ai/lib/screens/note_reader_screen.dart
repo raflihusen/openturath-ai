@@ -115,12 +115,26 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                               color: secondary,
                               letterSpacing: .6)),
                       const SizedBox(height: 8),
-                      Text(displayTitle,
-                          style: NativeFonts.newsreader(
-                              fontSize: 29,
-                              height: 1.15,
-                              fontWeight: FontWeight.w700,
-                              color: primary)),
+                      Directionality(
+                        textDirection:
+                            Bidi.detectRtlDirectionality(displayTitle)
+                                ? TextDirection.rtl
+                                : TextDirection.ltr,
+                        child: Text(
+                          displayTitle,
+                          style: Bidi.detectRtlDirectionality(displayTitle)
+                              ? NativeFonts.scheherazadeNew(
+                                  fontSize: 29,
+                                  height: 1.7,
+                                  fontWeight: FontWeight.w600,
+                                  color: primary)
+                              : NativeFonts.newsreader(
+                                  fontSize: 29,
+                                  height: 1.2,
+                                  fontWeight: FontWeight.w700,
+                                  color: primary),
+                        ),
+                      ),
                       if (_item.agentTitle.isNotEmpty &&
                           _item.documentKind == BookmarkDocumentKind.aiAnswer &&
                           !displayTitle.toLowerCase().contains(_item.agentTitle
@@ -169,8 +183,8 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                                   color: secondary),
                               blockquoteDecoration: BoxDecoration(
                                   color: subtle,
-                                  border: Border(
-                                      left: BorderSide(
+                                  border: BorderDirectional(
+                                      start: BorderSide(
                                           color: secondary, width: 3))),
                             ),
                           )),
