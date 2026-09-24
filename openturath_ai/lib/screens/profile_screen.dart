@@ -284,13 +284,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: canvas,
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         title: Text(
           AppCopy.navSettings,
-          style: ScholarlyFonts.newsreader(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.4,
+          style: ScholarlyFonts.outfit(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
             color: textPrimary,
           ),
         ),
@@ -312,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final membership = resolveMembershipPass(userModel);
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 108),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
               physics: const BouncingScrollPhysics(),
               children: [
                 _MembershipPass(
@@ -327,7 +326,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : null,
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 18),
 
                 // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
                 Container(
@@ -502,7 +501,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
 
                 // ── Quiet Google Play Compliance: Delete Account ──
                 Center(
@@ -836,7 +835,7 @@ class _MembershipPass extends StatelessWidget {
               onTap: onViewAccess ?? onManage,
               borderRadius: BorderRadius.circular(18),
               child: Ink(
-                height: 198,
+                height: 176,
                 decoration: BoxDecoration(
                   color: cardColor,
                   borderRadius: BorderRadius.circular(18),
@@ -847,49 +846,6 @@ class _MembershipPass extends StatelessWidget {
                   borderRadius: BorderRadius.circular(17),
                   child: Stack(
                     children: [
-                      // Ornamen geometris halus: memberi karakter tanpa
-                      // menyamai visual kartu bank atau mengganggu teks.
-                      Positioned(
-                        right: -52,
-                        top: -76,
-                        child: Container(
-                          width: 190,
-                          height: 190,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.12),
-                              width: 1.2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 20,
-                        top: 30,
-                        child: Container(
-                          width: 74,
-                          height: 74,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(22),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.08),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: -36,
-                        bottom: -56,
-                        child: Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.035),
-                          ),
-                        ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
                         child: Column(
@@ -1011,12 +967,13 @@ class _MembershipPass extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        FilledButton.icon(
+        OutlinedButton.icon(
           onPressed: onManage,
-          style: FilledButton.styleFrom(
-            backgroundColor: OTColors.accent(isDark),
-            foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
-            minimumSize: const Size.fromHeight(48),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: OTColors.textPrimary(isDark),
+            backgroundColor: OTColors.surface(isDark),
+            side: BorderSide(color: OTColors.border(isDark)),
+            minimumSize: const Size.fromHeight(44),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
