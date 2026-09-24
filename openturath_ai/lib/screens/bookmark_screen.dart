@@ -15,6 +15,7 @@ import '../core/design/native_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
+import '../core/design/ot_colors.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
 import '../models/bookmark_model.dart';
@@ -436,11 +437,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: isSelected ? textPrimary : surface,
-                        borderRadius: OTRadius.chipBorder,
+                        color: isSelected
+                            ? OTColors.primaryContainer(isDark)
+                            : surface,
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isSelected
-                              ? textPrimary
+                              ? OTColors.primaryContainer(isDark)
                               : border.withValues(alpha: 0.7),
                           width: 0.8,
                         ),
@@ -449,7 +452,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         child: Text(
                           Loc.text(cat),
                           style: NativeTypography.caption(
-                            color: isSelected ? canvas : textSecondary,
+                            color: isSelected
+                                ? OTColors.onPrimaryContainer(isDark)
+                                : textSecondary,
                           ).copyWith(
                             fontSize: 12,
                             fontWeight:
@@ -831,12 +836,12 @@ class _BookmarkCardState extends State<_BookmarkCard> {
       curve: OTMotion.curve,
       child: InkWell(
         onTap: widget.onOpen,
-        borderRadius: OTRadius.cardBorder,
+        borderRadius: BorderRadius.circular(22),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
             color: widget.surface,
-            borderRadius: OTRadius.cardBorder,
+            borderRadius: BorderRadius.circular(22),
             border: Border.all(
               color: _isExpanded
                   ? widget.accent.withValues(alpha: 0.4)
@@ -857,13 +862,14 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 2.5),
                     decoration: BoxDecoration(
-                      color: widget.accent.withValues(alpha: 0.12),
+                      color: OTColors.primaryContainer(isDark),
                       borderRadius: OTRadius.chipBorder,
                     ),
                     child: Text(
                       pillLabel,
                       style:
-                          NativeTypography.captionMedium(color: widget.accent)
+                          NativeTypography.captionMedium(
+                              color: OTColors.onPrimaryContainer(isDark))
                               .copyWith(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
