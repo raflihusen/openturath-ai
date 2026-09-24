@@ -341,12 +341,20 @@ const notebookUiScript = r'''
   function findOutputLanguageItem() {
     const panels = [...document.querySelectorAll('[role="menu"], .mat-mdc-menu-panel, .cdk-overlay-pane')];
     if (panels.length === 0) return null;
-    const candidates = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item')]);
+    const candidates = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item, div')]);
     return candidates.find(candidate => {
       if (!candidate || !document.contains(candidate)) return false;
       const label = (candidate.getAttribute('aria-label') || candidate.innerText || candidate.textContent || '')
         .trim().replace(/\s+/g, ' ').toLowerCase();
-      return /^(output language|bahasa output|bahasa keluaran|لغة الإخراج)(?:\s|$)/i.test(label);
+      if (label.includes('output language') || label.includes('bahasa output') || label.includes('bahasa keluaran') || label.includes('لغة الإخراج')) {
+        return true;
+      }
+      const icon = candidate.querySelector('mat-icon, i, [data-mat-icon-name]');
+      const iconName = icon ? (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.innerText || '').trim().toLowerCase() : '';
+      if ((iconName === 'language' || iconName === 'public' || iconName === 'translate') && (label.includes('language') || label.includes('bahasa') || label.includes('output') || label.includes('لغة'))) {
+        return true;
+      }
+      return false;
     });
   }
 
@@ -361,7 +369,7 @@ const notebookUiScript = r'''
         if (parentBtn) return parentBtn;
       }
     }
-    return null;
+    return document.querySelector('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i]');
   }
 
   window.otOpenLanguageSettings = function() {
