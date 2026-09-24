@@ -34,16 +34,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   String _checkoutErrorMessage(FirebaseFunctionsException error) {
     switch (error.code.toLowerCase()) {
       case 'unauthenticated':
-        return 'Sesi akun berakhir. Masuk kembali lalu ulangi pembayaran.';
+        return Loc.tr('checkoutAuthExpired');
       case 'deadline-exceeded':
       case 'unavailable':
-        return 'Layanan pembayaran belum merespons. Periksa koneksi lalu coba lagi.';
+        return Loc.tr('checkoutServiceUnavailable');
       case 'failed-precondition':
-        return 'Paket belum dapat diproses saat ini. Coba lagi beberapa saat lagi.';
+        return Loc.tr('checkoutPlanUnavailable');
       case 'permission-denied':
-        return 'Akun ini belum dapat memulai pembayaran. Periksa status akun Anda.';
+        return Loc.tr('checkoutAccountDenied');
       case 'invalid-argument':
-        return 'Pilihan paket perlu diperbarui. Buka kembali halaman ini lalu coba lagi.';
+        return Loc.tr('checkoutSelectionInvalid');
       default:
         return Loc.tr('checkoutError');
     }
@@ -71,8 +71,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             Expanded(
               child: Text(message,
                   style: OTTypography.caption(
-                          color:
-                              dark ? Colors.white : OTColors.textPrimary(dark))
+                          color: OTColors.textPrimary(dark))
                       .copyWith(height: 1.4)),
             ),
           ],
@@ -160,8 +159,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       }
     } on FormatException {
       if (mounted) {
-        setState(() => _checkoutError =
-            'Tautan pembayaran belum tersedia. Silakan coba kembali.');
+        setState(() => _checkoutError = Loc.tr('checkoutLinkUnavailable'));
       }
     } catch (_) {
       if (mounted) setState(() => _checkoutError = Loc.tr('checkoutError'));
@@ -176,29 +174,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (flagship) {
       return Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF18181B),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: const Color(0xFF343438),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          color: OTColors.primaryContainer(dark),
+          borderRadius: BorderRadius.circular(28),
         ),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(22),
         child: child,
       );
     }
     return Container(
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: border, width: 1.0),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: border, width: 0.8),
       ),
       padding: const EdgeInsets.all(20),
       child: child,
@@ -394,6 +381,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
     final border = OTColors.border(dark);
+    final featuredInk = OTColors.onPrimaryContainer(dark);
     final flagship =
         AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
     final offer = ProductPricing.tahawwulat[_tahawwulatIndex];
@@ -436,26 +424,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 4.5),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF22222A),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: const Color(0xFF40404C),
-                                  width: 0.8,
-                                ),
+                                color: OTColors.surface(dark).withValues(alpha: 0.6),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(Icons.workspace_premium_rounded,
-                                      size: 14, color: Colors.white),
-                                  SizedBox(width: 5),
+                                      size: 14, color: featuredInk),
+                                  const SizedBox(width: 5),
                                   Text(
-                                    'KOLEKSI UTAMA · 5 ASISTEN',
+                                    Loc.tr('planFeaturedLabel'),
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w700,
-                                      letterSpacing: 1.1,
-                                      color: Colors.white,
+                                      color: featuredInk,
                                     ),
                                   ),
                                 ],
@@ -465,16 +448,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.08),
+                                color: OTColors.surface(dark).withValues(alpha: 0.6),
                                 borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.15),
-                                    width: 0.6),
                               ),
-                              child: const Text(
-                                'Eksklusif',
+                              child: Text(
+                                Loc.tr('planExclusive'),
                                 style: TextStyle(
-                                    color: Color(0xFFA1A1AA),
+                                    color: featuredInk,
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.w500),
                               ),
@@ -483,12 +463,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(AppCopy.planTahawwulat,
-                            style: OTTypography.pageTitle(color: Colors.white)),
+                            style: OTTypography.pageTitle(color: featuredInk)),
                         const SizedBox(height: 6),
                         Text(
-                          'Lima asisten untuk menelaah Fikih Tahawwulat, didukung kitab rujukan dan arsip muhadharah.',
+                          Loc.tr('planFeaturedDescription'),
                           style:
-                              OTTypography.body(color: const Color(0xFFA1A1AA))
+                              OTTypography.body(color: featuredInk)
                                   .copyWith(fontSize: 13, height: 1.45),
                         ),
                         const SizedBox(height: 18),
@@ -512,14 +492,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: _tahawwulatIndex == i
-                                          ? const Color(0xFF2A2A34)
-                                          : Colors.white
-                                              .withValues(alpha: 0.03),
-                                      borderRadius: BorderRadius.circular(10),
+                                          ? OTColors.surface(dark)
+                                          : OTColors.primaryContainer(dark),
+                                      borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
                                         color: _tahawwulatIndex == i
-                                            ? Colors.white
-                                            : const Color(0xFF383842),
+                                            ? OTColors.accent(dark)
+                                            : OTColors.border(dark),
                                         width: _tahawwulatIndex == i ? 1.4 : 1,
                                       ),
                                     ),
@@ -529,18 +508,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                           ProductPricing.tahawwulat[i].title,
                                           style: OTTypography.captionMedium(
                                             color: _tahawwulatIndex == i
-                                                ? Colors.white
-                                                : const Color(0xFFA1A1AA),
+                                                ? ink
+                                                : featuredInk,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           ProductPricing.rupiah(ProductPricing
                                               .tahawwulat[i].amount),
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
-                                            color: Colors.white,
+                                            color: _tahawwulatIndex == i
+                                                ? ink : featuredInk,
                                           ),
                                         ),
                                       ],
@@ -556,30 +536,28 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             amount: offer.amount,
                             regularAmount: offer.regularAmount,
                             period: offer.period,
-                            foregroundColor: Colors.white,
-                            secondaryColor: const Color(0xFFB8B8BE)),
+                            foregroundColor: featuredInk,
+                            secondaryColor: featuredInk),
                         const SizedBox(height: 16),
-                        Divider(
-                            color: Colors.white.withValues(alpha: 0.12),
-                            height: 1),
+                        Divider(color: OTColors.border(dark), height: 1),
                         const SizedBox(height: 16),
 
                         // Daftar Benefit Fikih Tahawwulat
                         _benefitRow(
-                          'Akses ruang kajian Fikih Tahawwulat',
-                          Colors.white.withValues(alpha: 0.9),
+                          Loc.tr('planFeaturedBenefit1'),
+                          featuredInk,
                         ),
                         _benefitRow(
-                          'Lima asisten: Al-Muhaqqiq, Al-Bayan, Al-Mukhtabir, Al-Habib, dan Al-Khatib',
-                          Colors.white.withValues(alpha: 0.9),
+                          Loc.tr('planFeaturedBenefit2'),
+                          featuredInk,
                         ),
                         _benefitRow(
-                          'Uji Pemahaman Interaktif & Evaluasi Mandiri',
-                          Colors.white.withValues(alpha: 0.9),
+                          Loc.tr('planFeaturedBenefit3'),
+                          featuredInk,
                         ),
                         _benefitRow(
-                          'Arsip muhadharah dan transkrip sebagai bahan telaah',
-                          Colors.white.withValues(alpha: 0.9),
+                          Loc.tr('planFeaturedBenefit4'),
+                          featuredInk,
                         ),
 
                         const SizedBox(height: 16),
@@ -590,14 +568,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 ? null
                                 : () => _checkout(flagship, offer),
                             style: FilledButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF18181B),
+                              backgroundColor: OTColors.accent(dark),
+                              foregroundColor: OTColors.onAccent(dark),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(100)),
+                                  borderRadius: BorderRadius.circular(16)),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             child: Text(
-                              'Pilih paket ${offer.title}',
+                              Loc.tr('planChoose', [offer.title]),
                               style:
                                   const TextStyle(fontWeight: FontWeight.w700),
                             ),
@@ -618,7 +596,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             style: OTTypography.pageTitle(color: ink)),
                         const SizedBox(height: 6),
                         Text(
-                          'Akses satu bidang keilmuan beserta kitab rujukannya 24/7.',
+                          Loc.tr('planSingleDescription'),
                           style: OTTypography.body(color: muted)
                               .copyWith(fontSize: 13),
                         ),
