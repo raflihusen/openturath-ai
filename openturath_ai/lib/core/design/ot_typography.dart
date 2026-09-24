@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../scholarly_fonts.dart';
 import '../localization.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// OpenTurath Design System — Typography (3-Pilar Arsitektur Baku)
 /// 1. Editorial & Heading Layer: Newsreader (Display, Page Title, Nama Kitab Besar)
@@ -97,7 +96,7 @@ class OTTypography {
   // ── Editorial & Heading Styles ──
   static TextStyle brandLogo({Color? color}) => useSystemFontFallback
       ? TextStyle(fontFamily: 'Newsreader', fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color)
-      : GoogleFonts.newsreader(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color);
+      : ScholarlyFonts.newsreader(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color);
 
   static TextStyle displayLarge({Color? color}) => _newsreader(
         fontSize: 36,
