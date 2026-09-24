@@ -621,7 +621,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(28),
                         border: Border.all(color: border),
                       ),
                       child: Column(
@@ -629,25 +629,25 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         children: [
                           Row(
                             children: [
-                              Container(
+                              Flexible(child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF222220)
-                                      : const Color(0xFFEEEEEB),
-                                  borderRadius: BorderRadius.circular(6),
+                                  color: OTColors.primaryContainer(isDark),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
                                   book.localizedSection,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: 10,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w700,
-                                    color: textSecondary,
+                                    color: OTColors.onPrimaryContainer(isDark),
                                   ),
                                 ),
-                              ),
-                              const Spacer(),
+                              )),
+                              const SizedBox(width: 12),
                               Text(
                                 book.deathLabel,
                                 style: ScholarlyFonts.outfit(
@@ -670,7 +670,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                   color: ink,
-                                  height: 1.25,
+                                  height: 1.85,
                                 ),
                               ),
                             ),
@@ -678,10 +678,11 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                           const SizedBox(height: 12),
                           Text(
                             book.author,
-                            style: ScholarlyFonts.newsreader(
+                            style: ScholarlyFonts.scheherazadeNew(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: ink,
+                              height: 1.85,
                             ),
                           ),
                         ],
@@ -701,7 +702,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                     Container(
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(22),
                         border: Border.all(color: border),
                       ),
                       child: Builder(builder: (context) {
@@ -765,7 +766,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                           side: BorderSide(color: border),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),
@@ -808,27 +809,25 @@ class _DetailRow extends StatelessWidget {
             ? null
             : Border(bottom: BorderSide(color: border, width: 0.8)),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 130,
-            child: Text(
-              label,
-              style: ScholarlyFonts.outfit(
-                fontSize: 12,
-                color: textSecondary,
-              ),
+          Text(
+            label,
+            style: ScholarlyFonts.outfit(
+              fontSize: 12,
+              color: textSecondary,
             ),
           ),
-          Expanded(
-            child: Text(
-              displayValue,
-              style: ScholarlyFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: ink,
-              ),
+          const SizedBox(height: 5),
+          Text(
+            displayValue,
+            textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(displayValue)
+                ? TextDirection.rtl : null,
+            style: ScholarlyFonts.outfit(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: ink,
             ),
           ),
         ],
