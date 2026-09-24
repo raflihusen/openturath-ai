@@ -41,6 +41,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   final AgentService _agentService = AgentService();
   final AuthService _authService = AuthService();
   final TextEditingController _searchCtrl = TextEditingController();
+  final ScrollController _listScrollCtrl = ScrollController();
   Timer? _debounce;
 
   List<AgentModel> _allAgents = [];
@@ -60,6 +61,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   @override
   void dispose() {
     _searchCtrl.dispose();
+    _listScrollCtrl.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -120,6 +122,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   void _selectAgent(AgentModel agent) {
     setState(() => _selectedAgentId = agent.id);
     OTMotion.light();
+    if (_listScrollCtrl.hasClients) {
+      _listScrollCtrl.animateTo(0,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic);
+    }
   }
 
   void _openAgent(AgentModel agent) {
@@ -406,6 +413,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               ).firstOrNull;
 
                               return ListView(
+                                controller: _listScrollCtrl,
                                 physics: const BouncingScrollPhysics(
                                     parent: AlwaysScrollableScrollPhysics()),
                                 padding: const EdgeInsets.fromLTRB(
