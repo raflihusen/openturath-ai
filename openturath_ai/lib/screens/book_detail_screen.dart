@@ -307,37 +307,48 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     children: [
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 3.5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: surfaceSubtle,
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                  color: border.withValues(alpha: 0.7),
-                                  width: 0.6),
-                            ),
-                            child: Text(
-                              widget.book.sectionArabic ??
-                                  Loc.tr('unclassified'),
-                              style: OTTypography.caption(color: textSecondary)
-                                  .copyWith(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 11,
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 3.5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: surfaceSubtle,
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                    color: border.withValues(alpha: 0.7),
+                                    width: 0.6),
+                              ),
+                              child: Text(
+                                widget.book.sectionArabic ??
+                                    Loc.tr('unclassified'),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style:
+                                    OTTypography.caption(color: textSecondary)
+                                        .copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                           ),
-                          const Spacer(),
-                          Directionality(
-                            textDirection: TextDirection.ltr,
-                            child: Text(
-                              widget.book.editionId,
-                              style: OTTypography.caption(color: textSecondary)
-                                  .copyWith(
-                                fontFamily: 'Courier',
-                                fontSize: 11,
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Directionality(
+                              textDirection: TextDirection.ltr,
+                              child: Text(
+                                widget.book.editionId,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.end,
+                                style:
+                                    OTTypography.caption(color: textSecondary)
+                                        .copyWith(
+                                  fontFamily: 'Courier',
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                           ),
