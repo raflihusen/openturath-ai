@@ -573,21 +573,21 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     required Color textPrimary,
     required Color textSecondary,
   }) {
-    final activeBg = textPrimary;
-    final activeFg = isDark ? Colors.black : Colors.white;
+    final activeBg = OTColors.primaryContainer(isDark);
+    final activeFg = OTColors.onPrimaryContainer(isDark);
 
     return AppleInteractiveWrapper(
       onTap: onTap,
       pressedScale: 0.94,
       hapticType: HapticFeedbackType.selection,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color: isSelected ? activeBg : surface,
-          borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? activeBg : border,
             width: 0.8,
