@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 import '../core/design/ot_colors.dart';
@@ -259,8 +258,8 @@ class _HeroLibraryCard extends StatelessWidget {
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: border, width: 1.0),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: border, width: 0.8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,15 +273,13 @@ class _HeroLibraryCard extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF222220)
-                      : const Color(0xFFEEEEEB),
-                  borderRadius: BorderRadius.circular(6),
+                  color: OTColors.primaryContainer(isDark),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   Loc.tr('libraryOverview'),
-                  style: GoogleFonts.outfit(
-                    color: textSecondary,
+                  style: ScholarlyFonts.outfit(
+                    color: OTColors.onPrimaryContainer(isDark),
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.8,
@@ -291,7 +288,7 @@ class _HeroLibraryCard extends StatelessWidget {
               ),
               Text(
                 Loc.tr('bookCount', [metadata.totalKitab.toString()]),
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   color: textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -307,11 +304,11 @@ class _HeroLibraryCard extends StatelessWidget {
               child: Text(
                 metadata.namaArab,
                 textAlign: TextAlign.right,
-                style: GoogleFonts.scheherazadeNew(
+                style: ScholarlyFonts.scheherazadeNew(
                   color: ink,
-                  fontSize: 34,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
-                  height: 1.25,
+                  height: 1.85,
                 ),
               ),
             ),
@@ -354,17 +351,17 @@ class _HeroLibraryCard extends StatelessWidget {
                 isLoadingBooks
                     ? Loc.tr('libraryOpening')
                     : Loc.tr('openCatalog'),
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: ink,
-                foregroundColor: OTColors.canvas(isDark),
+                backgroundColor: OTColors.accent(isDark),
+                foregroundColor: OTColors.onAccent(isDark),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 elevation: 0,
               ),
@@ -385,102 +382,45 @@ class _StatsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     Loc.watch(context);
     final number = NumberFormat.decimalPattern(Loc.language);
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                label: Loc.tr('libraryWorks'),
-                value: number.format(metadata.totalKitab),
-                icon: Icons.auto_stories_outlined,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
+          decoration: BoxDecoration(
+            color: OTColors.surfaceSubtle(dark),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Wrap(
+            spacing: 20,
+            runSpacing: 8,
+            children: [
+              Text(
+                '${number.format(metadata.totalKitab)} ${Loc.tr('libraryWorks')}',
+                style: ScholarlyFonts.outfit(
+                  fontSize: 13, fontWeight: FontWeight.w600,
+                  color: OTColors.textPrimary(dark),
+                ),
               ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: _StatCard(
-                label: Loc.tr('libraryWords'),
-                value: NumberFormat.compact(locale: Loc.language)
-                    .format(metadata.totalKata),
-                icon: Icons.text_fields_outlined,
+              Text(
+                '${NumberFormat.compact(locale: Loc.language).format(metadata.totalKata)} ${Loc.tr('libraryWords')}',
+                style: ScholarlyFonts.outfit(
+                  fontSize: 13, color: OTColors.textSecondary(dark),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 10),
         Text(
           Loc.tr('libraryDataNote'),
           style: ScholarlyFonts.outfit(
             fontSize: 11,
-            color: OTColors.textSecondary(
-                Theme.of(context).brightness == Brightness.dark),
+            color: OTColors.textSecondary(dark),
           ),
         ),
       ],
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-  });
-
-  final String label;
-  final String value;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surface = OTColors.surface(isDark);
-    final ink = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-      decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: border, width: 1.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: textSecondary),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  label,
-                  textAlign: TextAlign.end,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: ScholarlyFonts.outfit(
-                    color: textSecondary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: GoogleFonts.newsreader(
-              color: ink,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              height: 1.1,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
