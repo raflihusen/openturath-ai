@@ -1,6 +1,7 @@
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
@@ -27,6 +28,58 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   int _specialistIndex = 0;
   bool _processing = false;
   bool _initialized = false;
+  String? _checkoutError;
+  String? _checkoutAgentId;
+
+  String _checkoutErrorMessage(FirebaseFunctionsException error) {
+    switch (error.code.toLowerCase()) {
+      case 'unauthenticated':
+        return 'Sesi akun berakhir. Masuk kembali lalu ulangi pembayaran.';
+      case 'deadline-exceeded':
+      case 'unavailable':
+        return 'Layanan pembayaran belum merespons. Periksa koneksi lalu coba lagi.';
+      case 'failed-precondition':
+        return 'Paket belum dapat diproses saat ini. Coba lagi beberapa saat lagi.';
+      case 'permission-denied':
+        return 'Akun ini belum dapat memulai pembayaran. Periksa status akun Anda.';
+      case 'invalid-argument':
+        return 'Pilihan paket perlu diperbarui. Buka kembali halaman ini lalu coba lagi.';
+      default:
+        return Loc.tr('checkoutError');
+    }
+  }
+
+  Widget _checkoutNotice(String agentId) {
+    final message = _checkoutAgentId == agentId ? _checkoutError : null;
+    if (message == null) return const SizedBox.shrink();
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final color = OTColors.destructive(dark);
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.09),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.info_outline_rounded, size: 18, color: color),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(message,
+                  style: OTTypography.caption(
+                          color:
+                              dark ? Colors.white : OTColors.textPrimary(dark))
+                      .copyWith(height: 1.4)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   List<AgentModel> get _specialists => AgentModel.defaultAgents
       .where((a) =>
@@ -51,10 +104,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (_processing) return;
     final user = FirebaseAuth.instance.currentUser;
     if (user == null || user.isAnonymous) {
-      AppSnackBar.warning(context, Loc.tr('signInRequired'));
+      setState(() {
+        _checkoutAgentId = agent.id;
+        _checkoutError = Loc.tr('signInRequired');
+      });
       return;
     }
-    setState(() => _processing = true);
+    setState(() {
+      _processing = true;
+      _checkoutError = null;
+      _checkoutAgentId = agent.id;
+    });
     try {
       final title = '${agent.title} · ${offer.title}';
       final result = await _service.createPayment(
@@ -72,7 +132,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       // An old backend or stale quote must never open a differently priced checkout.
       if (result['amount'] != offer.amount ||
           result['pricingRevision'] != ProductPricing.revision) {
-        AppSnackBar.warning(context, Loc.tr('priceChanged'));
+        setState(() => _checkoutError = Loc.tr('priceChanged'));
         return;
       }
       final paymentUrl = result['redirectUrl'];
@@ -94,8 +154,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted && paid == true) {
         AppSnackBar.success(context, Loc.tr('paymentConfirmed'));
       }
+    } on FirebaseFunctionsException catch (error) {
+      if (mounted) {
+        setState(() => _checkoutError = _checkoutErrorMessage(error));
+      }
+    } on FormatException {
+      if (mounted) {
+        setState(() => _checkoutError =
+            'Tautan pembayaran belum tersedia. Silakan coba kembali.');
+      }
     } catch (_) {
-      if (mounted) AppSnackBar.error(context, Loc.tr('checkoutError'));
+      if (mounted) setState(() => _checkoutError = Loc.tr('checkoutError'));
     } finally {
       if (mounted) setState(() => _processing = false);
     }
@@ -534,6 +603,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             ),
                           ),
                         ),
+                        _checkoutNotice(flagship.id),
                       ],
                     ),
                   ),
@@ -638,10 +708,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       color: _specialistIndex == i
                                           ? (dark
                                               ? const Color(0xFF2A2A34)
-                                              : Colors.black.withValues(alpha: 0.05))
+                                              : Colors.black
+                                                  .withValues(alpha: 0.05))
                                           : (dark
-                                              ? Colors.white.withValues(alpha: 0.03)
-                                              : Colors.black.withValues(alpha: 0.01)),
+                                              ? Colors.white
+                                                  .withValues(alpha: 0.03)
+                                              : Colors.black
+                                                  .withValues(alpha: 0.01)),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
                                         color: _specialistIndex == i
@@ -729,6 +802,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             child: Text(Loc.tr('continuePayment')),
                           ),
                         ),
+                        _checkoutNotice(selected.id),
                       ],
                     ),
                   ),
