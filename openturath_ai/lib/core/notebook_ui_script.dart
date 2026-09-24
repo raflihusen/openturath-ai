@@ -172,32 +172,21 @@ const notebookUiScript = r'''
   }
 
   function triggerClick(el) {
-    if (!el) return;
+    if (!el) return false;
     try {
-      const rect = el.getBoundingClientRect();
-      const x = rect.left + (rect.width > 0 ? rect.width / 2 : 0);
-      const y = rect.top + (rect.height > 0 ? rect.height / 2 : 0);
-      const evtInit = {
-        bubbles: true,
-        cancelable: true,
-        view: window,
-        clientX: x,
-        clientY: y
-      };
-      el.dispatchEvent(new PointerEvent('pointerdown', evtInit));
-      el.dispatchEvent(new MouseEvent('mousedown', evtInit));
-      el.dispatchEvent(new PointerEvent('pointerup', evtInit));
-      el.dispatchEvent(new MouseEvent('mouseup', evtInit));
       el.click();
+      return true;
     } catch (e) {
-      try { el.click(); } catch (_) {}
+      try {
+        return el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+      } catch (_) { return false; }
     }
   }
 
   function findOutputLanguageItem() {
     const panels = [...document.querySelectorAll('[role="menu"], .mat-mdc-menu-panel, .cdk-overlay-pane')];
     if (panels.length === 0) return null;
-    const candidates = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item, div')]);
+    const candidates = panels.flatMap(panel => [...panel.querySelectorAll('[role="menuitem"], button, mat-list-item')]);
     return candidates.find(candidate => {
       if (!candidate || !document.contains(candidate)) return false;
       const label = (candidate.getAttribute('aria-label') || candidate.innerText || candidate.textContent || '')
@@ -232,11 +221,7 @@ const notebookUiScript = r'''
     const root = document.documentElement;
     root.classList.add('ot-opening-language');
 
-    function cleanup() {
-      setTimeout(() => {
-        root.classList.remove('ot-opening-language');
-      }, 500);
-    }
+    function cleanup() { root.classList.remove('ot-opening-language'); }
 
     const immediate = findOutputLanguageItem();
     if (immediate) {
@@ -251,14 +236,10 @@ const notebookUiScript = r'''
       return false;
     }
 
-    const oldPosition = settings.style.cssText;
-    settings.style.setProperty('top', '8px', 'important');
-    settings.style.setProperty('left', '8px', 'important');
-    settings.style.setProperty('opacity', '0.001', 'important');
-    settings.style.setProperty('pointer-events', 'auto', 'important');
-    settings.style.setProperty('visibility', 'visible', 'important');
-
-    triggerClick(settings);
+    if (!triggerClick(settings)) {
+      cleanup();
+      return false;
+    }
 
     const deadline = Date.now() + 2500;
     const interval = setInterval(() => {
@@ -266,13 +247,11 @@ const notebookUiScript = r'''
       if (item) {
         clearInterval(interval);
         triggerClick(item);
-        settings.style.cssText = oldPosition;
         cleanup();
         return;
       }
       if (Date.now() > deadline) {
         clearInterval(interval);
-        settings.style.cssText = oldPosition;
         cleanup();
       }
     }, 25);
