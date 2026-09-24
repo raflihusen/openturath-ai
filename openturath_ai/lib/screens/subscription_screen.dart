@@ -488,6 +488,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                           setState(() => _tahawwulatIndex = i),
                                   borderRadius: BorderRadius.circular(10),
                                   child: Container(
+                                    constraints: const BoxConstraints(minHeight: 72),
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
@@ -506,6 +507,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       children: [
                                         Text(
                                           ProductPricing.tahawwulat[i].title,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                           style: OTTypography.captionMedium(
                                             color: _tahawwulatIndex == i
                                                 ? ink
@@ -516,6 +520,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         Text(
                                           ProductPricing.rupiah(ProductPricing
                                               .tahawwulat[i].amount),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
@@ -680,23 +687,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                           setState(() => _specialistIndex = i),
                                   borderRadius: BorderRadius.circular(10),
                                   child: Container(
+                                    constraints: const BoxConstraints(minHeight: 72),
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: _specialistIndex == i
-                                          ? (dark
-                                              ? const Color(0xFF2A2A34)
-                                              : Colors.black
-                                                  .withValues(alpha: 0.05))
-                                          : (dark
-                                              ? Colors.white
-                                                  .withValues(alpha: 0.03)
-                                              : Colors.black
-                                                  .withValues(alpha: 0.01)),
-                                      borderRadius: BorderRadius.circular(10),
+                                          ? OTColors.primaryContainer(dark)
+                                          : OTColors.surface(dark),
+                                      borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
                                         color: _specialistIndex == i
-                                            ? ink
+                                            ? OTColors.accent(dark)
                                             : border,
                                         width: _specialistIndex == i ? 1.4 : 1,
                                       ),
@@ -705,9 +706,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                       children: [
                                         Text(
                                           ProductPricing.specialists[i].title,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
                                           style: OTTypography.captionMedium(
                                             color: _specialistIndex == i
-                                                ? ink
+                                                ? OTColors.onPrimaryContainer(dark)
                                                 : muted,
                                           ),
                                         ),
@@ -715,10 +719,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         Text(
                                           ProductPricing.rupiah(ProductPricing
                                               .specialists[i].amount),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w700,
-                                            color: ink,
+                                            color: _specialistIndex == i
+                                                ? OTColors.onPrimaryContainer(dark)
+                                                : ink,
                                           ),
                                         ),
                                       ],
@@ -746,19 +755,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
                         // Daftar Benefit Spesialis Per Bidang
                         _benefitRow(
-                          'Akses Penuh Penelaah Kitab ${selected.title} 24/7',
+                          Loc.tr('planSingleBenefit1', [selected.title]),
                           ink,
                         ),
                         _benefitRow(
-                          'Temukan Ibarah & Konsep dalam waktu tersingkat',
+                          Loc.tr('planSingleBenefit2'),
                           ink,
                         ),
                         _benefitRow(
-                          'Rujukan terperinci mencakup nama kitab, jilid dan halaman dengan akurasi tinggi',
+                          Loc.tr('planSingleBenefit3'),
                           ink,
                         ),
                         _benefitRow(
-                          'Permudah pemahaman konsep melalui ibarah dan penjelasan yang disederhanakan dan tersusun',
+                          Loc.tr('planSingleBenefit4'),
                           ink,
                         ),
 
@@ -774,7 +783,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         .specialists[_specialistIndex]),
                             style: FilledButton.styleFrom(
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(100)),
+                                  borderRadius: BorderRadius.circular(16)),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                             child: Text(Loc.tr('continuePayment')),
