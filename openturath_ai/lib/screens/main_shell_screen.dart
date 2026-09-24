@@ -247,7 +247,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
               physics: const NeverScrollableScrollPhysics(),
               children: screens,
             ),
-            extendBody: true,
+            extendBody: false,
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
                 color: surface,
