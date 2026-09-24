@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
+import '../core/localization.dart';
+import '../core/scholarly_fonts.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
@@ -11,8 +13,7 @@ import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
 
 /// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
-/// Dirancang sepenuhnya dalam Bahasa Arab Turats dan Tata Letak RTL murni.
-/// Menggunakan font Naskh Scheherazade New tanpa font Amiri sama sekali.
+/// Chrome follows the app locale; source titles and names retain Arabic RTL.
 class BookDetailScreen extends StatefulWidget {
   final CanonicalBookPresentation book;
   final AgentModel? agent;
@@ -62,7 +63,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaved = false;
             _isSaving = false;
           });
-          AppSnackBar.show(context, message: 'تمت إزالة الكتاب من الملاحظات');
+          AppSnackBar.show(context, message: Loc.tr('bookmarkDeleted'));
         }
       } else {
         final agent = _resolveTargetAgent();
@@ -121,13 +122,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             _isSaving = false;
           });
           HapticFeedback.mediumImpact();
-          AppSnackBar.success(context, 'تم حفظ بيانات الكتاب في الملاحظات');
+          AppSnackBar.success(context, Loc.tr('savedSuccess'));
         }
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.error(context, 'تعذر تحديث الملاحظات');
+        AppSnackBar.error(context, Loc.tr('saveFailed'));
       }
     }
   }
@@ -169,43 +170,47 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     Clipboard.setData(ClipboardData(text: citation));
     HapticFeedback.selectionClick();
-    AppSnackBar.success(context, 'تم نسخ بطاقة الكتاب بنجاح');
+    AppSnackBar.success(context, Loc.tr('ui_e150b5de89'));
   }
 
   String _translateType(String? type) {
-    if (type == null || type.isEmpty) return 'مصنف علمي';
+    if (type == null || type.isEmpty) return Loc.tr('bookTypeWork');
     final l = type.toLowerCase();
-    if (l.contains('matn') || l.contains('matan')) return 'متن معتمد';
-    if (l.contains('syarah') || l.contains('sharh')) return 'شرح';
-    if (l.contains('hasyiyah') || l.contains('hashiyah')) return 'حاشية';
-    if (l.contains('mukhtasar') || l.contains('ringkasan')) return 'مختصر';
+    if (l.contains('matn') || l.contains('matan'))
+      return Loc.tr('bookTypeMatn');
+    if (l.contains('syarah') || l.contains('sharh'))
+      return Loc.tr('bookTypeSharh');
+    if (l.contains('hasyiyah') || l.contains('hashiyah'))
+      return Loc.tr('bookTypeHashiyah');
+    if (l.contains('mukhtasar') || l.contains('ringkasan'))
+      return Loc.tr('bookTypeSummary');
     if (l.contains('ensiklopedia') || l.contains('mausuah')) {
-      return 'موسوعة فقهية';
+      return Loc.tr('bookTypeEncyclopedia');
     }
     if (l.contains('manzhumah') || l.contains('nazham')) {
-      return 'منظومة علمية';
+      return Loc.tr('bookTypePoem');
     }
     return type;
   }
 
   String _translateEra(String? era) {
-    if (era == null || era.isEmpty) return 'التراث الإسلامي';
+    if (era == null || era.isEmpty) return Loc.tr('bookEraHeritage');
     final l = era.toLowerCase();
     if (l.contains('mutaqaddim') || l.contains('awal')) {
-      return 'عصر المتقدمين (حتى ٤٠٠ هـ)';
+      return Loc.tr('bookEraEarly');
     }
     if (l.contains('mutawassith') || l.contains('pertengahan')) {
-      return 'عصر المتوسطين (٤٠٠ - ٨٠٠ هـ)';
+      return Loc.tr('bookEraMiddle');
     }
     if (l.contains('muta\'akhkhir') ||
         l.contains('mutaakhir') ||
         l.contains('lanjut')) {
-      return 'عصر المتأخرين (٨٠٠ - ١٢٠٠ هـ)';
+      return Loc.tr('bookEraLate');
     }
     if (l.contains('mu\'ashir') ||
         l.contains('kontemporer') ||
         l.contains('modern')) {
-      return 'العصر المعاصر (بعد ١٢٠٠ هـ)';
+      return Loc.tr('bookEraModern');
     }
     return era;
   }
@@ -213,15 +218,22 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String _formatVolumes() {
     final vd = widget.book.volumesDescription;
     if (vd != null && vd.isNotEmpty) {
-      return (vd.contains('جزء') || vd.contains('مجلد')) ? vd : '$vd أجزاء';
+      return (vd.contains('جزء') ||
+              vd.contains('مجلد') ||
+              vd.toLowerCase().contains('jilid'))
+          ? vd
+          : Loc.tr('volumeCount', [vd]);
     }
     final count = widget.book.volumesCount;
-    if (count != null && count > 1) return '$count أجزاء';
-    return 'جزء واحد (مجلد مفرد)';
+    if (count != null && count > 0) {
+      return Loc.tr('volumeCount', ['$count']);
+    }
+    return Loc.tr('unknownMetadata');
   }
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final background = OTColors.canvas(isDark);
@@ -231,21 +243,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final surfaceSubtle = OTColors.surfaceSubtle(isDark);
 
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: Loc.isArabic ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
         backgroundColor: background,
         appBar: AppBar(
           backgroundColor: background,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_rounded, color: textPrimary),
-            tooltip: 'رجوع',
+          leading: BackButton(
+            color: textPrimary,
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
-            'بطاقة الكتاب',
-            style: OTTypography.arabicReading(color: textPrimary).copyWith(
+            Loc.tr('bookDetails'),
+            style: ScholarlyFonts.outfit(color: textPrimary).copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
@@ -260,12 +271,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     ? (isDark ? Colors.white : Colors.black)
                     : textSecondary,
               ),
-              tooltip: _isSaved ? 'إزالة من الملاحظات' : 'حفظ في الملاحظات',
+              tooltip: _isSaved ? Loc.tr('bookRemove') : Loc.tr('bookSave'),
               onPressed: _toggleSaveBook,
             ),
             IconButton(
               icon: Icon(Icons.share_outlined, color: textSecondary),
-              tooltip: 'نسخ بطاقة الكتاب',
+              tooltip: Loc.tr('bookCitationCopy'),
               onPressed: _copyScholarlyCitation,
             ),
             const SizedBox(width: 8),
@@ -305,7 +316,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   width: 0.6),
                             ),
                             child: Text(
-                              widget.book.sectionArabic ?? 'نص محقق معتمد',
+                              widget.book.sectionArabic ??
+                                  Loc.tr('unclassified'),
                               style: OTTypography.caption(color: textSecondary)
                                   .copyWith(
                                 fontWeight: FontWeight.w600,
@@ -328,14 +340,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: OTSpacing.md),
-                      Text(
-                        widget.book.titleArabic,
-                        textAlign: TextAlign.right,
-                        style: OTTypography.arabicDisplay(color: textPrimary)
-                            .copyWith(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          height: 1.6,
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          widget.book.titleArabic,
+                          textAlign: TextAlign.start,
+                          style: OTTypography.arabicDisplay(color: textPrimary)
+                              .copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            height: 1.6,
+                          ),
                         ),
                       ),
                       if (widget.book.shortTitleArabic != null &&
@@ -343,14 +358,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           widget.book.shortTitleArabic !=
                               widget.book.titleArabic) ...[
                         const SizedBox(height: 6),
-                        Text(
-                          'المختصر: ${widget.book.shortTitleArabic!}',
-                          textAlign: TextAlign.right,
-                          style:
-                              OTTypography.arabicReading(color: textSecondary)
-                                  .copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: Text(
+                            widget.book.shortTitleArabic!,
+                            textAlign: TextAlign.start,
+                            style:
+                                OTTypography.arabicReading(color: textSecondary)
+                                    .copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
@@ -361,7 +379,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           textDirection: TextDirection.ltr,
                           child: Text(
                             widget.book.titleLatin!,
-                            textAlign: TextAlign.right,
+                            textAlign: TextAlign.start,
                             style: OTTypography.body(color: textSecondary)
                                 .copyWith(
                               fontStyle: FontStyle.italic,
@@ -384,7 +402,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader('المؤلف والوفاة', textSecondary),
+                      _buildSectionHeader(
+                          Loc.tr('bookAuthorDeath'), textSecondary),
                       const SizedBox(height: 10),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,13 +418,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  widget.book.authorArabic,
-                                  style: OTTypography.arabicReading(
-                                          color: textPrimary)
-                                      .copyWith(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: Text(
+                                    widget.book.authorArabic,
+                                    textAlign: TextAlign.start,
+                                    style: OTTypography.arabicReading(
+                                            color: textPrimary)
+                                        .copyWith(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
                                 if (widget.book.authorLatin != null) ...[
@@ -433,9 +456,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   ),
                                   child: Text(
                                     widget.book.verifiedDeathYearHijri != null
-                                        ? 'سنة الوفاة: ${widget.book.verifiedDeathYearHijri} هـ'
-                                        : 'سنة الوفاة: غير مدونة',
-                                    style: OTTypography.arabicReading(
+                                        ? Loc.tr('deathYear', [
+                                            '${widget.book.verifiedDeathYearHijri}'
+                                          ])
+                                        : Loc.tr('unknownMetadata'),
+                                    style: ScholarlyFonts.outfit(
                                             color: textSecondary)
                                         .copyWith(
                                       fontSize: 12.5,
@@ -462,13 +487,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSectionHeader('التصنيف والمصنف', textSecondary),
+                      _buildSectionHeader(
+                          Loc.tr('bookClassification'), textSecondary),
                       const SizedBox(height: 12),
                       if (widget.book.sectionArabic != null &&
                           widget.book.sectionArabic!.isNotEmpty) ...[
                         _buildMetaRow(
                           icon: Icons.category_outlined,
-                          label: 'القسم العلمي',
+                          label: Loc.tr('bookScienceSection'),
                           value: widget.book.sectionArabic!,
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -479,7 +505,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           widget.book.reviewedTypeLabel!.isNotEmpty) ...[
                         _buildMetaRow(
                           icon: Icons.menu_book_outlined,
-                          label: 'نوع المصنف',
+                          label: Loc.tr('bookTextType'),
                           value: _translateType(widget.book.reviewedTypeLabel),
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -490,7 +516,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           widget.book.reviewedEraLabel!.isNotEmpty) ...[
                         _buildMetaRow(
                           icon: Icons.history_edu_rounded,
-                          label: 'عصر المؤلف',
+                          label: Loc.tr('bookAuthorEra'),
                           value: _translateEra(widget.book.reviewedEraLabel),
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -499,7 +525,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       ],
                       _buildMetaRow(
                         icon: Icons.auto_stories_outlined,
-                        label: 'عدد الأجزاء',
+                        label: Loc.tr('bookVolumes'),
                         value: _formatVolumes(),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
@@ -510,18 +536,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         const Divider(height: 16, thickness: 0.5),
                         _buildMetaRow(
                           icon: Icons.article_outlined,
-                          label: 'عدد الصفحات',
-                          value: '${widget.book.pagesDescription} صفحة',
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                        ),
-                      ],
-                      if (widget.book.canShowAuthority) ...[
-                        const Divider(height: 16, thickness: 0.5),
-                        _buildMetaRow(
-                          icon: Icons.verified_outlined,
-                          label: 'رتبة الاعتماد',
-                          value: 'معتمد في المذهب والفتوى',
+                          label: Loc.tr('bookPages'),
+                          value: Loc.tr(
+                              'pageCount', [widget.book.pagesDescription!]),
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
                         ),
@@ -541,20 +558,22 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildSectionHeader(
-                          'بيانات الطبع والتحقيق', textSecondary),
+                          Loc.tr('bookEditionData'), textSecondary),
                       const SizedBox(height: 12),
                       _buildMetaRow(
                         icon: Icons.business_outlined,
-                        label: 'دار النشر',
-                        value: widget.book.publisher ?? 'غير مدون',
+                        label: Loc.tr('bookPublisher'),
+                        value:
+                            widget.book.publisher ?? Loc.tr('unknownMetadata'),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),
                       const Divider(height: 16, thickness: 0.5),
                       _buildMetaRow(
                         icon: Icons.edit_note_rounded,
-                        label: 'المحقق',
-                        value: widget.book.muhaqqiq ?? 'غير مدون',
+                        label: Loc.tr('ui_ad39f1c3af'),
+                        value:
+                            widget.book.muhaqqiq ?? Loc.tr('unknownMetadata'),
                         textPrimary: textPrimary,
                         textSecondary: textSecondary,
                       ),
@@ -563,7 +582,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         const Divider(height: 16, thickness: 0.5),
                         _buildMetaRow(
                           icon: Icons.calendar_today_outlined,
-                          label: 'سنة الطبع',
+                          label: Loc.tr('bookPrintYear'),
                           value: widget.book.printYear!,
                           textPrimary: textPrimary,
                           textSecondary: textSecondary,
@@ -603,7 +622,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget _buildSectionHeader(String title, Color color) {
     return Text(
       title,
-      style: OTTypography.arabicReading(color: color).copyWith(
+      style: ScholarlyFonts.outfit(color: color).copyWith(
         fontSize: 13,
         fontWeight: FontWeight.w700,
       ),
@@ -621,21 +640,30 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       children: [
         Icon(icon, size: 18, color: textSecondary),
         const SizedBox(width: 8),
-        Text(
-          label,
-          style: OTTypography.arabicReading(color: textSecondary).copyWith(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w500,
+        Expanded(
+          flex: 2,
+          child: Text(
+            label,
+            style: ScholarlyFonts.outfit(color: textSecondary).copyWith(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
-        const Spacer(),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.start,
-            style: OTTypography.arabicReading(color: textPrimary).copyWith(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w600,
+        const SizedBox(width: 12),
+        Expanded(
+          flex: 3,
+          child: Directionality(
+            textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(value)
+                ? TextDirection.rtl
+                : Directionality.of(context),
+            child: Text(
+              value,
+              textAlign: TextAlign.start,
+              style: (RegExp(r'[\u0600-\u06FF]').hasMatch(value)
+                      ? OTTypography.arabicReading(color: textPrimary)
+                      : ScholarlyFonts.outfit(color: textPrimary))
+                  .copyWith(fontSize: 13.5, fontWeight: FontWeight.w600),
             ),
           ),
         ),
