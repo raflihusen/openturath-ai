@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/core/localization.dart';
 import 'package:openturath_ai/models/open_turath_book.dart';
+import 'package:openturath_ai/models/book_model.dart';
+import 'package:openturath_ai/screens/book_detail_screen.dart';
 import 'package:openturath_ai/screens/book_library_editorial_screen.dart';
 import 'package:openturath_ai/screens/library_metadata_overview_screen.dart';
 import 'package:openturath_ai/services/open_turath_catalog_repository.dart';
@@ -108,6 +110,18 @@ void main() {
     pages: '40',
   );
 
+  const canonicalBook = CanonicalBookPresentation(
+    editionId: 'kitab_al_umm_shafii',
+    titleArabic: 'كتاب الأم',
+    authorArabic: 'الإمام محمد بن إدريس الشافعي',
+    verifiedDeathYearHijri: 204,
+    reviewedTypeLabel: 'Asal Mazhab',
+    reviewedEraLabel: 'Mutaqaddimin',
+    publisher: 'دار الكتب العلمية',
+    muhaqqiq: 'رفعت فوزي عبد المطلب',
+    volumesCount: 8,
+  );
+
   testWidgets('English edition record keeps Arabic source and hides empty folder',
       (tester) async {
     tester.view.physicalSize = const Size(320, 700);
@@ -155,6 +169,23 @@ void main() {
         const OpenTurathBookDetailPage(book: book),
       ));
       expect(find.text(Loc.tr('bookReferenceLabel')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('canonical dossier fits 320 px in $language', (tester) async {
+      tester.view.physicalSize = const Size(320, 700);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(localized(
+        language,
+        const BookDetailScreen(book: canonicalBook),
+      ));
+      expect(find.text(Loc.tr('bookDetails')), findsOneWidget);
+      expect(find.text(canonicalBook.titleArabic), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
