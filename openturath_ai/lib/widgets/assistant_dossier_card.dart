@@ -44,12 +44,15 @@ class AssistantDossierCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                '${position.toString().padLeft(2, '0')} / ${total.toString().padLeft(2, '0')}',
-                style: ScholarlyFonts.outfit(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: accent,
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text(
+                  '${position.toString().padLeft(2, '0')} / ${total.toString().padLeft(2, '0')}',
+                  style: ScholarlyFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: accent,
+                  ),
                 ),
               ),
               const Spacer(),
