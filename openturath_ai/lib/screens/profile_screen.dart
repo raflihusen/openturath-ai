@@ -816,10 +816,9 @@ class _MembershipPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final cardColor =
-        isDark ? const Color(0xFF181714) : const Color(0xFF24221D);
-    const foreground = Colors.white;
-    final muted = Colors.white.withValues(alpha: 0.62);
+    final cardColor = OTColors.primaryContainer(isDark);
+    final foreground = OTColors.onPrimaryContainer(isDark);
+    final muted = foreground.withValues(alpha: 0.78);
     final isOpen = summary.isOpen;
 
     return Column(
@@ -827,7 +826,7 @@ class _MembershipPass extends StatelessWidget {
       children: [
         Semantics(
           label:
-              'Kartu akses OpenTurath. ${summary.badge}. ${summary.accessLabel}',
+              'OpenTurath. ${summary.badge}. ${summary.accessLabel}',
           child: Material(
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(18),
@@ -835,19 +834,16 @@ class _MembershipPass extends StatelessWidget {
               onTap: onViewAccess ?? onManage,
               borderRadius: BorderRadius.circular(18),
               child: Ink(
-                height: MediaQuery.textScalerOf(context).scale(176),
                 decoration: BoxDecoration(
                   color: cardColor,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.14), width: 0.8),
+                  borderRadius: BorderRadius.circular(28),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(17),
+                  borderRadius: BorderRadius.circular(28),
                   child: Stack(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+                        padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -867,13 +863,8 @@ class _MembershipPass extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: isOpen
-                                        ? Colors.white.withValues(alpha: 0.16)
-                                        : Colors.white.withValues(alpha: 0.08),
+                                    color: OTColors.surface(isDark).withValues(alpha: 0.7),
                                     borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.14)),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -900,9 +891,9 @@ class _MembershipPass extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const Spacer(),
+                            const SizedBox(height: 26),
                             Text(
-                              'Untuk',
+                              Loc.tr('membershipFor'),
                               style: ScholarlyFonts.outfit(
                                 color: muted,
                                 fontSize: 9.5,
@@ -939,6 +930,7 @@ class _MembershipPass extends StatelessWidget {
                                     label: AppCopy.navStudies,
                                     value: summary.accessLabel,
                                     valueColor: foreground,
+                                    labelColor: muted,
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -952,6 +944,7 @@ class _MembershipPass extends StatelessWidget {
                                         ? '—'
                                         : _expiryLabel(),
                                     valueColor: foreground,
+                                    labelColor: muted,
                                   ),
                                 ),
                               ],
@@ -992,11 +985,13 @@ class _PassMeta extends StatelessWidget {
   final String label;
   final String value;
   final Color valueColor;
+  final Color labelColor;
 
   const _PassMeta({
     required this.label,
     required this.value,
     required this.valueColor,
+    required this.labelColor,
   });
 
   @override
@@ -1007,7 +1002,7 @@ class _PassMeta extends StatelessWidget {
         Text(
           label,
           style: ScholarlyFonts.outfit(
-            color: Colors.white.withValues(alpha: 0.58),
+            color: labelColor,
             fontSize: 9.5,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.9,
