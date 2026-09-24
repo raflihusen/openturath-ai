@@ -406,6 +406,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               final agent = matches[idx];
                               return SpecialistCard(
                                 title: agent.title,
+                                titleArabic: agent.titleArabic,
+                                fieldId: agent.fieldId,
+                                scopeLabel: agent.subtitleAcademic,
                                 statusLabel: agent.isComingSoon
                                     ? AppCopy.comingSoon
                                     : null,

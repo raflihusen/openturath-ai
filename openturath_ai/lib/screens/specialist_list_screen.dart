@@ -423,6 +423,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                   return SpecialistCard(
                                     title: agent.title,
                                     titleArabic: agent.titleArabic,
+                                    fieldId: agent.fieldId,
                                     emoji: agent.emoji,
                                     scopeLabel: agent.subtitleAcademic,
                                     referenceLabel: agent.referenceBooks?.take(2).map((b) => b.titleArabic).where((s) => s.isNotEmpty).join(' · '),
