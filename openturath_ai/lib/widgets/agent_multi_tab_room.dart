@@ -1116,8 +1116,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         );
       }
 
+      final needsGoogleLogin =
+          isGoogleErr && session.errorMessage!.startsWith('Sesi akun Google');
       final title = isGoogleErr
-          ? 'Akun Google belum memiliki izin'
+          ? (needsGoogleLogin
+              ? 'Hubungkan akun Google'
+              : 'Akun Google belum memiliki izin')
           : (isTimeout
               ? 'Asisten belum berhasil dibuka'
               : 'Asisten Belum Bisa Dibuka');
@@ -1217,18 +1221,21 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onReceivedHttpError: (controller, request, errorResponse) {
               final code = errorResponse.statusCode;
+              final requestUri = request.url?.uriValue;
               if (request.isForMainFrame == true &&
                   mounted &&
-                  code != null &&
-                  code >= 400) {
+                  requestUri != null &&
+                  NotebookNavigation.notebook(requestUri)) {
                 if (code == 401 || code == 403) {
                   _readinessTimer?.cancel();
                   setState(() {
                     session.isWebLoading = false;
                     session.isSessionReady = false;
                     session.isGooglePermissionError = true;
-                    session.errorMessage =
-                        'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda untuk mengakses asisten.';
+                    session.isPaywallRequired = false;
+                    session.errorMessage = code == 401
+                        ? 'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda untuk mengakses asisten.'
+                        : 'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
                   });
                 }
               }
@@ -1378,6 +1385,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onLoadStart: (controller, uri) {
               session.hasInjectedEarlyScript = false;
+              final host = uri?.host.toLowerCase() ?? '';
+              if (host.startsWith('accounts.google') ||
+                  host == 'consent.google.com') {
+                session.isSessionReady = false;
+              }
               // Hanya aktifkan full loader jika sesi BELUM pernah siap sama sekali
               if (mounted && !session.isSessionReady && !session.isWebLoading) {
                 setState(() => session.isWebLoading = true);
