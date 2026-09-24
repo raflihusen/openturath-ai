@@ -475,7 +475,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          mainAxisExtent: 124,
+                          mainAxisExtent:
+                              MediaQuery.textScalerOf(context).scale(124),
                         ),
                         itemCount: _curatedDisciplines.length,
                         itemBuilder: (context, index) {
@@ -546,6 +547,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     Text(
                                       AppCopy.assistantsAvailableCount(
                                           disc.specialistCount),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                       style: ScholarlyFonts.outfit(
                                         fontSize: 11.5,
                                         color: textSecondary,
