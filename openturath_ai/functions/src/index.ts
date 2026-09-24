@@ -520,6 +520,82 @@ async function requestDokuCheckout(params: {
 }
 
 // ================================================================
+// MIDTRANS PAYMENT GATEWAY INTEGRATION (SNAP PRODUCTION)
+// ================================================================
+
+function getMidtransConfig() {
+  const env = process.env.MIDTRANS_ENV || "production";
+  const isProd = env === "production";
+  const snapUrl = isProd
+    ? "https://app.midtrans.com/snap/v1/transactions"
+    : "https://app.sandbox.midtrans.com/snap/v1/transactions";
+  const apiUrl = isProd
+    ? "https://api.midtrans.com/v2"
+    : "https://api.sandbox.midtrans.com/v2";
+  const merchantId = process.env.MIDTRANS_MERCHANT_ID || "";
+  const clientKey = process.env.MIDTRANS_CLIENT_KEY || "";
+  const serverKey = process.env.MIDTRANS_SERVER_KEY || "";
+  if (!serverKey) {
+    throw new Error("MIDTRANS_SERVER_KEY is not configured");
+  }
+  return { env, isProd, snapUrl, apiUrl, merchantId, clientKey, serverKey };
+}
+
+async function requestMidtransSnapCheckout(params: {
+  invoiceNumber: string;
+  amount: number;
+  itemName: string;
+  planId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+}): Promise<{ token: string; redirectUrl: string }> {
+  const cfg = getMidtransConfig();
+  const authHeader = "Basic " + Buffer.from(cfg.serverKey + ":").toString("base64");
+
+  const payload: Record<string, any> = {
+    transaction_details: {
+      order_id: params.invoiceNumber,
+      gross_amount: params.amount,
+    },
+    item_details: [
+      {
+        id: params.planId.slice(0, 50),
+        price: params.amount,
+        quantity: 1,
+        name: params.itemName.slice(0, 50),
+      },
+    ],
+    customer_details: {
+      first_name: params.customerName || "Peneliti OpenTurath",
+      email: params.customerEmail,
+      phone: params.customerPhone || undefined,
+    },
+    callbacks: {
+      finish: "https://openturath-ai.web.app/payment-success",
+    },
+  };
+
+  console.log(`[Midtrans Snap] Requesting Checkout for ${params.invoiceNumber} (${params.itemName}) - Rp ${params.amount}...`);
+  const response = await axios.post(cfg.snapUrl, payload, {
+    headers: {
+      "Authorization": authHeader,
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+    timeout: 15000,
+  });
+
+  const token = response.data?.token;
+  const redirectUrl = response.data?.redirect_url;
+  if (!redirectUrl) {
+    console.error("[Midtrans Snap] Missing redirect_url in response:", response.data);
+    throw new Error("Midtrans tidak mengembalikan redirect_url.");
+  }
+  return { token, redirectUrl };
+}
+
+// ================================================================
 // ================================================================
 // RATE LIMITING HELPER (In-Memory / Firestore Atomic Window)
 // ================================================================
@@ -608,12 +684,12 @@ export const createCheckout = functions
     const trxId = trxRef.id;
     const uid = context.auth?.uid || null;
 
-    // F-07: Tulis dokumen transaksi berstatus pending SEBELUM memanggil gateway DOKU
+    // F-07: Tulis dokumen transaksi berstatus pending SEBELUM memanggil gateway Midtrans
     await trxRef.set({
       uid,
       plan,
       agent_id: currentAgentId,
-      gateway: "doku",
+      gateway: "midtrans",
       invoice_number: invoiceNumber,
       amount: pricing.amount,
       duration_months: pricing.durationMonths,
@@ -627,37 +703,43 @@ export const createCheckout = functions
     });
 
     let paymentUrl = "";
+    let snapToken = "";
     try {
-      paymentUrl = await requestDokuCheckout({
+      const snapRes = await requestMidtransSnapCheckout({
         invoiceNumber,
         amount: pricing.amount,
         itemName: pricing.label,
+        planId: plan as string,
         customerName: name,
         customerEmail: email,
         customerPhone: phone || "",
       });
+      paymentUrl = snapRes.redirectUrl;
+      snapToken = snapRes.token;
 
-      // Update URL pembayaran yang berhasil diperoleh
+      // Update URL pembayaran dan Snap Token yang berhasil diperoleh
       await trxRef.update({
         payment_url: paymentUrl,
+        snap_token: snapToken,
         updated_at: admin.firestore.FieldValue.serverTimestamp(),
       });
     } catch (err: any) {
-      console.error("[createCheckout] DOKU checkout error:", err.response?.data || err.message);
+      console.error("[createCheckout] Midtrans checkout error:", err.response?.data || err.message);
       await trxRef.update({
         status: "failed",
-        error: err.response?.data?.error?.message || err.message || "Kendala teknis DOKU",
+        error: err.response?.data?.error_messages?.join(", ") || err.message || "Kendala teknis Midtrans",
         failed_at: admin.firestore.FieldValue.serverTimestamp(),
       }).catch(() => {});
       throw new functions.https.HttpsError(
         "internal",
-        "Gagal membuat sesi pembayaran DOKU: " + (err.response?.data?.error?.message || err.message || "Kendala teknis DOKU")
+        "Gagal membuat sesi pembayaran Midtrans: " + (err.response?.data?.error_messages?.join(", ") || err.message || "Kendala teknis Midtrans")
       );
     }
 
     return {
       redirectUrl: paymentUrl,
       paymentUrl: paymentUrl,
+      snapToken: snapToken,
       trxId,
       invoiceNumber,
       amount: pricing.amount,
@@ -986,6 +1068,110 @@ export const dokuWebhook = functions
   });
 
 // ================================================================
+// FUNCTION 2b-2: midtransWebhook (HTTP Notification dari Midtrans)
+// Otomatis verifikasi Signature SHA-512 & aktifkan akses santri
+// ================================================================
+export const midtransWebhook = functions
+  .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com" })
+  .https.onRequest(async (req, res) => {
+    try {
+      if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+      }
+
+      const body = req.body || {};
+      const orderId = body.order_id;
+      const statusCode = body.status_code;
+      const grossAmount = body.gross_amount;
+      const signatureKey = body.signature_key;
+      const transactionStatus = body.transaction_status;
+      const fraudStatus = body.fraud_status;
+
+      console.log(`[Midtrans Webhook] Notifikasi order: ${orderId}, status: ${transactionStatus}, code: ${statusCode}`);
+
+      if (!orderId || !statusCode || !grossAmount || !signatureKey) {
+        console.error("[Midtrans Webhook] Missing required signature parameters in body.");
+        res.status(400).send("Bad Request: Incomplete parameters");
+        return;
+      }
+
+      const cfg = getMidtransConfig();
+      // SHA-512 Signature verification
+      const rawSig = `${orderId}${statusCode}${grossAmount}${cfg.serverKey}`;
+      const expectedSig = crypto.createHash("sha512").update(rawSig).digest("hex");
+
+      if (!safeTimingEqual(String(signatureKey).toLowerCase(), expectedSig.toLowerCase())) {
+        console.error(`[Midtrans Webhook] Invalid signature key for order ${orderId}`);
+        res.status(401).send("Invalid signature");
+        return;
+      }
+
+      // State machine idempotensi event
+      const eventKey = crypto.createHash("sha256").update(`midtrans_${orderId}_${transactionStatus}_${statusCode}`).digest("hex");
+      const eventRef = db.collection("webhook_events").doc(eventKey);
+      const eventSnap = await eventRef.get();
+      if (eventSnap.exists && eventSnap.data()?.status === "completed") {
+        console.log(`[Midtrans Webhook] Event ${orderId} status ${transactionStatus} already completed.`);
+        res.status(200).json({ status: "ALREADY_PROCESSED" });
+        return;
+      }
+
+      await eventRef.set({
+        gateway: "midtrans",
+        order_id: orderId,
+        transaction_status: transactionStatus,
+        status_code: statusCode,
+        gross_amount: grossAmount,
+        status: "processing",
+        received_at: admin.firestore.FieldValue.serverTimestamp(),
+      }, { merge: true });
+
+      const isSuccess =
+        transactionStatus === "settlement" ||
+        (transactionStatus === "capture" && fraudStatus === "accept");
+
+      if (isSuccess) {
+        console.log(`[Midtrans Webhook] Payment confirmed for ${orderId}. Activating entitlement...`);
+        try {
+          const actResult = await processSuccessfulPayment(orderId, grossAmount);
+          await eventRef.update({
+            status: "completed",
+            completed_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          res.status(200).json({ status: "OK", orderId, details: actResult });
+        } catch (actErr: any) {
+          console.error(`[Midtrans Webhook] Activation error for ${orderId}:`, actErr.message);
+          await eventRef.update({
+            status: "failed",
+            error: actErr.message,
+            failed_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          res.status(500).json({ status: "ERROR", message: actErr.message });
+        }
+      } else if (transactionStatus === "cancel" || transactionStatus === "expire" || transactionStatus === "deny") {
+        console.log(`[Midtrans Webhook] Payment ${transactionStatus} for ${orderId}. Updating transaction record...`);
+        const txQuery = await db.collection("transactions").where("invoice_number", "==", orderId).limit(1).get();
+        if (!txQuery.empty) {
+          await txQuery.docs[0].ref.update({
+            status: transactionStatus,
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        }
+        await eventRef.update({ status: "completed" });
+        res.status(200).json({ status: "OK", message: `Transaction marked as ${transactionStatus}` });
+      } else {
+        console.log(`[Midtrans Webhook] Pending status ${transactionStatus} for ${orderId}.`);
+        await eventRef.update({ status: "pending" });
+        res.status(200).json({ status: "OK", message: "Status pending" });
+      }
+    } catch (err: any) {
+      console.error("[Midtrans Webhook] Uncaught error:", err.message);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+// ================================================================
 // FUNCTION 2c: checkPaymentStatus (Active Status Inquiry dari Client/App)
 // Memverifikasi status langsung ke DOKU API tanpa menunggu webhook
 // ================================================================
@@ -1033,51 +1219,109 @@ export const checkPaymentStatus = functions
       return { success: true, status: "SUCCESS", message: "Akses langganan sudah aktif." };
     }
 
-    // 2. Jika belum success di Firestore, query langsung ke DOKU Orders Inquiry API
-    const dokuCfg = getDokuConfig();
-    const targetPath = `/orders/v1/status/${invoiceNumber}`;
-    const requestId = `REQ-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const timestamp = new Date().toISOString().slice(0, 19) + "Z";
-    const signature = generateDokuGetSignature(dokuCfg.clientId, requestId, timestamp, targetPath, dokuCfg.secretKey);
+    const gateway = txData.gateway || "midtrans";
 
-    try {
-      console.log(`[checkPaymentStatus] Inquiring DOKU API for ${invoiceNumber}...`);
-      const response = await axios.get(`${dokuCfg.baseUrl}${targetPath}`, {
-        headers: {
-          "Client-Id": dokuCfg.clientId,
-          "Request-Id": requestId,
-          "Request-Timestamp": timestamp,
-          "Signature": signature,
-        },
-        timeout: 10000,
-      });
+    // 2. Status Inquiry ke Payment Gateway jika belum success di Firestore
+    if (gateway === "midtrans") {
+      const midtransCfg = getMidtransConfig();
+      const statusUrl = `${midtransCfg.apiUrl}/${invoiceNumber}/status`;
+      const authHeader = "Basic " + Buffer.from(midtransCfg.serverKey + ":").toString("base64");
 
-      const dokuData = response.data || {};
-      const trxStatus = dokuData.transaction?.status || "";
+      try {
+        console.log(`[checkPaymentStatus] Inquiring Midtrans API for ${invoiceNumber}...`);
+        const response = await axios.get(statusUrl, {
+          headers: {
+            "Authorization": authHeader,
+            "Accept": "application/json",
+          },
+          timeout: 10000,
+        });
 
-      if (trxStatus === "SUCCESS") {
-        console.log(`[checkPaymentStatus] DOKU Inquiry verified SUCCESS for ${invoiceNumber}! Activating subscription...`);
-        const actResult = await processSuccessfulPayment(invoiceNumber, dokuData.order?.amount);
-        return {
-          success: true,
-          status: "SUCCESS",
-          message: "Pembayaran terverifikasi. Akses Anda sudah aktif.",
-          details: actResult
-        };
-      } else {
+        const mData = response.data || {};
+        const trxStatus = mData.transaction_status || "";
+        const fraudStatus = mData.fraud_status || "";
+
+        const isSuccess =
+          trxStatus === "settlement" ||
+          (trxStatus === "capture" && fraudStatus === "accept");
+
+        if (isSuccess) {
+          console.log(`[checkPaymentStatus] Midtrans Inquiry verified SUCCESS for ${invoiceNumber}! Activating subscription...`);
+          const actResult = await processSuccessfulPayment(invoiceNumber, mData.gross_amount);
+          return {
+            success: true,
+            status: "SUCCESS",
+            message: "Pembayaran terverifikasi. Akses Anda sudah aktif.",
+            details: actResult,
+          };
+        } else if (trxStatus === "cancel" || trxStatus === "expire" || trxStatus === "deny") {
+          return {
+            success: false,
+            status: trxStatus.toUpperCase(),
+            message: `Pembayaran ${trxStatus}.`,
+          };
+        } else {
+          return {
+            success: false,
+            status: trxStatus ? trxStatus.toUpperCase() : "PENDING",
+            message: "Pembayaran masih menunggu penyelesaian.",
+          };
+        }
+      } catch (err: any) {
+        console.error("[checkPaymentStatus] Error checking Midtrans status:", err.response?.data || err.message);
         return {
           success: false,
-          status: trxStatus || "PENDING",
-          message: "Pembayaran masih menunggu penyelesaian."
+          status: "PENDING",
+          error: err.response?.data?.status_message || err.message,
         };
       }
-    } catch (err: any) {
-      console.error("[checkPaymentStatus] Error checking DOKU status:", err.response?.data || err.message);
-      return {
-        success: false,
-        status: "PENDING",
-        error: err.response?.data || err.message
-      };
+    } else {
+      // Fallback untuk transaksi warisan DOKU
+      const dokuCfg = getDokuConfig();
+      const targetPath = `/orders/v1/status/${invoiceNumber}`;
+      const requestId = `REQ-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const timestamp = new Date().toISOString().slice(0, 19) + "Z";
+      const signature = generateDokuGetSignature(dokuCfg.clientId, requestId, timestamp, targetPath, dokuCfg.secretKey);
+
+      try {
+        console.log(`[checkPaymentStatus] Inquiring DOKU API for ${invoiceNumber}...`);
+        const response = await axios.get(`${dokuCfg.baseUrl}${targetPath}`, {
+          headers: {
+            "Client-Id": dokuCfg.clientId,
+            "Request-Id": requestId,
+            "Request-Timestamp": timestamp,
+            "Signature": signature,
+          },
+          timeout: 10000,
+        });
+
+        const dokuData = response.data || {};
+        const trxStatus = dokuData.transaction?.status || "";
+
+        if (trxStatus === "SUCCESS") {
+          console.log(`[checkPaymentStatus] DOKU Inquiry verified SUCCESS for ${invoiceNumber}! Activating subscription...`);
+          const actResult = await processSuccessfulPayment(invoiceNumber, dokuData.order?.amount);
+          return {
+            success: true,
+            status: "SUCCESS",
+            message: "Pembayaran terverifikasi. Akses Anda sudah aktif.",
+            details: actResult
+          };
+        } else {
+          return {
+            success: false,
+            status: trxStatus || "PENDING",
+            message: "Pembayaran masih menunggu penyelesaian."
+          };
+        }
+      } catch (err: any) {
+        console.error("[checkPaymentStatus] Error checking DOKU status:", err.response?.data || err.message);
+        return {
+          success: false,
+          status: "PENDING",
+          error: err.response?.data || err.message
+        };
+      }
     }
   });
 
