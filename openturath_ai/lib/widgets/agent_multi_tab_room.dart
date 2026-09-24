@@ -761,27 +761,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
   void _handleAccessDenied(AgentSessionTab session) {
     _readinessTimer?.cancel();
-    final user = _authService.cachedCurrentUser;
-    final hasSubscription =
-        user != null && user.hasAccessToAgent(session.agent.id);
-
     if (mounted) {
       setState(() {
         session.isWebLoading = false;
         session.isSessionReady = false;
-        if (hasSubscription) {
-          session.isGooglePermissionError = true;
-          session.isPaywallRequired = false;
-          session.isTimeoutError = false;
-          session.errorMessage =
-              'Akun Google ini belum dapat membuka asisten. Gunakan akun Google yang sudah dihubungkan dengan OpenTurath.';
-        } else {
-          session.isGooglePermissionError = false;
-          session.isPaywallRequired = true;
-          session.isTimeoutError = false;
-          session.errorMessage =
-              'Akses untuk asisten ini memerlukan langganan aktif.';
-        }
+        session.isGooglePermissionError = true;
+        session.isPaywallRequired = false;
+        session.isTimeoutError = false;
+        session.errorMessage =
+            'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
       });
     }
   }
