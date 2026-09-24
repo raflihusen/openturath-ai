@@ -583,8 +583,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             left: -9999px !important;
             width: 24px !important;
             height: 24px !important;
-            opacity: 0.001 !important;
-            pointer-events: auto !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
             visibility: visible !important;
             z-index: -1 !important;
           }
@@ -595,12 +595,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           }
           .cdk-overlay-container {
             z-index: 99999 !important;
-          }
-          [role="dialog"], mat-dialog-container, .mat-mdc-dialog-container {
-            opacity: 1 !important;
-            visibility: visible !important;
-            display: block !important;
-            z-index: 100000 !important;
           }
           .chat-disclaimer, .query-disclaimer, .model-disclaimer,
           [class*="disclaimer" i], [aria-label*="disclaimer" i],
