@@ -163,7 +163,10 @@ const notebookUiScript = r'''
       .chat-message-pair, .to-user-container, .to-model-container {
         margin-bottom: 18px !important;
       }
-      .rendered-markdown, .chat-response { line-height: 1.8 !important; }
+      .rendered-markdown, .chat-response {
+        font-size: 15.5px !important;
+        line-height: 1.8 !important;
+      }
       .rendered-markdown p + p, .chat-response p + p { margin-top: 1em !important; }
       ::-webkit-scrollbar { display: none !important; width: 0 !important; }
       html, body, * { scrollbar-width: none !important; }
@@ -300,14 +303,15 @@ const notebookUiScript = r'''
   window.otGetConversationList = conversationList;
 
   function ready() {
-    if (accessDenied()) return false;
     if (inputReady()) return true;
+    if (accessDenied()) return false;
     return !!document.querySelector('app-chat-view, .chat-view, .chat-panel-content, [role="log"]');
   }
   function inputReady() {
     return !!document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
   }
 function accessDenied() {
+  if (inputReady()) return false;
   const body = (document.body?.innerText || '').toLowerCase();
   const title = (document.title || '').toLowerCase();
   const hasTextMatch = /anda memerlukan akses|minta akses|you need access|request access|tidak memiliki izin/.test(body) ||
