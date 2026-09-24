@@ -3,7 +3,7 @@ import '../widgets/adaptive_sheet.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 import '../core/app_copy.dart';
 import '../core/localization.dart';
@@ -386,8 +386,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                           [
                             if (_selectedSection != null)
                               _cleanSectionLabel(_selectedSection!),
-                            if (_selectedEra != null) _selectedEra!,
-                            if (_selectedType != null) _selectedType!,
+                            if (_selectedEra != null) Loc.text(_selectedEra!),
+                            if (_selectedType != null) Loc.text(_selectedType!),
                             if (_selectedCentury != null) _selectedCentury!,
                           ].join(' · '),
                           style: OTTypography.caption(color: primaryAccent)
@@ -509,7 +509,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                     spacing: 8,
                     children: eraChoices
                         .map((era) => ChoiceChip(
-                            label: Text(era),
+                            label: Text(Loc.text(era)),
                             selected:
                                 _selectedCentury == era || _selectedEra == era,
                             onSelected: (_) {
@@ -536,7 +536,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       spacing: 8,
                       children: _types
                           .map((type) => ChoiceChip(
-                              label: Text(type),
+                              label: Text(Loc.text(type)),
                               selected: _selectedType == type,
                               onSelected: (_) {
                                 setState(() {
@@ -649,7 +649,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             ),
             for (final era in _eras)
               _filterChip(
-                label: era,
+                label: Loc.text(era),
                 isSelected: _selectedEra == era,
                 onTap: () {
                   setState(() {
@@ -671,7 +671,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               ),
               for (final type in _types)
                 _filterChip(
-                  label: type,
+                  label: Loc.text(type),
                   isSelected: _selectedType == type,
                   onTap: () {
                     setState(() {
@@ -716,7 +716,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           ),
           for (final century in _centuries)
             _filterChip(
-              label: century,
+                label: Loc.text(century),
               isSelected: _selectedCentury == century,
               onTap: () {
                 setState(() {
@@ -883,7 +883,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
     final activeFg = isDark ? Colors.black : Colors.white;
 
     return Padding(
-      padding: const EdgeInsets.only(right: 6),
+      padding: const EdgeInsetsDirectional.only(end: 6),
       child: AppleInteractiveWrapper(
         onTap: onTap,
         pressedScale: 0.94,
