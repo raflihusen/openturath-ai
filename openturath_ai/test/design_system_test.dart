@@ -12,23 +12,25 @@ void main() {
   GoogleFonts.config.allowRuntimeFetching = false;
   OTTypography.useSystemFontFallback = true;
 
-  group('Quiet Scholar Design System — Tokens Suite', () {
-    test('OTColors provides calm, scholarly palettes without gold leaks', () {
+  group('OpenTurath Material 3 design tokens', () {
+    test('OTColors provides accessible expressive tones in both themes', () {
       // 1. Light palette checks
-      expect(OTColors.canvasLight, const Color(0xFFF6F6F3));
+      expect(OTColors.canvasLight, const Color(0xFFF7F7F3));
       expect(OTColors.surfaceLight, const Color(0xFFFFFFFF));
-      expect(OTColors.textPrimaryLight, const Color(0xFF171717));
-      expect(OTColors.textSecondaryLight, const Color(0xFF656560));
+      expect(OTColors.textPrimaryLight, const Color(0xFF1D2128));
+      expect(OTColors.textSecondaryLight, const Color(0xFF535A64));
 
       // 2. Dark palette checks
-      expect(OTColors.canvasDark, const Color(0xFF111110));
-      expect(OTColors.surfaceDark, const Color(0xFF181817));
-      expect(OTColors.textPrimaryDark, const Color(0xFFF4F4F0));
-      expect(OTColors.textSecondaryDark, const Color(0xFFB2B2AA));
+      expect(OTColors.canvasDark, const Color(0xFF12151B));
+      expect(OTColors.surfaceDark, const Color(0xFF1C212A));
+      expect(OTColors.textPrimaryDark, const Color(0xFFF1F3F8));
+      expect(OTColors.textSecondaryDark, const Color(0xFFC0C7D2));
 
-      // 3. Scholarly pure monochrome accents
-      expect(OTColors.accentLight, const Color(0xFF171717));
-      expect(OTColors.accentDark, const Color(0xFFF4F4F0));
+      // 3. Pilot accent and its readable tonal containers
+      expect(OTColors.accentLight, const Color(0xFF3159A5));
+      expect(OTColors.accentDark, const Color(0xFFA9C5FF));
+      expect(OTColors.primaryContainerLight, const Color(0xFFDCE6FF));
+      expect(OTColors.primaryContainerDark, const Color(0xFF263C65));
 
       // 4. Adaptive context helpers
       expect(OTColors.canvas(false), OTColors.canvasLight);
