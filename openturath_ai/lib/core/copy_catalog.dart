@@ -572,4 +572,10 @@ const copyCatalog = <String, List<String>>{
   "bookEraMiddle": ["Mutawassithin", "Middle period scholars", "المتوسطون"],
   "bookEraLate": ["Muta'akhkhirin", "Later scholars", "المتأخرون"],
   "bookEraModern": ["Mu'ashirin", "Contemporary scholars", "المعاصرون"],
+  "catalogFoundationalSchool": ["Asal Mazhab", "Foundational school texts", "أصول المذهب"],
+  "catalogEraFaces": ["Ashab Al-Wujuh", "Early school jurists", "أصحاب الوجوه"],
+  "catalogCenturySalaf": ["Salaf (≤ 300 H)", "Early period (to 300 AH)", "العصر الأول (حتى ٣٠٠ هـ)"],
+  "catalogCenturyEarly": ["Mutaqaddimin (301-600 H)", "Early scholars (301–600 AH)", "المتقدمون (٣٠١–٦٠٠ هـ)"],
+  "catalogCenturyLate": ["Muta'akhkhirin (601-1100 H)", "Later scholars (601–1100 AH)", "المتأخرون (٦٠١–١١٠٠ هـ)"],
+  "catalogCenturyModern": ["Mu'ashir (> 1100 H)", "Modern period (after 1100 AH)", "العصر الحديث (بعد ١١٠٠ هـ)"],
 };
