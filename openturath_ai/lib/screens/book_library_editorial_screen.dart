@@ -565,15 +565,18 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                       onPressed: () => Navigator.of(context).maybePop(),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      Loc.tr('bookReferenceLabel'),
-                      style: GoogleFonts.outfit(
-                        color: ink,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        Loc.tr('bookReferenceLabel'),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: ScholarlyFonts.outfit(
+                          color: ink,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    const Spacer(),
                     IconButton(
                       icon: Icon(Icons.copy_rounded, color: ink, size: 20),
                       tooltip: Loc.tr('bookCitationCopy'),
