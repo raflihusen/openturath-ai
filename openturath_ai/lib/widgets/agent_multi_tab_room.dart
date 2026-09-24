@@ -226,6 +226,206 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
     );
   }
 
+  void _confirmDeleteChatHistory(BuildContext context, AgentSessionTab session) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
+    showAdaptiveSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          border: Border.all(color: border, width: 0.8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                const Icon(Icons.delete_outline_rounded,
+                    color: Colors.redAccent, size: 22),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Hapus Riwayat Obrolan?',
+                    style: OTTypography.cardTitle(color: textPrimary)
+                        .copyWith(fontSize: 17),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Seluruh percakapan pada sesi asisten ini akan dibersihkan dari layar.',
+              style: OTTypography.body(color: textSecondary),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text('Batal',
+                      style: OTTypography.body(color: textSecondary)),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 10),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    session.webController?.evaluateJavascript(
+                      source:
+                          'if (typeof window.otClearChat === "function") { window.otClearChat(); } else if (typeof window.otDeleteChatHistory === "function") { window.otDeleteChatHistory(); }',
+                    );
+                    if (mounted) {
+                      AppSnackBar.success(
+                          context, 'Riwayat obrolan telah dibersihkan.');
+                    }
+                  },
+                  child: Text('Hapus',
+                      style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w600, color: Colors.white)),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSessionSwitcher(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+    final sessions = _sessionManager.tabs;
+
+    showAdaptiveSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setSheetState) {
+          return Container(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+            decoration: BoxDecoration(
+              color: surface,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
+              border: Border.all(color: border, width: 0.8),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: border,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Sesi Asisten Terbuka',
+                  style: OTTypography.cardTitle(color: textPrimary)
+                      .copyWith(fontSize: 17),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Pilih asisten untuk berpindah sesi kajian aktif.',
+                  style: OTTypography.caption(color: textSecondary),
+                ),
+                const SizedBox(height: 16),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: sessions.length,
+                    separatorBuilder: (_, __) => Divider(
+                        height: 1, color: border.withValues(alpha: 0.5)),
+                    itemBuilder: (context, index) {
+                      final s = sessions[index];
+                      final isActive = index == _sessionManager.activeIndex;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(
+                          isActive
+                              ? Icons.radio_button_checked_rounded
+                              : Icons.radio_button_unchecked_rounded,
+                          color: isActive
+                              ? OTColors.marja(isDark)
+                              : textSecondary,
+                          size: 20,
+                        ),
+                        title: Text(
+                          s.agent.title,
+                          style: OTTypography.bodyMedium(
+                            color: isActive ? textPrimary : textSecondary,
+                          ).copyWith(
+                            fontWeight: isActive
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.close_rounded,
+                              size: 18, color: textSecondary),
+                          tooltip: 'Tutup sesi',
+                          onPressed: () {
+                            _sessionManager.closeTab(index);
+                            setSheetState(() {});
+                            if (_sessionManager.tabs.isEmpty) {
+                              Navigator.pop(ctx);
+                            }
+                          },
+                        ),
+                        onTap: () {
+                          Navigator.pop(ctx);
+                          _sessionManager.selectTab(index);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -309,8 +509,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   source:
                       'if (typeof window.otOpenLanguageSettings === "function") { window.otOpenLanguageSettings(); } else if (typeof otOpenLanguageSettings === "function") { otOpenLanguageSettings(); }',
                 );
+              } else if (val == 'delete_chat') {
+                _confirmDeleteChatHistory(context, activeTab);
               } else if (val == 'font') {
                 _showFontScaleDialog(context, activeTab);
+              } else if (val == 'switch_session') {
+                _showSessionSwitcher(context);
               }
             },
             itemBuilder: (ctx) => [
@@ -323,6 +527,18 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     const SizedBox(width: 12),
                     Text('Bahasa Output (Output Language)',
                         style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'delete_chat',
+                child: Row(
+                  children: [
+                    const Icon(Icons.delete_outline_rounded,
+                        color: Colors.redAccent, size: 18),
+                    const SizedBox(width: 12),
+                    Text('Hapus Riwayat Obrolan',
+                        style: OTTypography.body(color: Colors.redAccent)),
                   ],
                 ),
               ),
@@ -350,12 +566,25 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   ],
                 ),
               ),
+              if (!AppPlatform.isDesktop && sessions.length > 1)
+                PopupMenuItem(
+                  value: 'switch_session',
+                  child: Row(
+                    children: [
+                      Icon(Icons.tab_rounded,
+                          color: textPrimary, size: 18),
+                      const SizedBox(width: 12),
+                      Text('Sesi Asisten Terbuka (${sessions.length})',
+                          style: OTTypography.body(color: textPrimary)),
+                    ],
+                  ),
+                ),
             ],
           ),
           const SizedBox(width: 4),
         ],
-        // Chrome-like Multi-Tab Bar (Hanya tampil jika terdapat lebih dari 1 sesi aktif)
-        bottom: sessions.length > 1
+        // Chrome-like Multi-Tab Bar (Hanya tampil di Desktop jika terdapat lebih dari 1 sesi aktif)
+        bottom: (AppPlatform.isDesktop && sessions.length > 1)
             ? PreferredSize(
                 preferredSize: const Size.fromHeight(42),
                 child: Container(

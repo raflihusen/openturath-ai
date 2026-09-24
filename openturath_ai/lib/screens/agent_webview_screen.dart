@@ -1288,6 +1288,17 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ),
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
+              leading: const Icon(Icons.delete_outline_rounded,
+                  color: Colors.redAccent, size: 20),
+              title: Text('Hapus Riwayat Obrolan',
+                  style: OTTypography.bodyMedium(color: Colors.redAccent)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _confirmDeleteChatHistory();
+              },
+            ),
+            Divider(height: 1, color: border.withValues(alpha: 0.5)),
+            ListTile(
               leading:
                   Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
               title: Text('Ukuran teks (${(_fontScale * 100).round()}%)',
@@ -1323,6 +1334,101 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       Navigator.pop(ctx);
                       _saveAnswerToBookmarks();
                     },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteChatHistory() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final textPrimary = OTColors.textPrimary(isDark);
+    final textSecondary = OTColors.textSecondary(isDark);
+
+    showAdaptiveSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          border: Border.all(color: border, width: 0.8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                const Icon(Icons.delete_outline_rounded,
+                    color: Colors.redAccent, size: 22),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Hapus Riwayat Obrolan?',
+                    style: OTTypography.cardTitle(color: textPrimary)
+                        .copyWith(fontSize: 17),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Seluruh percakapan pada sesi asisten ini akan dibersihkan dari layar.',
+              style: OTTypography.body(color: textSecondary),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text('Batal',
+                      style: OTTypography.body(color: textSecondary)),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 10),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    _webController?.evaluateJavascript(
+                      source:
+                          'if (typeof window.otClearChat === "function") { window.otClearChat(); } else if (typeof window.otDeleteChatHistory === "function") { window.otDeleteChatHistory(); }',
+                    );
+                    if (mounted) {
+                      AppSnackBar.success(
+                          context, 'Riwayat obrolan telah dibersihkan.');
+                    }
+                  },
+                  child: Text('Hapus',
+                      style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.w600, color: Colors.white)),
+                ),
+              ],
             ),
           ],
         ),

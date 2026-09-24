@@ -4,6 +4,8 @@ const notebookUiScript = r'''
   if (window.top !== window || !['notebooklm.google.com', 'notebook.google.com'].includes(location.hostname)) return;
   if (window.otNotebook) {
     window.otOpenLanguageSettings = window.otNotebook.openLanguageSettings;
+    window.otDeleteChatHistory = window.otNotebook.deleteChatHistory;
+    window.otClearChat = window.otNotebook.clearChat;
     return;
   }
   const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
@@ -123,43 +125,82 @@ const notebookUiScript = r'''
   window.otSetTheme = syncTheme;
 
   let presentationEnabled = false;
-  function clean() {
-    if (!presentationEnabled || !document.documentElement) return;
-    syncTheme();
+
+  function ensureStyles() {
     if (document.getElementById('ot-conversation-ui')) return;
     const style = document.createElement('style');
     style.id = 'ot-conversation-ui';
     style.textContent = `
-      top-bar, .top-bar, body > header, .app-header, app-header,
+      /* Eradicate top bar, headers, waffles, and account buttons */
+      top-bar, .top-bar, body > header, .app-header, app-header, header,
       mat-toolbar, [role="banner"], .notebook-header,
-      app-notebook-header, app-project-header {
+      app-notebook-header, app-project-header, .project-header,
+      .project-header-container, app-top-bar,
+      div[class*="header-container" i], div[class*="project-header" i],
+      app-user-avatar, div[class*="gb_"],
+      [aria-label*="Google apps" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
+      [role="tablist"], mat-tab-header, nav[class*="tab" i] {
+        position: fixed !important;
+        top: -99999px !important;
+        left: -99999px !important;
+        height: 0 !important;
+        width: 0 !important;
         max-height: 0 !important;
         min-height: 0 !important;
-        overflow: visible !important;
+        overflow: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
+
       button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
       button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i] {
         opacity: 0 !important;
         pointer-events: none !important;
       }
+
+      /* Eradicate hero cover cards, summary cards, and guide intros */
       labs-tailwind-logo, a.logo-link, .logo-container,
       app-notebook-guide, notebook-guide, app-guide-intro,
       app-chat-intro, app-project-summary, app-notebook-overview,
       .notebook-guide, .guide-container, .hero-container,
-      .cover-image-container, .summary-card, .guide-card {
+      .cover-image-container, .summary-card, .guide-card,
+      [class*="title-card" i], [class*="hero-container" i],
+      [class*="notebook-overview" i], [class*="notebook-cover" i],
+      [class*="guide-intro" i], [class*="project-summary" i],
+      [class*="hero-card" i] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
         max-height: 0 !important;
+        min-height: 0 !important;
         overflow: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
+
       .ot-opening-language [role="menu"],
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
+
+      /* Elevate chat input and disclaimer */
       .chat-panel-content, .chat-view, .conversation-container, .message-list {
-        padding-bottom: max(28px, env(safe-area-inset-bottom)) !important;
+        padding-bottom: max(36px, calc(env(safe-area-inset-bottom, 24px) + 20px)) !important;
       }
+      div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
+      [class*="input-container" i], [class*="chat-input" i] {
+        margin-bottom: 8px !important;
+      }
+      .disclaimer, [class*="disclaimer" i] {
+        margin-bottom: max(18px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
+        padding-bottom: 6px !important;
+        font-size: 11.5px !important;
+        opacity: 0.75 !important;
+      }
+
       .chat-message-pair, .to-user-container, .to-model-container {
         margin-bottom: 18px !important;
       }
@@ -172,6 +213,97 @@ const notebookUiScript = r'''
       html, body, * { scrollbar-width: none !important; }
     `;
     (document.head || document.documentElement).appendChild(style);
+  }
+
+  function removeTopToolbars() {
+    const selectors = [
+      'top-bar', '.top-bar', 'body > header', '.app-header', 'app-header', 'header',
+      'mat-toolbar', '[role="banner"]', '.notebook-header',
+      'app-notebook-header', 'app-project-header', '.project-header',
+      '.project-header-container', 'app-top-bar',
+      'div[class*="header-container" i]', 'div[class*="project-header" i]',
+      'app-user-avatar', 'div[class*="gb_"]',
+      '[aria-label*="Google apps" i]', '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]'
+    ];
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        el.style.setProperty('position', 'fixed', 'important');
+        el.style.setProperty('top', '-99999px', 'important');
+        el.style.setProperty('left', '-99999px', 'important');
+        el.style.setProperty('height', '0px', 'important');
+        el.style.setProperty('width', '0px', 'important');
+        el.style.setProperty('opacity', '0', 'important');
+        el.style.setProperty('pointer-events', 'none', 'important');
+      });
+    });
+  }
+
+  function removeHeroCard() {
+    const guideSelectors = [
+      'labs-tailwind-logo', 'a.logo-link', '.logo-container',
+      'app-notebook-guide', 'notebook-guide', 'app-guide-intro',
+      'app-chat-intro', 'app-project-summary', 'app-notebook-overview',
+      '.notebook-guide', '.guide-container', '.hero-container',
+      '.cover-image-container', '.summary-card', '.guide-card',
+      '[class*="title-card" i]', '[class*="hero-container" i]',
+      '[class*="notebook-overview" i]', '[class*="notebook-cover" i]',
+      '[class*="guide-intro" i]', '[class*="project-summary" i]',
+      '[class*="hero-card" i]'
+    ];
+    guideSelectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        el.style.setProperty('display', 'none', 'important');
+        el.style.setProperty('height', '0px', 'important');
+        el.style.setProperty('overflow', 'hidden', 'important');
+      });
+    });
+
+    const candidates = document.querySelectorAll('div, section, mat-card, article');
+    for (const card of candidates) {
+      if (card.id === 'ot-conversation-ui') continue;
+      if (card.matches('textarea, input, [role="textbox"], .chat-message, app-chat-message, app-chat-response, [role="article"]')) continue;
+      if (card.closest('.chat-message, app-chat-message, app-chat-response, [role="article"], app-chat-input, .input-container')) continue;
+
+      const txt = (card.innerText || card.textContent || '');
+      if (/\b\d+\s+(sources|sumber)\b/i.test(txt) && (txt.includes('202') || txt.includes('SUPER AI') || txt.includes('AI FIQH') || txt.includes('OpenTurath') || card.querySelector('img, [style*="background-image"]'))) {
+        let topCard = card;
+        while (topCard.parentElement && 
+               !topCard.parentElement.matches('body, main, app-chat-view, .chat-view, .chat-panel-content') &&
+               topCard.parentElement.children.length === 1) {
+          topCard = topCard.parentElement;
+        }
+        topCard.style.setProperty('display', 'none', 'important');
+        topCard.style.setProperty('height', '0px', 'important');
+        topCard.style.setProperty('overflow', 'hidden', 'important');
+      }
+    }
+  }
+
+  function sanitizeDisclaimer() {
+    const candidates = document.querySelectorAll('.disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"], div, p, span');
+    for (const el of candidates) {
+      if (el.children.length <= 1) {
+        const orig = el.textContent || '';
+        if (/gemini notebook|notebooklm|gemini/i.test(orig) && /mistakes|salah|double-check|periksa/i.test(orig)) {
+          const sanitized = orig
+            .replace(/gemini notebook/gi, 'OpenTurath AI')
+            .replace(/notebooklm/gi, 'OpenTurath AI')
+            .replace(/gemini/gi, 'OpenTurath AI');
+          if (el.textContent !== sanitized) {
+            el.textContent = sanitized;
+          }
+        }
+      }
+    }
+  }
+
+  function clean() {
+    if (!presentationEnabled || !document.documentElement) return;
+    syncTheme();
+    ensureStyles();
+    removeTopToolbars();
+    removeHeroCard();
+    sanitizeDisclaimer();
   }
 
   function triggerClick(el) {
@@ -319,6 +451,78 @@ function accessDenied() {
   const hasElementMatch = !!document.querySelector('[aria-label*="Request access" i], [aria-label*="Minta akses" i], app-access-denied, div[class*="access-denied" i]');
   return hasTextMatch || hasElementMatch;
 }
+window.otDeleteChatHistory = function() {
+  const moreBtns = [
+    ...document.querySelectorAll('button[aria-label*="More" i], button[aria-label*="Opsi" i], button[aria-label*="options" i], button[aria-label*="chat options" i], mat-toolbar button, .project-header button')
+  ];
+  document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
+    const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
+    if (name === 'more_vert' || name === 'more_horiz') {
+      const btn = icon.closest('button, [role="button"]');
+      if (btn && !moreBtns.includes(btn)) moreBtns.push(btn);
+    }
+  });
+
+  function findDeleteMenuItem() {
+    const items = [...document.querySelectorAll('[role="menuitem"], .mat-mdc-menu-panel button, .cdk-overlay-pane button, mat-list-item')];
+    return items.find(item => {
+      const txt = (item.getAttribute('aria-label') || item.innerText || item.textContent || '').toLowerCase();
+      return (txt.includes('delete') || txt.includes('hapus') || txt.includes('clear')) && 
+             (txt.includes('chat') || txt.includes('history') || txt.includes('riwayat') || txt.includes('obrolan') || txt.includes('percakapan'));
+    });
+  }
+
+  function confirmDialog() {
+    const deadline = Date.now() + 2500;
+    const interval = setInterval(() => {
+      const dialogBtns = [...document.querySelectorAll('mat-dialog-container button, .cdk-overlay-pane [role="dialog"] button, [role="alertdialog"] button')];
+      const confirmBtn = dialogBtns.find(b => {
+        const t = (b.getAttribute('aria-label') || b.innerText || b.textContent || '').trim().toLowerCase();
+        return (t === 'delete' || t === 'hapus' || t === 'clear' || t.includes('delete') || t.includes('hapus')) && !t.includes('cancel') && !t.includes('batal');
+      });
+      if (confirmBtn) {
+        clearInterval(interval);
+        triggerClick(confirmBtn);
+      } else if (Date.now() > deadline) {
+        clearInterval(interval);
+      }
+    }, 50);
+  }
+
+  const immediate = findDeleteMenuItem();
+  if (immediate) {
+    triggerClick(immediate);
+    confirmDialog();
+    return true;
+  }
+
+  for (const btn of moreBtns) {
+    triggerClick(btn);
+    setTimeout(() => {
+      const item = findDeleteMenuItem();
+      if (item) {
+        triggerClick(item);
+        confirmDialog();
+      }
+    }, 80);
+  }
+  return true;
+};
+
+window.otClearChat = function() {
+  try {
+    window.otDeleteChatHistory();
+  } catch (_) {}
+  try {
+    const messageContainers = document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]');
+    messageContainers.forEach(c => {
+      const messages = c.querySelectorAll('.chat-message, .model-message, .user-message, .to-user-container, .to-model-container, app-chat-response, app-chat-query, app-chat-prompt, app-chat-message, [role="article"]');
+      messages.forEach(m => m.remove());
+    });
+  } catch (_) {}
+  return true;
+};
+
 window.otNotebook = {
   clean,
   activate: () => { presentationEnabled = true; clean(); },
@@ -329,7 +533,9 @@ window.otNotebook = {
   conversationList,
   accessDenied,
   setTheme: syncTheme,
-  openLanguageSettings: window.otOpenLanguageSettings
+  openLanguageSettings: window.otOpenLanguageSettings,
+  deleteChatHistory: window.otDeleteChatHistory,
+  clearChat: window.otClearChat
 };
 let scheduled = false;
 let isGenerating = false;
