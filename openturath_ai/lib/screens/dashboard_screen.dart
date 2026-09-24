@@ -206,7 +206,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics()),
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 96),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -223,7 +223,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 14),
 
                     // Banner pembaruan jika tersedia
                     const UpdateReadyBanner(),
@@ -280,7 +280,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
 
                     // ── 3. Ergonomic Search Bar (Stadium Pill) ──
                     ListenableBuilder(
@@ -350,7 +350,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 18),
 
                     // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
                     if (_searchQuery.isNotEmpty) ...[
@@ -475,7 +475,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          mainAxisExtent: 156,
+                          mainAxisExtent: 124,
                         ),
                         itemCount: _curatedDisciplines.length,
                         itemBuilder: (context, index) {
@@ -503,7 +503,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 border: Border.all(color: border, width: 1.0),
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(14),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -530,7 +530,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         ),
                                       ],
                                     ),
-                                    const Spacer(),
+                                    const SizedBox(height: 18),
                                     Text(
                                       disc.name,
                                       style: ScholarlyFonts.newsreader(
@@ -542,24 +542,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 5),
+                                    const SizedBox(height: 3),
                                     Text(
                                       AppCopy.assistantsAvailableCount(
                                           disc.specialistCount),
                                       style: ScholarlyFonts.outfit(
                                         fontSize: 11.5,
                                         color: textSecondary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Container(
-                                      height: 2,
-                                      width: 32 + (index % 3) * 12,
-                                      decoration: BoxDecoration(
-                                        color:
-                                            textPrimary.withValues(alpha: 0.72),
-                                        borderRadius:
-                                            BorderRadius.circular(100),
                                       ),
                                     ),
                                   ],
@@ -638,7 +627,7 @@ class _StudyEntryCard extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(17),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -652,7 +641,7 @@ class _StudyEntryCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 14),
                     Text(
                       hasLiveSession || hasHistory
                           ? Loc.tr('ui_fb007d4dc4')
@@ -688,7 +677,7 @@ class _StudyEntryCard extends StatelessWidget {
                         height: 1.35,
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 14),
                     Row(
                       children: [
                         Container(
