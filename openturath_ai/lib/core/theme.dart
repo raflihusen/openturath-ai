@@ -16,8 +16,8 @@ class AppTheme {
   static const Color textSecondaryLight = OTColors.textSecondaryLight;
   static const Color textTertiaryLight = OTColors.textTertiaryLight;
   static const Color accentLight = OTColors.accentLight;
-  static const Color pillActionBgLight = OTColors.textPrimaryLight;
-  static const Color pillActionTextLight = OTColors.surfaceLight;
+  static const Color pillActionBgLight = OTColors.accentLight;
+  static const Color pillActionTextLight = OTColors.onAccentLight;
   static const Color pillSecondaryBgLight = OTColors.surfaceSubtleLight;
   static const Color citationBgLight = OTColors.surfaceSubtleLight;
   static const Color citationTextLight = OTColors.textPrimaryLight;
@@ -43,8 +43,8 @@ class AppTheme {
   static const Color textSecondaryDark = OTColors.textSecondaryDark;
   static const Color textTertiaryDark = OTColors.textTertiaryDark;
   static const Color accentDark = OTColors.accentDark;
-  static const Color pillActionBgDark = OTColors.textPrimaryDark;
-  static const Color pillActionTextDark = OTColors.surfaceDark;
+  static const Color pillActionBgDark = OTColors.accentDark;
+  static const Color pillActionTextDark = OTColors.onAccentDark;
   static const Color pillSecondaryBgDark = OTColors.surfaceSubtleDark;
   static const Color citationBgDark = OTColors.surfaceSubtleDark;
   static const Color citationTextDark = OTColors.textPrimaryDark;
@@ -153,9 +153,9 @@ class AppTheme {
       colorScheme: const ColorScheme(
         brightness: Brightness.dark,
         primary: accentDark,
-        onPrimary: canvasDark,
-        primaryContainer: citationBgDark,
-        onPrimaryContainer: citationTextDark,
+        onPrimary: OTColors.onAccentDark,
+        primaryContainer: OTColors.primaryContainerDark,
+        onPrimaryContainer: OTColors.onPrimaryContainerDark,
         secondary: pillActionBgDark,
         onSecondary: canvasDark,
         secondaryContainer: pillSecondaryBgDark,
@@ -325,9 +325,9 @@ class AppTheme {
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
         primary: accentLight,
-        onPrimary: Colors.white,
-        primaryContainer: citationBgLight,
-        onPrimaryContainer: citationTextLight,
+        onPrimary: OTColors.onAccentLight,
+        primaryContainer: OTColors.primaryContainerLight,
+        onPrimaryContainer: OTColors.onPrimaryContainerLight,
         secondary: pillActionBgLight,
         onSecondary: Colors.white,
         secondaryContainer: pillSecondaryBgLight,
