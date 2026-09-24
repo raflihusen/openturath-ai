@@ -230,19 +230,15 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        Text(
-                          Loc.tr('booksShown', [
-                            '${visibleBooks.length}',
-                            '${widget.books.length}',
-                          ]),
-                          style: GoogleFonts.outfit(
-                            fontSize: 12,
-                            color: textSecondary,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      Loc.tr('booksShown', [
+                        '${visibleBooks.length}',
+                        '${widget.books.length}',
+                      ]),
+                      style: ScholarlyFonts.outfit(
+                        fontSize: 12,
+                        color: textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Divider(height: 1, thickness: 0.8),
