@@ -19,14 +19,18 @@ void main() {
     expect(source, contains('Tafsir bi al-Ra’y'));
   });
 
-  testWidgets('assistant dossier opens study and reference actions', (tester) async {
+  testWidgets('assistant dossier opens study and reference actions',
+      (tester) async {
     AppConfig.localeNotifier.value = 'id';
-    final agent = AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
+    final agent =
+        AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_syafii');
     var studies = 0;
     var libraries = 0;
 
-    await tester.pumpWidget(MaterialApp(home: Scaffold(
-      body: SingleChildScrollView(child: AssistantDossierCard(
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+      body: SingleChildScrollView(
+          child: AssistantDossierCard(
         agent: agent,
         position: 2,
         total: 21,

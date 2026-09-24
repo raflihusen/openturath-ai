@@ -47,18 +47,23 @@ class AssistantDossierCard extends StatelessWidget {
               Text(
                 '${position.toString().padLeft(2, '0')} / ${total.toString().padLeft(2, '0')}',
                 style: ScholarlyFonts.outfit(
-                  fontSize: 12, fontWeight: FontWeight.w700, color: accent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: accent,
                 ),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: OTColors.primaryContainer(dark),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  agent.isComingSoon ? Loc.tr('comingSoon') : Loc.tr('assistantAvailable'),
+                  agent.isComingSoon
+                      ? Loc.tr('comingSoon')
+                      : Loc.tr('assistantAvailable'),
                   style: ScholarlyFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -72,7 +77,9 @@ class AssistantDossierCard extends StatelessWidget {
           Text(
             agent.title,
             style: ScholarlyFonts.newsreader(
-              fontSize: 28, fontWeight: FontWeight.w600, color: ink,
+              fontSize: 28,
+              fontWeight: FontWeight.w600,
+              color: ink,
             ),
           ),
           if (agent.titleArabic.isNotEmpty && !Loc.isArabic) ...[
@@ -81,16 +88,21 @@ class AssistantDossierCard extends StatelessWidget {
               agent.titleArabic,
               textDirection: TextDirection.rtl,
               style: ScholarlyFonts.scheherazadeNew(
-                fontSize: 21, height: 1.6, color: muted,
+                fontSize: 21,
+                height: 1.6,
+                color: muted,
               ),
             ),
           ],
-          if (scope.isNotEmpty && (Loc.language == 'id' || Loc.text(scope) != scope)) ...[
+          if (scope.isNotEmpty &&
+              (Loc.language == 'id' || Loc.text(scope) != scope)) ...[
             const SizedBox(height: 9),
             Text(
               scope,
               style: ScholarlyFonts.outfit(
-                fontSize: 14, height: 1.5, color: muted,
+                fontSize: 14,
+                height: 1.5,
+                color: muted,
               ),
             ),
           ],
@@ -101,14 +113,20 @@ class AssistantDossierCard extends StatelessWidget {
             Text(
               Loc.tr('referenceBooks'),
               style: ScholarlyFonts.outfit(
-                fontSize: 12, fontWeight: FontWeight.w700, color: muted,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: muted,
               ),
             ),
             const SizedBox(height: 6),
             Text(
-              references.take(2).map((b) => b.titleArabic.isNotEmpty
-                  ? b.titleArabic : b.title).join(' · '),
-              style: ScholarlyFonts.scheherazadeNew(fontSize: 15, height: 1.85, color: ink),
+              references
+                  .take(2)
+                  .map(
+                      (b) => b.titleArabic.isNotEmpty ? b.titleArabic : b.title)
+                  .join(' · '),
+              style: ScholarlyFonts.scheherazadeNew(
+                  fontSize: 15, height: 1.85, color: ink),
             ),
           ],
           const SizedBox(height: 20),
