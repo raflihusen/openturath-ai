@@ -61,8 +61,9 @@ abstract final class CatalogSectionLabel {
 
   static String of(String source) {
     final normalized = source.trim();
-    if (normalized.isEmpty || normalized == '-')
+    if (normalized.isEmpty || normalized == '-') {
       return Loc.tr('unknownMetadata');
+    }
     final index = Loc.supportedCodes.indexOf(Loc.language);
     for (final entry in _sections.entries) {
       if (normalized.startsWith(entry.key)) return entry.value[index];
