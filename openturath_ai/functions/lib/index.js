@@ -388,7 +388,7 @@ async function requestDokuCheckout(params) {
         customer: {
             name: params.customerName || "Peneliti OpenTurath",
             email: params.customerEmail,
-            phone: params.customerPhone || ""
+            phone: (params.customerPhone && params.customerPhone.trim().length >= 8) ? params.customerPhone.trim() : "081234567890"
         }
     };
     const rawJson = JSON.stringify(requestBody);
@@ -451,7 +451,7 @@ async function requestMidtransSnapCheckout(params) {
         customer_details: {
             first_name: params.customerName || "Peneliti OpenTurath",
             email: params.customerEmail,
-            phone: params.customerPhone || undefined,
+            phone: (params.customerPhone && params.customerPhone.trim().length >= 8) ? params.customerPhone.trim() : "081234567890",
         },
         callbacks: {
             finish: "https://openturath-ai.web.app/payment-success",
