@@ -148,7 +148,11 @@ void main() {
       ));
       expect(find.text(Loc.tr('bookCatalog')), findsOneWidget);
       expect(find.text(book.title), findsOneWidget);
-      expect(tester.takeException(), isNull);
+      final layoutError = tester.takeException();
+      if (layoutError is FlutterError) {
+        debugPrint(layoutError.toStringDeep());
+      }
+      expect(layoutError, isNull);
 
       await tester.pumpWidget(localized(
         language,
