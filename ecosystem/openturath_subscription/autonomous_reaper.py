@@ -269,11 +269,19 @@ class AutonomousReaper:
                         if ent_key in expired_by_module:
                             expired_by_module[ent_key].add(email)
                         elif ent_key is None:
-                            # If no entitlement key, consider expired for syafii or tahawwulat if was monthly
-                            expired_by_module["fiqh_syafii"].add(email)
+                            # If no entitlement key, check plan or apply across all modules
+                            if "tholib" in plan.lower():
+                                expired_by_module["fiqh_tahawwulat"].add(email)
+                                expired_by_module["fiqh_syafii"].add(email)
+                            else:
+                                for k in expired_by_module:
+                                    expired_by_module[k].add(email)
                 elif status in ["EXPIRED", "FAILED", "CANCELLED"]:
                     if ent_key in expired_by_module:
                         expired_by_module[ent_key].add(email)
+                    else:
+                        for k in expired_by_module:
+                            expired_by_module[k].add(email)
         except Exception as e:
             logger.error(f"Error reading Firestore transactions: {e}")
 
