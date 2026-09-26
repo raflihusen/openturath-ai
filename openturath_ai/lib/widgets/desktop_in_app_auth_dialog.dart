@@ -243,7 +243,7 @@ class _DesktopInAppAuthDialogState extends State<DesktopInAppAuthDialog> {
                           color: bg,
                           child: const Center(
                             child: AppLoader(
-                              title: 'Menyiapkan ruang masuk…',
+                              title: 'Menghubungkan ke Google…',
                               dotSize: 7,
                             ),
                           ),
