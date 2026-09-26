@@ -11,6 +11,7 @@ import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 import 'desktop_google_sign_in.dart';
 import 'desktop_webview_runtime.dart';
+import '../core/app_platform.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -83,7 +84,7 @@ class AuthService {
     try {
       User? firebaseUser;
 
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      if (!kIsWeb && AppPlatform.isDesktop) {
         final credential = await DesktopGoogleSignIn.signIn();
         if (credential == null) return null;
         final userCredential = await _auth.signInWithCredential(credential);

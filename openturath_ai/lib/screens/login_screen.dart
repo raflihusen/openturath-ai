@@ -14,8 +14,6 @@ import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
-import '../models/user_model.dart';
-import 'desktop_in_app_auth_screen.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
@@ -75,32 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _desktopError = null;
     });
     try {
-      UserModel? user;
-      if (AppPlatform.isDesktop) {
-        final result = await Navigator.push<Map<String, dynamic>>(
-          context,
-          MaterialPageRoute(
-            builder: (ctx) => const DesktopInAppAuthScreen(),
-          ),
-        );
-
-        if (result == null || result['idToken'] == null) {
-          if (mounted) setState(() => _isLoading = false);
-          return;
-        }
-
-        final idToken = result['idToken'] as String;
-        final email = result['email'] as String?;
-        final name = result['name'] as String?;
-
-        user = await _authService.signInWithDesktopGoogleToken(
-          idToken: idToken,
-          email: email,
-          displayName: name,
-        );
-      } else {
-        user = await _authService.signInWithGoogle();
-      }
+      final user = await _authService.signInWithGoogle();
 
       if (!mounted || user == null) return;
       Navigator.pushReplacementNamed(

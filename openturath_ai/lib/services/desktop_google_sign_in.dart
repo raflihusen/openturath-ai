@@ -33,7 +33,7 @@ class DesktopGoogleSignIn {
       final response =
           await probe.get(page).timeout(const Duration(seconds: 15));
       if (response.statusCode != 200 ||
-          !response.body.contains('openturath-desktop-auth-v1')) {
+          !response.body.contains('openturath-desktop-auth-')) {
         throw FirebaseAuthException(
             code: 'desktop-login-unavailable',
             message:
