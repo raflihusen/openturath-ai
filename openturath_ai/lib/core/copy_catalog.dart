@@ -614,4 +614,29 @@ const copyCatalog = <String, List<String>>{
   "catalogCenturyEarly": ["Mutaqaddimin (301-600 H)", "Early scholars (301–600 AH)", "المتقدمون (٣٠١–٦٠٠ هـ)"],
   "catalogCenturyLate": ["Muta'akhkhirin (601-1100 H)", "Later scholars (601–1100 AH)", "المتأخرون (٦٠١–١١٠٠ هـ)"],
   "catalogCenturyModern": ["Mu'ashir (> 1100 H)", "Modern period (after 1100 AH)", "العصر الحديث (بعد ١١٠٠ هـ)"],
+  "desktopLoginIntro": [
+    "Ruang baca digital untuk meneliti literatur turats klasik bersama pendamping telaah.",
+    "Digital reading room for classical turath literature with study assistants.",
+    "غرفة القراءة الرقمية لدراسة التراث الإسلامي مع مساعدي المطالعة."
+  ],
+  "desktopLoginTitle": [
+    "Masuk ke Ruang Telaah",
+    "Sign in to Study Room",
+    "الدخول إلى غرفة المطالعة"
+  ],
+  "desktopLoginHelp": [
+    "Gunakan akun Google Anda untuk membuka akses telaah kitab dan asisten riset.",
+    "Use your Google account to unlock access to books and study assistants.",
+    "استخدم حساب جوجل لفتح دراسة الكتب ومساعدي البحث."
+  ],
+  "desktopConnectingGoogle": [
+    "Menghubungkan ke Google…",
+    "Connecting to Google…",
+    "جارٍ الاتصال بجوجل…"
+  ],
+  "desktopBrowserHelp": [
+    "Autentikasi terhubung langsung di dalam aplikasi.",
+    "Direct in-app authentication without external browser.",
+    "مصادقة مباشرة داخل التطبيق دون متصفح خارجي."
+  ],
 };
