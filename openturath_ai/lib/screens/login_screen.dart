@@ -15,7 +15,7 @@ import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../models/user_model.dart';
-import '../widgets/desktop_in_app_auth_dialog.dart';
+import 'desktop_in_app_auth_screen.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
@@ -77,10 +77,11 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       UserModel? user;
       if (AppPlatform.isDesktop) {
-        final result = await showDialog<Map<String, dynamic>>(
-          context: context,
-          barrierDismissible: true,
-          builder: (ctx) => const DesktopInAppAuthDialog(),
+        final result = await Navigator.push<Map<String, dynamic>>(
+          context,
+          MaterialPageRoute(
+            builder: (ctx) => const DesktopInAppAuthScreen(),
+          ),
         );
 
         if (result == null || result['idToken'] == null) {
