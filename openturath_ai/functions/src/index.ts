@@ -1694,7 +1694,7 @@ const PERMANENT_VIP_EMAILS = new Set([
 
 export const dailyRevoke = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
-  .pubsub.schedule("0 0 * * *").timeZone("Asia/Jakarta")
+  .pubsub.schedule("every 1 hours")
   .onRun(async () => {
     let cursor: FirebaseFirestore.QueryDocumentSnapshot | undefined;
     while (true) {

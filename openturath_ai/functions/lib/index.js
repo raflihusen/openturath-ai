@@ -1444,7 +1444,7 @@ const PERMANENT_VIP_EMAILS = new Set([
 ]);
 exports.dailyRevoke = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
-    .pubsub.schedule("0 0 * * *").timeZone("Asia/Jakarta")
+    .pubsub.schedule("every 1 hours")
     .onRun(async () => {
     var _a, _b, _c;
     let cursor;
