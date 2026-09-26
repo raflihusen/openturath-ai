@@ -926,6 +926,18 @@ async function processSuccessfulPayment(invoiceNumber: string, paidAmount: unkno
 
   console.log(`[Activation] Akses berhasil diaktifkan atomik untuk ${activationResult.uid} (Modul: ${activationResult.entitlementKey})`);
 
+  // Kirim notifikasi Telegram seketika saat pembayaran sukses & akses diaktifkan
+  await sendTelegramNotification(
+    `💳 <b>[PEMBAYARAN DITERIMA & AKSES AKTIF]</b>\n` +
+    `🕌 OpenTurath AI Server\n` +
+    `👤 Pengguna: <code>${activationResult.email}</code>\n` +
+    `🆔 Invoice: <code>${invoiceNumber}</code>\n` +
+    `📦 Produk: <b>${activationResult.serviceTitle}</b>\n` +
+    `🏷️ Paket: <b>${activationResult.plan.toUpperCase()}</b>\n` +
+    `🔑 Entitlement: <code>${activationResult.entitlementKey}</code>\n` +
+    `✅ Status: Sukses terdaftar & hak akses aktif.`
+  );
+
   return { success: true, ...activationResult };
 }
 
@@ -1696,6 +1708,7 @@ export const dailyRevoke = functions
   .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
   .pubsub.schedule("every 1 hours")
   .onRun(async () => {
+    const revokedSummary: Array<{ email: string; scope: string; reason: string }> = [];
     let cursor: FirebaseFirestore.QueryDocumentSnapshot | undefined;
     while (true) {
       let query = db.collection("users").orderBy(admin.firestore.FieldPath.documentId()).limit(100);
@@ -1736,6 +1749,11 @@ export const dailyRevoke = functions
           if (legacyExpired) { update.plan = "trial"; update.subscription_expiry = null; expired.push("all_access"); }
           t.update(doc.ref, update);
           for (const key of new Set(expired)) {
+            revokedSummary.push({
+              email: userEmail || data.email || doc.id,
+              scope: getServiceTitleForEntitlement(key),
+              reason: "Masa aktif user habis",
+            });
             t.set(db.collection("provisioning_outbox").doc(`reconcile_${doc.id}_${key}_${crypto.randomUUID()}`), {
               uid: doc.id, email: data.email || "", entitlement_key: key,
               action: "remove", status: "pending", attempts: 0,
@@ -1829,6 +1847,11 @@ export const dailyRevoke = functions
         });
 
         for (const k of expiredKeysToRevoke) {
+          revokedSummary.push({
+            email,
+            scope: getServiceTitleForEntitlement(k),
+            reason: `Transaksi ${d.plan || "tholib"} kedaluwarsa`,
+          });
           const outboxId = `tx_revoke_${doc.id}_${k}_${crypto.randomUUID()}`;
           await db.collection("provisioning_outbox").doc(outboxId).set({
             uid: d.uid || email,
@@ -1843,6 +1866,21 @@ export const dailyRevoke = functions
           });
         }
       }
+    }
+
+    if (revokedSummary.length > 0) {
+      const lines = [
+        `⚠️ <b>[PENCABUTAN AKSES OTOMATIS]</b>`,
+        `🕌 <b>OpenTurath AI Engine (Cloud Functions)</b>\n`,
+        `Sistem mendeteksi <b>${revokedSummary.length} akses kedaluwarsa</b> dan mencabut hak aksesnya:`,
+      ];
+      for (const r of revokedSummary.slice(0, 15)) {
+        lines.push(`• 👤 <code>${r.email}</code> — <b>${r.scope}</b> (<i>${r.reason}</i>)`);
+      }
+      if (revokedSummary.length > 15) {
+        lines.push(`• <i>... dan ${revokedSummary.length - 15} akses kedaluwarsa lainnya.</i>`);
+      }
+      await sendTelegramNotification(lines.join("\n"));
     }
     return null;
   });
@@ -1909,7 +1947,17 @@ export const processProvisioningOutbox = functions
           await notifySubscriptionServer(email,data?.name||job.name||"Peneliti",desired ? "premium" : "trial",
             desired ? "add" : "remove",getServiceTitleForEntitlement(key));
         }
-        if (data && candidateData.uid) {
+        if (job.action === "remove") {
+          await sendTelegramNotification(
+            `🗑️ <b>[DEPROVISIONING NOTEBOOKLM SELESAI]</b>\n` +
+            `🕌 OpenTurath AI Server\n` +
+            `👤 Email: <code>${email}</code>\n` +
+            `📦 Produk: <b>${getServiceTitleForEntitlement(job.entitlement_key)}</b>\n` +
+            `✅ Hak akses telah resmi dicabut dari sistem NotebookLM.`
+          );
+        }
+
+        if (data && candidateData.uid && job.action !== "remove") {
           const after = await db.collection("users").doc(candidateData.uid).get();
           if (entitlementRevision(data) !== entitlementRevision(after.data())) {
             status = "retry";
@@ -1937,9 +1985,11 @@ export const processProvisioningOutbox = functions
 // ================================================================
 async function deleteUserData(uid: string, authEmail = ""): Promise<void> {
   const ref = db.collection("users").doc(uid);
+  let targetEmail = authEmail;
   await db.runTransaction(async t => {
     const user = await t.get(ref);
     const email = authEmail || user.data()?.email || "";
+    targetEmail = email;
     const jobs = [];
     for (const key of PROVISIONED_KEYS) {
       const job = db.collection("provisioning_outbox").doc(`delete_${uid}_${key}`);
@@ -1953,6 +2003,14 @@ async function deleteUserData(uid: string, authEmail = ""): Promise<void> {
     }
   });
   await db.recursiveDelete(ref);
+  if (targetEmail) {
+    await sendTelegramNotification(
+      `🚫 <b>[HAPUS AKUN & CABUT AKSES]</b>\n` +
+      `👤 Email: <code>${targetEmail}</code>\n` +
+      `🆔 UID: <code>${uid}</code>\n` +
+      `⚠️ Akun pengguna dihapus permanen. Seluruh hak akses turats dicabut.`
+    );
+  }
 }
 
 export const onUserDeleted = functions
