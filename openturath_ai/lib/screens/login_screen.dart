@@ -11,8 +11,11 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
+import '../models/user_model.dart';
+import '../widgets/desktop_in_app_auth_dialog.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
@@ -33,6 +36,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
+  String? _desktopError;
   late final TapGestureRecognizer _termsRecognizer;
   late final TapGestureRecognizer _privacyRecognizer;
 
@@ -66,24 +70,68 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signIn() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _desktopError = null;
+    });
     try {
-      final user = await _authService.signInWithGoogle();
-      if (!mounted || user == null) return;
+      UserModel? user;
       if (AppPlatform.isDesktop) {
-        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+        final result = await showDialog<Map<String, dynamic>>(
+          context: context,
+          barrierDismissible: true,
+          builder: (ctx) => const DesktopInAppAuthDialog(),
+        );
+
+        if (result == null || result['idToken'] == null) {
+          if (mounted) setState(() => _isLoading = false);
+          return;
+        }
+
+        final idToken = result['idToken'] as String;
+        final email = result['email'] as String?;
+        final name = result['name'] as String?;
+
+        user = await _authService.signInWithDesktopGoogleToken(
+          idToken: idToken,
+          email: email,
+          displayName: name,
+        );
       } else {
-        Navigator.pushReplacementNamed(context, AppRoutes.googleSessionAuth);
+        user = await _authService.signInWithGoogle();
       }
+
+      if (!mounted || user == null) return;
+      Navigator.pushReplacementNamed(
+        context,
+        AppPlatform.isDesktop
+            ? AppRoutes.dashboard
+            : AppRoutes.googleSessionAuth,
+      );
     } catch (e) {
       if (!mounted) return;
       final message = e.toString().contains('network') ||
               e.toString().contains('SocketException')
           ? AppCopy.networkError
           : (e is FirebaseAuthException && e.code.startsWith('desktop-')
-              ? e.message ?? AppCopy.googleSignInFailed
-              : AppCopy.googleSignInFailed);
-      AppSnackBar.error(context, message);
+              ? switch (e.code) {
+                  'desktop-listener-unavailable' =>
+                    Loc.tr('desktopListenerError'),
+                  'desktop-browser-unavailable' =>
+                    Loc.tr('desktopBrowserError'),
+                  'desktop-login-timeout' => Loc.tr('desktopTimeoutError'),
+                  _ => e.message ?? AppCopy.googleSignInFailed,
+                }
+              : e is FirebaseAuthException && AppPlatform.isDesktop
+                  ? e.code == 'keychain-error'
+                      ? Loc.tr('desktopKeychainError')
+                      : '${AppCopy.googleSignInFailed} (${e.code})'
+                  : AppCopy.googleSignInFailed);
+      if (AppPlatform.isDesktop) {
+        setState(() => _desktopError = message);
+      } else {
+        AppSnackBar.error(context, message);
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -110,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
+    if (AppPlatform.isDesktop) return _buildDesktopLogin(context);
     const bg = AppTheme.canvasDark;
     const textPrimary = AppTheme.textPrimaryDark;
     const textMuted = AppTheme.textSecondaryDark;
@@ -279,6 +328,201 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildDesktopLogin(BuildContext context) {
+    return Scaffold(
+      backgroundColor: OTColors.canvasLight,
+      body: LayoutBuilder(builder: (context, size) {
+        final compact = size.maxWidth < 820;
+        final story = Container(
+          constraints: BoxConstraints(minHeight: compact ? 260 : 540),
+          padding: const EdgeInsets.all(42),
+          decoration: BoxDecoration(
+            color: OTColors.canvasDark,
+            borderRadius: compact
+                ? const BorderRadius.vertical(top: Radius.circular(28))
+                : const BorderRadius.horizontal(left: Radius.circular(28)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const OpenTurathMark(size: 48, color: OTColors.accentDark),
+              if (!compact) const Spacer(),
+              if (compact) const SizedBox(height: 36),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: OTColors.surfaceSubtleDark,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(Loc.tr('academicSlogan'),
+                    style: ScholarlyFonts.outfit(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: OTColors.textSecondaryDark)),
+              ),
+              const SizedBox(height: 22),
+              Text(AppCopy.appName,
+                  style: ScholarlyFonts.newsreader(
+                      fontSize: compact ? 38 : 48,
+                      fontWeight: FontWeight.w600,
+                      color: OTColors.textPrimaryDark)),
+              const SizedBox(height: 10),
+              Text(Loc.tr('appTagline'),
+                  style: ScholarlyFonts.newsreader(
+                      fontSize: 21, color: OTColors.textSecondaryDark)),
+              const SizedBox(height: 22),
+              Text(Loc.tr('desktopLoginIntro'),
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 15,
+                      height: 1.5,
+                      color: OTColors.textSecondaryDark)),
+              if (!compact) const Spacer(),
+            ],
+          ),
+        );
+
+        final form = Container(
+          constraints: BoxConstraints(minHeight: compact ? 360 : 540),
+          padding: const EdgeInsets.all(42),
+          decoration: BoxDecoration(
+            color: OTColors.surfaceLight,
+            borderRadius: compact
+                ? const BorderRadius.vertical(bottom: Radius.circular(28))
+                : const BorderRadius.horizontal(right: Radius.circular(28)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: LanguageSwitcher()),
+              if (!compact) const Spacer(),
+              if (compact) const SizedBox(height: 18),
+              Text(Loc.tr('desktopLoginTitle'),
+                  style: ScholarlyFonts.newsreader(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w600,
+                      color: OTColors.textPrimaryLight)),
+              const SizedBox(height: 12),
+              Text(Loc.tr('desktopLoginHelp'),
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 15,
+                      height: 1.45,
+                      color: OTColors.textSecondaryLight)),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: FilledButton.icon(
+                  onPressed: _isLoading ? null : _signIn,
+                  icon: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: OTColors.onAccentLight))
+                      : _GoogleGVector(),
+                  label: Text(
+                      _isLoading
+                          ? Loc.tr('desktopConnectingGoogle')
+                          : AppCopy.continueWithGoogle,
+                      style: ScholarlyFonts.outfit(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: OTColors.onAccentLight)),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: OTColors.accentLight,
+                    foregroundColor: OTColors.onAccentLight,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                  ),
+                ),
+              ),
+              if (_desktopError != null) ...[
+                const SizedBox(height: 16),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: OTColors.surfaceSubtleLight,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.info_outline_rounded,
+                          size: 20, color: OTColors.destructiveLight),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          child: Text(_desktopError!,
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: 13,
+                                  color: OTColors.textPrimaryLight))),
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+              Text(Loc.tr('desktopBrowserHelp'),
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 12, color: OTColors.textSecondaryLight)),
+              if (!compact) const Spacer(),
+              if (compact) const SizedBox(height: 32),
+              const Divider(color: OTColors.borderSubtleLight),
+              const SizedBox(height: 12),
+              Text.rich(TextSpan(
+                text: '${AppCopy.termsAgreementPrefix} ',
+                style: ScholarlyFonts.outfit(
+                    fontSize: 12,
+                    height: 1.5,
+                    color: OTColors.textSecondaryLight),
+                children: [
+                  TextSpan(
+                      text: AppCopy.termsOfService,
+                      style:
+                          const TextStyle(decoration: TextDecoration.underline),
+                      recognizer: _termsRecognizer),
+                  const TextSpan(text: ' · '),
+                  TextSpan(
+                      text: AppCopy.privacyPolicy,
+                      style:
+                          const TextStyle(decoration: TextDecoration.underline),
+                      recognizer: _privacyRecognizer),
+                ],
+              )),
+            ],
+          ),
+        );
+
+        return Center(
+            child: SingleChildScrollView(
+          padding: const EdgeInsets.all(28),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1020),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: OTColors.borderSubtleLight),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(28),
+                child: compact
+                    ? Column(children: [story, form])
+                    : SizedBox(
+                        height: 540,
+                        child: Row(children: [
+                          Expanded(flex: 11, child: story),
+                          Expanded(flex: 9, child: form),
+                        ])),
+              ),
+            ),
+          ),
+        ));
+      }),
     );
   }
 }

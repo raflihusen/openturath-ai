@@ -89,7 +89,7 @@ class AuthService {
         final userCredential = await _auth.signInWithCredential(credential);
         firebaseUser = userCredential.user;
       } else {
-        // Mobile (Android / iOS), macOS & Web: Gunakan GoogleSignIn SDK resmi
+        // Android, iOS, macOS, and web use the GoogleSignIn SDK flow.
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
         if (googleUser == null) return null; // User membatalkan login
 
@@ -106,55 +106,102 @@ class AuthService {
       }
 
       if (firebaseUser == null) return null;
+      return await _resolveOrCreateFirebaseUser(firebaseUser);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-      // ── Cek apakah user sudah ada di Firestore ──
+  // ── In-App Desktop Google Sign In ──────────────────────────────
+  /// Menerima idToken dari InAppWebView (WKWebView), mengautentikasi Firebase Auth,
+  /// sekaligus mencatat kuki sesi Google aktif untuk NotebookLM (1x login).
+  Future<UserModel?> signInWithDesktopGoogleToken({
+    required String idToken,
+    String? email,
+    String? displayName,
+  }) async {
+    try {
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
+      final userCredential = await _auth.signInWithCredential(credential);
+      final firebaseUser = userCredential.user;
+      if (firebaseUser == null) return null;
+
+      final userModel = await _resolveOrCreateFirebaseUser(
+        firebaseUser,
+        fallbackName: displayName,
+        fallbackEmail: email,
+      );
+
+      // Simpan penanda bahwa sesi kuki Google di WKWebView sudah siap
       try {
-        final docRef =
-            _db.collection(AppConstants.colUsers).doc(firebaseUser.uid);
-        final doc = await docRef.get().timeout(const Duration(seconds: 4));
-
-        if (!doc.exists) {
-          // ── User baru: buat dokumen dengan plan trial ──
-          final newUser = UserModel(
-            uid: firebaseUser.uid,
-            name: firebaseUser.displayName ?? 'Pengguna',
-            email: firebaseUser.email ?? '',
-            photoUrl: firebaseUser.photoURL ?? '',
-            plan: AppConstants.planTrial,
-            questionsUsed: 0,
-          );
-          await docRef.set({
-            'name': newUser.name,
-            'email': newUser.email,
-            'photo_url': newUser.photoUrl,
-            'plan': newUser.plan,
-            'questions_used': newUser.questionsUsed,
-            'subscription_expiry': null,
-          }).timeout(const Duration(seconds: 4));
-          await _cacheUserLocally(newUser);
-          return newUser;
-        } else {
-          final userModel = UserModel.fromFirestore(doc);
-          await _cacheUserLocally(userModel);
-          return userModel;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('google_session_ready', true);
+        final effectiveEmail = firebaseUser.email ?? email ?? '';
+        if (effectiveEmail.isNotEmpty) {
+          await prefs.setString(
+              'google_session_email', effectiveEmail.trim().toLowerCase());
         }
-      } catch (_) {
-        // Fallback user jika Firestore lambat / offline: cek cache terlebih dahulu (F41)
-        final cached = await _getCachedUser(firebaseUser.uid);
-        if (cached != null) return cached;
+      } catch (_) {}
 
-        final fallback = UserModel(
+      return userModel;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // ── Helper Resolusi Profil User Firestore ──────────────────────
+  Future<UserModel> _resolveOrCreateFirebaseUser(
+    User firebaseUser, {
+    String? fallbackName,
+    String? fallbackEmail,
+  }) async {
+    final effectiveName =
+        firebaseUser.displayName ?? fallbackName ?? 'Pengguna';
+    final effectiveEmail = firebaseUser.email ?? fallbackEmail ?? '';
+    final photoUrl = firebaseUser.photoURL ?? '';
+
+    try {
+      final docRef =
+          _db.collection(AppConstants.colUsers).doc(firebaseUser.uid);
+      final doc = await docRef.get().timeout(const Duration(seconds: 4));
+
+      if (!doc.exists) {
+        final newUser = UserModel(
           uid: firebaseUser.uid,
-          name: firebaseUser.displayName ?? 'Pengguna',
-          email: firebaseUser.email ?? '',
-          photoUrl: firebaseUser.photoURL ?? '',
+          name: effectiveName,
+          email: effectiveEmail,
+          photoUrl: photoUrl,
           plan: AppConstants.planTrial,
           questionsUsed: 0,
         );
-        return fallback;
+        await docRef.set({
+          'name': newUser.name,
+          'email': newUser.email,
+          'photo_url': newUser.photoUrl,
+          'plan': newUser.plan,
+          'questions_used': newUser.questionsUsed,
+          'subscription_expiry': null,
+        }).timeout(const Duration(seconds: 4));
+        await _cacheUserLocally(newUser);
+        return newUser;
+      } else {
+        final userModel = UserModel.fromFirestore(doc);
+        await _cacheUserLocally(userModel);
+        return userModel;
       }
-    } catch (e) {
-      rethrow;
+    } catch (_) {
+      final cached = await _getCachedUser(firebaseUser.uid);
+      if (cached != null) return cached;
+
+      final fallback = UserModel(
+        uid: firebaseUser.uid,
+        name: effectiveName,
+        email: effectiveEmail,
+        photoUrl: photoUrl,
+        plan: AppConstants.planTrial,
+        questionsUsed: 0,
+      );
+      return fallback;
     }
   }
 
@@ -298,6 +345,7 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('google_session_ready');
+      await prefs.remove('google_session_email');
       await prefs.remove('last_opened_notebook_id');
       if (currentUid != null) {
         _userCache.remove(currentUid);
@@ -342,6 +390,7 @@ class AuthService {
         if (key.startsWith('openturath_${uid}_') ||
             key == 'openturath_cached_user_$uid' ||
             key == 'google_session_ready' ||
+            key == 'google_session_email' ||
             key == 'last_opened_notebook_id') {
           await prefs.remove(key);
         }

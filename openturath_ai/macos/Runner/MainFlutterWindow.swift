@@ -5,15 +5,28 @@ class MainFlutterWindow: NSWindow {
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
     self.contentViewController = flutterViewController
-    let available = (self.screen ?? NSScreen.main)?.visibleFrame.size
-      ?? NSSize(width: 1280, height: 820)
-    // Leave room for the menu bar, title bar and Dock on smaller displays.
-    self.contentMinSize = NSSize(width: min(860, available.width - 32),
-                                 height: min(600, available.height - 64))
-    self.setContentSize(NSSize(width: min(1280, available.width - 32),
-                               height: min(820, available.height - 64)))
+    let visibleFrame = (self.screen ?? NSScreen.main)?.visibleFrame
+      ?? NSRect(x: 0, y: 0, width: 1280, height: 820)
+
+    // Comfortable fixed desktop proportion without stretching UI shapes.
+    let windowWidth = min(1040, visibleFrame.width - 40)
+    let windowHeight = min(800, visibleFrame.height - 60)
+    let windowSize = NSSize(width: windowWidth, height: windowHeight)
+    let windowX = visibleFrame.minX + (visibleFrame.width - windowWidth) / 2.0
+    let windowY = visibleFrame.minY + (visibleFrame.height - windowHeight) / 2.0
+    let windowFrame = NSRect(x: windowX, y: windowY, width: windowWidth, height: windowHeight)
+
+    self.setFrame(windowFrame, display: true)
+    self.minSize = windowSize
+    self.maxSize = windowSize
+    self.styleMask.remove(.resizable)
+    self.collectionBehavior.remove(.fullScreenPrimary)
+    self.collectionBehavior.remove(.fullScreenAuxiliary)
+    self.standardWindowButton(.zoomButton)?.isEnabled = false
+    self.standardWindowButton(.zoomButton)?.isHidden = true
     self.title = "OpenTurath AI"
     self.center()
+
     RegisterGeneratedPlugins(registry: flutterViewController)
     super.awakeFromNib()
   }
