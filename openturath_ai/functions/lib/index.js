@@ -1446,6 +1446,7 @@ exports.dailyRevoke = functions
     .runWith({ serviceAccount: "open-turath@appspot.gserviceaccount.com", timeoutSeconds: 300 })
     .pubsub.schedule("0 0 * * *").timeZone("Asia/Jakarta")
     .onRun(async () => {
+    var _a, _b, _c;
     let cursor;
     while (true) {
         let query = db.collection("users").orderBy(admin.firestore.FieldPath.documentId()).limit(100);
@@ -1502,6 +1503,100 @@ exports.dailyRevoke = functions
         }
         cursor = page.docs[page.docs.length - 1];
     }
+    // PHASE 2: Reconcile transactions collection (Akal, Midtrans, Manual Overrides)
+    const now = new Date();
+    const txSnap = await db.collection("transactions").get();
+    const activeEmailsByEntitlement = new Map();
+    for (const key of PROVISIONED_KEYS) {
+        activeEmailsByEntitlement.set(key, new Set());
+    }
+    const allActiveEmails = new Set();
+    for (const doc of txSnap.docs) {
+        const d = doc.data();
+        const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
+        if (!email)
+            continue;
+        const status = String(d.status || "").toLowerCase();
+        if (!["success", "paid", "settled"].includes(status))
+            continue;
+        const rawExp = d.subscription_expires_at || d.access_expires_at || d.expires_at;
+        let expDate = null;
+        if (rawExp === null || rawExp === void 0 ? void 0 : rawExp.toDate)
+            expDate = rawExp.toDate();
+        else if (typeof rawExp === "string") {
+            const parsed = new Date(rawExp);
+            if (!isNaN(parsed.getTime()))
+                expDate = parsed;
+        }
+        const plan = String(d.plan || d.plan_id || "").toLowerCase();
+        const isVip = d.is_vip === true || plan.includes("vip") || (expDate && expDate.getFullYear() >= 2030);
+        if (isVip || PERMANENT_VIP_EMAILS.has(email))
+            continue;
+        const isYearly = ["1y", "year", "tahun", "annual", "bahits_1y"].some(y => plan.includes(y));
+        const entKey = d.entitlement_key;
+        if (expDate && expDate > now) {
+            if (isYearly || entKey === "all_access" || entKey === "all_ai" || !entKey) {
+                allActiveEmails.add(email);
+                for (const k of PROVISIONED_KEYS) {
+                    (_a = activeEmailsByEntitlement.get(k)) === null || _a === void 0 ? void 0 : _a.add(email);
+                }
+            }
+            else if (activeEmailsByEntitlement.has(entKey)) {
+                (_b = activeEmailsByEntitlement.get(entKey)) === null || _b === void 0 ? void 0 : _b.add(email);
+            }
+        }
+    }
+    for (const doc of txSnap.docs) {
+        const d = doc.data();
+        const email = (d.customer_email || d.payer_email || d.email || "").trim().toLowerCase();
+        if (!email)
+            continue;
+        if (PERMANENT_VIP_EMAILS.has(email) || d.is_vip === true)
+            continue;
+        const status = String(d.status || "").toLowerCase();
+        if (!["success", "paid", "settled"].includes(status))
+            continue;
+        const rawExp = d.subscription_expires_at || d.access_expires_at || d.expires_at;
+        let expDate = null;
+        if (rawExp === null || rawExp === void 0 ? void 0 : rawExp.toDate)
+            expDate = rawExp.toDate();
+        else if (typeof rawExp === "string") {
+            const parsed = new Date(rawExp);
+            if (!isNaN(parsed.getTime()))
+                expDate = parsed;
+        }
+        if (expDate && expDate <= now) {
+            const entKey = d.entitlement_key;
+            const targetKeys = (entKey && PROVISIONED_KEYS.includes(entKey))
+                ? [entKey]
+                : (String(d.plan || "").toLowerCase().includes("tholib") ? ["fiqh_tahawwulat", "fiqh_syafii"] : PROVISIONED_KEYS);
+            const expiredKeysToRevoke = [];
+            for (const k of targetKeys) {
+                if (!allActiveEmails.has(email) && !((_c = activeEmailsByEntitlement.get(k)) === null || _c === void 0 ? void 0 : _c.has(email))) {
+                    expiredKeysToRevoke.push(k);
+                }
+            }
+            await doc.ref.update({
+                status: "EXPIRED",
+                revoked_at: admin.firestore.FieldValue.serverTimestamp(),
+                updated_at: admin.firestore.FieldValue.serverTimestamp(),
+            });
+            for (const k of expiredKeysToRevoke) {
+                const outboxId = `tx_revoke_${doc.id}_${k}_${crypto.randomUUID()}`;
+                await db.collection("provisioning_outbox").doc(outboxId).set({
+                    uid: d.uid || email,
+                    email: email,
+                    name: d.customer_name || d.payer_name || "",
+                    entitlement_key: k,
+                    action: "remove",
+                    status: "pending",
+                    attempts: 0,
+                    source: "dailyRevoke_transactions",
+                    created_at: admin.firestore.FieldValue.serverTimestamp(),
+                });
+            }
+        }
+    }
     return null;
 });
 // ================================================================
@@ -1523,9 +1618,10 @@ exports.processProvisioningOutbox = functions
         if (Date.now() - started > 210000)
             break;
         const token = crypto.randomUUID();
-        const uid = candidate.data().uid;
+        const candidateData = candidate.data();
+        const uid = candidateData.uid || candidateData.email;
         if (typeof uid !== "string" || !uid) {
-            await candidate.ref.update({ status: "failed", error: "Missing owner UID" });
+            await candidate.ref.update({ status: "failed", error: "Missing owner UID or email" });
             continue;
         }
         const lease = db.collection("provisioning_leases").doc(uid);
@@ -1551,9 +1647,11 @@ exports.processProvisioningOutbox = functions
         let status = "completed";
         let error = "";
         try {
-            const user = await db.collection("users").doc(uid).get();
-            const data = user.data();
-            const email = ((data === null || data === void 0 ? void 0 : data.email) || job.email || "").trim().toLowerCase();
+            const userDoc = candidateData.uid && !candidateData.uid.includes("@")
+                ? await db.collection("users").doc(candidateData.uid).get()
+                : null;
+            const data = userDoc && userDoc.exists ? userDoc.data() : null;
+            const email = ((data === null || data === void 0 ? void 0 : data.email) || job.email || (uid.includes("@") ? uid : "")).trim().toLowerCase();
             if (!email.includes("@"))
                 throw new Error("Invalid provisioning email");
             const scope = job.entitlement_key;
@@ -1564,13 +1662,15 @@ exports.processProvisioningOutbox = functions
                 const isVip = (data === null || data === void 0 ? void 0 : data.is_vip) === true ||
                     ["vip", "admin", "guru", "special"].includes(String((data === null || data === void 0 ? void 0 : data.role) || "").toLowerCase()) ||
                     PERMANENT_VIP_EMAILS.has(email);
-                const desired = isVip || Boolean(data && getEntitlementAccess(data, key).active);
+                const desired = isVip || (job.action === "add" ? true : Boolean(data && getEntitlementAccess(data, key).active));
                 await notifySubscriptionServer(email, (data === null || data === void 0 ? void 0 : data.name) || job.name || "Peneliti", desired ? "premium" : "trial", desired ? "add" : "remove", getServiceTitleForEntitlement(key));
             }
-            const after = await db.collection("users").doc(uid).get();
-            if (entitlementRevision(data) !== entitlementRevision(after.data())) {
-                status = "retry";
-                error = "Entitlements changed during delivery";
+            if (data && candidateData.uid) {
+                const after = await db.collection("users").doc(candidateData.uid).get();
+                if (entitlementRevision(data) !== entitlementRevision(after.data())) {
+                    status = "retry";
+                    error = "Entitlements changed during delivery";
+                }
             }
         }
         catch (err) {
