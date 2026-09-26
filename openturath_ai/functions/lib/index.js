@@ -1505,7 +1505,9 @@ exports.dailyRevoke = functions
     }
     // PHASE 2: Reconcile transactions collection (Akal, Midtrans, Manual Overrides)
     const now = new Date();
-    const txSnap = await db.collection("transactions").get();
+    const txSnap = await db.collection("transactions")
+        .where("status", "in", ["success", "paid", "settled", "SUCCESS", "PAID", "SETTLED"])
+        .get();
     const activeEmailsByEntitlement = new Map();
     for (const key of PROVISIONED_KEYS) {
         activeEmailsByEntitlement.set(key, new Set());
