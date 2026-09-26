@@ -1,22 +1,36 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, browserLocalPersistence, setPersistence,
-  signInWithRedirect, getRedirectResult } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+  signInWithPopup, signInWithRedirect, getRedirectResult } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 
 const message = document.querySelector('#message');
 const login = document.querySelector('#login');
 const cancel = document.querySelector('#cancel');
 const params = new URLSearchParams(location.search);
-const state = params.get('state') ?? '';
-const isInApp = params.get('mode') === 'inapp' || window.flutter_inappwebview !== undefined;
 
+// Preserve loopback callback & state in sessionStorage across redirects or reloads
+const cbFromUrl = params.get('callback');
+const stFromUrl = params.get('state');
+
+if (cbFromUrl) {
+  try { sessionStorage.setItem('ot_cb', cbFromUrl); } catch (_) {}
+}
+if (stFromUrl) {
+  try { sessionStorage.setItem('ot_st', stFromUrl); } catch (_) {}
+}
+
+const cbStr = cbFromUrl || sessionStorage.getItem('ot_cb') || '';
+const state = stFromUrl || sessionStorage.getItem('ot_st') || '';
+
+const isInApp = params.get('mode') === 'inapp' || window.flutter_inappwebview !== undefined;
 if (isInApp) {
   document.body.classList.add('in-app');
 }
 
 let callback;
-try { callback = new URL(params.get('callback')); } catch { /* invalid link */ }
+try { callback = new URL(cbStr); } catch { /* invalid link */ }
 
-const validLoopback = location.origin === 'https://open-turath.web.app' && callback &&
+const validLoopback = (location.origin === 'https://open-turath.web.app' || location.origin === 'https://open-turath.firebaseapp.com') &&
+  callback &&
   callback.protocol === 'http:' && callback.hostname === '127.0.0.1' &&
   Number(callback.port) >= 1024 && Number(callback.port) <= 65535 &&
   callback.pathname === '/callback' && !callback.username && !callback.password &&
@@ -64,62 +78,87 @@ async function handleAuthSuccess(credential, user) {
   const name = user?.displayName || 'Pengguna';
   
   message.className = 'status-msg success';
-  message.textContent = 'Masuk berhasil! Menyiapkan ruang telaah…';
+  message.textContent = 'Masuk berhasil! Mengalihkan ke aplikasi OpenTurath AI…';
   
   if (isInApp) {
     notifyFlutter({ idToken, email, name, status: 'success' });
   } else if (validLoopback) {
+    try { sessionStorage.removeItem('ot_cb'); } catch (_) {}
+    try { sessionStorage.removeItem('ot_st'); } catch (_) {}
     finishLoopback({ idToken });
   }
 }
 
-async function startLogin() {
+async function performLogin() {
+  login.disabled = true;
+  cancel.disabled = true;
+  message.className = 'status-msg';
+  message.innerHTML = '<span class="spinner"></span> Menghubungkan ke Google…';
+
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
   provider.addScope('email');
   provider.addScope('profile');
-  
-  message.className = 'status-msg';
-  message.innerHTML = '<span class="spinner"></span> Mengarahkan ke Google…';
-  await signInWithRedirect(auth, provider);
+
+  // Try popup first (seamless on desktop, no redirect, maintains state in memory)
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    if (credential?.idToken) {
+      await handleAuthSuccess(credential, result.user);
+      return;
+    }
+  } catch (popupErr) {
+    console.warn('Popup interrupted or blocked:', popupErr);
+    if (popupErr.code === 'auth/popup-closed-by-user') {
+      message.className = 'status-msg';
+      message.textContent = 'Masuk dibatalkan. Klik tombol di bawah untuk mencoba kembali.';
+      login.disabled = false;
+      cancel.disabled = false;
+      return;
+    }
+  }
+
+  // Fallback to redirect if popup was blocked by browser
+  try {
+    message.innerHTML = '<span class="spinner"></span> Mengarahkan ke Google…';
+    await signInWithRedirect(auth, provider);
+  } catch (redirectErr) {
+    message.className = 'status-msg error';
+    message.textContent = 'Gagal menghubungkan Google: ' + (redirectErr.message || 'Silakan coba lagi.');
+    login.disabled = false;
+    cancel.disabled = false;
+  }
 }
 
-// 1. Periksa apakah halaman ini adalah hasil balikan dari login Google (redirect result)
+// 1. Check if returning from a redirect flow
+let fromRedirect = false;
 try {
   const redirectResult = await getRedirectResult(auth);
   if (redirectResult && redirectResult.user) {
+    fromRedirect = true;
     const credential = GoogleAuthProvider.credentialFromResult(redirectResult);
     if (credential?.idToken) {
       await handleAuthSuccess(credential, redirectResult.user);
-    } else {
-      throw new Error('Credential missing');
     }
-  } else if (isInApp) {
-    // Mode In-App: langsung arahkan ke halaman autentikasi Google tanpa perlu klik tombol dua kali!
-    await startLogin();
   }
 } catch (err) {
-  console.warn('Auth redirect flow error:', err);
-  message.className = 'status-msg error';
-  message.textContent = 'Gagal menghubungkan Google: ' + (err.message || 'Silakan coba kembali.');
-  document.body.classList.remove('in-app');
-  login.disabled = false;
-  cancel.disabled = false;
+  console.warn('Redirect check error:', err);
 }
 
-if (!isInApp && !validLoopback) {
-  message.className = 'status-msg';
-  message.textContent = 'Buka halaman ini melalui tombol Masuk di aplikasi OpenTurath AI.';
-} else if (!isInApp) {
-  // Legacy loopback mode (Windows external browser)
-  message.className = 'status-msg';
-  message.textContent = 'Siap menghubungkan akun Google Anda.';
-  login.disabled = false;
-  cancel.disabled = false;
-  cancel.onclick = () => finishLoopback({ cancel: '1' });
-  login.onclick = async () => {
-    login.disabled = true;
-    cancel.disabled = true;
-    await startLogin();
-  };
+if (!fromRedirect) {
+  if (validLoopback) {
+    // Desktop Loopback mode: Otomatis coba buka otentikasi Google tanpa memaksa klik berulang!
+    login.onclick = performLogin;
+    cancel.onclick = () => finishLoopback({ cancel: '1' });
+    
+    // Auto-trigger segera saat halaman dimuat
+    performLogin();
+  } else if (isInApp) {
+    login.onclick = performLogin;
+    performLogin();
+  } else {
+    message.className = 'status-msg';
+    message.textContent = 'Buka halaman ini melalui tombol Masuk di aplikasi OpenTurath AI.';
+  }
 }

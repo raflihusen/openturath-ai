@@ -11,6 +11,7 @@ import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 import 'desktop_google_sign_in.dart';
 import 'desktop_webview_runtime.dart';
+import '../core/app_platform.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -83,40 +84,26 @@ class AuthService {
     try {
       User? firebaseUser;
 
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+      if (!kIsWeb && AppPlatform.isDesktop) {
         final credential = await DesktopGoogleSignIn.signIn();
         if (credential == null) return null;
         final userCredential = await _auth.signInWithCredential(credential);
         firebaseUser = userCredential.user;
       } else {
-        // Android, iOS, macOS, and web use the native GoogleSignIn SDK flow.
-        try {
-          final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-          if (googleUser == null) return null; // User membatalkan login
+        // Mobile (Android / iOS) & Web use native GoogleSignIn SDK
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) return null; // User membatalkan login
 
-          final GoogleSignInAuthentication googleAuth =
-              await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
-          final credential = GoogleAuthProvider.credential(
-            accessToken: googleAuth.accessToken,
-            idToken: googleAuth.idToken,
-          );
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-          final userCredential = await _auth.signInWithCredential(credential);
-          firebaseUser = userCredential.user;
-        } catch (sdkError) {
-          debugPrint('Native GoogleSignIn fallback: $sdkError');
-          if (!kIsWeb && defaultTargetPlatform == TargetPlatform.macOS) {
-            // Fallback resmi macOS via FirebaseAuth OAuth Provider (ASWebAuthenticationSession)
-            final provider = GoogleAuthProvider();
-            provider.addScope('email');
-            provider.addScope('profile');
-            final userCredential = await _auth.signInWithProvider(provider);
-            firebaseUser = userCredential.user;
-          } else {
-            rethrow;
-          }
-        }
+        final userCredential = await _auth.signInWithCredential(credential);
+        firebaseUser = userCredential.user;
       }
 
       if (firebaseUser == null) return null;
