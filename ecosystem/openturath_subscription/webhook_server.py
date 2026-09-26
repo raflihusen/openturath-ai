@@ -44,7 +44,6 @@ import hashlib
 import hmac
 import json
 import logging
-from datetime import datetime, timezone
 import datetime
 from google.cloud import firestore
 
@@ -430,11 +429,11 @@ def process_firestore_updates(email: str, name: str, plan: str, duration_months:
                     td = t.to_dict()
                     t_key = td.get("entitlement_key")
                     t_exp = td.get("subscription_expires_at") or td.get("expires_at")
-                    if isinstance(t_exp, datetime):
-                        t_exp_dt = t_exp if t_exp.tzinfo else t_exp.replace(tzinfo=timezone.utc)
+                    if isinstance(t_exp, datetime.datetime):
+                        t_exp_dt = t_exp if t_exp.tzinfo else t_exp.replace(tzinfo=datetime.timezone.utc)
                     elif isinstance(t_exp, str):
                         try:
-                            t_exp_dt = datetime.fromisoformat(t_exp.replace("Z", "+00:00"))
+                            t_exp_dt = datetime.datetime.fromisoformat(t_exp.replace("Z", "+00:00"))
                         except Exception:
                             t_exp_dt = None
                     else:
