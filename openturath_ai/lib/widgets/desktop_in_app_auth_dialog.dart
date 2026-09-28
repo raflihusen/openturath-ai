@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../core/design/ot_colors.dart';
@@ -20,6 +22,14 @@ class DesktopInAppAuthDialog extends StatefulWidget {
 
   static const String desktopUserAgent =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+
+  static Future<Map<String, dynamic>?> show(BuildContext context) {
+    return showDialog<Map<String, dynamic>>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const DesktopInAppAuthDialog(),
+    );
+  }
 
   @override
   State<DesktopInAppAuthDialog> createState() => _DesktopInAppAuthDialogState();
@@ -142,6 +152,11 @@ class _DesktopInAppAuthDialogState extends State<DesktopInAppAuthDialog> {
                   child: Stack(
                     children: [
                       InAppWebView(
+                        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                          Factory<OneSequenceGestureRecognizer>(
+                            () => EagerGestureRecognizer(),
+                          ),
+                        },
                         webViewEnvironment: DesktopWebViewRuntime.environment,
                         initialUrlRequest: URLRequest(
                           url: WebUri(DesktopInAppAuthDialog.authUrl),

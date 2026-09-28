@@ -17,6 +17,7 @@ import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
+import '../widgets/desktop_in_app_auth_dialog.dart';
 
 /// LoginScreen: Gerbang Masuk OpenTurath
 /// Mengadopsi filosofi desain minimalis modern Claude:
@@ -73,15 +74,32 @@ class _LoginScreenState extends State<LoginScreen> {
       _desktopError = null;
     });
     try {
-      final user = await _authService.signInWithGoogle();
-
-      if (!mounted || user == null) return;
-      Navigator.pushReplacementNamed(
-        context,
-        AppPlatform.isDesktop
-            ? AppRoutes.dashboard
-            : AppRoutes.googleSessionAuth,
-      );
+      if (AppPlatform.isDesktop) {
+        // Desktop In-App Google Sign-In: langsung menyelaraskan sesi Firebase Auth
+        // dan sesi browser internal WKWebView sekaligus (1x masuk tanpa perlu 2x).
+        final result = await DesktopInAppAuthDialog.show(context);
+        if (result != null && result['idToken'] != null) {
+          final user = await _authService.signInWithDesktopGoogleToken(
+            idToken: result['idToken'] as String,
+            email: result['email'] as String?,
+            displayName: result['name'] as String?,
+          );
+          if (user != null && mounted) {
+            Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+            return;
+          }
+        } else {
+          // Dialog ditutup atau dibatalkan oleh pengguna
+          return;
+        }
+      } else {
+        final user = await _authService.signInWithGoogle();
+        if (!mounted || user == null) return;
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.googleSessionAuth,
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       final message = e.toString().contains('network') ||

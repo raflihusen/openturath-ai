@@ -35,7 +35,7 @@ Future<T?> showAdaptiveSheet<T>({
       backgroundColor: backgroundColor,
       insetPadding: const EdgeInsets.all(24),
       constraints: const BoxConstraints(maxWidth: 560),
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: AppPlatform.isDesktop ? Clip.none : Clip.antiAlias,
       child: LayoutBuilder(builder: (context, constraints) {
         final media = MediaQuery.of(context);
         final height = math.min(760.0, constraints.maxHeight);

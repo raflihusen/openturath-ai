@@ -245,7 +245,10 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         ),
         body: SafeArea(
           top: false,
-          child: Column(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1040),
+              child: Column(
             children: [
               // Search & Controls Container
               Padding(
@@ -549,10 +552,12 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                           ),
               ),
             ],
+            ),
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _sectionLabel(String title, String hint, Color ink, Color muted) {

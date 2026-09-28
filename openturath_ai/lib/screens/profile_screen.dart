@@ -310,10 +310,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 : (fbUser?.email ?? '');
             final membership = resolveMembershipPass(userModel);
 
-            return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
-              physics: const BouncingScrollPhysics(),
-              children: [
+            return Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1040),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+                  physics: const BouncingScrollPhysics(),
+                  children: [
                 _MembershipPass(
                   holderName: displayName,
                   email: email,
@@ -527,8 +530,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                   ),
                 ),
-              ],
-            );
+                ],
+              ),
+            ),
+          );
           },
         ),
       ),

@@ -332,7 +332,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1040),
+            child: Column(
           children: [
             // ── Search Field (collapsible) ──
             if (_showSearch)
@@ -624,7 +627,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 

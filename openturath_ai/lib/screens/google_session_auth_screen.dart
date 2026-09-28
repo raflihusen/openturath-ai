@@ -2,6 +2,8 @@ import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
 import '../core/localization.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../core/scholarly_fonts.dart';
@@ -34,8 +36,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   static const String _chromeUserAgent =
       "Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.127 Mobile Safari/537.36";
 
-  static const String _targetLoginUrl =
-      "https://accounts.google.com/ServiceLogin?continue=https://notebook.google.com/";
+  String get _targetLoginUrl {
+    final email = AuthService().currentUser?.email?.trim();
+    if (email != null && email.isNotEmpty) {
+      return "https://accounts.google.com/ServiceLogin?continue=https://notebook.google.com/&Email=${Uri.encodeComponent(email)}&login_hint=${Uri.encodeComponent(email)}";
+    }
+    return "https://accounts.google.com/ServiceLogin?continue=https://notebook.google.com/";
+  }
 
   @override
   void dispose() {
@@ -245,6 +252,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InAppWebView(
+                    gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                      Factory<OneSequenceGestureRecognizer>(
+                        () => EagerGestureRecognizer(),
+                      ),
+                    },
                     webViewEnvironment: DesktopWebViewRuntime.environment,
                     initialUrlRequest: URLRequest(url: WebUri(_targetLoginUrl)),
                     initialSettings: InAppWebViewSettings(

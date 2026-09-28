@@ -6,6 +6,8 @@ import '../core/localization.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../core/scholarly_fonts.dart';
@@ -191,6 +193,19 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
       if (mounted) {
         _isChecking = false;
       }
+    }
+  }
+
+  Future<void> _openInExternalBrowser() async {
+    final uri = Uri.tryParse(widget.paymentUrl);
+    if (uri == null || !_isAllowedPaymentDestination(uri)) return;
+    try {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      debugPrint('[DokuCheckout] Gagal membuka browser eksternal: $e');
     }
   }
 
@@ -392,11 +407,13 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
         }
       },
       child: Container(
-        height: screenHeight * 0.92,
+        height: AppPlatform.isDesktop ? double.infinity : screenHeight * 0.92,
         decoration: BoxDecoration(
           color: surfaceColor,
-          borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppTheme.radiusCard)),
+          borderRadius: AppPlatform.isDesktop
+              ? BorderRadius.circular(AppTheme.radiusCard)
+              : const BorderRadius.vertical(
+                  top: Radius.circular(AppTheme.radiusCard)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(isDark ? 100 : 40),
@@ -406,8 +423,11 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppTheme.radiusCard)),
+          clipBehavior: AppPlatform.isDesktop ? Clip.none : Clip.antiAlias,
+          borderRadius: AppPlatform.isDesktop
+              ? BorderRadius.circular(AppTheme.radiusCard)
+              : const BorderRadius.vertical(
+                  top: Radius.circular(AppTheme.radiusCard)),
           child: Stack(
             children: [
               // ── 1. Main Sheet Content (Header + WebView) ──
@@ -508,6 +528,13 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                 ],
                               ),
                             ),
+                            // Tombol Buka di Browser Luar (Sangat cepat & lancar di Desktop)
+                            IconButton(
+                              onPressed: _openInExternalBrowser,
+                              icon: Icon(Icons.open_in_browser_rounded,
+                                  size: 20, color: textSecondary),
+                              tooltip: 'Buka di Browser Eksternal',
+                            ),
                             // Tombol Cek Manual / Refresh
                             IconButton(
                               onPressed: _isChecking
@@ -557,9 +584,81 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                       minHeight: 2.5,
                     ),
 
-                  // WebView DOKU
+                  // Desktop helper banner: Info & Quick Browser Button
+                  if (AppPlatform.isDesktop)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF1E293B)
+                            : const Color(0xFFF1F5F9),
+                        border: Border(
+                            bottom: BorderSide(color: border, width: 1)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.speed_rounded,
+                            size: 16,
+                            color: accent,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Lebih cepat & lancar? Anda dapat menyelesaikan pembayaran di browser.',
+                              style: ScholarlyFonts.outfit(
+                                fontSize: 12,
+                                color: textSecondary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          InkWell(
+                            onTap: _openInExternalBrowser,
+                            borderRadius: BorderRadius.circular(6),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: accent.withAlpha(isDark ? 50 : 30),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                    color: accent.withAlpha(80), width: 1),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Buka di Browser',
+                                    style: ScholarlyFonts.outfit(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: accent,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.launch_rounded,
+                                    size: 13,
+                                    color: accent,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // WebView DOKU / Midtrans
                   Expanded(
                     child: InAppWebView(
+                      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                        Factory<OneSequenceGestureRecognizer>(
+                          () => EagerGestureRecognizer(),
+                        ),
+                      },
                       webViewEnvironment: DesktopWebViewRuntime.environment,
                       initialUrlRequest:
                           URLRequest(url: WebUri(widget.paymentUrl)),
@@ -569,20 +668,39 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                         databaseEnabled: true,
                         sharedCookiesEnabled: true,
                         thirdPartyCookiesEnabled: true,
-                        useHybridComposition: true,
+                        cacheEnabled: true,
+                        clearCache: false,
+                        clearSessionCache: false,
+                        useHybridComposition: false,
+                        disableVerticalScroll: false,
+                        disableHorizontalScroll: false,
+                        supportZoom: false,
+                        builtInZoomControls: false,
+                        displayZoomControls: false,
                         mixedContentMode:
                             MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                         allowFileAccess: false,
                         allowContentAccess: true,
                         javaScriptCanOpenWindowsAutomatically: true,
-                        supportZoom: true,
-                        builtInZoomControls: true,
-                        displayZoomControls: false,
+                        supportMultipleWindows: true,
                         forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
                         transparentBackground: false,
+                        userAgent: AppPlatform.isDesktop
+                            ? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                            : null,
                       ),
                       onWebViewCreated: (controller) {
                         _webController = controller;
+                      },
+                      onCreateWindow: (controller, createWindowAction) async {
+                        final targetUrl = createWindowAction.request.url;
+                        if (targetUrl != null) {
+                          await controller.loadUrl(
+                            urlRequest: URLRequest(url: targetUrl),
+                          );
+                          return true;
+                        }
+                        return false;
                       },
                       onProgressChanged: (controller, progress) {
                         if (mounted) {
@@ -652,6 +770,16 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             urlStr.contains('success')) {
                           _checkPaymentStatus();
                         }
+
+                        // Pastikan overflow scroll di body/html aktif
+                        try {
+                          await controller.evaluateJavascript(source: """
+                            (function() {
+                              document.documentElement.style.overflow = 'auto';
+                              document.body.style.overflow = 'auto';
+                            })();
+                          """);
+                        } catch (_) {}
 
                         // Deteksi instan jika DOM DOKU menampilkan halaman Payment Successful
                         try {
