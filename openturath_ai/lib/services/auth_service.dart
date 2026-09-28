@@ -87,8 +87,16 @@ class AuthService {
       if (!kIsWeb && AppPlatform.isDesktop) {
         final credential = await DesktopGoogleSignIn.signIn();
         if (credential == null) return null;
-        final userCredential = await _auth.signInWithCredential(credential);
-        firebaseUser = userCredential.user;
+        try {
+          final userCredential = await _auth.signInWithCredential(credential);
+          firebaseUser = userCredential.user;
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'keychain-error' && _auth.currentUser != null) {
+            firebaseUser = _auth.currentUser;
+          } else {
+            rethrow;
+          }
+        }
       } else {
         // Mobile (Android / iOS) & Web use native GoogleSignIn SDK
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -123,8 +131,17 @@ class AuthService {
   }) async {
     try {
       final credential = GoogleAuthProvider.credential(idToken: idToken);
-      final userCredential = await _auth.signInWithCredential(credential);
-      final firebaseUser = userCredential.user;
+      User? firebaseUser;
+      try {
+        final userCredential = await _auth.signInWithCredential(credential);
+        firebaseUser = userCredential.user;
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'keychain-error' && _auth.currentUser != null) {
+          firebaseUser = _auth.currentUser;
+        } else {
+          rethrow;
+        }
+      }
       if (firebaseUser == null) return null;
 
       final userModel = await _resolveOrCreateFirebaseUser(
