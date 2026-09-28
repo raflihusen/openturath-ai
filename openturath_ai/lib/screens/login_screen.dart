@@ -74,31 +74,22 @@ class _LoginScreenState extends State<LoginScreen> {
       _desktopError = null;
     });
     try {
-      if (AppPlatform.isDesktop) {
-        // Desktop In-App Google Sign-In: langsung menyelaraskan sesi Firebase Auth
-        // dan sesi browser internal WKWebView sekaligus (1x masuk tanpa perlu 2x).
-        final result = await DesktopInAppAuthDialog.show(context);
-        if (result != null && result['idToken'] != null) {
-          final user = await _authService.signInWithDesktopGoogleToken(
-            idToken: result['idToken'] as String,
-            email: result['email'] as String?,
-            displayName: result['name'] as String?,
-          );
-          if (user != null && mounted) {
-            Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
-            return;
-          }
-        } else {
-          // Dialog ditutup atau dibatalkan oleh pengguna
+      // In-App Google Sign-In Terpadu: menyelaraskan sesi Firebase Auth
+      // dan sesi browser internal WebView sekaligus (1x masuk tanpa perlu 2x).
+      final result = await DesktopInAppAuthDialog.show(context);
+      if (result != null && result['idToken'] != null) {
+        final user = await _authService.signInWithDesktopGoogleToken(
+          idToken: result['idToken'] as String,
+          email: result['email'] as String?,
+          displayName: result['name'] as String?,
+        );
+        if (user != null && mounted) {
+          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
           return;
         }
       } else {
-        final user = await _authService.signInWithGoogle();
-        if (!mounted || user == null) return;
-        Navigator.pushReplacementNamed(
-          context,
-          AppRoutes.googleSessionAuth,
-        );
+        // Dialog ditutup atau dibatalkan oleh pengguna
+        return;
       }
     } catch (e) {
       if (!mounted) return;

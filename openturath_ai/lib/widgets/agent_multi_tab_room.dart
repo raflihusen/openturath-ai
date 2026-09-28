@@ -1589,8 +1589,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   host == 'consent.google.com') {
                 session.isSessionReady = false;
               }
-              // Hanya aktifkan full loader jika sesi BELUM pernah siap sama sekali
-              if (mounted && !session.isSessionReady && !session.isWebLoading) {
+              // Hanya aktifkan full loader jika sesi BELUM pernah siap sama sekali dan bukan pada halaman akun Google
+              if (mounted &&
+                  !session.isSessionReady &&
+                  !session.isWebLoading &&
+                  !host.startsWith('accounts.google') &&
+                  host != 'consent.google.com') {
                 setState(() => session.isWebLoading = true);
               }
               if (!session.isSessionReady) {

@@ -1,9 +1,7 @@
-import '../core/app_platform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
 import '../widgets/app_loader.dart';
@@ -54,14 +52,7 @@ class _SplashScreenState extends State<SplashScreen>
       String targetRoute;
 
       if (user != null && !user.isAnonymous) {
-        final prefs = await SharedPreferences.getInstance()
-            .timeout(const Duration(seconds: 3));
-        final isSessionReady = prefs.getBool('google_session_ready') ?? false;
-        if (!isSessionReady && !AppPlatform.isDesktop) {
-          targetRoute = AppRoutes.googleSessionAuth;
-        } else {
-          targetRoute = AppRoutes.dashboard;
-        }
+        targetRoute = AppRoutes.dashboard;
       } else {
         targetRoute = AppRoutes.login;
       }
