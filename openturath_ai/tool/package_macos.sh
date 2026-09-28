@@ -7,7 +7,7 @@ test -d "$app"
 # Every shipped native executable/library must support both intended CPU families.
 while IFS= read -r -d '' binary; do
   if file -b "$binary" | grep -q 'Mach-O'; then
-    lipo -verify_arch arm64 x86_64 "$binary"
+    lipo "$binary" -verify_arch arm64 x86_64
   fi
 done < <(find "$app/Contents" -type f -print0)
 plutil -lint "$app/Contents/Info.plist"
