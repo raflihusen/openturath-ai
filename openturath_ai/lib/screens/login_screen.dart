@@ -17,7 +17,6 @@ import '../services/auth_service.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
-import '../widgets/desktop_in_app_auth_dialog.dart';
 
 /// LoginScreen: Gerbang Masuk OpenTurath
 /// Mengadopsi filosofi desain minimalis modern Claude:
@@ -74,21 +73,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _desktopError = null;
     });
     try {
-      // In-App Google Sign-In Terpadu: menyelaraskan sesi Firebase Auth
-      // dan sesi browser internal WebView sekaligus (1x masuk tanpa perlu 2x).
-      final result = await DesktopInAppAuthDialog.show(context);
-      if (result != null && result['idToken'] != null) {
-        final user = await _authService.signInWithDesktopGoogleToken(
-          idToken: result['idToken'] as String,
-          email: result['email'] as String?,
-          displayName: result['name'] as String?,
-        );
-        if (user != null && mounted) {
-          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
-          return;
-        }
-      } else {
-        // Dialog ditutup atau dibatalkan oleh pengguna
+      final user = await _authService.signInWithGoogle();
+      if (user != null && mounted) {
+        // Langsung masuk ke Dashboard utama tanpa perantara layar login kedua
+        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
         return;
       }
     } catch (e) {
