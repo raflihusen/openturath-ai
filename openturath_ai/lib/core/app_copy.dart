@@ -109,6 +109,10 @@ abstract final class AppCopy {
   static String get googleSessionActive => Loc.tr('googleSessionActive');
   static String get continueWithGoogle => Loc.tr('continueWithGoogle');
   static String get googleSignInFailed => Loc.tr('googleSignInFailed');
+  static String get desktopKeychainError => Loc.tr('desktopKeychainError');
+  static String get desktopListenerError => Loc.tr('desktopListenerError');
+  static String get desktopBrowserError => Loc.tr('desktopBrowserError');
+  static String get desktopTimeoutError => Loc.tr('desktopTimeoutError');
   static String get termsAgreementPrefix => Loc.tr('termsAgreementPrefix');
   static String get profile => Loc.tr('profile');
   static String get subscription => Loc.tr('subscription');

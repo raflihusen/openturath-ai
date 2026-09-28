@@ -90,15 +90,15 @@ class _LoginScreenState extends State<LoginScreen> {
           : (e is FirebaseAuthException && e.code.startsWith('desktop-')
               ? switch (e.code) {
                   'desktop-listener-unavailable' =>
-                    Loc.tr('desktopListenerError'),
+                    AppCopy.desktopListenerError,
                   'desktop-browser-unavailable' =>
-                    Loc.tr('desktopBrowserError'),
-                  'desktop-login-timeout' => Loc.tr('desktopTimeoutError'),
+                    AppCopy.desktopBrowserError,
+                  'desktop-login-timeout' => AppCopy.desktopTimeoutError,
                   _ => e.message ?? AppCopy.googleSignInFailed,
                 }
               : e is FirebaseAuthException && AppPlatform.isDesktop
                   ? e.code == 'keychain-error'
-                      ? Loc.tr('desktopKeychainError')
+                      ? AppCopy.desktopKeychainError
                       : '${AppCopy.googleSignInFailed} (${e.code})'
                   : AppCopy.googleSignInFailed);
       if (AppPlatform.isDesktop) {
