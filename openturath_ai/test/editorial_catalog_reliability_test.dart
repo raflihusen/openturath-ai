@@ -65,6 +65,7 @@ void main() {
       label: Loc.tr('multipleVolumes'), isSelected: true,
       hasSelectedState: true, isEnabled: true, hasEnabledState: true,
       isFocusable: true, isFocused: true, hasTapAction: true,
+      isButton: true, hasFocusAction: true,
     ));
     expect(find.text(_book.title), findsNothing);
     await tester.tap(find.text(Loc.tr('allBooks')));
