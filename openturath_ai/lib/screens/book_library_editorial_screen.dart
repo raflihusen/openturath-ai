@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/app_snackbar.dart';
+import '../core/arabic_utils.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
@@ -77,7 +78,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
             book.publisher,
             book.section,
             book.localizedSection,
-          ].join(' ').toLowerCase().contains(_query);
+          ].any((value) => ArabicUtils.matches(value, _query));
 
       if (!matchesQuery) return false;
 
@@ -172,11 +173,12 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             color: textSecondary, size: 20),
                         suffixIcon: _query.isNotEmpty
                             ? IconButton(
+                                tooltip: Loc.tr('clearSearch'),
                                 icon: Icon(Icons.clear_rounded,
                                     color: textSecondary, size: 18),
                                 onPressed: () {
                                   _searchController.clear();
-                                  _searchFocusNode.unfocus();
+                                  _searchFocusNode.requestFocus();
                                 },
                               )
                             : null,
@@ -329,24 +331,22 @@ class _FilterChip extends StatelessWidget {
     final surface = OTColors.surface(isDark);
     final border = OTColors.border(isDark);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: isSelected ? ink : surface,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: isSelected ? ink : border),
-        ),
-        child: Text(
-          label,
-          style: ScholarlyFonts.outfit(
-            color: isSelected ? OTColors.canvas(isDark) : ink,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (_) => onTap(),
+      showCheckmark: false,
+      backgroundColor: surface,
+      selectedColor: ink,
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      visualDensity: VisualDensity.standard,
+      shape: const StadiumBorder(),
+      side: BorderSide(color: isSelected ? ink : border),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      labelStyle: ScholarlyFonts.outfit(
+        color: isSelected ? OTColors.canvas(isDark) : ink,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
       ),
     );
   }
@@ -468,11 +468,11 @@ class _BookEditorialItem extends StatelessWidget {
                           Icon(Icons.layers_outlined,
                               size: 13, color: textSecondary),
                           const SizedBox(width: 4),
-                          Text(
+                          Flexible(child: Text(
                             book.volumeLabel,
                             style: ScholarlyFonts.outfit(
                                 fontSize: 11, color: textSecondary),
-                          ),
+                          )),
                         ],
                       ),
                       Row(
@@ -481,11 +481,11 @@ class _BookEditorialItem extends StatelessWidget {
                           Icon(Icons.format_list_numbered_rounded,
                               size: 13, color: textSecondary),
                           const SizedBox(width: 4),
-                          Text(
+                          Flexible(child: Text(
                             book.pagesLabel,
                             style: ScholarlyFonts.outfit(
                                 fontSize: 11, color: textSecondary),
-                          ),
+                          )),
                         ],
                       ),
                     ],
