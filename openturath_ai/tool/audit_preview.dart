@@ -58,48 +58,54 @@ class _AuditPreviewState extends State<_AuditPreview> {
           policy: WidgetOrderTraversalPolicy(),
           child: LocaleScope(
               child: Scaffold(
-        body: Column(children: [
-          const Text('LOCAL QA · bundled catalog · isolated browser notes'),
-          Wrap(
-              spacing: 12,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                TextButton(
-                    onPressed: () => setState(() {
-                          const codes = Loc.supportedCodes;
-                          _language = codes[
-                              (codes.indexOf(_language) + 1) % codes.length];
-                        }),
-                    child: Text(_language)),
-                TextButton(
-                    onPressed: () => setState(() {
-                          const widths = [360.0, 390.0, 768.0, 1024.0, 1440.0];
-                          _width = widths[
-                              (widths.indexOf(_width) + 1) % widths.length];
-                        }),
-                    child: Text('${_width.toInt()} px')),
-                TextButton(
-                    onPressed: () => setState(() => _dark = !_dark),
-                    child: Text(_dark ? 'Light' : 'Dark')),
-                TextButton(
-                    onPressed: () =>
-                        setState(() => _textScale = _textScale == 1 ? 2 : 1),
-                    child: Text('Text ${_textScale.toInt()}×')),
-              ]),
-          Expanded(
-              child: Center(
-                  child: SizedBox(
-            width: _width,
-            child: MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                size: Size(_width, MediaQuery.sizeOf(context).height - 72),
-                textScaler: TextScaler.linear(_textScale),
-              ),
-              child: child!,
-            ),
+            body: Column(children: [
+              const Text('LOCAL QA · bundled catalog · isolated browser notes'),
+              Wrap(
+                  spacing: 12,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    TextButton(
+                        onPressed: () => setState(() {
+                              const codes = Loc.supportedCodes;
+                              _language = codes[(codes.indexOf(_language) + 1) %
+                                  codes.length];
+                            }),
+                        child: Text(_language)),
+                    TextButton(
+                        onPressed: () => setState(() {
+                              const widths = [
+                                360.0,
+                                390.0,
+                                768.0,
+                                1024.0,
+                                1440.0
+                              ];
+                              _width = widths[
+                                  (widths.indexOf(_width) + 1) % widths.length];
+                            }),
+                        child: Text('${_width.toInt()} px')),
+                    TextButton(
+                        onPressed: () => setState(() => _dark = !_dark),
+                        child: Text(_dark ? 'Light' : 'Dark')),
+                    TextButton(
+                        onPressed: () => setState(
+                            () => _textScale = _textScale == 1 ? 2 : 1),
+                        child: Text('Text ${_textScale.toInt()}×')),
+                  ]),
+              Expanded(
+                  child: Center(
+                      child: SizedBox(
+                width: _width,
+                child: MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    size: Size(_width, MediaQuery.sizeOf(context).height - 72),
+                    textScaler: TextScaler.linear(_textScale),
+                  ),
+                  child: child!,
+                ),
+              ))),
+            ]),
           ))),
-        ]),
-      ))),
       home: Builder(
           builder: (context) => Scaffold(
                   body: Center(
