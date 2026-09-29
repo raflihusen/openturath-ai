@@ -19,7 +19,8 @@ class AgentSessionTab {
   bool isTimeoutError = false;
   bool isGooglePermissionError = false;
   bool isGoogleAuthPage = false;
-  double fontScale = 1.0;
+  static double defaultFontScale = 1.0;
+  double fontScale = defaultFontScale;
   bool hasAcknowledgedAdab = false;
   bool hasInjectedEarlyScript = false;
 

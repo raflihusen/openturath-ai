@@ -1,5 +1,7 @@
 import 'core/app_platform.dart';
 import 'services/desktop_webview_runtime.dart';
+import 'services/agent_session_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +43,8 @@ Future<void> main() async {
   // Load configuration
   try {
     await AppConfig.init();
+    final prefs = await SharedPreferences.getInstance();
+    AgentSessionTab.defaultFontScale = prefs.getDouble('turath_font_zoom_level') ?? 1.0;
   } catch (_) {}
 
   // ── Status bar transparan awal ──

@@ -243,7 +243,7 @@ const notebookUiScript = r'''
         margin-bottom: 18px !important;
       }
       .rendered-markdown, .chat-response {
-        font-size: 15.5px !important;
+        font-size: var(--ot-font-size, 15.5px) !important;
         line-height: 1.8 !important;
       }
       .rendered-markdown p + p, .chat-response p + p { margin-top: 1em !important; }

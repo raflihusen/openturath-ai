@@ -143,9 +143,10 @@ bool Win32Window::Create(const std::wstring& title,
   const int height = (std::min)(Scale(size.height, scale_factor),
                                 static_cast<int>(work.bottom - work.top));
   const int x = work.left + (work.right - work.left - width) / 2;
-  const int y = work.top + (work.bottom - work.top - height) / 2;
+  constexpr DWORD kFixedStyle =
+      WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
   HWND window = CreateWindow(
-      window_class, title.c_str(), WS_OVERLAPPEDWINDOW,
+      window_class, title.c_str(), kFixedStyle,
       x, y, width, height,
       nullptr, nullptr, GetModuleHandle(nullptr), this);
 

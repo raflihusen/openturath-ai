@@ -111,8 +111,29 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     if (_webController == null) return;
     try {
       await _webController!.evaluateJavascript(
-        source:
-            'if (typeof applyTurathFontScale === "function") { applyTurathFontScale($_fontScale); }',
+        source: '''
+          (function() {
+            if (typeof applyTurathFontScale === "function") {
+              applyTurathFontScale($_fontScale);
+            } else {
+              var scale = $_fontScale;
+              var basePx = Math.round(scale * 15);
+              var fontStyle = document.getElementById('ot-font-scale-style');
+              if (!fontStyle) {
+                fontStyle = document.createElement('style');
+                fontStyle.id = 'ot-font-scale-style';
+                (document.head || document.documentElement).appendChild(fontStyle);
+              }
+              fontStyle.textContent = `
+                :root, html, body { --ot-font-size: \${basePx}px !important; }
+                .rendered-markdown, .rendered-markdown *, .chat-response, .chat-response *, [role="article"], [role="article"] *,
+                .chat-panel-content, .chat-panel-content * {
+                  font-size: \${basePx}px !important;
+                }
+              `;
+            }
+          })();
+        ''',
       );
     } catch (_) {}
   }
@@ -148,6 +169,29 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         var scale = Number(value);
         if (!Number.isFinite(scale)) return;
         scale = Math.max(0.85, Math.min(2, scale));
+        var basePx = Math.round(scale * 15);
+        var arabicPx = Math.round(scale * 19);
+
+        if (document.documentElement && document.documentElement.style && typeof document.documentElement.style.setProperty === 'function') {
+          document.documentElement.style.setProperty('--ot-font-size', basePx + 'px');
+        }
+        if (document.body && document.body.style && typeof document.body.style.setProperty === 'function') {
+          document.body.style.setProperty('--ot-font-size', basePx + 'px');
+        }
+
+        try {
+          var rtlRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+          var els = document.querySelectorAll('.rendered-markdown p, .rendered-markdown li, .rendered-markdown div, [role="article"] p, [role="article"] li');
+          if (els && typeof els.forEach === 'function') {
+            els.forEach(function(el) {
+              if (rtlRegex.test(el.textContent || '')) {
+                el.setAttribute('dir', 'rtl');
+                el.classList.add('arabic');
+              }
+            });
+          }
+        } catch (_) {}
+
         var fontStyle = document.getElementById('ot-font-scale-style');
         if (!fontStyle) {
           fontStyle = document.createElement('style');
@@ -155,19 +199,27 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           (document.head || document.documentElement).appendChild(fontStyle);
         }
         fontStyle.textContent = `
-          .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"] {
-            font-size: ${Math.round(scale * 15)}px !important;
-            line-height: 1.65 !important;
+          :root, html, body {
+            --ot-font-size: ${basePx}px !important;
           }
-          .chat-panel-content p, .chat-view p, [role="article"] p,
-          .chat-panel-content span, .chat-view span, [role="article"] span,
-          .chat-panel-content li, .chat-view li, [role="article"] li {
-            font-size: inherit !important;
-            line-height: inherit !important;
+          .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="article"],
+          .rendered-markdown, .chat-response, .chat-message, .model-message, .user-message,
+          .to-user-container, .to-model-container, app-chat-message {
+            font-size: ${basePx}px !important;
+            line-height: 1.7 !important;
           }
-          [lang="ar"], .arabic {
-            font-size: ${Math.round(scale * 19)}px !important;
-            line-height: 1.8 !important;
+          .rendered-markdown p, .rendered-markdown span, .rendered-markdown li, .rendered-markdown div,
+          .chat-response p, .chat-response span, .chat-response li, .chat-response div,
+          [role="article"] p, [role="article"] span, [role="article"] li, [role="article"] div,
+          .chat-panel-content p, .chat-panel-content span, .chat-panel-content li, .chat-panel-content div,
+          .to-user-container p, .to-user-container span, .to-user-container li, .to-user-container div,
+          .to-model-container p, .to-model-container span, .to-model-container li, .to-model-container div {
+            font-size: ${basePx}px !important;
+            line-height: 1.7 !important;
+          }
+          [lang="ar"], .arabic, [dir="rtl"] {
+            font-size: ${arabicPx}px !important;
+            line-height: 1.85 !important;
           }
         `;
       };
