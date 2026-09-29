@@ -162,16 +162,14 @@ const notebookUiScript = r'''
       mat-toolbar button, .top-bar button,
       /* Sembunyikan kartu hero / overview / summary tengah */
       app-notebook-guide, notebook-guide, app-guide-intro,
-      app-chat-intro, app-project-summary, app-notebook-overview,
+      app-project-summary, app-notebook-overview,
       app-artifact-summary, .artifact-summary,
       .notebook-guide, .guide-container, .hero-container,
       .cover-image-container, .summary-card, .guide-card,
-      app-empty-chat, app-chat-empty-state, app-conversation-empty-state,
-      chat-intro, .chat-intro, .empty-state, .chat-empty-state, .empty-chat,
-      .guide-intro, app-source-guide,
       [class*="guide-intro" i], [class*="project-summary" i],
       [class*="project-overview" i], [class*="notebook-overview" i],
-      [class*="empty-state" i],
+      /* Sembunyikan badge PRO */
+      .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i],
       /* Sembunyikan Disclaimer Bawah Secara Total */
       .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
         display: none !important;
@@ -188,21 +186,23 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Elevate chat input and message list, always stick input to bottom */
-      .chat-panel-content, .chat-view, .conversation-container, .message-list {
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: flex-end !important;
-        min-height: 100% !important;
-        height: 100% !important;
+      /* Ruang bawah obrolan agar pesan tidak tertutup bilah input */
+      .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
+        padding-bottom: 110px !important;
         box-sizing: border-box !important;
-        padding-bottom: max(20px, calc(env(safe-area-inset-bottom, 20px) + 10px)) !important;
       }
-      div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
+      /* Kunci bilah input chat di bagian bawah layar secara presisi */
+      div.chat-input-container, .input-container, app-chat-input, chat-input, form.chat-input-form,
       [class*="input-container" i], [class*="chat-input" i] {
-        margin-top: auto !important;
-        margin-bottom: 8px !important;
-        width: 100% !important;
+        position: fixed !important;
+        bottom: 20px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: min(840px, calc(100vw - 32px)) !important;
+        max-width: 840px !important;
+        margin: 0 !important;
+        z-index: 1000 !important;
+        box-sizing: border-box !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -231,9 +231,7 @@ const notebookUiScript = r'''
       'labs-tailwind-logo', 'a.logo-link', 'a[aria-label*="NotebookLM" i]', 'svg[aria-label*="NotebookLM" i]',
       'button[aria-label*="Settings" i]', 'button[aria-label*="Setelan" i]',
       'button[aria-label*="Pengaturan" i]', 'button[aria-label*="Notebook settings" i]',
-      '.title-container', '.title-bar', '.notebook-title', '.project-title',
-      '[class*="title-bar" i]', '[class*="header-row" i]',
-      '[class*="title-container" i]', '[class*="notebook-title" i]', '[class*="project-title" i]'
+      '.pro-badge', '[class*="pro-badge" i]', '[class*="tier-badge" i]'
     ];
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -241,37 +239,30 @@ const notebookUiScript = r'''
       });
     });
 
-    // Deteksi baris header atas berdasarkan tombol options / more (titik tiga) di area atas (< 100px)
-    document.querySelectorAll('button, [role="button"], mat-icon').forEach(btn => {
-      const label = (btn.getAttribute('aria-label') || btn.getAttribute('title') || btn.innerText || btn.textContent || '').trim().toLowerCase();
-      const isMoreBtn = label.includes('more') || label.includes('opsi') || label.includes('tindakan') ||
-                        label.includes('setting') || label === 'more_vert' || label === 'more_horiz' || label === ':';
-      if (isMoreBtn) {
-        const rect = btn.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= 100 && rect.height > 0) {
-          let headerRow = btn.parentElement;
-          while (headerRow && headerRow !== document.body) {
-            const hRect = headerRow.getBoundingClientRect();
-            if (hRect.top <= 80 && hRect.height <= 100 && hRect.height > 15) {
-              if (!headerRow.querySelector('textarea, [contenteditable="true"], form')) {
-                headerRow.style.setProperty('display', 'none', 'important');
-                break;
-              }
-            }
-            headerRow = headerRow.parentElement;
-          }
+    // Sembunyikan lencana PRO
+    document.querySelectorAll('*').forEach(el => {
+      if (el.children.length === 0 && (el.textContent || '').trim().toUpperCase() === 'PRO') {
+        const badge = el.closest('button, a, span, div');
+        if (badge && badge !== document.body && badge.querySelectorAll('textarea, input').length === 0) {
+          badge.style.setProperty('display', 'none', 'important');
         }
       }
     });
 
-    // Deteksi baris header atas berdasarkan elemen Shared / Dibagikan / avatar
+    // Sembunyikan baris header atas: elemen di area paling atas (rect.top <= 80, height <= 95)
+    // yang memuat judul notebook / Shared / Dibagikan / avatar / tombol opsi titik tiga
     document.querySelectorAll('*').forEach(el => {
       if (el.children.length > 0 && el.children.length <= 15) {
         const rect = el.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= 80 && rect.height > 20 && rect.height <= 90) {
+        if (rect.top >= 0 && rect.top <= 80 && rect.height > 15 && rect.height <= 95) {
           const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
-          if (txt.includes('shared') || txt.includes('dibagikan') || (el.querySelector('app-user-avatar, [aria-label*="Google Account" i]') && !el.querySelector('textarea, input'))) {
-            if (!el.querySelector('textarea, [contenteditable="true"]')) {
+          const hasMore = el.querySelector('button[aria-label*="more" i], button[aria-label*="opsi" i], mat-icon');
+          const hasAvatar = el.querySelector('app-user-avatar, [aria-label*="Google Account" i]');
+          const isHeader = txt.includes('shared') || txt.includes('dibagikan') || txt.includes('super ai') ||
+                           txt.includes('al-muhaqqiq') || txt.includes('fikih') || txt.includes('syafii') ||
+                           txt.includes('tahawwulat') || hasAvatar || hasMore;
+          if (isHeader && !el.querySelector('textarea, [contenteditable="true"], form')) {
+            if (!el.matches('.chat-view, .chat-panel-content, main, [role="main"]')) {
               el.style.setProperty('display', 'none', 'important');
             }
           }
@@ -283,16 +274,12 @@ const notebookUiScript = r'''
   function removeHeroCard() {
     const guideSelectors = [
       'app-notebook-guide', 'notebook-guide', 'app-guide-intro',
-      'app-chat-intro', 'app-project-summary', 'app-notebook-overview',
+      'app-project-summary', 'app-notebook-overview',
       'app-artifact-summary', '.artifact-summary',
       '.notebook-guide', '.guide-container', '.hero-container',
       '.cover-image-container', '.summary-card', '.guide-card',
-      'app-empty-chat', 'app-chat-empty-state', 'app-conversation-empty-state',
-      'chat-intro', '.chat-intro', '.empty-state', '.chat-empty-state', '.empty-chat',
-      '.guide-intro', 'app-source-guide',
       '[class*="guide-intro" i]', '[class*="project-summary" i]',
-      '[class*="project-overview" i]', '[class*="notebook-overview" i]',
-      '[class*="empty-state" i]'
+      '[class*="project-overview" i]', '[class*="notebook-overview" i]'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -305,19 +292,43 @@ const notebookUiScript = r'''
       if (el.children.length === 0) {
         const txt = (el.textContent || '').trim().toLowerCase();
         if (/\b\d+\s+(sources|sumber)\b/i.test(txt)) {
-          let curr = el;
-          for (let i = 0; i < 5; i++) {
-            if (!curr || curr === document.body) break;
-            const parent = curr.parentElement;
-            if (parent && parent.querySelectorAll('textarea, [contenteditable="true"]').length === 0) {
-              curr = parent;
-            } else {
-              break;
+          const card = el.closest('app-notebook-guide, notebook-guide, .summary-card, .guide-card, .guide-container, mat-card, .artifact-summary');
+          if (card && card !== document.body && !card.matches('html, body, main, [role="main"], app-root, .chat-view, .chat-panel-content, .message-list')) {
+            if (card.querySelectorAll('textarea, [contenteditable="true"]').length === 0) {
+              card.style.setProperty('display', 'none', 'important');
             }
           }
-          if (curr && curr !== document.body) {
-            curr.style.setProperty('display', 'none', 'important');
-          }
+        }
+      }
+    });
+  }
+
+  function stickInputToBottom() {
+    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
+    if (input) {
+      const container = input.closest('form, app-chat-input, chat-input, div.chat-input-container, [class*="chat-input" i], [class*="input-container" i]') || input.parentElement;
+      if (container && container !== document.body && !container.matches('html, body, main, [role="main"], app-root')) {
+        container.style.setProperty('position', 'fixed', 'important');
+        container.style.setProperty('bottom', '20px', 'important');
+        container.style.setProperty('left', '50%', 'important');
+        container.style.setProperty('transform', 'translateX(-50%)', 'important');
+        container.style.setProperty('width', 'min(840px, calc(100vw - 32px))', 'important');
+        container.style.setProperty('max-width', '840px', 'important');
+        container.style.setProperty('z-index', '1000', 'important');
+        container.style.setProperty('margin', '0', 'important');
+      }
+    }
+
+    // Jika sedang dalam status Responding... (seperti pada tampilan loading AI)
+    document.querySelectorAll('*').forEach(el => {
+      if (el.children.length === 0 && (el.textContent || '').trim().toLowerCase().includes('responding')) {
+        const pill = el.closest('div, form');
+        if (pill && pill !== document.body && !pill.matches('html, body, main, [role="main"], app-root, .chat-view, .chat-panel-content, .message-list')) {
+          pill.style.setProperty('position', 'fixed', 'important');
+          pill.style.setProperty('bottom', '24px', 'important');
+          pill.style.setProperty('left', '50%', 'important');
+          pill.style.setProperty('transform', 'translateX(-50%)', 'important');
+          pill.style.setProperty('z-index', '1000', 'important');
         }
       }
     });
@@ -329,6 +340,7 @@ const notebookUiScript = r'''
     ensureStyles();
     removeTopToolbars();
     removeHeroCard();
+    stickInputToBottom();
   }
 
   function triggerClick(el) {
