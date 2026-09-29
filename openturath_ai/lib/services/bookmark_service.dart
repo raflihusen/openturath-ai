@@ -12,16 +12,24 @@ class BookmarkService extends ChangeNotifier {
     if (auth != null) _instance._auth = auth;
     return _instance;
   }
-  BookmarkService._internal() : _readCloudOverride = null {
+  BookmarkService._internal()
+      : _readCloudOverride = null,
+        _currentUserIdOverride = null {
     _initAuthListener();
   }
 
   @visibleForTesting
   BookmarkService.forTesting({
     required Future<List<BookmarkModel>> Function(String uid) readCloud,
-  }) : _readCloudOverride = readCloud;
+    String? currentUserId,
+  }) : _readCloudOverride = readCloud,
+       _currentUserIdOverride = currentUserId;
 
   final Future<List<BookmarkModel>> Function(String uid)? _readCloudOverride;
+  final String? _currentUserIdOverride;
+  String? get currentUserId => _readCloudOverride != null
+      ? _currentUserIdOverride
+      : _activeAuth?.currentUser?.uid;
 
   FirebaseFirestore? _firestore;
   FirebaseAuth? _auth;

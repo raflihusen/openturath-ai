@@ -16,24 +16,29 @@ class NoteEditorSheet extends StatefulWidget {
   final BookmarkModel? item;
   final ValueChanged<BookmarkModel>? onSaved;
   final bool fullScreen;
+  final BookmarkService? bookmarkService;
 
   const NoteEditorSheet({
     super.key,
     this.item,
     this.onSaved,
     this.fullScreen = false,
+    this.bookmarkService,
   });
 
   static Future<BookmarkModel?> show(
     BuildContext context, {
     BookmarkModel? item,
+    BookmarkService? bookmarkService,
   }) {
     return Navigator.of(context).push<BookmarkModel>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => NativeTheme(
             child: Scaffold(
-          body: SafeArea(child: NoteEditorSheet(item: item, fullScreen: true)),
+          body: SafeArea(child: NoteEditorSheet(
+            item: item, fullScreen: true, bookmarkService: bookmarkService,
+          )),
         )),
       ),
     );
@@ -59,12 +64,18 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   int _draftRevision = 0;
   Future<void> _pendingDraftWrite = Future<void>.value();
   Timer? _autoSaveDebounce;
+  late final BookmarkService _bookmarkService;
+  late final String? _draftOwnerId;
 
-  String get _draftKey => 'openturath_draft_note_${widget.item?.id ?? 'new'}';
+  String get _draftKey => _draftOwnerId == null
+      ? 'openturath_draft_note_${widget.item?.id ?? 'new'}'
+      : 'openturath_${_draftOwnerId}_draft_note_${widget.item?.id ?? 'new'}';
 
   @override
   void initState() {
     super.initState();
+    _bookmarkService = widget.bookmarkService ?? BookmarkService();
+    _draftOwnerId = _bookmarkService.currentUserId;
     _titleController = TextEditingController(text: widget.item?.title ?? '');
     _bodyController = TextEditingController(
       text: widget.item?.fullAnswer ?? widget.item?.arabicExcerpt ?? '',
@@ -276,6 +287,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   }
 
   Future<void> _saveNote() async {
+    if (_bookmarkService.currentUserId != _draftOwnerId) {
+      await _saveDraft();
+      throw StateError('The note owner changed while editing');
+    }
     final title = _titleController.text.trim();
     final body = _bodyController.text.trim();
 
@@ -318,7 +333,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
       );
     }
 
-    await BookmarkService().addBookmark(updated);
+    await _bookmarkService.addBookmark(updated, userId: _draftOwnerId);
 
     _noteSaved = true;
     _autoSaveDebounce?.cancel();
