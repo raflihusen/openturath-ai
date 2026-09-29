@@ -49,15 +49,15 @@ class _AuditPreviewState extends State<_AuditPreview> {
                 TextButton(
                     onPressed: () => setState(() {
                           final codes = Loc.supportedCodes;
-                          _language =
-                              codes[(codes.indexOf(_language) + 1) % codes.length];
+                          _language = codes[
+                              (codes.indexOf(_language) + 1) % codes.length];
                         }),
                     child: Text(_language)),
                 TextButton(
                     onPressed: () => setState(() {
                           const widths = [360.0, 390.0, 768.0, 1024.0, 1440.0];
-                          _width =
-                              widths[(widths.indexOf(_width) + 1) % widths.length];
+                          _width = widths[
+                              (widths.indexOf(_width) + 1) % widths.length];
                         }),
                     child: Text('${_width.toInt()} px')),
                 TextButton(
