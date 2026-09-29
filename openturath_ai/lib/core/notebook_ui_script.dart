@@ -189,11 +189,14 @@ const notebookUiScript = r'''
       [class*="input-container" i], [class*="chat-input" i] {
         margin-bottom: 8px !important;
       }
-      .disclaimer, [class*="disclaimer" i] {
-        margin-bottom: max(18px, calc(env(safe-area-inset-bottom, 16px) + 10px)) !important;
-        padding-bottom: 6px !important;
-        font-size: 11.5px !important;
-        opacity: 0.75 !important;
+      /* Sembunyikan Disclaimer Bawah Secara Total */
+      .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -251,29 +254,12 @@ const notebookUiScript = r'''
     });
   }
 
-  function sanitizeDisclaimer() {
-    try {
-      const candidates = document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"], p, span, small, div');
-      for (const el of candidates) {
-        if (el.children.length > 0) continue;
-        const txt = el.textContent || '';
-        if (txt.length > 0 && txt.length < 150 && /gemini|notebooklm/i.test(txt) && /mistake|salah|double-check|periksa/i.test(txt)) {
-          el.textContent = txt
-            .replace(/Gemini Notebook/gi, 'OpenTurath AI')
-            .replace(/NotebookLM/gi, 'OpenTurath AI')
-            .replace(/Gemini/gi, 'OpenTurath AI');
-        }
-      }
-    } catch (_) {}
-  }
-
   function clean() {
     if (!document.documentElement) return;
     syncTheme();
     ensureStyles();
     removeTopToolbars();
     removeHeroCard();
-    sanitizeDisclaimer();
   }
 
   function triggerClick(el) {

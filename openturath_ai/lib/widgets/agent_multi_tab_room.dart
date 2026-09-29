@@ -1852,6 +1852,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             shouldOverrideUrlLoading: (controller, action) async {
+              if (action.isForMainFrame != true) {
+                return NavigationActionPolicy.ALLOW;
+              }
               final uri = action.request.url;
               if (uri == null) return NavigationActionPolicy.CANCEL;
               if (NotebookNavigation.allowed(uri.uriValue)) {
