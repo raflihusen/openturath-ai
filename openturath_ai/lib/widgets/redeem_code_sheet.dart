@@ -2,13 +2,13 @@ import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../services/subscription_service.dart';
 import 'app_loader.dart';
+import 'exclusive_activation_dialog.dart';
 
 class RedeemCodeSheet extends StatefulWidget {
   final VoidCallback? onSuccess;
@@ -92,13 +92,24 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
             : 'Kode tidak valid atau sudah kedaluwarsa');
 
     if (success) {
-      AppSnackBar.show(
-        context,
-        message: Loc.tr('ui_76fa6fcef2'),
-        type: SnackType.success,
-      );
+      final serviceTitle = (result['serviceTitle'] as String?) ??
+          "Kajian Fikih Syafi'i: Al-Muhaqqiq";
+      final durationDays = (result['durationDays'] as num?)?.toInt() ?? 7;
+      final expiryRaw = result['expiry'] as String?;
+      final expiryDate = expiryRaw != null ? DateTime.tryParse(expiryRaw) : null;
+      final agentId = (result['entitlementKey'] as String?) ?? 'fiqh_syafii';
+
+      final nav = Navigator.of(context);
       widget.onSuccess?.call();
-      Navigator.of(context).pop();
+      nav.pop();
+
+      ExclusiveActivationDialog.show(
+        nav.context,
+        serviceTitle: serviceTitle,
+        durationDays: durationDays,
+        expiryDate: expiryDate,
+        agentId: agentId,
+      );
     } else {
       setState(() => _inlineError = _humanizeErrorMessage(message));
     }

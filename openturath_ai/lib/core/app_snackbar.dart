@@ -21,7 +21,7 @@ class AppSnackBar {
     // kalimat, bukan lewat warna jenuh. Hanya status kritis yang diberi
     // isyarat merah bata redup agar tetap terbaca tanpa merusak ketenangan.
     final backgroundColor = OTColors.inverseSurface(isDark);
-    const textColor = OTColors.onInverseSurface;
+    final textColor = isDark ? OTColors.onInverseSurface : OTColors.surfaceLight;
 
     final Color accentColor;
     final IconData icon;
@@ -68,7 +68,7 @@ class AppSnackBar {
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(
+                style: TextStyle(
                   color: textColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

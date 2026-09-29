@@ -44,8 +44,8 @@ class OTColors {
 
   // ── 4. Permukaan Terbalik (Snackbar, tooltip, pil gelap di mode terang) ──
   static const Color inverseSurfaceLight = textPrimaryLight;
-  static const Color inverseSurfaceDark = surfaceLight;
-  static const Color onInverseSurface = surfaceLight;
+  static const Color inverseSurfaceDark = Color(0xFF262D37);
+  static const Color onInverseSurface = Color(0xFFF1F3F8);
 
   // ── 5. Sage Zaitun — satu-satunya warna non-monokrom ──
   // Dipakai HANYA sebagai penanda status marja' / terverifikasi, tidak pernah dekoratif.
