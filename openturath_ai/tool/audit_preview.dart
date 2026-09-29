@@ -48,7 +48,7 @@ class _AuditPreviewState extends State<_AuditPreview> {
               children: [
                 TextButton(
                     onPressed: () => setState(() {
-                          final codes = Loc.supportedCodes;
+                          const codes = Loc.supportedCodes;
                           _language = codes[
                               (codes.indexOf(_language) + 1) % codes.length];
                         }),
