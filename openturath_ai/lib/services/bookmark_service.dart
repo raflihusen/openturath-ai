@@ -169,13 +169,7 @@ class BookmarkService extends ChangeNotifier {
         return;
       }
 
-      // Step 2: Read current local items
-      final localItems = await _store.read(userKey);
-      final localMap = <String, BookmarkModel>{
-        for (final b in localItems) b.id: b,
-      };
-
-      // Step 3: Fetch cloud bookmarks
+      // Fetch remotely before acquiring the local write lock.
       final snapshot = await db
           .collection('users')
           .doc(effectiveUid)
@@ -194,28 +188,33 @@ class BookmarkService extends ChangeNotifier {
         } catch (_) {}
       }
 
-      // Step 4: Two-way reconciliation
-      // - Push local notes not yet on cloud, or local notes newer than cloud version
-      for (final entry in localMap.entries) {
-        final cloudItem = cloudMap[entry.key];
-        if (cloudItem == null || entry.value.syncTime.isAfter(cloudItem.syncTime)) {
-          unawaited(_pushToCloud(entry.value, effectiveUid));
+      // Read and merge inside one locked update. A snapshot captured before
+      // the network await can erase edits or resurrect deleted notes.
+      final toPush = <BookmarkModel>[];
+      await _store.update(userKey, (localItems) {
+        final merged = <String, BookmarkModel>{
+          for (final bookmark in localItems) bookmark.id: bookmark,
+        };
+        for (final bookmark in localItems) {
+          final cloudItem = cloudMap[bookmark.id];
+          if (cloudItem == null ||
+              bookmark.syncTime.isAfter(cloudItem.syncTime)) {
+            toPush.add(bookmark);
+          }
         }
-      }
-
-      // - Merge cloud into local
-      final merged = <String, BookmarkModel>{...localMap};
-      for (final entry in cloudMap.entries) {
-        final existing = merged[entry.key];
-        if (existing == null || entry.value.syncTime.isAfter(existing.syncTime)) {
-          merged[entry.key] = entry.value;
+        for (final entry in cloudMap.entries) {
+          final existing = merged[entry.key];
+          if (existing == null ||
+              entry.value.syncTime.isAfter(existing.syncTime)) {
+            merged[entry.key] = entry.value;
+          }
         }
+        return merged.values.toList()
+          ..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));
+      });
+      for (final bookmark in toPush) {
+        unawaited(_pushToCloud(bookmark, effectiveUid));
       }
-
-      final finalList = merged.values.toList()
-        ..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));
-
-      await _store.replace(userKey, finalList);
       notifyListeners();
     } catch (e) {
       debugPrint('[BookmarkService] syncWithCloud failed: $e');
