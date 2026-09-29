@@ -46,22 +46,20 @@ class _AuditPreviewState extends State<_AuditPreview> {
               spacing: 12,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                DropdownButton<String>(
-                    value: _language,
-                    items: [
-                      for (final language in Loc.supportedCodes)
-                        DropdownMenuItem(
-                            value: language, child: Text(language)),
-                    ],
-                    onChanged: (value) => setState(() => _language = value!)),
-                DropdownButton<double>(
-                    value: _width,
-                    items: [
-                      for (final width in [360.0, 390.0, 768.0, 1024.0, 1440.0])
-                        DropdownMenuItem(
-                            value: width, child: Text('${width.toInt()} px')),
-                    ],
-                    onChanged: (value) => setState(() => _width = value!)),
+                TextButton(
+                    onPressed: () => setState(() {
+                          final codes = Loc.supportedCodes;
+                          _language =
+                              codes[(codes.indexOf(_language) + 1) % codes.length];
+                        }),
+                    child: Text(_language)),
+                TextButton(
+                    onPressed: () => setState(() {
+                          const widths = [360.0, 390.0, 768.0, 1024.0, 1440.0];
+                          _width =
+                              widths[(widths.indexOf(_width) + 1) % widths.length];
+                        }),
+                    child: Text('${_width.toInt()} px')),
                 TextButton(
                     onPressed: () => setState(() => _dark = !_dark),
                     child: Text(_dark ? 'Light' : 'Dark')),
