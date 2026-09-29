@@ -18,7 +18,7 @@ class MainFlutterWindow: NSWindow {
     self.showsResizeIndicator = false
     self.styleMask.remove(.resizable)
     self.styleMask.remove(.fullScreen)
-    self.collectionBehavior = [.defaultActivationPolicy]
+    self.collectionBehavior = [.managed, .fullScreenNone]
     self.minSize = NSSize(width: fixedWidth, height: fixedHeight)
     self.maxSize = NSSize(width: fixedWidth, height: fixedHeight)
     self.setContentSize(NSSize(width: fixedWidth, height: fixedHeight))
