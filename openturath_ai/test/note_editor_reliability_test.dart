@@ -33,7 +33,7 @@ void main() {
     await openEditor(tester);
     await tester.enterText(find.byType(TextField).first, 'Catatan terbaru');
     await tester.enterText(find.byType(TextField).last, 'Teks belum autosave');
-    await tester.pageBack();
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
     await tester.pumpAndSettle();
 
     final prefs = await SharedPreferences.getInstance();
@@ -43,9 +43,10 @@ void main() {
 
     await tester.tap(find.text('Buka editor'));
     await tester.pumpAndSettle();
-    expect(tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+    expect(
+        tester.widget<TextField>(find.byType(TextField).last).controller!.text,
         'Teks belum autosave');
-    await tester.pageBack();
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
     await tester.pumpAndSettle();
   });
 
@@ -59,7 +60,8 @@ void main() {
     await tester.pumpAndSettle();
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString('openturath_draft_note_new'), isNull);
-    final saved = jsonDecode(prefs.getString('openturath_saved_bookmarks')!) as List;
+    final saved =
+        jsonDecode(prefs.getString('openturath_saved_bookmarks')!) as List;
     expect(saved.single['fullAnswer'], 'Catatan tersimpan');
     expect(tester.takeException(), isNull);
   });
@@ -68,13 +70,14 @@ void main() {
       (tester) async {
     SharedPreferences.setMockInitialValues({
       'openturath_draft_note_new': jsonEncode({
-        'title': 'Draf lama', 'body': 'Isi lama',
+        'title': 'Draf lama',
+        'body': 'Isi lama',
       }),
     });
     await openEditor(tester);
     await tester.enterText(find.byType(TextField).first, '');
     await tester.enterText(find.byType(TextField).last, '');
-    await tester.pageBack();
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
     await tester.pumpAndSettle();
     final prefs = await SharedPreferences.getInstance();
     final draft = jsonDecode(prefs.getString('openturath_draft_note_new')!);
@@ -86,34 +89,46 @@ void main() {
       (tester) async {
     SharedPreferences.setMockInitialValues({
       'openturath_draft_note_new': jsonEncode({
-        'title': 'نص عربي', 'body': 'إنما الأعمال بالنيات',
+        'title': 'نص عربي',
+        'body': 'إنما الأعمال بالنيات',
       }),
     });
     await openEditor(tester);
     expect(tester.widget<TextField>(find.byType(TextField).last).textDirection,
         TextDirection.rtl);
-    await tester.pageBack();
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
     await tester.pumpAndSettle();
   });
 
-  testWidgets('an older draft cannot replace a newer saved note', (tester) async {
+  testWidgets('an older draft cannot replace a newer saved note',
+      (tester) async {
     final updated = DateTime(2026, 9, 29, 12);
     final item = BookmarkModel(
-      id: 'newer-note', title: 'Versi terbaru', agentId: 'catatan_mandiri',
-      agentTitle: '', fieldName: '', fieldId: 'general', arabicExcerpt: '',
-      fullAnswer: 'Isi terbaru', bookReference: '', pageNumber: '',
-      createdAt: updated.subtract(const Duration(days: 1)), updatedAt: updated,
+      id: 'newer-note',
+      title: 'Versi terbaru',
+      agentId: 'catatan_mandiri',
+      agentTitle: '',
+      fieldName: '',
+      fieldId: 'general',
+      arabicExcerpt: '',
+      fullAnswer: 'Isi terbaru',
+      bookReference: '',
+      pageNumber: '',
+      createdAt: updated.subtract(const Duration(days: 1)),
+      updatedAt: updated,
     );
     SharedPreferences.setMockInitialValues({
       'openturath_draft_note_newer-note': jsonEncode({
-        'title': 'Versi lama', 'body': 'Isi lama',
+        'title': 'Versi lama',
+        'body': 'Isi lama',
         'savedAt': updated.subtract(const Duration(hours: 1)).toIso8601String(),
       }),
     });
     await openEditor(tester, item: item);
-    expect(tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+    expect(
+        tester.widget<TextField>(find.byType(TextField).last).controller!.text,
         'Isi terbaru');
-    await tester.pageBack();
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
     await tester.pumpAndSettle();
   });
 }

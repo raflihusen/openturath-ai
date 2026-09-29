@@ -60,8 +60,7 @@ class _Document implements DocumentReference<Map<String, dynamic>> {
 }
 
 class _Snapshot implements QuerySnapshot<Map<String, dynamic>> {
-  _Snapshot(List<BookmarkModel> items)
-      : docs = items.map(_Row.new).toList();
+  _Snapshot(List<BookmarkModel> items) : docs = items.map(_Row.new).toList();
   @override
   final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs;
   @override
@@ -80,9 +79,17 @@ class _Row implements QueryDocumentSnapshot<Map<String, dynamic>> {
 }
 
 BookmarkModel _note(String id, String body) => BookmarkModel(
-      id: id, title: id, agentId: 'catatan_mandiri', agentTitle: '',
-      fieldName: '', fieldId: 'general', arabicExcerpt: '', fullAnswer: body,
-      bookReference: '', pageNumber: '', createdAt: DateTime(2026, 9, 1),
+      id: id,
+      title: id,
+      agentId: 'catatan_mandiri',
+      agentTitle: '',
+      fieldName: '',
+      fieldId: 'general',
+      arabicExcerpt: '',
+      fullAnswer: body,
+      bookReference: '',
+      pageNumber: '',
+      createdAt: DateTime(2026, 9, 1),
     );
 
 void main() {
@@ -90,7 +97,8 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   for (final mutation in ['add', 'edit', 'delete']) {
-    test('$mutation during remote fetch survives cloud reconciliation', () async {
+    test('$mutation during remote fetch survives cloud reconciliation',
+        () async {
       final db = _DelayedFirestore();
       final service = BookmarkService(firestore: db);
       final original = _note('existing', 'Versi lama');
@@ -102,9 +110,12 @@ void main() {
         case 'add':
           await service.addBookmark(_note('new', 'Baru'), userId: 'audit');
         case 'edit':
-          await service.addBookmark(original.copyWith(
-            fullAnswer: 'Versi terbaru', updatedAt: DateTime.now(),
-          ), userId: 'audit');
+          await service.addBookmark(
+              original.copyWith(
+                fullAnswer: 'Versi terbaru',
+                updatedAt: DateTime.now(),
+              ),
+              userId: 'audit');
         case 'delete':
           await service.deleteBookmark(original.id, userId: 'audit');
       }
@@ -114,7 +125,8 @@ void main() {
       final saved = await service.getBookmarks(userId: 'audit');
       switch (mutation) {
         case 'add':
-          expect(saved.map((item) => item.id), containsAll(['existing', 'new']));
+          expect(
+              saved.map((item) => item.id), containsAll(['existing', 'new']));
         case 'edit':
           expect(saved.single.fullAnswer, 'Versi terbaru');
         case 'delete':
