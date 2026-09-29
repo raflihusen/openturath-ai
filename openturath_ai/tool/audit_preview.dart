@@ -28,6 +28,20 @@ class _AuditPreviewState extends State<_AuditPreview> {
   double _textScale = 1;
 
   @override
+  void initState() {
+    super.initState();
+    final parameters = Uri.base.queryParameters;
+    final language = parameters['locale'];
+    if (Loc.supportedCodes.contains(language)) _language = language!;
+    final width = double.tryParse(parameters['width'] ?? '');
+    if ([360.0, 390.0, 768.0, 1024.0, 1440.0].contains(width)) {
+      _width = width!;
+    }
+    _textScale = parameters['scale'] == '2' ? 2 : 1;
+    _dark = parameters['dark'] == '1';
+  }
+
+  @override
   Widget build(BuildContext context) {
     AppConfig.localeNotifier.value = _language;
     return MaterialApp(
