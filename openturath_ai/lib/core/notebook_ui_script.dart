@@ -186,23 +186,13 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Ruang bawah obrolan agar pesan tidak tertutup bilah input */
+      /* Ruang bawah obrolan agar pesan tidak tertutup */
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        padding-bottom: 110px !important;
-        box-sizing: border-box !important;
+        padding-bottom: max(36px, calc(env(safe-area-inset-bottom, 24px) + 20px)) !important;
       }
-      /* Kunci bilah input chat di bagian bawah layar secara presisi */
-      div.chat-input-container, .input-container, app-chat-input, chat-input, form.chat-input-form,
+      div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
       [class*="input-container" i], [class*="chat-input" i] {
-        position: fixed !important;
-        bottom: 20px !important;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-        width: min(840px, calc(100vw - 32px)) !important;
-        max-width: 840px !important;
-        margin: 0 !important;
-        z-index: 1000 !important;
-        box-sizing: border-box !important;
+        margin-bottom: 8px !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -249,20 +239,16 @@ const notebookUiScript = r'''
       }
     });
 
-    // Sembunyikan baris header atas: elemen di area paling atas (rect.top <= 80, height <= 95)
-    // yang memuat judul notebook / Shared / Dibagikan / avatar / tombol opsi titik tiga
+    // Sembunyikan baris header atas spesifik yang memuat kata "Shared" atau "Dibagikan"
     document.querySelectorAll('*').forEach(el => {
-      if (el.children.length > 0 && el.children.length <= 15) {
+      if (el.children.length > 0 && el.children.length <= 10) {
         const rect = el.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= 80 && rect.height > 15 && rect.height <= 95) {
+        if (rect.top >= 0 && rect.top <= 65 && rect.height > 20 && rect.height <= 75) {
           const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
-          const hasMore = el.querySelector('button[aria-label*="more" i], button[aria-label*="opsi" i], mat-icon');
+          const hasShared = txt.includes('shared') || txt.includes('dibagikan');
           const hasAvatar = el.querySelector('app-user-avatar, [aria-label*="Google Account" i]');
-          const isHeader = txt.includes('shared') || txt.includes('dibagikan') || txt.includes('super ai') ||
-                           txt.includes('al-muhaqqiq') || txt.includes('fikih') || txt.includes('syafii') ||
-                           txt.includes('tahawwulat') || hasAvatar || hasMore;
-          if (isHeader && !el.querySelector('textarea, [contenteditable="true"], form')) {
-            if (!el.matches('.chat-view, .chat-panel-content, main, [role="main"]')) {
+          if ((hasShared || hasAvatar) && !el.querySelector('textarea, [contenteditable="true"], form')) {
+            if (!el.matches('.chat-view, .chat-panel-content, main, [role="main"], app-root')) {
               el.style.setProperty('display', 'none', 'important');
             }
           }
@@ -303,44 +289,12 @@ const notebookUiScript = r'''
     });
   }
 
-  function stickInputToBottom() {
-    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"], input[type="text"]');
-    if (input) {
-      const container = input.closest('form, app-chat-input, chat-input, div.chat-input-container, [class*="chat-input" i], [class*="input-container" i]') || input.parentElement;
-      if (container && container !== document.body && !container.matches('html, body, main, [role="main"], app-root')) {
-        container.style.setProperty('position', 'fixed', 'important');
-        container.style.setProperty('bottom', '20px', 'important');
-        container.style.setProperty('left', '50%', 'important');
-        container.style.setProperty('transform', 'translateX(-50%)', 'important');
-        container.style.setProperty('width', 'min(840px, calc(100vw - 32px))', 'important');
-        container.style.setProperty('max-width', '840px', 'important');
-        container.style.setProperty('z-index', '1000', 'important');
-        container.style.setProperty('margin', '0', 'important');
-      }
-    }
-
-    // Jika sedang dalam status Responding... (seperti pada tampilan loading AI)
-    document.querySelectorAll('*').forEach(el => {
-      if (el.children.length === 0 && (el.textContent || '').trim().toLowerCase().includes('responding')) {
-        const pill = el.closest('div, form');
-        if (pill && pill !== document.body && !pill.matches('html, body, main, [role="main"], app-root, .chat-view, .chat-panel-content, .message-list')) {
-          pill.style.setProperty('position', 'fixed', 'important');
-          pill.style.setProperty('bottom', '24px', 'important');
-          pill.style.setProperty('left', '50%', 'important');
-          pill.style.setProperty('transform', 'translateX(-50%)', 'important');
-          pill.style.setProperty('z-index', '1000', 'important');
-        }
-      }
-    });
-  }
-
   function clean() {
     if (!document.documentElement) return;
     syncTheme();
     ensureStyles();
     removeTopToolbars();
     removeHeroCard();
-    stickInputToBottom();
   }
 
   function triggerClick(el) {
