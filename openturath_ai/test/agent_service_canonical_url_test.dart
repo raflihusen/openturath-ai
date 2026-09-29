@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:openturath_ai/services/agent_service.dart';
 
 void main() {
   test('AgentService contains canonical master notebook URLs for all key modules', () {

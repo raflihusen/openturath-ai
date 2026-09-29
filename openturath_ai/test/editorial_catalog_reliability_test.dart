@@ -66,34 +66,38 @@ void main() {
   testWidgets('volume choices expose selection and support keyboard activation',
       (tester) async {
     final semantics = tester.ensureSemantics();
-    addTearDown(semantics.dispose);
-    await tester.pumpWidget(catalog());
-    final multiple = find.widgetWithText(ChoiceChip, Loc.tr('multipleVolumes'));
-    expect(multiple, findsOneWidget);
-    Focus.of(tester.element(find.text(Loc.tr('multipleVolumes'))))
-        .requestFocus();
-    await tester.pump();
-    await tester.sendKeyEvent(LogicalKeyboardKey.space);
-    await tester.pumpAndSettle();
-    expect(tester.widget<ChoiceChip>(multiple).selected, isTrue);
-    expect(
-        tester.getSemantics(multiple),
-        matchesSemantics(
-          label: Loc.tr('multipleVolumes'),
-          isSelected: true,
-          hasSelectedState: true,
-          isEnabled: true,
-          hasEnabledState: true,
-          isFocusable: true,
-          isFocused: true,
-          hasTapAction: true,
-          isButton: true,
-          hasFocusAction: true,
-        ));
-    expect(find.text(_book.title), findsNothing);
-    await tester.tap(find.text(Loc.tr('allBooks')));
-    await tester.pumpAndSettle();
-    expect(find.text(_book.title), findsOneWidget);
+    try {
+      await tester.pumpWidget(catalog());
+      final multiple =
+          find.widgetWithText(ChoiceChip, Loc.tr('multipleVolumes'));
+      expect(multiple, findsOneWidget);
+      Focus.of(tester.element(find.text(Loc.tr('multipleVolumes'))))
+          .requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+      expect(tester.widget<ChoiceChip>(multiple).selected, isTrue);
+      expect(
+          tester.getSemantics(multiple),
+          matchesSemantics(
+            label: Loc.tr('multipleVolumes'),
+            isSelected: true,
+            hasSelectedState: true,
+            isEnabled: true,
+            hasEnabledState: true,
+            isFocusable: true,
+            isFocused: true,
+            hasTapAction: true,
+            isButton: true,
+            hasFocusAction: true,
+          ));
+      expect(find.text(_book.title), findsNothing);
+      await tester.tap(find.text(Loc.tr('allBooks')));
+      await tester.pumpAndSettle();
+      expect(find.text(_book.title), findsOneWidget);
+    } finally {
+      semantics.dispose();
+    }
   });
 
   for (final width in [360.0, 390.0, 768.0, 1024.0, 1440.0]) {
