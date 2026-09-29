@@ -52,8 +52,12 @@ class _AuditPreviewState extends State<_AuditPreview> {
       locale: Locale(_language),
       supportedLocales: Loc.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: (context, child) => LocaleScope(
-          child: Scaffold(
+      // Browser focus can arrive before the first layout. The QA controls
+      // have a fixed widget order, so traversal needs no pre-layout geometry.
+      builder: (context, child) => FocusTraversalGroup(
+          policy: WidgetOrderTraversalPolicy(),
+          child: LocaleScope(
+              child: Scaffold(
         body: Column(children: [
           const Text('LOCAL QA · bundled catalog · isolated browser notes'),
           Wrap(
@@ -95,7 +99,7 @@ class _AuditPreviewState extends State<_AuditPreview> {
             ),
           ))),
         ]),
-      )),
+      ))),
       home: Builder(
           builder: (context) => Scaffold(
                   body: Center(
