@@ -40,6 +40,114 @@ import '../widgets/library_bottom_sheet.dart';
 class AgentMultiTabRoom extends StatefulWidget {
   const AgentMultiTabRoom({super.key});
 
+  /// Dialog pemilihan akun Google khusus untuk asisten NotebookLM.
+  /// Memastikan browser eksternal membuka akun yang tepat (/u/<index> atau AccountChooser).
+  static Future<void> showChangeGoogleAccountDialog(BuildContext context) async {
+    final currentEmail = await NativeAgentLauncher.getActiveNotebookEmail();
+    if (!context.mounted) return;
+    final controller = TextEditingController(text: currentEmail);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final newEmail = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? const Color(0xFF1E1E22) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.manage_accounts_rounded, color: OTColors.accent(isDark), size: 22),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Akun Google untuk Asisten',
+                style: ScholarlyFonts.outfit(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : const Color(0xFF18181B),
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul / notebook turats Anda. Browser akan langsung memilih akun ini tanpa salah masuk ke akun lain (/u/0/).',
+              style: ScholarlyFonts.outfit(
+                fontSize: 12,
+                color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+              ),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.emailAddress,
+              autofocus: true,
+              style: ScholarlyFonts.outfit(
+                fontSize: 14,
+                color: isDark ? Colors.white : const Color(0xFF18181B),
+              ),
+              decoration: InputDecoration(
+                hintText: 'nama@gmail.com',
+                prefixIcon: const Icon(Icons.email_outlined, size: 18),
+                filled: true,
+                fillColor: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                  ),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(
+              'Batal',
+              style: ScholarlyFonts.outfit(color: isDark ? Colors.white70 : Colors.black87),
+            ),
+          ),
+          if (AuthService().currentUser?.email != null)
+            TextButton(
+              onPressed: () {
+                final def = AuthService().currentUser?.email ?? '';
+                controller.text = def;
+              },
+              child: Text(
+                'Pakai Akun Utama',
+                style: ScholarlyFonts.outfit(color: OTColors.accent(isDark)),
+              ),
+            ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: OTColors.accent(isDark),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: Text(
+              'Simpan',
+              style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (newEmail != null && context.mounted) {
+      await NativeAgentLauncher.setActiveNotebookEmail(newEmail);
+      if (context.mounted) {
+        final display = newEmail.isEmpty ? 'Akun Masuk Utama' : newEmail;
+        AppSnackBar.info(context, 'Akun Google asisten diatur ke: $display');
+      }
+    }
+  }
+
   @override
   State<AgentMultiTabRoom> createState() => _AgentMultiTabRoomState();
 }
@@ -519,6 +627,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 _showFontScaleDialog(context, activeTab);
               } else if (val == 'switch_session') {
                 _showSessionSwitcher(context);
+              } else if (val == 'switch_google_account') {
+                AgentMultiTabRoom.showChangeGoogleAccountDialog(context);
               }
             },
             itemBuilder: (ctx) => [
@@ -530,6 +640,18 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         color: textPrimary, size: 18),
                     const SizedBox(width: 12),
                     Text('Buka di Browser Asli',
+                        style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'switch_google_account',
+                child: Row(
+                  children: [
+                    Icon(Icons.manage_accounts_rounded,
+                        color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text('Ganti Akun Google Asisten',
                         style: OTTypography.body(color: textPrimary)),
                   ],
                 ),
@@ -800,6 +922,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     final themeInitScript = '''
       (function() {
         try {
+          if (!['notebooklm.google.com', 'notebook.google.com'].includes(window.location.hostname)) {
+            return;
+          }
           window._otIsDark = $isDark;
           var meta = document.querySelector('meta[name="color-scheme"]');
           if (!meta) {
@@ -837,19 +962,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
             window.otNotebook.setTheme($isDark);
           }
-
-          try {
-            if (window.navigator) {
-              Object.defineProperty(navigator, 'webdriver', { get: () => undefined, configurable: true });
-            }
-          } catch(e) {}
         } catch(e) {}
       })();
     ''';
 
     return UserScript(
       source:
-          'window._otIsDark = $isDark;\n$_turatsMasterScript$notebookUiScript$themeInitScript',
+          '$_turatsMasterScript\n$notebookUiScript\n$themeInitScript',
       injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
       forMainFrameOnly: true,
     );
@@ -1450,8 +1569,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               hardwareAcceleration: true,
               useHybridComposition: true,
               useOnRenderProcessGone: true,
-              verticalScrollBarEnabled: false,
-              horizontalScrollBarEnabled: false,
+              supportMultipleWindows: true,
+              javaScriptCanOpenWindowsAutomatically: true,
               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
@@ -1460,6 +1579,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   ? AppConstants.desktopSafariUserAgent
                   : AppConstants.chromeMobileUserAgent,
             ),
+            onCreateWindow: (controller, createWindowAction) async {
+              final targetUrl = createWindowAction.request.url;
+              if (targetUrl != null) {
+                await controller.loadUrl(urlRequest: URLRequest(url: targetUrl));
+                return true;
+              }
+              return false;
+            },
             onReceivedError: (controller, request, error) {
               if (request.isForMainFrame == true && mounted) {
                 _readinessTimer?.cancel();
@@ -1743,37 +1870,85 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.open_in_browser_rounded,
+                          Icons.account_circle_rounded,
                           color: OTColors.accent(isDark),
-                          size: 20,
+                          size: 22,
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Akun Google Belum Terhubung di Sini',
-                              style: ScholarlyFonts.outfit(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white : const Color(0xFF18181B),
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Buka langsung di browser utama (Chrome / Safari) yang sudah terhubung dengan akun Google Anda tanpa kendala keamanan.',
-                              style: ScholarlyFonts.outfit(
-                                fontSize: 11,
-                                color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
-                              ),
-                            ),
-                          ],
+                        child: FutureBuilder<String>(
+                          future: NativeAgentLauncher.getActiveNotebookEmail(),
+                          builder: (context, snapshot) {
+                            final targetEmail = snapshot.data ??
+                                _authService.currentUser?.email ??
+                                'Google';
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Buka Sebagai: ',
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: 12,
+                                        color: isDark
+                                            ? const Color(0xFFA1A1AA)
+                                            : const Color(0xFF71717A),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        targetEmail,
+                                        style: ScholarlyFonts.outfit(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: isDark
+                                              ? Colors.white
+                                              : const Color(0xFF18181B),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Buka langsung di browser utama tanpa salah akun (/u/0/).',
+                                  style: ScholarlyFonts.outfit(
+                                    fontSize: 11,
+                                    color: isDark
+                                        ? const Color(0xFFA1A1AA)
+                                        : const Color(0xFF71717A),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        ),
+                        onPressed: () async {
+                          await AgentMultiTabRoom.showChangeGoogleAccountDialog(context);
+                          if (mounted) setState(() {});
+                        },
+                        child: Text(
+                          'Ganti Akun',
+                          style: ScholarlyFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: OTColors.accent(isDark),

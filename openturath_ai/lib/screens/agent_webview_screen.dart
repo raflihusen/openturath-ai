@@ -766,11 +766,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       clearCache: false,
                       clearSessionCache: false,
                       useHybridComposition: true,
-                      mixedContentMode:
-                          MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
-                      allowFileAccess: false,
-                      allowContentAccess: false,
-                      javaScriptCanOpenWindowsAutomatically: false,
+                      mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                      supportMultipleWindows: true,
+                      javaScriptCanOpenWindowsAutomatically: true,
                       useShouldOverrideUrlLoading: true,
                       supportZoom: true,
                       builtInZoomControls: true,
@@ -783,6 +781,14 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       algorithmicDarkeningAllowed: true,
                       transparentBackground: false,
                     ),
+                    onCreateWindow: (controller, createWindowAction) async {
+                      final targetUrl = createWindowAction.request.url;
+                      if (targetUrl != null) {
+                        await controller.loadUrl(urlRequest: URLRequest(url: targetUrl));
+                        return true;
+                      }
+                      return false;
+                    },
                     onWebViewCreated: (controller) {
                       _webController = controller;
                       final ownerUid = _authService.currentUser?.uid;
