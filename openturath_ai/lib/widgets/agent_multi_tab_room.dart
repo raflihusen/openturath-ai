@@ -606,23 +606,9 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 _showFontScaleDialog(context, activeTab);
               } else if (val == 'switch_session') {
                 _showSessionSwitcher(context);
-              } else if (val == 'reload') {
-                activeTab.webController?.reload();
               }
             },
             itemBuilder: (ctx) => [
-              PopupMenuItem(
-                value: 'reload',
-                child: Row(
-                  children: [
-                    Icon(Icons.refresh_rounded,
-                        color: textPrimary, size: 18),
-                    const SizedBox(width: 12),
-                    Text('Muat Ulang Halaman',
-                        style: OTTypography.body(color: textPrimary)),
-                  ],
-                ),
-              ),
               PopupMenuItem(
                 value: 'language',
                 child: Row(

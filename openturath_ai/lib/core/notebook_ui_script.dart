@@ -301,8 +301,8 @@ const notebookUiScript = r'''
       }
     });
 
-    // Sembunyikan lencana PRO
-    document.querySelectorAll('*').forEach(el => {
+    // Sembunyikan lencana PRO dengan selektor spesifik (tanpa querySelectorAll(*))
+    document.querySelectorAll('.pro-badge, [class*="pro-badge" i], [class*="tier-badge" i], button span, a span').forEach(el => {
       if (el.children.length === 0 && (el.textContent || '').trim().toUpperCase() === 'PRO') {
         const badge = el.closest('button, a, span, div');
         if (badge && badge !== document.body && badge.querySelectorAll('textarea, input').length === 0) {
@@ -311,18 +311,15 @@ const notebookUiScript = r'''
       }
     });
 
-    // Sembunyikan baris header atas spesifik yang memuat kata "Shared" atau "Dibagikan"
-    document.querySelectorAll('*').forEach(el => {
+    // Sembunyikan baris header atas spesifik tanpa forced layout loop
+    document.querySelectorAll('body > div, app-root > div, header, [role="banner"], app-top-bar, .top-bar').forEach(el => {
       if (el.children.length > 0 && el.children.length <= 10) {
-        const rect = el.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= 65 && rect.height > 20 && rect.height <= 75) {
-          const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
-          const hasShared = txt.includes('shared') || txt.includes('dibagikan');
-          const hasAvatar = el.querySelector('app-user-avatar, [aria-label*="Google Account" i]');
-          if ((hasShared || hasAvatar) && !el.querySelector('textarea, [contenteditable="true"], form')) {
-            if (!el.matches('.chat-view, .chat-panel-content, main, [role="main"], app-root')) {
-              el.style.setProperty('display', 'none', 'important');
-            }
+        const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+        const hasShared = txt.includes('shared') || txt.includes('dibagikan');
+        const hasAvatar = el.querySelector('app-user-avatar, [aria-label*="Google Account" i]');
+        if ((hasShared || hasAvatar) && !el.querySelector('textarea, [contenteditable="true"], form')) {
+          if (!el.matches('.chat-view, .chat-panel-content, main, [role="main"], app-root')) {
+            el.style.setProperty('display', 'none', 'important');
           }
         }
       }
@@ -352,33 +349,8 @@ const notebookUiScript = r'''
       });
     });
 
-    // Cari elemen yang memuat "sources" atau "sumber" (misal: "0 sources • Mar 9, 2026")
-    document.querySelectorAll('*').forEach(el => {
-      if (el.children.length === 0) {
-        const txt = (el.textContent || '').trim().toLowerCase();
-        if (/\b\d+\s+(sources|sumber)\b/i.test(txt)) {
-          // Cari container pembungkus intro ini (emoji + judul + info sumber)
-          let curr = el;
-          let targetCard = null;
-          while (curr && curr !== document.body && curr !== document.documentElement) {
-            if (curr.querySelector && curr.querySelector('textarea, [contenteditable="true"], .chat-message, .model-message, .user-message, [role="article"]')) {
-              break;
-            }
-            if (curr.matches && curr.matches('html, body, main, [role="main"], app-root, .chat-view, .chat-panel-content, .message-list, [role="log"]')) {
-              break;
-            }
-            targetCard = curr;
-            curr = curr.parentElement;
-          }
-          if (targetCard) {
-            targetCard.style.setProperty('display', 'none', 'important');
-          }
-        }
-      }
-    });
-
-    // Sembunyikan elemen sebelum pesan obrolan pertama
-    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]').forEach(panel => {
+    // Cari intro "sources" hanya pada area chat / panel utama (sangat hemat CPU)
+    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"], main').forEach(panel => {
       const firstMessage = panel.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair');
       if (firstMessage) {
         let prev = firstMessage.previousElementSibling;
@@ -395,8 +367,12 @@ const notebookUiScript = r'''
     });
   }
 
+  let lastCleanAt = 0;
   function clean() {
     if (!document.documentElement) return;
+    const now = Date.now();
+    if (now - lastCleanAt < 800) return;
+    lastCleanAt = now;
     syncTheme();
     ensureStyles();
     removeTopToolbars();
@@ -682,6 +658,10 @@ document.addEventListener('click', event => {
 function checkGenerationState() {
   const stopBtn = document.querySelector('button[aria-label*="Stop" i], button[aria-label*="Hentikan" i], [data-action*="stop" i]');
   const currentlyGenerating = !!(stopBtn && stopBtn.offsetParent !== null);
+
+  // Jika sedang idle dan tidak menghasilkan jawaban, segera keluar (0% CPU saat diam)
+  if (!currentlyGenerating && !isGenerating) return;
+
   const currentAnswer = latest();
 
   if (currentlyGenerating && !isGenerating) {
@@ -708,16 +688,32 @@ function checkGenerationState() {
   }
 }
 
+// Blokir pintasan reload (Cmd+R, Ctrl+R, F5) agar layout webview tidak ter-reset
+window.addEventListener('keydown', function(event) {
+  const isR = event.key === 'r' || event.key === 'R' || event.keyCode === 82;
+  if ((event.metaKey || event.ctrlKey) && isR) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  }
+  if (event.key === 'F5' || event.keyCode === 116) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  }
+}, true);
+
+// Gunakan debounce 300ms dan childList saja (tanpa characterData) untuk menghemat baterai & CPU
 const observer = new MutationObserver(() => {
   if (scheduled) return;
   scheduled = true;
-  requestAnimationFrame(() => {
+  setTimeout(() => {
     scheduled = false;
     clean();
     checkGenerationState();
-  });
+  }, 300);
 });
-observer.observe(document, {subtree:true, childList:true, characterData:true});
+observer.observe(document.body || document.documentElement, {subtree:true, childList:true});
 ensureStyles();
 clean();
 })();

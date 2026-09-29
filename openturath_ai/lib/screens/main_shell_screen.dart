@@ -118,16 +118,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
           final manager = AgentSessionManager.instance;
           if (manager.isOpen) manager.closeTab(manager.activeIndex);
         },
-        onReload: () async {
-          final manager = AgentSessionManager.instance;
-          if (!manager.isOpen) return;
-          try {
-            await manager.activeTab?.webController?.reload();
-          } catch (_) {
-            if (context.mounted) {
-              AppSnackBar.warning(context, 'Sesi belum dapat dimuat ulang.');
-            }
-          }
+        onReload: () {
+          // Dinonaktifkan: Cmd+R di dalam sesi AI merusak layout obrolan (menampilkan bilah Sources/Studio).
+          // Pintasan diabaikan secara aman agar tidak mereset sesi aktif.
         },
         onEscape: () {
           final manager = AgentSessionManager.instance;
