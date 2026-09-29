@@ -51,6 +51,13 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   bool _isSavingDraft = false;
   bool _draftSaved = false;
   bool _draftRestored = false;
+  bool _draftFailed = false;
+  bool _restoringDraft = false;
+  bool _closing = false;
+  bool _allowPop = false;
+  bool _noteSaved = false;
+  int _draftRevision = 0;
+  Future<void> _pendingDraftWrite = Future<void>.value();
   Timer? _autoSaveDebounce;
 
   String get _draftKey => 'openturath_draft_note_${widget.item?.id ?? 'new'}';
@@ -76,6 +83,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   Future<void> _loadDraft() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (!mounted || _hasChanges || _submitting || _closing) return;
       final raw = prefs.getString(_draftKey);
       if (raw == null || raw.isEmpty) return;
       final map = jsonDecode(raw);
@@ -83,6 +91,9 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
       final draftTitle = map['title'] as String? ?? '';
       final draftBody = map['body'] as String? ?? '';
+      final savedAt = DateTime.tryParse(map['savedAt'] as String? ?? '');
+      if (widget.item != null && savedAt != null &&
+          !savedAt.isAfter(widget.item!.effectiveTime)) return;
 
       final initialTitle = widget.item?.title ?? '';
       final initialBody =
@@ -93,8 +104,13 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
           (draftTitle.isNotEmpty || draftBody.isNotEmpty)) {
         if (mounted) {
           setState(() {
+            _restoringDraft = true;
             _titleController.text = draftTitle;
             _bodyController.text = draftBody;
+            _restoringDraft = false;
+            _textDirection = Bidi.detectRtlDirectionality(draftBody) ||
+                    (draftBody.isEmpty && Loc.isArabic)
+                ? TextDirection.rtl : TextDirection.ltr;
             _draftRestored = true;
             _hasChanges = true;
           });
@@ -104,38 +120,73 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   }
 
   void _scheduleAutoSave() {
-    if (!_hasChanges) {
-      setState(() => _hasChanges = true);
-    }
+    if (_restoringDraft || _submitting || _closing) return;
+    setState(() {
+      _hasChanges = true;
+      _draftSaved = false;
+      _draftRestored = false;
+      _draftFailed = false;
+      _draftRevision++;
+    });
     _autoSaveDebounce?.cancel();
-    _autoSaveDebounce = Timer(const Duration(milliseconds: 1500), _saveDraft);
+    _autoSaveDebounce = Timer(const Duration(milliseconds: 1500), () {
+      unawaited(_saveDraft());
+    });
   }
 
-  Future<void> _saveDraft() async {
-    final title = _titleController.text.trim();
-    final body = _bodyController.text.trim();
-    if (title.isEmpty && body.isEmpty) return;
-
-    if (mounted) setState(() => _isSavingDraft = true);
-    try {
+  Future<bool> _saveDraft({bool showStatus = true}) async {
+    // Capture before awaiting: later edits queue behind this exact snapshot.
+    final revision = _draftRevision;
+    final snapshot = jsonEncode({
+      'title': _titleController.text,
+      'body': _bodyController.text,
+      'savedAt': DateTime.now().toIso8601String(),
+    });
+    if (showStatus && mounted) setState(() => _isSavingDraft = true);
+    final write = _pendingDraftWrite.then((_) async {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        _draftKey,
-        jsonEncode({
-          'title': title,
-          'body': body,
-          'savedAt': DateTime.now().toIso8601String(),
-        }),
-      );
-      if (mounted) {
+      if (!await prefs.setString(_draftKey, snapshot)) {
+        throw StateError('Draft could not be written');
+      }
+    });
+    // Keep the queue usable after a failed write; report failure to its caller.
+    _pendingDraftWrite = write.catchError((Object _) {});
+    try {
+      await write;
+      if (showStatus && mounted && revision == _draftRevision) {
         setState(() {
           _isSavingDraft = false;
           _draftSaved = true;
+          _draftFailed = false;
         });
       }
+      return true;
     } catch (_) {
-      if (mounted) setState(() => _isSavingDraft = false);
+      if (showStatus && mounted && revision == _draftRevision) {
+        setState(() {
+          _isSavingDraft = false;
+          _draftFailed = true;
+        });
+      }
+      return false;
     }
+  }
+
+  Future<void> _close() async {
+    if (_closing || _submitting) return;
+    setState(() => _closing = true);
+    _autoSaveDebounce?.cancel();
+    final saved = !_hasChanges || await _saveDraft();
+    if (!mounted) return;
+    if (!saved) {
+      setState(() => _closing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(NativeCopy.text('saveFailed'))),
+      );
+      return;
+    }
+    setState(() => _allowPop = true);
+    Navigator.pop(context);
   }
 
   TextDirection _textDirection = TextDirection.ltr;
@@ -143,6 +194,10 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
   @override
   void dispose() {
     _autoSaveDebounce?.cancel();
+    // A parent can remove the route without invoking its normal back handler.
+    if (!_noteSaved && !_closing && _hasChanges) {
+      unawaited(_saveDraft(showStatus: false));
+    }
     _titleController.dispose();
     _bodyController.dispose();
     super.dispose();
@@ -261,21 +316,26 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
     await BookmarkService().addBookmark(updated);
 
-    // Clear draft after successful persistent save
+    _noteSaved = true;
+    _autoSaveDebounce?.cancel();
+    // Drain all writes before removing the draft so autosave cannot recreate it.
+    await _pendingDraftWrite;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_draftKey);
     } catch (_) {}
 
-    widget.onSaved?.call(updated);
     if (!mounted) return;
+    widget.onSaved?.call(updated);
     OTMotion.success();
+    setState(() => _allowPop = true);
     Navigator.pop(context, updated);
   }
 
   bool _submitting = false;
   Future<void> _submit() async {
-    if (_submitting) return;
+    if (_submitting || _closing) return;
+    _autoSaveDebounce?.cancel();
     setState(() => _submitting = true);
     try {
       await _saveNote();
@@ -294,7 +354,12 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
     Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
     final media = MediaQuery.of(context);
-    return Container(
+    return PopScope<BookmarkModel>(
+      canPop: _allowPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) unawaited(_close());
+      },
+      child: Container(
       height: widget.fullScreen ? double.infinity : media.size.height * .92,
       color: NativeColors.canvas(dark),
       padding: EdgeInsets.only(
@@ -306,7 +371,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
               Row(children: [
                 IconButton(
                     tooltip: NativeCopy.text('back'),
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: _submitting || _closing ? null : _close,
                     icon: const Icon(Icons.arrow_back_rounded)),
                 Expanded(
                     child: Text(
@@ -315,7 +380,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                             : 'Edit catatan'),
                         style: NativeType.title(dark, size: 22))),
                 FilledButton(
-                    onPressed: _submitting ? null : _submit,
+                    onPressed: _submitting || _closing ? null : _submit,
                     child: Text(_submitting
                         ? NativeCopy.text('loading')
                         : Loc.tr('save'))),
@@ -336,14 +401,15 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                           FocusScope.of(context).unfocus();
                           setState(() => _isPreview = true);
                         }),
-                    if (_isSavingDraft || _draftSaved || _draftRestored)
+                    if (_isSavingDraft || _draftSaved || _draftRestored || _draftFailed)
+                      Semantics(liveRegion: true, child:
                       Text(
-                          Loc.text(_isSavingDraft
+                          _draftFailed ? NativeCopy.text('saveFailed') : Loc.text(_isSavingDraft
                               ? 'Menyimpan draf...'
                               : _draftRestored
                                   ? 'Draf dipulihkan'
                                   : 'Draf tersimpan'),
-                          style: NativeType.meta(dark)),
+                          style: NativeType.meta(dark))),
                   ]),
             ])),
         if (!_isPreview)
@@ -426,6 +492,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                     ] else ...[
                       TextField(
                           controller: _titleController,
+                          readOnly: _submitting || _closing,
                           maxLines: null,
                           textDirection: Bidi.detectRtlDirectionality(
                                       _titleController.text) ||
@@ -446,6 +513,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                       const SizedBox(height: 16),
                       TextField(
                           controller: _bodyController,
+                          readOnly: _submitting || _closing,
                           maxLines: null,
                           minLines: 8,
                           textDirection: _textDirection,
@@ -461,6 +529,6 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                   ]),
                 ))),
       ]),
-    );
+    ));
   }
 }
