@@ -131,15 +131,18 @@ const notebookUiScript = r'''
     const style = document.createElement('style');
     style.id = 'ot-conversation-ui';
     style.textContent = `
-      /* Eradicate top bar, headers, waffles, and account buttons */
-      top-bar, .top-bar, body > header, .app-header, app-header, header,
-      mat-toolbar, [role="banner"], .notebook-header,
-      app-notebook-header, app-project-header, .project-header,
-      .project-header-container, app-top-bar,
-      div[class*="header-container" i], div[class*="project-header" i],
-      app-user-avatar, div[class*="gb_"],
-      [aria-label*="Google apps" i], [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
-      [role="tablist"], mat-tab-header, nav[class*="tab" i] {
+      /* Sembunyikan bilah navigasi Google luar, akun avatar, dan waffle */
+      body > header,
+      top-bar, .top-bar,
+      app-header,
+      app-user-avatar,
+      div[class*="gb_"],
+      #gb, #gbwa,
+      [aria-label*="Google apps" i],
+      [aria-label*="Aplikasi Google" i],
+      [aria-label*="Google Account" i],
+      [aria-label*="Akun Google" i],
+      labs-tailwind-logo, a.logo-link, .logo-container {
         position: fixed !important;
         top: -99999px !important;
         left: -99999px !important;
@@ -158,28 +161,6 @@ const notebookUiScript = r'''
       button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i] {
         opacity: 0 !important;
         pointer-events: none !important;
-      }
-
-      /* Eradicate hero cover cards, summary cards, and guide intros */
-      labs-tailwind-logo, a.logo-link, .logo-container,
-      app-notebook-guide, notebook-guide, app-guide-intro,
-      app-chat-intro, app-project-summary, app-notebook-overview,
-      .notebook-guide, .guide-container, .hero-container,
-      .cover-image-container, .summary-card, .guide-card,
-      [class*="title-card" i], [class*="hero-container" i],
-      [class*="notebook-overview" i], [class*="notebook-cover" i],
-      [class*="guide-intro" i], [class*="project-summary" i],
-      [class*="hero-card" i] {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        max-height: 0 !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
       }
 
       .ot-opening-language [role="menu"],
@@ -217,13 +198,10 @@ const notebookUiScript = r'''
 
   function removeTopToolbars() {
     const selectors = [
-      'top-bar', '.top-bar', 'body > header', '.app-header', 'app-header', 'header',
-      'mat-toolbar', '[role="banner"]', '.notebook-header',
-      'app-notebook-header', 'app-project-header', '.project-header',
-      '.project-header-container', 'app-top-bar',
-      'div[class*="header-container" i]', 'div[class*="project-header" i]',
-      'app-user-avatar', 'div[class*="gb_"]',
-      '[aria-label*="Google apps" i]', '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]'
+      'body > header', 'top-bar', '.top-bar', 'app-header',
+      'app-user-avatar', 'div[class*="gb_"]', '#gb', '#gbwa',
+      '[aria-label*="Google apps" i]', '[aria-label*="Aplikasi Google" i]',
+      '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]'
     ];
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -240,43 +218,13 @@ const notebookUiScript = r'''
 
   function removeHeroCard() {
     const guideSelectors = [
-      'labs-tailwind-logo', 'a.logo-link', '.logo-container',
-      'app-notebook-guide', 'notebook-guide', 'app-guide-intro',
-      'app-chat-intro', 'app-project-summary', 'app-notebook-overview',
-      '.notebook-guide', '.guide-container', '.hero-container',
-      '.cover-image-container', '.summary-card', '.guide-card',
-      '[class*="title-card" i]', '[class*="hero-container" i]',
-      '[class*="notebook-overview" i]', '[class*="notebook-cover" i]',
-      '[class*="guide-intro" i]', '[class*="project-summary" i]',
-      '[class*="hero-card" i]'
+      'labs-tailwind-logo', 'a.logo-link', '.logo-container'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         el.style.setProperty('display', 'none', 'important');
-        el.style.setProperty('height', '0px', 'important');
-        el.style.setProperty('overflow', 'hidden', 'important');
       });
     });
-
-    const candidates = document.querySelectorAll('div, section, mat-card, article');
-    for (const card of candidates) {
-      if (card.id === 'ot-conversation-ui') continue;
-      if (card.matches('textarea, input, [role="textbox"], .chat-message, app-chat-message, app-chat-response, [role="article"]')) continue;
-      if (card.closest('.chat-message, app-chat-message, app-chat-response, [role="article"], app-chat-input, .input-container')) continue;
-
-      const txt = (card.innerText || card.textContent || '');
-      if (/\b\d+\s+(sources|sumber)\b/i.test(txt) && (txt.includes('202') || txt.includes('SUPER AI') || txt.includes('AI FIQH') || txt.includes('OpenTurath') || card.querySelector('img, [style*="background-image"]'))) {
-        let topCard = card;
-        while (topCard.parentElement && 
-               !topCard.parentElement.matches('body, main, app-chat-view, .chat-view, .chat-panel-content') &&
-               topCard.parentElement.children.length === 1) {
-          topCard = topCard.parentElement;
-        }
-        topCard.style.setProperty('display', 'none', 'important');
-        topCard.style.setProperty('height', '0px', 'important');
-        topCard.style.setProperty('overflow', 'hidden', 'important');
-      }
-    }
   }
 
   function sanitizeDisclaimer() {
@@ -437,10 +385,10 @@ const notebookUiScript = r'''
   function ready() {
     if (inputReady()) return true;
     if (accessDenied()) return false;
-    return !!document.querySelector('app-chat-view, .chat-view, .chat-panel-content, [role="log"]');
+    return !!document.querySelector('textarea, [contenteditable="true"], [role="textbox"], app-chat-view, .chat-view, .chat-panel-content, [role="log"], app-chat-input, .chat-input-container, form button[type="submit"]');
   }
   function inputReady() {
-    return !!document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
+    return !!document.querySelector('textarea, [contenteditable="true"], [role="textbox"], [aria-label*="prompt" i], [placeholder*="tanya" i], [placeholder*="ask" i]');
   }
 function accessDenied() {
   if (inputReady()) return false;

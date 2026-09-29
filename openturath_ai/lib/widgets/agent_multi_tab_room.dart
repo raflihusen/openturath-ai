@@ -629,9 +629,23 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 _showSessionSwitcher(context);
               } else if (val == 'switch_google_account') {
                 AgentMultiTabRoom.showChangeGoogleAccountDialog(context);
+              } else if (val == 'reload') {
+                activeTab.webController?.reload();
               }
             },
             itemBuilder: (ctx) => [
+              PopupMenuItem(
+                value: 'reload',
+                child: Row(
+                  children: [
+                    Icon(Icons.refresh_rounded,
+                        color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text('Muat Ulang Halaman',
+                        style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'open_browser',
                 child: Row(
@@ -992,6 +1006,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   }
 
   @override
+  void didUpdateWidget(_SingleAgentTabWebView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!oldWidget.isActive && widget.isActive) {
+      _verifySurfaceHealth();
+      if (!widget.session.isSessionReady) {
+        _startReadinessCheck();
+      }
+    }
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _readinessTimer?.cancel();
@@ -1180,6 +1205,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         if (widget.session.isGoogleAuthPage && mounted) {
           setState(() {
             widget.session.isGoogleAuthPage = false;
+            if (!widget.session.isSessionReady) {
+              widget.session.isWebLoading = true;
+            }
           });
         }
       }
@@ -1571,6 +1599,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               useOnRenderProcessGone: true,
               supportMultipleWindows: true,
               javaScriptCanOpenWindowsAutomatically: true,
+              isInspectable: true,
               forceDark: isDark ? ForceDark.ON : ForceDark.OFF,
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,

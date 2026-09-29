@@ -74,6 +74,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   int _readySamples = 0;
   bool _checkingReady = false;
   bool _hasCopied = false;
+  bool _isGoogleAuthPage = false;
 
   bool _isExiting = false;
   bool _isGoingBack = false;
@@ -522,9 +523,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   path.contains('/servicelogin')));
       if (isLogin) {
         // Halaman autentikasi Google sedang aktif di dalam WebView internal.
-        // JANGAN batalkan _readinessTimer dan JANGAN blokir tampilan dengan error buntu!
-        // Berikan ruang pada InAppWebView agar pengguna dapat memilih/memasukkan akun
-        // Google secara langsung (inline) dengan dukungan penuh keyboard & mouse.
+        _isGoogleAuthPage = true;
         if (mounted && (_isWebViewLoading || _errorMessage != null)) {
           setState(() {
             _isWebViewLoading = false;
@@ -532,6 +531,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           });
         }
         return;
+      } else {
+        if (_isGoogleAuthPage && mounted) {
+          setState(() {
+            _isGoogleAuthPage = false;
+            _isWebViewLoading = true;
+          });
+        }
       }
       final hasScript = await _webController!.evaluateJavascript(
         source:
@@ -769,6 +775,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       supportMultipleWindows: true,
                       javaScriptCanOpenWindowsAutomatically: true,
+                      isInspectable: true,
                       useShouldOverrideUrlLoading: true,
                       supportZoom: true,
                       builtInZoomControls: true,
