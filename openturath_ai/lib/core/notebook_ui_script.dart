@@ -141,12 +141,15 @@ const notebookUiScript = r'''
       body > header,
       top-bar, .top-bar,
       app-header, .app-header,
-      mat-toolbar,
+      mat-toolbar, mat-toolbar-row,
       .notebook-header, app-notebook-header,
       .project-header, app-project-header,
       app-chat-header, chat-header, .chat-header,
-      app-top-bar,
+      app-top-bar, .mobile-header,
       header, [role="banner"],
+      .title-container, .title-bar, .notebook-title, .project-title,
+      [class*="title-bar" i], [class*="header-row" i],
+      [class*="title-container" i], [class*="notebook-title" i], [class*="project-title" i],
       /* Sembunyikan elemen di dalam header */
       app-user-avatar, div[class*="gb_"], #gb, #gbwa,
       [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i],
@@ -185,13 +188,21 @@ const notebookUiScript = r'''
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Elevate chat input and message list */
+      /* Elevate chat input and message list, always stick input to bottom */
       .chat-panel-content, .chat-view, .conversation-container, .message-list {
-        padding-bottom: max(36px, calc(env(safe-area-inset-bottom, 24px) + 20px)) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-end !important;
+        min-height: 100% !important;
+        height: 100% !important;
+        box-sizing: border-box !important;
+        padding-bottom: max(20px, calc(env(safe-area-inset-bottom, 20px) + 10px)) !important;
       }
       div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
       [class*="input-container" i], [class*="chat-input" i] {
+        margin-top: auto !important;
         margin-bottom: 8px !important;
+        width: 100% !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -210,16 +221,19 @@ const notebookUiScript = r'''
   function removeTopToolbars() {
     const selectors = [
       'body > header', 'top-bar', '.top-bar', 'app-header', '.app-header',
-      'mat-toolbar', '.notebook-header', 'app-notebook-header',
+      'mat-toolbar', 'mat-toolbar-row', '.notebook-header', 'app-notebook-header',
       '.project-header', 'app-project-header', 'header', '[role="banner"]',
-      'app-chat-header', 'chat-header', '.chat-header', 'app-top-bar',
+      'app-chat-header', 'chat-header', '.chat-header', 'app-top-bar', '.mobile-header',
       'app-user-avatar', 'div[class*="gb_"]', '#gb', '#gbwa',
       '[aria-label*="Google apps" i]', '[aria-label*="Aplikasi Google" i]',
       '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]',
       'a[href*="myaccount.google.com"]',
       'labs-tailwind-logo', 'a.logo-link', 'a[aria-label*="NotebookLM" i]', 'svg[aria-label*="NotebookLM" i]',
       'button[aria-label*="Settings" i]', 'button[aria-label*="Setelan" i]',
-      'button[aria-label*="Pengaturan" i]', 'button[aria-label*="Notebook settings" i]'
+      'button[aria-label*="Pengaturan" i]', 'button[aria-label*="Notebook settings" i]',
+      '.title-container', '.title-bar', '.notebook-title', '.project-title',
+      '[class*="title-bar" i]', '[class*="header-row" i]',
+      '[class*="title-container" i]', '[class*="notebook-title" i]', '[class*="project-title" i]'
     ];
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -227,11 +241,34 @@ const notebookUiScript = r'''
       });
     });
 
-    // Deteksi baris header atas berdasarkan elemen Shared / Dibagikan / More di area paling atas (rect.top <= 80)
+    // Deteksi baris header atas berdasarkan tombol options / more (titik tiga) di area atas (< 100px)
+    document.querySelectorAll('button, [role="button"], mat-icon').forEach(btn => {
+      const label = (btn.getAttribute('aria-label') || btn.getAttribute('title') || btn.innerText || btn.textContent || '').trim().toLowerCase();
+      const isMoreBtn = label.includes('more') || label.includes('opsi') || label.includes('tindakan') ||
+                        label.includes('setting') || label === 'more_vert' || label === 'more_horiz' || label === ':';
+      if (isMoreBtn) {
+        const rect = btn.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top <= 100 && rect.height > 0) {
+          let headerRow = btn.parentElement;
+          while (headerRow && headerRow !== document.body) {
+            const hRect = headerRow.getBoundingClientRect();
+            if (hRect.top <= 80 && hRect.height <= 100 && hRect.height > 15) {
+              if (!headerRow.querySelector('textarea, [contenteditable="true"], form')) {
+                headerRow.style.setProperty('display', 'none', 'important');
+                break;
+              }
+            }
+            headerRow = headerRow.parentElement;
+          }
+        }
+      }
+    });
+
+    // Deteksi baris header atas berdasarkan elemen Shared / Dibagikan / avatar
     document.querySelectorAll('*').forEach(el => {
       if (el.children.length > 0 && el.children.length <= 15) {
         const rect = el.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= 80 && rect.height > 20 && rect.height <= 90 && rect.width > 200) {
+        if (rect.top >= 0 && rect.top <= 80 && rect.height > 20 && rect.height <= 90) {
           const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
           if (txt.includes('shared') || txt.includes('dibagikan') || (el.querySelector('app-user-avatar, [aria-label*="Google Account" i]') && !el.querySelector('textarea, input'))) {
             if (!el.querySelector('textarea, [contenteditable="true"]')) {

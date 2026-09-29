@@ -1,4 +1,3 @@
-import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
@@ -56,7 +55,48 @@ class DokuCheckoutSheet extends StatefulWidget {
     int? regularAmount,
     String periodLabel = '',
   }) {
-    return showAdaptiveSheet<bool>(
+    if (AppPlatform.isDesktop) {
+      return Navigator.of(context, rootNavigator: true).push<bool>(
+        MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (context) => Scaffold(
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF0F172A)
+                : const Color(0xFFF1F5F9),
+            body: SafeArea(
+              child: Center(
+                child: Container(
+                  constraints:
+                      const BoxConstraints(maxWidth: 620, maxHeight: 850),
+                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(50),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: DokuCheckoutSheet(
+                    paymentUrl: paymentUrl,
+                    invoiceNumber: invoiceNumber,
+                    trxId: trxId,
+                    planTitle: planTitle,
+                    amount: amount,
+                    regularAmount: regularAmount,
+                    periodLabel: periodLabel,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -196,18 +236,6 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     }
   }
 
-  Future<void> _openInExternalBrowser() async {
-    final uri = Uri.tryParse(widget.paymentUrl);
-    if (uri == null || !_isAllowedPaymentDestination(uri)) return;
-    try {
-      await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-    } catch (e) {
-      debugPrint('[DokuCheckout] Gagal membuka browser eksternal: $e');
-    }
-  }
 
   Future<bool> _handleWillPop() async {
     if (_isSuccess || _hasPopped) return false;
@@ -528,13 +556,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                 ],
                               ),
                             ),
-                            // Tombol Buka di Browser Luar (Sangat cepat & lancar di Desktop)
-                            IconButton(
-                              onPressed: _openInExternalBrowser,
-                              icon: Icon(Icons.open_in_browser_rounded,
-                                  size: 20, color: textSecondary),
-                              tooltip: 'Buka di Browser Eksternal',
-                            ),
+
                             // Tombol Cek Manual / Refresh
                             IconButton(
                               onPressed: _isChecking
@@ -584,72 +606,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                       minHeight: 2.5,
                     ),
 
-                  // Desktop helper banner: Info & Quick Browser Button
-                  if (AppPlatform.isDesktop)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF1E293B)
-                            : const Color(0xFFF1F5F9),
-                        border: Border(
-                            bottom: BorderSide(color: border, width: 1)),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.speed_rounded,
-                            size: 16,
-                            color: accent,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Lebih cepat & lancar? Anda dapat menyelesaikan pembayaran di browser.',
-                              style: ScholarlyFonts.outfit(
-                                fontSize: 12,
-                                color: textSecondary,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          InkWell(
-                            onTap: _openInExternalBrowser,
-                            borderRadius: BorderRadius.circular(6),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: accent.withAlpha(isDark ? 50 : 30),
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                    color: accent.withAlpha(80), width: 1),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Buka di Browser',
-                                    style: ScholarlyFonts.outfit(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: accent,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Icon(
-                                    Icons.launch_rounded,
-                                    size: 13,
-                                    color: accent,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+
 
                   // WebView DOKU / Midtrans
                   Expanded(
