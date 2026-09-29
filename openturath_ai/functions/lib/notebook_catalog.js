@@ -54,8 +54,8 @@ exports.NOTEBOOK_ENTITIES = {
     "06.3_AL_MUKHTABIR": {
         code: "06.3_AL_MUKHTABIR",
         name: "Al-Mukhtabir (Fikih Tahawwulat - Cabang Komparasi & Verifikasi Ilmiah)",
-        masterId: "ac803816-5541-4446-bc9d-b56326493555",
-        masterUrl: "https://notebooklm.google.com/notebook/ac803816-5541-4446-bc9d-b56326493555",
+        masterId: "ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
+        masterUrl: "https://notebooklm.google.com/notebook/ac61a7a0-87e7-42a5-a30f-980ff74a78d8",
         clones: [
             { name: "06.3 - AL-MUKHTABIR - 01", id: "d4cdd234-de90-4573-9a4b-4547b778bff7", url: "https://notebooklm.google.com/notebook/d4cdd234-de90-4573-9a4b-4547b778bff7" },
             { name: "06.3 - AL-MUKHTABIR - 02", id: "8af7065e-6c04-4ef5-8894-5b5a8c54c90e", url: "https://notebooklm.google.com/notebook/8af7065e-6c04-4ef5-8894-5b5a8c54c90e" },
@@ -75,8 +75,8 @@ exports.NOTEBOOK_ENTITIES = {
     "06.4_AL_HABIB": {
         code: "06.4_AL_HABIB",
         name: "Al-Habib (Fikih Tahawwulat - Cabang Hikmah & Tazkiyah)",
-        masterId: "c8b8a754-991d-429d-8379-b0478abb6ceb",
-        masterUrl: "https://notebooklm.google.com/notebook/c8b8a754-991d-429d-8379-b0478abb6ceb",
+        masterId: "6673e79a-7156-42e1-b116-bc1653a32094",
+        masterUrl: "https://notebooklm.google.com/notebook/6673e79a-7156-42e1-b116-bc1653a32094",
         clones: [
             { name: "06.4 - AL-HABIB - 01", id: "b30f1e86-8494-4a64-ac7f-602301b07ad1", url: "https://notebooklm.google.com/notebook/b30f1e86-8494-4a64-ac7f-602301b07ad1" },
             { name: "06.4 - AL-HABIB - 02", id: "b09f2859-9dca-4a62-b4df-028034cb89a2", url: "https://notebooklm.google.com/notebook/b09f2859-9dca-4a62-b4df-028034cb89a2" },
@@ -96,8 +96,8 @@ exports.NOTEBOOK_ENTITIES = {
     "06.5_AL_KHATIB": {
         code: "06.5_AL_KHATIB",
         name: "Al-Khatib (Fikih Tahawwulat - Cabang Khutbah & Retorika Aktual)",
-        masterId: "926f3633-53fc-4dbf-81da-0570f7a4d26b",
-        masterUrl: "https://notebooklm.google.com/notebook/926f3633-53fc-4dbf-81da-0570f7a4d26b",
+        masterId: "1288e413-9569-47a3-892f-64008e53c1e8",
+        masterUrl: "https://notebooklm.google.com/notebook/1288e413-9569-47a3-892f-64008e53c1e8",
         clones: [
             { name: "06.5 - AL-KHATIB - 01", id: "c644c43f-b145-495c-a299-ebcac28a6ea9", url: "https://notebooklm.google.com/notebook/c644c43f-b145-495c-a299-ebcac28a6ea9" },
             { name: "06.5 - AL-KHATIB - 02", id: "bab4cebb-5441-4eb1-8b05-86d368717022", url: "https://notebooklm.google.com/notebook/bab4cebb-5441-4eb1-8b05-86d368717022" },
@@ -411,8 +411,8 @@ exports.NOTEBOOK_ENTITIES = {
     "01_FIKIH_SYAFII": {
         code: "01_FIKIH_SYAFII",
         name: "Fikih Syafi'i (Mazhab Imam Asy-Syafi'i)",
-        masterId: "c89d09ca-4b48-4000-a98d-59e532607fb6",
-        masterUrl: "https://notebooklm.google.com/notebook/c89d09ca-4b48-4000-a98d-59e532607fb6",
+        masterId: "334e7b83-0e76-4787-a1d6-314642a35862",
+        masterUrl: "https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862",
         clones: [
             { name: "01 - FIKIH SYAFII - 01", id: "8c9d4719-07d7-4603-92f3-0fbb1abac4f9", url: "https://notebooklm.google.com/notebook/8c9d4719-07d7-4603-92f3-0fbb1abac4f9" },
             { name: "01 - FIKIH SYAFII - 02", id: "4245a33e-dab2-4b4f-b592-40de43e22d73", url: "https://notebooklm.google.com/notebook/4245a33e-dab2-4b4f-b592-40de43e22d73" },
@@ -626,18 +626,14 @@ function resolveAgentNotebook(agentId, uid) {
     const entity = exports.NOTEBOOK_ENTITIES[entityCode];
     if (!entity)
         return null;
-    if (uid && entity.clones && entity.clones.length > 0) {
-        const cloneIndex = hashString(`${uid}:${agentId}`) % entity.clones.length;
-        const clone = entity.clones[cloneIndex];
-        return {
-            url: clone.url,
-            notebookId: clone.id,
-            cloneName: clone.name,
-            entityCode,
-            isMaster: false,
-            cloneIndex,
-        };
-    }
+    // Selalu arahkan ke Master Notebook resmi terverifikasi yang terhubung ke sharing/provisioning
+    return {
+        url: entity.masterUrl,
+        notebookId: entity.masterId,
+        cloneName: `${entity.name} (Master)`,
+        entityCode,
+        isMaster: true,
+    };
     // Default ke Master jika tanpa UID atau belum ada klon
     return {
         url: entity.masterUrl,

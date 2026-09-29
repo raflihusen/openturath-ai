@@ -11,13 +11,46 @@ class AgentService {
     return AgentModel.defaultAgents;
   }
 
+  static const Map<String, String> _canonicalMasterNotebookUrls = {
+    'fiqh_syafii':
+        'https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862',
+    'fiqh_syafii_muhaqqiq':
+        'https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862',
+    'fiqh_tahawwulat':
+        'https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4',
+    'fiqh_tahawwulat_muhaqqiq':
+        'https://notebooklm.google.com/notebook/dc7ee7e4-f4ad-4db6-9cd0-0013727abbe4',
+    'fiqh_tahawwulat_bayan':
+        'https://notebooklm.google.com/notebook/483d0291-0a70-411c-bff0-f1ea4b83b2fd',
+    'fiqh_tahawwulat_mukhtabir':
+        'https://notebooklm.google.com/notebook/ac61a7a0-87e7-42a5-a30f-980ff74a78d8',
+    'fiqh_tahawwulat_habib':
+        'https://notebooklm.google.com/notebook/6673e79a-7156-42e1-b116-bc1653a32094',
+    'fiqh_tahawwulat_khatib':
+        'https://notebooklm.google.com/notebook/1288e413-9569-47a3-892f-64008e53c1e8',
+    'nahwu':
+        'https://notebooklm.google.com/notebook/15bc4cef-4b94-4241-b05a-d50a586bde06',
+    'hadits':
+        'https://notebooklm.google.com/notebook/b9626501-538c-4358-a44f-6731eaec50b6',
+    'tafsir':
+        'https://notebooklm.google.com/notebook/df92cc50-1106-4221-8748-1663f00fa7fe',
+    'ushul_fiqh':
+        'https://notebooklm.google.com/notebook/6ab6dae8-0067-435a-85ca-b6bd4e17dd12',
+  };
+
   // ── Ambil URL agent dari Cloud Function secara aman (Server-Side Entitlement) ────
   Future<String?> getAgentUrl(String agentId) async {
     try {
       final result = await _functions
           .call(AppConstants.fnGetAgentUrl, {'agentId': agentId});
       final data = Map<String, dynamic>.from(result as Map);
-      final url = data['url'] as String?;
+      var url = data['url'] as String?;
+      
+      // Sanitasi ke Master Notebook resmi terverifikasi agar tidak diarahkan ke klon tidak terdaftar
+      if (_canonicalMasterNotebookUrls.containsKey(agentId)) {
+        url = _canonicalMasterNotebookUrls[agentId];
+      }
+
       if (url != null && url.isNotEmpty) {
         return url;
       }
