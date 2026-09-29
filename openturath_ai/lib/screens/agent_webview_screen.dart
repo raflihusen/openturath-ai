@@ -862,6 +862,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     ),
                     shouldOverrideUrlLoading:
                         (controller, navigationAction) async {
+                      if (navigationAction.isForMainFrame != true) {
+                        return NavigationActionPolicy.ALLOW;
+                      }
                       final uri = navigationAction.request.url;
                       return uri != null && NotebookNavigation.allowed(uri)
                           ? NavigationActionPolicy.ALLOW

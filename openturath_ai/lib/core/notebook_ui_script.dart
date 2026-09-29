@@ -124,14 +124,23 @@ const notebookUiScript = r'''
   }
   window.otSetTheme = syncTheme;
 
-  let presentationEnabled = false;
+  let presentationEnabled = true;
 
   function ensureStyles() {
     if (document.getElementById('ot-conversation-ui')) return;
     const style = document.createElement('style');
     style.id = 'ot-conversation-ui';
     style.textContent = `
-      /* Sembunyikan hanya bilah akun Google luar, avatar, dan waffle */
+      /* Sembunyikan bilah navigasi header NotebookLM dan bilah Google luar */
+      body > header,
+      top-bar, .top-bar,
+      app-header,
+      mat-toolbar,
+      .notebook-header,
+      app-notebook-header,
+      app-project-header,
+      header[role="banner"],
+      [role="banner"],
       app-user-avatar,
       div[class*="gb_"],
       #gb, #gbwa,
@@ -139,15 +148,33 @@ const notebookUiScript = r'''
       [aria-label*="Aplikasi Google" i],
       [aria-label*="Google Account" i],
       [aria-label*="Akun Google" i],
-      labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i] {
+      a[href*="myaccount.google.com"],
+      button:has(app-user-avatar),
+      labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i], svg[aria-label*="NotebookLM" i] {
         display: none !important;
         visibility: hidden !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        margin: 0 !important;
       }
 
       button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
       button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i] {
-        opacity: 0 !important;
-        pointer-events: none !important;
+        display: none !important;
+        visibility: hidden !important;
+      }
+
+      /* Sembunyikan kartu hero/guide tengah agar chat bersih */
+      app-notebook-guide, notebook-guide, app-guide-intro,
+      app-chat-intro, app-project-summary, app-notebook-overview,
+      .notebook-guide, .guide-container, .hero-container,
+      .cover-image-container, .summary-card, .guide-card,
+      [class*="guide-intro" i], [class*="project-summary" i] {
+        display: none !important;
+        visibility: hidden !important;
       }
 
       .ot-opening-language [role="menu"],
@@ -185,20 +212,37 @@ const notebookUiScript = r'''
 
   function removeTopToolbars() {
     const selectors = [
+      'body > header', 'top-bar', '.top-bar', 'app-header',
+      'mat-toolbar', '.notebook-header', 'app-notebook-header', 'app-project-header', 'header[role="banner"]',
       'app-user-avatar', 'div[class*="gb_"]', '#gb', '#gbwa',
       '[aria-label*="Google apps" i]', '[aria-label*="Aplikasi Google" i]',
-      '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]'
+      '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]',
+      'a[href*="myaccount.google.com"]',
+      'labs-tailwind-logo', 'a.logo-link', 'a[aria-label*="NotebookLM" i]', 'svg[aria-label*="NotebookLM" i]',
+      'button[aria-label*="Settings" i]', 'button[aria-label*="Setelan" i]',
+      'button[aria-label*="Pengaturan" i]', 'button[aria-label*="Notebook settings" i]'
     ];
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         el.style.setProperty('display', 'none', 'important');
       });
     });
+    // Hapus badge PRO jika ada
+    document.querySelectorAll('button, a, span, div').forEach(el => {
+      if (el.children.length === 0 && (el.textContent || '').trim() === 'PRO') {
+        const p = el.closest('button, a, div[role="button"], span');
+        if (p) p.style.setProperty('display', 'none', 'important');
+      }
+    });
   }
 
   function removeHeroCard() {
     const guideSelectors = [
-      'labs-tailwind-logo', 'a.logo-link', 'a[aria-label*="NotebookLM" i]'
+      'app-notebook-guide', 'notebook-guide', 'app-guide-intro',
+      'app-chat-intro', 'app-project-summary', 'app-notebook-overview',
+      '.notebook-guide', '.guide-container', '.hero-container',
+      '.cover-image-container', '.summary-card', '.guide-card',
+      '[class*="guide-intro" i]', '[class*="project-summary" i]'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -209,24 +253,22 @@ const notebookUiScript = r'''
 
   function sanitizeDisclaimer() {
     try {
-      const candidates = document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i]');
+      const candidates = document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"], p, span, small, div');
       for (const el of candidates) {
-        if ((el.textContent || '').length > 250) continue;
-        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-        let node;
-        while ((node = walker.nextNode())) {
-          if (node.nodeValue && /notebooklm|gemini/i.test(node.nodeValue) && /mistake|salah|double-check|periksa/i.test(node.nodeValue)) {
-            node.nodeValue = node.nodeValue
-              .replace(/NotebookLM/gi, 'OpenTurath AI')
-              .replace(/Gemini/gi, 'OpenTurath AI');
-          }
+        if (el.children.length > 0) continue;
+        const txt = el.textContent || '';
+        if (txt.length > 0 && txt.length < 150 && /gemini|notebooklm/i.test(txt) && /mistake|salah|double-check|periksa/i.test(txt)) {
+          el.textContent = txt
+            .replace(/Gemini Notebook/gi, 'OpenTurath AI')
+            .replace(/NotebookLM/gi, 'OpenTurath AI')
+            .replace(/Gemini/gi, 'OpenTurath AI');
         }
       }
     } catch (_) {}
   }
 
   function clean() {
-    if (!presentationEnabled || !document.documentElement) return;
+    if (!document.documentElement) return;
     syncTheme();
     ensureStyles();
     removeTopToolbars();
@@ -544,10 +586,12 @@ const observer = new MutationObserver(() => {
   scheduled = true;
   requestAnimationFrame(() => {
     scheduled = false;
-    if (presentationEnabled) clean();
+    clean();
     checkGenerationState();
   });
 });
 observer.observe(document, {subtree:true, childList:true, characterData:true});
+ensureStyles();
+clean();
 })();
 ''';
