@@ -6,6 +6,9 @@ const notebookUiScript = r'''
     window.otOpenLanguageSettings = window.otNotebook.openLanguageSettings;
     window.otDeleteChatHistory = window.otNotebook.deleteChatHistory;
     window.otClearChat = window.otNotebook.clearChat;
+    if (typeof window.otNotebook.clean === 'function') {
+      window.otNotebook.clean();
+    }
     return;
   }
   const answerSelector = '.chat-message[data-sender="model"], .model-message, .response-message, .to-user-container, .to-user-message, .chat-message-pair .answer, [data-message-author-role="assistant"], app-chat-response, app-chat-message, .chat-response, [role="article"]';
@@ -127,30 +130,47 @@ const notebookUiScript = r'''
   let presentationEnabled = true;
 
   function ensureStyles() {
-    if (document.getElementById('ot-conversation-ui')) return;
-    const style = document.createElement('style');
-    style.id = 'ot-conversation-ui';
+    let style = document.getElementById('ot-conversation-ui');
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'ot-conversation-ui';
+      (document.head || document.documentElement).appendChild(style);
+    }
     style.textContent = `
-      /* Sembunyikan bilah navigasi header NotebookLM dan bilah Google luar */
+      /* Sembunyikan SEMUA bilah header/navigasi NotebookLM dan Google */
       body > header,
       top-bar, .top-bar,
-      app-header,
+      app-header, .app-header,
       mat-toolbar,
-      .notebook-header,
-      app-notebook-header,
-      app-project-header,
-      header[role="banner"],
-      [role="banner"],
-      app-user-avatar,
-      div[class*="gb_"],
-      #gb, #gbwa,
-      [aria-label*="Google apps" i],
-      [aria-label*="Aplikasi Google" i],
-      [aria-label*="Google Account" i],
-      [aria-label*="Akun Google" i],
-      a[href*="myaccount.google.com"],
-      button:has(app-user-avatar),
-      labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i], svg[aria-label*="NotebookLM" i] {
+      .notebook-header, app-notebook-header,
+      .project-header, app-project-header,
+      app-chat-header, chat-header, .chat-header,
+      app-top-bar,
+      header, [role="banner"],
+      /* Sembunyikan elemen di dalam header */
+      app-user-avatar, div[class*="gb_"], #gb, #gbwa,
+      [aria-label*="Google apps" i], [aria-label*="Aplikasi Google" i],
+      [aria-label*="Google Account" i], [aria-label*="Akun Google" i],
+      a[href*="myaccount.google.com"], button:has(app-user-avatar),
+      labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i], svg[aria-label*="NotebookLM" i],
+      button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
+      button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
+      .project-header button, app-project-header button,
+      mat-toolbar button, .top-bar button,
+      /* Sembunyikan kartu hero / overview / summary tengah */
+      app-notebook-guide, notebook-guide, app-guide-intro,
+      app-chat-intro, app-project-summary, app-notebook-overview,
+      app-artifact-summary, .artifact-summary,
+      .notebook-guide, .guide-container, .hero-container,
+      .cover-image-container, .summary-card, .guide-card,
+      app-empty-chat, app-chat-empty-state, app-conversation-empty-state,
+      chat-intro, .chat-intro, .empty-state, .chat-empty-state, .empty-chat,
+      .guide-intro, app-source-guide,
+      [class*="guide-intro" i], [class*="project-summary" i],
+      [class*="project-overview" i], [class*="notebook-overview" i],
+      [class*="empty-state" i],
+      /* Sembunyikan Disclaimer Bawah Secara Total */
+      .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -161,42 +181,17 @@ const notebookUiScript = r'''
         margin: 0 !important;
       }
 
-      button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
-      button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i] {
-        display: none !important;
-        visibility: hidden !important;
-      }
-
-      /* Sembunyikan kartu hero/guide tengah agar chat bersih */
-      app-notebook-guide, notebook-guide, app-guide-intro,
-      app-chat-intro, app-project-summary, app-notebook-overview,
-      .notebook-guide, .guide-container, .hero-container,
-      .cover-image-container, .summary-card, .guide-card,
-      [class*="guide-intro" i], [class*="project-summary" i] {
-        display: none !important;
-        visibility: hidden !important;
-      }
-
       .ot-opening-language [role="menu"],
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
-      /* Elevate chat input and disclaimer */
+      /* Elevate chat input and message list */
       .chat-panel-content, .chat-view, .conversation-container, .message-list {
         padding-bottom: max(36px, calc(env(safe-area-inset-bottom, 24px) + 20px)) !important;
       }
       div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
       [class*="input-container" i], [class*="chat-input" i] {
         margin-bottom: 8px !important;
-      }
-      /* Sembunyikan Disclaimer Bawah Secara Total */
-      .disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"] {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -210,13 +205,14 @@ const notebookUiScript = r'''
       ::-webkit-scrollbar { display: none !important; width: 0 !important; }
       html, body, * { scrollbar-width: none !important; }
     `;
-    (document.head || document.documentElement).appendChild(style);
   }
 
   function removeTopToolbars() {
     const selectors = [
-      'body > header', 'top-bar', '.top-bar', 'app-header',
-      'mat-toolbar', '.notebook-header', 'app-notebook-header', 'app-project-header', 'header[role="banner"]',
+      'body > header', 'top-bar', '.top-bar', 'app-header', '.app-header',
+      'mat-toolbar', '.notebook-header', 'app-notebook-header',
+      '.project-header', 'app-project-header', 'header', '[role="banner"]',
+      'app-chat-header', 'chat-header', '.chat-header', 'app-top-bar',
       'app-user-avatar', 'div[class*="gb_"]', '#gb', '#gbwa',
       '[aria-label*="Google apps" i]', '[aria-label*="Aplikasi Google" i]',
       '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]',
@@ -230,11 +226,19 @@ const notebookUiScript = r'''
         el.style.setProperty('display', 'none', 'important');
       });
     });
-    // Hapus badge PRO jika ada
-    document.querySelectorAll('button, a, span, div').forEach(el => {
-      if (el.children.length === 0 && (el.textContent || '').trim() === 'PRO') {
-        const p = el.closest('button, a, div[role="button"], span');
-        if (p) p.style.setProperty('display', 'none', 'important');
+
+    // Deteksi baris header atas berdasarkan elemen Shared / Dibagikan / More di area paling atas (rect.top <= 80)
+    document.querySelectorAll('*').forEach(el => {
+      if (el.children.length > 0 && el.children.length <= 15) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top <= 80 && rect.height > 20 && rect.height <= 90 && rect.width > 200) {
+          const txt = (el.innerText || el.textContent || '').trim().toLowerCase();
+          if (txt.includes('shared') || txt.includes('dibagikan') || (el.querySelector('app-user-avatar, [aria-label*="Google Account" i]') && !el.querySelector('textarea, input'))) {
+            if (!el.querySelector('textarea, [contenteditable="true"]')) {
+              el.style.setProperty('display', 'none', 'important');
+            }
+          }
+        }
       }
     });
   }
@@ -243,14 +247,42 @@ const notebookUiScript = r'''
     const guideSelectors = [
       'app-notebook-guide', 'notebook-guide', 'app-guide-intro',
       'app-chat-intro', 'app-project-summary', 'app-notebook-overview',
+      'app-artifact-summary', '.artifact-summary',
       '.notebook-guide', '.guide-container', '.hero-container',
       '.cover-image-container', '.summary-card', '.guide-card',
-      '[class*="guide-intro" i]', '[class*="project-summary" i]'
+      'app-empty-chat', 'app-chat-empty-state', 'app-conversation-empty-state',
+      'chat-intro', '.chat-intro', '.empty-state', '.chat-empty-state', '.empty-chat',
+      '.guide-intro', 'app-source-guide',
+      '[class*="guide-intro" i]', '[class*="project-summary" i]',
+      '[class*="project-overview" i]', '[class*="notebook-overview" i]',
+      '[class*="empty-state" i]'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
         el.style.setProperty('display', 'none', 'important');
       });
+    });
+
+    // Cari elemen yang memuat "sources" atau "sumber" (misal: "0 sources • Mar 9, 2026")
+    document.querySelectorAll('*').forEach(el => {
+      if (el.children.length === 0) {
+        const txt = (el.textContent || '').trim().toLowerCase();
+        if (/\b\d+\s+(sources|sumber)\b/i.test(txt)) {
+          let curr = el;
+          for (let i = 0; i < 5; i++) {
+            if (!curr || curr === document.body) break;
+            const parent = curr.parentElement;
+            if (parent && parent.querySelectorAll('textarea, [contenteditable="true"]').length === 0) {
+              curr = parent;
+            } else {
+              break;
+            }
+          }
+          if (curr && curr !== document.body) {
+            curr.style.setProperty('display', 'none', 'important');
+          }
+        }
+      }
     });
   }
 

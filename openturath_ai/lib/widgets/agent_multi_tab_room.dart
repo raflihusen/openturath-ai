@@ -1,4 +1,3 @@
-import 'desktop_reference_panel.dart';
 import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
@@ -581,21 +580,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.open_in_browser_rounded, color: textPrimary, size: 20),
-            tooltip: 'Buka di Browser Asli (Chrome / Safari)',
-            onPressed: () async {
-              final url = activeTab.resolvedUrl;
-              if (url != null) {
-                final opened = await NativeAgentLauncher.launchNotebook(url);
-                if (!opened && context.mounted) {
-                  AppSnackBar.warning(context, 'Gagal membuka browser eksternal.');
-                }
-              } else {
-                AppSnackBar.warning(context, 'Tautan asisten sedang disiapkan...');
-              }
-            },
-          ),
-          IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
@@ -609,12 +593,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               side: BorderSide(color: border, width: 0.8),
             ),
             onSelected: (val) {
-              if (val == 'open_browser') {
-                final url = activeTab.resolvedUrl;
-                if (url != null) {
-                  NativeAgentLauncher.launchNotebook(url);
-                }
-              } else if (val == 'conversation') {
+              if (val == 'conversation') {
                 _copyActiveConversation(activeTab);
               } else if (val == 'language') {
                 activeTab.webController?.evaluateJavascript(
@@ -627,8 +606,6 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 _showFontScaleDialog(context, activeTab);
               } else if (val == 'switch_session') {
                 _showSessionSwitcher(context);
-              } else if (val == 'switch_google_account') {
-                AgentMultiTabRoom.showChangeGoogleAccountDialog(context);
               } else if (val == 'reload') {
                 activeTab.webController?.reload();
               }
@@ -647,37 +624,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 ),
               ),
               PopupMenuItem(
-                value: 'open_browser',
-                child: Row(
-                  children: [
-                    Icon(Icons.open_in_browser_rounded,
-                        color: textPrimary, size: 18),
-                    const SizedBox(width: 12),
-                    Text('Buka di Browser Asli',
-                        style: OTTypography.body(color: textPrimary)),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'switch_google_account',
-                child: Row(
-                  children: [
-                    Icon(Icons.manage_accounts_rounded,
-                        color: textPrimary, size: 18),
-                    const SizedBox(width: 12),
-                    Text('Ganti Akun Google Asisten',
-                        style: OTTypography.body(color: textPrimary)),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
                 value: 'language',
                 child: Row(
                   children: [
                     Icon(Icons.language_rounded,
                         color: textPrimary, size: 18),
                     const SizedBox(width: 12),
-                    Text('Bahasa Output (Output Language)',
+                    Text('Bahasa Output',
                         style: OTTypography.body(color: textPrimary)),
                   ],
                 ),
@@ -847,28 +800,18 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               )
             : null,
       ),
-      body: Row(children: [
-        if (AppPlatform.isDesktop && MediaQuery.sizeOf(context).width >= 1100)
-          SizedBox(
-              width: 300,
-              child: DesktopReferencePanel(
-                  key: ValueKey(activeTab.agent.id), agent: activeTab.agent)),
-        if (AppPlatform.isDesktop && MediaQuery.sizeOf(context).width >= 1100)
-          const VerticalDivider(width: 1),
-        Expanded(
-            key: const ValueKey('study-webviews'),
-            child: IndexedStack(
-              index: _sessionManager.activeIndex,
-              children: [
-                for (int i = 0; i < sessions.length; i++)
-                  _SingleAgentTabWebView(
-                    key: ValueKey('agent_tab_${sessions[i].agent.id}'),
-                    session: sessions[i],
-                    isActive: i == _sessionManager.activeIndex,
-                  ),
-              ],
-            )),
-      ]),
+      body: IndexedStack(
+        key: const ValueKey('study-webviews'),
+        index: _sessionManager.activeIndex,
+        children: [
+          for (int i = 0; i < sessions.length; i++)
+            _SingleAgentTabWebView(
+              key: ValueKey('agent_tab_${sessions[i].agent.id}'),
+              session: sessions[i],
+              isActive: i == _sessionManager.activeIndex,
+            ),
+        ],
+      ),
     );
   }
 }
