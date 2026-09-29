@@ -141,6 +141,16 @@ PRODUCT_TO_NOTEBOOKS: dict[str, list[str]] = {
     ],
 }
 
+PERMANENT_VIP_EMAILS: set[str] = {
+    "openturath@gmail.com",
+    "ramah@ptct.net",
+    "raflimaulan@gmail.com",
+    "mas.raflihusen@gmail.com",
+    "alkhateeb23@gmail.com",
+    "omarasb1441@gmail.com",
+    "prilatief@gmail.com",
+}
+
 # Mapping: nama service/kelas di Akal / DOKU → key entitlement di database Firestore
 PRODUCT_TO_ENTITLEMENT_KEY: dict[str, str] = {
     "AI Fikih Tahawwulat": "fiqh_tahawwulat",
@@ -553,6 +563,9 @@ async def process_webhook(payload: dict) -> dict:
         return {"success": success, "action": "provisioned", "results": results}
 
     elif status in INACTIVE_STATUSES:
+        if email.strip().lower() in PERMANENT_VIP_EMAILS:
+            logger.info("🛡️ SKIP CABUT AKSES: %s adalah OWNER / PERMANENT VIP. Akses abadi dijamin.", email)
+            return {"success": True, "action": "ignored_permanent_vip"}
         logger.info("   ❌ CABUT akses: %s ← %s (%d notebook)", email, service_name, len(notebook_ids))
         
         # 1. Update Firestore
