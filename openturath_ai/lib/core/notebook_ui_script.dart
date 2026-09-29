@@ -160,14 +160,21 @@ const notebookUiScript = r'''
       button[aria-label*="Pengaturan" i], button[aria-label*="Notebook settings" i],
       .project-header button, app-project-header button,
       mat-toolbar button, .top-bar button,
-      /* Sembunyikan kartu hero / overview / summary tengah */
+      /* Sembunyikan kartu hero / overview / summary / intro buku catatan di tengah obrolan */
       app-notebook-guide, notebook-guide, app-guide-intro,
       app-project-summary, app-notebook-overview,
       app-artifact-summary, .artifact-summary,
       .notebook-guide, .guide-container, .hero-container,
       .cover-image-container, .summary-card, .guide-card,
+      app-chat-intro, app-conversation-intro, app-notebook-intro,
+      app-project-intro, app-chat-empty-state, app-empty-state,
+      .chat-intro, .conversation-intro, .notebook-intro, .project-intro,
+      .chat-empty-state, .empty-state,
       [class*="guide-intro" i], [class*="project-summary" i],
       [class*="project-overview" i], [class*="notebook-overview" i],
+      [class*="chat-intro" i], [class*="conversation-intro" i],
+      [class*="notebook-intro" i], [class*="project-intro" i],
+      [class*="empty-state" i],
       /* Sembunyikan badge PRO */
       .pro-badge, [class*="pro-badge" i], [class*="tier-badge" i],
       /* Sembunyikan Disclaimer Bawah Secara Total */
@@ -182,17 +189,54 @@ const notebookUiScript = r'''
         margin: 0 !important;
       }
 
+      /* Sembunyikan tombol opsi titik tiga di dalam webview obrolan */
+      button[aria-label*="chat options" i],
+      button[aria-label*="more options" i],
+      button[aria-label*="opsi lainnya" i],
+      button[aria-label*="opsi obrolan" i],
+      button[aria-label*="opsi percakapan" i],
+      button[aria-label*="notebook options" i],
+      button[aria-label*="opsi buku catatan" i],
+      button[aria-label*="opsi proyek" i],
+      button[aria-label="More" i],
+      button[aria-label="Opsi" i],
+      button[aria-label*="More actions" i],
+      button[aria-label*="Tindakan lainnya" i],
+      .chat-options-button,
+      [class*="chat-options" i],
+      [class*="chat-actions" i],
+      .conversation-actions,
+      button:has(mat-icon[data-mat-icon-name="more_vert"]),
+      button:has(mat-icon[data-mat-icon-name="more_horiz"]),
+      button:has(mat-icon[fonticon="more_vert"]),
+      button:has(mat-icon[fonticon="more_horiz"]) {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        left: -9999px !important;
+        top: -9999px !important;
+        width: 0 !important;
+        height: 0 !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        overflow: hidden !important;
+      }
+
       .ot-opening-language [role="menu"],
       .ot-opening-language .mat-mdc-menu-panel { opacity: 0 !important; }
       .cdk-overlay-container { z-index: 99999 !important; }
 
       /* Ruang bawah obrolan agar pesan tidak tertutup */
       .chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"] {
-        padding-bottom: max(36px, calc(env(safe-area-inset-bottom, 24px) + 20px)) !important;
+        padding-bottom: max(64px, calc(env(safe-area-inset-bottom, 24px) + 48px)) !important;
       }
       div.chat-input-container, .input-container, app-chat-input, form.chat-input-form,
-      [class*="input-container" i], [class*="chat-input" i] {
-        margin-bottom: 8px !important;
+      [class*="input-container" i], [class*="chat-input" i],
+      .chat-input-area, [class*="input-area" i], .query-box-container {
+        margin-bottom: max(22px, calc(env(safe-area-inset-bottom, 16px) + 14px)) !important;
       }
 
       .chat-message-pair, .to-user-container, .to-model-container {
@@ -227,6 +271,34 @@ const notebookUiScript = r'''
       document.querySelectorAll(sel).forEach(el => {
         el.style.setProperty('display', 'none', 'important');
       });
+    });
+
+    // Sembunyikan tombol opsi titik tiga (more_vert / more_horiz / options) secara halus
+    document.querySelectorAll('mat-icon, [data-mat-icon-name]').forEach(icon => {
+      const name = (icon.getAttribute('data-mat-icon-name') || icon.getAttribute('fonticon') || icon.textContent || '').trim().toLowerCase();
+      if (name === 'more_vert' || name === 'more_horiz') {
+        const btn = icon.closest('button, [role="button"]');
+        if (btn && btn.querySelectorAll('textarea, input').length === 0) {
+          btn.style.setProperty('opacity', '0', 'important');
+          btn.style.setProperty('pointer-events', 'none', 'important');
+          btn.style.setProperty('position', 'absolute', 'important');
+          btn.style.setProperty('left', '-9999px', 'important');
+          btn.style.setProperty('width', '0', 'important');
+          btn.style.setProperty('height', '0', 'important');
+        }
+      }
+    });
+
+    document.querySelectorAll('button[aria-label*="options" i], button[aria-label*="opsi" i], button[aria-label*="more" i]').forEach(btn => {
+      const label = (btn.getAttribute('aria-label') || '').toLowerCase();
+      if (!label.includes('send') && !label.includes('kirim') && !label.includes('mic') && !label.includes('suara')) {
+        btn.style.setProperty('opacity', '0', 'important');
+        btn.style.setProperty('pointer-events', 'none', 'important');
+        btn.style.setProperty('position', 'absolute', 'important');
+        btn.style.setProperty('left', '-9999px', 'important');
+        btn.style.setProperty('width', '0', 'important');
+        btn.style.setProperty('height', '0', 'important');
+      }
     });
 
     // Sembunyikan lencana PRO
@@ -264,8 +336,15 @@ const notebookUiScript = r'''
       'app-artifact-summary', '.artifact-summary',
       '.notebook-guide', '.guide-container', '.hero-container',
       '.cover-image-container', '.summary-card', '.guide-card',
+      'app-chat-intro', 'app-conversation-intro', 'app-notebook-intro',
+      'app-project-intro', 'app-chat-empty-state', 'app-empty-state',
+      '.chat-intro', '.conversation-intro', '.notebook-intro', '.project-intro',
+      '.chat-empty-state', '.empty-state',
       '[class*="guide-intro" i]', '[class*="project-summary" i]',
-      '[class*="project-overview" i]', '[class*="notebook-overview" i]'
+      '[class*="project-overview" i]', '[class*="notebook-overview" i]',
+      '[class*="chat-intro" i]', '[class*="conversation-intro" i]',
+      '[class*="notebook-intro" i]', '[class*="project-intro" i]',
+      '[class*="empty-state" i]'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -278,12 +357,39 @@ const notebookUiScript = r'''
       if (el.children.length === 0) {
         const txt = (el.textContent || '').trim().toLowerCase();
         if (/\b\d+\s+(sources|sumber)\b/i.test(txt)) {
-          const card = el.closest('app-notebook-guide, notebook-guide, .summary-card, .guide-card, .guide-container, mat-card, .artifact-summary');
-          if (card && card !== document.body && !card.matches('html, body, main, [role="main"], app-root, .chat-view, .chat-panel-content, .message-list')) {
-            if (card.querySelectorAll('textarea, [contenteditable="true"]').length === 0) {
-              card.style.setProperty('display', 'none', 'important');
+          // Cari container pembungkus intro ini (emoji + judul + info sumber)
+          let curr = el;
+          let targetCard = null;
+          while (curr && curr !== document.body && curr !== document.documentElement) {
+            if (curr.querySelector && curr.querySelector('textarea, [contenteditable="true"], .chat-message, .model-message, .user-message, [role="article"]')) {
+              break;
+            }
+            if (curr.matches && curr.matches('html, body, main, [role="main"], app-root, .chat-view, .chat-panel-content, .message-list, [role="log"]')) {
+              break;
+            }
+            targetCard = curr;
+            curr = curr.parentElement;
+          }
+          if (targetCard) {
+            targetCard.style.setProperty('display', 'none', 'important');
+          }
+        }
+      }
+    });
+
+    // Sembunyikan elemen sebelum pesan obrolan pertama
+    document.querySelectorAll('.chat-panel-content, .chat-view, .conversation-container, .message-list, [role="log"]').forEach(panel => {
+      const firstMessage = panel.querySelector('.chat-message, .model-message, .user-message, [role="article"], .chat-message-pair');
+      if (firstMessage) {
+        let prev = firstMessage.previousElementSibling;
+        while (prev) {
+          const prevTxt = (prev.textContent || '').toLowerCase();
+          if (prevTxt.includes('source') || prevTxt.includes('sumber') || prevTxt.includes('•') || prev.querySelector('img, svg, mat-icon') || prevTxt.length < 80) {
+            if (!prev.querySelector('textarea, [contenteditable="true"]')) {
+              prev.style.setProperty('display', 'none', 'important');
             }
           }
+          prev = prev.previousElementSibling;
         }
       }
     });
