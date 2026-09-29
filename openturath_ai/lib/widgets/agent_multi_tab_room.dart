@@ -622,7 +622,26 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(color: border, width: 0.8),
             ),
+            onOpened: () {
+              setState(() => activeTab.isMenuOpen = true);
+              activeTab.webController?.evaluateJavascript(
+                source:
+                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(true);',
+              );
+            },
+            onCanceled: () {
+              setState(() => activeTab.isMenuOpen = false);
+              activeTab.webController?.evaluateJavascript(
+                source:
+                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(false);',
+              );
+            },
             onSelected: (val) {
+              setState(() => activeTab.isMenuOpen = false);
+              activeTab.webController?.evaluateJavascript(
+                source:
+                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(false);',
+              );
               if (val == 'conversation') {
                 _copyActiveConversation(activeTab);
               } else if (val == 'language') {
@@ -918,6 +937,69 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             line-height: 1.85 !important;
           }
         `;
+      };
+
+      var _otMenuIsOpen = false;
+      function _otDismiss() {
+        if (!_otMenuIsOpen) return;
+        _otMenuIsOpen = false;
+        try {
+          var el = document.getElementById('ot-menu-backdrop');
+          if (el) el.remove();
+        } catch (_) {}
+        try {
+          if (window.flutter_inappwebview && typeof window.flutter_inappwebview.callHandler === 'function') {
+            window.flutter_inappwebview.callHandler('otDismissMenu');
+          }
+        } catch (_) {}
+      }
+
+      function _otHandleOutsideInteraction(e) {
+        if (!_otMenuIsOpen) return;
+        try {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof e.stopImmediatePropagation === 'function') {
+            e.stopImmediatePropagation();
+          }
+        } catch (_) {}
+        _otDismiss();
+      }
+
+      window.otSetMenuOpen = function(isOpen) {
+        _otMenuIsOpen = !!isOpen;
+        try {
+          var old = document.getElementById('ot-menu-backdrop');
+          if (old) old.remove();
+        } catch (_) {}
+
+        if (typeof window.removeEventListener === 'function') {
+          window.removeEventListener('pointerdown', _otHandleOutsideInteraction, true);
+          window.removeEventListener('mousedown', _otHandleOutsideInteraction, true);
+          window.removeEventListener('touchstart', _otHandleOutsideInteraction, true);
+          window.removeEventListener('click', _otHandleOutsideInteraction, true);
+        }
+
+        if (_otMenuIsOpen) {
+          if (typeof window.addEventListener === 'function') {
+            window.addEventListener('pointerdown', _otHandleOutsideInteraction, true);
+            window.addEventListener('mousedown', _otHandleOutsideInteraction, true);
+            window.addEventListener('touchstart', _otHandleOutsideInteraction, true);
+            window.addEventListener('click', _otHandleOutsideInteraction, true);
+          }
+          try {
+            if (document && document.body && typeof document.createElement === 'function' && typeof document.body.appendChild === 'function') {
+              var backdrop = document.createElement('div');
+              backdrop.id = 'ot-menu-backdrop';
+              backdrop.setAttribute('style', 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;z-index:2147483647!important;background:transparent!important;cursor:default!important;-webkit-tap-highlight-color:transparent!important;');
+              backdrop.addEventListener('pointerdown', _otHandleOutsideInteraction, true);
+              backdrop.addEventListener('mousedown', _otHandleOutsideInteraction, true);
+              backdrop.addEventListener('touchstart', _otHandleOutsideInteraction, true);
+              backdrop.addEventListener('click', _otHandleOutsideInteraction, true);
+              document.body.appendChild(backdrop);
+            }
+          } catch (_) {}
+        }
       };
     })();
   """;
@@ -1776,6 +1858,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   });
                 },
               );
+              controller.addJavaScriptHandler(
+                handlerName: 'otDismissMenu',
+                callback: (args) {
+                  if (mounted) {
+                    final nav = Navigator.of(context, rootNavigator: false);
+                    if (nav.canPop()) {
+                      nav.pop();
+                    }
+                  }
+                  return true;
+                },
+              );
               if (!session.isSessionReady) {
                 _startReadinessCheck();
               }
@@ -1853,6 +1947,21 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               return NavigationActionPolicy.CANCEL;
             },
           ),
+
+          // Penutup transparan saat menu titik tiga sedang terbuka (khususnya untuk sentuhan Android / Flutter layer)
+          if (session.isMenuOpen)
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  final nav = Navigator.of(context, rootNavigator: false);
+                  if (nav.canPop()) {
+                    nav.pop();
+                  }
+                },
+                child: const ColoredBox(color: Colors.transparent),
+              ),
+            ),
 
         // Fullscreen pulsing loader hanya saat inisialisasi awal
           if (!session.isSessionReady && session.isWebLoading)

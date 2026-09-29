@@ -23,6 +23,7 @@ class AgentSessionTab {
   double fontScale = defaultFontScale;
   bool hasAcknowledgedAdab = false;
   bool hasInjectedEarlyScript = false;
+  bool isMenuOpen = false;
 
   /// Mode tampilan: false untuk tampilan DOM WebView murni (default), true jika menggunakan overlay native.
   bool isNativeView = false;
@@ -41,6 +42,7 @@ class AgentSessionTab {
       webController?.removeJavaScriptHandler(handlerName: 'otCopiedAnswer');
       webController?.removeJavaScriptHandler(handlerName: 'otAnswerState');
       webController?.removeJavaScriptHandler(handlerName: 'otAnswerChunk');
+      webController?.removeJavaScriptHandler(handlerName: 'otDismissMenu');
     } catch (_) {}
     if (webController != null) {
       // Dispose only after the corresponding platform view has left the tree.
