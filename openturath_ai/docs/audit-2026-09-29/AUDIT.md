@@ -42,7 +42,7 @@ Tidak dilakukan perombakan visual umum atau optimasi spekulatif. Tidak ada klaim
 - `lib/screens/book_library_editorial_screen.dart`: normalisasi Arab, clear berlabel dengan fokus kembali, filter standar dan metadata yang dapat membungkus.
 - `lib/screens/book_catalog_screen.dart`: clear/reset/Escape membatalkan debounce, serta clear search yang dapat diakses lewat kontrol standar.
 - Empat file regresi baru: `note_editor_reliability_test.dart` (8), `bookmark_concurrent_sync_test.dart` (3), `editorial_catalog_reliability_test.dart` (32), `catalog_search_reset_test.dart` (1): total **44** pengujian.
-- `tool/audit_preview.dart`: entrypoint QA terisolasi yang memakai layar produk dan data bundel, mendukung pilihan locale, lebar, tema, dan pembesaran teks. Label QA terlihat pada capture.
+- `tool/audit_preview.dart`: entrypoint QA terisolasi yang memakai layar produk dan data bundel, mendukung pilihan locale, lebar, tema, dan pembesaran teks melalui kontrol atau parameter URL. Widget-order traversal memperbaiki error fokus sebelum layout pada startup harness. Label QA terlihat pada capture.
 - `test/agent_service_canonical_url_test.dart`: hanya unused import dibuang setelah analyzer menemukannya. Test dan pemetaan NotebookLM berasal dari pekerjaan lain yang masuk saat audit.
 - `functions/lib/notebook_catalog.js.map`: artefak tracked yang diregenerasi oleh build TypeScript setelah perubahan pemetaan dari pekerjaan lain; source mapping tersebut dipertahankan.
 
@@ -54,7 +54,7 @@ Semua command berikut dijalankan di `/Users/apple/Downloads/ramadhan/openturath_
 
 | Pemeriksaan | Baseline | Hasil akhir |
 | --- | --- | --- |
-| `flutter analyze --no-pub` | Exit 0, tidak ada issue. Percobaan awal terbatas oleh izin tulis `engine.stamp`, lalu berhasil dengan akses cache yang disetujui. | Exit 0, tidak ada issue pada source aplikasi; tool QA dikoreksi bila lint ditemukan. |
+| `flutter analyze --no-pub` | Exit 0, tidak ada issue. Percobaan awal terbatas oleh izin tulis `engine.stamp`, lalu berhasil dengan akses cache yang disetujui. | Exit 0, tidak ada issue pada source aplikasi dan tool QA final. |
 | `flutter test --no-pub --reporter expanded` | Exit 0, **207** lulus. | Exit 0, **252** lulus: 207 baseline + 44 regresi audit + 1 test dari pekerjaan lain. |
 | `npm run build` (direktori `functions`) | Exit 0, TypeScript berhasil. | Exit 0. |
 | `AUDIT_SOURCE_ROOT=/Users/apple/Downloads/ramadhan/openturath_ai node --experimental-transform-types --test functions/test/*.test.ts` | Exit 0, **41** lulus. Percobaan dengan cwd/transform yang salah adalah masalah cara menjalankan test dan diperbaiki. | Exit 0, **41** lulus, 0 gagal. |
@@ -70,12 +70,29 @@ Tes layout editorial mencakup **360, 390, 768, 1024, 1440** logical pixels × **
 
 ### Pemeriksaan runtime dan gambar
 
-Preview lokal menggunakan **1.173** entri katalog Hadis bundel. Pencarian `الزبير` menemukan 9 hasil; membuka detail `نسخة الزبير بن عدي` dan kembali mempertahankan hasil. Clear memulihkan 1.173 entri dan fokus input. Filter tampil sebagai kontrol dengan checked/selected state pada accessibility tree browser.
+Preview lokal menggunakan **1.173** entri katalog Hadis bundel. Pencarian `الزبير` menemukan 9 hasil; membuka detail `نسخة الزبير بن عدي` dan kembali mempertahankan hasil. Clear memulihkan 1.173 entri dan fokus input. Filter tampil sebagai kontrol dengan checked/selected state pada accessibility tree browser. Pada viewport desktop 1440 px, Space pada “Beberapa jilid” mengubah selected state dan hasil menjadi **119** kitab.
+
+Pada browser, catatan berlabel **CONTOH QA** ditambah teks terakhir dan langsung ditutup dalam satu rangkaian input. Membuka kembali editor memulihkan tambahan terakhir dan status “Draf dipulihkan”. Setelah Simpan, editor baru kosong. Data contoh ini hanya berada pada storage origin localhost QA.
+
+Pemeriksaan visual data aktual mencakup bingkai konten **390 px ID**, **360 px AR/dark/teks 2×** dengan scroll ke metadata panjang, serta viewport browser **768 px EN** dan **1440 px ID**. Pada bingkai 360 px, informasi volume/halaman membungkus tanpa overflow; halaman panjang tetap dapat di-scroll. Pemeriksaan viewport 1024 px ada pada widget matrix, bukan capture runtime tersendiri.
 
 - [Sebelum — editorial, ID, 390 px](screenshots/catalog-before-390-id.jpg)
 - [Sesudah — editorial, ID, 390 px](screenshots/catalog-after-390-id.jpg)
+- [Sesudah — Arab, bingkai 360 px, teks 2×, dark](screenshots/catalog-after-360-ar-2x-dark.jpg)
+- [Sesudah — viewport 768 px, English](screenshots/catalog-after-768-en.jpg)
+- [Sesudah — viewport 1440 px, filter keyboard terpilih](screenshots/catalog-after-1440-id-keyboard-filter.jpg)
+- [Draft contoh dipulihkan sesudah segera keluar](screenshots/note-draft-restored.jpg)
 
-Capture dibuat dari layar produk di harness QA yang diberi label, bukan mock desain. Reload debug preview pernah memunculkan assertion layout Flutter dan kemudian layar kosong; keadaan preview stabil sebelum reload tidak menampilkan error/warning pada pemeriksaan console. Gangguan harness/reload ini tidak dikategorikan sebagai bukti kegagalan aplikasi production. Detail runtime tambahan dicatat setelah pemeriksaan terakhir.
+Capture dibuat dari layar produk di harness QA, bukan mock desain. Startup/reload awal memunculkan error Flutter pada reading-order focus sebelum render box memiliki layout. Harness memakai widget-order traversal karena kontrol QA memiliki urutan tetap; sesudah koreksi, startup dan navigasi katalog diperiksa pada origin baru dan console untuk origin itu menghasilkan **0 error/warning**. Assertion tidak dimatikan dan error tidak disaring dari aplikasi. Entrypoint production dengan Firebase tidak dijalankan melalui browser di sesi ini, sehingga bukti tersebut terbatas pada harness.
+
+Bundle release QA terpisah berhasil dikompilasi dengan exit 0:
+
+```sh
+flutter build web --release --no-pub --no-wasm-dry-run --target tool/audit_preview.dart --output /private/tmp/openturath-qa-web-fixed
+python3 -m http.server 8792 --bind 127.0.0.1 --directory /private/tmp/openturath-qa-web-fixed
+```
+
+Preview akhir: `http://127.0.0.1:8792/?locale=id&width=390`. Parameter yang diterima: `locale=id|en|ar`, `width=360|390|768|1024|1440`, `scale=1|2`, `dark=0|1`. Build ulang dan cache service worker lama sempat menampilkan bundle sebelumnya; pemeriksaan akhir memakai origin lokal baru. URL ini bekerja ketika server lokal masih berjalan; source entrypoint dan capture tersimpan di Git untuk reproduksi berikutnya.
 
 Acuan yang diperiksa: [Flutter accessibility](https://docs.flutter.dev/ui/accessibility) dan [W3C WCAG 2.2 Reflow](https://www.w3.org/WAI/WCAG22/Understanding/reflow.html). Perbaikan semantics, keyboard, fokus, dan reflow dibuktikan sesuai lingkup di atas. Belum ada audit screen reader native, seluruh kontras, reduced motion, seluruh dialog, atau seluruh layar; tidak ada klaim kepatuhan WCAG lengkap.
 
