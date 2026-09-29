@@ -140,9 +140,9 @@ bool Win32Window::Create(const std::wstring& title,
   const auto& work = monitor_info.rcWork;
   const int width = (std::min)(Scale(size.width, scale_factor),
                                static_cast<int>(work.right - work.left));
-  const int height = (std::min)(Scale(size.height, scale_factor),
-                                static_cast<int>(work.bottom - work.top));
+  const int height = static_cast<int>(work.bottom - work.top);
   const int x = work.left + (work.right - work.left - width) / 2;
+  const int y = work.top;
   constexpr DWORD kFixedStyle =
       WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
   HWND window = CreateWindow(
