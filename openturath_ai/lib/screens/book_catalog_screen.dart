@@ -168,6 +168,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   }
 
   void _clearFilters() {
+    _debounce?.cancel();
     _searchCtrl.clear();
     setState(() {
       _searchQuery = '';
@@ -177,6 +178,16 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       _selectedCentury = null;
       _applyFilters();
     });
+  }
+
+  void _clearSearch() {
+    _debounce?.cancel();
+    _searchCtrl.clear();
+    setState(() {
+      _searchQuery = '';
+      _applyFilters();
+    });
+    _searchFocusNode.requestFocus();
   }
 
   bool get _hasActiveFilters =>
@@ -214,8 +225,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
   Widget build(BuildContext context) => DesktopShortcuts(
         onFind: _searchFocusNode.requestFocus,
         onEscape: () {
-          _searchCtrl.clear();
-          _onSearchChanged('');
+          _clearSearch();
           _searchFocusNode.unfocus();
         },
         child: _buildScreen(context),
@@ -318,15 +328,10 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       ),
                     ),
                     if (_searchQuery.isNotEmpty)
-                      GestureDetector(
-                        onTap: () {
-                          _searchCtrl.clear();
-                          setState(() {
-                            _searchQuery = '';
-                            _applyFilters();
-                          });
-                        },
-                        child: Icon(Icons.close_rounded,
+                      IconButton(
+                        tooltip: Loc.tr('clearSearch'),
+                        onPressed: _clearSearch,
+                        icon: Icon(Icons.close_rounded,
                             size: 18, color: textSecondary),
                       ),
                   ],
