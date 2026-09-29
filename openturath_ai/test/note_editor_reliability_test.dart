@@ -193,4 +193,25 @@ void main() {
     await tester.tap(find.byIcon(Icons.arrow_back_rounded));
     await tester.pumpAndSettle();
   });
+
+  testWidgets('cleared content of an existing note restores as an empty draft',
+      (tester) async {
+    final item = BookmarkModel(
+      id: 'clear-existing', title: 'Judul awal', agentId: 'catatan_mandiri',
+      agentTitle: '', fieldName: '', fieldId: 'general', arabicExcerpt: '',
+      fullAnswer: 'Isi awal', bookReference: '', pageNumber: '',
+      createdAt: DateTime(2026, 9, 1),
+    );
+    await openEditor(tester, item: item);
+    await tester.enterText(find.byType(TextField).first, '');
+    await tester.enterText(find.byType(TextField).last, '');
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Buka editor'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(find.byType(TextField).first).controller!.text, isEmpty);
+    expect(tester.widget<TextField>(find.byType(TextField).last).controller!.text, isEmpty);
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+    await tester.pumpAndSettle();
+  });
 }

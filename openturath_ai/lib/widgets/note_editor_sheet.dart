@@ -118,7 +118,7 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
 
       // Only restore if draft has different/more recent content
       if ((draftTitle != initialTitle || draftBody != initialBody) &&
-          (draftTitle.isNotEmpty || draftBody.isNotEmpty)) {
+          (draftTitle.isNotEmpty || draftBody.isNotEmpty || savedAt != null)) {
         if (mounted) {
           setState(() {
             _restoringDraft = true;
