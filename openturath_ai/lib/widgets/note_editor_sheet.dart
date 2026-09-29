@@ -415,15 +415,18 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                         ChoiceChip(
                             label: Text(Loc.text('Tulis')),
                             selected: !_isPreview,
-                            onSelected: (_) =>
-                                setState(() => _isPreview = false)),
+                            onSelected: _submitting || _closing
+                                ? null
+                                : (_) => setState(() => _isPreview = false)),
                         ChoiceChip(
                             label: Text(Loc.text('Pratinjau')),
                             selected: _isPreview,
-                            onSelected: (_) {
-                              FocusScope.of(context).unfocus();
-                              setState(() => _isPreview = true);
-                            }),
+                            onSelected: _submitting || _closing
+                                ? null
+                                : (_) {
+                                    FocusScope.of(context).unfocus();
+                                    setState(() => _isPreview = true);
+                                  }),
                         if (_isSavingDraft ||
                             _draftSaved ||
                             _draftRestored ||
@@ -448,42 +451,58 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
                     IconButton(
                         tooltip: Loc.text('Tebal'),
                         icon: const Icon(Icons.format_bold),
-                        onPressed: () => _applyFormat('**', '**',
-                            defaultText: Loc.text('teks tebal'))),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyFormat('**', '**',
+                                defaultText: Loc.text('teks tebal'))),
                     IconButton(
                         tooltip: Loc.text('Miring'),
                         icon: const Icon(Icons.format_italic),
-                        onPressed: () => _applyFormat('*', '*',
-                            defaultText: Loc.text('teks miring'))),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyFormat('*', '*',
+                                defaultText: Loc.text('teks miring'))),
                     IconButton(
                         tooltip: Loc.text('Daftar Poin'),
                         icon: const Icon(Icons.format_list_bulleted),
-                        onPressed: () => _applyFormat('\n- ', '',
-                            defaultText: Loc.text('poin catatan'))),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyFormat('\n- ', '',
+                                defaultText: Loc.text('poin catatan'))),
                     IconButton(
                         tooltip: Loc.text('Kutipan'),
                         icon: const Icon(Icons.format_quote),
-                        onPressed: () => _applyFormat('\n> ', '',
-                            defaultText: Loc.text('kutipan ibarah'))),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyFormat('\n> ', '',
+                                defaultText: Loc.text('kutipan ibarah'))),
                     IconButton(
                         tooltip: NativeCopy.text('arabicQuote'),
                         icon: const Icon(Icons.format_quote_rounded),
-                        onPressed: () => _applyFormat('« ', ' »',
-                            defaultText: Loc.text('kutipan ibarah'))),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyFormat('« ', ' »',
+                                defaultText: Loc.text('kutipan ibarah'))),
                     IconButton(
                         tooltip: Loc.text('Judul Bab'),
                         icon: const Icon(Icons.title),
-                        onPressed: () => _applyFormat('\n# ', '',
-                            defaultText: Loc.text('Judul Bab'))),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyFormat('\n# ', '',
+                                defaultText: Loc.text('Judul Bab'))),
                     IconButton(
                         tooltip: Loc.text('Orientasi Kiri ke Kanan (LTR)'),
                         icon: const Icon(Icons.format_textdirection_l_to_r),
-                        onPressed: () => _applyDirection(TextDirection.ltr)),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyDirection(TextDirection.ltr)),
                     IconButton(
                         tooltip:
                             Loc.text('Orientasi Kanan ke Kiri / Arab (RTL)'),
                         icon: const Icon(Icons.format_textdirection_r_to_l),
-                        onPressed: () => _applyDirection(TextDirection.rtl)),
+                        onPressed: _submitting || _closing
+                            ? null
+                            : () => _applyDirection(TextDirection.rtl)),
                   ])),
             Divider(color: NativeColors.border(dark)),
             Expanded(
