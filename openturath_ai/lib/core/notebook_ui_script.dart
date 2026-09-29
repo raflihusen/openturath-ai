@@ -131,10 +131,7 @@ const notebookUiScript = r'''
     const style = document.createElement('style');
     style.id = 'ot-conversation-ui';
     style.textContent = `
-      /* Sembunyikan bilah navigasi Google luar, akun avatar, dan waffle */
-      body > header,
-      top-bar, .top-bar,
-      app-header,
+      /* Sembunyikan hanya bilah akun Google luar, avatar, dan waffle */
       app-user-avatar,
       div[class*="gb_"],
       #gb, #gbwa,
@@ -142,19 +139,9 @@ const notebookUiScript = r'''
       [aria-label*="Aplikasi Google" i],
       [aria-label*="Google Account" i],
       [aria-label*="Akun Google" i],
-      labs-tailwind-logo, a.logo-link, .logo-container {
-        position: fixed !important;
-        top: -99999px !important;
-        left: -99999px !important;
-        height: 0 !important;
-        width: 0 !important;
-        max-height: 0 !important;
-        min-height: 0 !important;
-        overflow: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
+      labs-tailwind-logo, a.logo-link, a[aria-label*="NotebookLM" i] {
+        display: none !important;
+        visibility: hidden !important;
       }
 
       button[aria-label*="Settings" i], button[aria-label*="Setelan" i],
@@ -198,27 +185,20 @@ const notebookUiScript = r'''
 
   function removeTopToolbars() {
     const selectors = [
-      'body > header', 'top-bar', '.top-bar', 'app-header',
       'app-user-avatar', 'div[class*="gb_"]', '#gb', '#gbwa',
       '[aria-label*="Google apps" i]', '[aria-label*="Aplikasi Google" i]',
       '[aria-label*="Google Account" i]', '[aria-label*="Akun Google" i]'
     ];
     selectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
-        el.style.setProperty('position', 'fixed', 'important');
-        el.style.setProperty('top', '-99999px', 'important');
-        el.style.setProperty('left', '-99999px', 'important');
-        el.style.setProperty('height', '0px', 'important');
-        el.style.setProperty('width', '0px', 'important');
-        el.style.setProperty('opacity', '0', 'important');
-        el.style.setProperty('pointer-events', 'none', 'important');
+        el.style.setProperty('display', 'none', 'important');
       });
     });
   }
 
   function removeHeroCard() {
     const guideSelectors = [
-      'labs-tailwind-logo', 'a.logo-link', '.logo-container'
+      'labs-tailwind-logo', 'a.logo-link', 'a[aria-label*="NotebookLM" i]'
     ];
     guideSelectors.forEach(sel => {
       document.querySelectorAll(sel).forEach(el => {
@@ -228,21 +208,21 @@ const notebookUiScript = r'''
   }
 
   function sanitizeDisclaimer() {
-    const candidates = document.querySelectorAll('.disclaimer, [class*="disclaimer" i], footer, [role="contentinfo"], div, p, span');
-    for (const el of candidates) {
-      if (el.children.length <= 1) {
-        const orig = el.textContent || '';
-        if (/gemini notebook|notebooklm|gemini/i.test(orig) && /mistakes|salah|double-check|periksa/i.test(orig)) {
-          const sanitized = orig
-            .replace(/gemini notebook/gi, 'OpenTurath AI')
-            .replace(/notebooklm/gi, 'OpenTurath AI')
-            .replace(/gemini/gi, 'OpenTurath AI');
-          if (el.textContent !== sanitized) {
-            el.textContent = sanitized;
+    try {
+      const candidates = document.querySelectorAll('.chat-disclaimer, .query-disclaimer, .model-disclaimer, [class*="disclaimer" i]');
+      for (const el of candidates) {
+        if ((el.textContent || '').length > 250) continue;
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while ((node = walker.nextNode())) {
+          if (node.nodeValue && /notebooklm|gemini/i.test(node.nodeValue) && /mistake|salah|double-check|periksa/i.test(node.nodeValue)) {
+            node.nodeValue = node.nodeValue
+              .replace(/NotebookLM/gi, 'OpenTurath AI')
+              .replace(/Gemini/gi, 'OpenTurath AI');
           }
         }
       }
-    }
+    } catch (_) {}
   }
 
   function clean() {
@@ -382,13 +362,19 @@ const notebookUiScript = r'''
   }
   window.otGetConversationList = conversationList;
 
+  function isStillLoading() {
+    const body = (document.body?.innerText || '').toLowerCase();
+    return body.includes('loading notebook') || body.includes('memuat notebook');
+  }
+
   function ready() {
-    if (inputReady()) return true;
     if (accessDenied()) return false;
-    return !!document.querySelector('textarea, [contenteditable="true"], [role="textbox"], app-chat-view, .chat-view, .chat-panel-content, [role="log"], app-chat-input, .chat-input-container, form button[type="submit"]');
+    if (isStillLoading()) return false;
+    return inputReady();
   }
   function inputReady() {
-    return !!document.querySelector('textarea, [contenteditable="true"], [role="textbox"], [aria-label*="prompt" i], [placeholder*="tanya" i], [placeholder*="ask" i]');
+    const input = document.querySelector('textarea, [contenteditable="true"], [role="textbox"]');
+    return !!(input && visible(input));
   }
 function accessDenied() {
   if (inputReady()) return false;
