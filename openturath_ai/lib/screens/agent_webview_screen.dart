@@ -520,12 +520,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   path.contains('/signin') ||
                   path.contains('/servicelogin')));
       if (isLogin) {
-        _readinessTimer?.cancel();
-        setState(() {
-          _isWebViewLoading = false;
-          _errorMessage =
-              'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda.';
-        });
+        // Halaman autentikasi Google sedang aktif di dalam WebView internal.
+        // JANGAN batalkan _readinessTimer dan JANGAN blokir tampilan dengan error buntu!
+        // Berikan ruang pada InAppWebView agar pengguna dapat memilih/memasukkan akun
+        // Google secara langsung (inline) dengan dukungan penuh keyboard & mouse.
+        if (mounted && (_isWebViewLoading || _errorMessage != null)) {
+          setState(() {
+            _isWebViewLoading = false;
+            _errorMessage = null;
+          });
+        }
         return;
       }
       final hasScript = await _webController!.evaluateJavascript(

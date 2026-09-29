@@ -39,9 +39,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   String get _targetLoginUrl {
     final email = AuthService().currentUser?.email?.trim();
     if (email != null && email.isNotEmpty) {
-      return "https://accounts.google.com/ServiceLogin?continue=https://notebook.google.com/&Email=${Uri.encodeComponent(email)}&login_hint=${Uri.encodeComponent(email)}";
+      return "https://accounts.google.com/ServiceLogin?continue=https://notebooklm.google.com/&Email=${Uri.encodeComponent(email)}&login_hint=${Uri.encodeComponent(email)}";
     }
-    return "https://accounts.google.com/ServiceLogin?continue=https://notebook.google.com/";
+    return "https://accounts.google.com/ServiceLogin?continue=https://notebooklm.google.com/";
   }
 
   @override
@@ -57,6 +57,9 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     setState(() => _isSessionReady = true);
 
     try {
+      if (AuthService().currentUser == null) {
+        await AuthService().signInAnonymously();
+      }
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('google_session_ready', true);
       final email = AuthService().currentUser?.email?.trim().toLowerCase();
@@ -66,7 +69,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
     } catch (_) {}
 
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.dashboard,
+      (route) => false,
+    );
   }
 
   Future<void> _confirmCancelAndSignOut() async {
@@ -296,24 +303,11 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     },
                     onLoadStop: (controller, url) async {
                       if (!mounted || url == null) return;
-                      final urlStr = url.toString();
-
-                      final cookieManager = DesktopWebViewRuntime.cookies;
-                      final cookies = await cookieManager.getCookies(
-                        url: WebUri("https://notebook.google.com"),
-                      );
-                      final hasSession = cookies.any((c) =>
-                          c.name == 'SID' ||
-                          c.name == 'HSID' ||
-                          c.name == 'SSID' ||
-                          c.name == 'OSID');
-
-                      if (hasSession ||
-                          (NotebookNavigation.notebook(url) &&
-                              !urlStr.contains('ServiceLogin') &&
-                              !urlStr.contains('signin'))) {
-                        await _onSessionAuthenticated();
-                      }
+                      await _checkAndAuthenticateSession(url);
+                    },
+                    onUpdateVisitedHistory: (controller, url, isReload) async {
+                      if (!mounted || url == null) return;
+                      await _checkAndAuthenticateSession(url);
                     },
                   ),
                 ),
@@ -323,5 +317,30 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _checkAndAuthenticateSession(WebUri url) async {
+    final urlStr = url.toString();
+    final cookieManager = DesktopWebViewRuntime.cookies;
+    final cookiesLm = await cookieManager.getCookies(
+      url: WebUri("https://notebooklm.google.com"),
+    );
+    final cookiesNb = await cookieManager.getCookies(
+      url: WebUri("https://notebook.google.com"),
+    );
+    final allCookies = [...cookiesLm, ...cookiesNb];
+    final hasSession = allCookies.any((c) =>
+        c.name == 'SID' ||
+        c.name == 'HSID' ||
+        c.name == 'SSID' ||
+        c.name == 'OSID');
+
+    if (hasSession ||
+        (NotebookNavigation.notebook(url.uriValue) &&
+            !urlStr.contains('ServiceLogin') &&
+            !urlStr.contains('signin') &&
+            !urlStr.contains('accounts.google'))) {
+      await _onSessionAuthenticated();
+    }
   }
 }

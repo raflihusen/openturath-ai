@@ -73,36 +73,45 @@ class _LoginScreenState extends State<LoginScreen> {
       _desktopError = null;
     });
     try {
-      final user = await _authService.signInWithGoogle();
-      if (user != null && mounted) {
-        // Langsung masuk ke Dashboard utama tanpa perantara layar login kedua
-        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
-        return;
-      }
+      // 1x Login terpadu: masuk langsung ke Google Session via browser internal
+      // sehingga kuki sesi Google langsung tersimpan di storage aplikasi.
+      // Seluruh 21 asisten NotebookLM dan Firebase Auth langsung aktif bersamaan tanpa 2x login.
+      if (!mounted) return;
+      await Navigator.pushNamed(context, AppRoutes.googleSessionAuth);
+      return;
     } catch (e) {
       if (!mounted) return;
       final message = e.toString().contains('network') ||
               e.toString().contains('SocketException')
           ? AppCopy.networkError
-          : (e is FirebaseAuthException && e.code.startsWith('desktop-')
-              ? switch (e.code) {
-                  'desktop-listener-unavailable' =>
-                    AppCopy.desktopListenerError,
-                  'desktop-browser-unavailable' =>
-                    AppCopy.desktopBrowserError,
-                  'desktop-login-timeout' => AppCopy.desktopTimeoutError,
-                  _ => e.message ?? AppCopy.googleSignInFailed,
-                }
-              : e is FirebaseAuthException && AppPlatform.isDesktop
-                  ? e.code == 'keychain-error'
-                      ? AppCopy.desktopKeychainError
-                      : '${AppCopy.googleSignInFailed} (${e.code})'
-                  : AppCopy.googleSignInFailed);
+          : AppCopy.googleSignInFailed;
       if (AppPlatform.isDesktop) {
         setState(() => _desktopError = message);
       } else {
         AppSnackBar.error(context, message);
       }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _signInWithExternalBrowser() async {
+    setState(() {
+      _isLoading = true;
+      _desktopError = null;
+    });
+    try {
+      final user = await _authService.signInWithGoogle();
+      if (user != null && mounted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+        return;
+      }
+    } catch (e) {
+      if (!mounted) return;
+      final message = e is FirebaseAuthException
+          ? e.message ?? AppCopy.googleSignInFailed
+          : AppCopy.googleSignInFailed;
+      setState(() => _desktopError = message);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -438,9 +447,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ],
               const SizedBox(height: 16),
-              Text(Loc.tr('desktopBrowserHelp'),
+              GestureDetector(
+                onTap: _isLoading ? null : _signInWithExternalBrowser,
+                child: Text(
+                  '${Loc.tr('desktopBrowserHelp')} (atau buka di Safari)',
                   style: ScholarlyFonts.outfit(
-                      fontSize: 12, color: OTColors.textSecondaryLight)),
+                    fontSize: 12,
+                    color: OTColors.textSecondaryLight,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
               if (!compact) const Spacer(),
               if (compact) const SizedBox(height: 32),
               const Divider(color: OTColors.borderSubtleLight),

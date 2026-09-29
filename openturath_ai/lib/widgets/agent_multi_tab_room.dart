@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/turath_chat_message.dart';
 
 import '../core/app_copy.dart';
@@ -1003,16 +1004,16 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   path.contains('/signin') ||
                   path.contains('/servicelogin')));
       if (isLogin) {
-        _readinessTimer?.cancel();
-        if (mounted) {
+        // Halaman autentikasi Google sedang aktif di dalam WebView internal.
+        // JANGAN batalkan _readinessTimer dan JANGAN blokir tampilan dengan error buntu!
+        // Berikan ruang pada InAppWebView agar pengguna dapat memilih/memasukkan akun
+        // Google secara langsung (inline) dengan dukungan penuh keyboard & mouse.
+        if (mounted && (widget.session.isWebLoading || widget.session.errorMessage != null)) {
           setState(() {
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = false;
-            widget.session.isGooglePermissionError = true;
-            widget.session.isPaywallRequired = false;
-            widget.session.isTimeoutError = false;
-            widget.session.errorMessage =
-                'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda untuk mengakses asisten.';
+            widget.session.isGooglePermissionError = false;
+            widget.session.errorMessage = null;
           });
         }
         return;
@@ -1049,11 +1050,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         await controller.evaluateJavascript(
           source: 'window.otNotebook?.activate()',
         );
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('google_session_ready', true);
+        } catch (_) {}
         if (!mounted) return;
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = true;
+            widget.session.isGooglePermissionError = false;
+            widget.session.errorMessage = null;
             widget.session.isTimeoutError = false;
           });
           _syncInitialHistory();
@@ -1338,12 +1345,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           message: session.errorMessage!,
           icon: icon,
           retryLabel: retryLabel,
-          onRetry: () {
+          onRetry: () async {
             if (isGoogleErr) {
-              NavigationGuard.safePushNamed(
+              await NavigationGuard.safePushNamed(
                 context,
                 AppRoutes.googleSessionAuth,
               );
+              if (mounted && session.webController != null) {
+                setState(() {
+                  session.errorMessage = null;
+                  session.isGooglePermissionError = false;
+                  session.isWebLoading = true;
+                  session.isSessionReady = false;
+                });
+                session.webController!.reload();
+                _startReadinessCheck();
+              }
             } else {
               setState(() {
                 session.errorMessage = null;
@@ -1425,16 +1442,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               if (request.isForMainFrame == true &&
                   mounted &&
                   NotebookNavigation.notebook(requestUri)) {
-                if (code == 401 || code == 403) {
+                if (code == 403) {
                   _readinessTimer?.cancel();
                   setState(() {
                     session.isWebLoading = false;
                     session.isSessionReady = false;
                     session.isGooglePermissionError = true;
                     session.isPaywallRequired = false;
-                    session.errorMessage = code == 401
-                        ? 'Sesi akun Google Anda belum terhubung atau telah kedaluwarsa. Silakan hubungkan akun Google Anda untuk mengakses asisten.'
-                        : 'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
+                    session.errorMessage =
+                        'Akun Google yang aktif belum dapat membuka notebook ini. Periksa akun Google yang digunakan dan izin Viewer pada notebook.';
                   });
                 }
               }
