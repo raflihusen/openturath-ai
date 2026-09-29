@@ -22,8 +22,8 @@ class BookmarkService extends ChangeNotifier {
   BookmarkService.forTesting({
     required Future<List<BookmarkModel>> Function(String uid) readCloud,
     String? currentUserId,
-  }) : _readCloudOverride = readCloud,
-       _currentUserIdOverride = currentUserId;
+  })  : _readCloudOverride = readCloud,
+        _currentUserIdOverride = currentUserId;
 
   final Future<List<BookmarkModel>> Function(String uid)? _readCloudOverride;
   final String? _currentUserIdOverride;
@@ -74,7 +74,9 @@ class BookmarkService extends ChangeNotifier {
 
   String _key(String? userId) {
     final uid = userId ?? _activeAuth?.currentUser?.uid;
-    return uid == null || uid.isEmpty ? _legacyKey : 'openturath_${uid}_saved_bookmarks';
+    return uid == null || uid.isEmpty
+        ? _legacyKey
+        : 'openturath_${uid}_saved_bookmarks';
   }
 
   Future<List<BookmarkModel>> getBookmarks({String? userId}) async =>
@@ -206,7 +208,7 @@ class BookmarkService extends ChangeNotifier {
             final model = BookmarkModel.fromJson(data);
             cloudMap[model.id] = model;
           } catch (_) {}
-          }
+        }
       }
 
       // Read and merge inside one locked update. A snapshot captured before

@@ -36,8 +36,11 @@ class NoteEditorSheet extends StatefulWidget {
         fullscreenDialog: true,
         builder: (_) => NativeTheme(
             child: Scaffold(
-          body: SafeArea(child: NoteEditorSheet(
-            item: item, fullScreen: true, bookmarkService: bookmarkService,
+          body: SafeArea(
+              child: NoteEditorSheet(
+            item: item,
+            fullScreen: true,
+            bookmarkService: bookmarkService,
           )),
         )),
       ),

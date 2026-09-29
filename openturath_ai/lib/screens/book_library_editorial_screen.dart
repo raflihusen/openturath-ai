@@ -468,7 +468,8 @@ class _BookEditorialItem extends StatelessWidget {
                           Icon(Icons.layers_outlined,
                               size: 13, color: textSecondary),
                           const SizedBox(width: 4),
-                          Flexible(child: Text(
+                          Flexible(
+                              child: Text(
                             book.volumeLabel,
                             style: ScholarlyFonts.outfit(
                                 fontSize: 11, color: textSecondary),
@@ -481,7 +482,8 @@ class _BookEditorialItem extends StatelessWidget {
                           Icon(Icons.format_list_numbered_rounded,
                               size: 13, color: textSecondary),
                           const SizedBox(width: 4),
-                          Flexible(child: Text(
+                          Flexible(
+                              child: Text(
                             book.pagesLabel,
                             style: ScholarlyFonts.outfit(
                                 fontSize: 11, color: textSecondary),
@@ -629,7 +631,8 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         children: [
                           Row(
                             children: [
-                              Flexible(child: Container(
+                              Flexible(
+                                  child: Container(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
@@ -823,7 +826,8 @@ class _DetailRow extends StatelessWidget {
           Text(
             displayValue,
             textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(displayValue)
-                ? TextDirection.rtl : null,
+                ? TextDirection.rtl
+                : null,
             style: ScholarlyFonts.outfit(
               fontSize: 14,
               fontWeight: FontWeight.w500,

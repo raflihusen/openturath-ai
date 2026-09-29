@@ -434,9 +434,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       child: Row(
         children: [
           _filterChip(
-            label: hasFilters
-                ? Loc.tr('ui_c0c96d1d9a')
-                : Loc.tr('allBooks'),
+            label: hasFilters ? Loc.tr('ui_c0c96d1d9a') : Loc.tr('allBooks'),
             isSelected: !hasFilters,
             onTap: hasFilters ? _clearFilters : () {},
             isDark: isDark,
@@ -718,7 +716,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
           ),
           for (final century in _centuries)
             _filterChip(
-                label: Loc.text(century),
+              label: Loc.text(century),
               isSelected: _selectedCentury == century,
               onTap: () {
                 setState(() {
@@ -780,8 +778,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                   ),
                   child: Text(
                     AppCopy.tryAgain,
-                    style: OTTypography.button(
-                        color: OTColors.onAccent(isDark)),
+                    style:
+                        OTTypography.button(color: OTColors.onAccent(isDark)),
                   ),
                 ),
               ),
