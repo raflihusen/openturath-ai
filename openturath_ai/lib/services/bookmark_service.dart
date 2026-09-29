@@ -12,9 +12,16 @@ class BookmarkService extends ChangeNotifier {
     if (auth != null) _instance._auth = auth;
     return _instance;
   }
-  BookmarkService._internal() {
+  BookmarkService._internal() : _readCloudOverride = null {
     _initAuthListener();
   }
+
+  @visibleForTesting
+  BookmarkService.forTesting({
+    required Future<List<BookmarkModel>> Function(String uid) readCloud,
+  }) : _readCloudOverride = readCloud;
+
+  final Future<List<BookmarkModel>> Function(String uid)? _readCloudOverride;
 
   FirebaseFirestore? _firestore;
   FirebaseAuth? _auth;
@@ -165,27 +172,33 @@ class BookmarkService extends ChangeNotifier {
       }
 
       final db = _db;
-      if (db == null) {
+      if (db == null && _readCloudOverride == null) {
         return;
       }
 
       // Fetch remotely before acquiring the local write lock.
-      final snapshot = await db
-          .collection('users')
-          .doc(effectiveUid)
-          .collection('bookmarks')
-          .get();
-
       final cloudMap = <String, BookmarkModel>{};
-      for (final doc in snapshot.docs) {
-        try {
-          final data = doc.data();
-          if (!data.containsKey('id') || (data['id'] as String).isEmpty) {
-            data['id'] = doc.id;
+      final readCloud = _readCloudOverride;
+      if (readCloud != null) {
+        for (final bookmark in await readCloud(effectiveUid)) {
+          cloudMap[bookmark.id] = bookmark;
+        }
+      } else {
+        final snapshot = await db!
+            .collection('users')
+            .doc(effectiveUid)
+            .collection('bookmarks')
+            .get();
+        for (final doc in snapshot.docs) {
+          try {
+            final data = doc.data();
+            if (!data.containsKey('id') || (data['id'] as String).isEmpty) {
+              data['id'] = doc.id;
+            }
+            final model = BookmarkModel.fromJson(data);
+            cloudMap[model.id] = model;
+          } catch (_) {}
           }
-          final model = BookmarkModel.fromJson(data);
-          cloudMap[model.id] = model;
-        } catch (_) {}
       }
 
       // Read and merge inside one locked update. A snapshot captured before

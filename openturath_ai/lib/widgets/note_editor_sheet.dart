@@ -94,7 +94,9 @@ class _NoteEditorSheetState extends State<NoteEditorSheet> {
       final savedAt = DateTime.tryParse(map['savedAt'] as String? ?? '');
       if (widget.item != null &&
           savedAt != null &&
-          !savedAt.isAfter(widget.item!.effectiveTime)) return;
+          !savedAt.isAfter(widget.item!.effectiveTime)) {
+        return;
+      }
 
       final initialTitle = widget.item?.title ?? '';
       final initialBody =
