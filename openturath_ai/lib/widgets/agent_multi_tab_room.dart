@@ -30,6 +30,7 @@ import '../services/agent_service.dart';
 import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
+import '../services/native_agent_launcher.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -472,6 +473,21 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         ),
         actions: [
           IconButton(
+            icon: Icon(Icons.open_in_browser_rounded, color: textPrimary, size: 20),
+            tooltip: 'Buka di Browser Asli (Chrome / Safari)',
+            onPressed: () async {
+              final url = activeTab.resolvedUrl;
+              if (url != null) {
+                final opened = await NativeAgentLauncher.launchNotebook(url);
+                if (!opened && context.mounted) {
+                  AppSnackBar.warning(context, 'Gagal membuka browser eksternal.');
+                }
+              } else {
+                AppSnackBar.warning(context, 'Tautan asisten sedang disiapkan...');
+              }
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.menu_book_outlined, color: textPrimary, size: 20),
             tooltip: AppCopy.referenceBooks,
             onPressed: () => _openLibrarySheet(context, activeTab.agent),
@@ -485,7 +501,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               side: BorderSide(color: border, width: 0.8),
             ),
             onSelected: (val) {
-              if (val == 'conversation') {
+              if (val == 'open_browser') {
+                final url = activeTab.resolvedUrl;
+                if (url != null) {
+                  NativeAgentLauncher.launchNotebook(url);
+                }
+              } else if (val == 'conversation') {
                 _copyActiveConversation(activeTab);
               } else if (val == 'language') {
                 activeTab.webController?.evaluateJavascript(
@@ -501,6 +522,18 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               }
             },
             itemBuilder: (ctx) => [
+              PopupMenuItem(
+                value: 'open_browser',
+                child: Row(
+                  children: [
+                    Icon(Icons.open_in_browser_rounded,
+                        color: textPrimary, size: 18),
+                    const SizedBox(width: 12),
+                    Text('Buka di Browser Asli',
+                        style: OTTypography.body(color: textPrimary)),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'language',
                 child: Row(
@@ -804,6 +837,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           if (window.otNotebook && typeof window.otNotebook.setTheme === 'function') {
             window.otNotebook.setTheme($isDark);
           }
+
+          try {
+            if (window.navigator) {
+              Object.defineProperty(navigator, 'webdriver', { get: () => undefined, configurable: true });
+            }
+          } catch(e) {}
         } catch(e) {}
       })();
     ''';
@@ -1008,15 +1047,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         // JANGAN batalkan _readinessTimer dan JANGAN blokir tampilan dengan error buntu!
         // Berikan ruang pada InAppWebView agar pengguna dapat memilih/memasukkan akun
         // Google secara langsung (inline) dengan dukungan penuh keyboard & mouse.
-        if (mounted && (widget.session.isWebLoading || widget.session.errorMessage != null)) {
+        if (mounted && (widget.session.isWebLoading || widget.session.errorMessage != null || !widget.session.isGoogleAuthPage)) {
           setState(() {
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = false;
             widget.session.isGooglePermissionError = false;
+            widget.session.isGoogleAuthPage = true;
             widget.session.errorMessage = null;
           });
         }
         return;
+      } else {
+        if (widget.session.isGoogleAuthPage && mounted) {
+          setState(() {
+            widget.session.isGoogleAuthPage = false;
+          });
+        }
       }
       final hasScript = await controller.evaluateJavascript(
         source:
@@ -1336,7 +1382,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           ? Icons.account_circle_outlined
           : (isTimeout ? Icons.wifi_off_rounded : Icons.info_outline_rounded);
 
-      final retryLabel = isGoogleErr ? 'Ganti Akun Google' : 'Coba lagi';
+      final retryLabel = isGoogleErr ? 'Buka di Browser Asli' : 'Coba lagi';
 
       return Container(
         color: canvas,
@@ -1347,19 +1393,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           retryLabel: retryLabel,
           onRetry: () async {
             if (isGoogleErr) {
-              await NavigationGuard.safePushNamed(
-                context,
-                AppRoutes.googleSessionAuth,
-              );
-              if (mounted && session.webController != null) {
-                setState(() {
-                  session.errorMessage = null;
-                  session.isGooglePermissionError = false;
-                  session.isWebLoading = true;
-                  session.isSessionReady = false;
-                });
-                session.webController!.reload();
-                _startReadinessCheck();
+              final url = session.resolvedUrl;
+              if (url != null) {
+                await NativeAgentLauncher.launchNotebook(url);
               }
             } else {
               setState(() {
@@ -1421,7 +1457,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
               algorithmicDarkeningAllowed: true,
               userAgent: AppPlatform.isDesktop
-                  ? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                  ? AppConstants.desktopSafariUserAgent
                   : AppConstants.chromeMobileUserAgent,
             ),
             onReceivedError: (controller, request, error) {
@@ -1676,6 +1712,91 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 title: session.agent.title,
                 subtitle: AppCopy.loadingReferences,
                 onCancel: () => AgentSessionManager.instance.closeRoom(),
+              ),
+            ),
+
+          // Banner penolong saat sesi Google belum terhubung / halaman login aktif
+          if (session.isGoogleAuthPage)
+            Positioned(
+              top: 16,
+              left: 16,
+              right: 16,
+              child: Material(
+                elevation: 8,
+                borderRadius: BorderRadius.circular(14),
+                color: isDark ? const Color(0xFF27272A) : const Color(0xFFFFFFFF),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: OTColors.accent(isDark).withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.open_in_browser_rounded,
+                          color: OTColors.accent(isDark),
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Akun Google Belum Terhubung di Sini',
+                              style: ScholarlyFonts.outfit(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : const Color(0xFF18181B),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Buka langsung di browser utama (Chrome / Safari) yang sudah terhubung dengan akun Google Anda tanpa kendala keamanan.',
+                              style: ScholarlyFonts.outfit(
+                                fontSize: 11,
+                                color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: OTColors.accent(isDark),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          elevation: 0,
+                        ),
+                        icon: const Icon(Icons.open_in_browser_rounded, size: 16),
+                        label: Text(
+                          'Buka di Browser',
+                          style: ScholarlyFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
+                        ),
+                        onPressed: () async {
+                          final url = session.resolvedUrl;
+                          if (url != null) {
+                            await NativeAgentLauncher.launchNotebook(url);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
         ],

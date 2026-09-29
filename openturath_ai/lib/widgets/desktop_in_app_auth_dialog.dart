@@ -27,7 +27,7 @@ class DesktopInAppAuthDialog extends StatefulWidget {
       'https://open-turath.firebaseapp.com/desktop-auth.html?mode=inapp';
 
   static const String desktopUserAgent =
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+      AppConstants.desktopSafariUserAgent;
 
   /// Menampilkan layar autentikasi in-app sebagai full-screen route
   /// untuk menjamin responsivitas penuh keyboard, touchpad, dan pointer.

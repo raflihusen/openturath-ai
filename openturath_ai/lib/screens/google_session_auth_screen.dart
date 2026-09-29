@@ -9,7 +9,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../core/scholarly_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:url_launcher/url_launcher.dart';
 import '../core/app_copy.dart';
+import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/notebook_navigation.dart';
 import '../core/theme.dart';
@@ -32,9 +34,6 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
   InAppWebViewController? _webController;
   bool _isSessionReady = false;
   final ValueNotifier<double> _loadProgress = ValueNotifier<double>(0.0);
-
-  static const String _chromeUserAgent =
-      "Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.127 Mobile Safari/537.36";
 
   String get _targetLoginUrl {
     final email = AuthService().currentUser?.email?.trim();
@@ -197,6 +196,14 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
           ),
           actions: [
             IconButton(
+              tooltip: 'Buka di Browser Luar (Chrome / Safari)',
+              icon: Icon(Icons.open_in_browser_rounded, size: 20, color: textSecondary),
+              onPressed: () async {
+                final uri = Uri.parse(_targetLoginUrl);
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              },
+            ),
+            IconButton(
               tooltip: AppCopy.exit,
               icon: Icon(Icons.logout_rounded, size: 20, color: textSecondary),
               onPressed: _confirmCancelAndSignOut,
@@ -269,8 +276,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                     initialSettings: InAppWebViewSettings(
                       incognito: false,
                       userAgent: AppPlatform.isDesktop
-                          ? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-                          : _chromeUserAgent,
+                          ? AppConstants.desktopSafariUserAgent
+                          : AppConstants.chromeMobileUserAgent,
                       javaScriptEnabled: true,
                       domStorageEnabled: true,
                       databaseEnabled: true,

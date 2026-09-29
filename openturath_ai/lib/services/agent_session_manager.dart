@@ -18,6 +18,7 @@ class AgentSessionTab {
   bool isPaywallRequired = false;
   bool isTimeoutError = false;
   bool isGooglePermissionError = false;
+  bool isGoogleAuthPage = false;
   double fontScale = 1.0;
   bool hasAcknowledgedAdab = false;
   bool hasInjectedEarlyScript = false;

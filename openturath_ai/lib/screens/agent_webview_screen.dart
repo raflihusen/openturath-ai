@@ -32,6 +32,7 @@ import '../services/auth_service.dart';
 import '../widgets/legal_document_sheet.dart';
 import '../services/bookmark_service.dart';
 import '../services/telemetry_service.dart';
+import '../services/native_agent_launcher.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
@@ -711,6 +712,18 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               ),
             IconButton(
               icon:
+                  Icon(Icons.open_in_browser_rounded, color: textPrimary, size: 21),
+              tooltip: 'Buka di Browser Asli (Chrome / Safari)',
+              onPressed: () async {
+                if (_agentUrl != null) {
+                  await NativeAgentLauncher.launchNotebook(_agentUrl!);
+                } else {
+                  AppSnackBar.warning(context, 'Tautan asisten sedang disiapkan...');
+                }
+              },
+            ),
+            IconButton(
+              icon:
                   Icon(Icons.menu_book_outlined, color: textPrimary, size: 21),
               tooltip: AppCopy.referenceBooks,
               onPressed: () => showResearchLibrary(context, agent: _agent),
@@ -742,7 +755,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     initialSettings: InAppWebViewSettings(
                       incognito: false,
                       userAgent: AppPlatform.isDesktop
-                          ? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                          ? AppConstants.desktopSafariUserAgent
                           : AppConstants.chromeMobileUserAgent,
                       javaScriptEnabled: true,
                       domStorageEnabled: true,
@@ -1278,6 +1291,19 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   .copyWith(fontSize: 18),
             ),
             const SizedBox(height: 12),
+            ListTile(
+              leading:
+                  Icon(Icons.open_in_browser_rounded, color: textPrimary, size: 20),
+              title: Text('Buka di Browser Asli (Chrome / Safari)',
+                  style: OTTypography.bodyMedium(color: textPrimary)),
+              onTap: () async {
+                Navigator.pop(ctx);
+                if (_agentUrl != null) {
+                  await NativeAgentLauncher.launchNotebook(_agentUrl!);
+                }
+              },
+            ),
+            Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
               leading:
                   Icon(Icons.language_rounded, color: textPrimary, size: 20),

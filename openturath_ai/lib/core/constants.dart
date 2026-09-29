@@ -4,9 +4,13 @@ class AppConstants {
   static const String appNameArabic = 'الذكاء الاصطناعي للعلوم الإسلامية';
   static const String appTagline = 'Membaca kitab, menelusuri ibarah.';
 
-  // ── Chrome Mobile User Agent Resmi (Mitigasi Error 403 Google) ──
+  // ── User Agent Desktop Resmi (Safari macOS untuk WKWebView) ──
+  static const String desktopSafariUserAgent =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15';
+
+  // ── Chrome Mobile User Agent Resmi (Android WebView) ──
   static const String chromeMobileUserAgent =
-      'Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.6613.127 Mobile Safari/537.36';
+      'Mozilla/5.0 (Linux; Android 14; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
 
   // ── Firestore Collections ─────────────────────────────────────
   static const String colUsers = 'users';
