@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:openturath_ai/core/app_config.dart';
 import 'package:openturath_ai/models/bookmark_model.dart';
+import 'package:openturath_ai/services/bookmark_service.dart';
 import 'package:openturath_ai/widgets/note_editor_sheet.dart';
 
 void main() {
@@ -15,11 +16,14 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  Future<void> openEditor(WidgetTester tester, {BookmarkModel? item}) async {
+  Future<void> openEditor(WidgetTester tester, {
+    BookmarkModel? item, BookmarkService? service,
+  }) async {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(body: Builder(builder: (context) {
         return TextButton(
-          onPressed: () => NoteEditorSheet.show(context, item: item),
+          onPressed: () => NoteEditorSheet.show(context,
+            item: item, bookmarkService: service),
           child: const Text('Buka editor'),
         );
       })),
@@ -27,6 +31,48 @@ void main() {
     await tester.tap(find.text('Buka editor'));
     await tester.pumpAndSettle();
   }
+
+  testWidgets('system back flushes changes before the route closes', (tester) async {
+    await openEditor(tester);
+    await tester.enterText(find.byType(TextField).last, 'Draf dari tombol sistem');
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Buka editor'), findsOneWidget);
+    final prefs = await SharedPreferences.getInstance();
+    expect(jsonDecode(prefs.getString('openturath_draft_note_new')!)['body'],
+        'Draf dari tombol sistem');
+  });
+
+  testWidgets('accounts cannot restore each other drafts and legacy data stays intact',
+      (tester) async {
+    const legacy = '{"title":"Legacy","body":"Pemilik belum diketahui"}';
+    SharedPreferences.setMockInitialValues({'openturath_draft_note_new': legacy});
+    final first = BookmarkService.forTesting(readCloud: (_) async => [], currentUserId: 'first');
+    final second = BookmarkService.forTesting(readCloud: (_) async => [], currentUserId: 'second');
+    await openEditor(tester, service: first);
+    expect(tester.widget<TextField>(find.byType(TextField).last).controller!.text, isEmpty);
+    await tester.enterText(find.byType(TextField).last, 'Draf akun pertama');
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+    await tester.pumpAndSettle();
+
+    await openEditor(tester, service: second);
+    expect(tester.widget<TextField>(find.byType(TextField).last).controller!.text, isEmpty);
+    await tester.enterText(find.byType(TextField).last, 'Draf akun kedua');
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+    await tester.pumpAndSettle();
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString('openturath_draft_note_new'), legacy);
+    expect(jsonDecode(prefs.getString('openturath_first_draft_note_new')!)['body'],
+        'Draf akun pertama');
+    expect(jsonDecode(prefs.getString('openturath_second_draft_note_new')!)['body'],
+        'Draf akun kedua');
+
+    await openEditor(tester, service: first);
+    expect(tester.widget<TextField>(find.byType(TextField).last).controller!.text,
+        'Draf akun pertama');
+    await tester.tap(find.byIcon(Icons.arrow_back_rounded));
+    await tester.pumpAndSettle();
+  });
 
   testWidgets('back immediately preserves the latest draft and restores it',
       (tester) async {
