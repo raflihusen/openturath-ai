@@ -14,6 +14,7 @@ Tanggal: 30 September 2026. Semua exit code di bawah diperoleh dari proses yang 
 | `git diff --check` | Exit 0 |
 | Katalog pratinjau vs katalog asli | SHA-256 identik; 87 record |
 | GET hosting `desktop-auth.html` pada `web.app` dan `firebaseapp.com` | HTTP 200; penanda `openturath-desktop-auth-v3` |
+| GET script yang sudah dihosting pada `firebaseapp.com/desktop-auth.js` | HTTP 200; `authDomain` sama, origin `firebaseapp.com` diterima oleh script, callback loopback memakai form POST, mode embedded bersifat opsional |
 
 Delapan tes transport adalah bagian dari suite yang sama, bukan tambahan sehingga totalnya menjadi 260. Setelah domain login diubah, bagian transport dijalankan ulang secara terarah. Analisis dan build final mencakup perubahan domain tersebut.
 
