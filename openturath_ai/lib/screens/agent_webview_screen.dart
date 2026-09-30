@@ -4,7 +4,6 @@ import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
