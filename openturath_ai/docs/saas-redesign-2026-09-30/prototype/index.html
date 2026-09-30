@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <title>OpenTurath — Pratinjau pustaka</title>
+  <link rel="preload" href="assets/NativeInter.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/NotoSansArabic.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="workspace.css">
+  <script defer src="workspace.js"></script>
+</head>
+<body>
+  <a class="skip" href="#content">Lewati navigasi</a>
+  <aside class="sidebar" aria-label="Navigasi utama">
+    <a class="brand" href="#asisten" aria-label="OpenTurath, asisten"><img src="assets/mark.svg" width="24" height="28" alt=""><span translate="no">OpenTurath</span></a>
+    <button class="sidebar-search" data-action="search"><span data-icon="search"></span><span>Cari kitab</span><kbd>⌘ K</kbd></button>
+    <nav class="main-nav">
+      <a href="#asisten" data-nav="asisten"><span data-icon="chat"></span>Asisten</a>
+      <a href="#pustaka" data-nav="pustaka"><span data-icon="library"></span>Pustaka</a>
+      <a href="#catatan" data-nav="catatan"><span data-icon="note"></span>Catatan</a>
+    </nav>
+    <div class="collection-nav"><span class="nav-label">Katalog pratinjau</span><a href="#pustaka" data-collection="syafii"><span data-icon="book"></span><span>Fikih Syafi’i</span><span class="nav-count">87</span></a></div>
+    <div class="sidebar-bottom"><a href="#akun" data-nav="akun"><span data-icon="settings"></span>Akun & koneksi</a><span class="local-label">Pratinjau lokal</span></div>
+  </aside>
+  <div class="app">
+    <header class="topbar"><div class="crumb"><img class="mobile-brand" src="assets/mark.svg" width="20" height="24" alt="OpenTurath"><a id="parent-crumb" href="#pustaka">Pustaka</a><span class="crumb-divider">/</span><span id="current-crumb">Fikih Syafi’i</span></div><div class="topbar-actions"><span class="preview-label">Pratinjau desain</span><button class="icon-button" data-action="theme" aria-label="Gunakan tampilan gelap"><span data-icon="sun"></span></button><button class="icon-button mobile-search" data-action="search" aria-label="Cari kitab"><span data-icon="search"></span></button></div></header>
+    <main id="content" tabindex="-1"><div class="loading" role="status">Memuat katalog…</div></main>
+  </div>
+  <nav class="mobile-nav" aria-label="Navigasi utama seluler"><a href="#asisten" data-nav="asisten"><span data-icon="chat"></span>Asisten</a><a href="#pustaka" data-nav="pustaka"><span data-icon="library"></span>Pustaka</a><a href="#catatan" data-nav="catatan"><span data-icon="note"></span>Catatan</a><a href="#akun" data-nav="akun"><span data-icon="settings"></span>Akun</a></nav>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
