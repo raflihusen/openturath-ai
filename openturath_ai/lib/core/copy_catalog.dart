@@ -639,8 +639,8 @@ const copyCatalog = <String, List<String>>{
     "جارٍ الاتصال بجوجل…"
   ],
   "desktopBrowserHelp": [
-    "Autentikasi terhubung langsung di dalam aplikasi.",
-    "Direct in-app authentication without external browser.",
-    "مصادقة مباشرة داخل التطبيق دون متصفح خارجي."
+    "Google dibuka di browser untuk masuk. Setelah selesai, kembali ke OpenTurath.",
+    "Sign in to Google in your browser, then return to OpenTurath.",
+    "سجّل الدخول إلى جوجل في المتصفح، ثم عد إلى OpenTurath."
   ],
 };
