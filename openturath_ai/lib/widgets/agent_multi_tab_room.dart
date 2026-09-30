@@ -41,7 +41,8 @@ class AgentMultiTabRoom extends StatefulWidget {
 
   /// Dialog pemilihan akun Google khusus untuk asisten NotebookLM.
   /// Memastikan browser eksternal membuka akun yang tepat (/u/<index> atau AccountChooser).
-  static Future<void> showChangeGoogleAccountDialog(BuildContext context) async {
+  static Future<void> showChangeGoogleAccountDialog(
+      BuildContext context) async {
     final currentEmail = await NativeAgentLauncher.getActiveNotebookEmail();
     if (!context.mounted) return;
     final controller = TextEditingController(text: currentEmail);
@@ -54,7 +55,8 @@ class AgentMultiTabRoom extends StatefulWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            Icon(Icons.manage_accounts_rounded, color: OTColors.accent(isDark), size: 22),
+            Icon(Icons.manage_accounts_rounded,
+                color: OTColors.accent(isDark), size: 22),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -76,7 +78,8 @@ class AgentMultiTabRoom extends StatefulWidget {
               'Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul / notebook turats Anda. Browser akan langsung memilih akun ini tanpa salah masuk ke akun lain (/u/0/).',
               style: ScholarlyFonts.outfit(
                 fontSize: 12,
-                color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                color:
+                    isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
               ),
             ),
             const SizedBox(height: 14),
@@ -92,14 +95,18 @@ class AgentMultiTabRoom extends StatefulWidget {
                 hintText: 'nama@gmail.com',
                 prefixIcon: const Icon(Icons.email_outlined, size: 18),
                 filled: true,
-                fillColor: isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                fillColor:
+                    isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
-                    color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                    color: isDark
+                        ? const Color(0xFF3F3F46)
+                        : const Color(0xFFE4E4E7),
                   ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               ),
             ),
           ],
@@ -109,7 +116,8 @@ class AgentMultiTabRoom extends StatefulWidget {
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               'Batal',
-              style: ScholarlyFonts.outfit(color: isDark ? Colors.white70 : Colors.black87),
+              style: ScholarlyFonts.outfit(
+                  color: isDark ? Colors.white70 : Colors.black87),
             ),
           ),
           if (AuthService().currentUser?.email != null)
@@ -126,7 +134,8 @@ class AgentMultiTabRoom extends StatefulWidget {
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: OTColors.accent(isDark),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
             child: Text(
@@ -364,7 +373,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
     );
   }
 
-  void _confirmDeleteChatHistory(BuildContext context, AgentSessionTab session) {
+  void _confirmDeleteChatHistory(
+      BuildContext context, AgentSessionTab session) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = OTColors.surface(isDark);
     final border = OTColors.border(isDark);
@@ -521,9 +531,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                           isActive
                               ? Icons.radio_button_checked_rounded
                               : Icons.radio_button_unchecked_rounded,
-                          color: isActive
-                              ? OTColors.marja(isDark)
-                              : textSecondary,
+                          color:
+                              isActive ? OTColors.marja(isDark) : textSecondary,
                           size: 20,
                         ),
                         title: Text(
@@ -531,9 +540,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                           style: OTTypography.bodyMedium(
                             color: isActive ? textPrimary : textSecondary,
                           ).copyWith(
-                            fontWeight: isActive
-                                ? FontWeight.w600
-                                : FontWeight.w400,
+                            fontWeight:
+                                isActive ? FontWeight.w600 : FontWeight.w400,
                           ),
                         ),
                         trailing: IconButton(
@@ -662,8 +670,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 value: 'language',
                 child: Row(
                   children: [
-                    Icon(Icons.language_rounded,
-                        color: textPrimary, size: 18),
+                    Icon(Icons.language_rounded, color: textPrimary, size: 18),
                     const SizedBox(width: 12),
                     Text('Bahasa Output',
                         style: OTTypography.body(color: textPrimary)),
@@ -711,8 +718,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   value: 'switch_session',
                   child: Row(
                     children: [
-                      Icon(Icons.tab_rounded,
-                          color: textPrimary, size: 18),
+                      Icon(Icons.tab_rounded, color: textPrimary, size: 18),
                       const SizedBox(width: 12),
                       Text('Sesi Asisten Terbuka (${sessions.length})',
                           style: OTTypography.body(color: textPrimary)),
@@ -1053,8 +1059,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     ''';
 
     return UserScript(
-      source:
-          '$_turatsMasterScript\n$notebookUiScript\n$themeInitScript',
+      source: '$_turatsMasterScript\n$notebookUiScript\n$themeInitScript',
       injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
       forMainFrameOnly: true,
     );
@@ -1263,7 +1268,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
         // JANGAN batalkan _readinessTimer dan JANGAN blokir tampilan dengan error buntu!
         // Berikan ruang pada InAppWebView agar pengguna dapat memilih/memasukkan akun
         // Google secara langsung (inline) dengan dukungan penuh keyboard & mouse.
-        if (mounted && (widget.session.isWebLoading || widget.session.errorMessage != null || !widget.session.isGoogleAuthPage)) {
+        if (mounted &&
+            (widget.session.isWebLoading ||
+                widget.session.errorMessage != null ||
+                !widget.session.isGoogleAuthPage)) {
           setState(() {
             widget.session.isWebLoading = false;
             widget.session.isSessionReady = false;
@@ -1683,7 +1691,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onCreateWindow: (controller, createWindowAction) async {
               final targetUrl = createWindowAction.request.url;
               if (targetUrl != null) {
-                await controller.loadUrl(urlRequest: URLRequest(url: targetUrl));
+                await controller.loadUrl(
+                    urlRequest: URLRequest(url: targetUrl));
                 return true;
               }
               return false;
@@ -1812,8 +1821,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         if (session.chatMessages.isNotEmpty &&
                             !session.chatMessages.last.isUser) {
                           final last = session.chatMessages.last;
-                          session.chatMessages[session.chatMessages.length - 1] =
-                              last.copyWith(text: currentText);
+                          session.chatMessages[session.chatMessages.length -
+                              1] = last.copyWith(text: currentText);
                         } else {
                           session.chatMessages.add(TurathChatMessage(
                             id: 'bot_${DateTime.now().millisecondsSinceEpoch}',
@@ -1966,7 +1975,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               ),
             ),
 
-        // Fullscreen pulsing loader hanya saat inisialisasi awal
+          // Fullscreen pulsing loader hanya saat inisialisasi awal
           if (!session.isSessionReady && session.isWebLoading)
             Positioned.fill(
               child: AppLoader.fullscreen(
@@ -1985,13 +1994,17 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               child: Material(
                 elevation: 8,
                 borderRadius: BorderRadius.circular(14),
-                color: isDark ? const Color(0xFF27272A) : const Color(0xFFFFFFFF),
+                color:
+                    isDark ? const Color(0xFF27272A) : const Color(0xFFFFFFFF),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFE4E4E7),
+                      color: isDark
+                          ? const Color(0xFF3F3F46)
+                          : const Color(0xFFE4E4E7),
                       width: 1,
                     ),
                   ),
@@ -2000,7 +2013,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: OTColors.accent(isDark).withValues(alpha: 0.12),
+                          color:
+                              OTColors.accent(isDark).withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -2067,10 +2081,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       TextButton(
                         style: TextButton.styleFrom(
                           visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
                         ),
                         onPressed: () async {
-                          await AgentMultiTabRoom.showChangeGoogleAccountDialog(context);
+                          await AgentMultiTabRoom.showChangeGoogleAccountDialog(
+                              context);
                           if (mounted) setState(() {});
                         },
                         child: Text(
@@ -2078,7 +2094,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                           style: ScholarlyFonts.outfit(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                            color: isDark
+                                ? const Color(0xFFA1A1AA)
+                                : const Color(0xFF71717A),
                           ),
                         ),
                       ),
@@ -2087,14 +2105,18 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         style: ElevatedButton.styleFrom(
                           backgroundColor: OTColors.accent(isDark),
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
                           elevation: 0,
                         ),
-                        icon: const Icon(Icons.open_in_browser_rounded, size: 16),
+                        icon:
+                            const Icon(Icons.open_in_browser_rounded, size: 16),
                         label: Text(
                           'Buka di Browser',
-                          style: ScholarlyFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
+                          style: ScholarlyFonts.outfit(
+                              fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                         onPressed: () async {
                           final url = session.resolvedUrl;

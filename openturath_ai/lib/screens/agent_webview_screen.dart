@@ -831,7 +831,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   ),
                 ),
               ),
-
             IconButton(
               icon:
                   Icon(Icons.menu_book_outlined, color: textPrimary, size: 21),
@@ -876,7 +875,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       clearCache: false,
                       clearSessionCache: false,
                       useHybridComposition: true,
-                      mixedContentMode: MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
+                      mixedContentMode:
+                          MixedContentMode.MIXED_CONTENT_NEVER_ALLOW,
                       supportMultipleWindows: true,
                       javaScriptCanOpenWindowsAutomatically: true,
                       isInspectable: true,
@@ -895,7 +895,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     onCreateWindow: (controller, createWindowAction) async {
                       final targetUrl = createWindowAction.request.url;
                       if (targetUrl != null) {
-                        await controller.loadUrl(urlRequest: URLRequest(url: targetUrl));
+                        await controller.loadUrl(
+                            urlRequest: URLRequest(url: targetUrl));
                         return true;
                       }
                       return false;
@@ -957,7 +958,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         handlerName: 'otDismissMenu',
                         callback: (args) {
                           if (mounted) {
-                            final nav = Navigator.of(context, rootNavigator: false);
+                            final nav =
+                                Navigator.of(context, rootNavigator: false);
                             if (nav.canPop()) {
                               nav.pop();
                             }

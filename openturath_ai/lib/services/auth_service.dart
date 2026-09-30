@@ -149,7 +149,6 @@ class AuthService {
         fallbackName: displayName,
         fallbackEmail: email,
       );
-
     } catch (e) {
       rethrow;
     }

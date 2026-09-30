@@ -93,7 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ? switch (e.code) {
                   'desktop-listener-unavailable' =>
                     AppCopy.desktopListenerError,
-                  'desktop-browser-unavailable' || 'browser-unavailable' =>
+                  'desktop-browser-unavailable' ||
+                  'browser-unavailable' =>
                     AppCopy.desktopBrowserError,
                   'desktop-login-timeout' => AppCopy.desktopTimeoutError,
                   _ => e.message ?? AppCopy.googleSignInFailed,
