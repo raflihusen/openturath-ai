@@ -633,22 +633,42 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             onOpened: () {
               setState(() => activeTab.isMenuOpen = true);
               activeTab.webController?.evaluateJavascript(
-                source:
-                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(true);',
+                source: '''
+(function() {
+  if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(true);
+  var old = document.getElementById('ot-menu-backdrop');
+  if (old) old.remove();
+  var b = document.createElement('div');
+  b.id = 'ot-menu-backdrop';
+  b.style.cssText = 'position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100vh!important;z-index:2147483647!important;background:transparent!important;cursor:default!important;-webkit-tap-highlight-color:transparent!important;';
+  function dismiss(e) {
+    try { e.preventDefault(); e.stopPropagation(); } catch (_) {}
+    b.remove();
+    if (window.flutter_inappwebview && window.flutter_inappwebview.callHandler) {
+      window.flutter_inappwebview.callHandler('otDismissMenu');
+    }
+  }
+  b.addEventListener('pointerdown', dismiss, true);
+  b.addEventListener('mousedown', dismiss, true);
+  b.addEventListener('touchstart', dismiss, true);
+  b.addEventListener('click', dismiss, true);
+  (document.body || document.documentElement).appendChild(b);
+})();
+''',
               );
             },
             onCanceled: () {
               setState(() => activeTab.isMenuOpen = false);
               activeTab.webController?.evaluateJavascript(
                 source:
-                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(false);',
+                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(false); var b = document.getElementById("ot-menu-backdrop"); if (b) b.remove();',
               );
             },
             onSelected: (val) {
               setState(() => activeTab.isMenuOpen = false);
               activeTab.webController?.evaluateJavascript(
                 source:
-                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(false);',
+                    'if (typeof window.otSetMenuOpen === "function") window.otSetMenuOpen(false); var b = document.getElementById("ot-menu-backdrop"); if (b) b.remove();',
               );
               if (val == 'conversation') {
                 _copyActiveConversation(activeTab);
@@ -1871,9 +1891,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 handlerName: 'otDismissMenu',
                 callback: (args) {
                   if (mounted) {
+                    setState(() => session.isMenuOpen = false);
                     final nav = Navigator.of(context, rootNavigator: false);
                     if (nav.canPop()) {
                       nav.pop();
+                    } else {
+                      final rootNav = Navigator.of(context, rootNavigator: true);
+                      if (rootNav.canPop()) {
+                        rootNav.pop();
+                      }
                     }
                   }
                   return true;
@@ -1966,9 +1992,19 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
+                  setState(() => session.isMenuOpen = false);
+                  session.webController?.evaluateJavascript(
+                    source:
+                        'var b = document.getElementById("ot-menu-backdrop"); if (b) b.remove();',
+                  );
                   final nav = Navigator.of(context, rootNavigator: false);
                   if (nav.canPop()) {
                     nav.pop();
+                  } else {
+                    final rootNav = Navigator.of(context, rootNavigator: true);
+                    if (rootNav.canPop()) {
+                      rootNav.pop();
+                    }
                   }
                 },
                 child: const ColoredBox(color: Colors.transparent),
