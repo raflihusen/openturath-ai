@@ -81,3 +81,5 @@ Layar konseptual dengan NotebookLM di tengah belum membuktikan bahwa situs Googl
 Jalur lama `DesktopInAppAuthDialog` masih ada sebagai kode yang tidak dipanggil layar login. Jalur `GoogleSessionAuthScreen` juga belum dimigrasikan. Keberadaan keduanya tidak boleh dipakai untuk menyatakan integrasi NotebookLM sudah diperbaiki menyeluruh. Tidak ada perubahan pada halaman hosting yang disebarkan dari pekerjaan ini.
 
 Petunjuk checkpoint: [RESTORE.md](RESTORE.md). Status satu login: **belum selesai**, menunggu keputusan wadah dan verifikasi autentikasi nyata.
+
+Hasil tes, build, batas bukti visual, dan pemeriksaan yang belum dapat dilakukan tercatat pada [VERIFICATION.md](VERIFICATION.md).
