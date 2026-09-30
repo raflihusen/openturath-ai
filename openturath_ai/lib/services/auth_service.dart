@@ -121,9 +121,9 @@ class AuthService {
     }
   }
 
-  // ── In-App Desktop Google Sign In ──────────────────────────────
-  /// Menerima idToken dari InAppWebView (WKWebView), mengautentikasi Firebase Auth,
-  /// sekaligus mencatat kuki sesi Google aktif untuk NotebookLM (1x login).
+  // ── Desktop token compatibility ───────────────────────────────
+  /// Authenticates Firebase only. A Google ID token does not establish a
+  /// NotebookLM browser session; readiness must be checked in that session.
   Future<UserModel?> signInWithDesktopGoogleToken({
     required String idToken,
     String? email,
@@ -144,24 +144,12 @@ class AuthService {
       }
       if (firebaseUser == null) return null;
 
-      final userModel = await _resolveOrCreateFirebaseUser(
+      return await _resolveOrCreateFirebaseUser(
         firebaseUser,
         fallbackName: displayName,
         fallbackEmail: email,
       );
 
-      // Simpan penanda bahwa sesi kuki Google di WKWebView sudah siap
-      try {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('google_session_ready', true);
-        final effectiveEmail = firebaseUser.email ?? email ?? '';
-        if (effectiveEmail.isNotEmpty) {
-          await prefs.setString(
-              'google_session_email', effectiveEmail.trim().toLowerCase());
-        }
-      } catch (_) {}
-
-      return userModel;
     } catch (e) {
       rethrow;
     }
