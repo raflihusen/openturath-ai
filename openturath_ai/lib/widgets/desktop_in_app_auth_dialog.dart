@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -66,9 +67,15 @@ class _DesktopInAppAuthDialogState extends State<DesktopInAppAuthDialog> {
     try {
       final credential = await DesktopGoogleSignIn.signIn();
       if (credential != null && credential.idToken != null) {
+        String? email;
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          email = prefs.getString('google_session_email') ??
+              prefs.getString('notebook_google_email');
+        } catch (_) {}
         _finishWithResult({
           'idToken': credential.idToken!,
-          'email': null,
+          'email': email,
           'name': null,
         });
       }
