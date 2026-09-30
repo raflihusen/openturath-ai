@@ -85,7 +85,7 @@ async function handleAuthSuccess(credential, user) {
   } else if (validLoopback) {
     try { sessionStorage.removeItem('ot_cb'); } catch (_) {}
     try { sessionStorage.removeItem('ot_st'); } catch (_) {}
-    finishLoopback({ idToken });
+    finishLoopback({ idToken, email, name });
   }
 }
 

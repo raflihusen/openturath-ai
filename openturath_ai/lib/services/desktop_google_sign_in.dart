@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Browser-based Firebase Google login. Tokens arrive by POST to a short-lived
@@ -86,6 +87,15 @@ class DesktopGoogleSignIn {
         final idToken = fields['idToken'];
         if (fields['cancel'] != '1' && (idToken == null || idToken.isEmpty)) {
           throw const FormatException('Missing credential');
+        }
+        final email = fields['email']?.trim().toLowerCase();
+        if (email != null && email.isNotEmpty) {
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('google_session_email', email);
+            await prefs.setString('notebook_google_email', email);
+            await prefs.setBool('google_session_ready', true);
+          } catch (_) {}
         }
         request.response.headers.contentType = ContentType.html;
         request.response.write(

@@ -1642,7 +1642,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             if (isGoogleErr) {
               final url = session.resolvedUrl;
               if (url != null) {
-                await NativeAgentLauncher.launchNotebook(url);
+                final email =
+                    await NativeAgentLauncher.getActiveNotebookEmail();
+                await NativeAgentLauncher.launchNotebook(url,
+                    email: email.isNotEmpty ? email : null);
               }
             } else {
               setState(() {
@@ -2064,9 +2067,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         child: FutureBuilder<String>(
                           future: NativeAgentLauncher.getActiveNotebookEmail(),
                           builder: (context, snapshot) {
-                            final targetEmail = snapshot.data ??
-                                _authService.currentUser?.email ??
-                                'Google';
+                            final activeEmail = snapshot.data?.trim() ?? '';
+                            final targetEmail = activeEmail.isNotEmpty
+                                ? activeEmail
+                                : (_authService.currentUser?.email?.trim() ??
+                                    '');
+                            final displayEmail = targetEmail.isNotEmpty
+                                ? targetEmail
+                                : 'Google';
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -2084,7 +2092,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                                     ),
                                     Flexible(
                                       child: Text(
-                                        targetEmail,
+                                        displayEmail,
                                         style: ScholarlyFonts.outfit(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
@@ -2157,7 +2165,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         onPressed: () async {
                           final url = session.resolvedUrl;
                           if (url != null) {
-                            await NativeAgentLauncher.launchNotebook(url);
+                            final email = await NativeAgentLauncher
+                                .getActiveNotebookEmail();
+                            await NativeAgentLauncher.launchNotebook(url,
+                                email: email.isNotEmpty ? email : null);
                           }
                         },
                       ),

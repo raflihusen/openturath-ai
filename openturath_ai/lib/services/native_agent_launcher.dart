@@ -18,9 +18,15 @@ class NativeAgentLauncher {
   static Future<String> getActiveNotebookEmail() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final custom = prefs.getString(_prefNotebookEmailKey)?.trim().toLowerCase();
+      final custom =
+          prefs.getString(_prefNotebookEmailKey)?.trim().toLowerCase();
       if (custom != null && custom.isNotEmpty) {
         return custom;
+      }
+      final sessionEmail =
+          prefs.getString('google_session_email')?.trim().toLowerCase();
+      if (sessionEmail != null && sessionEmail.isNotEmpty) {
+        return sessionEmail;
       }
     } catch (_) {}
     return AuthService().currentUser?.email?.trim().toLowerCase() ?? '';
@@ -35,6 +41,7 @@ class NativeAgentLauncher {
         await prefs.remove(_prefNotebookEmailKey);
       } else {
         await prefs.setString(_prefNotebookEmailKey, clean);
+        await prefs.setString('google_session_email', clean);
       }
     } catch (_) {}
   }

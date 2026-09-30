@@ -115,7 +115,17 @@ class AuthService {
       }
 
       if (firebaseUser == null) return null;
-      return await _resolveOrCreateFirebaseUser(firebaseUser);
+      final userModel = await _resolveOrCreateFirebaseUser(firebaseUser);
+      final effectiveEmail = firebaseUser.email?.trim().toLowerCase();
+      if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('google_session_email', effectiveEmail);
+          await prefs.setString('notebook_google_email', effectiveEmail);
+          await prefs.setBool('google_session_ready', true);
+        } catch (_) {}
+      }
+      return userModel;
     } catch (e) {
       rethrow;
     }
@@ -144,11 +154,24 @@ class AuthService {
       }
       if (firebaseUser == null) return null;
 
-      return await _resolveOrCreateFirebaseUser(
+      final userModel = await _resolveOrCreateFirebaseUser(
         firebaseUser,
         fallbackName: displayName,
         fallbackEmail: email,
       );
+
+      final effectiveEmail =
+          (firebaseUser.email ?? email)?.trim().toLowerCase();
+      if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('google_session_email', effectiveEmail);
+          await prefs.setString('notebook_google_email', effectiveEmail);
+          await prefs.setBool('google_session_ready', true);
+        } catch (_) {}
+      }
+
+      return userModel;
     } catch (e) {
       rethrow;
     }
