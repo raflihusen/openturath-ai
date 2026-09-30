@@ -22,7 +22,12 @@ function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));re
 let notes=read(storageKey,[]);if(!Array.isArray(notes))notes=[];
 let toastTimer;
 function toast(message){const el=document.querySelector('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),3500);}
-function bookFeature(book){return `<div class="book-feature"><p class="eyebrow">DARI KATALOG FIKIH SYAFI’I</p><div class="book-rule"></div><h2 class="arabic" lang="ar" dir="rtl">${escapeHtml(book?.الاسم_المختصر || 'الأم')}</h2><p class="arabic" lang="ar" dir="rtl">${book?.id===1?'للإمام الشافعي':escapeHtml(book?.المؤلف || '')}</p><div class="book-rule"></div><p class="fine">${escapeHtml(book?.jilid || '')} jilid · ${escapeHtml(book?.pages || '')} halaman</p></div>`;}
+function extent(book){
+ const volumes=book?.jilid || book?.volumes || book?.عدد_الأجزاء;
+ const pages=book?.pages || book?.jumlah_halaman || book?.عدد_الصفحات;
+ return [volumes ? `${volumes} jilid` : '', pages ? `${pages} halaman` : ''].filter(Boolean).join(' · ') || 'Jumlah belum tercatat';
+}
+function bookFeature(book){return `<div class="book-feature"><p class="eyebrow">DARI KATALOG FIKIH SYAFI’I</p><div class="book-rule"></div><h2 class="arabic" lang="ar" dir="rtl">${escapeHtml(book?.الاسم_المختصر || 'الأم')}</h2><p class="arabic" lang="ar" dir="rtl">${book?.id===1?'للإمام الشافعي':escapeHtml(book?.المؤلف || '')}</p><div class="book-rule"></div><p class="fine">${escapeHtml(extent(book))}</p></div>`;}
 function renderKajian(){
  root.innerHTML=`<div class="workspace"><section><div class="welcome"><p class="eyebrow">RUANG KAJIAN</p><h1>Mulai sebuah telaah.</h1><p>Pilih bidang kajian, buka NotebookLM, lalu simpan hasil telaah Anda bersama rujukannya.</p></div><div class="section-top"><h2>Pilih ruang telaah</h2><a class="text-button" href="#pustaka">Jelajahi pustaka ${icon('arrow')}</a></div><div class="module-list"><button class="module" data-module="Fikih Syafi’i"><span class="module-mark" lang="ar">ش</span><span><h3>Fikih Syafi’i</h3><p>Telusuri pendapat, ibarah, dan konteks dalam mazhab.</p><small>${books.length} judul pada katalog lokal</small></span>${icon('arrow')}</button><button class="module" data-module="Fikih Tahawwulat"><span class="module-mark" lang="ar">ت</span><span><h3>Fikih Tahawwulat</h3><p>Kaji istilah dan pemikiran dalam fikih perubahan.</p><small>Contoh navigasi ruang kajian</small></span>${icon('arrow')}</button><button class="module" data-module="Hadits & Syarah"><span class="module-mark" lang="ar">ح</span><span><h3>Hadits & Syarah</h3><p>Baca penjelasan dan hubungkan pembahasan antar sumber.</p><small>Contoh navigasi ruang kajian</small></span>${icon('arrow')}</button></div><div class="start-note">${icon('note')}<p>Catat hal yang penting saat menelaah.<br><a class="text-button" href="#catatan">Buka catatan Anda ${icon('arrow')}</a></p></div></section><aside class="reference-rail" aria-label="Pilihan dari pustaka"><div class="rail-heading"><span>Dari pustaka</span>${icon('book')}</div>${bookFeature(books[0])}<p>Periksa pengarang dan edisi sebelum mulai menelaah.</p><button class="text-button" data-book="1">Lihat metadata kitab ${icon('arrow')}</button><hr class="rail-divider"><p class="eyebrow">KENALI SUMBERNYA</p><button class="mini-book" data-book="2"><h3 lang="ar" dir="rtl">الأمر والنهي على معنى الشافعي</h3><p>1 jilid · 384 halaman</p></button><button class="mini-book" data-book="3"><h3 lang="ar" dir="rtl">المختصر من علم الشافعي</h3><p>3 jilid · 2.107 halaman</p></button></aside></div>`;
 }
@@ -45,13 +50,13 @@ function renderBooks(){
  });
  if(document.querySelector('#sort').value==='name') result=result.slice().sort((a,b)=>String(a.الكتاب).localeCompare(String(b.الكتاب),'ar'));
  document.querySelector('#result-count').textContent=`${result.length} dari ${books.length} judul · metadata dari katalog aplikasi`;
- document.querySelector('#catalog-grid').innerHTML=result.length?result.map(book=>`<button class="catalog-card" data-book="${book.id}" aria-label="Lihat metadata ${escapeHtml(book.الكتاب)}"><span class="book-number">FIKIH SYAFI’I · ${String(book.id).padStart(2,'0')}</span><h2 lang="ar">${escapeHtml(book.الاسم_المختصر || book.الكتاب)}</h2><p lang="ar">${escapeHtml(book.المؤلف)}</p><span class="card-meta"><span>${escapeHtml(book.jilid)} jilid · ${escapeHtml(book.pages)} halaman</span>${icon('arrow')}</span></button>`).join(''):`<div class="empty"><h2>Kitab belum ditemukan.</h2><p>Coba judul Arab yang lebih singkat, nama pengarang, atau ubah filter periode.</p><button class="secondary" id="clear-search">Hapus pencarian</button></div>`;
+ document.querySelector('#catalog-grid').innerHTML=result.length?result.map(book=>`<button class="catalog-card" data-book="${book.id}" aria-label="Lihat metadata ${escapeHtml(book.الكتاب)}"><span class="book-number">FIKIH SYAFI’I · ${String(book.id).padStart(2,'0')}</span><h2 lang="ar">${escapeHtml(book.الاسم_المختصر || book.الكتاب)}</h2><p lang="ar">${escapeHtml(book.المؤلف)}</p><span class="card-meta"><span>${escapeHtml(extent(book))}</span>${icon('arrow')}</span></button>`).join(''):`<div class="empty"><h2>Kitab belum ditemukan.</h2><p>Coba judul Arab yang lebih singkat, nama pengarang, atau ubah filter periode.</p><button class="secondary" id="clear-search">Hapus pencarian</button></div>`;
 }
 function showBook(id){
  const book=books.find(b=>Number(b.id)===Number(id));if(!book)return;
  selectedBook=book;
  const dialog=document.querySelector('#book-dialog');
- dialog.innerHTML=`<button class="close icon-button" data-close="book-dialog" aria-label="Tutup metadata">${icon('close')}</button><p class="eyebrow">METADATA KITAB · FIKIH SYAFI’I</p><div class="book-dialog-heading"><h2 id="book-title" lang="ar" dir="rtl">${escapeHtml(book.الكتاب)}</h2><p lang="ar" dir="rtl">${escapeHtml(book.المؤلف)}</p></div><dl class="book-metadata"><div class="metadata-row"><dt>Peneliti / editor</dt><dd lang="ar">${escapeHtml(book.المحقق_أو_المعتني)}</dd></div><div class="metadata-row"><dt>Penerbit</dt><dd lang="ar">${escapeHtml(book.الناشر)}</dd></div><div class="metadata-row"><dt>Edisi</dt><dd lang="ar">${escapeHtml(book.سنة_الطبع_والطبعة)}</dd></div><div class="metadata-row"><dt>Jumlah</dt><dd>${escapeHtml(book.jilid)} jilid · ${escapeHtml(book.pages)} halaman</dd></div></dl><div class="dialog-actions"><button class="primary" id="book-to-room">${icon('compass')} Telaah di NotebookLM</button><button class="secondary" id="book-to-note">${icon('note')} Buat catatan</button></div><p class="book-disclaimer">Metadata ini berasal dari katalog aplikasi. Pratinjau tidak memuat teks kitab dan tidak membuktikan kitab ini terpasang sebagai sumber pada suatu notebook.</p>`;
+ dialog.innerHTML=`<button class="close icon-button" data-close="book-dialog" aria-label="Tutup metadata">${icon('close')}</button><p class="eyebrow">METADATA KITAB · FIKIH SYAFI’I</p><div class="book-dialog-heading"><h2 id="book-title" lang="ar" dir="rtl">${escapeHtml(book.الكتاب)}</h2><p lang="ar" dir="rtl">${escapeHtml(book.المؤلف)}</p></div><dl class="book-metadata"><div class="metadata-row"><dt>Peneliti / editor</dt><dd lang="ar">${escapeHtml(book.المحقق_أو_المعتني)}</dd></div><div class="metadata-row"><dt>Penerbit</dt><dd lang="ar">${escapeHtml(book.الناشر)}</dd></div><div class="metadata-row"><dt>Edisi</dt><dd lang="ar">${escapeHtml(book.سنة_الطبع_والطبعة)}</dd></div><div class="metadata-row"><dt>Jumlah</dt><dd class="count-value" dir="ltr">${escapeHtml(extent(book))}</dd></div></dl><div class="dialog-actions"><button class="primary" id="book-to-room">${icon('compass')} Telaah di NotebookLM</button><button class="secondary" id="book-to-note">${icon('note')} Buat catatan</button></div><p class="book-disclaimer">Metadata ini berasal dari katalog aplikasi. Pratinjau tidak memuat teks kitab dan tidak membuktikan kitab ini terpasang sebagai sumber pada suatu notebook.</p>`;
  dialog.showModal();
 }
 function renderRoom(){
@@ -92,6 +97,7 @@ function theme(){document.body.classList.toggle('dark');document.querySelector('
 function search(){if(location.hash!=='#pustaka'){location.hash='pustaka';setTimeout(()=>document.querySelector('#book-search')?.focus(),50);}else document.querySelector('#book-search')?.focus();}
 document.querySelector('#theme').addEventListener('click',theme);
 document.querySelector('#find').addEventListener('click',search);
+document.querySelector('.skip').addEventListener('click',e=>{e.preventDefault();root.focus();});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();search();}});
 document.addEventListener('click',e=>{
  const close=e.target.closest('[data-close]');if(close){document.getElementById(close.dataset.close).close();return;}
@@ -101,14 +107,14 @@ document.addEventListener('click',e=>{
  const id=e.target.closest('[id]')?.id;
  if(id==='clear-search'){document.querySelector('#book-search').value='';document.querySelector('#era').value='all';renderBooks();document.querySelector('#book-search').focus();}
  if(id==='book-to-room'){document.querySelector('#book-dialog').close();currentModule='Fikih Syafi’i';if(location.hash==='#ruang')navigate();else location.hash='ruang';}
- if(id==='book-to-note'){document.querySelector('#book-dialog').close();activeNote=null;write(draftKey,{title:selectedBook.الاسم_المختصر,body:''});location.hash='catatan';}
+ if(id==='book-to-note'){document.querySelector('#book-dialog').close();activeNote=null;const old=draft();const reference='Rujukan: '+selectedBook.الكتاب;write(draftKey,{title:old.title || selectedBook.الاسم_المختصر,body:[old.body,reference].filter(Boolean).join('\n\n')});if(location.hash==='#catatan')renderNotes();else location.hash='catatan';}
  if(id==='notebook-info'){location.hash='akun';}
  if(id==='open-login')document.querySelector('#login-dialog').showModal();
  if(id==='demo-login'){document.querySelector('#login-dialog').close();location.hash='kajian';toast('Alur contoh dibuka. Tidak ada login yang dilakukan.');}
  if(id==='account-theme')theme();
  if(id==='save-note')saveNote();
- if(id==='new-note'){activeNote=null;renderNotes();document.querySelector('#note-title').focus();}
+ if(id==='new-note'){const old=draft();if(old.title || old.body){notes.unshift({id:String(Date.now()),...old});if(!write(storageKey,notes)){toast('Simpan atau salin draf sebelum membuat catatan baru.');return;}write(draftKey,{title:'',body:''});}activeNote=null;renderNotes();document.querySelector('#note-title').focus();}
 });
-window.addEventListener('hashchange',navigate);
+window.addEventListener('hashchange',()=>{navigate();root.focus({preventScroll:true});});
 hydrateIcons();
 fetch('assets/catalog-syafii.json').then(response=>{if(!response.ok)throw Error('Catalog unavailable');return response.json();}).then(data=>{books=data;navigate();}).catch(()=>{root.innerHTML='<div class="empty"><h2>Katalog tidak dapat dimuat.</h2><p>Buka pratinjau melalui server lokal, bukan langsung sebagai file. Petunjuk tersedia pada README.</p></div>';});
