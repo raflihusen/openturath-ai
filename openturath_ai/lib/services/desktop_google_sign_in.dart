@@ -10,8 +10,10 @@ import 'package:url_launcher/url_launcher.dart';
 /// Browser-based Firebase Google login. Tokens arrive by POST to a short-lived
 /// loopback listener, never in a redirect URL, logs or SharedPreferences.
 class DesktopGoogleSignIn {
+  // Match the hosted page's Firebase authDomain. Redirect fallback must not
+  // depend on cross-origin auth-helper storage blocked by modern browsers.
   static final page =
-      Uri.parse('https://open-turath.web.app/desktop-auth.html');
+      Uri.parse('https://open-turath.firebaseapp.com/desktop-auth.html');
   static Future<OAuthCredential?>? _pending;
 
   static Future<OAuthCredential?> signIn() =>

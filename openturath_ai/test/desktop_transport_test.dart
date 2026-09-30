@@ -86,6 +86,11 @@ void main() {
         valid('null', state), isTrue); // Opaque HTTPS-to-loopback form origin.
     expect(valid(null, state), isFalse);
     expect(valid('https://untrusted.example', state), isFalse);
+    expect(valid('https://open-turath.web.app', state), isFalse);
+    expect(
+        valid('https://open-turath.firebaseapp.com.evil.example', state),
+        isFalse);
+    expect(valid('https://open-turath.firebaseapp.com:444', state), isFalse);
     expect(valid(DesktopGoogleSignIn.page.origin, 'b' * 43), isFalse);
     expect(valid('null', ''), isFalse);
   });
