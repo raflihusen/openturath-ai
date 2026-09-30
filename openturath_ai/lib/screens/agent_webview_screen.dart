@@ -4,6 +4,7 @@ import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -981,11 +982,60 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         return NavigationActionPolicy.ALLOW;
                       }
                       final uri = navigationAction.request.url;
-                      return uri != null && NotebookNavigation.allowed(uri)
+                      if (uri == null) return NavigationActionPolicy.CANCEL;
+
+                      final host = uri.host;
+                      final uriStr = uri.toString();
+
+                      // Jika Google login dimuat tanpa login_hint atau Email, sematkan otomatis
+                      // dari email pengguna aktif agar akun langsung dikenali tanpa input manual
+                      if (host.startsWith('accounts.google') &&
+                          !uriStr.contains('login_hint=') &&
+                          !uriStr.contains('Email=')) {
+                        final email = _authService.currentUser?.email;
+                        if (email != null && email.isNotEmpty) {
+                          final newUri = uri.uriValue.replace(
+                            queryParameters: {
+                              ...uri.uriValue.queryParameters,
+                              'login_hint': email,
+                              'Email': email,
+                            },
+                          );
+                          controller.loadUrl(urlRequest: URLRequest(url: WebUri.uri(newUri)));
+                          return NavigationActionPolicy.CANCEL;
+                        }
+                      }
+
+                      return NotebookNavigation.allowed(uri)
                           ? NavigationActionPolicy.ALLOW
                           : NavigationActionPolicy.CANCEL;
                     },
                     onLoadStop: (controller, url) async {
+                      if (url != null && url.host.startsWith('accounts.google')) {
+                        final email = _authService.currentUser?.email;
+                        if (email != null && email.isNotEmpty) {
+                          try {
+                            await controller.evaluateJavascript(source: '''
+                              (function() {
+                                const email = ${jsonEncode(email)};
+                                const input = document.querySelector('input[type="email"], #identifierId');
+                                if (input && (!input.value || input.value !== email)) {
+                                  input.value = email;
+                                  input.dispatchEvent(new Event('input', { bubbles: true }));
+                                  input.dispatchEvent(new Event('change', { bubbles: true }));
+                                  const nextBtn = document.querySelector('#identifierNext button, button[data-idom-class*="nCP5yc"], button[type="button"]');
+                                  if (nextBtn) {
+                                    setTimeout(() => {
+                                      try { nextBtn.click(); } catch(e){}
+                                    }, 350);
+                                  }
+                                }
+                              })();
+                            ''');
+                          } catch (_) {}
+                        }
+                        return;
+                      }
                       await _applyHideScript();
                       await _applyCurrentFontScale();
                       await _detectGoogleAccessDenied();
