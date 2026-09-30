@@ -1,0 +1,13 @@
+{
+  "status": "proposal",
+  "scope": "OpenTurath SaaS workspace prototype",
+  "colors": {
+    "light": { "canvas": "#ffffff", "rail": "#f8f9fb", "subtle": "#f3f4f6", "text": "#202124", "secondaryText": "#646871", "border": "#e6e8ec", "controlBorder": "#c5c9d0", "accent": "#0066cc", "accentHover": "#0057ad", "selected": "#edf5ff", "error": "#b42318" },
+    "dark": { "canvas": "#18191c", "rail": "#141518", "subtle": "#232529", "text": "#f3f4f6", "secondaryText": "#b0b5be", "border": "#31343a", "controlBorder": "#6b717c", "accent": "#8cbdff", "accentHover": "#accfff", "selected": "#24354c", "error": "#ffaaa4" }
+  },
+  "type": { "interfaceFamily": "Inter", "arabicMetadataFamily": "Noto Sans Arabic", "pageTitle": 24, "sectionTitle": 18, "body": 14, "control": 13, "caption": 12, "arabicTitle": 17, "arabicDetailTitle": 20, "arabicLineHeight": 1.9 },
+  "spacing": [4, 8, 12, 16, 20, 24, 28, 32],
+  "radii": { "control": 6, "editor": 8, "status": 4 },
+  "layout": { "desktopSidebar": 224, "tabletSidebar": 200, "headerHeight": 56, "desktopInset": 32, "tabletInset": 24, "mobileInset": 16, "detailPanel": 320, "pageSize": 12, "mobileBreakpoint": 760, "fullDetailBreakpoint": 1100 },
+  "interaction": { "desktopControlHeight": 40, "mobilePrimaryControlHeight": 44, "iconHitArea": 44, "focusWidth": 2, "stateTransitionMs": 120, "reducedMotion": "disable transitions" }
+}
