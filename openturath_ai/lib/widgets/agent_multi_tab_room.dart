@@ -1896,34 +1896,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             onLoadStop: (controller, uri) async {
               if (!mounted || uri == null) return;
 
-              final host = uri.host;
-              // Jika di halaman akun Google, bantu auto-fill email akun aktif dan klik tombol berikutnya
-              if (host.startsWith('accounts.google')) {
-                final email = _authService.currentUser?.email;
-                if (email != null && email.isNotEmpty) {
-                  try {
-                    await controller.evaluateJavascript(source: '''
-                      (function() {
-                        const email = ${jsonEncode(email)};
-                        const input = document.querySelector('input[type="email"], #identifierId');
-                        if (input && (!input.value || input.value !== email)) {
-                          input.value = email;
-                          input.dispatchEvent(new Event('input', { bubbles: true }));
-                          input.dispatchEvent(new Event('change', { bubbles: true }));
-                          const nextBtn = document.querySelector('#identifierNext button, button[data-idom-class*="nCP5yc"], button[type="button"]');
-                          if (nextBtn) {
-                            setTimeout(() => {
-                              try { nextBtn.click(); } catch(e){}
-                            }, 350);
-                          }
-                        }
-                      })();
-                    ''');
-                  } catch (_) {}
-                }
-                return;
-              }
-
+              // Google owns its sign-in and verification UI. Do not inject
+              // values, click provider buttons, or alter challenge navigation.
               if (!NotebookNavigation.notebook(uri.uriValue)) {
                 return;
               }
@@ -1969,28 +1943,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
               final uri = action.request.url;
               if (uri == null) return NavigationActionPolicy.CANCEL;
-
-              final host = uri.host;
-              final uriStr = uri.toString();
-
-              // Jika Google login dimuat tanpa login_hint atau Email, sematkan otomatis
-              // dari email pengguna yang sedang aktif agar Google langsung mengenali akun
-              if (host.startsWith('accounts.google') &&
-                  !uriStr.contains('login_hint=') &&
-                  !uriStr.contains('Email=')) {
-                final email = _authService.currentUser?.email;
-                if (email != null && email.isNotEmpty) {
-                  final newUri = uri.uriValue.replace(
-                    queryParameters: {
-                      ...uri.uriValue.queryParameters,
-                      'login_hint': email,
-                      'Email': email,
-                    },
-                  );
-                  controller.loadUrl(urlRequest: URLRequest(url: WebUri.uri(newUri)));
-                  return NavigationActionPolicy.CANCEL;
-                }
-              }
 
               if (NotebookNavigation.allowed(uri.uriValue)) {
                 return NavigationActionPolicy.ALLOW;
