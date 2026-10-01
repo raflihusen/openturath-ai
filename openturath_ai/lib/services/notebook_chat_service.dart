@@ -31,6 +31,7 @@ class NotebookChatService {
   final CallableGateway _gateway;
 
   Future<NotebookChatReply> ask({
+    required String expectedUid,
     required String agentId,
     required String question,
     required String requestId,
@@ -45,6 +46,7 @@ class NotebookChatService {
       'agentId': agentId,
       'question': question.trim(),
       'requestId': requestId,
+      'expectedUid': expectedUid,
     });
     final invalid = FirebaseFunctionsException(
       code: 'unavailable',
