@@ -160,7 +160,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   const SizedBox(height: 20),
                                   Text(
                                     AppCopy.appName,
-                                    textDirection: TextDirection.ltr,
                                     style: ScholarlyFonts.newsreader(
                                       fontSize: 30,
                                       fontWeight: FontWeight.w600,
