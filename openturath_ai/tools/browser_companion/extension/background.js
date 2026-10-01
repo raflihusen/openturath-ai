@@ -20,6 +20,32 @@ const SAFE_CODES = new Set([
   'failed-precondition', 'deadline-exceeded', 'uncertain', 'busy',
 ]);
 
+// Match Chrome's known errors; never retain or print the source message.
+const NATIVE_ERROR_CODES = new Map([
+  ['Specified native messaging host not found.', 'host-not-found'],
+  ['Native host has exited.', 'host-exited'],
+  ['Failed to start native messaging host.', 'host-exited'],
+  ['Access to the specified native messaging host is forbidden.', 'forbidden'],
+  ['Error when communicating with the native messaging host.', 'invalid-response'],
+]);
+const NATIVE_ERROR_TITLES = Object.freeze({
+  'host-not-found': 'Penghubung OpenTurath belum terpasang.',
+  'host-exited': 'Penghubung OpenTurath berhenti atau belum dapat berjalan.',
+  'forbidden': 'Chrome menolak akses penghubung OpenTurath.',
+  'invalid-response': 'Pesan penghubung OpenTurath tidak dapat dibaca.',
+  'unknown': 'Koneksi penghubung OpenTurath terputus.',
+});
+
+function nativeErrorCode(error) {
+  return typeof error?.message === 'string'
+    ? (NATIVE_ERROR_CODES.get(error.message) || 'unknown') : 'unknown';
+}
+
+function showNativeDiagnostic(code) {
+  chrome.action.setTitle({title: NATIVE_ERROR_TITLES[code]});
+  console.warn(`OpenTurath Browser Companion: ${code}`);
+}
+
 function validEmail(value) {
   return typeof value === 'string' && value.length <= 320 &&
     value === value.toLowerCase() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -183,6 +209,9 @@ function handleState(message) {
   chrome.action.setBadgeText({
     text: message.status === 'connected' || message.code === 'ready' ? '' : '!',
   });
+  if (message.status === 'connected' || message.code === 'ready') {
+    chrome.action.setTitle({title: 'Hubungkan OpenTurath'});
+  }
 }
 
 function validateResult(raw, job) {
@@ -299,12 +328,13 @@ function connectToHost() {
     }
   });
   port.onDisconnect.addListener(() => {
-    // Read Chrome's error without logging it or any account data.
-    void chrome.runtime.lastError;
+    // Consume lastError inside its callback; only a static category may escape.
+    const code = nativeErrorCode(chrome.runtime.lastError);
     if (nativePort !== port) return;
     nativePort = null;
     cancelJobs();
     chrome.action.setBadgeText({text: '!'});
+    showNativeDiagnostic(code);
     // A user action or a fresh worker start may reconnect; chat is never replayed.
   });
   port.postMessage({type: 'connected', protocol: 1});
