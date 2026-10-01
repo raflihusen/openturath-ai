@@ -8,6 +8,11 @@ const NONCE = /^[0-9a-f]{32}$/i;
 const LOAD_TIMEOUT_MS = 45000;
 const ASK_TIMEOUT_MS = 120000;
 const activeJobs = new Map();
+const seenRequestIds = new Set();
+const retiredEpochs = new Set();
+const MAX_SEEN_REQUESTS = 4096;
+const MAX_RETIRED_EPOCHS = 64;
+let currentEpoch = null;
 let nativePort = null;
 
 const SAFE_CODES = new Set([
@@ -37,7 +42,7 @@ function validateJob(raw) {
       history.some(turn => !Array.isArray(turn) || turn.length !== 3 ||
         typeof turn[0] !== 'string' || turn[0].length > 128000 ||
         turn[1] !== null || ![1, 2].includes(turn[2])) ||
-      JSON.stringify(history).length > 250000)) {
+      JSON.stringify(history).length > 120000)) {
     throw new Error('invalid-argument');
   }
   return {
@@ -73,13 +78,14 @@ function notebookLocation(rawUrl, job) {
   }
 }
 
-function waitUntilLoaded(tabId, job) {
+function waitUntilLoaded(tabId, job, signal) {
   return new Promise((resolve, reject) => {
     let finished = false;
     const cleanup = () => {
       clearTimeout(timer);
       chrome.tabs.onUpdated.removeListener(updated);
       chrome.tabs.onRemoved.removeListener(removed);
+      signal.removeEventListener('abort', aborted);
     };
     const settle = (error, tab) => {
       if (finished) return;
@@ -98,22 +104,85 @@ function waitUntilLoaded(tabId, job) {
     const removed = removedId => {
       if (removedId === tabId) settle(new Error('unavailable'));
     };
+    const aborted = () => settle(new Error('unavailable'));
     const timer = setTimeout(() => settle(new Error('deadline-exceeded')), LOAD_TIMEOUT_MS);
     chrome.tabs.onUpdated.addListener(updated);
     chrome.tabs.onRemoved.addListener(removed);
+    signal.addEventListener('abort', aborted, {once: true});
+    if (signal.aborted) { aborted(); return; }
     chrome.tabs.get(tabId).then(inspect, () => settle(new Error('unavailable')));
   });
 }
 
-async function notebookTab(job) {
+async function notebookTab(job, signal) {
   const tabs = await chrome.tabs.query({url: ORIGINS.map(origin => `${origin}/notebook/*`)});
+  if (signal.aborted) throw new Error('unavailable');
   const existing = tabs.find(tab => !tab.incognito && notebookLocation(tab.url, job));
   const tab = existing || await chrome.tabs.create({
     url: `${ORIGINS[0]}/notebook/${job.notebookId}?authuser=${encodeURIComponent(job.email)}`,
     active: false,
   });
   if (!Number.isInteger(tab.id)) throw new Error('unavailable');
-  return waitUntilLoaded(tab.id, job);
+  return waitUntilLoaded(tab.id, job, signal);
+}
+
+function cancelEntry(entry) {
+  if (activeJobs.get(entry.job.requestId) !== entry) return;
+  // Remove first: a response already queued by Chrome must not cross the bridge.
+  activeJobs.delete(entry.job.requestId);
+  entry.controller.abort();
+  clearTimeout(entry.askTimer);
+  if (entry.tabId != null) {
+    chrome.tabs.sendMessage(entry.tabId, {
+      type: 'openturath:cancel', requestId: entry.job.requestId, epoch: entry.job.epoch,
+    }, {frameId: 0}).catch(() => {});
+  }
+}
+
+function cancelJobs({requestId, epoch} = {}) {
+  for (const entry of [...activeJobs.values()]) {
+    if ((requestId == null || entry.job.requestId === requestId) &&
+        (epoch == null || entry.job.epoch === epoch)) cancelEntry(entry);
+  }
+}
+
+function rememberJob(job, port) {
+  if (job.epoch !== currentEpoch) {
+    if (retiredEpochs.has(job.epoch) || retiredEpochs.size >= MAX_RETIRED_EPOCHS) {
+      sendResult(port, failure(job, 'failed-precondition'));
+      return false;
+    }
+    if (currentEpoch != null) retiredEpochs.add(currentEpoch);
+    cancelJobs();
+    currentEpoch = job.epoch;
+    seenRequestIds.clear();
+  }
+  if (seenRequestIds.has(job.requestId)) return false;
+  // Fail closed at the bound; evicting IDs could permit a duplicated delivery.
+  if (seenRequestIds.size >= MAX_SEEN_REQUESTS) {
+    sendResult(port, failure(job, 'failed-precondition'));
+    return false;
+  }
+  seenRequestIds.add(job.requestId);
+  return true;
+}
+
+function handleState(message) {
+  if (message.epoch != null && (typeof message.epoch !== 'string' ||
+      !NONCE.test(message.epoch) || (currentEpoch != null && message.epoch !== currentEpoch))) return;
+  const uncertain = message.status === 'uncertain' || message.code === 'uncertain';
+  if (uncertain) {
+    if (message.requestId == null) cancelJobs({epoch: message.epoch});
+    else if (typeof message.requestId === 'string' && NONCE.test(message.requestId)) {
+      cancelJobs({requestId: message.requestId, epoch: message.epoch});
+    }
+  }
+  if (message.status === 'waiting' || message.status === 'disconnected') {
+    cancelJobs({epoch: message.epoch});
+  }
+  chrome.action.setBadgeText({
+    text: message.status === 'connected' || message.code === 'ready' ? '' : '!',
+  });
 }
 
 function validateResult(raw, job) {
@@ -171,29 +240,30 @@ async function executeJob(raw, port) {
     } catch (_) { /* A malformed envelope cannot safely be correlated. */ }
     return;
   }
-  if (activeJobs.has(job.requestId)) {
-    // A duplicated delivery cannot generate a second NotebookLM request.
-    return;
-  }
+  // A validated ID is consumed even when execution fails or ownership is revoked.
+  // This survives reconnect within the worker; the native ledger survives restart.
+  if (!rememberJob(job, port)) return;
   if ([...activeJobs.values()].some(entry =>
       entry.job.notebookId === job.notebookId && entry.job.email === job.email)) {
     sendResult(port, failure(job, 'busy'));
     return;
   }
-  const entry = {job, port, tabId: null, dispatched: false};
+  const entry = {job, port, tabId: null, dispatched: false,
+    controller: new AbortController(), askTimer: null};
   activeJobs.set(job.requestId, entry);
-  let askTimer;
   try {
-    const tab = await notebookTab(job);
+    const tab = await notebookTab(job, entry.controller.signal);
     if (port !== nativePort || activeJobs.get(job.requestId) !== entry) return;
-    const current = await chrome.tabs.get(tab.id);
-    if (!notebookLocation(current.url, job)) throw new Error('unauthenticated');
     entry.tabId = tab.id;
+    const current = await chrome.tabs.get(tab.id);
+    if (port !== nativePort || activeJobs.get(job.requestId) !== entry ||
+        entry.controller.signal.aborted) return;
+    if (!notebookLocation(current.url, job)) throw new Error('unauthenticated');
     entry.dispatched = true;
     const response = await Promise.race([
       chrome.tabs.sendMessage(tab.id, {type: 'openturath:ask', job}, {frameId: 0}),
       new Promise((_resolve, reject) => {
-        askTimer = setTimeout(() => reject(new Error('uncertain')), ASK_TIMEOUT_MS);
+        entry.askTimer = setTimeout(() => reject(new Error('uncertain')), ASK_TIMEOUT_MS);
       }),
     ]);
     if (activeJobs.get(job.requestId) === entry) sendResult(port, validateResult(response, job));
@@ -204,13 +274,9 @@ async function executeJob(raw, port) {
         (SAFE_CODES.has(error?.message) ? error.message : 'unavailable');
       sendResult(port, failure(job, code));
     }
-    if (entry.tabId != null) {
-      chrome.tabs.sendMessage(entry.tabId, {
-        type: 'openturath:cancel', requestId: job.requestId, epoch: job.epoch,
-      }, {frameId: 0}).catch(() => {});
-    }
+    cancelEntry(entry);
   } finally {
-    clearTimeout(askTimer);
+    clearTimeout(entry.askTimer);
     if (activeJobs.get(job.requestId) === entry) activeJobs.delete(job.requestId);
   }
 }
@@ -229,7 +295,7 @@ function connectToHost() {
     if (nativePort !== port || !message || typeof message !== 'object') return;
     if (message.type === 'job') void executeJob(message.job, port);
     if (message.type === 'state') {
-      chrome.action.setBadgeText({text: message.code === 'ready' ? '' : '!'});
+      handleState(message);
     }
   });
   port.onDisconnect.addListener(() => {
@@ -237,14 +303,7 @@ function connectToHost() {
     void chrome.runtime.lastError;
     if (nativePort !== port) return;
     nativePort = null;
-    for (const entry of activeJobs.values()) {
-      if (entry.tabId != null) {
-        chrome.tabs.sendMessage(entry.tabId, {
-          type: 'openturath:cancel', requestId: entry.job.requestId, epoch: entry.job.epoch,
-        }, {frameId: 0}).catch(() => {});
-      }
-    }
-    activeJobs.clear();
+    cancelJobs();
     chrome.action.setBadgeText({text: '!'});
     // A user action or a fresh worker start may reconnect; chat is never replayed.
   });
