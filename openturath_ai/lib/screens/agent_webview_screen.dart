@@ -631,7 +631,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
       }
       if (_isGoogleAuthPage ||
           url == null ||
-          !NotebookNavigation.notebook(url.uriValue)) return;
+          !NotebookNavigation.notebook(url.uriValue)) {
+        return;
+      }
       final hasScript = await _webController!.evaluateJavascript(
         source:
             'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',

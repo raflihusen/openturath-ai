@@ -1297,7 +1297,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       }
       if (widget.session.isGoogleAuthPage ||
           url == null ||
-          !NotebookNavigation.notebook(url.uriValue)) return;
+          !NotebookNavigation.notebook(url.uriValue)) {
+        return;
+      }
       final hasScript = await controller.evaluateJavascript(
         source:
             'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
@@ -1970,7 +1972,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               final currentUrl = await controller.getUrl();
               if (currentUrl == null ||
                   !NotebookNavigation.notebook(currentUrl.uriValue) ||
-                  session.isGoogleAuthPage) return;
+                  session.isGoogleAuthPage) {
+                return;
+              }
               if (mounted &&
                   progress >= 35 &&
                   !session.hasInjectedEarlyScript) {
