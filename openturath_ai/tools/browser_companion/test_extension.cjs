@@ -44,7 +44,7 @@ async function flush() {
 }
 
 function harness() {
-  const ports = [], asks = [], cancellations = [], created = [], badges = [];
+  const ports = [], asks = [], cancellations = [], created = [], badges = [], titles = [], warnings = [];
   const timers = new Map();
   let timerSequence = 0;
   let tab = {id: 7, status: 'complete', incognito: false,
@@ -63,7 +63,8 @@ function harness() {
       },
       onStartup: event(), onInstalled: event(), lastError: null,
     },
-    action: {onClicked: event(), setBadgeText(value) { badges.push(value.text); }},
+    action: {onClicked: event(), setBadgeText(value) { badges.push(value.text); },
+      setTitle(value) { titles.push(value.title); }},
     tabs: {
       onUpdated: event(), onRemoved: event(),
       query: (...args) => query(...args), get: (...args) => get(...args),
@@ -86,11 +87,12 @@ function harness() {
   };
   vm.runInNewContext(workerSource, {
     chrome, URL, TextEncoder, AbortController,
+    console: {warn(...args) { warnings.push(args); }},
     setTimeout(callback, delay) { const id = ++timerSequence; timers.set(id, {callback, delay}); return id; },
     clearTimeout(id) { timers.delete(id); },
   }, {filename: sourcePath});
   return {
-    ports, asks, cancellations, created, badges, timers,
+    ports, asks, cancellations, created, badges, titles, warnings, timers,
     currentPort: () => ports.at(-1),
     emit: message => ports.at(-1).onMessage.fire(message),
     job: (job = fixtureJob) => ports.at(-1).onMessage.fire({type: 'job', job}),
@@ -99,6 +101,7 @@ function harness() {
     setQuery: implementation => { query = implementation; },
     setGet: implementation => { get = implementation; },
     setTab: value => { tab = value; },
+    setLastError: value => { chrome.runtime.lastError = value; },
     reconnect() { chrome.action.onClicked.fire(); },
     disconnect() { ports.at(-1).onDisconnect.fire(); },
     async close() { ports.at(-1).onDisconnect.fire(); await flush(); assert.equal(timers.size, 0); },
@@ -268,4 +271,48 @@ test('a missing content listener causes one uncertain result and no retry', asyn
   assert.equal(JSON.stringify(h.results()).includes('private transport detail'), false);
   h.job(); await flush(); assert.equal(h.asks.length, 1);
   await h.close();
+});
+
+for (const [message, category, title] of [
+  ['Specified native messaging host not found.', 'host-not-found', 'Penghubung OpenTurath belum terpasang.'],
+  ['Native host has exited.', 'host-exited', 'Penghubung OpenTurath berhenti atau belum dapat berjalan.'],
+  ['Failed to start native messaging host.', 'host-exited', 'Penghubung OpenTurath berhenti atau belum dapat berjalan.'],
+  ['Access to the specified native messaging host is forbidden.', 'forbidden', 'Chrome menolak akses penghubung OpenTurath.'],
+  ['Error when communicating with the native messaging host.', 'invalid-response', 'Pesan penghubung OpenTurath tidak dapat dibaca.'],
+]) {
+  test(`native disconnect exposes only the static ${category} diagnostic`, async () => {
+    const h = harness();
+    h.setLastError({message}); h.disconnect(); await flush();
+    assert.equal(h.titles.at(-1), title);
+    assert.deepEqual(h.warnings, [[`OpenTurath Browser Companion: ${category}`]]);
+    assert.equal(h.ports.length, 1);
+    assert.equal(h.asks.length, 0);
+    await h.close();
+  });
+}
+
+test('unrecognized native errors cannot leak account details, tokens or object fields', async () => {
+  const h = harness();
+  h.setLastError({message: 'Native host has exited. fixture@example.com SID=SECRET_FIXTURE',
+    accountEmail: 'fixture@example.com', token: 'SECRET_FIXTURE'});
+  h.disconnect(); await flush();
+  assert.deepEqual(h.warnings, [['OpenTurath Browser Companion: unknown']]);
+  assert.equal(h.titles.at(-1), 'Koneksi penghubung OpenTurath terputus.');
+  const exported = JSON.stringify({warnings: h.warnings, titles: h.titles, messages: h.currentPort().messages});
+  assert.equal(exported.includes('SECRET_FIXTURE'), false);
+  assert.equal(exported.includes('fixture@example.com'), false);
+  assert.equal(h.ports.length, 1);
+  h.setLastError(null); h.reconnect();
+  h.emit({type: 'state', status: 'connected', code: 'ready'});
+  assert.equal(h.titles.at(-1), 'Hubungkan OpenTurath');
+  await h.close();
+});
+
+test('absent or non-string native errors use the same static unknown category', async () => {
+  for (const error of [null, {message: {token: 'SECRET_FIXTURE'}}]) {
+    const h = harness(); h.setLastError(error); h.disconnect(); await flush();
+    assert.deepEqual(h.warnings, [['OpenTurath Browser Companion: unknown']]);
+    assert.equal(JSON.stringify(h.warnings).includes('SECRET_FIXTURE'), false);
+    await h.close();
+  }
 });
