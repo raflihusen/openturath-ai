@@ -1,7 +1,6 @@
 import '../widgets/adaptive_sheet.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/desktop_webview_gate.dart';
-import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter/material.dart';
@@ -15,7 +14,6 @@ import '../core/copied_answer.dart';
 
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
-import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/navigation_guard.dart';
 import '../core/theme.dart';
@@ -626,33 +624,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     _checkingReady = true;
     try {
       final url = await _webController!.getUrl();
-      final host = url?.host.toLowerCase() ?? '';
-      final path = url?.path.toLowerCase() ?? '';
-      final isLogin = host.contains('accounts.google') ||
-          host == 'accounts.youtube.com' ||
-          host == 'consent.google.com' ||
-          (host.contains('notebook') &&
-              (path.contains('/login') ||
-                  path.contains('/signin') ||
-                  path.contains('/servicelogin')));
-      if (isLogin) {
-        // Halaman autentikasi Google sedang aktif di dalam WebView internal.
-        _isGoogleAuthPage = true;
-        if (mounted && (_isWebViewLoading || _errorMessage != null)) {
-          setState(() {
-            _isWebViewLoading = false;
-            _errorMessage = null;
-          });
-        }
+      if (url != null && NotebookNavigation.authentication(url.uriValue)) {
+        _handleAuthenticationRequired();
+        await _webController!.stopLoading();
         return;
-      } else {
-        if (_isGoogleAuthPage && mounted) {
-          setState(() {
-            _isGoogleAuthPage = false;
-            _isWebViewLoading = true;
-          });
-        }
       }
+      if (_isGoogleAuthPage || url == null ||
+          !NotebookNavigation.notebook(url.uriValue)) return;
       final hasScript = await _webController!.evaluateJavascript(
         source:
             'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
@@ -862,9 +840,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         UnmodifiableListView<UserScript>([_cloakScript]),
                     initialSettings: InAppWebViewSettings(
                       incognito: false,
-                      userAgent: AppPlatform.isDesktop
-                          ? AppConstants.desktopSafariUserAgent
-                          : AppConstants.chromeMobileUserAgent,
                       javaScriptEnabled: true,
                       domStorageEnabled: true,
                       databaseEnabled: true,
@@ -893,7 +868,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     ),
                     onCreateWindow: (controller, createWindowAction) async {
                       final targetUrl = createWindowAction.request.url;
-                      if (targetUrl != null) {
+                      if (targetUrl != null &&
+                          NotebookNavigation.authentication(targetUrl.uriValue)) {
+                        _handleAuthenticationRequired();
+                        return false;
+                      }
+                      if (targetUrl != null &&
+                          NotebookNavigation.allowed(targetUrl.uriValue)) {
                         await controller.loadUrl(
                             urlRequest: URLRequest(url: targetUrl));
                         return true;
@@ -968,7 +949,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       );
                       _startReadinessCheck();
                     },
-                    onLoadStart: (controller, url) {
+                    onLoadStart: (controller, url) async {
+                      if (url != null &&
+                          NotebookNavigation.authentication(url.uriValue)) {
+                        _handleAuthenticationRequired();
+                        await controller.stopLoading();
+                        return;
+                      }
                       if (mounted) setState(() => _isWebViewLoading = true);
                       _startReadinessCheck();
                     },
@@ -979,10 +966,15 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     ),
                     shouldOverrideUrlLoading:
                         (controller, navigationAction) async {
+                      final uri = navigationAction.request.url;
+                      if (uri != null &&
+                          NotebookNavigation.authentication(uri.uriValue)) {
+                        _handleAuthenticationRequired();
+                        return NavigationActionPolicy.CANCEL;
+                      }
                       if (navigationAction.isForMainFrame != true) {
                         return NavigationActionPolicy.ALLOW;
                       }
-                      final uri = navigationAction.request.url;
                       if (uri == null) return NavigationActionPolicy.CANCEL;
 
                       return NotebookNavigation.allowed(uri)
@@ -1159,7 +1151,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                             title: AppCopy.cannotLoadStudy,
                             message: _errorMessage!,
                             icon: Icons.info_outline_rounded,
-                            onRetry: _fetchAgentUrl,
+                            onRetry: _isGoogleAuthPage ? null : _fetchAgentUrl,
                             retryLabel: AppCopy.tryAgain,
                             onBack: () => Navigator.pop(context),
                             backLabel: AppCopy.backToHome,
