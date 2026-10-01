@@ -63,7 +63,8 @@ class BrowserCompanionRuntime extends ChangeNotifier {
   BrowserCompanionRuntime({
     required CompanionIdentity? Function() identity,
     Directory? runtimeDirectory,
-    this.responseTimeout = const Duration(seconds: 130),
+    // Covers worker page load (45s), ask (120s), and local IPC overhead.
+    this.responseTimeout = const Duration(seconds: 190),
     this.heartbeatTimeout = const Duration(seconds: 30),
   })  : _identity = identity,
         _directory = runtimeDirectory ?? _defaultDirectory();
@@ -718,8 +719,13 @@ class BrowserCompanionRuntime extends ChangeNotifier {
     Map<String, dynamic>? reply;
     String? failureCode;
     if (code != null) {
-      failureCode =
-          codes.contains(code) ? code as String : 'failed-precondition';
+      // Only a validated browser result receives this transport-specific code.
+      // Native owner revocation keeps its existing unauthenticated error.
+      failureCode = code == 'unauthenticated'
+          ? 'notebook-session-required'
+          : codes.contains(code)
+              ? code as String
+              : 'failed-precondition';
     } else if (raw['accountEmail'] != _owner!.email ||
         raw['answer'] is! String ||
         (raw['answer'] as String).trim().isEmpty ||
