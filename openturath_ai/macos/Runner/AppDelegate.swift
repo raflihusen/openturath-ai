@@ -6,7 +6,7 @@ class AppDelegate: FlutterAppDelegate {
   override func applicationDidFinishLaunching(_ notification: Notification) {
     // Retire only the three credential keys written by the old AuthUserDefaults
     // patch. Do not read their values, touch Keychain, or clear research notes.
-    // The new launcher never authenticates Firebase natively.
+    // Native Firebase authentication uses the official SDK and Keychain.
     let appID = "1:255541559800:ios:c789f7f14e7fb46cd2960d"
     let apiKey = "AIzaSyB-ABXjjHM5GNNoScOLziz4G20nDFx6jSk"
     let domain = "com.google.Firebase.Auth.firebase_auth_\(appID)" as CFString
