@@ -14,10 +14,10 @@ const _conversation = '22222222-2222-2222-2222-222222222222';
 const _source = '33333333-3333-3333-3333-333333333333';
 
 Matcher _code(String value) => isA<FirebaseFunctionsException>().having(
-  (error) => error.code,
-  'safe error code',
-  value,
-);
+      (error) => error.code,
+      'safe error code',
+      value,
+    );
 
 class _Agents extends AgentService {
   _Agents(this.onUrl, this.onRecord);
@@ -94,7 +94,7 @@ class _Runtime extends BrowserCompanionRuntime {
 
 class _Harness {
   _Harness({this.deferredStage, String? url})
-    : url = url ?? 'https://notebooklm.google.com/notebook/$_notebook/' {
+      : url = url ?? 'https://notebooklm.google.com/notebook/$_notebook/' {
     // Each fixture receives its own owner/generation, including static history.
     final number = ++_counter;
     owner = CompanionIdentity(
@@ -196,7 +196,7 @@ void main() {
       final fixture = _Harness();
       fixture.identity = null;
       await expectLater(fixture.send(), throwsA(_code('unauthenticated')));
-      fixture.identity = CompanionIdentity(
+      fixture.identity = const CompanionIdentity(
         uid: 'other-reader',
         googleSub: '999',
         email: 'other@example.com',
