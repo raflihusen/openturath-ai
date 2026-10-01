@@ -1,0 +1,322 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=Noto+Sans+Arabic:wght@400;500;600&display=swap');
+#ot-design-review { color-scheme:light dark; --ot-bg:light-dark(#ffffff,#171717); --ot-side:light-dark(#f7f7f7,#131313); --ot-ink:light-dark(#202020,#ededed); --ot-muted:light-dark(#686868,#aaa); --ot-line:light-dark(#e7e7e7,#333); --ot-soft:light-dark(#f1f1f1,#252525); --ot-action:light-dark(#202020,#ededed); --ot-on:light-dark(#fff,#171717); font:14px/1.5 Inter,Arial,sans-serif; color:var(--ot-ink); width:100%; --ot-row-space:17px; }
+#ot-design-review *,#ot-design-review *::before,#ot-design-review *::after {box-sizing:border-box}
+#ot-design-review [hidden]{display:none!important}
+#ot-design-review button,#ot-design-review input,#ot-design-review select,#ot-design-review textarea{font:inherit;color:inherit}
+#ot-design-review button{cursor:inherit}
+#ot-design-review button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;border:0;text-align:left}
+#ot-design-review button:focus-visible,#ot-design-review input:focus-visible,#ot-design-review textarea:focus-visible,#ot-design-review select:focus-visible{outline:2px solid var(--ot-ink);outline-offset:3px}
+#ot-design-review button:hover{background:var(--ot-soft)}
+#ot-design-review svg {flex-shrink:0;width:17px;height:17px;stroke-width:1.65}
+#ot-design-review h1,#ot-design-review h2,#ot-design-review h3,#ot-design-review p{margin:0}
+#ot-design-review h1 {font-size:27px;font-weight:600;letter-spacing:-1.05px;line-height:1.25}
+#ot-design-review h2 {font-size:18px;font-weight:600;letter-spacing:-.45px}
+#ot-design-review h3 {font-size:15px;font-weight:600;letter-spacing:-.15px}
+#ot-design-review .ot-muted {color:var(--ot-muted)}
+#ot-design-review .ot-small {font-size:12px}
+#ot-design-review .ot-label {font-size:11px;font-weight:500;letter-spacing:.7px;text-transform:uppercase;color:var(--ot-muted)}
+#ot-design-review .ot-ar {font-family:'Noto Sans Arabic',Tahoma,sans-serif;direction:rtl;letter-spacing:0;line-height:1.85}
+#ot-design-review .ot-preview {display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:0 0 15px;font-size:12px;color:var(--ot-muted)}
+#ot-design-review .ot-preview strong{font-weight:500;color:var(--ot-ink)}
+#ot-design-review .ot-preview-controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+#ot-design-review .ot-preview select{background:var(--ot-bg);border:1px solid var(--ot-line);border-radius:6px;padding:7px 9px;max-width:100%}
+#ot-design-review .ot-preview button{min-height:32px;padding:6px 9px;border:1px solid var(--ot-line);border-radius:6px}
+#ot-design-review .ot-shell{background:var(--ot-bg);border:1px solid var(--ot-line);border-radius:10px;overflow:hidden;display:grid;grid-template-columns:192px minmax(0,1fr);min-height:740px;position:relative}
+#ot-design-review .ot-sidebar{background:var(--ot-side);border-right:1px solid var(--ot-line);display:flex;flex-direction:column;padding:25px 14px 16px;gap:27px;min-width:0}
+#ot-design-review .ot-brand{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;letter-spacing:-.65px;padding:0 10px}
+#ot-design-review .ot-brand img{width:26px;height:26px;object-fit:contain;filter:var(--ot-logo-filter,none)}
+#ot-design-review[data-tone=dark] .ot-brand img,#ot-design-review[data-tone=dark] .ot-login-logo{filter:invert(1)}
+@media(prefers-color-scheme:dark){#ot-design-review[data-tone=system] .ot-brand img,#ot-design-review[data-tone=system] .ot-login-logo{filter:invert(1)}}
+#ot-design-review .ot-sidebar nav{display:flex;flex-direction:column;gap:4px}
+#ot-design-review .ot-nav{width:100%;justify-content:flex-start;padding:10px 12px;border-radius:6px;font-size:13px;color:var(--ot-muted)}
+#ot-design-review .ot-nav[aria-current=page]{background:var(--ot-soft);color:var(--ot-ink);font-weight:600}
+#ot-design-review .ot-sidebar-group{display:flex;flex-direction:column;gap:4px}
+#ot-design-review .ot-sidebar-group .ot-label{padding:0 12px 7px}
+#ot-design-review .ot-sidebar-group button{justify-content:flex-start;padding:8px 12px;color:var(--ot-muted);font-size:12px;border-radius:6px}
+#ot-design-review .ot-sidebar-bottom{margin-top:auto;border-top:1px solid var(--ot-line);padding-top:12px}
+#ot-design-review .ot-avatar{width:27px;height:27px;border:1px solid var(--ot-line);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;background:var(--ot-bg)}
+#ot-design-review .ot-main{min-width:0;display:flex;flex-direction:column}
+#ot-design-review .ot-topbar{min-height:58px;border-bottom:1px solid var(--ot-line);display:flex;align-items:center;justify-content:space-between;padding:12px 28px;gap:12px;font-size:12px;color:var(--ot-muted)}
+#ot-design-review .ot-crumb{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#ot-design-review .ot-crumb strong{font-weight:500;color:var(--ot-ink)}
+#ot-design-review .ot-topbar button{padding:4px 6px}
+#ot-design-review .ot-content{padding:32px 32px 40px;flex:1;min-width:0}
+#ot-design-review .ot-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:26px}
+#ot-design-review .ot-heading p{margin-top:7px;color:var(--ot-muted);font-size:13px;max-width:540px}
+#ot-design-review .ot-button{padding:9px 13px;border:1px solid var(--ot-line);border-radius:6px;min-height:37px;white-space:normal;font-size:12px;font-weight:500}
+#ot-design-review .ot-primary{background:var(--ot-action);color:var(--ot-on);border-color:var(--ot-action)}
+#ot-design-review .ot-primary:hover{background:var(--ot-action);opacity:.85}
+#ot-design-review .ot-text-button{padding:5px 0;font-size:12px;font-weight:500}
+#ot-design-review .ot-text-button:hover{background:transparent;text-decoration:underline}
+#ot-design-review .ot-search{display:flex;gap:9px;align-items:center;border:1px solid var(--ot-line);border-radius:7px;background:var(--ot-bg);padding:9px 12px;flex:1;min-width:160px;max-width:390px}
+#ot-design-review .ot-search input{border:0;outline:0;background:transparent;min-width:0;width:100%;font-size:13px}
+#ot-design-review .ot-search input:focus-visible{outline:0}
+#ot-design-review .ot-search:focus-within{outline:2px solid var(--ot-ink);outline-offset:2px}
+#ot-design-review .ot-search svg{color:var(--ot-muted)}
+#ot-design-review .ot-shortcut{border:1px solid var(--ot-line);border-radius:4px;padding:0 4px;color:var(--ot-muted);font-size:10px;white-space:nowrap}
+#ot-design-review .ot-toolbar{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}
+#ot-design-review .ot-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#ot-design-review .ot-tools select{background:var(--ot-bg);border:1px solid var(--ot-line);border-radius:6px;font-size:12px;padding:8px 10px;max-width:100%}
+#ot-design-review .ot-tabs{display:flex;gap:22px;border-bottom:1px solid var(--ot-line);margin-bottom:25px;flex-wrap:wrap}
+#ot-design-review .ot-tabs button{padding:0 0 12px;color:var(--ot-muted);border-bottom:2px solid transparent;border-radius:0;font-size:12px}
+#ot-design-review .ot-tabs button[aria-pressed=true]{color:var(--ot-ink);border-color:var(--ot-ink);font-weight:600}
+#ot-design-review .ot-count{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 10px;color:var(--ot-muted);font-size:12px}
+#ot-design-review .ot-table-head,#ot-design-review .ot-book{display:grid;grid-template-columns:25px minmax(0,1fr) 65px 42px;gap:15px;align-items:center}
+#ot-design-review .ot-table-head{border-block:1px solid var(--ot-line);padding:10px 6px;font-size:11px;color:var(--ot-muted)}
+#ot-design-review .ot-book{width:100%;border-bottom:1px solid var(--ot-line);padding:var(--ot-row-space) 6px;justify-content:unset;border-radius:0;text-align:left}
+#ot-design-review .ot-book-index{font-size:11px;color:var(--ot-muted);font-variant-numeric:tabular-nums;align-self:start;padding-top:7px}
+#ot-design-review .ot-book-title{font-family:'Noto Sans Arabic',Tahoma,sans-serif;display:block;font-weight:500;font-size:18px;direction:rtl;text-align:right;line-height:1.8}
+#ot-design-review .ot-book-author{display:block;font-family:'Noto Sans Arabic',Tahoma,sans-serif;font-size:12px;color:var(--ot-muted);direction:rtl;text-align:right;line-height:1.8;margin-top:2px}
+#ot-design-review .ot-book-nums{font-size:12px;color:var(--ot-muted);font-variant-numeric:tabular-nums}
+#ot-design-review .ot-pagination{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:20px;font-size:12px;color:var(--ot-muted);flex-wrap:wrap}
+#ot-design-review .ot-pagination button{border:1px solid var(--ot-line);padding:6px 10px;border-radius:6px}
+#ot-design-review button:disabled{opacity:.4;cursor:default}
+#ot-design-review .ot-section-label{margin:28px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+#ot-design-review .ot-study-row{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:15px;align-items:center;padding:19px 0;border-bottom:1px solid var(--ot-line)}
+#ot-design-review .ot-study-row p{font-size:12px;color:var(--ot-muted);margin-top:4px}
+#ot-design-review .ot-study-icon{color:var(--ot-muted)}
+#ot-design-review .ot-resume{border:1px solid var(--ot-line);border-radius:8px;padding:22px;display:flex;align-items:center;gap:20px;margin:8px 0 28px}
+#ot-design-review .ot-resume .ot-flex{flex:1;min-width:0}
+#ot-design-review .ot-resume h2{margin:9px 0 6px}
+#ot-design-review .ot-resume p{font-size:13px;color:var(--ot-muted)}
+#ot-design-review .ot-field-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}
+#ot-design-review .ot-field{display:flex;justify-content:space-between;padding:17px 0;border-bottom:1px solid var(--ot-line);width:100%;font-weight:500;font-size:13px}
+#ot-design-review .ot-field span{display:flex;align-items:center;gap:10px}
+#ot-design-review .ot-field small{color:var(--ot-muted);font-size:11px;font-weight:400}
+#ot-design-review .ot-collection{margin-top:30px;padding-top:23px;border-top:1px solid var(--ot-line);display:flex;justify-content:space-between;align-items:center;gap:18px}
+#ot-design-review .ot-collection p{font-size:13px;color:var(--ot-muted);margin-top:6px;max-width:430px}
+#ot-design-review .ot-meta{display:grid;grid-template-columns:135px minmax(0,1fr);gap:0;margin:25px 0 0}
+#ot-design-review .ot-meta dt,#ot-design-review .ot-meta dd{margin:0;padding:14px 0;border-bottom:1px solid var(--ot-line);font-size:13px;overflow-wrap:anywhere}
+#ot-design-review .ot-meta dt{color:var(--ot-muted)}
+#ot-design-review .ot-meta dd.ot-ar{font-size:14px}
+#ot-design-review .ot-detail-title{font-size:30px;font-weight:500;margin:18px 0 6px;text-align:right}
+#ot-design-review .ot-detail-sub{font-size:15px;text-align:right;color:var(--ot-muted)}
+#ot-design-review .ot-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:24px}
+#ot-design-review .ot-back{font-size:12px;color:var(--ot-muted);padding:0;margin:0 0 22px;justify-content:flex-start}
+#ot-design-review .ot-empty{padding:50px 20px;text-align:center;max-width:470px;margin:0 auto}
+#ot-design-review .ot-empty>svg{width:28px;height:28px;margin-bottom:16px;color:var(--ot-muted)}
+#ot-design-review .ot-empty h2{margin-bottom:8px}
+#ot-design-review .ot-empty p{font-size:13px;color:var(--ot-muted);margin-bottom:20px}
+#ot-design-review .ot-role{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:16px;padding:21px 0;border-bottom:1px solid var(--ot-line);align-items:center}
+#ot-design-review .ot-role .ot-ar{font-size:14px;color:var(--ot-muted)}
+#ot-design-review .ot-role p{font-size:13px;color:var(--ot-muted);margin-top:4px}
+#ot-design-review .ot-room{display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:0;margin:-32px -32px -40px;min-height:680px}
+#ot-design-review .ot-conversation{padding:24px;min-width:0;display:flex;flex-direction:column}
+#ot-design-review .ot-session{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:18px;border-bottom:1px solid var(--ot-line);margin-bottom:25px;font-size:12px}
+#ot-design-review .ot-question{margin:0 0 25px auto;max-width:92%;background:var(--ot-soft);border-radius:9px;padding:13px 16px;font-size:13px}
+#ot-design-review .ot-answer{font-size:14px;line-height:1.8;margin-bottom:30px}
+#ot-design-review .ot-answer .ot-label{margin-bottom:13px;display:block}
+#ot-design-review .ot-answer h3{margin-bottom:10px}
+#ot-design-review .ot-answer p+p{margin-top:14px}
+#ot-design-review .ot-answer-actions{display:flex;gap:17px;margin-top:20px}
+#ot-design-review .ot-answer-actions button{font-size:11px;color:var(--ot-muted);padding:3px 0}
+#ot-design-review .ot-composer{margin-top:auto;border:1px solid var(--ot-line);border-radius:9px;padding:13px 13px 10px;background:var(--ot-bg)}
+#ot-design-review .ot-composer textarea{width:100%;resize:vertical;min-height:64px;border:0;background:transparent;padding:0;font-size:13px}
+#ot-design-review .ot-composer-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--ot-muted);font-size:11px}
+#ot-design-review .ot-composer-bottom button{padding:7px;border-radius:5px}
+#ot-design-review .ot-references{border-left:1px solid var(--ot-line);padding:23px 18px;background:var(--ot-side)}
+#ot-design-review .ot-references h3{font-size:13px;margin-bottom:4px}
+#ot-design-review .ot-source{width:100%;padding:17px 0;border-bottom:1px solid var(--ot-line);justify-content:flex-start;align-items:flex-start;gap:8px}
+#ot-design-review .ot-source .ot-ar{font-size:15px;font-weight:500}
+#ot-design-review .ot-source small{font-size:11px;color:var(--ot-muted);display:block;margin-top:4px}
+#ot-design-review .ot-notes{border-top:1px solid var(--ot-line)}
+#ot-design-review .ot-note-row{width:100%;padding:20px 0;border-bottom:1px solid var(--ot-line);justify-content:space-between;align-items:center;gap:14px}
+#ot-design-review .ot-note-row>span{min-width:0;flex:1}
+#ot-design-review .ot-note-row strong{display:block;font-weight:500;font-size:14px}
+#ot-design-review .ot-note-row p{color:var(--ot-muted);font-size:12px;margin:6px 0 8px}
+#ot-design-review .ot-note-row small{font-size:11px;color:var(--ot-muted)}
+#ot-design-review .ot-editor-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--ot-line)}
+#ot-design-review .ot-editor-tools{display:flex;gap:7px;margin:17px 0 24px;flex-wrap:wrap}
+#ot-design-review .ot-editor-tools button{border-radius:4px;padding:7px;color:var(--ot-muted)}
+#ot-design-review .ot-editor-title{border:0;width:100%;background:transparent;font-size:25px!important;font-weight:600;padding:0 0 15px;letter-spacing:-.8px}
+#ot-design-review .ot-editor-body{border:0;width:100%;min-height:330px;resize:vertical;background:transparent;font-size:15px;line-height:1.9;padding:0}
+#ot-design-review .ot-inline-reference{margin-top:24px;border-top:1px solid var(--ot-line);padding-top:18px;display:flex;align-items:center;gap:10px;color:var(--ot-muted);font-size:12px}
+#ot-design-review .ot-account{max-width:620px}
+#ot-design-review .ot-person{display:flex;align-items:center;gap:16px;padding:0 0 28px;border-bottom:1px solid var(--ot-line)}
+#ot-design-review .ot-person .ot-avatar{width:44px;height:44px;font-size:14px}
+#ot-design-review .ot-setting{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:19px 0;border-bottom:1px solid var(--ot-line);font-size:13px}
+#ot-design-review .ot-setting p{font-size:12px;color:var(--ot-muted);margin-top:4px}
+#ot-design-review .ot-setting select{border:1px solid var(--ot-line);border-radius:5px;background:var(--ot-bg);padding:7px;font-size:12px}
+#ot-design-review .ot-plans{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:25px}
+#ot-design-review .ot-plan{border:1px solid var(--ot-line);border-radius:8px;padding:22px;display:flex;flex-direction:column;gap:20px}
+#ot-design-review .ot-plan ul{padding:0;list-style:none;margin:0;font-size:13px}
+#ot-design-review .ot-plan li{display:flex;gap:8px;margin:11px 0;align-items:center}
+#ot-design-review .ot-plan .ot-button{margin-top:auto}
+#ot-design-review .ot-login{max-width:370px;margin:50px auto;padding:20px 0}
+#ot-design-review .ot-login-logo{width:39px;height:39px;margin-bottom:24px}
+#ot-design-review .ot-login h1{margin-bottom:10px}
+#ot-design-review .ot-login p{color:var(--ot-muted);font-size:13px;margin-bottom:27px}
+#ot-design-review .ot-login .ot-button{width:100%;margin-bottom:15px}
+#ot-design-review .ot-login-footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--ot-line);font-size:11px;color:var(--ot-muted)}
+#ot-design-review .ot-mobile-nav{display:none}
+#ot-design-review .ot-notice{border:1px solid var(--ot-line);border-radius:7px;background:var(--ot-side);padding:15px;margin-top:20px;display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--ot-muted)}
+#ot-design-review .ot-toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ot-action);color:var(--ot-on);padding:10px 16px;border-radius:6px;font-size:12px;max-width:90%;box-shadow:0 3px 18px #0002;z-index:3}
+#ot-design-review .ot-dialog-backdrop{position:absolute;inset:0;background:#0005;display:flex;align-items:center;justify-content:center;padding:25px;z-index:5}
+#ot-design-review .ot-dialog{background:var(--ot-bg);padding:26px;border:1px solid var(--ot-line);border-radius:10px;width:430px;max-width:100%}
+#ot-design-review .ot-dialog p{font-size:13px;color:var(--ot-muted);margin:12px 0 20px}
+#ot-design-review .ot-dialog .ot-search{max-width:none}
+#ot-design-review[data-device=mobile] .ot-shell{max-width:390px;margin:auto;grid-template-columns:1fr;min-height:740px;border-radius:19px}
+#ot-design-review[data-device=mobile] .ot-sidebar{display:none}
+#ot-design-review[data-device=mobile] .ot-topbar{padding:14px 20px;font-size:11px}
+#ot-design-review[data-device=mobile] .ot-content{padding:25px 20px 30px}
+#ot-design-review[data-device=mobile] .ot-heading{flex-wrap:wrap;margin-bottom:22px}
+#ot-design-review[data-device=mobile] h1{font-size:24px}
+#ot-design-review[data-device=mobile] .ot-toolbar{align-items:stretch}
+#ot-design-review[data-device=mobile] .ot-search{max-width:none;width:100%;flex-basis:100%}
+#ot-design-review[data-device=mobile] .ot-shortcut{display:none}
+#ot-design-review[data-device=mobile] .ot-table-head{display:none}
+#ot-design-review[data-device=mobile] .ot-book{grid-template-columns:20px minmax(0,1fr);column-gap:12px;row-gap:0;padding:18px 0}
+#ot-design-review[data-device=mobile] .ot-book-nums{grid-column:2;font-size:11px;text-align:right;display:none}
+#ot-design-review[data-device=mobile] .ot-book-title{font-size:18px}
+#ot-design-review[data-device=mobile] .ot-book-author{font-size:12px}
+#ot-design-review[data-device=mobile] .ot-mobile-nav{display:flex;justify-content:space-around;border-top:1px solid var(--ot-line);background:var(--ot-bg);padding:11px 8px 14px;gap:4px}
+#ot-design-review .ot-mobile-nav button{flex:1;display:flex;flex-direction:column;gap:6px;padding:5px 2px;color:var(--ot-muted);font-size:10px;border-radius:5px}
+#ot-design-review .ot-mobile-nav button[aria-current=page]{color:var(--ot-ink);font-weight:600}
+#ot-design-review[data-device=mobile] .ot-resume{padding:18px;flex-wrap:wrap;gap:16px}
+#ot-design-review[data-device=mobile] .ot-field-grid{column-gap:16px}
+#ot-design-review[data-device=mobile] .ot-field{font-size:12px}
+#ot-design-review[data-device=mobile] .ot-field small{display:none}
+#ot-design-review[data-device=mobile] .ot-study-row{gap:10px;grid-template-columns:22px minmax(0,1fr) auto}
+#ot-design-review[data-device=mobile] .ot-collection{align-items:flex-start;flex-direction:column}
+#ot-design-review[data-device=mobile] .ot-meta{grid-template-columns:92px minmax(0,1fr)}
+#ot-design-review[data-device=mobile] .ot-detail-title{font-size:28px}
+#ot-design-review[data-device=mobile] .ot-role{grid-template-columns:22px minmax(0,1fr);gap:12px}
+#ot-design-review[data-device=mobile] .ot-role>.ot-button{grid-column:2;justify-self:start;margin-top:8px}
+#ot-design-review[data-device=mobile] .ot-room{grid-template-columns:1fr;margin:-25px -20px -30px;min-height:650px}
+#ot-design-review[data-device=mobile] .ot-conversation{padding:20px}
+#ot-design-review[data-device=mobile] .ot-references{border-left:0;border-top:1px solid var(--ot-line);display:none}
+#ot-design-review[data-device=mobile] .ot-room[data-sources=true] .ot-references{display:block}
+#ot-design-review[data-device=mobile] .ot-plans{grid-template-columns:1fr}
+#ot-design-review[data-device=mobile] .ot-login{margin:35px auto}
+#ot-design-review[data-device=mobile] .ot-toast{bottom:90px}
+@media(max-width:700px){#ot-design-review .ot-shell{grid-template-columns:1fr;min-height:700px}#ot-design-review .ot-sidebar{display:none}#ot-design-review .ot-topbar{padding:13px 20px}#ot-design-review .ot-content{padding:25px 20px 30px}#ot-design-review .ot-mobile-nav{display:flex;justify-content:space-around;border-top:1px solid var(--ot-line);padding:10px 8px}#ot-design-review .ot-heading{flex-wrap:wrap}#ot-design-review .ot-room{grid-template-columns:1fr;margin:-25px -20px -30px}#ot-design-review .ot-references{border-left:0;border-top:1px solid var(--ot-line)}#ot-design-review .ot-plans{grid-template-columns:1fr}#ot-design-review .ot-preview-controls{width:100%}#ot-design-review .ot-preview select{flex:1}#ot-design-review .ot-table-head,#ot-design-review .ot-book{grid-template-columns:20px minmax(0,1fr) 36px;gap:10px}#ot-design-review .ot-book-nums:nth-last-child(2){display:none}#ot-design-review .ot-table-head span:nth-last-child(2){display:none}}
+@media(max-width:400px){#ot-design-review .ot-topbar .ot-small{display:none}#ot-design-review .ot-field-grid{grid-template-columns:1fr}#ot-design-review .ot-role{grid-template-columns:20px minmax(0,1fr)}#ot-design-review .ot-role>.ot-button{grid-column:2;justify-self:start}#ot-design-review .ot-preview button{min-height:36px}#ot-design-review .ot-search input,#ot-design-review textarea{font-size:16px}#ot-design-review .ot-study-row{grid-template-columns:24px minmax(0,1fr)}#ot-design-review .ot-study-row>.ot-button{grid-column:2;justify-self:start}#ot-design-review .ot-resume{flex-wrap:wrap}#ot-design-review .ot-meta{grid-template-columns:90px minmax(0,1fr)}}
+@media(pointer:coarse){#ot-design-review .ot-nav,#ot-design-review .ot-button,#ot-design-review .ot-mobile-nav button{min-height:44px}#ot-design-review input,#ot-design-review textarea{font-size:16px}}
+</style>
+<div id="ot-design-review" data-tone="system" data-device="desktop" aria-label="Rancangan OpenTurath monochrome">
+  <div class="ot-preview">
+    <span><strong>OpenTurath / Monochrome</strong> · Usulan desain · Sesi, akun & catatan contoh</span>
+    <div class="ot-preview-controls">
+      <select id="ot-screen-picker" aria-label="Layar rancangan">
+        <option value="pustaka">Pustaka</option><option value="kitab">Detail kitab</option><option value="kajian">Kajian</option><option value="asisten">Asisten Fikih</option><option value="tahawwulat">Fikih Tahawwulat</option><option value="ruang">Ruang percakapan</option><option value="catatan">Catatan</option><option value="editor">Editor catatan</option><option value="akun">Akun</option><option value="akses">Pilihan akses</option><option value="login">Login</option>
+      </select>
+      <button type="button" id="ot-device-toggle" class="cursor-interaction" aria-label="Tampilkan rancangan ponsel"><i data-lucide="smartphone" aria-hidden="true"></i><span>Ponsel</span></button>
+      <button type="button" id="ot-theme-toggle" class="cursor-interaction" aria-label="Ubah mode terang dan gelap"><i data-lucide="moon" aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <div class="ot-shell">
+    <aside class="ot-sidebar" aria-label="Navigasi OpenTurath">
+      <div class="ot-brand"><img data-ot-brand alt="Logo OpenTurath"><span>OpenTurath</span></div>
+      <nav>
+        <button type="button" data-go="kajian" class="ot-nav cursor-interaction"><i data-lucide="messages-square" aria-hidden="true"></i>Kajian</button>
+        <button type="button" data-go="pustaka" class="ot-nav cursor-interaction" aria-current="page"><i data-lucide="library" aria-hidden="true"></i>Pustaka</button>
+        <button type="button" data-go="catatan" class="ot-nav cursor-interaction"><i data-lucide="notebook-pen" aria-hidden="true"></i>Catatan</button>
+      </nav>
+      <div class="ot-sidebar-group"><span class="ot-label">Koleksi</span><button type="button" data-go="asisten" class="cursor-interaction">Fikih Syafi’i</button><button type="button" data-go="tahawwulat" class="cursor-interaction">Fikih Tahawwulat</button></div>
+      <div class="ot-sidebar-group"><span class="ot-label">Sesi terakhir</span><button type="button" data-go="ruang" class="cursor-interaction"><i data-lucide="message-square" aria-hidden="true"></i>Menelusuri bab thaharah</button></div>
+      <div class="ot-sidebar-bottom"><button type="button" data-go="akun" class="ot-nav cursor-interaction"><span class="ot-avatar">P</span><span>Pengguna contoh</span><i data-lucide="chevrons-up-down" aria-hidden="true"></i></button></div>
+    </aside>
+    <main class="ot-main">
+      <header class="ot-topbar"><span class="ot-crumb" id="ot-breadcrumb">Pustaka <span>/</span> <strong>Fikih Syafi’i</strong></span><span class="ot-small">Ruang kajian turats</span></header>
+      <div class="ot-content" id="ot-screen"><h1>Pustaka</h1><p class="ot-muted">Fikih Syafi’i</p></div>
+      <nav class="ot-mobile-nav" aria-label="Navigasi ponsel"><button type="button" data-go="kajian" class="cursor-interaction"><i data-lucide="messages-square" aria-hidden="true"></i>Kajian</button><button type="button" data-go="pustaka" class="cursor-interaction" aria-current="page"><i data-lucide="library" aria-hidden="true"></i>Pustaka</button><button type="button" data-go="catatan" class="cursor-interaction"><i data-lucide="notebook-pen" aria-hidden="true"></i>Catatan</button><button type="button" data-go="akun" class="cursor-interaction"><i data-lucide="user-round" aria-hidden="true"></i>Akun</button></nav>
+    </main>
+    <div class="ot-toast" id="ot-toast" role="status" hidden></div>
+    <div class="ot-dialog-backdrop" id="ot-modal" hidden></div>
+  </div>
+</div>
+<script>
+(() => {
+  const root=document.getElementById('ot-design-review');
+  const screen=root.querySelector('#ot-screen');
+  const picker=root.querySelector('#ot-screen-picker');
+  const catalog=__OT_CATALOG_DATA__;
+  const mark='__OT_MARK_DATA__';
+  const state={screen:'pustaka',device:'desktop',tone:'system',query:'',volume:'all',page:0,bookId:1,noteFilter:'Semua',sources:false,savedBooks:[],fontSize:14,rowSpace:17};
+  const notes=[{title:'Peta bacaan: bab thaharah',kind:'Catatan pribadi',preview:'Susun urutan bacaan dan catat perbedaan edisi sebelum mulai menelaah.',body:'Peta bacaan: bab thaharah\n\n1. Tentukan kitab dan edisi yang dipakai.\n2. Catat judul bab dan subbab dari sumber.\n3. Pisahkan kutipan asli dari catatan pribadi.\n\nRujukan awal: الأم — دار الفكر، بيروت. Nomor halaman belum dicatat.',time:'Hari ini',book:1},{title:'Identitas edisi Al-Umm',kind:'Rujukan kitab',preview:'Al-Syafi’i · Dar al-Fikr, Beirut · 8 jilid',body:'Rujukan katalog: الأم\nPengarang: أبو عبد الله محمد بن إدريس الشافعي\nPenerbit: دار الفكر - بيروت\n8 jilid. Informasi mengikuti katalog aplikasi.',time:'Kemarin',book:1},{title:'Menelusuri bab thaharah',kind:'Jawaban AI',preview:'Daftar langkah untuk menemukan pembahasan dan mencatat rujukannya.',body:'Contoh jawaban untuk ilustrasi antarmuka.\n\nMulai dari judul bab dalam kitab yang Anda pilih. Catat edisi dan halaman saat membaca. Simpan kutipan asli bersama catatan Anda agar keduanya dapat dibedakan.',time:'Kemarin',book:1}];
+  let activeNote=0,toastTimer;
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const icon=name=>`<i data-lucide="${name}" aria-hidden="true"></i>`;
+  const button=(label,action,primary=false,ic='')=>`<button type="button" class="ot-button ${primary?'ot-primary':''} cursor-interaction" data-action="${action}">${ic?icon(ic):''}${label}</button>`;
+  const goButton=(label,dest,primary=false,ic='')=>`<button type="button" class="ot-button ${primary?'ot-primary':''} cursor-interaction" data-go="${dest}">${ic?icon(ic):''}${label}</button>`;
+  const heading=(title,sub='',action='')=>`<div class="ot-heading"><div><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div>${action}</div>`;
+  const normalize=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u064B-\u065F\u0670\u0640\u0300-\u036f]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي');
+  const book=()=>catalog.find(b=>b.id===state.bookId)||catalog[0];
+  const title=b=>b['الاسم_المختصر']||b['الكتاب'];
+  const author=b=>b['المؤلف'];
+  const filtered=()=>catalog.filter(b=>(state.volume==='all'||(state.volume==='single'?Number(b['عدد_الأجزاء'])===1:Number(b['عدد_الأجزاء'])>1))&&normalize(Object.values(b).join(' ')).includes(normalize(state.query)));
+  function toast(message){const el=root.querySelector('#ot-toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,2600);}
+  function persist(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{screen:state.screen,device:state.device,tone:state.tone},privateContent:{bookId:state.bookId,fontSize:state.fontSize,rowSpace:state.rowSpace}}).catch(()=>{});}
+  function applyAppearance(){root.style.colorScheme=state.tone==='system'?'light dark':state.tone;root.dataset.tone=state.tone;root.dataset.device=state.device;root.style.fontSize=state.fontSize+'px';root.style.setProperty('--ot-row-space',state.rowSpace+'px');root.querySelector('#ot-device-toggle span').textContent=state.device==='desktop'?'Ponsel':'Desktop';root.querySelector('#ot-device-toggle').setAttribute('aria-label',state.device==='desktop'?'Tampilkan rancangan ponsel':'Tampilkan rancangan desktop');}
+  function navigate(dest){captureDraft();state.screen=dest;state.sources=false;render();persist();}
+  function captureDraft(){if(state.screen==='editor'){const t=screen.querySelector('#ot-note-title'),b=screen.querySelector('#ot-note-body');if(t&&b){notes[activeNote].title=t.value;notes[activeNote].body=b.value;notes[activeNote].preview=b.value.slice(0,110);}}}
+  function library(){return heading('Pustaka','Katalog Fikih Syafi’i',button('Tentang koleksi','collection',false,'info'))+`<div class="ot-tabs"><button type="button" aria-pressed="true" class="cursor-interaction">Kitab</button><button type="button" data-go="asisten" class="cursor-interaction">Asisten koleksi</button></div><div class="ot-toolbar"><label class="ot-search">${icon('search')}<input id="ot-book-search" aria-label="Cari kitab atau pengarang" placeholder="Cari kitab atau pengarang…" value="${esc(state.query)}"><span class="ot-shortcut">⌘ K</span></label><div class="ot-tools"><select id="ot-volume-filter" aria-label="Filter jilid"><option value="all">Semua jilid</option><option value="single">Satu jilid</option><option value="multi">Beberapa jilid</option></select>${button('Tersimpan','saved',false,'bookmark')}</div></div><div id="ot-library-results"></div>`;}
+  function updateLibrary(){const target=screen.querySelector('#ot-library-results');if(!target)return;let items=filtered();if(state.onlySaved)items=items.filter(b=>state.savedBooks.includes(b.id));const pages=Math.max(1,Math.ceil(items.length/6));state.page=Math.min(state.page,pages-1);const page=items.slice(state.page*6,state.page*6+6);target.innerHTML=`<div class="ot-count" aria-live="polite"><span>${items.length} edisi kitab</span><span>Metadata katalog aplikasi</span></div>`+(items.length?`<div class="ot-table-head"><span>No.</span><span>Kitab & pengarang</span><span>Wafat</span><span>Jilid</span></div>`+page.map((b,i)=>`<button type="button" data-book="${b.id}" class="ot-book cursor-interaction" aria-label="Buka detail ${esc(title(b))}"><span class="ot-book-index">${String(state.page*6+i+1).padStart(2,'0')}</span><span><span class="ot-book-title" lang="ar">${esc(title(b))}</span><span class="ot-book-author" lang="ar">${esc(author(b))}</span></span><span class="ot-book-nums">${esc(b.tahun_wafat||'—')} H</span><span class="ot-book-nums">${esc(b['عدد_الأجزاء'])}</span></button>`).join('')+`<div class="ot-pagination"><span>${state.page*6+1}–${Math.min((state.page+1)*6,items.length)} dari ${items.length}</span><div class="ot-tools"><button type="button" data-action="previous" class="cursor-interaction" ${state.page===0?'disabled':''}>${icon('chevron-left')}<span>Sebelumnya</span></button><span>${state.page+1} / ${pages}</span><button type="button" data-action="next" class="cursor-interaction" ${state.page>=pages-1?'disabled':''}>Berikutnya${icon('chevron-right')}</button></div></div>`:`<div class="ot-empty">${icon('search')}<h2>${state.onlySaved?'Belum ada kitab tersimpan':'Kitab tidak ditemukan'}</h2><p>${state.onlySaved?'Buka detail kitab lalu pilih Simpan rujukan.':'Coba judul, pengarang, atau hapus filter pencarian.'}</p>${button('Tampilkan semua kitab','clear')}</div>`);icons();}
+  function detail(){const b=book();return `<button type="button" data-go="pustaka" class="ot-back cursor-interaction">${icon('arrow-left')}Kembali ke pustaka</button><div class="ot-count"><span>Fikih Syafi’i</span><span>Identitas edisi</span></div><h1 class="ot-detail-title ot-ar" lang="ar">${esc(b['الكتاب'])}</h1><p class="ot-detail-sub ot-ar" lang="ar">${esc(author(b))}</p><div class="ot-actions">${button(state.savedBooks.includes(b.id)?'Rujukan tersimpan':'Simpan rujukan','bookmark',true,'bookmark')}${button('Salin sitasi','citation',false,'copy')}${button('Buat catatan','book-note',false,'notebook-pen')}</div><dl class="ot-meta"><dt>Pengarang</dt><dd class="ot-ar" lang="ar">${esc(author(b))}</dd><dt>Tahqiq</dt><dd class="ot-ar" lang="ar">${esc(b['المحقق_أو_المعتني']||'لم يذكر')}</dd><dt>Penerbit</dt><dd class="ot-ar" lang="ar">${esc(b['الناشر'])}</dd><dt>Edisi & tahun</dt><dd class="ot-ar" lang="ar">${esc(b['سنة_الطبع_والطبعة'])}</dd><dt>Jumlah jilid</dt><dd>${esc(b['عدد_الأجزاء'])} jilid</dd><dt>Jumlah halaman</dt><dd>${esc(b['عدد_الصفحات'])} halaman</dd></dl><div class="ot-notice">${icon('info')}<span>Informasi mengikuti katalog aplikasi. Teks kitab dan nomor halaman kutipan dibuka melalui ruang kajian.</span></div>`;}
+  const fields=[['Fikih','scale','6 asisten'],['Hadis','quote','1 asisten'],['Tafsir','book-open','1 asisten'],['Akidah','compass','1 asisten'],['Usul Fikih','git-branch','1 asisten'],['Bahasa Arab','languages','1 asisten']];
+  function kajian(){return heading('Kajian','Pilih bidang atau lanjutkan sesi Anda.')+`<div class="ot-resume"><div class="ot-flex"><span class="ot-label">Sesi terakhir</span><h2>Menelusuri bab thaharah</h2><p>Fikih Syafi’i · Ibarah & rujukan kitab</p></div>${goButton('Lanjutkan','ruang',true,'arrow-right')}</div><div class="ot-section-label"><h3>Bidang ilmu</h3><span class="ot-small ot-muted">Asisten berdasarkan cakupan kajian</span></div><div class="ot-field-grid">${fields.map(f=>`<button type="button" data-go="asisten" class="ot-field cursor-interaction"><span>${icon(f[1])}${f[0]}</span><small>${f[2]}</small>${icon('chevron-right')}</button>`).join('')}</div><div class="ot-collection"><div><span class="ot-label">Koleksi khusus</span><h2 style="margin-top:7px">Fikih Tahawwulat</h2><p>Lima asisten untuk telaah teks, konsep, latihan, muhadharah, dan bahan dakwah.</p></div>${goButton('Jelajahi koleksi','tahawwulat',false,'arrow-right')}</div><div class="ot-section-label"><h3>Catatan terakhir</h3><button type="button" class="ot-text-button cursor-interaction" data-go="catatan">Lihat semua ${icon('arrow-right')}</button></div><button type="button" data-note="0" class="ot-note-row cursor-interaction"><span><strong>${esc(notes[0].title)}</strong><small>Catatan pribadi · Hari ini</small></span>${icon('arrow-up-right')}</button>`;}
+  const assistants=[['Fikih Syafi’i','Matan, syarah, dan hasyiyah dalam mazhab Syafi’i.'],['Fikih Hanafi','Rujukan dan pembahasan dalam mazhab Hanafi.'],['Fikih Maliki','Rujukan dan pembahasan dalam mazhab Maliki.'],['Fikih Hanbali','Rujukan dan pembahasan dalam mazhab Hanbali.'],['Fikih Muqaran','Perbandingan pendapat dan rujukan fikih.'],['Fatwa & Masail','Penelusuran pembahasan masalah fikih.']];
+  function assistantList(){return heading('Asisten Fikih','Pilih cakupan rujukan yang sesuai dengan kajian Anda.')+`<div class="ot-tabs"><button type="button" aria-pressed="true" class="cursor-interaction">Mazhab & fatwa</button><button type="button" data-go="tahawwulat" class="cursor-interaction">Fikih Tahawwulat</button></div>`+assistants.map((a,i)=>`<div class="ot-study-row"><span class="ot-study-icon">${icon('book-open')}</span><div><h3>${a[0]}</h3><p>${a[1]}</p>${i===0?'<button type="button" data-go="pustaka" class="ot-text-button cursor-interaction">Lihat kitab rujukan</button>':''}</div>${button('Mulai kajian',i===0?'start-room':'assistant-preview',i===0,'arrow-right')}</div>`).join('');}
+  const roles=[['Al-Muhaqqiq','المحقق','Telaah matan, ibarah, dan rujukannya.'],['Al-Bayan','البيان','Pahami konsep dan istilah secara bertahap.'],['Al-Mukhtabir','المختبر','Uji pemahaman melalui tanya jawab.'],['Al-Habib','الحبيب','Telusuri materi muhadharah Habib Abu Bakar.'],['Al-Khatib','الخطيب','Susun bahan dakwah dan khutbah.']];
+  function tahawwulat(){return heading('Fikih Tahawwulat','Karya Al-Habib Abu Bakar Al-Adni Al-Masyhur',button('Tentang koleksi','tahawwulat-info',false,'info'))+`<div class="ot-count"><span>Lima asisten khusus</span><button type="button" data-go="pustaka" class="ot-text-button cursor-interaction">Pustaka ${icon('arrow-up-right')}</button></div>`+roles.map((r,i)=>`<div class="ot-role"><span class="ot-label">${String(i+1).padStart(2,'0')}</span><div><h3>${r[0]} <span class="ot-ar" lang="ar">${r[1]}</span></h3><p>${r[2]}</p></div>${button('Mulai kajian','role-'+i,i===0,'arrow-right')}</div>`).join('');}
+  function room(){return `<div class="ot-room" data-sources="${state.sources}"><div class="ot-conversation"><div class="ot-session"><span><strong>${esc(state.role||'Fikih Syafi’i')}</strong> <span class="ot-muted">/ Menelusuri rujukan</span></span>${button('Rujukan','sources',false,'panel-right')}</div><div class="ot-question">Bagaimana memulai penelusuran bab thaharah dalam kitab yang tersedia?</div><article class="ot-answer"><span class="ot-label">Asisten kajian</span><h3>Mulai dari kitab dan edisi yang dipakai</h3><p>Tentukan rujukan awal, lalu buka daftar isi untuk menemukan judul bab. Catat identitas edisi agar halaman yang Anda simpan dapat ditemukan kembali.</p><p>Pisahkan kutipan asli dari ringkasan dan catatan pribadi. Saat pembahasan ditemukan, simpan bersama judul kitab, jilid, dan halaman.</p><div class="ot-answer-actions">${button('Salin','copy-answer',false,'copy')}${button('Simpan ke catatan','save-answer',false,'bookmark')}</div></article><form class="ot-composer" id="ot-chat-form"><textarea id="ot-message" aria-label="Pertanyaan kajian" placeholder="Tulis pertanyaan kajian…"></textarea><div class="ot-composer-bottom"><span>Periksa hasil pada sumbernya.</span><button type="submit" class="ot-primary cursor-interaction" aria-label="Kirim pertanyaan contoh">${icon('arrow-up')}</button></div></form></div><aside class="ot-references"><h3>Kitab rujukan</h3><span class="ot-small ot-muted">Identitas sumber</span>${catalog.slice(0,3).map(b=>`<button type="button" data-book="${b.id}" class="ot-source cursor-interaction">${icon('book-open')}<span><span class="ot-ar" lang="ar">${esc(title(b))}</span><small>${esc(b['عدد_الأجزاء'])} jilid · ${esc(b['الناشر'])}</small></span></button>`).join('')}<div class="ot-section-label"><h3>Catatan kajian</h3></div><button type="button" data-note="0" class="ot-source cursor-interaction">${icon('notebook-pen')}<span>Peta bacaan<small>Catatan pribadi</small></span></button></aside></div>`;}
+  function noteList(){const list=notes.map((n,i)=>({n,i})).filter(({n})=>state.noteFilter==='Semua'||n.kind===state.noteFilter);return heading('Catatan','Tulisan pribadi, jawaban tersimpan, dan rujukan kitab.',button('Catatan baru','new-note',true,'plus'))+`<div class="ot-tabs">${['Semua','Catatan pribadi','Jawaban AI','Rujukan kitab'].map(k=>`<button type="button" data-note-filter="${k}" aria-pressed="${state.noteFilter===k}" class="cursor-interaction">${k}</button>`).join('')}</div><div class="ot-notes">`+list.map(({n,i})=>`<button type="button" data-note="${i}" class="ot-note-row cursor-interaction"><span><strong>${esc(n.title||'Catatan tanpa judul')}</strong><p>${esc(n.preview)}</p><small>${esc(n.kind)} · ${esc(n.time)}</small></span>${icon('chevron-right')}</button>`).join('')+`</div>`;}
+  function editor(){const n=notes[activeNote];return `<div class="ot-editor-head"><button type="button" data-go="catatan" class="ot-back cursor-interaction" style="margin:0">${icon('arrow-left')}Catatan</button><div class="ot-tools"><span class="ot-small ot-muted" id="ot-draft-state" role="status">Draf contoh</span>${button('Simpan','save-note',true,'check')}</div></div><div class="ot-editor-tools">${[['bold','Tebal'],['italic','Miring'],['list','Daftar'],['quote','Kutipan'],['heading','Judul'],['align-right','Arah Arab']].map(t=>`<button type="button" data-format="${t[0]}" aria-label="${t[1]}" class="cursor-interaction">${icon(t[0])}</button>`).join('')}</div><input class="ot-editor-title" id="ot-note-title" aria-label="Judul catatan" placeholder="Judul catatan" value="${esc(n.title)}"><textarea class="ot-editor-body" id="ot-note-body" aria-label="Isi catatan" placeholder="Mulai menulis…" dir="auto">${esc(n.body)}</textarea><div class="ot-inline-reference">${icon('book-open')}<span>Rujukan: <span class="ot-ar" lang="ar">${esc(title(catalog.find(b=>b.id===n.book)||catalog[0]))}</span></span><button type="button" data-action="note-book" class="ot-text-button cursor-interaction">Lihat edisi ${icon('arrow-up-right')}</button></div>`;}
+  function account(){return heading('Akun','Kelola akses dan preferensi ruang kajian Anda.')+`<div class="ot-account"><div class="ot-person"><span class="ot-avatar">P</span><div><h3>Pengguna contoh</h3><p class="ot-small ot-muted">Akun pratinjau</p></div></div><div class="ot-section-label"><h3>Akses kajian</h3></div><div class="ot-setting"><div><strong>Fikih Syafi’i</strong><p>Status akses mengikuti akun aplikasi.</p></div>${goButton('Lihat pilihan','akses',false,'arrow-right')}</div><div class="ot-section-label"><h3>Preferensi</h3></div><div class="ot-setting"><div>Tampilan<p>Gunakan mode yang nyaman untuk membaca.</p></div><select id="ot-account-theme" aria-label="Tampilan"><option value="system">Ikuti sistem</option><option value="light">Terang</option><option value="dark">Gelap</option></select></div><div class="ot-setting"><div>Bahasa<p>Bahasa antarmuka aplikasi.</p></div><span>Indonesia</span></div><div class="ot-setting"><span>Ukuran teks bacaan</span>${button('Atur ukuran','text-size',false,'type')}</div><div class="ot-section-label"><h3>Bantuan</h3></div><div class="ot-setting"><span>Tentang OpenTurath</span>${button('Buka','about',false,'arrow-up-right')}</div><div class="ot-setting"><span>Ketentuan & privasi</span>${button('Baca','legal',false,'arrow-up-right')}</div><div class="ot-actions">${goButton('Keluar akun','login',false,'log-out')}</div></div>`;}
+  function access(){return heading('Pilihan akses','Pilih cakupan kajian yang Anda perlukan.')+`<div class="ot-plans"><section class="ot-plan"><span class="ot-label">Modul pilihan</span><div><h2>Fikih Syafi’i</h2><p class="ot-small ot-muted" style="margin-top:7px">Telaah rujukan dalam mazhab Syafi’i.</p></div><ul><li>${icon('check')}Asisten kajian Fikih Syafi’i</li><li>${icon('check')}Katalog kitab rujukan</li><li>${icon('check')}Simpan hasil dan catatan</li></ul><div class="ot-setting" style="padding:10px 0"><span>Periode akses</span><span>Bulanan</span></div><p class="ot-small ot-muted">Harga mengikuti pilihan akses pada aplikasi.</p>${button('Lihat ringkasan','order',true,'arrow-right')}</section><section class="ot-plan"><span class="ot-label">Koleksi khusus</span><div><h2>Fikih Tahawwulat</h2><p class="ot-small ot-muted" style="margin-top:7px">Lima pendekatan untuk satu khazanah.</p></div><ul><li>${icon('check')}Lima asisten khusus</li><li>${icon('check')}Pustaka Fikih Tahawwulat</li><li>${icon('check')}Simpan hasil dan catatan</li></ul><div class="ot-setting" style="padding:10px 0"><span>Periode akses</span><span>Bulanan</span></div><p class="ot-small ot-muted">Harga mengikuti pilihan akses pada aplikasi.</p>${button('Lihat ringkasan','order-tahawwulat',false,'arrow-right')}</section></div><div class="ot-actions">${button('Gunakan kode akses','redeem',false,'ticket')}</div><div class="ot-notice">${icon('info')}<span>Rancangan pilihan akses. Tidak terhubung ke pembayaran atau aktivasi akun.</span></div>`;}
+  function login(){return `<div class="ot-login"><img data-ot-brand class="ot-login-logo" alt="Logo OpenTurath"><h1>Masuk ke OpenTurath</h1><p>Ruang kajian kitab, rujukan, dan catatan Anda.</p>${button('Lanjutkan dengan Google','demo-login',true,'log-in')}<p class="ot-small">Google dibuka di browser untuk masuk. Setelah selesai, kembali ke OpenTurath.</p><div class="ot-login-footer">Dengan masuk, Anda menyetujui <button type="button" data-action="legal" class="ot-text-button cursor-interaction">Ketentuan Layanan</button> dan <button type="button" data-action="legal" class="ot-text-button cursor-interaction">Kebijakan Privasi</button>.</div></div>`;}
+  const labels={pustaka:['Pustaka','Fikih Syafi’i'],kitab:['Pustaka','Identitas edisi'],kajian:['Kajian','Ruang Anda'],asisten:['Kajian','Asisten Fikih'],tahawwulat:['Kajian','Fikih Tahawwulat'],ruang:['Kajian','Sesi percakapan'],catatan:['Catatan','Semua catatan'],editor:['Catatan','Editor'],akun:['Akun','Preferensi'],akses:['Akun','Pilihan akses'],login:['OpenTurath','Masuk']};
+  function icons(){if(globalThis.lucide)lucide.createIcons({attrs:{width:17,height:17}});}
+  function render(){applyAppearance();const views={pustaka:library,kitab:detail,kajian,asisten:assistantList,tahawwulat,ruang:room,catatan:noteList,editor,akun:account,akses:access,login};if(!views[state.screen])state.screen='pustaka';screen.innerHTML=views[state.screen]();picker.value=state.screen;const crumb=labels[state.screen];root.querySelector('#ot-breadcrumb').innerHTML=`${crumb[0]} <span>/</span> <strong>${crumb[1]}</strong>`;const selected=['kitab'].includes(state.screen)?'pustaka':['editor'].includes(state.screen)?'catatan':['akses','login'].includes(state.screen)?'akun':['asisten','tahawwulat','ruang'].includes(state.screen)?'kajian':state.screen;root.querySelectorAll('[data-go]').forEach(n=>{if(n.classList.contains('ot-nav')||n.parentElement.classList.contains('ot-mobile-nav')){if(n.dataset.go===selected)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current');}});root.querySelectorAll('[data-ot-brand]').forEach(i=>i.src=mark);if(state.screen==='pustaka'){screen.querySelector('#ot-volume-filter').value=state.volume;updateLibrary();}if(state.screen==='akun')screen.querySelector('#ot-account-theme').value=state.tone;icons();}
+  function modal(title,body,actions=''){const el=root.querySelector('#ot-modal');el.innerHTML=`<section class="ot-dialog" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="ot-heading" style="margin-bottom:0"><h2>${title}</h2><button type="button" data-action="close-modal" aria-label="Tutup dialog" class="cursor-interaction">${icon('x')}</button></div>${body}${actions?`<div class="ot-actions">${actions}</div>`:''}</section>`;el.hidden=false;icons();el.querySelector('button')?.focus();}
+  root.addEventListener('click',event=>{
+    const target=event.target.closest('button');if(!target)return;
+    if(target.dataset.go){navigate(target.dataset.go);return;}
+    if(target.dataset.book){state.bookId=Number(target.dataset.book);navigate('kitab');return;}
+    if(target.dataset.note!==undefined){activeNote=Number(target.dataset.note);navigate('editor');return;}
+    if(target.dataset.noteFilter){state.noteFilter=target.dataset.noteFilter;render();persist();return;}
+    if(target.dataset.format){const text=screen.querySelector('#ot-note-body');if(text){const start=text.selectionStart,end=text.selectionEnd;const selected=text.value.slice(start,end)||'teks';const type=target.dataset.format;const value=type==='bold'?`**${selected}**`:type==='italic'?`_${selected}_`:type==='list'?`\n- ${selected}`:type==='quote'?`\n> ${selected}`:type==='heading'?`\n## ${selected}`:selected;if(type==='align-right'){text.dir=text.dir==='rtl'?'auto':'rtl';}else{text.setRangeText(value,start,end,'select');}text.focus();captureDraft();screen.querySelector('#ot-draft-state').textContent='Draf berubah';}return;}
+    const a=target.dataset.action;if(!a)return;
+    if(a==='next'||a==='previous'){state.page+=a==='next'?1:-1;updateLibrary();}
+    else if(a==='clear'){state.query='';state.volume='all';state.onlySaved=false;state.page=0;render();}
+    else if(a==='saved'){state.onlySaved=!state.onlySaved;state.page=0;updateLibrary();target.setAttribute('aria-pressed',String(state.onlySaved));}
+    else if(a==='bookmark'){const i=state.savedBooks.indexOf(state.bookId);if(i>=0)state.savedBooks.splice(i,1);else state.savedBooks.push(state.bookId);render();toast(i>=0?'Rujukan dihapus dari contoh tersimpan.':'Rujukan tersimpan dalam pratinjau.');}
+    else if(a==='citation')modal('Sitasi kitab',`<p class="ot-ar" lang="ar">${esc(bibliography())}</p><p>Sitasi disusun dari metadata katalog. Teks ini dapat dipilih dan disalin.</p>`,button('Selesai','close-modal',true));
+    else if(a==='collection')modal('Pustaka Fikih Syafi’i',`<p>${catalog.length} record edisi dari katalog aplikasi. Cari judul dan pengarang dalam bahasa Arab, lalu periksa identitas edisinya.</p><p>Keberadaan dalam katalog belum membuktikan isi kitab tersedia pada suatu sesi NotebookLM.</p>`,button('Kembali ke katalog','close-modal',true));
+    else if(a==='tahawwulat-info')modal('Fikih Tahawwulat','<p>Khazanah karya Al-Habib Abu Bakar Al-Adni Al-Masyhur dengan lima peran asisten: telaah matan, penjelasan konsep, latihan, muhadharah, dan penyusunan bahan dakwah.</p>',button('Lihat lima asisten','close-modal',true));
+    else if(a==='start-room'){state.role='Fikih Syafi’i';navigate('ruang');}
+    else if(a.startsWith('role-')){state.role='Fikih Tahawwulat · '+roles[Number(a.slice(5))][0];navigate('ruang');}
+    else if(a==='assistant-preview')modal('Pilih cakupan kajian','<p>Ilustrasi ruang percakapan menggunakan sesi Fikih Syafi’i sebagai contoh tata letak.</p>',goButton('Lihat ruang kajian','ruang',true));
+    else if(a==='sources'){state.sources=!state.sources;screen.querySelector('.ot-room').dataset.sources=state.sources;if(state.device!=='mobile')toast('Rujukan tersedia di panel kanan.');}
+    else if(a==='copy-answer')modal('Salin hasil kajian','<p>Tentukan kitab dan edisi yang dipakai. Catat judul bab, jilid, dan halaman ketika menelaah sumber.</p><p>Isi percakapan ini adalah contoh rancangan, bukan hasil penelitian.</p>',button('Selesai','close-modal',true));
+    else if(a==='save-answer'){toast('Contoh jawaban tersedia di Catatan → Jawaban AI.');}
+    else if(a==='new-note'||a==='book-note'){captureDraft();notes.unshift({title:a==='book-note'?'Catatan: '+title(book()):'',body:'',kind:'Catatan pribadi',preview:'',time:'Hari ini',book:state.bookId});activeNote=0;navigate('editor');}
+    else if(a==='save-note'){captureDraft();navigate('catatan');toast('Catatan contoh disimpan selama pratinjau ini.');}
+    else if(a==='note-book'){captureDraft();state.bookId=notes[activeNote].book;navigate('kitab');}
+    else if(a==='text-size')modal('Ukuran teks bacaan','<p>Ukuran huruf bacaan diatur terpisah dari kontrol aplikasi.</p><label class="ot-search">Ukuran <input type="range" id="ot-reading-size" min="16" max="28" value="20" aria-label="Ukuran teks bacaan"></label><p class="ot-ar" id="ot-reading-sample" lang="ar" style="font-size:20px">الأم — أبو عبد الله محمد بن إدريس الشافعي</p>',button('Selesai','close-modal',true));
+    else if(a==='about')modal('OpenTurath','<p>Ruang untuk menelaah kitab, menemukan rujukan, dan menyusun catatan kajian.</p>',button('Tutup','close-modal',true));
+    else if(a==='legal')modal('Ketentuan & privasi','<p>Tampilan dokumen kebijakan menggunakan halaman baca yang sama dengan aplikasi. Naskah resmi tidak direkonstruksi dalam ilustrasi ini.</p>',button('Tutup','close-modal',true));
+    else if(a==='demo-login'){navigate('kajian');toast('Login disimulasikan untuk pratinjau desain.');}
+    else if(a==='order'||a==='order-tahawwulat')modal('Ringkasan akses',`<p><strong>${a==='order'?'Fikih Syafi’i':'Fikih Tahawwulat'}</strong><br>Periode bulanan · Akun contoh</p><p>Harga dan metode pembayaran dimuat dari penawaran aplikasi pada implementasi. Tidak ada transaksi pada pratinjau ini.</p>`,button('Kembali','close-modal',true));
+    else if(a==='redeem')modal('Gunakan kode akses','<p>Masukkan kode akses yang Anda terima.</p><label class="ot-search"><input aria-label="Kode akses" placeholder="Kode akses" id="ot-redeem-code"></label>',button('Periksa kode','check-redeem',true));
+    else if(a==='check-redeem'){root.querySelector('#ot-modal').hidden=true;toast('Pratinjau tidak memvalidasi atau mengaktifkan kode.');}
+    else if(a==='close-modal')root.querySelector('#ot-modal').hidden=true;
+    persist();
+  });
+  function bibliography(){const b=book();return [b['المؤلف'],b['الكتاب'],b['الناشر'],b['سنة_الطبع_والطبعة']].filter(Boolean).join('، ');}
+  root.addEventListener('input',event=>{if(event.target.id==='ot-book-search'){state.query=event.target.value;state.page=0;updateLibrary();}else if(event.target.id==='ot-note-title'||event.target.id==='ot-note-body'){captureDraft();screen.querySelector('#ot-draft-state').textContent='Draf contoh berubah';}else if(event.target.id==='ot-reading-size'){root.querySelector('#ot-reading-sample').style.fontSize=event.target.value+'px';}});
+  root.addEventListener('change',event=>{if(event.target.id==='ot-volume-filter'){state.volume=event.target.value;state.page=0;updateLibrary();}if(event.target.id==='ot-account-theme'){state.tone=event.target.value;applyAppearance();persist();}});
+  root.addEventListener('submit',event=>{event.preventDefault();if(event.target.id==='ot-chat-form'){const text=screen.querySelector('#ot-message').value.trim();if(!text)return;const q=screen.querySelector('.ot-question');q.textContent=text;screen.querySelector('#ot-message').value='';toast('Pertanyaan contoh ditampilkan. Mesin asisten tidak terhubung.');}});
+  root.addEventListener('keydown',event=>{if(event.key==='Escape'){root.querySelector('#ot-modal').hidden=true;}if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k'){event.preventDefault();if(state.screen!=='pustaka')navigate('pustaka');screen.querySelector('#ot-book-search').focus();}});
+  root.querySelector('#ot-modal').addEventListener('click',event=>{if(event.target.id==='ot-modal')event.target.hidden=true;});
+  picker.addEventListener('change',()=>navigate(picker.value));
+  root.querySelector('#ot-device-toggle').addEventListener('click',()=>{state.device=state.device==='desktop'?'mobile':'desktop';applyAppearance();persist();});
+  root.querySelector('#ot-theme-toggle').addEventListener('click',()=>{state.tone=state.tone==='dark'?'light':'dark';applyAppearance();persist();});
+  function restore(saved){if(!saved)return;const v={...saved.modelContent,...saved.privateContent};if(labels[v.screen])state.screen=v.screen;if(['desktop','mobile'].includes(v.device))state.device=v.device;if(['system','light','dark'].includes(v.tone))state.tone=v.tone;if(catalog.some(b=>b.id===v.bookId))state.bookId=v.bookId;if(typeof v.fontSize==='number')state.fontSize=Math.max(12,Math.min(17,v.fontSize));if(typeof v.rowSpace==='number')state.rowSpace=Math.max(12,Math.min(23,v.rowSpace));}
+  restore(window.openai?.widgetState);
+  window.addEventListener('openai:set_globals',event=>{restore(event.detail?.globals?.widgetState);render();});
+  render();
+  if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:()=>{applyAppearance();persist();}});tweak.addSlider(state,'rowSpace',{label:'Ruang antarbaris kitab',min:12,max:23,unit:'px'});}
+})();
+</script>
