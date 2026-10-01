@@ -9,8 +9,11 @@ import 'native_turath_chat_view.dart';
 
 /// Prototype chat surface: no NotebookLM WebView, browser launch or Google login.
 class NotebookBackendChatTab extends StatefulWidget {
-  const NotebookBackendChatTab({super.key, required this.session});
+  const NotebookBackendChatTab({super.key, required this.session,
+    this.controller, this.accountChanges});
   final AgentSessionTab session;
+  final NotebookChatController? controller;
+  final Stream<String?>? accountChanges;
 
   @override
   State<NotebookBackendChatTab> createState() => _NotebookBackendChatTabState();
@@ -18,16 +21,17 @@ class NotebookBackendChatTab extends StatefulWidget {
 
 class _NotebookBackendChatTabState extends State<NotebookBackendChatTab> {
   late final NotebookChatController _chat;
-  StreamSubscription<User?>? _auth;
+  StreamSubscription<String?>? _auth;
 
   @override
   void initState() {
     super.initState();
-    _chat = NotebookChatController(agentId: widget.session.agent.id,
+    _chat = widget.controller ?? NotebookChatController(agentId: widget.session.agent.id,
       currentUid: () => FirebaseAuth.instance.currentUser?.uid);
     _chat.synchronizeOwner();
     _chat.addListener(_changed);
-    _auth = FirebaseAuth.instance.authStateChanges().listen((_) => _chat.synchronizeOwner());
+    _auth = (widget.accountChanges ?? FirebaseAuth.instance.authStateChanges().map((user) => user?.uid))
+        .listen((_) => _chat.synchronizeOwner());
   }
 
   void _changed() {
