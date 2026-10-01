@@ -31,8 +31,8 @@ prepared = {}
 for relative, url in sources.items():
     with urllib.request.urlopen(url, timeout=25) as response:
         data = response.read()
-    if not data.startswith(b"// Copyright"):
-        raise SystemExit("Unexpected SDK source response.")
+    if len(data) < 1000 or b"Copyright" not in data[:400] or b"Google" not in data[:400]:
+        raise SystemExit(f"Unexpected SDK source response for {relative}.")
     prepared[relative] = data
 
 with tempfile.TemporaryDirectory(prefix="openturath-sdk-restore-") as folder:
