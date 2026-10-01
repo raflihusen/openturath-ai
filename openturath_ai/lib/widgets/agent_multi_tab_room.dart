@@ -34,10 +34,14 @@ import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
 import 'notebook_backend_chat_tab.dart';
+import 'browser_companion_chat_tab.dart';
 
 // Explicit local prototype opt-in; remains off in normal/release builds.
 const _backendChatPrototype =
     bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE');
+const _browserCompanionPrototype =
+    bool.fromEnvironment('OPENTURATH_BROWSER_COMPANION');
+const _nativeChat = _backendChatPrototype || _browserCompanionPrototype;
 
 /// AgentMultiTabRoom: Persistent, multi-tab AI Study Room inspired by Google Chrome tabs.
 /// Keeps up to 7 AI specialists running concurrently in memory without reloading.
@@ -171,10 +175,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
   final AuthService _authService = AuthService();
 
   Future<void> _copyActiveConversation(AgentSessionTab session) async {
+    final owner = _authService.currentUser?.uid;
+    if (owner == null) return;
     final controller = session.webController;
-    if (!_backendChatPrototype && controller == null) return;
+    if (!_nativeChat && controller == null) return;
     try {
-      final result = _backendChatPrototype
+      final result = _nativeChat
           ? session.chatMessages
               .map((message) => [message.text, ...message.citations].join('\n'))
               .join('\n\n')
@@ -183,15 +189,16 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   'window.otNotebook ? window.otNotebook.conversation() : ""',
             );
       final text = result is String ? result.trim() : '';
+      if (_authService.currentUser?.uid != owner) return;
       if (text.isEmpty) {
         if (mounted) AppSnackBar.warning(context, AppCopy.noConversationToCopy);
         return;
       }
       final formatted = text;
       // 1. Simpan langsung ke Catatan (Bookmarks)
-      final uid = _authService.currentUser?.uid;
       final bookmark = copiedAnswerBookmark(formatted, session.agent);
-      await _bookmarkService.addBookmark(bookmark, userId: uid);
+      await _bookmarkService.addBookmark(bookmark, userId: owner);
+      if (_authService.currentUser?.uid != owner) return;
 
       // 2. Salin ke clipboard perangkat
       await Clipboard.setData(ClipboardData(text: formatted));
@@ -696,7 +703,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               }
             },
             itemBuilder: (ctx) => [
-              if (!_backendChatPrototype)
+              if (!_nativeChat)
                 PopupMenuItem(
                   value: 'language',
                   child: Row(
@@ -709,7 +716,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     ],
                   ),
                 ),
-              if (!_backendChatPrototype)
+              if (!_nativeChat)
                 PopupMenuItem(
                   value: 'delete_chat',
                   child: Row(
@@ -734,7 +741,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   ],
                 ),
               ),
-              if (!_backendChatPrototype)
+              if (!_nativeChat)
                 PopupMenuItem(
                   value: 'font',
                   child: Row(
@@ -880,7 +887,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         index: _sessionManager.activeIndex,
         children: [
           for (int i = 0; i < sessions.length; i++)
-            if (_backendChatPrototype)
+            if (_browserCompanionPrototype)
+              BrowserCompanionChatTab(
+                key: ValueKey('companion_agent_tab_${sessions[i].agent.id}'),
+                session: sessions[i],
+              )
+            else if (_backendChatPrototype)
               NotebookBackendChatTab(
                 key: ValueKey('native_agent_tab_${sessions[i].agent.id}'),
                 session: sessions[i],
@@ -1785,7 +1797,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 handlerName: 'otCopiedAnswer',
                 callback: (args) async {
                   try {
+                    final owner = _authService.currentUser?.uid;
+                    if (owner == null) return false;
                     final url = await controller.getUrl();
+                    if (_authService.currentUser?.uid != owner) return false;
                     if (url?.scheme != 'https' ||
                         !['notebooklm.google.com', 'notebook.google.com']
                             .contains(url?.host) ||
@@ -1804,7 +1819,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       _lastCopiedToastAt = now;
 
                       await Clipboard.setData(ClipboardData(text: text));
-                      if (context.mounted) {
+                      if (context.mounted && _authService.currentUser?.uid == owner) {
                         OTMotion.light();
                         AppSnackBar.success(
                           context,
@@ -1814,11 +1829,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                             label: 'Simpan',
                             textColor: OTColors.onInverseSurface,
                             onPressed: () {
-                              final uid = _authService.currentUser?.uid;
-                              if (uid != null) {
+                              if (_authService.currentUser?.uid == owner) {
                                 unawaited(_bookmarkService.addBookmark(
                                   copiedAnswerBookmark(text, session.agent),
-                                  userId: uid,
+                                  userId: owner,
                                 ));
                               }
                             },
