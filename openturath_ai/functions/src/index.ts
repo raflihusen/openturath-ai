@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
 import * as crypto from "crypto";
+import { handleNativeChat, NativeChatError } from "./native_chat";
 import {
   NOTEBOOK_ENTITIES,
   AGENT_TO_ENTITY,
@@ -351,6 +352,67 @@ export const recordQuestion = functions
         "Akses Pro untuk kajian ini belum aktif. Tukarkan voucher atau berlangganan untuk melanjutkan."
       );
     });
+  });
+
+// Native chat prototype. Enabling this requires a dedicated operator session,
+// an isolated test notebook and an explicitly configured test UID.
+export const askAgent = functions
+  .runWith({
+    serviceAccount: "open-turath@appspot.gserviceaccount.com",
+    secrets: ["NOTEBOOK_BRIDGE_KEY"],
+    timeoutSeconds: 120,
+    maxInstances: 1,
+  })
+  .https.onCall(async (data, context) => {
+    if (context.auth) {
+      const header = context.rawRequest.headers.authorization;
+      try {
+        if (!header?.startsWith("Bearer ")) throw new Error("Missing token");
+        const verified = await admin.auth().verifyIdToken(header.slice(7), true);
+        if (verified.uid !== context.auth.uid) throw new Error("Identity mismatch");
+      } catch (_) {
+        throw new functions.https.HttpsError("unauthenticated", "Silakan masuk kembali ke OpenTurath.");
+      }
+    }
+    try {
+      return await handleNativeChat(data, context.auth?.uid, {
+        testUid: process.env.NOTEBOOK_BRIDGE_TEST_UID,
+        authorize: async (uid, agentId) => {
+          const key = getEntitlementKey(agentId);
+          if (!key || !AGENT_URLS[agentId]) return false;
+          const snapshot = await db.collection("users").doc(uid).get();
+          return snapshot.exists && getEntitlementAccess(snapshot.data()!, key).active;
+        },
+        rateLimit: uid => enforceRateLimit(`native_chat_${uid}`, 10, 60, "Terlalu banyak pertanyaan. Silakan tunggu sebentar."),
+        ask: async request => {
+          const endpoint = process.env.NOTEBOOK_BRIDGE_URL;
+          const key = process.env.NOTEBOOK_BRIDGE_KEY;
+          if (!endpoint || !key || key.length < 32) {
+            throw new NativeChatError("failed-precondition", "Koneksi asisten di aplikasi belum diaktifkan.");
+          }
+          const url = new URL(endpoint);
+          const local = process.env.FUNCTIONS_EMULATOR === "true" &&
+            url.protocol === "http:" && ["127.0.0.1", "localhost"].includes(url.hostname);
+          if ((!local && url.protocol !== "https:") || url.username || url.password || url.search || url.hash || url.pathname !== "/ask") {
+            throw new NativeChatError("failed-precondition", "Konfigurasi koneksi asisten belum valid.");
+          }
+          const response = await axios.post(url.toString(), request, {
+            headers: {Authorization: `Bearer ${key}`},
+            timeout: 80000,
+            maxRedirects: 0,
+            maxContentLength: 512000,
+            maxBodyLength: 40000,
+          });
+          return response.data;
+        },
+      });
+    } catch (error) {
+      if (error instanceof NativeChatError) {
+        throw new functions.https.HttpsError(error.code, error.message);
+      }
+      if (error instanceof functions.https.HttpsError) throw error;
+      throw new functions.https.HttpsError("unavailable", "Asisten belum dapat dihubungi.");
+    }
   });
 
 // ================================================================
