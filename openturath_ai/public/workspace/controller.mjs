@@ -17,7 +17,7 @@ export class WorkspaceController {
 
   async sessionChanged(user) {
     const epoch = ++this.epoch;
-    this.update({ user, phase: user ? 'loading' : 'signed-out', error: null, link: null, busy: false });
+    this.update({ user, phase: user ? 'loading' : 'signed-out', error: null, link: null, busy: false, notice: null, agentId: null });
     if (!user) return;
     try {
       await this.adapter.ensureProfile(user);
@@ -75,12 +75,13 @@ export class WorkspaceController {
   async signOut() {
     // Invalidate links and in-flight requests immediately, even if logout fails.
     ++this.epoch;
+    const epoch = this.epoch;
     this.update({ busy: true, link: null, error: null, notice: null, phase: 'signing-out' });
     try {
       await this.adapter.signOut();
-      await this.sessionChanged(null);
+      if (epoch === this.epoch) await this.sessionChanged(null);
     } catch (error) {
-      this.update({ busy: false, phase: 'logout-error', error });
+      if (epoch === this.epoch) this.update({ busy: false, phase: 'logout-error', error });
     }
   }
 }
