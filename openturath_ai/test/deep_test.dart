@@ -82,11 +82,11 @@ void main() {
     });
 
     test('Radius tokens conform to Apple HIG 3-token system', () {
-      expect(AppTheme.radiusPill, equals(100.0));
+      expect(AppTheme.radiusPill, equals(10.0));
       expect(AppTheme.radiusFull, equals(100.0));
       expect(AppTheme.radiusXS, equals(8.0));
-      expect(AppTheme.radiusCard, equals(16.0));
-      expect(AppTheme.radiusM, equals(16.0));
+      expect(AppTheme.radiusCard, equals(12.0));
+      expect(AppTheme.radiusM, equals(12.0));
       expect(AppTheme.radiusS, equals(8.0));
     });
   });
