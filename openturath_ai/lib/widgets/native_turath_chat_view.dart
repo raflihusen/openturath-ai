@@ -69,6 +69,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
   @override
   void didUpdateWidget(NativeTurathChatView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _canSend = _textController.text.trim().isNotEmpty && !widget.isGenerating;
     if (widget.messages.length != oldWidget.messages.length ||
         (widget.messages.isNotEmpty &&
             oldWidget.messages.isNotEmpty &&
@@ -321,6 +322,8 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 ? _buildScholarlyRichText(msg.text, textPrimary, textSecondary)
                 : MarkdownBody(
                     data: msg.text,
+                    // Answers are untrusted display text. Do not fetch embedded image URLs.
+                    imageBuilder: (uri, title, alt) => Text(alt ?? ''),
                     styleSheet: MarkdownStyleSheet(
                       p: GoogleFonts.outfit(
                         fontSize: 14.5,
@@ -341,6 +344,17 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                     ),
                   ),
 
+            if (msg.citations.isNotEmpty)
+              ExpansionTile(
+                title: const Text('Rujukan sumber'),
+                tilePadding: EdgeInsets.zero,
+                children: [for (final citation in msg.citations)
+                  Padding(padding: const EdgeInsets.only(bottom: 8),
+                    child: Align(alignment: Alignment.centerLeft,
+                      child: SelectableText(citation))),
+                ],
+              ),
+
             const SizedBox(height: 10),
 
             // Action Bar Bawah (Salin, Bookmark)
@@ -351,13 +365,13 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                   icon: Icon(Icons.content_copy_rounded, size: 16, color: textSecondary),
                   tooltip: 'Salin jawaban',
                   visualDensity: VisualDensity.compact,
-                  onPressed: () => _copyMessage(msg.text),
+                  onPressed: () => _copyMessage([msg.text, ...msg.citations].join('\n\n')),
                 ),
                 IconButton(
                   icon: Icon(Icons.bookmark_border_rounded, size: 17, color: textSecondary),
                   tooltip: 'Simpan ke risalah',
                   visualDensity: VisualDensity.compact,
-                  onPressed: () => _bookmarkMessage(msg.text),
+                  onPressed: () => _bookmarkMessage([msg.text, ...msg.citations].join('\n\n')),
                 ),
               ],
             ),
