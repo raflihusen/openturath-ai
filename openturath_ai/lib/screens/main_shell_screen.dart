@@ -139,6 +139,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final indicator = OTColors.primaryContainer(isDark);
 
     final isWideScreen = MediaQuery.of(context).size.width >= 768;
+    final expandedSidebar = MediaQuery.sizeOf(context).width >= 1100;
     final screens = _buildScreens();
 
     final Widget baseScaffold = isWideScreen
@@ -147,7 +148,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
             body: Row(
               children: [
                 Container(
-                  color: surface,
+                  decoration: BoxDecoration(color: surface,
+                    border: BorderDirectional(end: BorderSide(color: OTColors.border(isDark)))) ,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -156,11 +158,21 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           backgroundColor: surface,
                           indicatorColor: indicator,
                           minWidth: 92,
+                          minExtendedWidth: 208,
+                          extended: expandedSidebar,
                           selectedIndex: _currentIndex,
-                          labelType: NavigationRailLabelType.all,
+                          labelType: expandedSidebar
+                              ? NavigationRailLabelType.none
+                              : NavigationRailLabelType.all,
                           leading: Padding(
-                            padding: const EdgeInsets.only(bottom: 22),
-                            child: OpenTurathMark(size: 36, color: accent),
+                            padding: const EdgeInsets.only(top: 16, bottom: 28),
+                            child: Row(mainAxisSize: MainAxisSize.min, children: [
+                              OpenTurathMark(size: 30, color: accent),
+                              if (expandedSidebar) ...[
+                                const SizedBox(width: 10),
+                                Text('OpenTurath', style: Theme.of(context).textTheme.titleMedium),
+                              ],
+                            ]),
                           ),
                           onDestinationSelected: (index) {
                             HapticFeedback.selectionClick();
