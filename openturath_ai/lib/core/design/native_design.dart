@@ -23,8 +23,8 @@ abstract final class NativeColors {
   static const borderStrongDark = OTColors.borderStrongDark;
   static const accentLight = OTColors.accentLight;
   static const accentDark = OTColors.accentDark;
-  static const destructiveLight = Color(0xFF8C2F2F);
-  static const destructiveDark = Color(0xFFE49A93);
+  static const destructiveLight = OTColors.destructiveLight;
+  static const destructiveDark = OTColors.destructiveDark;
   static Color canvas(bool dark) => dark ? canvasDark : canvasLight;
   static Color surface(bool dark) => dark ? surfaceDark : surfaceLight;
   static Color surfaceSubtle(bool dark) =>
@@ -41,15 +41,15 @@ abstract final class NativeColors {
   static Color accent(bool dark) => dark ? accentDark : accentLight;
   static Color onAccent(bool dark) => OTColors.onAccent(dark);
   static Color actionFill(bool dark) => OTColors.accent(dark);
-  static Color destructiveFill(bool dark) => const Color(0xFF8C2F2F);
+  static Color destructiveFill(bool dark) => OTColors.accent(dark);
   static Color inverseSurface(bool dark) =>
       dark ? surfaceLight : textPrimaryLight;
   static Color destructive(bool dark) =>
       dark ? destructiveDark : destructiveLight;
   static Color marja(bool dark) =>
-      dark ? const Color(0xFFA7BDA6) : const Color(0xFF405C42);
+      OTColors.marja(dark);
   static Color collection(bool dark) =>
-      dark ? const Color(0xFF202024) : const Color(0xFFFFFFFF);
+      OTColors.surface(dark);
   static Color brass(bool dark) => accent(dark);
 }
 
