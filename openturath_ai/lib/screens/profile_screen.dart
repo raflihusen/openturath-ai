@@ -650,7 +650,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () => Navigator.pop(ctx),
             style: FilledButton.styleFrom(
               backgroundColor: textPrimary,
-              foregroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+              foregroundColor: isDark ? const Color(0xFF191919) : Colors.white,
               shape:
                   RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
@@ -730,8 +730,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required Color textSecondary,
     required VoidCallback onTap,
   }) {
-    final activeBg = isDark ? const Color(0xFF18181B) : Colors.white;
-    final activeFg = isDark ? Colors.white : const Color(0xFF18181B);
+    final activeBg = isDark ? const Color(0xFF191919) : Colors.white;
+    final activeFg = isDark ? Colors.white : const Color(0xFF191919);
     final inactiveFg = textSecondary;
 
     return Expanded(
