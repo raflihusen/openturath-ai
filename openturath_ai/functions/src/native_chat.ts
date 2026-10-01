@@ -5,14 +5,14 @@ export class NativeChatError extends Error {
   constructor(public readonly code: ChatCode, message: string) { super(message); }
 }
 
-export interface ChatRequest { agentId: string; question: string; requestId: string; }
+export interface ChatRequest { agentId: string; question: string; requestId: string; expectedUid: string; }
 export interface ChatCitation { sourceId: string; citationNumber: number; excerpt: string | null; }
 export interface ChatReply { requestId: string; answer: string; citations: ChatCitation[]; }
 export interface NativeChatDependencies {
   testUid: string | undefined;
   authorize(uid: string, agentId: string): Promise<boolean>;
   rateLimit(uid: string): Promise<void>;
-  ask(request: ChatRequest & { uid: string }): Promise<unknown>;
+  ask(request: Omit<ChatRequest, "expectedUid"> & { uid: string }): Promise<unknown>;
 }
 
 const requestPattern = /^[a-f0-9]{32}$/;
@@ -23,13 +23,14 @@ export function parseChatRequest(value: unknown): ChatRequest {
     throw new NativeChatError("invalid-argument", "Pertanyaan tidak valid.");
   }
   const data = value as Record<string, unknown>;
-  if (Object.keys(data).some(key => !["agentId", "question", "requestId"].includes(key)) ||
+  if (Object.keys(data).some(key => !["agentId", "question", "requestId", "expectedUid"].includes(key)) ||
       typeof data.agentId !== "string" || !/^[a-z][a-z0-9_]{0,79}$/.test(data.agentId) ||
       typeof data.question !== "string" || !data.question.trim() || data.question.length > 8000 ||
-      typeof data.requestId !== "string" || !requestPattern.test(data.requestId)) {
+      typeof data.requestId !== "string" || !requestPattern.test(data.requestId) ||
+      typeof data.expectedUid !== "string" || !data.expectedUid || data.expectedUid.length > 128) {
     throw new NativeChatError("invalid-argument", "Pertanyaan tidak valid atau terlalu panjang.");
   }
-  return {agentId: data.agentId, question: data.question.trim(), requestId: data.requestId};
+  return {agentId: data.agentId, question: data.question.trim(), requestId: data.requestId, expectedUid: data.expectedUid};
 }
 
 export function parseChatReply(value: unknown, requestId: string): ChatReply {
@@ -55,6 +56,7 @@ export function parseChatReply(value: unknown, requestId: string): ChatReply {
 export async function handleNativeChat(data: unknown, uid: string | undefined, deps: NativeChatDependencies): Promise<ChatReply> {
   if (!uid) throw new NativeChatError("unauthenticated", "Silakan masuk ke OpenTurath.");
   const request = parseChatRequest(data);
+  if (request.expectedUid !== uid) throw new NativeChatError("unauthenticated", "Akun berubah. Silakan kirim pertanyaan dari akun aktif.");
   // No production rollout: initially permit only the explicitly configured prototype user.
   if (!deps.testUid) throw new NativeChatError("failed-precondition", "Koneksi asisten di aplikasi belum diaktifkan.");
   if (uid !== deps.testUid) throw new NativeChatError("permission-denied", "Akses pengujian asisten belum tersedia untuk akun ini.");
@@ -63,7 +65,8 @@ export async function handleNativeChat(data: unknown, uid: string | undefined, d
   }
   await deps.rateLimit(uid);
   try {
-    return parseChatReply(await deps.ask({...request, uid}), request.requestId);
+    const {expectedUid: _, ...payload} = request;
+    return parseChatReply(await deps.ask({...payload, uid}), request.requestId);
   } catch (error) {
     if (error instanceof NativeChatError) throw error;
     // Never return/log upstream errors: they can include request headers or account/session data.
