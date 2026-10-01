@@ -10,20 +10,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_copy.dart';
 import '../core/routes.dart';
-import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
-import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
 
-/// LoginScreen: Gerbang Masuk OpenTurath
-/// Mengadopsi filosofi desain minimalis modern Claude:
-/// - Dark mode hitam pekat (pure deep black)
-/// - Light mode putih pekat (pure clean white)
-/// - Shape minimalis dengan garis abu-abu tipis (subtle hairline border)
-/// - Slogan resmi: "Membaca kitab, menelusuri ibarah." dengan tipografi editorial serif
+/// A shared, theme-adaptive sign-in surface for mobile and desktop.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -112,396 +105,206 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Widget _stagger({required int delayMs, required Widget child}) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: Duration(milliseconds: 350 + delayMs),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, animChild) {
-        return Transform.translate(
-          offset: Offset(0, 18 * (1 - value)),
-          child: Opacity(
-            opacity: value.clamp(0.0, 1.0),
-            child: animChild,
-          ),
-        );
-      },
-      child: child,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    if (AppPlatform.isDesktop) return _buildDesktopLogin(context);
-    const bg = AppTheme.canvasDark;
-    const textPrimary = AppTheme.textPrimaryDark;
-    const textMuted = AppTheme.textSecondaryDark;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final canvas = OTColors.canvas(dark);
+    final primary = OTColors.textPrimary(dark);
+    final secondary = OTColors.textSecondary(dark);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: bg,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: dark ? Brightness.dark : Brightness.light,
+        systemNavigationBarColor: canvas,
+        systemNavigationBarIconBrightness:
+            dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: bg,
+        backgroundColor: canvas,
         body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 380),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 12),
-
-                    // ── 1. Visual Symbol: Arch Artwork dengan Fade Bawah Mulus ──
-                    _stagger(
-                      delayMs: 40,
-                      child: const OpenTurathMark(
-                          size: 148, color: AppTheme.textPrimaryDark),
-                    ),
-                    const LanguageSwitcher(),
-
-                    // ── 2. Brand Wordmark: "OpenTurath" ──
-                    _stagger(
-                      delayMs: 90,
-                      child: Text(
-                        AppCopy.appName,
-                        textAlign: TextAlign.center,
-                        style: ScholarlyFonts.newsreader(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.6,
-                          color: textPrimary,
-                          height: 1.15,
+          child: LayoutBuilder(
+            builder: (context, viewport) {
+              final bodyMinHeight =
+                  viewport.maxHeight > 80 ? viewport.maxHeight - 80 : 0.0;
+              return SingleChildScrollView(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: LanguageSwitcher(),
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // ── 3. Academic Editorial Slogan: "AI for Islamic Scholarship" ──
-                    _stagger(
-                      delayMs: 140,
-                      child: Text(
-                        'AI for Islamic Scholarship',
-                        textAlign: TextAlign.center,
-                        style: ScholarlyFonts.newsreader(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.italic,
-                          letterSpacing: -0.1,
-                          color: textMuted,
-                          height: 1.3,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 56),
-
-                    // ── 4. High-Contrast Solid White Action Pill ──
-                    _stagger(
-                      delayMs: 200,
-                      child: AppleInteractiveWrapper(
-                        onTap: _isLoading ? null : _signIn,
-                        hapticType: HapticFeedbackType.medium,
-                        child: SizedBox(
-                          height: 52,
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: _isLoading ? null : _signIn,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF0E0E10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              elevation: 0,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Color(0xFF0E0E10),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(minHeight: bodyMinHeight),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional.centerStart,
+                                    child: OpenTurathMark(
+                                        size: 44, color: primary),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    AppCopy.appName,
+                                    textDirection: TextDirection.ltr,
+                                    style: ScholarlyFonts.newsreader(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: -0.5,
+                                      height: 1.2,
+                                      color: primary,
                                     ),
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      _GoogleGVector(),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        AppCopy.continueWithGoogle,
-                                        style: ScholarlyFonts.outfit(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: -0.1,
-                                          color: const Color(0xFF0E0E10),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    AppCopy.appTagline,
+                                    style: ScholarlyFonts.outfit(
+                                      fontSize: 15,
+                                      height: 1.5,
+                                      color: secondary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 28),
+                                  FilledButton.icon(
+                                    onPressed: _isLoading ? null : _signIn,
+                                    icon: _isLoading
+                                        ? SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: secondary),
+                                          )
+                                        : _GoogleGVector(),
+                                    label: Text(
+                                      _isLoading
+                                          ? Loc.tr('desktopConnectingGoogle')
+                                          : AppCopy.continueWithGoogle,
+                                      textAlign: TextAlign.center,
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: OTColors.accent(dark),
+                                      foregroundColor: OTColors.onAccent(dark),
+                                      disabledBackgroundColor:
+                                          OTColors.surfaceSubtle(dark),
+                                      disabledForegroundColor: secondary,
+                                      minimumSize: const Size(0, 52),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 14),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      elevation: 0,
+                                    ),
+                                  ),
+                                  if (_desktopError != null) ...[
+                                    const SizedBox(height: 16),
+                                    Semantics(
+                                      liveRegion: true,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(14),
+                                        decoration: BoxDecoration(
+                                          color: OTColors.surfaceSubtle(dark),
+                                          border: Border.all(
+                                              color: OTColors.border(dark)),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Icon(Icons.error_outline_rounded,
+                                                size: 18, color: primary),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                _desktopError!,
+                                                style: ScholarlyFonts.outfit(
+                                                    fontSize: 13,
+                                                    height: 1.5,
+                                                    color: primary),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
+                                    ),
+                                  ],
+                                  if (AppPlatform.isDesktop) ...[
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      Loc.tr('desktopBrowserHelp'),
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: 12,
+                                          height: 1.5,
+                                          color: secondary),
+                                    ),
+                                  ],
+                                  const SizedBox(height: 28),
+                                  Text.rich(
+                                    TextSpan(
+                                      text: '${AppCopy.termsAgreementPrefix} ',
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: 12,
+                                          height: 1.6,
+                                          color: secondary),
+                                      children: [
+                                        TextSpan(
+                                          text: AppCopy.termsOfService,
+                                          style: TextStyle(
+                                            color: primary,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                          recognizer: _termsRecognizer,
+                                        ),
+                                        const TextSpan(text: ' · '),
+                                        TextSpan(
+                                          text: AppCopy.privacyPolicy,
+                                          style: TextStyle(
+                                            color: primary,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                          recognizer: _privacyRecognizer,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // ── 5. Minimalist Legal Disclaimer (Proporsional 2-Baris Seimbang) ──
-                    _stagger(
-                      delayMs: 260,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 320),
-                        child: Text.rich(
-                          TextSpan(
-                            text: '${AppCopy.termsAgreementPrefix}\n',
-                            style: ScholarlyFonts.outfit(
-                              color: textMuted,
-                              fontSize: 12,
-                              height: 1.5,
+                                ],
+                              ),
                             ),
-                            children: [
-                              TextSpan(
-                                text: AppCopy.termsOfService,
-                                style: const TextStyle(
-                                  color: textPrimary,
-                                  decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                recognizer: _termsRecognizer,
-                              ),
-                              const TextSpan(text: ' & '),
-                              TextSpan(
-                                text: AppCopy.privacyPolicy,
-                                style: const TextStyle(
-                                  color: textPrimary,
-                                  decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                recognizer: _privacyRecognizer,
-                              ),
-                              const TextSpan(text: '.'),
-                            ],
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDesktopLogin(BuildContext context) {
-    return Scaffold(
-      backgroundColor: OTColors.canvasLight,
-      body: LayoutBuilder(builder: (context, size) {
-        final compact = size.maxWidth < 820;
-        final story = Container(
-          constraints: BoxConstraints(minHeight: compact ? 260 : 540),
-          padding: const EdgeInsets.all(42),
-          decoration: BoxDecoration(
-            color: OTColors.canvasDark,
-            borderRadius: compact
-                ? const BorderRadius.vertical(top: Radius.circular(28))
-                : const BorderRadius.horizontal(left: Radius.circular(28)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const OpenTurathMark(size: 48, color: OTColors.accentDark),
-              if (!compact) const Spacer(),
-              if (compact) const SizedBox(height: 36),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: OTColors.surfaceSubtleDark,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Text(Loc.tr('academicSlogan'),
-                    style: ScholarlyFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: OTColors.textSecondaryDark)),
-              ),
-              const SizedBox(height: 22),
-              Text(AppCopy.appName,
-                  style: ScholarlyFonts.newsreader(
-                      fontSize: compact ? 38 : 48,
-                      fontWeight: FontWeight.w600,
-                      color: OTColors.textPrimaryDark)),
-              const SizedBox(height: 10),
-              Text(Loc.tr('appTagline'),
-                  style: ScholarlyFonts.newsreader(
-                      fontSize: 21, color: OTColors.textSecondaryDark)),
-              const SizedBox(height: 22),
-              Text(Loc.tr('desktopLoginIntro'),
-                  style: ScholarlyFonts.outfit(
-                      fontSize: 15,
-                      height: 1.5,
-                      color: OTColors.textSecondaryDark)),
-              if (!compact) const Spacer(),
-            ],
-          ),
-        );
-
-        final form = Container(
-          constraints: BoxConstraints(minHeight: compact ? 360 : 540),
-          padding: const EdgeInsets.all(42),
-          decoration: BoxDecoration(
-            color: OTColors.surfaceLight,
-            borderRadius: compact
-                ? const BorderRadius.vertical(bottom: Radius.circular(28))
-                : const BorderRadius.horizontal(right: Radius.circular(28)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: LanguageSwitcher()),
-              if (!compact) const Spacer(),
-              if (compact) const SizedBox(height: 18),
-              Text(Loc.tr('desktopLoginTitle'),
-                  style: ScholarlyFonts.newsreader(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w600,
-                      color: OTColors.textPrimaryLight)),
-              const SizedBox(height: 12),
-              Text(Loc.tr('desktopLoginHelp'),
-                  style: ScholarlyFonts.outfit(
-                      fontSize: 15,
-                      height: 1.45,
-                      color: OTColors.textSecondaryLight)),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: FilledButton.icon(
-                  onPressed: _isLoading ? null : _signIn,
-                  icon: _isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: OTColors.onAccentLight))
-                      : _GoogleGVector(),
-                  label: Text(
-                      _isLoading
-                          ? Loc.tr('desktopConnectingGoogle')
-                          : AppCopy.continueWithGoogle,
-                      style: ScholarlyFonts.outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: OTColors.onAccentLight)),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: OTColors.accentLight,
-                    foregroundColor: OTColors.onAccentLight,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                  ),
-                ),
-              ),
-              if (_desktopError != null) ...[
-                const SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: OTColors.surfaceSubtleLight,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.info_outline_rounded,
-                          size: 20, color: OTColors.destructiveLight),
-                      const SizedBox(width: 10),
-                      Expanded(
-                          child: Text(_desktopError!,
-                              style: ScholarlyFonts.outfit(
-                                  fontSize: 13,
-                                  color: OTColors.textPrimaryLight))),
-                    ],
-                  ),
-                ),
-              ],
-              const SizedBox(height: 16),
-              Text(
-                Loc.tr('desktopBrowserHelp'),
-                style: ScholarlyFonts.outfit(
-                  fontSize: 12,
-                  color: OTColors.textSecondaryLight,
-                ),
-              ),
-              if (!compact) const Spacer(),
-              if (compact) const SizedBox(height: 32),
-              const Divider(color: OTColors.borderSubtleLight),
-              const SizedBox(height: 12),
-              Text.rich(TextSpan(
-                text: '${AppCopy.termsAgreementPrefix} ',
-                style: ScholarlyFonts.outfit(
-                    fontSize: 12,
-                    height: 1.5,
-                    color: OTColors.textSecondaryLight),
-                children: [
-                  TextSpan(
-                      text: AppCopy.termsOfService,
-                      style:
-                          const TextStyle(decoration: TextDecoration.underline),
-                      recognizer: _termsRecognizer),
-                  const TextSpan(text: ' · '),
-                  TextSpan(
-                      text: AppCopy.privacyPolicy,
-                      style:
-                          const TextStyle(decoration: TextDecoration.underline),
-                      recognizer: _privacyRecognizer),
-                ],
-              )),
-            ],
-          ),
-        );
-
-        return Center(
-            child: SingleChildScrollView(
-          padding: const EdgeInsets.all(28),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1020),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(color: OTColors.borderSubtleLight),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: compact
-                    ? Column(children: [story, form])
-                    : SizedBox(
-                        height: 540,
-                        child: Row(children: [
-                          Expanded(flex: 11, child: story),
-                          Expanded(flex: 9, child: form),
-                        ])),
-              ),
-            ),
-          ),
-        ));
-      }),
     );
   }
 }
