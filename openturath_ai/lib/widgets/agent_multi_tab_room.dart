@@ -2160,9 +2160,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                             await BrowserWorkspaceLauncher()
                                 .open(agentId: session.agent.id);
                           } catch (_) {
-                            if (context.mounted)
+                            if (context.mounted) {
                               AppSnackBar.error(
                                   context, 'Ruang browser belum dapat dibuka.');
+                            }
                           }
                         },
                       ),
