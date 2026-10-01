@@ -26,9 +26,15 @@ class _Gateway extends CallableGateway {
 
   void reply(int index, {String answer = 'Jawaban fixture [1]'}) {
     pending[index].complete({
-      'requestId': requests[index]['requestId'], 'answer': answer,
-      'citations': [{'sourceId': '11111111-1111-1111-1111-111111111111',
-        'citationNumber': 1, 'excerpt': 'Kutipan fixture'}],
+      'requestId': requests[index]['requestId'],
+      'answer': answer,
+      'citations': [
+        {
+          'sourceId': '11111111-1111-1111-1111-111111111111',
+          'citationNumber': 1,
+          'excerpt': 'Kutipan fixture'
+        }
+      ],
       'operatorSession': 'secret-fixture',
     });
   }
@@ -36,17 +42,23 @@ class _Gateway extends CallableGateway {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final agent = AgentModel.defaultAgents.firstWhere((item) => item.id == 'fiqh_syafii');
+  final agent =
+      AgentModel.defaultAgents.firstWhere((item) => item.id == 'fiqh_syafii');
 
-  test('one authenticated backend call returns native answer and citation data', () async {
+  test('one authenticated backend call returns native answer and citation data',
+      () async {
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => 'reader',
-      service: NotebookChatService(gateway: gateway));
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => 'reader',
+        service: NotebookChatService(gateway: gateway));
     final request = chat.send('Pertanyaan fixture');
     expect(chat.isGenerating, isTrue);
-    expect(gateway.requests.single.keys.toSet(), {'agentId', 'question', 'requestId', 'expectedUid'});
+    expect(gateway.requests.single.keys.toSet(),
+        {'agentId', 'question', 'requestId', 'expectedUid'});
     expect(gateway.requests.single['expectedUid'], 'reader');
-    expect(gateway.requests.single['requestId'], matches(RegExp(r'^[a-f0-9]{32}$')));
+    expect(gateway.requests.single['requestId'],
+        matches(RegExp(r'^[a-f0-9]{32}$')));
     gateway.reply(0);
     await request;
     expect(chat.isGenerating, isFalse);
@@ -58,8 +70,10 @@ void main() {
 
   test('simultaneous sends never duplicate an in-flight question', () async {
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => 'reader',
-      service: NotebookChatService(gateway: gateway));
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => 'reader',
+        service: NotebookChatService(gateway: gateway));
     final request = chat.send('Pertanyaan pertama');
     await chat.send('Pertanyaan kedua');
     expect(gateway.requests, hasLength(1));
@@ -71,8 +85,10 @@ void main() {
   test('logout clears history and discards late responses', () async {
     String? uid = 'reader';
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => uid,
-      service: NotebookChatService(gateway: gateway));
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => uid,
+        service: NotebookChatService(gateway: gateway));
     final request = chat.send('Pertanyaan akun pertama');
     uid = null;
     chat.synchronizeOwner();
@@ -86,11 +102,15 @@ void main() {
     chat.dispose();
   });
 
-  test('a late response cannot alter a new account conversation or its busy state', () async {
+  test(
+      'a late response cannot alter a new account conversation or its busy state',
+      () async {
     var uid = 'reader';
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => uid,
-      service: NotebookChatService(gateway: gateway));
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => uid,
+        service: NotebookChatService(gateway: gateway));
     final first = chat.send('Akun pertama');
     uid = 'other';
     chat.synchronizeOwner();
@@ -106,13 +126,16 @@ void main() {
     chat.dispose();
   });
 
-  test('failed connector does not create an assistant message or retry', () async {
+  test('failed connector does not create an assistant message or retry',
+      () async {
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => 'reader',
-      service: NotebookChatService(gateway: gateway));
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => 'reader',
+        service: NotebookChatService(gateway: gateway));
     final request = chat.send('Pertanyaan fixture');
     gateway.pending.single.completeError(FirebaseFunctionsException(
-      code: 'unavailable', message: 'Bearer secret-fixture'));
+        code: 'unavailable', message: 'Bearer secret-fixture'));
     await request;
     expect(chat.messages, hasLength(1));
     expect(chat.messages.single.isUser, isTrue);
@@ -124,10 +147,13 @@ void main() {
 
   test('malformed response is discarded', () async {
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => 'reader',
-      service: NotebookChatService(gateway: gateway));
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => 'reader',
+        service: NotebookChatService(gateway: gateway));
     final request = chat.send('Pertanyaan fixture');
-    gateway.pending.single.complete({'requestId': 'wrong', 'answer': 'wrong', 'citations': []});
+    gateway.pending.single
+        .complete({'requestId': 'wrong', 'answer': 'wrong', 'citations': []});
     await request;
     expect(chat.messages, hasLength(1));
     expect(chat.error, isNotNull);
@@ -136,8 +162,10 @@ void main() {
 
   test('disposing the tab suppresses pending updates', () async {
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => 'reader',
-      service: NotebookChatService(gateway: gateway));
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => 'reader',
+        service: NotebookChatService(gateway: gateway));
     final request = chat.send('Pertanyaan fixture');
     chat.dispose();
     gateway.reply(0);
@@ -145,12 +173,19 @@ void main() {
     expect(chat.messages, isEmpty);
   });
 
-  testWidgets('real native tab sends, displays citations and accepts the next question without a WebView', (tester) async {
+  testWidgets(
+      'real native tab sends, displays citations and accepts the next question without a WebView',
+      (tester) async {
     final gateway = _Gateway();
-    final chat = NotebookChatController(agentId: agent.id, currentUid: () => 'reader',
-      service: NotebookChatService(gateway: gateway));
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: NotebookBackendChatTab(
-      session: AgentSessionTab(agent: agent), controller: chat,
+    final chat = NotebookChatController(
+        agentId: agent.id,
+        currentUid: () => 'reader',
+        service: NotebookChatService(gateway: gateway));
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: NotebookBackendChatTab(
+      session: AgentSessionTab(agent: agent),
+      controller: chat,
       accountChanges: const Stream.empty(),
     ))));
     expect(find.byType(InAppWebView), findsNothing);

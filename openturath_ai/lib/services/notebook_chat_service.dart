@@ -52,30 +52,39 @@ class NotebookChatService {
       code: 'unavailable',
       message: 'Jawaban asisten belum dapat dibaca.',
     );
-    if (raw is! Map || raw['requestId'] != requestId ||
-        raw['answer'] is! String || (raw['answer'] as String).trim().isEmpty ||
-        (raw['answer'] as String).length > 128000 || raw['citations'] is! List ||
+    if (raw is! Map ||
+        raw['requestId'] != requestId ||
+        raw['answer'] is! String ||
+        (raw['answer'] as String).trim().isEmpty ||
+        (raw['answer'] as String).length > 128000 ||
+        raw['citations'] is! List ||
         (raw['citations'] as List).length > 100) {
       throw invalid;
     }
     final citations = <NotebookChatCitation>[];
-    final uuid = RegExp(r'^[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}$');
+    final uuid =
+        RegExp(r'^[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}$');
     for (final ref in raw['citations'] as List) {
-      if (ref is! Map || ref['sourceId'] is! String ||
+      if (ref is! Map ||
+          ref['sourceId'] is! String ||
           !uuid.hasMatch(ref['sourceId'] as String) ||
-          ref['citationNumber'] is! int || (ref['citationNumber'] as int) < 1 ||
+          ref['citationNumber'] is! int ||
+          (ref['citationNumber'] as int) < 1 ||
           (ref['citationNumber'] as int) > 1000 ||
-          (ref['excerpt'] != null && (ref['excerpt'] is! String ||
-              (ref['excerpt'] as String).length > 4000))) {
+          (ref['excerpt'] != null &&
+              (ref['excerpt'] is! String ||
+                  (ref['excerpt'] as String).length > 4000))) {
         throw invalid;
       }
       citations.add(NotebookChatCitation(
-        ref['sourceId'] as String, ref['citationNumber'] as int,
+        ref['sourceId'] as String,
+        ref['citationNumber'] as int,
         ref['excerpt'] as String?,
       ));
     }
     return NotebookChatReply(
-      (raw['answer'] as String).trim(), List.unmodifiable(citations),
+      (raw['answer'] as String).trim(),
+      List.unmodifiable(citations),
     );
   }
 }

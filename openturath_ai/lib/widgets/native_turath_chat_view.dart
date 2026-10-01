@@ -60,7 +60,8 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
   }
 
   void _onTextChanged() {
-    final canSend = _textController.text.trim().isNotEmpty && !widget.isGenerating;
+    final canSend =
+        _textController.text.trim().isNotEmpty && !widget.isGenerating;
     if (canSend != _canSend) {
       setState(() => _canSend = canSend);
     }
@@ -152,18 +153,22 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           // ── 1. Timeline Obrolan ──
           Expanded(
             child: widget.messages.isEmpty
-                ? _buildEmptyState(textPrimary, textSecondary, surfaceSubtle, border)
+                ? _buildEmptyState(
+                    textPrimary, textSecondary, surfaceSubtle, border)
                 : ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                    itemCount: widget.messages.length + (widget.isGenerating ? 1 : 0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 18),
+                    itemCount:
+                        widget.messages.length + (widget.isGenerating ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == widget.messages.length) {
                         return _buildBreathingIndicator(textSecondary);
                       }
                       final msg = widget.messages[index];
                       return msg.isUser
-                          ? _buildUserBubble(msg, surfaceSubtle, border, textPrimary)
+                          ? _buildUserBubble(
+                              msg, surfaceSubtle, border, textPrimary)
                           : _buildAssistantMessage(
                               msg, textPrimary, textSecondary, border, isDark);
                     },
@@ -219,9 +224,12 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
               runSpacing: 8,
               alignment: WrapAlignment.center,
               children: [
-                _buildPromptChip('Syarah & Istinbath', surfaceSubtle, border, textPrimary),
-                _buildPromptChip('Takhrij & Kedudukan Hadits', surfaceSubtle, border, textPrimary),
-                _buildPromptChip('Tinjauan Mazhab Syafi\'i', surfaceSubtle, border, textPrimary),
+                _buildPromptChip(
+                    'Syarah & Istinbath', surfaceSubtle, border, textPrimary),
+                _buildPromptChip('Takhrij & Kedudukan Hadits', surfaceSubtle,
+                    border, textPrimary),
+                _buildPromptChip('Tinjauan Mazhab Syafi\'i', surfaceSubtle,
+                    border, textPrimary),
               ],
             ),
           ],
@@ -348,10 +356,13 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
               ExpansionTile(
                 title: const Text('Rujukan sumber'),
                 tilePadding: EdgeInsets.zero,
-                children: [for (final citation in msg.citations)
-                  Padding(padding: const EdgeInsets.only(bottom: 8),
-                    child: Align(alignment: Alignment.centerLeft,
-                      child: SelectableText(citation))),
+                children: [
+                  for (final citation in msg.citations)
+                    Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: SelectableText(citation))),
                 ],
               ),
 
@@ -362,16 +373,20 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.content_copy_rounded, size: 16, color: textSecondary),
+                  icon: Icon(Icons.content_copy_rounded,
+                      size: 16, color: textSecondary),
                   tooltip: 'Salin jawaban',
                   visualDensity: VisualDensity.compact,
-                  onPressed: () => _copyMessage([msg.text, ...msg.citations].join('\n\n')),
+                  onPressed: () =>
+                      _copyMessage([msg.text, ...msg.citations].join('\n\n')),
                 ),
                 IconButton(
-                  icon: Icon(Icons.bookmark_border_rounded, size: 17, color: textSecondary),
+                  icon: Icon(Icons.bookmark_border_rounded,
+                      size: 17, color: textSecondary),
                   tooltip: 'Simpan ke risalah',
                   visualDensity: VisualDensity.compact,
-                  onPressed: () => _bookmarkMessage([msg.text, ...msg.citations].join('\n\n')),
+                  onPressed: () => _bookmarkMessage(
+                      [msg.text, ...msg.citations].join('\n\n')),
                 ),
               ],
             ),

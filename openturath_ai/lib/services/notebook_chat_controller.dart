@@ -7,8 +7,11 @@ import '../models/turath_chat_message.dart';
 import 'notebook_chat_service.dart';
 
 class NotebookChatController extends ChangeNotifier {
-  NotebookChatController({required this.agentId, required this.currentUid,
-    NotebookChatService service = const NotebookChatService()}) : _service = service;
+  NotebookChatController(
+      {required this.agentId,
+      required this.currentUid,
+      NotebookChatService service = const NotebookChatService()})
+      : _service = service;
 
   final String agentId;
   final String? Function() currentUid;
@@ -38,38 +41,56 @@ class NotebookChatController extends ChangeNotifier {
     if (isGenerating || question.trim().isEmpty) return;
     final owner = _owner;
     if (owner == null || question.length > 8000) {
-      error = owner == null ? 'Silakan masuk ke OpenTurath.' : 'Pertanyaan terlalu panjang.';
+      error = owner == null
+          ? 'Silakan masuk ke OpenTurath.'
+          : 'Pertanyaan terlalu panjang.';
       notifyListeners();
       return;
     }
     final epoch = _epoch;
     final random = Random.secure();
-    final id = List.generate(16, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
-    _messages.add(TurathChatMessage(id: '${id}_q', text: question.trim(),
-      isUser: true, timestamp: DateTime.now()));
+    final id = List.generate(
+            16, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0'))
+        .join();
+    _messages.add(TurathChatMessage(
+        id: '${id}_q',
+        text: question.trim(),
+        isUser: true,
+        timestamp: DateTime.now()));
     isGenerating = true;
     error = null;
     notifyListeners();
     try {
-      final reply = await _service.ask(expectedUid: owner, agentId: agentId,
-        question: question, requestId: id);
+      final reply = await _service.ask(
+          expectedUid: owner,
+          agentId: agentId,
+          question: question,
+          requestId: id);
       if (_disposed || epoch != _epoch || currentUid() != owner) return;
-      _messages.add(TurathChatMessage(id: '${id}_a', text: reply.answer,
-        isUser: false, timestamp: DateTime.now(),
-        citations: reply.citations.map((ref) => ref.display).toList()));
+      _messages.add(TurathChatMessage(
+          id: '${id}_a',
+          text: reply.answer,
+          isUser: false,
+          timestamp: DateTime.now(),
+          citations: reply.citations.map((ref) => ref.display).toList()));
     } on FirebaseFunctionsException catch (failure) {
       if (_disposed || epoch != _epoch || currentUid() != owner) return;
       error = switch (failure.code) {
         'unauthenticated' => 'Silakan masuk kembali ke OpenTurath.',
         'permission-denied' => 'Akses kajian ini belum aktif untuk akun Anda.',
-        'failed-precondition' => 'Koneksi asisten di aplikasi belum diaktifkan.',
-        'resource-exhausted' => 'Terlalu banyak pertanyaan. Silakan tunggu sebentar.',
-        'deadline-exceeded' => 'Respons belum diterima. Pertanyaan tidak dikirim ulang otomatis.',
-        _ => 'Asisten belum dapat menjawab. Pertanyaan tidak dikirim ulang otomatis.',
+        'failed-precondition' =>
+          'Koneksi asisten di aplikasi belum diaktifkan.',
+        'resource-exhausted' =>
+          'Terlalu banyak pertanyaan. Silakan tunggu sebentar.',
+        'deadline-exceeded' =>
+          'Respons belum diterima. Pertanyaan tidak dikirim ulang otomatis.',
+        _ =>
+          'Asisten belum dapat menjawab. Pertanyaan tidak dikirim ulang otomatis.',
       };
     } catch (_) {
       if (_disposed || epoch != _epoch || currentUid() != owner) return;
-      error = 'Asisten belum dapat dihubungi. Pertanyaan tidak dikirim ulang otomatis.';
+      error =
+          'Asisten belum dapat dihubungi. Pertanyaan tidak dikirim ulang otomatis.';
     } finally {
       if (!_disposed && epoch == _epoch) {
         if (currentUid() != owner) {

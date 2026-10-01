@@ -9,8 +9,8 @@ import 'native_turath_chat_view.dart';
 
 /// Prototype chat surface: no NotebookLM WebView, browser launch or Google login.
 class NotebookBackendChatTab extends StatefulWidget {
-  const NotebookBackendChatTab({super.key, required this.session,
-    this.controller, this.accountChanges});
+  const NotebookBackendChatTab(
+      {super.key, required this.session, this.controller, this.accountChanges});
   final AgentSessionTab session;
   final NotebookChatController? controller;
   final Stream<String?>? accountChanges;
@@ -26,11 +26,14 @@ class _NotebookBackendChatTabState extends State<NotebookBackendChatTab> {
   @override
   void initState() {
     super.initState();
-    _chat = widget.controller ?? NotebookChatController(agentId: widget.session.agent.id,
-      currentUid: () => FirebaseAuth.instance.currentUser?.uid);
+    _chat = widget.controller ??
+        NotebookChatController(
+            agentId: widget.session.agent.id,
+            currentUid: () => FirebaseAuth.instance.currentUser?.uid);
     _chat.synchronizeOwner();
     _chat.addListener(_changed);
-    _auth = (widget.accountChanges ?? FirebaseAuth.instance.authStateChanges().map((user) => user?.uid))
+    _auth = (widget.accountChanges ??
+            FirebaseAuth.instance.authStateChanges().map((user) => user?.uid))
         .listen((_) => _chat.synchronizeOwner());
   }
 
@@ -55,16 +58,20 @@ class _NotebookBackendChatTabState extends State<NotebookBackendChatTab> {
 
   @override
   Widget build(BuildContext context) => Column(children: [
-    if (_chat.error != null)
-      Padding(padding: const EdgeInsets.all(16), child: Text(
-        _chat.error!, key: const ValueKey('native-chat-error'),
-        style: TextStyle(color: Theme.of(context).colorScheme.error),
-      )),
-    Expanded(child: NativeTurathChatView(
-      agent: widget.session.agent,
-      messages: _chat.messages,
-      isGenerating: _chat.isGenerating,
-      onSend: _chat.send,
-    )),
-  ]);
+        if (_chat.error != null)
+          Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                _chat.error!,
+                key: const ValueKey('native-chat-error'),
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              )),
+        Expanded(
+            child: NativeTurathChatView(
+          agent: widget.session.agent,
+          messages: _chat.messages,
+          isGenerating: _chat.isGenerating,
+          onSend: _chat.send,
+        )),
+      ]);
 }

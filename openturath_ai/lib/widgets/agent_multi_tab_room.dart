@@ -36,7 +36,8 @@ import '../widgets/library_bottom_sheet.dart';
 import 'notebook_backend_chat_tab.dart';
 
 // Explicit local prototype opt-in; remains off in normal/release builds.
-const _backendChatPrototype = bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE');
+const _backendChatPrototype =
+    bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE');
 
 /// AgentMultiTabRoom: Persistent, multi-tab AI Study Room inspired by Google Chrome tabs.
 /// Keeps up to 7 AI specialists running concurrently in memory without reloading.
@@ -174,10 +175,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
     if (!_backendChatPrototype && controller == null) return;
     try {
       final result = _backendChatPrototype
-          ? session.chatMessages.map((message) => [message.text, ...message.citations].join('\n')).join('\n\n')
+          ? session.chatMessages
+              .map((message) => [message.text, ...message.citations].join('\n'))
+              .join('\n\n')
           : await controller!.evaluateJavascript(
-        source: 'window.otNotebook ? window.otNotebook.conversation() : ""',
-      );
+              source:
+                  'window.otNotebook ? window.otNotebook.conversation() : ""',
+            );
       final text = result is String ? result.trim() : '';
       if (text.isEmpty) {
         if (mounted) AppSnackBar.warning(context, AppCopy.noConversationToCopy);
@@ -693,30 +697,31 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             },
             itemBuilder: (ctx) => [
               if (!_backendChatPrototype)
-              PopupMenuItem(
-                value: 'language',
-                child: Row(
-                  children: [
-                    Icon(Icons.language_rounded, color: textPrimary, size: 18),
-                    const SizedBox(width: 12),
-                    Text('Bahasa Output',
-                        style: OTTypography.body(color: textPrimary)),
-                  ],
+                PopupMenuItem(
+                  value: 'language',
+                  child: Row(
+                    children: [
+                      Icon(Icons.language_rounded,
+                          color: textPrimary, size: 18),
+                      const SizedBox(width: 12),
+                      Text('Bahasa Output',
+                          style: OTTypography.body(color: textPrimary)),
+                    ],
+                  ),
                 ),
-              ),
               if (!_backendChatPrototype)
-              PopupMenuItem(
-                value: 'delete_chat',
-                child: Row(
-                  children: [
-                    const Icon(Icons.delete_outline_rounded,
-                        color: Colors.redAccent, size: 18),
-                    const SizedBox(width: 12),
-                    Text('Hapus Riwayat Obrolan',
-                        style: OTTypography.body(color: Colors.redAccent)),
-                  ],
+                PopupMenuItem(
+                  value: 'delete_chat',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.delete_outline_rounded,
+                          color: Colors.redAccent, size: 18),
+                      const SizedBox(width: 12),
+                      Text('Hapus Riwayat Obrolan',
+                          style: OTTypography.body(color: Colors.redAccent)),
+                    ],
+                  ),
                 ),
-              ),
               PopupMenuItem(
                 value: 'conversation',
                 child: Row(
@@ -730,18 +735,18 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 ),
               ),
               if (!_backendChatPrototype)
-              PopupMenuItem(
-                value: 'font',
-                child: Row(
-                  children: [
-                    Icon(Icons.format_size_rounded,
-                        color: textPrimary, size: 18),
-                    const SizedBox(width: 12),
-                    Text('Ukuran huruf',
-                        style: OTTypography.body(color: textPrimary)),
-                  ],
+                PopupMenuItem(
+                  value: 'font',
+                  child: Row(
+                    children: [
+                      Icon(Icons.format_size_rounded,
+                          color: textPrimary, size: 18),
+                      const SizedBox(width: 12),
+                      Text('Ukuran huruf',
+                          style: OTTypography.body(color: textPrimary)),
+                    ],
+                  ),
                 ),
-              ),
               if (!AppPlatform.isDesktop && sessions.length > 1)
                 PopupMenuItem(
                   value: 'switch_session',
@@ -881,11 +886,11 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 session: sessions[i],
               )
             else
-            _SingleAgentTabWebView(
-              key: ValueKey('agent_tab_${sessions[i].agent.id}'),
-              session: sessions[i],
-              isActive: i == _sessionManager.activeIndex,
-            ),
+              _SingleAgentTabWebView(
+                key: ValueKey('agent_tab_${sessions[i].agent.id}'),
+                session: sessions[i],
+                isActive: i == _sessionManager.activeIndex,
+              ),
         ],
       ),
     );
