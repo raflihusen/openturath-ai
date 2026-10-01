@@ -196,8 +196,8 @@ void main() {
       final fixture = _Harness();
       fixture.identity = null;
       await expectLater(fixture.send(), throwsA(_code('unauthenticated')));
-      fixture.identity = const CompanionIdentity(
-        uid: 'other-reader',
+      fixture.identity = CompanionIdentity(
+        uid: 'other-reader-${fixture.owner.uid}',
         googleSub: '999',
         email: 'other@example.com',
       );
