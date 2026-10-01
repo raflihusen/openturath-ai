@@ -333,6 +333,46 @@ void main() {
         },
       );
 
+      test('validated browser unauthenticated has a distinct session error',
+          () async {
+        await runtime.start();
+        final meta = await metadata(directory);
+        await attach(meta);
+        final future = runtime.ask(
+          expectedUid: owner!.uid,
+          notebookId: notebook,
+          question: 'Fixture browser login missing',
+          requestId: requestId,
+        );
+        final expected =
+            expectLater(future, throwsA(code('notebook-session-required')));
+        final job = await pollJob(meta);
+        final result = {
+          for (final key in [
+            'requestId',
+            'epoch',
+            'uid',
+            'googleSub',
+            'email',
+            'notebookId'
+          ])
+            key: job[key],
+          'code': 'unauthenticated',
+        };
+        expect(
+            (await post(meta, '/result', {...envelope(meta), 'result': result}))
+                .status,
+            200);
+        await expected;
+        expect(runtime.connected, isTrue);
+        expect(owner!.uid, 'fixture-user');
+        expect((await post(meta, '/poll', envelope(meta))).body['job'], isNull);
+        final stored = jsonDecode(
+            await File(p.join(directory.path, 'ledger.json'))
+                .readAsString()) as Map;
+        expect((stored['records'] as List).single['state'], 'failed');
+      });
+
       test(
         'disconnect invalidates dispatched requests without replay after reattach',
         () async {
