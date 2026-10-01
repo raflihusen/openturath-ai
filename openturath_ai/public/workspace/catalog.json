@@ -1,0 +1,233 @@
+[
+  {
+    "id": "fikih-tahawwulat-bayan",
+    "title": "Al-Bayan (Fikih Tahawwulat - Cabang Sosialisasi & Dakwah Ammah)",
+    "aliases": [
+      "fikih-tahawwulat-bayan",
+      "fiqh_tahawwulat_bayan"
+    ]
+  },
+  {
+    "id": "fikih-tahawwulat-habib",
+    "title": "Al-Habib (Fikih Tahawwulat - Cabang Hikmah & Tazkiyah)",
+    "aliases": [
+      "fikih-tahawwulat-habib",
+      "fiqh_tahawwulat_habib"
+    ]
+  },
+  {
+    "id": "fikih-tahawwulat-khatib",
+    "title": "Al-Khatib (Fikih Tahawwulat - Cabang Khutbah & Retorika Aktual)",
+    "aliases": [
+      "fikih-tahawwulat-khatib",
+      "fiqh_tahawwulat_khatib"
+    ]
+  },
+  {
+    "id": "fikih-tahawwulat-muhaqqiq",
+    "title": "Al-Muhaqqiq (Fikih Tahawwulat - Cabang Analitis & Ushul)",
+    "aliases": [
+      "fikih-tahawwulat-muhaqqiq",
+      "fiqh_tahawwulat",
+      "fiqh_tahawwulat_muhaqqiq"
+    ]
+  },
+  {
+    "id": "fikih-tahawwulat-mukhtabir",
+    "title": "Al-Mukhtabir (Fikih Tahawwulat - Cabang Komparasi & Verifikasi Ilmiah)",
+    "aliases": [
+      "fikih-tahawwulat-mukhtabir",
+      "fiqh_tahawwulat_mukhtabir"
+    ]
+  },
+  {
+    "id": "aqidah",
+    "title": "Aqidah & Ushuluddin (Teologi & Ilmu Kalam)",
+    "aliases": [
+      "aqidah",
+      "aqidah_kalam",
+      "aqidah_ushuluddin",
+      "ushuluddin"
+    ]
+  },
+  {
+    "id": "bahasa_arab",
+    "title": "Bahasa & Sastra Arab (Nahwu, Sharaf, Balaghah, Leksikografi)",
+    "aliases": [
+      "bahasa_arab",
+      "lughah_balaghah",
+      "lughah_mujam",
+      "lughah_nahwu",
+      "lughah_sharaf",
+      "nahwu-sharaf-muerib",
+      "nahwu-sharaf-tashrif",
+      "nahwu_sharaf",
+      "nahwu_sharaf_muerib",
+      "nahwu_sharaf_tashrif"
+    ]
+  },
+  {
+    "id": "bibliografi",
+    "title": "Bibliografi & Faharis (Indeks & Katalog Turath)",
+    "aliases": [
+      "bibliografi",
+      "bibliografi_faharis",
+      "faharis"
+    ]
+  },
+  {
+    "id": "fatawa",
+    "title": "Fatawa & Masail Fiqhiyyah (Kumpulan Fatwa Ulama)",
+    "aliases": [
+      "fatawa",
+      "fatawa_dan_masail",
+      "fatawa_masail"
+    ]
+  },
+  {
+    "id": "fikih-hanafi",
+    "title": "Fikih Hanafi (Mazhab Imam Abu Hanifah)",
+    "aliases": [
+      "fikih-hanafi",
+      "fiqh_hanafi",
+      "fiqh_hanafi_muhaqqiq"
+    ]
+  },
+  {
+    "id": "fikih-hanbali",
+    "title": "Fikih Hanbali (Mazhab Imam Ahmad bin Hanbal)",
+    "aliases": [
+      "fikih-hanbali",
+      "fiqh_hambali",
+      "fiqh_hanbali",
+      "fiqh_hanbali_muhaqqiq"
+    ]
+  },
+  {
+    "id": "fikih-maliki",
+    "title": "Fikih Maliki (Mazhab Imam Malik)",
+    "aliases": [
+      "fikih-maliki",
+      "fiqh_maliki",
+      "fiqh_maliki_muhaqqiq"
+    ]
+  },
+  {
+    "id": "fikih-muqaran",
+    "title": "Fikih Muqaran & Umum (Fikih Perbandingan Mazhab & Siyasah)",
+    "aliases": [
+      "fikih-muqaran",
+      "fiqh_muqaran",
+      "fiqh_muqaran_muhaqqiq"
+    ]
+  },
+  {
+    "id": "fikih-syafii",
+    "title": "Fikih Syafi'i (Mazhab Imam Asy-Syafi'i)",
+    "aliases": [
+      "fikih-syafii",
+      "fikih-syafii-muhaqqiq",
+      "fiqh_syafii",
+      "fiqh_syafii_muhaqqiq"
+    ]
+  },
+  {
+    "id": "hadits",
+    "title": "Hadits Nabawi (Kitab Induk Hadis)",
+    "aliases": [
+      "hadits",
+      "hadits-nabawi",
+      "hadits_muhaqqiq"
+    ]
+  },
+  {
+    "id": "hadits_ilal",
+    "title": "Musthalah & Ulumul Hadits (Kritik & Metodologi Hadis)",
+    "aliases": [
+      "hadits_ilal",
+      "hadits_takhrij",
+      "musthalah",
+      "musthalah_hadits"
+    ]
+  },
+  {
+    "id": "qawaid",
+    "title": "Qawaid Fiqhiyyah (Kaidah-Kaidah Fikih)",
+    "aliases": [
+      "qawaid",
+      "qawaid_fiqhiyyah",
+      "usul_qawaid"
+    ]
+  },
+  {
+    "id": "hadits_syarah",
+    "title": "Syarah Hadits (Penjelasan Ensiklopedis Hadis Nabawi)",
+    "aliases": [
+      "hadits_syarah",
+      "syarah-hadits",
+      "syarah_hadits"
+    ]
+  },
+  {
+    "id": "tafsir",
+    "title": "Tafsir & Ulumul Qur'an (Eksegesis Kitab Suci)",
+    "aliases": [
+      "tafsir",
+      "tafsir_ahkam",
+      "tafsir_matsur",
+      "tafsir_muhaqqiq",
+      "tafsir_ulumul_quran"
+    ]
+  },
+  {
+    "id": "qiraat",
+    "title": "Tajwid & Qiraat (Ilmu Bacaan Al-Qur'an)",
+    "aliases": [
+      "qiraat",
+      "tajwid",
+      "tajwid_qiraat"
+    ]
+  },
+  {
+    "id": "sirah",
+    "title": "Tarikh & Sirah Nabawiyyah (Sejarah Islam & Biografi Nabi)",
+    "aliases": [
+      "sirah",
+      "tarikh",
+      "tarikh_khulafa"
+    ]
+  },
+  {
+    "id": "habib_umar",
+    "title": "Tasawwuf & Adzkar (Spiritualitas & Doa)",
+    "aliases": [
+      "habib_umar",
+      "imam_ghazali",
+      "tasawwuf",
+      "tasawwuf_adab",
+      "tasawwuf_adzkar",
+      "tasawwuf_ihya"
+    ]
+  },
+  {
+    "id": "rijal",
+    "title": "Thabaqat & Tarajim Rijal (Biografi Tokoh & Perawi Hadis)",
+    "aliases": [
+      "rijal",
+      "tarikh_thabaqat",
+      "thabaqat",
+      "thabaqat_rijal"
+    ]
+  },
+  {
+    "id": "ushul-fiqh",
+    "title": "Ushul Fikih (Metodologi Penggalian Hukum Islam)",
+    "aliases": [
+      "ushul-fiqh",
+      "ushul_fiqh",
+      "ushul_muhaqqiq",
+      "usul_istinbath",
+      "usul_maqashid"
+    ]
+  }
+]
