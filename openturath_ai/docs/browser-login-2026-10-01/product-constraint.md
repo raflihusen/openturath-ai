@@ -6,9 +6,10 @@ Pengguna menegaskan bahwa tujuan utama aplikasi adalah memberi pengalaman OpenTu
 
 ## Keadaan yang terverifikasi
 
-- Source entry native saat ini masih menjadi launcher ruang browser, dan halaman browser sudah live. Klarifikasi ini belum mengubah entry native atau me-rollback publikasi.
+- Entry aplikasi sudah dikembalikan ke alur native OpenTurath (splash, login, beranda, pustaka, pembaca, dan catatan). Launcher browser hanya tersedia melalui flag pengembangan `OPENTURATH_BROWSER_EXPERIMENT=true`; halaman eksperimen yang telah dipublikasikan tetap live.
 - Perbaikan keamanan autentikasi, pemulihan SDK resmi, dan checkpoint source tetap tersedia. Baseline sebelum arah browser adalah `5c188d8`; catatan versi Hosting ada di `publication.json`.
-- Uji terakhir mencapai halaman pemilihan akun Google di Arc; pemilihan akun oleh agent ditolak peninjauan izin otomatis karena akun belum ditentukan pengguna. Belum ada bukti OAuth selesai atau NotebookLM menjawab.
+- Pengguna kemudian mengizinkan akun `raflimaulan@gmail.com` dan satu pertanyaan uji. Login Google resmi berhasil, callback kembali ke aplikasi diterima, lalu Firebase native gagal menyimpan sesi ke Keychain macOS. Konfigurasi Keychain Sharing sekarang telah ditambahkan; penandatanganan dan uji ulang runtime masih menunggu tim/sertifikat yang benar.
+- Pada profil Arc yang sama, ruang browser mengenali sesi Firebase tanpa login ulang; callable produksi memberi akses Fikih Syafi'i; NotebookLM membuka notebook dengan akun yang sama tanpa formulir login kedua; satu pertanyaan baru menghasilkan jawaban dan enam tombol sitasi. Bukti ini hanya berlaku untuk alur browser pada akun/perangkat yang diuji, bukan sesi WebView native atau semua platform. Rincian: [pemulihan native dan uji akun nyata](native-recovery.md).
 
 ## Batas arsitektur yang perlu diselesaikan
 
