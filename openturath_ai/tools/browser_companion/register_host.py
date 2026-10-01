@@ -59,4 +59,3 @@ if __name__ == "__main__":
     except (OSError, RuntimeError) as error:
         print("Installation failed:", error, file=sys.stderr)
         sys.exit(1)
-
