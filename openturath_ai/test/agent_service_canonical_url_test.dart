@@ -21,8 +21,8 @@ class _Gateway extends CallableGateway {
   }
 }
 
-Matcher _accessError(String code) => isA<AgentAccessException>()
-    .having((error) => error.code, 'code', code);
+Matcher _accessError(String code) =>
+    isA<AgentAccessException>().having((error) => error.code, 'code', code);
 
 void main() {
   // Synthetic ID: this suite must never depend on a production notebook.
@@ -47,26 +47,37 @@ void main() {
   });
 
   for (final code in ['permission-denied', 'unauthenticated', 'unavailable']) {
-    test('preserves server $code and does not fall back to a local URL', () async {
+    test('preserves server $code and does not fall back to a local URL',
+        () async {
       final service = AgentService(
         functions: _Gateway(
-          error: FirebaseFunctionsException(code: code, message: 'Server error'),
+          error:
+              FirebaseFunctionsException(code: code, message: 'Server error'),
         ),
       );
-      await expectLater(service.getAgentUrl('fiqh_syafii'),
-          throwsA(_accessError(code)));
+      await expectLater(
+          service.getAgentUrl('fiqh_syafii'), throwsA(_accessError(code)));
     });
   }
 
-  for (final response in [null, 'not a map', ['not a map']]) {
-    test('rejects malformed callable response ${response.runtimeType}', () async {
+  for (final response in [
+    null,
+    'not a map',
+    ['not a map']
+  ]) {
+    test('rejects malformed callable response ${response.runtimeType}',
+        () async {
       final service = AgentService(functions: _Gateway(response: response));
       await expectLater(service.getAgentUrl('fiqh_syafii'),
           throwsA(_accessError('invalid-response')));
     });
   }
 
-  for (final response in [{}, {'url': null}, {'url': ''}]) {
+  for (final response in [
+    {},
+    {'url': null},
+    {'url': ''}
+  ]) {
     test('does not conceal missing server destinations: $response', () async {
       final service = AgentService(functions: _Gateway(response: response));
       await expectLater(service.getAgentUrl('fiqh_syafii'),
