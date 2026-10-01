@@ -33,9 +33,14 @@ class AgentService {
         throw const AgentAccessException(
             'empty-url', 'URL asisten belum tersedia untuk bidang ini.');
       }
-      final uri = url is String ? Uri.tryParse(url) : null;
+      if (url is! String) {
+        throw const AgentAccessException(
+            'invalid-url', 'Alamat asisten dari server tidak valid.');
+      }
+      final uri = Uri.tryParse(url);
       if (uri == null ||
           url != url.trim() ||
+          url.contains('%') ||
           !NotebookNavigation.notebook(uri) ||
           !_notebookPath.hasMatch(uri.path) ||
           uri.hasQuery ||
