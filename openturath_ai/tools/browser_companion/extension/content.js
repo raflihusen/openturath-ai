@@ -61,11 +61,15 @@
 
   function currentNotebook(job) {
     const url = new URL(location.href);
+    const hints = url.searchParams.getAll('authuser');
+    // Account hints can be normalized by Google; performAsk verifies the
+    // bootstrap account email before sending either notebook or chat RPCs.
+    const validHint = hints.length === 0 || (hints.length === 1 &&
+      (hints[0] === job.email || /^(0|[1-9]\d{0,2})$/.test(hints[0])));
     return window === window.top && ORIGINS.has(url.origin) &&
       !url.username && !url.password && !url.hash &&
       url.pathname.toLowerCase() === `/notebook/${job.notebookId.toLowerCase()}` &&
-      url.searchParams.getAll('authuser').length === 1 &&
-      url.searchParams.get('authuser') === job.email;
+      validHint;
   }
 
   function normalizeReply(reply, job) {
