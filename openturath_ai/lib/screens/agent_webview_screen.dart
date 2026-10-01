@@ -80,69 +80,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
   bool _isExiting = false;
   bool _isGoingBack = false;
 
-  Future<String> _getActiveGoogleEmail() async {
-    final authEmail = _authService.currentUser?.email?.trim().toLowerCase();
-    if (authEmail != null && authEmail.isNotEmpty) return authEmail;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedEmail =
-          prefs.getString('google_session_email')?.trim().toLowerCase() ??
-              prefs.getString('notebook_google_email')?.trim().toLowerCase();
-      if (savedEmail != null && savedEmail.isNotEmpty) return savedEmail;
-    } catch (_) {}
-    return await NativeAgentLauncher.getActiveNotebookEmail();
-  }
 
-  Future<void> _injectGoogleSignInAutoFill(
-      InAppWebViewController controller) async {
-    final email = await _getActiveGoogleEmail();
-    if (email.isEmpty) return;
-    try {
-      await controller.evaluateJavascript(source: '''
-        (function() {
-          const email = ${jsonEncode(email)};
-          
-          function fillEmail() {
-            const input = document.querySelector('input[type="email"], #identifierId');
-            if (input) {
-              if (!input.value || input.value.trim().toLowerCase() !== email.toLowerCase()) {
-                input.focus();
-                input.value = email;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-              }
-              const nextBtn = document.querySelector('#identifierNext button, #identifierNext, button[data-idom-class*="nCP5yc"], button[type="button"]');
-              if (nextBtn && !window._otAutoNextTriggered) {
-                window._otAutoNextTriggered = true;
-                setTimeout(() => {
-                  try {
-                    nextBtn.click();
-                  } catch (e) {}
-                }, 350);
-              }
-            }
-            
-            const tiles = document.querySelectorAll('li[data-identifier], [data-email], div[role="link"]');
-            for (const tile of tiles) {
-              const text = (tile.innerText || tile.getAttribute('data-identifier') || tile.getAttribute('data-email') || '').toLowerCase();
-              if (text.includes(email.toLowerCase()) && !window._otTileClicked) {
-                window._otTileClicked = true;
-                setTimeout(() => {
-                  try { tile.click(); } catch(e) {}
-                }, 250);
-                break;
-              }
-            }
-          }
-
-          fillEmail();
-          setTimeout(fillEmail, 500);
-          setTimeout(fillEmail, 1200);
-          setTimeout(fillEmail, 2500);
-        })();
-      ''');
-    } catch (_) {}
-  }
 
   @override
   void initState() {
@@ -1051,29 +989,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       final uri = navigationAction.request.url;
                       if (uri == null) return NavigationActionPolicy.CANCEL;
 
-                      final host = uri.host.toLowerCase();
-                      final uriStr = uri.toString();
-
-                      // Jika Google login dimuat tanpa login_hint atau Email, sematkan otomatis
-                      // dari email pengguna yang sedang aktif agar Google langsung mengenali akun
-                      if (host.startsWith('accounts.google') &&
-                          !uriStr.contains('login_hint=') &&
-                          !uriStr.contains('Email=')) {
-                        final email = await _getActiveGoogleEmail();
-                        if (email.isNotEmpty) {
-                          final newUri = uri.uriValue.replace(
-                            queryParameters: {
-                              ...uri.uriValue.queryParameters,
-                              'login_hint': email,
-                              'Email': email,
-                              'authuser': email,
-                            },
-                          );
-                          controller.loadUrl(
-                              urlRequest: URLRequest(url: WebUri.uri(newUri)));
-                          return NavigationActionPolicy.CANCEL;
-                        }
-                      }
 
                       return NotebookNavigation.allowed(uri)
                           ? NavigationActionPolicy.ALLOW
@@ -1085,7 +1000,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       if (host.startsWith('accounts.google') ||
                           host == 'accounts.youtube.com' ||
                           host == 'consent.google.com') {
-                        await _injectGoogleSignInAutoFill(controller);
+                        
                         return;
                       }
 
@@ -1103,7 +1018,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         final host = currentUrl?.host.toLowerCase() ?? '';
                         if (host.startsWith('accounts.google') ||
                             host == 'accounts.youtube.com') {
-                          unawaited(_injectGoogleSignInAutoFill(controller));
+                          
                         }
                       }
                       if (progress >= 25) {
