@@ -124,8 +124,9 @@ class ProviderTests(unittest.TestCase):
 
         async def ask(notebook, question, **kwargs):
             calls.append((notebook, question, kwargs))
-            state["conversation"] = "changed" if change_after_ask else "new-conversation"
-            return SimpleNamespace(answer="Fixture [1]", conversation_id="new-conversation", references=[
+            conversation = kwargs["conversation_id"] or "new-conversation"
+            state["conversation"] = "changed" if change_after_ask else conversation
+            return SimpleNamespace(answer="Fixture [1]", conversation_id=conversation, references=[
                 SimpleNamespace(source_id=N1, citation_number=1, cited_text="Fixture excerpt")])
 
         class FakeClient:
@@ -157,7 +158,7 @@ class ProviderTests(unittest.TestCase):
         with patch.dict(sys.modules, {"notebooklm": module}):
             result, conversation = asyncio.run(NotebookProvider(Path("/dedicated/test/session.json")).ask(N1, "fixture", "known-conversation"))
         self.assertEqual(calls[0][2], {"source_ids": [N1], "conversation_id": "known-conversation"})
-        self.assertEqual(conversation, "new-conversation")
+        self.assertEqual(conversation, "known-conversation")
         self.assertEqual(result["citations"][0]["excerpt"], "Fixture excerpt")
 
     def test_unexpected_history_change_after_ask_discards_answer(self):
