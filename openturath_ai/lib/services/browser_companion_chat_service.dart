@@ -140,9 +140,10 @@ class BrowserCompanionChatService extends NotebookChatService {
       // Resolve from the authenticated server on every send; never client catalog.
       final url = await _agents.getAgentUrl(agentId);
       _checkOwner(expectedUid, ownerKey, generation);
-      if (url == null)
+      if (url == null) {
         throw const AgentAccessException(
             'failed-precondition', 'Alamat kajian belum tersedia.');
+      }
       final notebookId =
           Uri.parse(url).pathSegments.where((p) => p.isNotEmpty).last;
       await _agents.recordQuestion(agentId);
