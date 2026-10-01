@@ -57,8 +57,11 @@ class _BrowserCompanionChatTabState extends State<BrowserCompanionChatTab> {
       leading: Icon(BrowserCompanionChatService.runtime.connected
           ? Icons.check_circle_outline : Icons.link_outlined, size: 20),
       title: Text(_error ?? (BrowserCompanionChatService.runtime.connected
-          ? 'Penghubung tersambung'
+          ? 'Penghubung Chrome tersambung'
           : 'Menunggu penghubung Google Chrome')),
+      subtitle: BrowserCompanionChatService.runtime.connected
+          ? const Text('Gunakan akun Google yang sama di NotebookLM. Akses kajian diperiksa saat pertanyaan dikirim.')
+          : null,
       trailing: BrowserCompanionChatService.runtime.connected ? null
           : TextButton(onPressed: _starting ? null : _start,
               child: Text(_starting ? 'Menghubungkan…' : 'Coba lagi'))),
