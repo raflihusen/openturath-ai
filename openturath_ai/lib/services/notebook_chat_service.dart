@@ -48,6 +48,11 @@ class NotebookChatService {
       'requestId': requestId,
       'expectedUid': expectedUid,
     });
+    return decodeReply(raw, requestId);
+  }
+
+  /// Shared validation for normalized replies from either transport.
+  static NotebookChatReply decodeReply(Object? raw, String requestId) {
     final invalid = FirebaseFunctionsException(
       code: 'unavailable',
       message: 'Jawaban asisten belum dapat dibaca.',
