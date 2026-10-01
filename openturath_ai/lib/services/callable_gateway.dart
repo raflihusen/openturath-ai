@@ -10,7 +10,9 @@ import 'package:http/http.dart' as http;
 /// Uses the documented callable wire protocol where FlutterFire has no plugin.
 /// The same server functions continue to enforce authentication and entitlements.
 class CallableGateway {
-  const CallableGateway();
+  const CallableGateway({this.timeout = const Duration(seconds: 30)});
+
+  final Duration timeout;
 
   Future<dynamic> call(String name, [Map<String, dynamic>? data]) async {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
@@ -20,6 +22,7 @@ class CallableGateway {
           client: client,
           projectId: Firebase.app().options.projectId,
           token: () async => FirebaseAuth.instance.currentUser?.getIdToken(),
+          timeout: timeout,
         ).call(name, data);
       } finally {
         client.close();
@@ -28,7 +31,7 @@ class CallableGateway {
     final result = await FirebaseFunctions.instance
         .httpsCallable(
           name,
-          options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+          options: HttpsCallableOptions(timeout: timeout),
         )
         .call(data);
     return result.data;
