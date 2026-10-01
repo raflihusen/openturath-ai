@@ -13,36 +13,29 @@ void main() {
   OTTypography.useSystemFontFallback = true;
 
   group('OpenTurath Material 3 design tokens', () {
-    test('OTColors provides accessible expressive tones in both themes', () {
-      // 1. Light palette checks
-      expect(OTColors.canvasLight, const Color(0xFFF7F7F3));
-      expect(OTColors.surfaceLight, const Color(0xFFFFFFFF));
-      expect(OTColors.textPrimaryLight, const Color(0xFF1D2128));
-      expect(OTColors.textSecondaryLight, const Color(0xFF535A64));
-
-      // 2. Dark palette checks
-      expect(OTColors.canvasDark, const Color(0xFF12151B));
-      expect(OTColors.surfaceDark, const Color(0xFF1C212A));
-      expect(OTColors.textPrimaryDark, const Color(0xFFF1F3F8));
-      expect(OTColors.textSecondaryDark, const Color(0xFFC0C7D2));
-
-      // 3. Pilot accent and its readable tonal containers
-      expect(OTColors.accentLight, const Color(0xFF3159A5));
-      expect(OTColors.accentDark, const Color(0xFFA9C5FF));
-      expect(OTColors.primaryContainerLight, const Color(0xFFDCE6FF));
-      expect(OTColors.primaryContainerDark, const Color(0xFF263C65));
-
-      // 4. Adaptive context helpers
-      expect(OTColors.canvas(false), OTColors.canvasLight);
-      expect(OTColors.canvas(true), OTColors.canvasDark);
-      expect(OTColors.surface(false), OTColors.surfaceLight);
-      expect(OTColors.surface(true), OTColors.surfaceDark);
-      expect(OTColors.textPrimary(false), OTColors.textPrimaryLight);
-      expect(OTColors.textPrimary(true), OTColors.textPrimaryDark);
-      expect(OTColors.textSecondary(false), OTColors.textSecondaryLight);
-      expect(OTColors.textSecondary(true), OTColors.textSecondaryDark);
-      expect(OTColors.accent(false), OTColors.accentLight);
-      expect(OTColors.accent(true), OTColors.accentDark);
+    test('monochrome text and actions remain readable in both themes', () {
+      double contrast(Color a, Color b) {
+        final x = a.computeLuminance();
+        final y = b.computeLuminance();
+        return ((x > y ? x : y) + .05) / ((x > y ? y : x) + .05);
+      }
+      for (final dark in [false, true]) {
+        final neutral = [OTColors.canvas(dark), OTColors.surface(dark),
+          OTColors.surfaceSubtle(dark), OTColors.textPrimary(dark),
+          OTColors.textSecondary(dark), OTColors.accent(dark),
+          OTColors.primaryContainer(dark), OTColors.destructive(dark),
+          OTColors.marja(dark)];
+        for (final color in neutral) {
+          expect(color.r, color.g);
+          expect(color.g, color.b);
+        }
+        for (final background in [OTColors.canvas(dark), OTColors.surface(dark)]) {
+          expect(contrast(OTColors.textPrimary(dark), background), greaterThanOrEqualTo(4.5));
+          expect(contrast(OTColors.textSecondary(dark), background), greaterThanOrEqualTo(4.5));
+        }
+        expect(contrast(OTColors.accent(dark), OTColors.onAccent(dark)), greaterThanOrEqualTo(4.5));
+        expect(contrast(OTColors.primaryContainer(dark), OTColors.onPrimaryContainer(dark)), greaterThanOrEqualTo(4.5));
+      }
     });
 
     test('OTTypography strictly separates Brand, Interface, and Arabic layers', () {
