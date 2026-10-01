@@ -732,6 +732,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     }
   }
 
+  void _handleAuthenticationRequired() {
+    _readinessTimer?.cancel();
+    if (!mounted) return;
+    setState(() {
+      _isGoogleAuthPage = true;
+      _isWebViewLoading = false;
+      _errorMessage = NotebookNavigation.authenticationMessage;
+    });
+  }
+
   @override
   Widget build(BuildContext context) =>
       DesktopWebViewGate(builder: _buildContent);
