@@ -95,10 +95,14 @@ function failure(job, code) {
 function notebookLocation(rawUrl, job) {
   try {
     const url = new URL(rawUrl);
+    const hints = url.searchParams.getAll('authuser');
+    // Google may replace the email hint with an account index after redirect.
+    // The content protocol still verifies the observed email before any RPC.
+    const validHint = hints.length === 0 || (hints.length === 1 &&
+      (hints[0] === job.email || /^(0|[1-9]\d{0,2})$/.test(hints[0])));
     return ORIGINS.includes(url.origin) && !url.username && !url.password &&
       !url.hash && url.pathname.toLowerCase() === `/notebook/${job.notebookId.toLowerCase()}` &&
-      url.searchParams.getAll('authuser').length === 1 &&
-      url.searchParams.get('authuser') === job.email;
+      validHint;
   } catch (_) {
     return false;
   }
@@ -143,7 +147,10 @@ function waitUntilLoaded(tabId, job, signal) {
 async function notebookTab(job, signal) {
   const tabs = await chrome.tabs.query({url: ORIGINS.map(origin => `${origin}/notebook/*`)});
   if (signal.aborted) throw new Error('unavailable');
-  const existing = tabs.find(tab => !tab.incognito && notebookLocation(tab.url, job));
+  // An indexed existing tab may belong to another signed-in Google account.
+  // Reuse only an explicit matching email; otherwise navigate with our hint.
+  const existing = tabs.find(tab => !tab.incognito && notebookLocation(tab.url, job) &&
+    new URL(tab.url).searchParams.get('authuser') === job.email);
   const tab = existing || await chrome.tabs.create({
     url: `${ORIGINS[0]}/notebook/${job.notebookId}?authuser=${encodeURIComponent(job.email)}`,
     active: false,
