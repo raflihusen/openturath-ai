@@ -98,6 +98,45 @@ Workspace Studio mempunyai langkah Ask NotebookLM dan API pemicu flow. Tetapi ak
 
 NotebookLM Enterprise memiliki API dan integrasi identitas enterprise dengan lisensi/IAM serta resource project/location. Permukaan dokumentasi yang diperiksa tidak memberi bukti grant chat consumer untuk semua akun Gmail pribadi. Mengadopsinya mengubah model akun dan resource produk. [API Enterprise](https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/api-notebooks), [setup identitas/lisensi](https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/set-up-notebooklm).
 
+## Keputusan mengenai Chromium di dalam aplikasi
+
+Pemeriksaan lanjutan pada 1 Oktober 2026 menjawab pertanyaan pengguna: **Chromium tidak diperlukan untuk autentikasi Firebase dan tidak cukup untuk menjamin satu login Firebase + NotebookLM. Jangan mengganti mesin aplikasi sebagai perbaikan autentikasi.**
+
+### Mesin, profil, dan izin layanan adalah tiga hal berbeda
+
+Chromium adalah mesin browser. Profil menyimpan cookie dan data situs. Izin layanan menentukan kredensial yang diterima Firebase atau NotebookLM. Menyamakan mesin tidak otomatis menyamakan profil, dan menyamakan profil tidak mengubah izin yang diberikan Google kepada klien OpenTurath.
+
+Electron mendokumentasikan bahwa halaman dengan partition `persist:` yang sama berbagi sesi persistent **di dalam aplikasi**. WebView2 menyimpan data browser pada user-data folder aplikasi host. Kedua mekanisme itu membantu kontinuitas halaman aplikasi sendiri; tidak menjadi jembatan otomatis ke profil Chrome/Edge pengguna yang dipakai login melalui browser sistem. [Electron session](https://www.electronjs.org/docs/latest/api/session), [WebView2 user-data folder](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/user-data-folder).
+
+Jika Google OAuth dibuka di browser sistem lalu callback dikirim ke aplikasi, hasil yang kembali adalah hasil otorisasi sesuai alur, bukan cookie profil browser. Memasang Chromium pada sisi penerima tidak mengubah isi callback. [Google native OAuth](https://developers.google.com/identity/protocols/oauth2/native-app).
+
+### Mengapa Chromium embedded tetap dapat ditolak
+
+Kebijakan Google mendefinisikan embedded user-agent berdasarkan kendali developer, termasuk kemampuan menyisipkan script, mengubah routing, atau mengakses session cookies. Jadi istilah “Chromium”, “Electron”, atau “WebView2” tidak memberikan pengecualian otomatis. Standar native OAuth juga menilai pemisahan domain keamanan; memindahkan browser ke proses atau jendela lain saja tidak membuktikan pemisahan itu. [Kebijakan Google](https://developers.google.com/identity/protocols/oauth2/policies), [RFC 8252](https://datatracker.ietf.org/doc/html/rfc8252).
+
+Untuk login situs Google biasa, klaimnya tidak perlu dilebihkan menjadi “setiap percobaan pasti gagal”. Google menyatakan sign-in dapat dihentikan pada browser tertanam dan secara khusus meminta developer Chromium Embedded Framework memindahkan Sign in with Google ke browser-based OAuth. Percobaan yang kebetulan lolos tidak menjadi bukti dukungan saat akun baru, challenge, atau re-authentication. [Panduan browser Google](https://support.google.com/accounts/answer/7675428), [panduan developer CEF](https://developers.googleblog.com/en/guidance-to-developers-affected-by-our-effort-to-block-less-secure-browsers-and-applications/).
+
+Browser penuh yang kompatibel, misalnya Chrome/Edge, berbeda dari memasukkan library Chromium ke aplikasi. Menjadi browser penuh yang diterima Google juga tidak menyediakan API chat NotebookLM bagi UI Flutter secara otomatis. Mengganti User-Agent agar menyerupai browser lain tidak dipakai sebagai perbaikan.
+
+### Pilihan arsitektur yang dapat dipertanggungjawabkan
+
+| Pilihan | Keputusan |
+|---|---|
+| Chromium embedded untuk login Google lalu menyembunyikan NotebookLM | Ditolak sebagai perbaikan login. Tetap mempunyai batas Google authentication dan belum memenuhi seluruh platform. |
+| Autentikasi Google resmi; Firebase mengikuti otomatis | Fondasi identitas yang direkomendasikan. Tidak perlu login Firebase kedua. Tidak dengan sendirinya memberi akses NotebookLM. |
+| UI Flutter + browser pendamping per pengguna | Eksperimen desktop yang diprioritaskan; belum janji produk semua platform. Browser tetap mengelola sesi situs. |
+| UI native + grant API NotebookLM untuk identitas klien OpenTurath | Target arsitektur untuk rilis lintas platform jika grant chat/sitasi tersebut benar-benar tersedia dan tervalidasi. Permukaan resmi yang diperiksa belum membuktikan grant consumer itu. |
+
+Fondasi Firebase didukung dokumentasi [federated authentication](https://firebase.google.com/docs/auth/flutter/federated-auth). Jembatan desktop mempunyai mekanisme [native messaging](https://developer.chrome.com/docs/extensions/develop/concepts/native-messaging), tetapi penerimaan request NotebookLM masih merupakan gate berbeda. Target API pada tabel adalah syarat arsitektur, **bukan klaim bahwa API Enterprise atau token Firebase yang ada telah memenuhi syarat itu**.
+
+Dalam eksperimen pendamping, login Google harus tetap ditangani manusia melalui browser asli. Ekstensi tidak perlu diberi akses ke `accounts.google.com`, menyisipkan script pada halaman login, mengotomasi autentikasi, atau mengekspor nilai cookie. Izin dan kanal komunikasi dipersempit untuk pekerjaan NotebookLM serta aplikasi yang sudah dipasangkan. Ini rancangan pembatasan, belum implementasi yang diuji.
+
+### Apa arti “pasti berhasil” pada keputusan ini
+
+Yang dapat dirancang tanpa layar login kedua adalah pertukaran identitas Google ke Firebase. Yang belum bisa dijanjikan adalah seluruh alur NotebookLM dalam UI native pada semua platform. Persetujuan pertama dan tantangan Google tetap berada pada Google; `prompt=none` hanya berlaku ketika autentikasi dan consent sudah ada. [Google OIDC](https://developers.google.com/identity/openid-connect/openid-connect).
+
+Karena itu keputusan berikutnya bukan membangun Chromium atau menambah retry. Keputusan berikutnya adalah membuktikan akses NotebookLM yang sah, akun yang cocok, jawaban/sitasi, dan pembaruan sesi pada satu implementasi nyata. Jika semua syarat produk tetap wajib, kegagalan gate mobile atau grant upstream harus disebut hambatan rilis, bukan ditutupi dengan klaim bahwa desktop yang lolos menjamin semuanya.
+
 ## Pembuktian berikutnya yang bernilai
 
 Rekomendasi penelitian berikutnya adalah eksperimen desktop tanpa ekspor cookie, menggunakan akun uji dan notebook dummy yang disetujui untuk pengujian. Prototipe tidak dinyatakan lolos hanya karena popup Google berhasil atau fixture hijau.
