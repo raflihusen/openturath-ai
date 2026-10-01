@@ -60,7 +60,7 @@ class AgentMultiTabRoom extends StatefulWidget {
     final newEmail = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1E1E22) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF1F1F1F) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
@@ -73,7 +73,7 @@ class AgentMultiTabRoom extends StatefulWidget {
                 style: ScholarlyFonts.outfit(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : const Color(0xFF18181B),
+                  color: isDark ? Colors.white : const Color(0xFF191919),
                 ),
               ),
             ),
@@ -88,7 +88,7 @@ class AgentMultiTabRoom extends StatefulWidget {
               style: ScholarlyFonts.outfit(
                 fontSize: 12,
                 color:
-                    isDark ? const Color(0xFFA1A1AA) : const Color(0xFF71717A),
+                    isDark ? const Color(0xFFA4A4A4) : const Color(0xFF747474),
               ),
             ),
             const SizedBox(height: 14),
@@ -98,20 +98,20 @@ class AgentMultiTabRoom extends StatefulWidget {
               autofocus: true,
               style: ScholarlyFonts.outfit(
                 fontSize: 14,
-                color: isDark ? Colors.white : const Color(0xFF18181B),
+                color: isDark ? Colors.white : const Color(0xFF191919),
               ),
               decoration: InputDecoration(
                 hintText: 'nama@gmail.com',
                 prefixIcon: const Icon(Icons.email_outlined, size: 18),
                 filled: true,
                 fillColor:
-                    isDark ? const Color(0xFF27272A) : const Color(0xFFF4F4F5),
+                    isDark ? const Color(0xFF282828) : const Color(0xFFF4F4F4),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(
                     color: isDark
-                        ? const Color(0xFF3F3F46)
-                        : const Color(0xFFE4E4E7),
+                        ? const Color(0xFF414141)
+                        : const Color(0xFFE5E5E5),
                   ),
                 ),
                 contentPadding:
@@ -426,7 +426,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             Row(
               children: [
                 const Icon(Icons.delete_outline_rounded,
-                    color: Colors.redAccent, size: 22),
+                    color: Colors.grey, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -454,7 +454,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 const SizedBox(width: 12),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
+                    backgroundColor: Colors.grey,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -722,10 +722,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   child: Row(
                     children: [
                       const Icon(Icons.delete_outline_rounded,
-                          color: Colors.redAccent, size: 18),
+                          color: Colors.grey, size: 18),
                       const SizedBox(width: 12),
                       Text('Hapus Riwayat Obrolan',
-                          style: OTTypography.body(color: Colors.redAccent)),
+                          style: OTTypography.body(color: Colors.grey)),
                     ],
                   ),
                 ),
@@ -2087,7 +2087,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 elevation: 8,
                 borderRadius: BorderRadius.circular(14),
                 color:
-                    isDark ? const Color(0xFF27272A) : const Color(0xFFFFFFFF),
+                    isDark ? const Color(0xFF282828) : const Color(0xFFFFFFFF),
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -2095,8 +2095,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isDark
-                          ? const Color(0xFF3F3F46)
-                          : const Color(0xFFE4E4E7),
+                          ? const Color(0xFF414141)
+                          : const Color(0xFFE5E5E5),
                       width: 1,
                     ),
                   ),
@@ -2138,8 +2138,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                                       style: ScholarlyFonts.outfit(
                                         fontSize: 12,
                                         color: isDark
-                                            ? const Color(0xFFA1A1AA)
-                                            : const Color(0xFF71717A),
+                                            ? const Color(0xFFA4A4A4)
+                                            : const Color(0xFF747474),
                                       ),
                                     ),
                                     Flexible(
@@ -2150,7 +2150,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                                           fontWeight: FontWeight.w700,
                                           color: isDark
                                               ? Colors.white
-                                              : const Color(0xFF18181B),
+                                              : const Color(0xFF191919),
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -2164,8 +2164,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                                   style: ScholarlyFonts.outfit(
                                     fontSize: 11,
                                     color: isDark
-                                        ? const Color(0xFFA1A1AA)
-                                        : const Color(0xFF71717A),
+                                        ? const Color(0xFFA4A4A4)
+                                        : const Color(0xFF747474),
                                   ),
                                 ),
                               ],
@@ -2178,11 +2178,11 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         style: OutlinedButton.styleFrom(
                           visualDensity: VisualDensity.compact,
                           foregroundColor:
-                              isDark ? Colors.white : const Color(0xFF18181B),
+                              isDark ? Colors.white : const Color(0xFF191919),
                           side: BorderSide(
                             color: isDark
-                                ? const Color(0xFF3F3F46)
-                                : const Color(0xFFD4D4D8),
+                                ? const Color(0xFF414141)
+                                : const Color(0xFFD5D5D5),
                           ),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 8),
@@ -2225,8 +2225,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: isDark
-                                ? const Color(0xFFA1A1AA)
-                                : const Color(0xFF71717A),
+                                ? const Color(0xFFA4A4A4)
+                                : const Color(0xFF747474),
                           ),
                         ),
                       ),
