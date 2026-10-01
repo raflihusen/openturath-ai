@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-01",
+  "firebaseAuth": "11.15.0",
+  "googleUtilities": "8.1.3",
+  "status": "Four generated Pod source files restored from official repositories; both Swift files parse successfully",
+  "sources": {
+    "AuthStoredUserManager.swift": "e9f14e9ff241acfdfa9d840b7864a4db2f8f20acb44a6e93bfbbf95e3875d543",
+    "AuthKeychainServices.swift": "aef01daadae2ce217f150728142ed6c0285d9ed8d2b5573b573a454dcb0fb16f",
+    "GULKeychainStorage.m": "e19c1d1b0fe4585cc125c09cb195d23cd2e3c3bba05f4c349cf1083a840d11ee",
+    "GULKeychainUtils.m": "9c583452edb96b11423b3cb0f642295968e896ec164cd233238f190668a653c0"
+  },
+  "credentials": "User credentials and preference contents were not read or deleted"
+}
