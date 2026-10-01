@@ -87,16 +87,11 @@ class AuthService {
       if (!kIsWeb && AppPlatform.isDesktop) {
         final credential = await DesktopGoogleSignIn.signIn();
         if (credential == null) return null;
-        try {
-          final userCredential = await _auth.signInWithCredential(credential);
-          firebaseUser = userCredential.user;
-        } on FirebaseAuthException catch (e) {
-          if (e.code == 'keychain-error' && _auth.currentUser != null) {
-            firebaseUser = _auth.currentUser;
-          } else {
-            rethrow;
-          }
-        }
+        final userCredential = await _auth.signInWithCredential(credential);
+        firebaseUser = userCredential.user;
+      } else if (kIsWeb) {
+        final result = await _auth.signInWithPopup(GoogleAuthProvider());
+        firebaseUser = result.user;
       } else {
         // Mobile (Android / iOS) & Web use native GoogleSignIn SDK
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -122,55 +117,9 @@ class AuthService {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('google_session_email', effectiveEmail);
           await prefs.setString('notebook_google_email', effectiveEmail);
-          await prefs.setBool('google_session_ready', true);
+          await prefs.remove('google_session_ready');
         } catch (_) {}
       }
-      return userModel;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  // ── Desktop token compatibility ───────────────────────────────
-  /// Authenticates Firebase only. A Google ID token does not establish a
-  /// NotebookLM browser session; readiness must be checked in that session.
-  Future<UserModel?> signInWithDesktopGoogleToken({
-    required String idToken,
-    String? email,
-    String? displayName,
-  }) async {
-    try {
-      final credential = GoogleAuthProvider.credential(idToken: idToken);
-      User? firebaseUser;
-      try {
-        final userCredential = await _auth.signInWithCredential(credential);
-        firebaseUser = userCredential.user;
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'keychain-error' && _auth.currentUser != null) {
-          firebaseUser = _auth.currentUser;
-        } else {
-          rethrow;
-        }
-      }
-      if (firebaseUser == null) return null;
-
-      final userModel = await _resolveOrCreateFirebaseUser(
-        firebaseUser,
-        fallbackName: displayName,
-        fallbackEmail: email,
-      );
-
-      final effectiveEmail =
-          (firebaseUser.email ?? email)?.trim().toLowerCase();
-      if (effectiveEmail != null && effectiveEmail.isNotEmpty) {
-        try {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('google_session_email', effectiveEmail);
-          await prefs.setString('notebook_google_email', effectiveEmail);
-          await prefs.setBool('google_session_ready', true);
-        } catch (_) {}
-      }
-
       return userModel;
     } catch (e) {
       rethrow;
