@@ -23,8 +23,10 @@ class NotebookNavigation {
       _trustedHttps(uri) &&
       (_authenticationHosts.contains(uri.host.toLowerCase()) ||
           (hosts.contains(uri.host.toLowerCase()) &&
-              uri.path.toLowerCase().split('/').any(
-                  const {'login', 'signin', 'servicelogin'}.contains)));
+              uri.path
+                  .toLowerCase()
+                  .split('/')
+                  .any(const {'login', 'signin', 'servicelogin'}.contains)));
 
   // Google OAuth must run in a supported browser, never in this app WebView.
   static bool allowed(Uri uri) =>

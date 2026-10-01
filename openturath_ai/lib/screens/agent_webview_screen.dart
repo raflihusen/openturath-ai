@@ -629,7 +629,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         await _webController!.stopLoading();
         return;
       }
-      if (_isGoogleAuthPage || url == null ||
+      if (_isGoogleAuthPage ||
+          url == null ||
           !NotebookNavigation.notebook(url.uriValue)) return;
       final hasScript = await _webController!.evaluateJavascript(
         source:
@@ -879,7 +880,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     onCreateWindow: (controller, createWindowAction) async {
                       final targetUrl = createWindowAction.request.url;
                       if (targetUrl != null &&
-                          NotebookNavigation.authentication(targetUrl.uriValue)) {
+                          NotebookNavigation.authentication(
+                              targetUrl.uriValue)) {
                         _handleAuthenticationRequired();
                         return false;
                       }

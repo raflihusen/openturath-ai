@@ -1607,12 +1607,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final title = session.isGoogleAuthPage
           ? 'Koneksi asisten belum tersedia'
           : isGoogleErr
-          ? (needsGoogleLogin
-              ? 'Hubungkan akun Google'
-              : 'Akun Google belum memiliki izin')
-          : (isTimeout
-              ? 'Asisten belum berhasil dibuka'
-              : 'Asisten Belum Bisa Dibuka');
+              ? (needsGoogleLogin
+                  ? 'Hubungkan akun Google'
+                  : 'Akun Google belum memiliki izin')
+              : (isTimeout
+                  ? 'Asisten belum berhasil dibuka'
+                  : 'Asisten Belum Bisa Dibuka');
 
       final icon = isGoogleErr
           ? Icons.account_circle_outlined
@@ -1627,31 +1627,33 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           message: session.errorMessage!,
           icon: icon,
           retryLabel: retryLabel,
-          onRetry: session.isGoogleAuthPage ? null : () async {
-            if (isGoogleErr) {
-              final url = session.resolvedUrl;
-              if (url != null) {
-                final email =
-                    await NativeAgentLauncher.getActiveNotebookEmail();
-                await NativeAgentLauncher.launchNotebook(url,
-                    email: email.isNotEmpty ? email : null);
-              }
-            } else {
-              setState(() {
-                session.errorMessage = null;
-                session.isTimeoutError = false;
-                session.isGooglePermissionError = false;
-                session.isWebLoading = true;
-                session.isSessionReady = false;
-              });
-              if (session.webController != null) {
-                session.webController!.reload();
-                _startReadinessCheck();
-              } else {
-                _fetchUrl();
-              }
-            }
-          },
+          onRetry: session.isGoogleAuthPage
+              ? null
+              : () async {
+                  if (isGoogleErr) {
+                    final url = session.resolvedUrl;
+                    if (url != null) {
+                      final email =
+                          await NativeAgentLauncher.getActiveNotebookEmail();
+                      await NativeAgentLauncher.launchNotebook(url,
+                          email: email.isNotEmpty ? email : null);
+                    }
+                  } else {
+                    setState(() {
+                      session.errorMessage = null;
+                      session.isTimeoutError = false;
+                      session.isGooglePermissionError = false;
+                      session.isWebLoading = true;
+                      session.isSessionReady = false;
+                    });
+                    if (session.webController != null) {
+                      session.webController!.reload();
+                      _startReadinessCheck();
+                    } else {
+                      _fetchUrl();
+                    }
+                  }
+                },
           onBack: () => AgentSessionManager.instance.closeRoom(),
           backLabel: 'Kembali ke Beranda',
         ),
@@ -1704,7 +1706,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 _handleAuthenticationRequired();
                 return false;
               }
-              if (targetUrl != null && NotebookNavigation.allowed(targetUrl.uriValue)) {
+              if (targetUrl != null &&
+                  NotebookNavigation.allowed(targetUrl.uriValue)) {
                 await controller.loadUrl(
                     urlRequest: URLRequest(url: targetUrl));
                 return true;
@@ -1906,7 +1909,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             onLoadStart: (controller, uri) async {
               session.hasInjectedEarlyScript = false;
-              if (uri != null && NotebookNavigation.authentication(uri.uriValue)) {
+              if (uri != null &&
+                  NotebookNavigation.authentication(uri.uriValue)) {
                 _handleAuthenticationRequired();
                 await controller.stopLoading();
                 return;
@@ -1983,7 +1987,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
             },
             shouldOverrideUrlLoading: (controller, action) async {
               final uri = action.request.url;
-              if (uri != null && NotebookNavigation.authentication(uri.uriValue)) {
+              if (uri != null &&
+                  NotebookNavigation.authentication(uri.uriValue)) {
                 _handleAuthenticationRequired();
                 return NavigationActionPolicy.CANCEL;
               }

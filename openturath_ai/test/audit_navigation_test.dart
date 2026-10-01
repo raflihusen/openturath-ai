@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/core/notebook_navigation.dart';
+
 void main() {
   test('only official HTTPS notebook hosts are allowed in the WebView', () {
     for (final host in [
@@ -30,15 +31,22 @@ void main() {
       expect(NotebookNavigation.authentication(uri), isTrue);
       expect(NotebookNavigation.notebook(uri), isFalse);
     }
-    final deceptive = Uri.parse('https://accounts.google.com.attacker.invalid/');
+    final deceptive =
+        Uri.parse('https://accounts.google.com.attacker.invalid/');
     expect(NotebookNavigation.authentication(deceptive), isFalse);
     expect(NotebookNavigation.allowed(deceptive), isFalse);
   });
   test('A11 user content origins, custom ports and deceptive URLs blocked', () {
-    for (final url in ['https://sites.google.com/site/phishing',
-      'https://evil.googleusercontent.com/', 'https://accounts.google.com.evil.test/',
-      'https://user@accounts.google.com/', 'https://accounts.google.com:8443/',
-      'http://accounts.google.com/', 'javascript:alert(1)', 'file:///etc/passwd']) {
+    for (final url in [
+      'https://sites.google.com/site/phishing',
+      'https://evil.googleusercontent.com/',
+      'https://accounts.google.com.evil.test/',
+      'https://user@accounts.google.com/',
+      'https://accounts.google.com:8443/',
+      'http://accounts.google.com/',
+      'javascript:alert(1)',
+      'file:///etc/passwd'
+    ]) {
       expect(NotebookNavigation.allowed(Uri.parse(url)), isFalse, reason: url);
     }
   });

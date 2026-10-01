@@ -32,7 +32,8 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('restored auth routes to dashboard after mounting', (tester) async {
+  testWidgets('restored auth routes to dashboard after mounting',
+      (tester) async {
     await startApp(tester, () => AppRoutes.dashboard);
     expect(find.text('Dashboard destination'), findsOneWidget);
     expect(find.byType(SplashScreen), findsNothing);
