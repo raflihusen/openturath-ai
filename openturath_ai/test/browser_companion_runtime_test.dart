@@ -5,7 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
-import '../lib/services/browser_companion_runtime.dart';
+import 'package:openturath_ai/services/browser_companion_runtime.dart';
 
 const notebook = '11111111-1111-1111-1111-111111111111';
 const conversation = '22222222-2222-2222-2222-222222222222';
@@ -14,17 +14,16 @@ const clientId = 'ffffffffffffffffffffffffffffffff';
 const requestId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
 Matcher code(String value) => isA<FirebaseFunctionsException>().having(
-  (error) => error.code,
-  'safe error code',
-  value,
-);
+      (error) => error.code,
+      'safe error code',
+      value,
+    );
 
 Future<Map<String, dynamic>> metadata(Directory directory) async =>
     Map<String, dynamic>.from(
       jsonDecode(
-            await File(p.join(directory.path, 'runtime.json')).readAsString(),
-          )
-          as Map,
+        await File(p.join(directory.path, 'runtime.json')).readAsString(),
+      ) as Map,
     );
 
 Future<({int status, Map<String, dynamic> body})> post(
@@ -34,6 +33,7 @@ Future<({int status, Map<String, dynamic> body})> post(
   String? host,
   String? origin,
   String? authorization,
+  ContentType? contentType,
 }) async {
   final client = HttpClient()..connectionTimeout = const Duration(seconds: 2);
   try {
@@ -49,7 +49,7 @@ Future<({int status, Map<String, dynamic> body})> post(
       authorization ?? 'Bearer ${runtime['bearer']}',
     );
     if (origin != null) request.headers.set('origin', origin);
-    request.headers.contentType = ContentType.json;
+    request.headers.contentType = contentType ?? ContentType.json;
     request.write(jsonEncode(body));
     final response = await request.close().timeout(const Duration(seconds: 2));
     final decoded = jsonDecode(
@@ -70,7 +70,8 @@ Future<({int status, Map<String, dynamic> body})> post(
 Map<String, dynamic> envelope(
   Map<String, dynamic> runtime, {
   String client = clientId,
-}) => {'clientId': client, 'epoch': runtime['epoch']};
+}) =>
+    {'clientId': client, 'epoch': runtime['epoch']};
 
 Future<void> attach(
   Map<String, dynamic> runtime, {
@@ -88,30 +89,31 @@ Future<Map<String, dynamic>> pollJob(Map<String, dynamic> runtime) async {
   for (var count = 0; count < 100; count++) {
     final response = await post(runtime, '/poll', envelope(runtime));
     expect(response.status, 200);
-    if (response.body['job'] != null)
+    if (response.body['job'] != null) {
       return Map<String, dynamic>.from(response.body['job'] as Map);
+    }
     await Future<void>.delayed(const Duration(milliseconds: 5));
   }
   fail('Fixture job was not queued.');
 }
 
 Map<String, dynamic> reply(Map<String, dynamic> job) => {
-  for (final key in [
-    'requestId',
-    'epoch',
-    'uid',
-    'googleSub',
-    'email',
-    'notebookId',
-  ])
-    key: job[key],
-  'answer': 'Fixture answer that must not be stored in the ledger.',
-  'citations': [
-    {'sourceId': source, 'citationNumber': 1, 'excerpt': 'Fixture source.'},
-  ],
-  'conversationId': conversation,
-  'accountEmail': job['email'],
-};
+      for (final key in [
+        'requestId',
+        'epoch',
+        'uid',
+        'googleSub',
+        'email',
+        'notebookId',
+      ])
+        key: job[key],
+      'answer': 'Fixture answer that must not be stored in the ledger.',
+      'citations': [
+        {'sourceId': source, 'citationNumber': 1, 'excerpt': 'Fixture source.'},
+      ],
+      'conversationId': conversation,
+      'accountEmail': job['email'],
+    };
 
 void main() {
   test('native identity rejects an absent subject or ambiguous email', () {
@@ -191,7 +193,8 @@ void main() {
               '/attach',
               body,
               host: 'localhost:${meta['port']}',
-            )).status,
+            ))
+                .status,
             403,
           );
           expect(
@@ -200,7 +203,8 @@ void main() {
               '/attach',
               body,
               origin: 'https://notebooklm.google.com',
-            )).status,
+            ))
+                .status,
             403,
           );
           expect(
@@ -213,7 +217,8 @@ void main() {
               '/attach',
               body,
               authorization: 'Bearer ${'0' * 64}',
-            )).status,
+            ))
+                .status,
             403,
           );
           expect(runtime.connected, isFalse);
@@ -293,7 +298,8 @@ void main() {
             (await post(meta, '/result', {
               ...envelope(meta),
               'result': bad,
-            })).body['code'],
+            }))
+                .body['code'],
             'account-mismatch',
           );
           await post(meta, '/result', {
@@ -383,7 +389,8 @@ void main() {
             (await post(meta, '/result', {
               ...envelope(meta),
               'result': reply(job),
-            })).body['code'],
+            }))
+                .body['code'],
             'unauthenticated',
           );
           await expected;
@@ -412,8 +419,9 @@ void main() {
           for (var count = 0; count < 100; count++) {
             final file = File(p.join(directory.path, 'ledger.json'));
             if (await file.exists() &&
-                (await file.readAsString()).contains(requestId))
+                (await file.readAsString()).contains(requestId)) {
               break;
+            }
             await Future<void>.delayed(const Duration(milliseconds: 5));
           }
           owner = null;
@@ -455,13 +463,11 @@ void main() {
           expect((await post(meta, '/poll', envelope(meta))).body, {
             'job': null,
           });
-          final stored =
-              jsonDecode(
-                    await File(
-                      p.join(directory.path, 'ledger.json'),
-                    ).readAsString(),
-                  )
-                  as Map;
+          final stored = jsonDecode(
+            await File(
+              p.join(directory.path, 'ledger.json'),
+            ).readAsString(),
+          ) as Map;
           expect((stored['records'] as List).single['state'], 'uncertain');
         },
       );
@@ -528,6 +534,77 @@ void main() {
           );
         },
       );
+
+      test('only JSON UTF-8 IPC bodies are accepted', () async {
+        await runtime.start();
+        final meta = await metadata(directory);
+        final body = {...envelope(meta), 'protocol': 1};
+        expect(
+            (await post(meta, '/attach', body, contentType: ContentType.text))
+                .status,
+            415);
+        expect(
+            (await post(meta, '/attach', body,
+                    contentType:
+                        ContentType('application', 'json', charset: 'latin1')))
+                .status,
+            415);
+        expect(runtime.connected, isFalse);
+      });
+
+      test('same-client attach maintains heartbeat while an answer is pending',
+          () async {
+        runtime.dispose();
+        await runtime.stop();
+        runtime = BrowserCompanionRuntime(
+            identity: () => owner,
+            runtimeDirectory: directory,
+            heartbeatTimeout: const Duration(milliseconds: 300),
+            responseTimeout: const Duration(seconds: 2));
+        await runtime.start();
+        final meta = await metadata(directory);
+        await attach(meta);
+        final future = runtime.ask(
+            expectedUid: owner!.uid,
+            notebookId: notebook,
+            question: 'Fixture slow answer',
+            requestId: requestId);
+        final job = await pollJob(meta);
+        for (var count = 0; count < 2; count++) {
+          await Future<void>.delayed(const Duration(milliseconds: 180));
+          await attach(meta);
+        }
+        expect(runtime.connected, isTrue);
+        expect((await post(meta, '/poll', envelope(meta))).body, {'job': null});
+        await post(meta, '/result', {...envelope(meta), 'result': reply(job)});
+        expect((await future)['accountEmail'], owner!.email);
+      });
+
+      test('an expired client cannot replay its pending request on attach',
+          () async {
+        runtime.dispose();
+        await runtime.stop();
+        runtime = BrowserCompanionRuntime(
+            identity: () => owner,
+            runtimeDirectory: directory,
+            heartbeatTimeout: const Duration(milliseconds: 250),
+            responseTimeout: const Duration(seconds: 2));
+        await runtime.start();
+        final meta = await metadata(directory);
+        await attach(meta);
+        final future = runtime.ask(
+            expectedUid: owner!.uid,
+            notebookId: notebook,
+            question: 'Fixture expired client',
+            requestId: requestId);
+        final expected = expectLater(future, throwsA(code('uncertain')));
+        await pollJob(meta);
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+        expect(runtime.connected, isFalse);
+        await attach(meta);
+        await expected;
+        expect((await post(meta, '/poll', envelope(meta))).body, {'job': null});
+      });
 
       test(
         'invalid citation shape and unknown error codes remain safe failures',
