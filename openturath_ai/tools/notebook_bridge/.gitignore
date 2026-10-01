@@ -1,0 +1,10 @@
+__pycache__/
+.venv/
+.runtime/
+.state/
+.env*
+*.sqlite3*
+bindings.local.json
+storage_state*.json*
+master_token*.json*
+*.session.json
