@@ -148,7 +148,10 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
 
     return Container(
       color: canvas,
-      child: Column(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
         children: [
           // ── 1. Timeline Obrolan ──
           Expanded(
@@ -186,6 +189,8 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
             isDark,
           ),
         ],
+      ),
+        ),
       ),
     );
   }
@@ -281,7 +286,9 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         alignment: Alignment.centerRight,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.sizeOf(context).width * 0.82,
+            maxWidth: (MediaQuery.sizeOf(context).width < 800
+                ? MediaQuery.sizeOf(context).width
+                : 800) * 0.82,
           ),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
