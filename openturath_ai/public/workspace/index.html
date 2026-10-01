@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id" data-workspace="openturath-browser-workspace-v1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f7f5">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com; style-src 'self'; img-src 'self'; connect-src 'self' https://*.googleapis.com https://us-central1-open-turath.cloudfunctions.net https://open-turath.firebaseapp.com https://open-turath.web.app; frame-src https://open-turath.firebaseapp.com https://open-turath.web.app; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests">
+  <title>Ruang Kajian — OpenTurath</title>
+  <link rel="icon" href="../favicon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./workspace.css">
+</head>
+<body>
+  <header>
+    <a class="brand" href="./"><img src="../brand-mark.svg" width="28" height="28" alt="">OpenTurath</a>
+    <div id="account" hidden><span id="email"></span><button id="logout" type="button">Keluar</button></div>
+  </header>
+  <main>
+    <section id="welcome">
+      <p class="eyebrow">RUANG KAJIAN</p>
+      <h1>Membaca kitab,<br>menelusuri ibarah.</h1>
+      <p>Masuk dengan Google, pilih bidang, lalu lanjutkan kajian di NotebookLM dengan browser yang sama.</p>
+      <button id="login" class="primary" type="button" disabled>Lanjutkan dengan Google</button>
+      <p class="small">Gunakan satu profil browser biasa. Google dapat meminta persetujuan, pemilihan akun atau verifikasi keamanan.</p>
+    </section>
+    <p id="status" role="status" aria-live="polite">Menyiapkan ruang kajian…</p>
+    <button id="retry-profile" type="button" hidden>Coba siapkan profil lagi</button>
+    <section id="workspace" hidden>
+      <div class="section-heading"><div><p class="eyebrow">PUSTAKA ASISTEN</p><h1>Mulai kajian.</h1></div>
+        <label class="search">Cari bidang<input id="search" type="search" placeholder="Fikih, hadis, bahasa Arab…"></label>
+      </div>
+      <section id="ready-link" class="notice" hidden>
+        <h2 id="selected-title">Kajian siap dibuka</h2>
+        <p>NotebookLM akan dibuka di tab ini. Akun Google dan izin notebook tetap diperiksa oleh Google.</p>
+        <a id="notebook-link" class="primary" referrerpolicy="no-referrer">Buka NotebookLM</a>
+      </section>
+      <div id="catalog" class="catalog"></div>
+      <p id="empty" hidden>Tidak ada bidang yang cocok.</p>
+      <section class="access">
+        <div><h2>Punya kode akses?</h2><p>Aktifkan bidang kajian untuk akun yang sedang digunakan.</p></div>
+        <form id="redeem-form"><label for="code">Kode akses</label><input id="code" maxlength="256" autocomplete="off" required><button id="redeem" type="submit">Tukarkan kode</button></form>
+      </section>
+      <p class="small">Keluar dari OpenTurath mengakhiri sesi OpenTurath. Sesi Google/NotebookLM dikelola terpisah oleh Google; pada perangkat bersama, keluar juga dari akun Google.</p>
+    </section>
+    <noscript>Aktifkan JavaScript untuk masuk dan memeriksa akses kajian.</noscript>
+  </main>
+  <footer><a href="../privacy.html">Privasi</a><a href="../terms.html">Ketentuan</a><a href="../">Tentang OpenTurath</a></footer>
+  <script type="module" src="./workspace.mjs"></script>
+</body>
+</html>
