@@ -11,5 +11,8 @@ PRODUCT_NAME = OpenTurath AI
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.example.openturathAi
 
+// Team from the installed valid Apple Development certificate (public subject).
+DEVELOPMENT_TEAM = TG4G5DYSFG
+
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 OpenTurath AI. All rights reserved.
