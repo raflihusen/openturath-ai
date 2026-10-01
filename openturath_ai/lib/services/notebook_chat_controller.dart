@@ -77,13 +77,16 @@ class NotebookChatController extends ChangeNotifier {
       if (_disposed || epoch != _epoch || currentUid() != owner) return;
       error = switch (failure.code) {
         'unauthenticated' => 'Silakan masuk kembali ke OpenTurath.',
+        'notebook-session-required' =>
+          'Buka NotebookLM di profil Chrome tempat penghubung dipasang, lalu masuk dengan akun Google yang sama dengan OpenTurath.',
         'permission-denied' => 'Akses kajian ini belum aktif untuk akun Anda.',
         'account-mismatch' =>
           'Akun Google di Chrome berbeda. Gunakan akun yang sama dengan OpenTurath.',
         'uncertain' =>
           'Pengiriman terputus. Pertanyaan mungkin sudah diterima; tidak dikirim ulang otomatis.',
         'busy' => 'Tunggu jawaban percakapan yang sedang berjalan.',
-        'unavailable' => 'Penghubung asisten belum tersambung. Periksa koneksi Anda.',
+        'unavailable' =>
+          'Penghubung asisten belum tersambung. Periksa koneksi Anda.',
         'failed-precondition' =>
           'Koneksi asisten di aplikasi belum diaktifkan.',
         'resource-exhausted' =>
