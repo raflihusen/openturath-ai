@@ -1,0 +1,22 @@
+{
+  "workspace": "https://open-turath.firebaseapp.com/workspace/",
+  "release": "sites/open-turath/channels/live/releases/1790820177097000",
+  "version": "sites/open-turath/versions/1e450535e855f729",
+  "previousVersion": "sites/open-turath/versions/4355608794b98a53",
+  "releasedAtUtc": "2026-10-01T02:02:57.097Z",
+  "authorization": "User approved publication of the browser workspace and desktop login pages.",
+  "verification": {
+    "liveVersionMatches": true,
+    "changedFilesChecked": 10,
+    "changedFilesHttp200": 10,
+    "changedFilesMatchLocalContent": 10,
+    "preservedLiveFiles": 27,
+    "preservedLiveHashesMatch": 27,
+    "securityHeadersChecked": ["X-Content-Type-Options: nosniff", "X-Frame-Options: DENY", "Referrer-Policy: no-referrer"],
+    "firebaseWebSdkSignedOutBoot": "passed",
+    "webAppAliasRedirect": "passed",
+    "realAccountGoogleToNotebookAnswer": "not-yet-tested"
+  },
+  "apkUploaded": false,
+  "firestoreVersionBroadcast": false
+}
