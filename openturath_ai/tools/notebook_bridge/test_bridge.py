@@ -1,14 +1,17 @@
 """Offline contract tests only. No sessions, Google requests or production access."""
 import asyncio
 import json
+from http.client import HTTPConnection
+from http.server import HTTPServer
 from pathlib import Path
 import sys
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
+import threading
 from unittest.mock import patch
 
-from bridge import BridgeEngine, BridgeFailure, NotebookProvider, validate_bindings
+from bridge import BridgeEngine, BridgeFailure, NotebookProvider, make_handler, validate_bindings
 
 N1 = "11111111-1111-1111-1111-111111111111"
 N2 = "22222222-2222-2222-2222-222222222222"
@@ -167,6 +170,56 @@ class ProviderTests(unittest.TestCase):
             with self.assertRaises(BridgeFailure):
                 asyncio.run(NotebookProvider(Path("/dedicated/test/session.json")).ask(N1, "fixture", None))
         self.assertEqual(len(calls), 1)
+
+
+class HttpBoundaryTests(unittest.TestCase):
+    def setUp(self):
+        self.calls = []
+        self.key = "local-http-test-fixture-key" * 2
+        def ask(data):
+            self.calls.append(data)
+            return {"requestId": data["requestId"], "answer": "Fixture HTTP", "citations": []}
+        self.server = HTTPServer(("127.0.0.1", 0), make_handler(SimpleNamespace(ask=ask), self.key))
+        self.thread = threading.Thread(target=lambda: self.server.serve_forever(poll_interval=0.05), daemon=True)
+        self.thread.start()
+
+    def tearDown(self):
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join(timeout=2)
+
+    def request(self, key=None, path="/ask", oversized=False):
+        body = json.dumps({"uid": "reader", "agentId": "fiqh_syafii", "question": "Fixture",
+                           "requestId": "a" * 32})
+        headers = {"Content-Type": "application/json"}
+        if key is not None:
+            headers["Authorization"] = "Bearer " + key
+        if oversized:
+            body = "x" * 40001
+        connection = HTTPConnection("127.0.0.1", self.server.server_port, timeout=2)
+        try:
+            connection.request("POST", path, body, headers)
+            response = connection.getresponse()
+            return response.status, json.loads(response.read()), response.getheader("Cache-Control")
+        finally:
+            connection.close()
+
+    def test_missing_or_wrong_bridge_key_never_reaches_engine(self):
+        for key in (None, "wrong-fixture"):
+            self.assertEqual(self.request(key)[0], 401)
+        self.assertEqual(self.calls, [])
+
+    def test_authenticated_post_returns_only_json_and_disables_cache(self):
+        status, response, cache = self.request(self.key)
+        self.assertEqual(status, 200)
+        self.assertEqual(response["answer"], "Fixture HTTP")
+        self.assertEqual(cache, "no-store")
+        self.assertEqual(len(self.calls), 1)
+
+    def test_wrong_path_and_oversized_body_never_reach_engine(self):
+        self.assertEqual(self.request(self.key, path="/other")[0], 503)
+        self.assertEqual(self.request(self.key, oversized=True)[0], 503)
+        self.assertEqual(self.calls, [])
 
 
 if __name__ == "__main__":
