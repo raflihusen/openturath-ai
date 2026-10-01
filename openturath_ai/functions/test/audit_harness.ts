@@ -125,6 +125,12 @@ export function loadBackend(root = process.cwd()) {
   vm.runInNewContext(stripTypeScriptTypes(catalogSource + '\nexports.NOTEBOOK_ENTITIES = NOTEBOOK_ENTITIES; exports.AGENT_TO_ENTITY = AGENT_TO_ENTITY; exports.resolveAgentNotebook = resolveAgentNotebook;'),
     {exports: catalogExports, console, Math});
   deps['./notebook_catalog'] = catalogExports;
+  const nativeSource = fs.readFileSync(path.join(root, 'functions/src/native_chat.ts'), 'utf8')
+    .replace(/export (class|function|async function) /g, '$1 ');
+  const nativeExports: any = {};
+  vm.runInNewContext(stripTypeScriptTypes(nativeSource + '\nexports.handleNativeChat = handleNativeChat; exports.NativeChatError = NativeChatError;', {mode: 'transform'}),
+    {exports: nativeExports});
+  deps['./native_chat'] = nativeExports;
   const file = path.join(root,'functions/src/index.ts');
   let source = fs.readFileSync(file,'utf8')
     .replace(/^import \* as (\w+) from "([^"]+)";/gm, 'const $1 = require("$2");')
@@ -135,9 +141,9 @@ export function loadBackend(root = process.cwd()) {
     'getEntitlementAccess','processSuccessfulPayment','dokuWebhook','getDokuConfig','notifySubscriptionServer',
     'onUserCreate','dailyRevoke','processProvisioningOutbox','cleanupOrphanedDeletions','redeemCode',
     'addCalendarMonthsClamped','verifySubscriptionFirestore','generateDokuSignature','handleLogin','chatGate',
-    'getAgentUrl','checkPaymentStatus','resolvePlanPricing','createCheckout',
+    'getAgentUrl','askAgent','checkPaymentStatus','resolvePlanPricing','createCheckout',
   ].map(n=>n+':typeof '+n+' === "undefined" ? undefined : '+n).join(',') + ', onUserDeleted: typeof onUserDeleted === "undefined" ? undefined : onUserDeleted};';
   const exports: any = {};
-  vm.runInNewContext(stripTypeScriptTypes(source), {require:(name: string)=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];}, exports, Buffer, process, console:{log(){},warn(){},error(){}},Date, setTimeout,clearTimeout});
+  vm.runInNewContext(stripTypeScriptTypes(source), {require:(name: string)=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];}, exports, Buffer, process, URL, console:{log(){},warn(){},error(){}},Date, setTimeout,clearTimeout});
   return { api:exports.api, db, axios, users, sent };
 }
