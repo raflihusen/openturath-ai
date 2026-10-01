@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.createCheckout = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
+exports.onClientErrorLogged = exports.akalWebhook = exports.syncAkalPurchases = exports.chatGate = exports.cleanupOrphanedDeletions = exports.onUserDeleted = exports.processProvisioningOutbox = exports.dailyRevoke = exports.onUserCreate = exports.redeemCode = exports.checkPaymentStatus = exports.midtransWebhook = exports.dokuWebhook = exports.createCheckout = exports.askAgent = exports.recordQuestion = exports.getAgentUrl = exports.MODULE_PLANS = exports.PURCHASABLE_AGENTS = void 0;
 exports.addCalendarMonthsClamped = addCalendarMonthsClamped;
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const axios_1 = require("axios");
 const crypto = require("crypto");
+const native_chat_1 = require("./native_chat");
 const notebook_catalog_1 = require("./notebook_catalog");
 admin.initializeApp();
 const db = admin.firestore();
@@ -293,6 +294,73 @@ exports.recordQuestion = functions
         }
         throw new functions.https.HttpsError("permission-denied", "Akses Pro untuk kajian ini belum aktif. Tukarkan voucher atau berlangganan untuk melanjutkan.");
     });
+});
+// Native chat prototype. Enabling this requires a dedicated operator session,
+// an isolated test notebook and an explicitly configured test UID.
+exports.askAgent = functions
+    .runWith({
+    serviceAccount: "open-turath@appspot.gserviceaccount.com",
+    secrets: ["NOTEBOOK_BRIDGE_KEY"],
+    timeoutSeconds: 120,
+    maxInstances: 1,
+})
+    .https.onCall(async (data, context) => {
+    var _a;
+    if (context.auth) {
+        const header = context.rawRequest.headers.authorization;
+        try {
+            if (!(header === null || header === void 0 ? void 0 : header.startsWith("Bearer ")))
+                throw new Error("Missing token");
+            const verified = await admin.auth().verifyIdToken(header.slice(7), true);
+            if (verified.uid !== context.auth.uid)
+                throw new Error("Identity mismatch");
+        }
+        catch (_) {
+            throw new functions.https.HttpsError("unauthenticated", "Silakan masuk kembali ke OpenTurath.");
+        }
+    }
+    try {
+        return await (0, native_chat_1.handleNativeChat)(data, (_a = context.auth) === null || _a === void 0 ? void 0 : _a.uid, {
+            testUid: process.env.NOTEBOOK_BRIDGE_TEST_UID,
+            authorize: async (uid, agentId) => {
+                const key = getEntitlementKey(agentId);
+                if (!key || !AGENT_URLS[agentId])
+                    return false;
+                const snapshot = await db.collection("users").doc(uid).get();
+                return snapshot.exists && getEntitlementAccess(snapshot.data(), key).active;
+            },
+            rateLimit: uid => enforceRateLimit(`native_chat_${uid}`, 10, 60, "Terlalu banyak pertanyaan. Silakan tunggu sebentar."),
+            ask: async (request) => {
+                const endpoint = process.env.NOTEBOOK_BRIDGE_URL;
+                const key = process.env.NOTEBOOK_BRIDGE_KEY;
+                if (!endpoint || !key || key.length < 32) {
+                    throw new native_chat_1.NativeChatError("failed-precondition", "Koneksi asisten di aplikasi belum diaktifkan.");
+                }
+                const url = new URL(endpoint);
+                const local = process.env.FUNCTIONS_EMULATOR === "true" &&
+                    url.protocol === "http:" && ["127.0.0.1", "localhost"].includes(url.hostname);
+                if ((!local && url.protocol !== "https:") || url.username || url.password || url.search || url.hash || url.pathname !== "/ask") {
+                    throw new native_chat_1.NativeChatError("failed-precondition", "Konfigurasi koneksi asisten belum valid.");
+                }
+                const response = await axios_1.default.post(url.toString(), request, {
+                    headers: { Authorization: `Bearer ${key}` },
+                    timeout: 80000,
+                    maxRedirects: 0,
+                    maxContentLength: 512000,
+                    maxBodyLength: 40000,
+                });
+                return response.data;
+            },
+        });
+    }
+    catch (error) {
+        if (error instanceof native_chat_1.NativeChatError) {
+            throw new functions.https.HttpsError(error.code, error.message);
+        }
+        if (error instanceof functions.https.HttpsError)
+            throw error;
+        throw new functions.https.HttpsError("unavailable", "Asisten belum dapat dihubungi.");
+    }
 });
 // ================================================================
 // DOKU PAYMENT GATEWAY INTEGRATION
