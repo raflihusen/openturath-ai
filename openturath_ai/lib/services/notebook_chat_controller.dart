@@ -78,6 +78,12 @@ class NotebookChatController extends ChangeNotifier {
       error = switch (failure.code) {
         'unauthenticated' => 'Silakan masuk kembali ke OpenTurath.',
         'permission-denied' => 'Akses kajian ini belum aktif untuk akun Anda.',
+        'account-mismatch' =>
+          'Akun Google di Chrome berbeda. Gunakan akun yang sama dengan OpenTurath.',
+        'uncertain' =>
+          'Pengiriman terputus. Pertanyaan mungkin sudah diterima; tidak dikirim ulang otomatis.',
+        'busy' => 'Tunggu jawaban percakapan yang sedang berjalan.',
+        'unavailable' => 'Penghubung asisten belum tersambung. Periksa koneksi Anda.',
         'failed-precondition' =>
           'Koneksi asisten di aplikasi belum diaktifkan.',
         'resource-exhausted' =>
