@@ -1,6 +1,18 @@
-# Kandidat integrasi NotebookLM di dalam OpenTurath
+# Arsip prototipe akun operator NotebookLM
 
-Tanggal: 1 Oktober 2026. Status: **kode prototipe lokal kini diimplementasikan dan diuji dengan fixture; belum terhubung ke Google, belum aktif pada build normal, belum dirilis**. Lihat [implementasi dan bukti verifikasi](../../tools/notebook_bridge/README.md) untuk batas persis kode yang tersedia.
+Tanggal: 1 Oktober 2026. Status: **arah akun operator ditolak pengguna dan dihentikan sebagai arah produk**. Kode prototipe tetap tersimpan untuk restore, diuji hanya dengan fixture, belum terhubung ke Google, belum aktif pada build normal, dan belum dirilis. Bagian kandidat di bawah merupakan catatan historis, bukan rencana yang disetujui. Lihat [implementasi dan bukti verifikasi](../../tools/notebook_bridge/README.md) untuk batas persis kode yang tersedia.
+
+## Hasil pemeriksaan ulang login pribadi
+
+Kebutuhan aktif adalah satu login memakai akun Google masing-masing pengguna, NotebookLM asli, dan antarmuka OpenTurath di aplikasi native. Prototipe akun operator tidak memenuhi kebutuhan tersebut.
+
+Kode `DesktopGoogleSignIn` mengirim ID token ke Firebase melalui callback browser, tanpa sesi situs Google. Jalur mobile juga memakai kredensial Google untuk Firebase. Tidak ada pertukaran token yang sudah terbukti menghasilkan sesi NotebookLM pribadi di aplikasi. [Dokumentasi Firebase](https://firebase.google.com/docs/auth/flutter/federated-auth) mendokumentasikan autentikasi Firebase; [kebijakan OAuth Google](https://developers.google.com/identity/protocols/oauth2/policies#use-secure-browsers) melarang otorisasi melalui browser tertanam yang dikendalikan developer. Keberhasilan login Firebase tidak menjadi bukti bahwa NotebookLM sudah terautentikasi.
+
+[Kode Android konektor terbaru](https://github.com/teng-lin/notebooklm-py/blob/main/src/notebooklm/_android/auth.py) memakai master token, scope termasuk `labs-tailwind`, serta identitas paket dan sertifikat aplikasi Google. Scope tersebut tidak ditemukan pada [daftar scope publik Google](https://developers.google.com/identity/protocols/oauth2/scopes) yang diperiksa. Ini bukan bukti bahwa token Google Sign-In milik proyek OpenTurath diterima oleh NotebookLM; mekanisme tersebut tidak diaktifkan atau diuji memakai kredensial pengguna.
+
+Ada integrasi resmi [Ask NotebookLM di Workspace Studio](https://workspaceupdates.googleblog.com/2026/05/notebooklm-in-workspace-studio.html), dengan [API pemicu alur](https://developers.google.com/workspace/add-ons/studio/build-a-starter). Namun pengguna memerlukan akses Studio dan konfigurasi alur. [Persyaratan Studio](https://support.google.com/workspace-studio/answer/16444479?hl=en) membatasi akun pribadi pada Workspace Experiments, dan [panduan langkah Notebook](https://support.google.com/workspace-studio/table/17176961) menyatakan bahwa jawabannya berupa teks tanpa sitasi. Jalur ini belum memenuhi produk untuk semua akun Gmail dengan sitasi kitab.
+
+Kesimpulan pemeriksaan: belum ada alur terverifikasi yang memenuhi seluruh syarat aktif. Tidak ada perubahan autentikasi runtime, ekspor sesi, login tambahan, pertanyaan NotebookLM, atau deployment pada pemeriksaan ini. Tes fixture terdahulu tidak membuktikan satu login Google nyata. Dokumen ini tidak memberi izin baru untuk mengumpulkan cookie atau master token akun pengguna.
 
 ## Tujuan dan kesalahan arah sebelumnya
 
