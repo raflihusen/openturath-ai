@@ -280,7 +280,7 @@ def post(runtime, route, payload, timeout=25):
 
 class Relay:
     def __init__(self, runtime_path, incoming, writer, stop, retry_delay=0.5, http_timeout=25,
-                 job_timeout=180, heartbeat_interval=10):
+                 job_timeout=200, heartbeat_interval=10):
         self.runtime_path, self.incoming, self.writer, self.stop = runtime_path, incoming, writer, stop
         self.retry_delay, self.http_timeout = retry_delay, http_timeout
         self.job_timeout, self.pending_since = job_timeout, 0
