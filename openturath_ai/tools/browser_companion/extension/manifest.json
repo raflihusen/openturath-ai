@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "OpenTurath Browser Companion",
+  "description": "Menghubungkan percakapan OpenTurath dengan sesi NotebookLM milik pengguna di Chrome.",
+  "version": "0.1.0",
+  "minimum_chrome_version": "105",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzjvIfTs2b8o7AmqMm3ARd3qGaDTC+SCvh74iRaFcomkiCkbKAaGjiNSaky+1y8M1RWxHuKuDL88yo9Dnp0XymNBJ9dS7H6J5i9fR1iVLHZBKFCjt4homIBJvKpIfnRbjmVqFKmjKteRGwHtj3Rkm/aFUesReTjBJKwLkMUkoJsfCjPIrfnReki48w8X+3mMbK1c9WqSch1k/rSMsmlvm7gFnT6RCHXpXjJ6Eb9FiVDLviwY//TMZEJjC19BiNLQBiI9oJuK0eLTlLDTTC+1TMxsHUA1I3W74fsLMZSnSSXaGZtmRm7/szq97uGakPHbtnlg/dHnKH8jILiC/vpkLgQIDAQAB",
+  "permissions": ["nativeMessaging"],
+  "host_permissions": [
+    "https://notebooklm.google.com/*",
+    "https://notebook.google.com/*"
+  ],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_title": "Hubungkan OpenTurath"},
+  "content_scripts": [
+    {
+      "matches": [
+        "https://notebooklm.google.com/*",
+        "https://notebook.google.com/*"
+      ],
+      "js": ["notebook_protocol.js", "content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "incognito": "not_allowed",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
