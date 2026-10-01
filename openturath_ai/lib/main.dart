@@ -60,7 +60,8 @@ Future<void> main() async {
   try {
     await AppConfig.init();
     final prefs = await SharedPreferences.getInstance();
-    AgentSessionTab.defaultFontScale = prefs.getDouble('turath_font_zoom_level') ?? 1.0;
+    AgentSessionTab.defaultFontScale =
+        prefs.getDouble('turath_font_zoom_level') ?? 1.0;
   } catch (_) {}
 
   // ── Status bar transparan awal ──
