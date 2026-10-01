@@ -11,6 +11,7 @@ import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
 import 'desktop_google_sign_in.dart';
 import 'desktop_webview_runtime.dart';
+import 'browser_companion_chat_service.dart';
 import '../core/app_platform.dart';
 
 class AuthService {
@@ -304,6 +305,8 @@ class AuthService {
   // ── Sign Out ───────────────────────────────────────────────────
   Future<void> signOut() async {
     final currentUid = _auth.currentUser?.uid;
+    // Revoke native capabilities before asynchronous SDK/storage cleanup.
+    await BrowserCompanionChatService.stop();
 
     try {
       AgentSessionManager.instance.closeAll();
@@ -323,6 +326,7 @@ class AuthService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('google_session_ready');
       await prefs.remove('google_session_email');
+      await prefs.remove('notebook_google_email');
       await prefs.remove('last_opened_notebook_id');
       if (currentUid != null) {
         _userCache.remove(currentUid);
@@ -350,6 +354,7 @@ class AuthService {
     final user = currentUser;
     if (user == null) return;
     final uid = user.uid;
+    await BrowserCompanionChatService.stop();
 
     // Auth deletion enforces recent login. The server trigger owns revocation and recursive cleanup.
     await user.delete();
@@ -368,6 +373,7 @@ class AuthService {
             key == 'openturath_cached_user_$uid' ||
             key == 'google_session_ready' ||
             key == 'google_session_email' ||
+            key == 'notebook_google_email' ||
             key == 'last_opened_notebook_id') {
           await prefs.remove(key);
         }
