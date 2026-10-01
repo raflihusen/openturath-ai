@@ -160,7 +160,7 @@ class BridgeEngine:
             raise BridgeFailure("upstream-result-unknown") from None
 
 
-def serve(engine: BridgeEngine, key: str, port: int):
+def make_handler(engine: BridgeEngine, key: str):
     if len(key) < 32:
         raise BridgeFailure("missing-bridge-key")
 
@@ -195,8 +195,12 @@ def serve(engine: BridgeEngine, key: str, port: int):
             except (BridgeFailure, ValueError, TimeoutError):
                 self.respond(503, {"error": "bridge-unavailable"})
 
+    return Handler
+
+
+def serve(engine: BridgeEngine, key: str, port: int):
     # Single synchronous server serializes asks. Never expose this HTTP port publicly.
-    HTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    HTTPServer(("127.0.0.1", port), make_handler(engine, key)).serve_forever()
 
 
 def main():
