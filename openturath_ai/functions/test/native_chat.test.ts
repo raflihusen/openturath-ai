@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
+import {loadBackend, Stamp} from './audit_harness.ts';
 
 const require = createRequire(import.meta.url);
 const {handleNativeChat, parseChatReply} = require('../lib/native_chat.js');
@@ -90,5 +91,49 @@ test('wrong request IDs, empty answers and invalid citations fail closed', () =>
     {...reply, citations: [{sourceId: 'bad', citationNumber: 1, excerpt: null}]},
     {...reply, citations: [{...reply.citations[0], citationNumber: -1}]}]) {
     assert.throws(() => parseChatReply(value, request.requestId), {code: 'unavailable'});
+  }
+});
+
+test('actual callable rejects unauthenticated access before making HTTP requests', async () => {
+  const {api, sent} = loadBackend();
+  await assert.rejects(api.askAgent(request, {}), {code: 'unauthenticated'});
+  assert.equal(sent.length, 0);
+});
+test('actual callable revalidates token revocation before accessing the bridge', async () => {
+  const {api, auth, sent} = loadBackend();
+  let checked = false;
+  auth.verifyIdToken = async (_token: string, checkRevoked?: boolean) => {
+    checked = checkRevoked === true;
+    throw new Error('revoked token fixture');
+  };
+  await assert.rejects(api.askAgent({...request, expectedUid: 'u'}, {
+    auth: {uid: 'u'}, rawRequest: {headers: {authorization: 'Bearer fixture-token'}},
+  }), {code: 'unauthenticated'});
+  assert.equal(checked, true);
+  assert.equal(sent.length, 0);
+});
+test('actual callable validates entitlement and forwards the Firebase UID', async () => {
+  const names = ['NOTEBOOK_BRIDGE_TEST_UID', 'NOTEBOOK_BRIDGE_KEY', 'NOTEBOOK_BRIDGE_URL', 'FUNCTIONS_EMULATOR'];
+  const previous = Object.fromEntries(names.map(name => [name, process.env[name]]));
+  Object.assign(process.env, {NOTEBOOK_BRIDGE_TEST_UID: 'u', NOTEBOOK_BRIDGE_KEY: 'k'.repeat(32),
+    NOTEBOOK_BRIDGE_URL: 'http://127.0.0.1:8794/ask', FUNCTIONS_EMULATOR: 'true'});
+  try {
+    const {api, db, axios, sent} = loadBackend();
+    db.seed('users/u', {entitlements: {fiqh_syafii: {plan: 'single', expiry: new Stamp(Date.now() + 60000)}}});
+    axios.post = async (...args: any[]) => {sent.push(args); return {data: reply};};
+    const context = {auth: {uid: 'u'}, rawRequest: {headers: {authorization: 'Bearer fixture-token'}}};
+    assert.deepEqual(JSON.parse(JSON.stringify(await api.askAgent({...request, expectedUid: 'u'}, context))), reply);
+    assert.equal(sent.length, 1);
+    assert.equal(sent[0][1].uid, 'u');
+    assert.equal('expectedUid' in sent[0][1], false);
+    assert.equal(sent[0][2].maxRedirects, 0);
+    db.seed('users/u', {account_deleted: true});
+    await assert.rejects(api.askAgent({...request, expectedUid: 'u'}, context), {code: 'permission-denied'});
+    assert.equal(sent.length, 1);
+  } finally {
+    for (const name of names) {
+      if (previous[name] === undefined) delete process.env[name];
+      else process.env[name] = previous[name];
+    }
   }
 });
