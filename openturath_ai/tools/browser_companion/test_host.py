@@ -75,6 +75,10 @@ class Fixture:
         self.lock = threading.Lock()
         self.response = None
         self.result_hook = None
+        self.heartbeat_deadline = None
+        self.last_seen = 0
+        self.attach_count = 0
+        self.reject_heartbeat = False
         fixture = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -102,14 +106,25 @@ class Fixture:
                     self.reply(*fixture.response)
                     return
                 if self.path == "/attach":
+                    fixture.attach_count += 1
+                    if fixture.reject_heartbeat and fixture.attach_count > 1:
+                        self.reply(409, b'{}')
+                        return
+                    fixture.last_seen = time.monotonic()
                     fixture.attached.set()
                     value = {"ok": True}
                 elif self.path == "/poll":
+                    fixture.last_seen = time.monotonic()
                     try:
                         value = {"job": fixture.jobs.get_nowait()}
                     except queue.Empty:
                         value = {"job": None}
                 elif self.path == "/result":
+                    if (fixture.heartbeat_deadline is not None and
+                            time.monotonic() - fixture.last_seen > fixture.heartbeat_deadline):
+                        self.reply(409, b'{}')
+                        return
+                    fixture.last_seen = time.monotonic()
                     with fixture.lock:
                         fixture.results.append(body)
                     fixture.result_received.set()
@@ -173,11 +188,12 @@ class HostTests(unittest.TestCase):
         self.path.write_text(json.dumps(runtime), encoding="utf-8")
         self.path.chmod(0o600)
 
-    def relay(self, fixture, job_timeout=180):
+    def relay(self, fixture, job_timeout=180, heartbeat_interval=10):
         self.metadata(fixture.runtime)
         stop, incoming, capture = threading.Event(), queue.Queue(), Capture()
         relay = host.Relay(self.path, incoming, host.FrameWriter(capture, stop), stop,
-                           retry_delay=0.03, http_timeout=1, job_timeout=job_timeout)
+                           retry_delay=0.03, http_timeout=1, job_timeout=job_timeout,
+                           heartbeat_interval=heartbeat_interval)
         thread = threading.Thread(target=relay.run)
         self.relays.append((relay, thread, stop, incoming, capture))
         thread.start()
@@ -306,6 +322,59 @@ class HostTests(unittest.TestCase):
         self.assertNotIn("must-not-forward", serialized)
         self.assertNotIn('"port"', serialized)
         stop.set()
+
+    def test_utf16_limits_match_dart_for_arabic_and_emoji_history(self):
+        value = job()
+        arabic = [["ع" * 60000, None, 2]]
+        self.assertGreater(len(json.dumps(arabic, ensure_ascii=False).encode("utf-8")), 120000)
+        self.assertEqual(host.validate_job({**value, "history": arabic}, EPOCH)["history"], arabic)
+        for text in ["x" * 119987, "😀" * 59993]:
+            host.validate_job({**value, "history": [[text, None, 2]]}, EPOCH)
+        for text in ["x" * 119988, "😀" * 59994]:
+            with self.subTest(units=host._utf16_units(text)), self.assertRaises(host.ProtocolError):
+                host.validate_job({**value, "history": [[text, None, 2]]}, EPOCH)
+        host.validate_job({**value, "question": "😀" * 4000}, EPOCH)
+        with self.assertRaises(host.ProtocolError):
+            host.validate_job({**value, "question": "😀" * 4001}, EPOCH)
+        host.validate_result({**result(value), "answer": "😀" * 64000}, value)
+        with self.assertRaises(host.ProtocolError):
+            host.validate_result({**result(value), "answer": "😀" * 64001}, value)
+
+    def test_pending_heartbeat_keeps_session_alive_without_job_polling(self):
+        fixture, value = self.fixture(), job()
+        fixture.heartbeat_deadline = 0.12
+        fixture.jobs.put(value)
+        fixture.jobs.put(job(request_id="b" * 32))
+        relay, stop, incoming, capture = self.relay(fixture, heartbeat_interval=0.02)
+        capture.wait(lambda message: message.get("type") == "job")
+        time.sleep(0.25)
+        with fixture.lock:
+            requests = list(fixture.requests)
+        pulses = [body for route, _headers, body in requests if route == "/attach"]
+        self.assertGreaterEqual(len(pulses), 3)
+        self.assertTrue(all(body == {"clientId": relay.client_id, "protocol": 1, "epoch": EPOCH}
+                            for body in pulses))
+        self.assertEqual(len([route for route, _headers, _body in requests if route == "/poll"]), 1)
+        self.assertEqual(len([message for message in capture.messages if message.get("type") == "job"]), 1)
+        incoming.put({"type": "result", "result": result(value)})
+        self.assertTrue(fixture.result_received.wait(3))
+        stop.set()
+        self.assertEqual(len(fixture.results), 1)
+        self.assertFalse(any(message.get("status") == "uncertain" for message in capture.messages))
+
+    def test_lost_pending_heartbeat_marks_uncertain_without_replay(self):
+        fixture, value = self.fixture(), job()
+        fixture.reject_heartbeat = True
+        fixture.jobs.put(value)
+        _relay, _stop, incoming, capture = self.relay(fixture, heartbeat_interval=0.02)
+        capture.wait(lambda message: message.get("type") == "job")
+        capture.wait(lambda message: message.get("status") == "uncertain"
+                     and message.get("requestId") == value["requestId"])
+        self.assertTrue(fixture.disconnected.wait(3))
+        incoming.put({"type": "result", "result": result(value)})
+        time.sleep(0.1)
+        self.assertEqual(fixture.results, [])
+        self.assertEqual(len([message for message in capture.messages if message.get("type") == "job"]), 1)
 
     def test_late_wrong_tuple_does_not_consume_current_job(self):
         fixture, value = self.fixture(), job()
