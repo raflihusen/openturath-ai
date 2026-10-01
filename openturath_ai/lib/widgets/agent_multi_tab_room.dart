@@ -17,7 +17,6 @@ import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/navigation_guard.dart';
 import '../core/routes.dart';
-import '../core/constants.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
@@ -1322,7 +1321,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
       final result = await controller.evaluateJavascript(
           source: 'window.otNotebook ? window.otNotebook.ready() : false');
       _readySamples = result == true ? _readySamples + 1 : 0;
-      if (!mounted) return;
+      if (!mounted || widget.session.isGoogleAuthPage) return;
       final elapsedMs = _loadingStarted != null
           ? DateTime.now().difference(_loadingStarted!).inMilliseconds
           : 0;
@@ -1335,7 +1334,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool('google_session_ready', true);
         } catch (_) {}
-        if (!mounted) return;
+        if (!mounted || widget.session.isGoogleAuthPage) return;
         if (mounted) {
           setState(() {
             widget.session.isWebLoading = false;
