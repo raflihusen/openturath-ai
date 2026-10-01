@@ -331,7 +331,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 : MarkdownBody(
                     data: msg.text,
                     // Answers are untrusted display text. Do not fetch embedded image URLs.
-                    imageBuilder: (uri, title, alt) => Text(alt ?? ''),
+                    sizedImageBuilder: (config) => Text(config.alt ?? ''),
                     styleSheet: MarkdownStyleSheet(
                       p: GoogleFonts.outfit(
                         fontSize: 14.5,
