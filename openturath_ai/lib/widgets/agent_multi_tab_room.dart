@@ -33,6 +33,10 @@ import '../services/native_agent_launcher.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
+import 'notebook_backend_chat_tab.dart';
+
+// Explicit local prototype opt-in; remains off in normal/release builds.
+const _backendChatPrototype = bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE');
 
 /// AgentMultiTabRoom: Persistent, multi-tab AI Study Room inspired by Google Chrome tabs.
 /// Keeps up to 7 AI specialists running concurrently in memory without reloading.
@@ -167,9 +171,11 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
 
   Future<void> _copyActiveConversation(AgentSessionTab session) async {
     final controller = session.webController;
-    if (controller == null) return;
+    if (!_backendChatPrototype && controller == null) return;
     try {
-      final result = await controller.evaluateJavascript(
+      final result = _backendChatPrototype
+          ? session.chatMessages.map((message) => [message.text, ...message.citations].join('\n')).join('\n\n')
+          : await controller!.evaluateJavascript(
         source: 'window.otNotebook ? window.otNotebook.conversation() : ""',
       );
       final text = result is String ? result.trim() : '';
@@ -686,6 +692,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               }
             },
             itemBuilder: (ctx) => [
+              if (!_backendChatPrototype)
               PopupMenuItem(
                 value: 'language',
                 child: Row(
@@ -697,6 +704,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   ],
                 ),
               ),
+              if (!_backendChatPrototype)
               PopupMenuItem(
                 value: 'delete_chat',
                 child: Row(
@@ -721,6 +729,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   ],
                 ),
               ),
+              if (!_backendChatPrototype)
               PopupMenuItem(
                 value: 'font',
                 child: Row(
@@ -866,6 +875,12 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         index: _sessionManager.activeIndex,
         children: [
           for (int i = 0; i < sessions.length; i++)
+            if (_backendChatPrototype)
+              NotebookBackendChatTab(
+                key: ValueKey('native_agent_tab_${sessions[i].agent.id}'),
+                session: sessions[i],
+              )
+            else
             _SingleAgentTabWebView(
               key: ValueKey('agent_tab_${sessions[i].agent.id}'),
               session: sessions[i],
