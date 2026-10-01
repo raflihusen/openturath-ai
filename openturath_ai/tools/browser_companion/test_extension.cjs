@@ -316,3 +316,40 @@ test('absent or non-string native errors use the same static unknown category', 
     await h.close();
   }
 });
+
+for (const hint of ['?authuser=0&pli=1', '?authuser=2', '']) {
+  test(`Google-normalized notebook location ${hint || 'without hint'} reaches identity verification`, async () => {
+    const h = harness();
+    h.setQuery(async () => []);
+    h.setGet(async () => ({id: 8, status: 'complete', incognito: false,
+      url: `https://notebook.google.com/notebook/${notebookId}${hint}`}));
+    h.job(); await flush();
+    assert.equal(h.created.length, 1);
+    assert.equal(new URL(h.created[0].url).searchParams.get('authuser'), fixtureJob.email);
+    assert.equal(h.asks.length, 1);
+    assert.equal(h.results()[0].result.accountEmail, fixtureJob.email);
+    await h.close();
+  });
+}
+
+test('an existing indexed notebook is not assumed to belong to our account', async () => {
+  const h = harness();
+  h.setTab({id: 7, status: 'complete', incognito: false,
+    url: `https://notebook.google.com/notebook/${notebookId}?authuser=0`});
+  h.job(); await flush();
+  assert.equal(h.created.length, 1);
+  assert.equal(h.asks[0].tabId, 8);
+  await h.close();
+});
+
+for (const hint of ['?authuser=other%40example.com', '?authuser=0&authuser=1', '?authuser=invalid']) {
+  test(`invalid redirected account hint ${hint} never dispatches a question`, async () => {
+    const h = harness(); h.setQuery(async () => []);
+    h.setGet(async () => ({id: 8, status: 'complete', incognito: false,
+      url: `https://notebook.google.com/notebook/${notebookId}${hint}`}));
+    h.job(); await flush();
+    assert.equal(h.asks.length, 0);
+    assert.equal(h.results()[0].result.code, 'unauthenticated');
+    await h.close();
+  });
+}
