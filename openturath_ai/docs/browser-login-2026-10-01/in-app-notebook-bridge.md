@@ -1,6 +1,6 @@
 # Kandidat integrasi NotebookLM di dalam OpenTurath
 
-Tanggal: 1 Oktober 2026. Status: **hasil riset dan rancangan kandidat; belum diimplementasikan atau diuji sebagai konektor server**.
+Tanggal: 1 Oktober 2026. Status: **kode prototipe lokal kini diimplementasikan dan diuji dengan fixture; belum terhubung ke Google, belum aktif pada build normal, belum dirilis**. Lihat [implementasi dan bukti verifikasi](../../tools/notebook_bridge/README.md) untuk batas persis kode yang tersedia.
 
 ## Tujuan dan kesalahan arah sebelumnya
 
@@ -45,4 +45,4 @@ Karena itu satu akun operator yang mengakses satu master notebook untuk banyak p
 
 ## Keputusan yang belum dibuat
 
-Kebutuhan UI aplikasi sudah jelas dan tidak ditanyakan kembali. Keputusan yang tersisa adalah apakah pengguna menerima pengujian kandidat konektor NotebookLM yang tidak resmi. Akun operator, lokasi kredensial, dan hak penggunaan notebook belum ditetapkan. Pada penelitian ini tidak ada sesi Google dibaca/diekspor, master token dibuat, paket konektor dijalankan, pertanyaan NotebookLM tambahan dikirim, atau backend produksi diubah.
+Kebutuhan UI aplikasi sudah jelas dan tidak ditanyakan kembali. Keputusan yang tersisa adalah apakah pengguna menerima pengujian **nyata** kandidat konektor NotebookLM yang tidak resmi. Akun operator, lokasi kredensial, dan hak penggunaan notebook belum ditetapkan. Kode lokal disiapkan agar dapat diperiksa tanpa sesi Google; fixture hanya digunakan dalam tes. Tidak ada sesi Google dibaca/diekspor, master token dibuat, SDK konektor dijalankan, pertanyaan NotebookLM tambahan dikirim, atau backend produksi diubah.
