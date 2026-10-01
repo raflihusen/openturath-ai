@@ -7,7 +7,9 @@ import '../core/theme.dart';
 import '../widgets/app_loader.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, this.resolveInitialRoute});
+
+  final String Function()? resolveInitialRoute;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -37,7 +39,10 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward();
-    _checkAuthAndNavigate();
+    // Navigator's initial route must finish mounting before it is replaced.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _checkAuthAndNavigate();
+    });
   }
 
   @override
@@ -46,23 +51,23 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  Future<void> _checkAuthAndNavigate() async {
+  void _checkAuthAndNavigate() {
+    var targetRoute = AppRoutes.login;
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      String targetRoute;
-
-      if (user != null && !user.isAnonymous) {
-        targetRoute = AppRoutes.dashboard;
+      if (widget.resolveInitialRoute != null) {
+        targetRoute = widget.resolveInitialRoute!();
       } else {
-        targetRoute = AppRoutes.login;
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null && !user.isAnonymous) {
+          targetRoute = AppRoutes.dashboard;
+        }
       }
-
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, targetRoute);
     } catch (_) {
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, AppRoutes.login);
+      // Reading auth state may fail, but must not leave an endless splash.
+      targetRoute = AppRoutes.login;
     }
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, targetRoute);
   }
 
   @override
