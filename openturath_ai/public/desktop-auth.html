@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id" data-auth="openturath-desktop-auth-v3">
+<html lang="id" data-auth="openturath-desktop-auth-v4">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -131,27 +131,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* In-app mode: sembunyikan kartu redundant, langsung tampilkan status spinner loading ke Google */
-    body.in-app {
-      background: transparent;
-    }
-    body.in-app .brand-mark,
-    body.in-app h1,
-    body.in-app .desc,
-    body.in-app .btn-google,
-    body.in-app .btn-cancel {
-      display: none !important;
-    }
-    body.in-app .auth-card {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-    }
-    body.in-app .status-msg {
-      margin-top: 0;
-      font-size: 14px;
-    }
   </style>
 </head>
 <body>

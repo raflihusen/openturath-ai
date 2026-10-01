@@ -40,6 +40,4 @@ post_install do |installer|
     flutter_additional_macos_build_settings(target)
   end
 
-  patch_script = File.expand_path(File.join(__dir__, 'patch_macos_keychain.rb'))
-  system("ruby \"#{patch_script}\"") if File.exist?(patch_script)
 end
