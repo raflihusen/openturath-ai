@@ -18,6 +18,8 @@ class BrowserCompanionChatService extends NotebookChatService {
   static final Map<String, _Conversation> _conversations = {};
   static StreamSubscription<User?>? _accountChanges;
   static String? _ownerKey;
+  static int _generation = 0;
+  static Future<void>? _starting;
 
   static CompanionIdentity? currentIdentity() {
     final user = FirebaseAuth.instance.currentUser;
@@ -37,10 +39,11 @@ class BrowserCompanionChatService extends NotebookChatService {
       ? null
       : '${owner.uid}|${owner.googleSub}|${owner.email}';
 
-  static Future<void> start() async {
-    _accountChanges ??= FirebaseAuth.instance.userChanges().listen((_) {
-      if (_ownerKey != _key(currentIdentity())) unawaited(stop());
-    });
+  static Future<void> start() =>
+      _starting ??= _start().whenComplete(() => _starting = null);
+
+  static Future<void> _start() async {
+    final generation = _generation;
     final owner = currentIdentity();
     if (owner == null) {
       throw FirebaseFunctionsException(code: 'unauthenticated',
@@ -51,19 +54,33 @@ class BrowserCompanionChatService extends NotebookChatService {
       await runtime.stop();
       _conversations.clear();
     }
+    if (generation != _generation || _key(currentIdentity()) != key) {
+      throw FirebaseFunctionsException(code: 'unauthenticated',
+          message: 'Akun berubah ketika penghubung disiapkan.');
+    }
     _ownerKey = key;
+    _accountChanges ??= FirebaseAuth.instance.userChanges().listen((_) {
+      if (_ownerKey != _key(currentIdentity())) unawaited(stop());
+    });
     await runtime.start();
+    if (generation != _generation || _key(currentIdentity()) != key) {
+      await stop();
+      throw FirebaseFunctionsException(code: 'unauthenticated',
+          message: 'Akun berubah ketika penghubung disiapkan.');
+    }
   }
 
   static Future<void> stop() async {
+    _generation++;
     _ownerKey = null;
     _conversations.clear();
     await runtime.stop();
   }
 
-  void _checkOwner(String expectedUid, String ownerKey) {
+  void _checkOwner(String expectedUid, String ownerKey, int generation) {
     if (currentIdentity()?.uid != expectedUid ||
-        _key(currentIdentity()) != ownerKey || _ownerKey != ownerKey) {
+        _key(currentIdentity()) != ownerKey || _ownerKey != ownerKey ||
+        _generation != generation) {
       throw FirebaseFunctionsException(code: 'unauthenticated',
           message: 'Akun berubah. Buka kembali percakapan untuk akun aktif.');
     }
@@ -78,7 +95,8 @@ class BrowserCompanionChatService extends NotebookChatService {
     }
     await start();
     final ownerKey = _ownerKey!;
-    _checkOwner(expectedUid, ownerKey);
+    final generation = _generation;
+    _checkOwner(expectedUid, ownerKey, generation);
     if (!runtime.connected) {
       throw FirebaseFunctionsException(code: 'unavailable',
           message: 'Penghubung Google Chrome belum tersambung.');
@@ -86,17 +104,17 @@ class BrowserCompanionChatService extends NotebookChatService {
     try {
       // Resolve from the authenticated server on every send; never client catalog.
       final url = await _agents.getAgentUrl(agentId);
-      _checkOwner(expectedUid, ownerKey);
+      _checkOwner(expectedUid, ownerKey, generation);
       if (url == null) throw const AgentAccessException('failed-precondition', 'Alamat kajian belum tersedia.');
-      final notebookId = Uri.parse(url).pathSegments.last;
+      final notebookId = Uri.parse(url).pathSegments.where((p) => p.isNotEmpty).last;
       await _agents.recordQuestion(agentId);
-      _checkOwner(expectedUid, ownerKey);
+      _checkOwner(expectedUid, ownerKey, generation);
       final conversationKey = '$ownerKey|$notebookId';
       final conversation = _conversations[conversationKey];
       final raw = await runtime.ask(expectedUid: expectedUid,
           notebookId: notebookId, question: question.trim(), requestId: requestId,
           history: conversation?.history, conversationId: conversation?.id);
-      _checkOwner(expectedUid, ownerKey);
+      _checkOwner(expectedUid, ownerKey, generation);
       final reply = NotebookChatService.decodeReply(raw, requestId);
       final next = _Conversation(raw['conversationId'] as String,
           [...?conversation?.history, [reply.answer, null, 2], [question.trim(), null, 1]]);
