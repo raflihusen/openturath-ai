@@ -61,8 +61,8 @@ class DokuCheckoutSheet extends StatefulWidget {
           fullscreenDialog: true,
           builder: (context) => Scaffold(
             backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? const Color(0xFF0F172A)
-                : const Color(0xFFF1F5F9),
+                ? const Color(0xFF1B1B1B)
+                : const Color(0xFFF5F5F5),
             body: SafeArea(
               child: Center(
                 child: Container(
@@ -490,14 +490,14 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withAlpha(30),
+                                color: const Color(0xFF6E6E6E).withAlpha(30),
                                 borderRadius:
                                     BorderRadius.circular(AppTheme.radiusXS),
                               ),
                               child: const Icon(
                                 Icons.lock_rounded,
                                 size: 18,
-                                color: Color(0xFF10B981),
+                                color: Color(0xFF6E6E6E),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -824,15 +824,15 @@ class _CelebratorySuccessView extends StatelessWidget {
                             height: 88,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF10B981)
+                              color: const Color(0xFF6E6E6E)
                                   .withValues(alpha: 0.16),
                               border: Border.all(
-                                color: const Color(0xFF10B981),
+                                color: const Color(0xFF6E6E6E),
                                 width: 3,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF10B981)
+                                  color: const Color(0xFF6E6E6E)
                                       .withValues(alpha: 0.3),
                                   blurRadius: 28,
                                   spreadRadius: 4,
@@ -842,7 +842,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                             child: const Icon(
                               Icons.check_rounded,
                               size: 50,
-                              color: Color(0xFF10B981),
+                              color: Color(0xFF6E6E6E),
                             ),
                           ),
                         );
@@ -888,7 +888,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                               style: ScholarlyFonts.outfit(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 16,
-                                color: const Color(0xFF10B981),
+                                color: const Color(0xFF6E6E6E),
                               ),
                             ),
                           ),
