@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class WorkspaceLaunchException implements Exception {
@@ -42,28 +40,9 @@ class BrowserWorkspaceLauncher {
 
   Future<void> open({String? agentId}) async {
     final uri = workspaceUri(agentId: agentId);
-    if (!kIsWeb) {
-      final client = http.Client();
-      try {
-        final page = await client
-            .get(workspaceUri())
-            .timeout(const Duration(seconds: 15));
-        if (page.statusCode != 200 ||
-            !page.body.contains('openturath-browser-workspace-v1')) {
-          throw const WorkspaceLaunchException(
-            'Ruang browser belum tersedia. Pengelola perlu menerbitkan versi ruang kajian yang baru.',
-          );
-        }
-      } on WorkspaceLaunchException {
-        rethrow;
-      } catch (_) {
-        throw const WorkspaceLaunchException(
-          'Ruang kajian belum dapat dihubungi. Periksa internet lalu coba lagi.',
-        );
-      } finally {
-        client.close();
-      }
-    }
+    // A native HTTP preflight can fail while the system browser can connect
+    // (for example, through its own proxy). Open the validated public HTTPS
+    // destination directly; the browser owns connectivity and authentication.
     try {
       if (await launchUrl(uri,
           mode: LaunchMode.externalApplication, webOnlyWindowName: '_self')) {
