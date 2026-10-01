@@ -31,12 +31,11 @@ class TahawwulatFlagshipCard extends StatelessWidget {
     this.onOpenIntroduction,
   });
 
-  static const _obsidian = Color(0xFF172B54);
-  static const _graphite = Color(0xFF263C65);
-  static const _pearl = Color(0xFFF1F3F8);
-  static const _silver = Color(0xFFDAE6FF);
-  static const _muted = Color(0xFFCED8EA);
-  static const _hairline = Color(0xFF536C98);
+  static const _obsidian = Color(0xFF111111);
+    static const _pearl = Color(0xFFF5F5F5);
+  static const _silver = Color(0xFFE8E8E8);
+  static const _muted = Color(0xFFB8B8B8);
+  static const _hairline = Color(0xFF454545);
 
   String _numberForIndex(int index) {
     return (index + 1).toString().padLeft(2, '0');
@@ -54,27 +53,15 @@ class TahawwulatFlagshipCard extends StatelessWidget {
           ])}',
       child: Container(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [_graphite, _obsidian],
-            stops: [0, 0.72],
-          ),
-          borderRadius: BorderRadius.circular(28),
+          color: _obsidian,
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.16),
             width: 0.8,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 14,
-              offset: const Offset(0, 5),
-            ),
-          ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
             child: Column(
