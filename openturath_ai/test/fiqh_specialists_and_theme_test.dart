@@ -64,12 +64,11 @@ void main() {
       expect(AppConfig.themeNotifier.value, ThemeMode.system);
     });
 
-    test('AppTheme defines pure monochrome accent and parchment reading surface tokens', () {
-      expect(AppTheme.accentDark, equals(AppTheme.accentDark));
-      expect(AppTheme.accentLight, equals(AppTheme.accentLight));
-      expect(AppTheme.readingCanvasParchmentLight, const Color(0xFFF6F6F3));
-      expect(AppTheme.readingCanvasParchmentDark, const Color(0xFF181817));
+    test('AppTheme defines neutral monochrome accent and reading surface tokens', () {
+      expect(AppTheme.accentDark, const Color(0xFFF5F5F5));
+      expect(AppTheme.accentLight, const Color(0xFF171717));
+      expect(AppTheme.readingCanvasParchmentLight, const Color(0xFFFAFAFA));
+      expect(AppTheme.readingCanvasParchmentDark, const Color(0xFF191919));
     });
   });
 }
-
