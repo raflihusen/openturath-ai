@@ -26,7 +26,7 @@ Alamat `web.app` diarahkan ke `firebaseapp.com` sebelum OAuth dimulai agar redir
 - URL notebook dibatasi pada HTTPS, host Google yang tepat, dan pola ID notebook. Query/fragment dari server dibuang sebelum tautan dibuat; `authuser` hanya petunjuk pemilihan akun.
 - Katalog publik hanya memuat judul dan ID bidang, tanpa URL/ID notebook pribadi. Cache offline hanya memuat berkas publik ruang browser, bukan helper OAuth, API terautentikasi, atau halaman Google.
 - Patch SDK macOS yang memindahkan data autentikasi ke preferensi biasa dihentikan. Empat sumber Pods dipulihkan dari tag resmi FirebaseAuth 11.15.0 dan GoogleUtilities 8.1.3; versi dan hash tercatat di `sdk-restoration.json`.
-- Startup macOS baru hanya menghapus tiga nama preferensi plaintext yang diketahui ditulis patch lama, tanpa membaca nilainya atau menghapus Keychain. Pembersihan runtime ini belum dijalankan dalam pemeriksaan ini.
+- Startup macOS baru hanya menghapus tiga nama preferensi plaintext yang diketahui ditulis patch lama, tanpa membaca nilainya atau menghapus Keychain. Launcher baru sudah dijalankan di macOS; keberadaan dan isi credential lama tidak dibaca atau didokumentasikan.
 
 ## Cakupan dan batasan nyata
 
@@ -51,6 +51,8 @@ NotebookLM tetap mengelola izin notebook, sesi Google, dan verifikasi akun. Logo
 | SDK Firebase JS 12.19.0 | Empat modul resmi merespons HTTP 200 |
 | Callable produksi tanpa autentikasi | HTTP 401 `UNAUTHENTICATED`, CORS mengizinkan origin workspace; bukan bukti akses akun berlangganan |
 | Browser lokal desktop dan lebar 390px | SDK benar-benar dimuat, tombol login aktif, status belum login, tidak ada error/warning console; tidak ada overflow horizontal |
+| Halaman HTTPS produksi | 10 berkas HTTP 200 dan sesuai source lokal; MIME serta tiga header keamanan benar; SDK siap pada keadaan belum login |
+| Launcher macOS → Arc → Google | Build ulang exit 0; tombol membuka ruang publik di Arc, lalu login mencapai halaman pemilihan akun Google |
 | Google login → akses server → pertanyaan NotebookLM → jawaban | **Belum diuji dengan akun nyata** |
 | Android/iOS/Windows/Linux pada perangkat nyata | **Belum diuji** |
 
@@ -60,15 +62,21 @@ Tes unit dan build tidak membuktikan login Google atau jawaban NotebookLM berhas
 
 Preview lokal: `http://127.0.0.1:8795/workspace/`.
 
-## Publikasi yang disiapkan, belum dilakukan
+## Publikasi yang sudah dilakukan
 
-Persiapan baca-saja pada Hosting berhasil. Versi live saat diperiksa: `sites/open-turath/versions/4355608794b98a53`.
+Pengguna menyetujui publikasi pada percakapan ini. Hosting berhasil menerbitkan versi `sites/open-turath/versions/1e450535e855f729` pada 1 Oktober 2026, 05:02:57 zona Asia/Aden (02:02:57 UTC). Versi sebelumnya: `sites/open-turath/versions/4355608794b98a53`. Catatan lengkap ada di `publication.json`.
 
-Rencana hanya mengubah delapan berkas `/workspace/` serta `/desktop-auth.html` dan `/desktop-auth.js`. Hash **27 berkas live lainnya dipertahankan**. Konfigurasi live disalin, dengan header keamanan/MIME khusus berkas baru. Tidak ada unggahan APK, penulisan Firestore `app_config/version`, atau pemanggilan `publish_auto_update.py`.
+Publikasi hanya mengubah delapan berkas `/workspace/` serta `/desktop-auth.html` dan `/desktop-auth.js`. Pemeriksaan sesudah publikasi membuktikan hash **27 berkas live lainnya tetap sama**. Sepuluh berkas yang berubah merespons HTTP 200 dan isinya sama dengan source lokal. Konfigurasi live disalin, dengan header keamanan/MIME khusus berkas baru. Tidak ada unggahan APK, penulisan Firestore `app_config/version`, atau pemanggilan `publish_auto_update.py`.
 
 `tool/deploy_browser_workspace.cjs` bersifat baca-saja secara default. Opsi `--publish` diperlukan untuk mengubah Hosting publik. Skrip menolak publikasi jika live berubah selama persiapan, host upload tidak sesuai, atau berkas lama memerlukan upload yang tidak tersedia. Versi lama dicatat untuk pemulihan Hosting.
 
-Ruang HTTPS baru **belum live**. Launcher menolak halaman yang tidak memiliki marker versi workspace, sehingga membuka build sekarang dapat menampilkan pesan bahwa ruang baru perlu diterbitkan.
+Ruang HTTPS baru **sudah live** pada `https://open-turath.firebaseapp.com/workspace/`. Alamat `web.app` juga diuji dan benar-benar berpindah ke alamat utama.
+
+Uji macOS langsung menemukan bahwa pemeriksaan HTTP awal launcher gagal meskipun browser dapat memuat halaman publik. Commit `c51536c` menghapus pemeriksaan awal tersebut: launcher membuka alamat HTTPS yang sudah divalidasi, lalu browser menangani jaringan dan autentikasi. Delapan tes launcher lulus kembali, analisis Flutter exit 0, dan build macOS debug ulang exit 0. Klik tombol pada build baru berhasil membuka ruang di Arc; status pembukaan browser tidak dianggap sebagai keberhasilan autentikasi.
+
+Google menampilkan halaman pemilihan akun untuk client proyek OpenTurath dengan scope identitas dasar. Peninjauan izin otomatis menolak pemilihan akun oleh agent karena pengguna belum menentukan akun yang boleh dipakai. Tidak dilakukan percobaan alternatif untuk melewati penolakan. **Pemilihan akun oleh pengguna, hasil OAuth, pemeriksaan hak akses positif, dan jawaban NotebookLM masih menunggu uji lanjutan.** Tidak ada password, token, atau URL state OAuth yang disimpan dalam bukti publikasi.
+
+![Halaman HTTPS publik sebelum login](workspace-live.jpg)
 
 ## Uji penerimaan setelah publikasi
 

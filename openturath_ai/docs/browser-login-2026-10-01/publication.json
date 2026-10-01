@@ -15,6 +15,8 @@
     "securityHeadersChecked": ["X-Content-Type-Options: nosniff", "X-Frame-Options: DENY", "Referrer-Policy: no-referrer"],
     "firebaseWebSdkSignedOutBoot": "passed",
     "webAppAliasRedirect": "passed",
+    "macosNativeLauncherToArc": "passed after removing blocking native HTTP preflight",
+    "normalBrowserGoogleAccountChooser": "reached; waiting for user account selection",
     "realAccountGoogleToNotebookAnswer": "not-yet-tested"
   },
   "apkUploaded": false,
