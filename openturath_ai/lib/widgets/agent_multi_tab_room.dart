@@ -1267,6 +1267,22 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
   }
 
+  void _handleAuthenticationRequired() {
+    _readinessTimer?.cancel();
+    _inputRetryTimer?.cancel();
+    if (!mounted) return;
+    setState(() {
+      final session = widget.session;
+      session.isWebLoading = false;
+      session.isSessionReady = false;
+      session.isGoogleAuthPage = true;
+      session.isGooglePermissionError = false;
+      session.isPaywallRequired = false;
+      session.isTimeoutError = false;
+      session.errorMessage = NotebookNavigation.authenticationMessage;
+    });
+  }
+
   Future<void> _checkReady() async {
     if (_checkingReady || widget.session.webController == null || !mounted) {
       return;
@@ -1275,43 +1291,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     try {
       final controller = widget.session.webController!;
       final url = await controller.getUrl();
-      final host = url?.host.toLowerCase() ?? '';
-      final path = url?.path.toLowerCase() ?? '';
-      final isLogin = host.contains('accounts.google') ||
-          host == 'accounts.youtube.com' ||
-          host == 'consent.google.com' ||
-          (host.contains('notebook') &&
-              (path.contains('/login') ||
-                  path.contains('/signin') ||
-                  path.contains('/servicelogin')));
-      if (isLogin) {
-        // Halaman autentikasi Google sedang aktif di dalam WebView internal.
-        // JANGAN batalkan _readinessTimer dan JANGAN blokir tampilan dengan error buntu!
-        // Berikan ruang pada InAppWebView agar pengguna dapat memilih/memasukkan akun
-        // Google secara langsung (inline) dengan dukungan penuh keyboard & mouse.
-        if (mounted &&
-            (widget.session.isWebLoading ||
-                widget.session.errorMessage != null ||
-                !widget.session.isGoogleAuthPage)) {
-          setState(() {
-            widget.session.isWebLoading = false;
-            widget.session.isSessionReady = false;
-            widget.session.isGooglePermissionError = false;
-            widget.session.isGoogleAuthPage = true;
-            widget.session.errorMessage = null;
-          });
-        }
+      if (url != null && NotebookNavigation.authentication(url.uriValue)) {
+        _handleAuthenticationRequired();
+        await controller.stopLoading();
         return;
-      } else {
-        if (widget.session.isGoogleAuthPage && mounted) {
-          setState(() {
-            widget.session.isGoogleAuthPage = false;
-            if (!widget.session.isSessionReady) {
-              widget.session.isWebLoading = true;
-            }
-          });
-        }
       }
+      if (widget.session.isGoogleAuthPage ||
+          url == null ||
+          !NotebookNavigation.notebook(url.uriValue)) return;
       final hasScript = await controller.evaluateJavascript(
         source:
             'typeof window.otNotebook !== "undefined" && typeof window.otNotebook.ready === "function"',
@@ -1618,7 +1605,9 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
 
       final needsGoogleLogin =
           isGoogleErr && session.errorMessage!.startsWith('Sesi akun Google');
-      final title = isGoogleErr
+      final title = session.isGoogleAuthPage
+          ? 'Koneksi asisten belum tersedia'
+          : isGoogleErr
           ? (needsGoogleLogin
               ? 'Hubungkan akun Google'
               : 'Akun Google belum memiliki izin')
@@ -1639,7 +1628,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
           message: session.errorMessage!,
           icon: icon,
           retryLabel: retryLabel,
-          onRetry: () async {
+          onRetry: session.isGoogleAuthPage ? null : () async {
             if (isGoogleErr) {
               final url = session.resolvedUrl;
               if (url != null) {
@@ -1708,13 +1697,15 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               forceDarkStrategy:
                   ForceDarkStrategy.PREFER_WEB_THEME_OVER_USER_AGENT_DARKENING,
               algorithmicDarkeningAllowed: true,
-              userAgent: AppPlatform.isDesktop
-                  ? AppConstants.desktopSafariUserAgent
-                  : AppConstants.chromeMobileUserAgent,
             ),
             onCreateWindow: (controller, createWindowAction) async {
               final targetUrl = createWindowAction.request.url;
-              if (targetUrl != null) {
+              if (targetUrl != null &&
+                  NotebookNavigation.authentication(targetUrl.uriValue)) {
+                _handleAuthenticationRequired();
+                return false;
+              }
+              if (targetUrl != null && NotebookNavigation.allowed(targetUrl.uriValue)) {
                 await controller.loadUrl(
                     urlRequest: URLRequest(url: targetUrl));
                 return true;
@@ -1914,8 +1905,13 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 _startReadinessCheck();
               }
             },
-            onLoadStart: (controller, uri) {
+            onLoadStart: (controller, uri) async {
               session.hasInjectedEarlyScript = false;
+              if (uri != null && NotebookNavigation.authentication(uri.uriValue)) {
+                _handleAuthenticationRequired();
+                await controller.stopLoading();
+                return;
+              }
               final host = uri?.host.toLowerCase() ?? '';
               if (host.startsWith('accounts.google') ||
                   host == 'consent.google.com') {
@@ -1968,12 +1964,10 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             onProgressChanged: (controller, progress) async {
-              if (mounted && progress >= 35) {
-                final currentUrl = await controller.getUrl();
-                final host = currentUrl?.host.toLowerCase() ?? '';
-                if (host.startsWith('accounts.google') ||
-                    host == 'accounts.youtube.com') {}
-              }
+              final currentUrl = await controller.getUrl();
+              if (currentUrl == null ||
+                  !NotebookNavigation.notebook(currentUrl.uriValue) ||
+                  session.isGoogleAuthPage) return;
               if (mounted &&
                   progress >= 35 &&
                   !session.hasInjectedEarlyScript) {
@@ -1989,10 +1983,14 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
             },
             shouldOverrideUrlLoading: (controller, action) async {
+              final uri = action.request.url;
+              if (uri != null && NotebookNavigation.authentication(uri.uriValue)) {
+                _handleAuthenticationRequired();
+                return NavigationActionPolicy.CANCEL;
+              }
               if (action.isForMainFrame != true) {
                 return NavigationActionPolicy.ALLOW;
               }
-              final uri = action.request.url;
               if (uri == null) return NavigationActionPolicy.CANCEL;
 
               if (NotebookNavigation.allowed(uri.uriValue)) {
