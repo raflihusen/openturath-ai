@@ -30,6 +30,12 @@ Repositori [notebooklm-py](https://github.com/teng-lin/notebooklm-py) mendokumen
 
 Dokumentasi [API Enterprise Google](https://docs.cloud.google.com/gemini/enterprise/notebooklm-enterprise/docs/api-notebooks) yang diperiksa tetap mendokumentasikan operasi pengelolaan notebook. Belum ditemukan endpoint chat publik resmi pada daftar yang diperiksa. Jadi kandidat konektor sumber terbuka tidak dinyatakan sebagai integrasi resmi yang didukung Google atau sebagai solusi rilis yang pasti stabil.
 
+## Batas isolasi percakapan yang ditemukan
+
+Pada bagian `Conversation semantics`, API Python penulis menyatakan bahwa `conversation_id=None` meneruskan percakapan saat ini pada notebook; pemanggilan berulang tidak membuat percakapan baru. ID percakapan yang diberikan eksplisit meneruskan percakapan bernama. Resep membuat percakapan baru yang didokumentasikan menggunakan penghapusan history lama dan dinyatakan destruktif.
+
+Karena itu satu akun operator yang mengakses satu master notebook untuk banyak pelanggan belum merupakan implementasi yang aman. Tidak boleh mengandalkan UUID percakapan acak yang belum dibuat server, instruksi prompt untuk mengabaikan history, atau penghapusan percakapan pelanggan lain. Prototipe awal hanya dapat memakai satu pengguna/notebook uji terpisah; penggunaan multi pengguna masih memerlukan jalur pembuatan percakapan terisolasi yang tervalidasi atau notebook terpisah per pengguna, dengan perhitungan kapasitas dan kuota yang sesuai. Perilaku ini berasal dari kontrak SDK yang diperiksa dan belum diverifikasi lewat uji konektor langsung.
+
 ## Prototipe yang perlu dibuktikan sebelum diaktifkan
 
 1. Satu akun operator khusus dan satu notebook uji, dengan kredensial disimpan terpisah dari Git, log, dan binary aplikasi. Pemindahan/penyimpanan sesi membutuhkan persetujuan yang menyebut akun dan lokasi penyimpanannya. Izin terdahulu untuk satu pertanyaan browser tidak diperluas menjadi izin mengambil sesi akun Google pribadi.
