@@ -296,4 +296,3 @@ test("follow-up history uses recorded triplets and verifies the saved conversati
   assert.equal(params[4], CONVERSATION);
   assert.deepEqual(params[2], [["Previous answer", null, 2], ["Previous question", null, 1]]);
 });
-
