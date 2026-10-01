@@ -170,8 +170,13 @@ def read_runtime(path):
 
 
 def _email(value):
-    return (isinstance(value, str) and len(value) <= 320
+    return (isinstance(value, str) and _utf16_units(value) <= 320
             and value == value.lower() and EMAIL.fullmatch(value))
+
+
+def _utf16_units(value):
+    # Dart and JavaScript string limits count UTF-16 units, not UTF-8 bytes.
+    return len(value) + sum(ord(character) > 0xffff for character in value)
 
 
 def validate_job(raw, epoch):
@@ -182,14 +187,14 @@ def validate_job(raw, epoch):
         raise ProtocolError()
     if (not isinstance(raw["requestId"], str) or not NONCE.fullmatch(raw["requestId"])
             or raw["epoch"] != epoch
-            or not isinstance(raw["uid"], str) or not 1 <= len(raw["uid"]) <= 128
+            or not isinstance(raw["uid"], str) or not 1 <= _utf16_units(raw["uid"]) <= 128
             or any(ord(c) < 32 or ord(c) == 127 for c in raw["uid"])
             or not isinstance(raw["googleSub"], str)
             or not re.fullmatch(r"\d{1,64}", raw["googleSub"], re.ASCII)
             or not _email(raw["email"])
             or not isinstance(raw["notebookId"], str) or not UUID.fullmatch(raw["notebookId"])
             or not isinstance(raw["question"], str) or not raw["question"].strip()
-            or len(raw["question"]) > 8000
+            or _utf16_units(raw["question"]) > 8000
             or not (raw["conversationId"] is None or
                     isinstance(raw["conversationId"], str) and UUID.fullmatch(raw["conversationId"]))):
         raise ProtocolError()
@@ -197,10 +202,11 @@ def validate_job(raw, epoch):
     if history is not None:
         if (not isinstance(history, list) or len(history) > 80
                 or any(not isinstance(turn, list) or len(turn) != 3
-                       or not isinstance(turn[0], str) or len(turn[0]) > 128000
+                       or not isinstance(turn[0], str) or _utf16_units(turn[0]) > 128000
                        or turn[1] is not None or type(turn[2]) is not int or turn[2] not in (1, 2)
                        for turn in history)
-                or len(encode_json({"history": history})) > 120000):
+                or _utf16_units(json.dumps(history, ensure_ascii=False,
+                                          separators=(",", ":"))) > 120000):
             raise ProtocolError()
     job = {key: raw[key] for key in (*TUPLE, "question", "history", "conversationId")}
     encode_json({"type": "job", "job": job})
@@ -216,7 +222,7 @@ def validate_result(raw, job):
             raise ProtocolError()
         return {**result, "answer": "", "citations": [], "conversationId": None, "code": raw["code"]}
     if (not isinstance(raw.get("answer"), str) or not raw["answer"].strip()
-            or len(raw["answer"]) > 128000
+            or _utf16_units(raw["answer"]) > 128000
             or raw.get("accountEmail") != job["email"]
             or not isinstance(raw.get("conversationId"), str)
             or not UUID.fullmatch(raw["conversationId"])
@@ -229,7 +235,7 @@ def validate_result(raw, job):
                 or type(citation.get("citationNumber")) is not int
                 or not 1 <= citation["citationNumber"] <= 1000
                 or not (citation.get("excerpt") is None or
-                        isinstance(citation["excerpt"], str) and len(citation["excerpt"]) <= 4000)):
+                        isinstance(citation["excerpt"], str) and _utf16_units(citation["excerpt"]) <= 4000)):
             raise ProtocolError()
         citations.append({"sourceId": citation["sourceId"],
                           "citationNumber": citation["citationNumber"], "excerpt": citation.get("excerpt")})
@@ -273,10 +279,12 @@ def post(runtime, route, payload, timeout=25):
 
 
 class Relay:
-    def __init__(self, runtime_path, incoming, writer, stop, retry_delay=0.5, http_timeout=25, job_timeout=180):
+    def __init__(self, runtime_path, incoming, writer, stop, retry_delay=0.5, http_timeout=25,
+                 job_timeout=180, heartbeat_interval=10):
         self.runtime_path, self.incoming, self.writer, self.stop = runtime_path, incoming, writer, stop
         self.retry_delay, self.http_timeout = retry_delay, http_timeout
         self.job_timeout, self.pending_since = job_timeout, 0
+        self.heartbeat_interval, self.last_http = heartbeat_interval, 0
         self.client_id = secrets.token_hex(16)
         self.runtime = None
         self.attached = False
@@ -295,7 +303,9 @@ class Relay:
         self.writer.send(message)
 
     def call(self, route, payload):
-        return post(self.runtime, route, payload, self.http_timeout)
+        response = post(self.runtime, route, payload, self.http_timeout)
+        self.last_http = time.monotonic()
+        return response
 
     def disconnect(self):
         if self.pending is not None:
@@ -326,6 +336,11 @@ class Relay:
                     if self.pending is not None:
                         if time.monotonic() - self.pending_since >= self.job_timeout:
                             raise ProtocolError()
+                        if time.monotonic() - self.last_http >= self.heartbeat_interval:
+                            # Refresh this client without polling another queued job.
+                            self.call("/attach", {"clientId": self.client_id, "protocol": 1,
+                                                  "epoch": self.runtime["epoch"]})
+                            self.state("connected", "ready")
                         try:
                             message = self.incoming.get(timeout=self.retry_delay)
                         except queue.Empty:
