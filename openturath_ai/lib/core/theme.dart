@@ -25,9 +25,9 @@ class AppTheme {
   static const Color queryBoxBorderLight = OTColors.borderLight;
 
   // ── 1b. Token Navigasi & Status ───────────────────────────────────────────
-  // Status kritis memakai merah bata redup dari OTColors, bukan merah neon iOS.
-  static const Color navBarDark = Color(0xCC111110);
-  static const Color navBarLight = Color(0xD9F6F6F3);
+  // Status kritis memakai ikon dan pesan eksplisit di atas palet monokrom.
+  static const Color navBarDark = Color(0xCC111111);
+  static const Color navBarLight = Color(0xD9FAFAFA);
   static const Color navBarBorderDark = OTColors.borderDark;
   static const Color navBarBorderLight = OTColors.borderLight;
   static const double dividerIndent = 54.0;
@@ -52,8 +52,8 @@ class AppTheme {
   static const Color queryBoxBorderDark = OTColors.borderDark;
   static const Color surfaceElevated = OTColors.surfaceSubtleDark;
   static const Color scholarlyIndigo = OTColors.textPrimaryDark;
-  static const Color readingCanvasParchmentLight = Color(0xFFF6F6F3);
-  static const Color readingCanvasParchmentDark = Color(0xFF181817);
+  static const Color readingCanvasParchmentLight = Color(0xFFFAFAFA);
+  static const Color readingCanvasParchmentDark = Color(0xFF191919);
 
   // ── 3. Backwards Compatibility Aliases ────────────────────────────────────
   static const Color lmLightCanvas = canvasLight;
@@ -84,12 +84,12 @@ class AppTheme {
   static const Color lmDarkCitationText = citationTextDark;
   static const Color lmDarkPillAction = pillActionBgDark;
 
-  static const Color brandRed = Color(0xFFBA1A1A);
+  static const Color brandRed = Color(0xFF171717);
   static const Color brandGreen = OTColors.textSecondaryLight;
   static const Color brandBlue = accentLight;
 
   static const Color bgBase = canvasDark;
-  static const Color bgDeep = Color(0xFF0E0E0F);
+  static const Color bgDeep = Color(0xFF111111);
   static const Color bgCanvas = canvasDark;
   static const Color surfaceL1 = surfaceCardDark;
   static const Color surfaceL2 = surfaceHeaderDark;
@@ -117,14 +117,14 @@ class AppTheme {
 
   // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
   static const double radiusXS = 8.0; // Kecil: chip / badge / tag
-  static const double radiusCard = 16.0; // Sedang: card / dialog / bottom sheet
-  static const double radiusM = 16.0; // Alias untuk kompatibilitas
+  static const double radiusCard = 12.0; // Sedang: card / dialog / bottom sheet
+  static const double radiusM = 12.0; // Alias untuk kompatibilitas
   static const double radiusS = 8.0; // Diharmonisasi ke 8.0
-  static const double radiusL = 16.0; // Diharmonisasi ke 16.0
-  static const double radiusXL = 16.0; // Diharmonisasi ke 16.0
+  static const double radiusL = 12.0; // Diharmonisasi ke 16.0
+  static const double radiusXL = 12.0; // Diharmonisasi ke 16.0
   static const double radiusFull = 100.0; // Bulat: pill / button / avatar
-  static const double radiusPill = 100.0; // Stadium Pills & Buttons
-  static const double radiusQuery = 100.0; // Chat Query Stadium Pill
+  static const double radiusPill = 10.0; // Stadium Pills & Buttons
+  static const double radiusQuery = 14.0; // Chat Query Stadium Pill
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
   static const LinearGradient bgGradient = LinearGradient(
@@ -164,8 +164,8 @@ class AppTheme {
         onTertiary: canvasDark,
         tertiaryContainer: pillSecondaryBgDark,
         onTertiaryContainer: textPrimaryDark,
-        error: error,
-        onError: Colors.white,
+        error: OTColors.destructiveDark,
+        onError: OTColors.onAccentDark,
         errorContainer: pillSecondaryBgDark,
         onErrorContainer: OTColors.destructiveDark,
         surface: canvasDark,
