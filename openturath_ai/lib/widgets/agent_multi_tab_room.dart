@@ -1094,8 +1094,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
   bool? _lastIsDark;
   DateTime? _lastCopiedToastAt;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -1902,7 +1900,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                     if (nav.canPop()) {
                       nav.pop();
                     } else {
-                      final rootNav = Navigator.of(context, rootNavigator: true);
+                      final rootNav =
+                          Navigator.of(context, rootNavigator: true);
                       if (rootNav.canPop()) {
                         rootNav.pop();
                       }
@@ -1941,7 +1940,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               if (host.startsWith('accounts.google') ||
                   host == 'accounts.youtube.com' ||
                   host == 'consent.google.com') {
-                
                 return;
               }
 
@@ -1974,9 +1972,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                 final currentUrl = await controller.getUrl();
                 final host = currentUrl?.host.toLowerCase() ?? '';
                 if (host.startsWith('accounts.google') ||
-                    host == 'accounts.youtube.com') {
-                  
-                }
+                    host == 'accounts.youtube.com') {}
               }
               if (mounted &&
                   progress >= 35 &&
@@ -1998,7 +1994,6 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               }
               final uri = action.request.url;
               if (uri == null) return NavigationActionPolicy.CANCEL;
-
 
               if (NotebookNavigation.allowed(uri.uriValue)) {
                 return NavigationActionPolicy.ALLOW;
@@ -2090,9 +2085,8 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                                 ? activeEmail
                                 : (_authService.currentUser?.email?.trim() ??
                                     '');
-                            final displayEmail = targetEmail.isNotEmpty
-                                ? targetEmail
-                                : 'Google';
+                            final displayEmail =
+                                targetEmail.isNotEmpty ? targetEmail : 'Google';
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -2143,9 +2137,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                       OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
                           visualDensity: VisualDensity.compact,
-                          foregroundColor: isDark ? Colors.white : const Color(0xFF18181B),
+                          foregroundColor:
+                              isDark ? Colors.white : const Color(0xFF18181B),
                           side: BorderSide(
-                            color: isDark ? const Color(0xFF3F3F46) : const Color(0xFFD4D4D8),
+                            color: isDark
+                                ? const Color(0xFF3F3F46)
+                                : const Color(0xFFD4D4D8),
                           ),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 8),
@@ -2160,9 +2157,12 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                         ),
                         onPressed: () async {
                           try {
-                            await BrowserWorkspaceLauncher().open(agentId: session.agent.id);
+                            await BrowserWorkspaceLauncher()
+                                .open(agentId: session.agent.id);
                           } catch (_) {
-                            if (mounted) AppSnackBar.error(context, 'Ruang browser belum dapat dibuka.');
+                            if (context.mounted)
+                              AppSnackBar.error(
+                                  context, 'Ruang browser belum dapat dibuka.');
                           }
                         },
                       ),

@@ -24,9 +24,13 @@ class BrowserWorkspaceLauncher {
           'open-turath.web.app',
         }.contains(uri.host) ||
         RegExp(r'^open-turath--[a-z0-9-]+\.web\.app$').hasMatch(uri.host);
-    if (uri.scheme != 'https' || !trustedHost || uri.hasPort ||
-        uri.userInfo.isNotEmpty || uri.path != '/workspace/' ||
-        uri.hasQuery || uri.hasFragment) {
+    if (uri.scheme != 'https' ||
+        !trustedHost ||
+        uri.hasPort ||
+        uri.userInfo.isNotEmpty ||
+        uri.path != '/workspace/' ||
+        uri.hasQuery ||
+        uri.hasFragment) {
       throw const WorkspaceLaunchException('Alamat ruang kajian tidak valid.');
     }
     if (agentId == null) return uri;
@@ -41,7 +45,8 @@ class BrowserWorkspaceLauncher {
     if (!kIsWeb) {
       final client = http.Client();
       try {
-        final page = await client.get(workspaceUri())
+        final page = await client
+            .get(workspaceUri())
             .timeout(const Duration(seconds: 15));
         if (page.statusCode != 200 ||
             !page.body.contains('openturath-browser-workspace-v1')) {

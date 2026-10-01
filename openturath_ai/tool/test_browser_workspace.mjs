@@ -104,7 +104,8 @@ test('credential-like query parameters and fragments are never forwarded to Goog
   const link = new URL(notebookLink(notebook + '?idToken=secret&continue=https://evil.test#auth=secret', userA.email));
   assert.deepEqual([...link.searchParams.keys()], ['authuser']); assert.equal(link.hash, '');
 });
-for (const target of ['http://notebooklm.google.com/notebook/id', 'https://notebooklm.google.com.evil.test/notebook/id', 'https://user:pass@notebooklm.google.com/notebook/id', 'https://accounts.google.com/signin', 'javascript:alert(1)', 'https://notebooklm.google.com:8443/notebook/id']) {
+const notebookPath = new URL(notebook).pathname;
+for (const target of [`http://notebooklm.google.com${notebookPath}`, `https://notebooklm.google.com.evil.test${notebookPath}`, `https://user:pass@notebooklm.google.com${notebookPath}`, 'https://accounts.google.com/signin', 'javascript:alert(1)', `https://notebooklm.google.com:8443${notebookPath}`]) {
   test(`rejects unexpected notebook destination ${target}`, () => assert.throws(() => notebookLink(target)));
 }
 test('public catalog has every server entity and exposes no notebook IDs or URLs', () => {

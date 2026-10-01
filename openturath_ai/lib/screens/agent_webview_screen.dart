@@ -4,13 +4,11 @@ import '../widgets/desktop_webview_gate.dart';
 import '../core/app_platform.dart';
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/native_agent_launcher.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
 import '../core/copied_answer.dart';
@@ -79,8 +77,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
 
   bool _isExiting = false;
   bool _isGoingBack = false;
-
-
 
   @override
   void initState() {
@@ -989,7 +985,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       final uri = navigationAction.request.url;
                       if (uri == null) return NavigationActionPolicy.CANCEL;
 
-
                       return NotebookNavigation.allowed(uri)
                           ? NavigationActionPolicy.ALLOW
                           : NavigationActionPolicy.CANCEL;
@@ -1000,7 +995,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       if (host.startsWith('accounts.google') ||
                           host == 'accounts.youtube.com' ||
                           host == 'consent.google.com') {
-                        
                         return;
                       }
 
@@ -1017,9 +1011,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                         final currentUrl = await controller.getUrl();
                         final host = currentUrl?.host.toLowerCase() ?? '';
                         if (host.startsWith('accounts.google') ||
-                            host == 'accounts.youtube.com') {
-                          
-                        }
+                            host == 'accounts.youtube.com') {}
                       }
                       if (progress >= 25) {
                         await _applyHideScript();

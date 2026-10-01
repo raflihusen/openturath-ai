@@ -19,10 +19,14 @@ void main() {
     'https://open-turath.firebaseapp.com/workspace/#auth=token',
   ]) {
     test('rejects unsafe workspace override $base', () {
-      expect(() => BrowserWorkspaceLauncher.workspaceUri(base: base), throwsA(isA<WorkspaceLaunchException>()));
+      expect(() => BrowserWorkspaceLauncher.workspaceUri(base: base),
+          throwsA(isA<WorkspaceLaunchException>()));
     });
   }
   test('rejects attempts to encode another destination into the agent ID', () {
-    expect(() => BrowserWorkspaceLauncher.workspaceUri(agentId: '../?continue=https://evil.test'), throwsA(isA<WorkspaceLaunchException>()));
+    expect(
+        () => BrowserWorkspaceLauncher.workspaceUri(
+            agentId: '../?continue=https://evil.test'),
+        throwsA(isA<WorkspaceLaunchException>()));
   });
 }
