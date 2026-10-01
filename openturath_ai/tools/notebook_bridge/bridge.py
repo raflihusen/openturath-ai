@@ -70,7 +70,9 @@ class NotebookProvider:
                 if not source_ids:
                     raise BridgeFailure("notebook-has-no-sources")
                 result = await client.chat.ask(notebook, question, source_ids=source_ids, conversation_id=conversation)
-                if not result.conversation_id or await client.chat.get_conversation_id(notebook) != result.conversation_id:
+                if (not result.conversation_id or
+                        (conversation is not None and result.conversation_id != conversation) or
+                        await client.chat.get_conversation_id(notebook) != result.conversation_id):
                     raise BridgeFailure("conversation-isolation-failed")
                 citations = []
                 for reference in result.references:
@@ -199,6 +201,10 @@ def serve(engine: BridgeEngine, key: str, port: int):
 
 def main():
     import fcntl
+    import sys
+
+    if sys.version_info < (3, 11):
+        raise BridgeFailure("python-3.11-required")
 
     # Explicit paths only: never search browsers, personal sessions, or master-token files.
     session = Path(os.environ["NOTEBOOK_OPERATOR_SESSION"]).resolve()
