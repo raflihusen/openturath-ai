@@ -144,7 +144,7 @@ const copyCatalog = <String, List<String>>{
   "googleSessionActive": ["Sesi Google aktif", "Google session active", "جلسة Google نشطة"],
   "continueWithGoogle": ["Lanjutkan dengan Google", "Continue with Google", "المتابعة باستخدام Google"],
   "googleSignInFailed": ["Gagal masuk dengan Google. Coba lagi.", "Google sign-in failed. Please try again.", "تعذر تسجيل الدخول باستخدام Google. أعد المحاولة."],
-  "desktopKeychainError": ["Akses Keychain macOS tidak tersedia. Silakan izinkan akses atau restart aplikasi.", "macOS Keychain access unavailable. Please permit access or restart the app.", "تعذر الوصول إلى سلسلة مفاتيح macOS. يُرجى السماح بالوصول أو إعادة تشغيل التطبيق."],
+  "desktopKeychainError": ["Sesi login tidak dapat disimpan dengan aman di macOS. Build aplikasi perlu diperiksa oleh pengelola; login ulang tidak memperbaiki masalah ini.", "Your sign-in session could not be stored securely on macOS. The app build needs to be checked by its maintainer; signing in again will not fix this issue.", "تعذر حفظ جلسة تسجيل الدخول بأمان على macOS. يجب على المسؤول فحص بناء التطبيق؛ ولن تُصلح إعادة تسجيل الدخول هذه المشكلة."],
   "desktopListenerError": ["Gagal membuka listener lokal desktop untuk autentikasi.", "Failed to initialize local desktop listener for authentication.", "تعذر فتح منفذ الاستماع المحلي لسطح المكتب للمصادقة."],
   "desktopBrowserError": ["Tidak dapat membuka peramban web untuk login.", "Unable to open web browser for sign-in.", "تعذر فتح متصفح الويب لتسجيل الدخول."],
   "desktopTimeoutError": ["Waktu masuk telah habis. Silakan coba kembali.", "Sign-in timed out. Please try again.", "انتهت مهلة تسجيل الدخول. يُرجى المحاولة مجددًا."],
