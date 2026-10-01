@@ -19,8 +19,26 @@ export function validAgentId(value) {
   return typeof value === 'string' && /^[a-z0-9_-]{1,80}$/.test(value);
 }
 
+export function canonicalWorkspace(value) {
+  const current = new URL(value);
+  if (current.hostname !== 'open-turath.web.app') return null;
+  const target = new URL('https://open-turath.firebaseapp.com/workspace/');
+  const agent = current.searchParams.get('agent');
+  if (validAgentId(agent)) target.searchParams.set('agent', agent);
+  return target.href;
+}
+
 export function readableError(error) {
   const code = error?.code || error?.message;
+  // Callable messages come from the existing OpenTurath server and are rendered
+  // as plain text, so voucher restrictions can be explained without changing them.
+  if (typeof error?.code === 'string' && error.code.startsWith('functions/') &&
+      typeof error.message === 'string' && error.message.length <= 500) {
+    if (error.message.includes('Identitas perangkat')) {
+      return 'Kode promo ini memerlukan aktivasi pada perangkat fisik sesuai ketentuannya. Hubungi pengelola untuk penggunaan melalui browser.';
+    }
+    return error.message;
+  }
   const messages = {
     'auth/popup-closed-by-user': 'Masuk dibatalkan. Anda dapat mencoba lagi.',
     'auth/cancelled-popup-request': 'Permintaan masuk sebelumnya dibatalkan.',

@@ -3,11 +3,18 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { WorkspaceController } from '../public/workspace/controller.mjs';
-import { notebookLink, redirectFallbackAllowed } from '../public/workspace/model.mjs';
+import { canonicalWorkspace, notebookLink, redirectFallbackAllowed } from '../public/workspace/model.mjs';
 
 const userA = { uid: 'alice', email: 'alice@example.test' };
 const userB = { uid: 'bob', email: 'bob@example.test' };
 const notebook = 'https://notebooklm.google.com/notebook/334e7b83-0e76-4787-a1d6-314642a35862';
+test('the web.app alias uses the same Firebase origin without forwarding credentials', () => {
+  const canonical = new URL(canonicalWorkspace('https://open-turath.web.app/workspace/?agent=fiqh_syafii&idToken=secret#auth=secret'));
+  assert.equal(canonical.origin, 'https://open-turath.firebaseapp.com');
+  assert.deepEqual([...canonical.searchParams.keys()], ['agent']);
+  assert.equal(canonical.hash, '');
+  assert.equal(canonicalWorkspace('https://open-turath.firebaseapp.com/workspace/'), null);
+});
 const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
 function fixture(overrides = {}) {
   const calls = { login: 0, access: 0 };

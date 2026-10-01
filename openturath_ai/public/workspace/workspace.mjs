@@ -1,5 +1,5 @@
 import { WorkspaceController } from './controller.mjs';
-import { readableError, redirectFallbackAllowed, validAgentId } from './model.mjs';
+import { canonicalWorkspace, readableError, redirectFallbackAllowed, validAgentId } from './model.mjs';
 
 const elements = Object.fromEntries(['welcome', 'account', 'email', 'login', 'logout', 'workspace', 'status', 'catalog', 'search', 'empty', 'ready-link', 'notebook-link', 'selected-title', 'redeem-form', 'redeem', 'code', 'retry-profile'].map(id => [id, document.getElementById(id)]));
 let catalog = [];
@@ -60,7 +60,13 @@ function renderCatalog() {
   elements.empty.hidden = count !== 0;
 }
 
-try {
+// Keep redirect OAuth and its Firebase helper on one origin. The web.app alias
+// must not require a second OAuth redirect-domain configuration.
+const canonical = canonicalWorkspace(location.href);
+if (canonical) {
+  elements.status.textContent = 'Membuka ruang kajian utama…';
+  location.replace(canonical);
+} else try {
   const sdk = 'https://www.gstatic.com/firebasejs/12.19.0/';
   const [core, authSdk, dbSdk, functionsSdk, response] = await Promise.all([
     import(`${sdk}firebase-app.js`), import(`${sdk}firebase-auth.js`),
@@ -71,7 +77,7 @@ try {
   catalog = await response.json();
   if (!Array.isArray(catalog) || !catalog.length || catalog.some(item => !validAgentId(item.id) || !Array.isArray(item.aliases))) throw new Error('invalid-catalog');
   if (!catalog.some(item => item.aliases.includes(pendingAgent))) pendingAgent = null;
-  const hosted = ['open-turath.firebaseapp.com', 'open-turath.web.app'].includes(location.hostname);
+  const hosted = location.hostname === 'open-turath.firebaseapp.com';
   const app = core.initializeApp({
     apiKey: 'AIzaSyC9b5YVceixZZL6AkLnsroBC9qvSt06bQ0',
     authDomain: hosted ? location.hostname : 'open-turath.firebaseapp.com',
