@@ -65,8 +65,8 @@ class BrowserCompanionRuntime extends ChangeNotifier {
     Directory? runtimeDirectory,
     this.responseTimeout = const Duration(seconds: 130),
     this.heartbeatTimeout = const Duration(seconds: 30),
-  }) : _identity = identity,
-       _directory = runtimeDirectory ?? _defaultDirectory();
+  })  : _identity = identity,
+        _directory = runtimeDirectory ?? _defaultDirectory();
 
   final CompanionIdentity? Function() _identity;
   final Directory _directory;
@@ -132,11 +132,11 @@ class BrowserCompanionRuntime extends ChangeNotifier {
   }
 
   FirebaseFunctionsException _error(String code) => FirebaseFunctionsException(
-    code: code,
-    message: code == 'uncertain'
-        ? 'Permintaan mungkin sudah diproses. Tidak dikirim ulang secara otomatis.'
-        : 'Koneksi asisten belum dapat digunakan. Hubungkan kembali akun yang sesuai.',
-  );
+        code: code,
+        message: code == 'uncertain'
+            ? 'Permintaan mungkin sudah diproses. Tidak dikirim ulang secara otomatis.'
+            : 'Koneksi asisten belum dapat digunakan. Hubungkan kembali akun yang sesuai.',
+      );
 
   CompanionIdentity? get _current {
     try {
@@ -235,22 +235,24 @@ class BrowserCompanionRuntime extends ChangeNotifier {
   }
 
   Future<void> _saveLedger() => _writePrivate(_ledgerFile, {
-    'version': 1,
-    'records': _ledger.values.toList(growable: false),
-  });
+        'version': 1,
+        'records': _ledger.values.toList(growable: false),
+      });
 
   Future<void> _loadLedger() async {
     _ledger.clear();
     await _regularFile(_ledgerFile, optional: true);
     if (!await _ledgerFile.exists()) return;
-    if (await _ledgerFile.length() > 4 * 1024 * 1024)
+    if (await _ledgerFile.length() > 4 * 1024 * 1024) {
       throw _error('failed-precondition');
+    }
     final decoded = jsonDecode(await _ledgerFile.readAsString());
     if (decoded is! Map ||
         decoded['version'] != 1 ||
         decoded['records'] is! List ||
-        (decoded['records'] as List).length > 4096)
+        (decoded['records'] as List).length > 4096) {
       throw _error('failed-precondition');
+    }
     const keys = {
       'requestId',
       'epoch',
@@ -289,8 +291,9 @@ class BrowserCompanionRuntime extends ChangeNotifier {
           !states.contains(raw['state']) ||
           raw['createdAt'] is! int ||
           raw['updatedAt'] is! int ||
-          _ledger.containsKey(raw['requestId']))
+          _ledger.containsKey(raw['requestId'])) {
         throw _error('failed-precondition');
+      }
       CompanionIdentity(
         uid: raw['uid'] as String,
         googleSub: raw['googleSub'] as String,
@@ -308,75 +311,78 @@ class BrowserCompanionRuntime extends ChangeNotifier {
   }
 
   Future<void> start() => _serial(() async {
-    if (_disposed) throw _error('failed-precondition');
-    if (!(Platform.isMacOS || Platform.isLinux || Platform.isWindows) ||
-        Platform.isWindows) {
-      throw _error('failed-precondition');
-    }
-    if (_server != null) {
-      await _checkOwner();
-      return;
-    }
-    final owner = _current;
-    if (owner == null) throw _error('unauthenticated');
-    _owner = owner;
-    _epoch = _randomHex(16);
-    _bearer = _randomHex(32);
-    try {
-      final type = await FileSystemEntity.type(
-        _directory.path,
-        followLinks: false,
-      );
-      if (type != FileSystemEntityType.notFound &&
-          type != FileSystemEntityType.directory) {
-        throw _error('failed-precondition');
-      }
-      await _directory.create(recursive: true);
-      await _privateMode(_directory.path, 0x1c0);
-      final canonical = await _directory.resolveSymbolicLinks();
-      if (_claimedDirectories.contains(canonical))
-        throw _error('failed-precondition');
-      _claimedDirectories.add(canonical);
-      _claimedDirectory = canonical;
-      final lockFile = File(p.join(_directory.path, 'runtime.lock'));
-      await _regularFile(lockFile, optional: true);
-      await lockFile.create();
-      await _privateMode(lockFile.path, 0x180);
-      _lock = await lockFile.open(mode: FileMode.append);
-      await _lock!.lock(FileLock.exclusive);
-      _holdsLock = true;
-      await _loadLedger();
-      if (!_ownerMatches) throw _error('unauthenticated');
-      _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-      if (!_ownerMatches) throw _error('unauthenticated');
-      await _writePrivate(_metadata, {
-        'version': 1,
-        'port': _server!.port,
-        'bearer': _bearer,
-        'epoch': _epoch,
-        'pid': pid,
-      });
-      if (!_ownerMatches) throw _error('unauthenticated');
-      _server!.listen((request) {
-        unawaited(_route(request));
-      });
-      _heartbeat = Timer.periodic(const Duration(seconds: 1), (_) {
-        _maintenance(() async {
-          if (_server == null) return;
-          if (!_ownerMatches) {
-            await _invalidate('unauthenticated');
-            return;
+        if (_disposed) throw _error('failed-precondition');
+        if (!(Platform.isMacOS || Platform.isLinux || Platform.isWindows) ||
+            Platform.isWindows) {
+          throw _error('failed-precondition');
+        }
+        if (_server != null) {
+          await _checkOwner();
+          return;
+        }
+        final owner = _current;
+        if (owner == null) throw _error('unauthenticated');
+        _owner = owner;
+        _epoch = _randomHex(16);
+        _bearer = _randomHex(32);
+        try {
+          final type = await FileSystemEntity.type(
+            _directory.path,
+            followLinks: false,
+          );
+          if (type != FileSystemEntityType.notFound &&
+              type != FileSystemEntityType.directory) {
+            throw _error('failed-precondition');
           }
-          if (_clientId != null && !connected) await _invalidate('unavailable');
-        });
+          await _directory.create(recursive: true);
+          await _privateMode(_directory.path, 0x1c0);
+          final canonical = await _directory.resolveSymbolicLinks();
+          if (_claimedDirectories.contains(canonical)) {
+            throw _error('failed-precondition');
+          }
+          _claimedDirectories.add(canonical);
+          _claimedDirectory = canonical;
+          final lockFile = File(p.join(_directory.path, 'runtime.lock'));
+          await _regularFile(lockFile, optional: true);
+          await lockFile.create();
+          await _privateMode(lockFile.path, 0x180);
+          _lock = await lockFile.open(mode: FileMode.append);
+          await _lock!.lock(FileLock.exclusive);
+          _holdsLock = true;
+          await _loadLedger();
+          if (!_ownerMatches) throw _error('unauthenticated');
+          _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+          if (!_ownerMatches) throw _error('unauthenticated');
+          await _writePrivate(_metadata, {
+            'version': 1,
+            'port': _server!.port,
+            'bearer': _bearer,
+            'epoch': _epoch,
+            'pid': pid,
+          });
+          if (!_ownerMatches) throw _error('unauthenticated');
+          _server!.listen((request) {
+            unawaited(_route(request));
+          });
+          _heartbeat = Timer.periodic(const Duration(seconds: 1), (_) {
+            _maintenance(() async {
+              if (_server == null) return;
+              if (!_ownerMatches) {
+                await _invalidate('unauthenticated');
+                return;
+              }
+              if (_clientId != null && !connected) {
+                await _invalidate('unavailable');
+              }
+            });
+          });
+          _setStatus('waiting');
+        } catch (error) {
+          await _stopInternal();
+          if (error is FirebaseFunctionsException) rethrow;
+          throw _error('failed-precondition');
+        }
       });
-      _setStatus('waiting');
-    } catch (error) {
-      await _stopInternal();
-      if (error is FirebaseFunctionsException) rethrow;
-      throw _error('failed-precondition');
-    }
-  });
 
   Future<void> _checkOwner() async {
     if (_ownerMatches) return;
@@ -391,10 +397,11 @@ class BrowserCompanionRuntime extends ChangeNotifier {
       pending.timer?.cancel();
       pending.record['state'] = pending.dispatched ? 'uncertain' : 'cancelled';
       pending.record['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
-      if (!pending.completer.isCompleted)
+      if (!pending.completer.isCompleted) {
         pending.completer.completeError(
           _error(pending.dispatched ? 'uncertain' : code),
         );
+      }
     }
     _pending.clear();
     if (_holdsLock && _ledger.isNotEmpty) await _saveLedger();
@@ -418,12 +425,14 @@ class BrowserCompanionRuntime extends ChangeNotifier {
           question.trim().isEmpty ||
           question.length > 8000 ||
           (conversationId != null && !_uuid.hasMatch(conversationId)) ||
-          !_validHistory(history))
+          !_validHistory(history)) {
         throw _error('invalid-argument');
+      }
       if (_ledger.containsKey(requestId)) throw _error('failed-precondition');
       if (!connected) throw _error('unavailable');
-      if (_ledger.length >= 4096 || _pending.length >= 16)
+      if (_ledger.length >= 4096 || _pending.length >= 16) {
         throw _error('resource-exhausted');
+      }
       if (_pending.values.any((item) => item.job['notebookId'] == notebookId)) {
         throw _error('busy');
       }
@@ -461,8 +470,9 @@ class BrowserCompanionRuntime extends ChangeNotifier {
       } catch (error) {
         _pending.remove(requestId);
         pending.record['state'] = 'uncertain';
-        if (!pending.completer.isCompleted)
+        if (!pending.completer.isCompleted) {
           pending.completer.completeError(_error('uncertain'));
+        }
         if (error is FirebaseFunctionsException) rethrow;
         throw _error('uncertain');
       }
@@ -473,15 +483,17 @@ class BrowserCompanionRuntime extends ChangeNotifier {
           pending.record['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
           await _saveLedger();
           _pending.remove(requestId);
-          if (!pending.completer.isCompleted)
+          if (!pending.completer.isCompleted) {
             pending.completer.completeError(_error('uncertain'));
+          }
         });
       });
       return pending;
     });
     final reply = await pending.completer.future;
-    if (!_ownerMatches || _owner!.uid != expectedUid)
+    if (!_ownerMatches || _owner!.uid != expectedUid) {
       throw _error('unauthenticated');
+    }
     return reply;
   }
 
@@ -516,8 +528,9 @@ class BrowserCompanionRuntime extends ChangeNotifier {
     late StreamSubscription<List<int>> subscription;
     final timer = Timer(const Duration(seconds: 5), () {
       unawaited(subscription.cancel());
-      if (!result.isCompleted)
+      if (!result.isCompleted) {
         result.completeError(_error('deadline-exceeded'));
+      }
     });
     subscription = request.listen(
       (chunk) {
@@ -530,8 +543,9 @@ class BrowserCompanionRuntime extends ChangeNotifier {
         }
       },
       onError: (Object _) {
-        if (!result.isCompleted)
+        if (!result.isCompleted) {
           result.completeError(_error('invalid-argument'));
+        }
       },
       onDone: () {
         if (result.isCompleted) return;
@@ -590,6 +604,13 @@ class BrowserCompanionRuntime extends ChangeNotifier {
       await _respond(request, 404, {'ok': false, 'code': 'invalid-argument'});
       return;
     }
+    final contentType = request.headers.contentType;
+    if (contentType?.mimeType != 'application/json' ||
+        (contentType?.charset != null &&
+            contentType!.charset!.toLowerCase() != 'utf-8')) {
+      await _respond(request, 415, {'ok': false, 'code': 'invalid-argument'});
+      return;
+    }
     try {
       if (!_ownerMatches) {
         await _serial(() => _checkOwner());
@@ -600,20 +621,23 @@ class BrowserCompanionRuntime extends ChangeNotifier {
         final allowed = request.uri.path == '/attach'
             ? {'clientId', 'protocol', 'epoch'}
             : request.uri.path == '/result'
-            ? {'clientId', 'epoch', 'result'}
-            : {'clientId', 'epoch'};
+                ? {'clientId', 'epoch', 'result'}
+                : {'clientId', 'epoch'};
         if (body.keys.toSet().difference(allowed).isNotEmpty ||
             body.length != allowed.length ||
             body['clientId'] is! String ||
             !_nonce.hasMatch(body['clientId'] as String) ||
-            body['epoch'] != _epoch)
+            body['epoch'] != _epoch) {
           throw _error('invalid-argument');
+        }
         final clientId = body['clientId'] as String;
         if (request.uri.path == '/attach') {
-          if (body['protocol'] is! int || body['protocol'] != 1)
+          if (body['protocol'] is! int || body['protocol'] != 1) {
             throw _error('failed-precondition');
-          if (_clientId != null && _clientId != clientId && connected)
+          }
+          if (_clientId != null && _clientId != clientId && connected) {
             throw _error('busy');
+          }
           if (_clientId != null && !connected) await _invalidate('unavailable');
           _clientId = clientId;
           _lastSeen = DateTime.now();
@@ -661,11 +685,13 @@ class BrowserCompanionRuntime extends ChangeNotifier {
   }
 
   Future<void> _acceptResult(dynamic raw) async {
-    if (raw is! Map || raw['requestId'] is! String)
+    if (raw is! Map || raw['requestId'] is! String) {
       throw _error('invalid-argument');
+    }
     final pending = _pending[raw['requestId']];
-    if (pending == null || !pending.dispatched)
+    if (pending == null || !pending.dispatched) {
       throw _error('failed-precondition');
+    }
     const tupleKeys = [
       'requestId',
       'epoch',
@@ -674,8 +700,9 @@ class BrowserCompanionRuntime extends ChangeNotifier {
       'email',
       'notebookId',
     ];
-    if (tupleKeys.any((key) => raw[key] != pending.job[key]))
+    if (tupleKeys.any((key) => raw[key] != pending.job[key])) {
       throw _error('account-mismatch');
+    }
     const codes = {
       'invalid-argument',
       'unavailable',
@@ -691,9 +718,8 @@ class BrowserCompanionRuntime extends ChangeNotifier {
     Map<String, dynamic>? reply;
     String? failureCode;
     if (code != null) {
-      failureCode = codes.contains(code)
-          ? code as String
-          : 'failed-precondition';
+      failureCode =
+          codes.contains(code) ? code as String : 'failed-precondition';
     } else if (raw['accountEmail'] != _owner!.email ||
         raw['answer'] is! String ||
         (raw['answer'] as String).trim().isEmpty ||
@@ -726,7 +752,7 @@ class BrowserCompanionRuntime extends ChangeNotifier {
           'excerpt': item['excerpt'],
         });
       }
-      if (failureCode == null)
+      if (failureCode == null) {
         reply = {
           for (final key in tupleKeys) key: raw[key],
           'answer': raw['answer'],
@@ -734,21 +760,23 @@ class BrowserCompanionRuntime extends ChangeNotifier {
           'conversationId': raw['conversationId'],
           'accountEmail': raw['accountEmail'],
         };
+      }
     }
     pending.record['state'] = failureCode == 'uncertain'
         ? 'uncertain'
         : failureCode == null
-        ? 'completed'
-        : 'failed';
+            ? 'completed'
+            : 'failed';
     pending.record['updatedAt'] = DateTime.now().millisecondsSinceEpoch;
     await _saveLedger();
     await _checkOwner();
     _pending.remove(raw['requestId']);
     pending.timer?.cancel();
-    if (failureCode != null)
+    if (failureCode != null) {
       pending.completer.completeError(_error(failureCode));
-    else
+    } else {
       pending.completer.complete(Map<String, dynamic>.unmodifiable(reply!));
+    }
   }
 
   Future<void> stop() => _serial(_stopInternal);
@@ -781,8 +809,9 @@ class BrowserCompanionRuntime extends ChangeNotifier {
     await _lock?.close();
     _lock = null;
     _holdsLock = false;
-    if (_claimedDirectory != null)
+    if (_claimedDirectory != null) {
       _claimedDirectories.remove(_claimedDirectory);
+    }
     _claimedDirectory = null;
     _owner = null;
     _bearer = null;
