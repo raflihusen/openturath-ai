@@ -145,5 +145,5 @@ export function loadBackend(root = process.cwd()) {
   ].map(n=>n+':typeof '+n+' === "undefined" ? undefined : '+n).join(',') + ', onUserDeleted: typeof onUserDeleted === "undefined" ? undefined : onUserDeleted};';
   const exports: any = {};
   vm.runInNewContext(stripTypeScriptTypes(source), {require:(name: string)=>{if(!(name in deps))throw Error('Unexpected dependency '+name);return deps[name];}, exports, Buffer, process, URL, console:{log(){},warn(){},error(){}},Date, setTimeout,clearTimeout});
-  return { api:exports.api, db, axios, users, sent };
+  return { api:exports.api, db, axios, auth, users, sent };
 }
