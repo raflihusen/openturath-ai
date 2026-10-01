@@ -209,229 +209,166 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics()),
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+                    padding: EdgeInsets.fromLTRB(
+                      MediaQuery.sizeOf(context).width >= 768 ? 40 : 20,
+                      28,
+                      MediaQuery.sizeOf(context).width >= 768 ? 40 : 20,
+                      40,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    // ── 1. Header Centered: OpenTurath ──
-                    Center(
-                      child: Text(
-                        'OpenTurath',
-                        style: ScholarlyFonts.newsreader(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.4,
-                          color: textPrimary,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 14),
-
-                    // Banner pembaruan jika tersedia
-                    const UpdateReadyBanner(),
-
-                    // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
-                    // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
-                    ListenableBuilder(
-                      listenable: AgentSessionManager.instance,
-                      builder: (context, _) {
-                        final activeAgent =
-                            AgentSessionManager.instance.activeTab?.agent;
-                        final lastAgent = _lastOpenedAgentId == null
-                            ? null
-                            : _agents.cast<AgentModel?>().firstWhere(
-                                  (agent) => agent?.id == _lastOpenedAgentId,
-                                  orElse: () => null,
-                                );
-                        final target = activeAgent ?? lastAgent;
-                        final hasLiveSession = activeAgent != null;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _StudyEntryCard(
-                              name: user.name,
-                              agent: target,
-                              hasLiveSession: hasLiveSession,
-                              isDark: isDark,
-                              onPrimary: () {
-                                if (target != null) {
-                                  _openNotebook(target, user);
-                                  return;
-                                }
-                                final shell = MainShellController.of(context);
-                                if (shell != null) {
-                                  shell.switchTab(1);
-                                } else {
-                                  NavigationGuard.safePushNamed(
-                                      context, AppRoutes.specialistList);
-                                }
-                              },
+                        // ── 1. Header Centered: OpenTurath ──
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            'OpenTurath',
+                            style: ScholarlyFonts.newsreader(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.4,
+                              color: textPrimary,
                             ),
-                            const SizedBox(height: 12),
-                            _ScholarlyDatePanel(
-                              masehiDate: HijriDateUtils.formatMasehiOnly(),
-                              hijriDate: HijriDateUtils.formatHijriOnly(),
-                              surface: surface,
-                              border: border,
-                              textPrimary: textPrimary,
-                              textSecondary: textSecondary,
-                              accent: accent,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // ── 3. Ergonomic Search Bar (Stadium Pill) ──
-                    ListenableBuilder(
-                      listenable: _searchFocusNode,
-                      builder: (context, _) {
-                        final isFocused = _searchFocusNode.hasFocus;
-                        return Container(
-                          height: 54,
-                          padding: const EdgeInsets.only(left: 16, right: 6),
-                          decoration: BoxDecoration(
-                            color: OTColors.surfaceSubtle(isDark),
-                            borderRadius: BorderRadius.circular(22),
-                            border: isFocused
-                                ? Border.all(color: accent, width: 1.5)
-                                : null,
                           ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.search_rounded,
-                                  size: 20,
-                                  color: isFocused ? accent : textSecondary),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextField(
-                                  controller: _searchController,
-                                  focusNode: _searchFocusNode,
-                                  onChanged: (val) =>
-                                      setState(() => _searchQuery = val.trim()),
-                                  style: ScholarlyFonts.outfit(
-                                      fontSize: 13.5, color: textPrimary),
-                                  decoration: InputDecoration(
-                                    hintText: AppCopy.dashboardSearchHint,
-                                    hintStyle: ScholarlyFonts.outfit(
-                                        fontSize: 13.5, color: textSecondary),
-                                    border: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    focusedErrorBorder: InputBorder.none,
-                                    filled: false,
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.zero,
-                                  ),
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        // Banner pembaruan jika tersedia
+                        const UpdateReadyBanner(),
+
+                        // Kartu ini hanya menampilkan keadaan yang benar-benar ada:
+                        // sesi yang masih tersimpan, asisten terakhir, atau pintu mulai.
+                        ListenableBuilder(
+                          listenable: AgentSessionManager.instance,
+                          builder: (context, _) {
+                            final activeAgent =
+                                AgentSessionManager.instance.activeTab?.agent;
+                            final lastAgent = _lastOpenedAgentId == null
+                                ? null
+                                : _agents.cast<AgentModel?>().firstWhere(
+                                      (agent) =>
+                                          agent?.id == _lastOpenedAgentId,
+                                      orElse: () => null,
+                                    );
+                            final target = activeAgent ?? lastAgent;
+                            final hasLiveSession = activeAgent != null;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _StudyEntryCard(
+                                  name: user.name,
+                                  agent: target,
+                                  hasLiveSession: hasLiveSession,
+                                  isDark: isDark,
+                                  onPrimary: () {
+                                    if (target != null) {
+                                      _openNotebook(target, user);
+                                      return;
+                                    }
+                                    final shell =
+                                        MainShellController.of(context);
+                                    if (shell != null) {
+                                      shell.switchTab(1);
+                                    } else {
+                                      NavigationGuard.safePushNamed(
+                                          context, AppRoutes.specialistList);
+                                    }
+                                  },
                                 ),
+                                const SizedBox(height: 12),
+                                _ScholarlyDatePanel(
+                                  masehiDate: HijriDateUtils.formatMasehiOnly(),
+                                  hijriDate: HijriDateUtils.formatHijriOnly(),
+                                  surface: surface,
+                                  border: border,
+                                  textPrimary: textPrimary,
+                                  textSecondary: textSecondary,
+                                  accent: accent,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // ── 3. Ergonomic Search Bar (Stadium Pill) ──
+                        ListenableBuilder(
+                          listenable: _searchFocusNode,
+                          builder: (context, _) {
+                            final isFocused = _searchFocusNode.hasFocus;
+                            return Container(
+                              height: 54,
+                              padding:
+                                  const EdgeInsets.only(left: 16, right: 6),
+                              decoration: BoxDecoration(
+                                color: OTColors.surfaceSubtle(isDark),
+                                borderRadius: BorderRadius.circular(22),
+                                border: isFocused
+                                    ? Border.all(color: accent, width: 1.5)
+                                    : null,
                               ),
-                              if (_searchQuery.isNotEmpty)
-                                Tooltip(
-                                  message: Loc.tr('clearSearch'),
-                                  child: InkWell(
-                                    onTap: () {
-                                      _searchController.clear();
-                                      setState(() => _searchQuery = '');
-                                    },
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Icon(Icons.close_rounded,
-                                          size: 18, color: textSecondary),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.search_rounded,
+                                      size: 20,
+                                      color:
+                                          isFocused ? accent : textSecondary),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _searchController,
+                                      focusNode: _searchFocusNode,
+                                      onChanged: (val) => setState(
+                                          () => _searchQuery = val.trim()),
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: 13.5, color: textPrimary),
+                                      decoration: InputDecoration(
+                                        hintText: AppCopy.dashboardSearchHint,
+                                        hintStyle: ScholarlyFonts.outfit(
+                                            fontSize: 13.5,
+                                            color: textSecondary),
+                                        border: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        focusedErrorBorder: InputBorder.none,
+                                        filled: false,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
-                    if (_searchQuery.isNotEmpty) ...[
-                      Text(
-                        AppCopy.searchResults,
-                        style: ScholarlyFonts.outfit(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Builder(
-                        builder: (context) {
-                          final q = _searchQuery.toLowerCase();
-                          final matches = _agents.where((a) {
-                            if (a.kind == CorpusKind.scholar) return false;
-                            final title = a.title.toLowerCase();
-                            final arabic = a.titleArabic;
-                            final subtitle = a.subtitleAcademic.toLowerCase();
-                            final category = a.category.toLowerCase();
-                            final books = a.referenceBooks?.any(
-                                    (b) => b.title.toLowerCase().contains(q)) ??
-                                false;
-                            return title.contains(q) ||
-                                arabic.contains(q) ||
-                                subtitle.contains(q) ||
-                                category.contains(q) ||
-                                books;
-                          }).toList();
-
-                          if (matches.isEmpty) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 36),
-                              child: Center(
-                                child: Text(
-                                  AppCopy.noAssistantsFound,
-                                  style: ScholarlyFonts.outfit(
-                                      fontSize: 13.5, color: textSecondary),
-                                ),
+                                  if (_searchQuery.isNotEmpty)
+                                    Tooltip(
+                                      message: Loc.tr('clearSearch'),
+                                      child: InkWell(
+                                        onTap: () {
+                                          _searchController.clear();
+                                          setState(() => _searchQuery = '');
+                                        },
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(Icons.close_rounded,
+                                              size: 18, color: textSecondary),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             );
-                          }
+                          },
+                        ),
 
-                          return ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: matches.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 10),
-                            itemBuilder: (context, idx) {
-                              final agent = matches[idx];
-                              return SpecialistCard(
-                                title: agent.title,
-                                titleArabic: agent.titleArabic,
-                                fieldId: agent.fieldId,
-                                scopeLabel: agent.subtitleAcademic,
-                                statusLabel: agent.isComingSoon
-                                    ? AppCopy.comingSoon
-                                    : null,
-                                onOpen: () => _openNotebook(agent, user),
-                                onOpenLibrary: agent.catalogId != null
-                                    ? () => showResearchLibrary(context,
-                                        agent: agent)
-                                    : null,
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ] else ...[
-                      // ── Bidang kajian: pintu masuk utama ke studi ──
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
+                        const SizedBox(height: 18),
+
+                        // ── 4. Jika Sedang Mencari (Hasil Realtime) ──
+                        if (_searchQuery.isNotEmpty) ...[
                           Text(
-                            AppCopy.chooseField,
+                            AppCopy.searchResults,
                             style: ScholarlyFonts.outfit(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -439,291 +376,285 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               color: textPrimary,
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              final shell = MainShellController.of(context);
-                              if (shell != null) {
-                                shell.switchTab(1);
-                              } else {
-                                NavigationGuard.safePushNamed(
-                                    context, AppRoutes.specialistList);
-                              }
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  AppCopy.seeAll,
-                                  style: ScholarlyFonts.outfit(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: textPrimary,
+                          const SizedBox(height: 12),
+                          Builder(
+                            builder: (context) {
+                              final q = _searchQuery.toLowerCase();
+                              final matches = _agents.where((a) {
+                                if (a.kind == CorpusKind.scholar) return false;
+                                final title = a.title.toLowerCase();
+                                final arabic = a.titleArabic;
+                                final subtitle =
+                                    a.subtitleAcademic.toLowerCase();
+                                final category = a.category.toLowerCase();
+                                final books = a.referenceBooks?.any((b) =>
+                                        b.title.toLowerCase().contains(q)) ??
+                                    false;
+                                return title.contains(q) ||
+                                    arabic.contains(q) ||
+                                    subtitle.contains(q) ||
+                                    category.contains(q) ||
+                                    books;
+                              }).toList();
+
+                              if (matches.isEmpty) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 36),
+                                  child: Center(
+                                    child: Text(
+                                      AppCopy.noAssistantsFound,
+                                      style: ScholarlyFonts.outfit(
+                                          fontSize: 13.5, color: textSecondary),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 2),
-                                Icon(Icons.chevron_right_rounded,
-                                    size: 16, color: textPrimary),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      // Setiap bidang tampil sebagai kartu direktori keilmuan adaptif berkelas.
-                      GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate:
-                            SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 380,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          mainAxisExtent:
-                              MediaQuery.textScalerOf(context).scale(124),
-                        ),
-                        itemCount: _curatedDisciplines.length,
-                        itemBuilder: (context, index) {
-                          final disc = _curatedDisciplines[index];
-                          return AppleInteractiveWrapper(
-                            onTap: () {
-                              final shell = MainShellController.of(context);
-                              if (shell != null) {
-                                shell.switchTab(1, fieldId: disc.fieldId);
-                              } else {
-                                NavigationGuard.safePushNamed(
-                                  context,
-                                  AppRoutes.specialistList,
-                                  arguments: {'fieldId': disc.fieldId},
                                 );
                               }
+
+                              return ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: matches.length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 10),
+                                itemBuilder: (context, idx) {
+                                  final agent = matches[idx];
+                                  return SpecialistCard(
+                                    title: agent.title,
+                                    titleArabic: agent.titleArabic,
+                                    fieldId: agent.fieldId,
+                                    scopeLabel: agent.subtitleAcademic,
+                                    statusLabel: agent.isComingSoon
+                                        ? AppCopy.comingSoon
+                                        : null,
+                                    onOpen: () => _openNotebook(agent, user),
+                                    onOpenLibrary: agent.catalogId != null
+                                        ? () => showResearchLibrary(context,
+                                            agent: agent)
+                                        : null,
+                                  );
+                                },
+                              );
                             },
-                            pressedScale: 0.96,
-                            hapticType: HapticFeedbackType.light,
-                            borderRadius: BorderRadius.circular(18),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: surface,
-                                borderRadius: BorderRadius.circular(18),
-                                border: Border.all(color: border, width: 1.0),
+                          ),
+                        ] else ...[
+                          // ── Bidang kajian: pintu masuk utama ke studi ──
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                AppCopy.chooseField,
+                                style: ScholarlyFonts.outfit(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.2,
+                                  color: textPrimary,
+                                ),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(14),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              GestureDetector(
+                                onTap: () {
+                                  final shell = MainShellController.of(context);
+                                  if (shell != null) {
+                                    shell.switchTab(1);
+                                  } else {
+                                    NavigationGuard.safePushNamed(
+                                        context, AppRoutes.specialistList);
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          (index + 1)
-                                              .toString()
-                                              .padLeft(2, '0'),
-                                          style: ScholarlyFonts.outfit(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 1.1,
-                                            color: textSecondary,
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.north_east_rounded,
-                                          size: 17,
-                                          color: textSecondary.withValues(
-                                              alpha: 0.72),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 18),
                                     Text(
-                                      disc.name,
-                                      style: ScholarlyFonts.newsreader(
-                                        fontSize: 20,
+                                      AppCopy.seeAll,
+                                      style: ScholarlyFonts.outfit(
+                                        fontSize: 12.5,
                                         fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.25,
                                         color: textPrimary,
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      AppCopy.assistantsAvailableCount(
-                                          disc.specialistCount),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: 11.5,
-                                        color: textSecondary,
-                                      ),
-                                    ),
+                                    const SizedBox(width: 2),
+                                    Icon(Icons.chevron_right_rounded,
+                                        size: 16, color: textPrimary),
                                   ],
                                 ),
                               ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 14),
+
+                          // Setiap bidang tampil sebagai kartu direktori keilmuan adaptif berkelas.
+                          GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 380,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              mainAxisExtent:
+                                  MediaQuery.textScalerOf(context).scale(116),
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ],
+                            itemCount: _curatedDisciplines.length,
+                            itemBuilder: (context, index) {
+                              final disc = _curatedDisciplines[index];
+                              return AppleInteractiveWrapper(
+                                onTap: () {
+                                  final shell = MainShellController.of(context);
+                                  if (shell != null) {
+                                    shell.switchTab(1, fieldId: disc.fieldId);
+                                  } else {
+                                    NavigationGuard.safePushNamed(
+                                      context,
+                                      AppRoutes.specialistList,
+                                      arguments: {'fieldId': disc.fieldId},
+                                    );
+                                  }
+                                },
+                                pressedScale: 0.99,
+                                hapticType: HapticFeedbackType.light,
+                                borderRadius: BorderRadius.circular(4),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    border: Border(
+                                        bottom: BorderSide(color: border)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4, vertical: 14),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              (index + 1)
+                                                  .toString()
+                                                  .padLeft(2, '0'),
+                                              style: ScholarlyFonts.outfit(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 1.1,
+                                                color: textSecondary,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.north_east_rounded,
+                                              size: 17,
+                                              color: textSecondary.withValues(
+                                                  alpha: 0.72),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Text(
+                                          disc.name,
+                                          style: ScholarlyFonts.newsreader(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: -0.25,
+                                            color: textPrimary,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          AppCopy.assistantsAvailableCount(
+                                              disc.specialistCount),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: ScholarlyFonts.outfit(
+                                            fontSize: 11.5,
+                                            color: textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
-  },
-);
   }
 }
 
 class _StudyEntryCard extends StatelessWidget {
+  const _StudyEntryCard(
+      {required this.name,
+      required this.agent,
+      required this.hasLiveSession,
+      required this.isDark,
+      required this.onPrimary});
   final String name;
   final AgentModel? agent;
   final bool hasLiveSession;
   final bool isDark;
   final VoidCallback onPrimary;
 
-  const _StudyEntryCard({
-    required this.name,
-    required this.agent,
-    required this.hasLiveSession,
-    required this.isDark,
-    required this.onPrimary,
-  });
-
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
     final displayName = name.isEmpty || name == 'Ahlan' ? null : name;
     final hasHistory = agent != null;
-    final title = hasLiveSession || hasHistory
-        ? agent!.title
-        : AppCopy.studyEntryDefaultTitle;
+    final title = hasHistory ? agent!.title : AppCopy.studyEntryDefaultTitle;
     final subtitle = hasLiveSession
         ? AppCopy.studyEntryResumeSubtitle
-        : (hasHistory
+        : hasHistory
             ? AppCopy.studyEntryHistorySubtitle
-            : AppCopy.studyEntryDefaultSubtitle);
-    final primaryLabel = hasLiveSession || hasHistory
-        ? AppCopy.continueStudy
-        : AppCopy.startStudy;
-
-    final categoryLabel = AppCopy.studyBookCategory;
-
-    final surface = OTColors.primaryContainer(isDark);
-    final textPrimary = OTColors.onPrimaryContainer(isDark);
-    final textSecondary = OTColors.onPrimaryContainer(isDark);
-
-    return Semantics(
-      button: true,
-      label: '$title. $subtitle',
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(28),
-        child: InkWell(
-          onTap: onPrimary,
-          borderRadius: BorderRadius.circular(28),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: surface,
-              borderRadius: BorderRadius.circular(28),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
-              child: Padding(
-                padding: const EdgeInsets.all(22),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      displayName == null
-                          ? AppCopy.ahlanDefault
-                          : AppCopy.ahlanWithName(displayName),
-                      style: ScholarlyFonts.outfit(
-                        color: textSecondary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      hasLiveSession || hasHistory
-                          ? Loc.tr('ui_fb007d4dc4')
-                          : categoryLabel,
-                      style: ScholarlyFonts.outfit(
-                        color: textSecondary,
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      Loc.text(title),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.newsreader(
-                        color: textPrimary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.4,
-                        height: 1.25,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.outfit(
-                        color: textSecondary,
-                        fontSize: 12.5,
-                        height: 1.35,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 7),
-                          decoration: BoxDecoration(
-                            color: OTColors.accent(isDark),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                primaryLabel,
-                                style: ScholarlyFonts.outfit(
-                                  color: OTColors.onAccent(isDark),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 13,
-                                color: OTColors.onAccent(isDark),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+            : AppCopy.studyEntryDefaultSubtitle;
+    final ink = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 28),
+      decoration: BoxDecoration(
+          border: Border(
+              top: BorderSide(color: OTColors.border(isDark)),
+              bottom: BorderSide(color: OTColors.border(isDark)))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+            displayName == null
+                ? AppCopy.ahlanDefault
+                : AppCopy.ahlanWithName(displayName),
+            style: ScholarlyFonts.outfit(fontSize: 13, color: muted)),
+        const SizedBox(height: 14),
+        Text(Loc.text(title),
+            style: ScholarlyFonts.newsreader(
+                fontSize: MediaQuery.sizeOf(context).width >= 768 ? 34 : 28,
+                fontWeight: FontWeight.w500,
+                letterSpacing: -.7,
+                height: 1.18,
+                color: ink)),
+        const SizedBox(height: 12),
+        ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Text(subtitle,
+                style: ScholarlyFonts.outfit(
+                    fontSize: 14, height: 1.55, color: muted))),
+        const SizedBox(height: 22),
+        FilledButton.icon(
+            onPressed: onPrimary,
+            label:
+                Text(hasHistory ? AppCopy.continueStudy : AppCopy.startStudy),
+            icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+            iconAlignment: IconAlignment.end),
+      ]),
     );
   }
 }
@@ -753,9 +684,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
       decoration: BoxDecoration(
-        color: surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: border, width: 1.0),
+        border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
         children: [
@@ -777,7 +706,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                         AppCopy.today,
                         style: ScholarlyFonts.outfit(
                           color: textSecondary,
-                          fontSize: 9.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -788,7 +717,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
                           color: textPrimary,
-                          fontSize: 11.5,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -822,7 +751,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                         AppCopy.hijriCalendar,
                         style: ScholarlyFonts.outfit(
                           color: textSecondary,
-                          fontSize: 9.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -833,7 +762,7 @@ class _ScholarlyDatePanel extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
                           color: textPrimary,
-                          fontSize: 11.5,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
