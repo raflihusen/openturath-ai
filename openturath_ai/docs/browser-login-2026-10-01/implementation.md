@@ -1,5 +1,7 @@
 # Ruang browser OpenTurath — implementasi dan hasil pemeriksaan
 
+**Catatan historis.** Dokumen ini mencatat implementasi dan publikasi eksperimen browser sebelum kebutuhan tampilan native ditegaskan kembali. Entry default sekarang sudah dipulihkan ke aplikasi native, dan uji akun nyata kemudian membuktikan jawaban NotebookLM pada browser yang sama. Hasil terbaru, hambatan Keychain, dan batas integrasi native dicatat di [native-recovery.md](native-recovery.md). Pernyataan di bawah tentang launcher sebagai entry aktif dan belum adanya uji akun nyata hanya berlaku pada snapshot eksperimen terdahulu.
+
 Tanggal: 1 Oktober 2026. Cabang: `codex/browser-session-login-2026-10-01`.
 Baseline sebelum implementasi: `5c188d8`. Setiap perubahan disimpan sebagai checkpoint Git.
 
