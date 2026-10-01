@@ -274,11 +274,11 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderDark, width: 1),
+          borderSide: const BorderSide(color: OTColors.borderStrongDark, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderDark, width: 1),
+          borderSide: const BorderSide(color: OTColors.borderStrongDark, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
@@ -445,11 +445,11 @@ class AppTheme {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderLight, width: 1),
+          borderSide: const BorderSide(color: OTColors.borderStrongLight, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
-          borderSide: const BorderSide(color: borderLight, width: 1),
+          borderSide: const BorderSide(color: OTColors.borderStrongLight, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusCard),
