@@ -92,7 +92,7 @@ void main() {
       }
 
       expect(check('https://notebooklm.google.com/notebook/abc-123'), isTrue);
-      expect(check('https://accounts.google.com/ServiceLogin'), isTrue);
+      expect(check('https://accounts.google.com/ServiceLogin'), isFalse);
       expect(check('https://fonts.gstatic.com/s/roboto/v20/xyz.woff2'), isFalse); // Resource URL is not a top-level destination.
       expect(check('https://apis.google.com/js/api.js'), isFalse);
       expect(check('http://notebooklm.google.com'), isFalse); // HTTP insecure rejected
