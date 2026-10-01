@@ -190,7 +190,12 @@ void main() {
     ))));
     expect(find.byType(InAppWebView), findsNothing);
     await tester.enterText(find.byType(TextField), 'Pertanyaan fixture');
+    await tester.pump();
     await tester.tap(find.byTooltip('Kirim telaah'));
+    await tester.pump();
+    expect(gateway.requests, hasLength(1));
+    // A user may prepare the next question while the previous answer is pending.
+    await tester.enterText(find.byType(TextField), 'Pertanyaan berikutnya');
     await tester.pump();
     gateway.reply(0);
     await tester.pump();
@@ -199,7 +204,6 @@ void main() {
     await tester.tap(find.text('Rujukan sumber'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('[1] Kutipan fixture'), findsOneWidget);
-    await tester.enterText(find.byType(TextField), 'Pertanyaan berikutnya');
     await tester.tap(find.byTooltip('Kirim telaah'));
     await tester.pump();
     expect(gateway.requests, hasLength(2));
