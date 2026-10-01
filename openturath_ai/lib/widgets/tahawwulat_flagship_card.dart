@@ -333,7 +333,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                           width: 50,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: _graphite,
+                            color: _obsidian,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: Colors.white.withValues(alpha: 0.14),
