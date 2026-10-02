@@ -9,10 +9,8 @@ import '../models/user_model.dart';
 import '../core/constants.dart';
 import 'agent_session_manager.dart';
 import 'session_user_stream.dart';
-import 'desktop_google_sign_in.dart';
 import 'desktop_webview_runtime.dart';
 import 'browser_companion_chat_service.dart';
-import '../core/app_platform.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -85,18 +83,13 @@ class AuthService {
     try {
       User? firebaseUser;
 
-      if (!kIsWeb && AppPlatform.isDesktop) {
-        final credential = await DesktopGoogleSignIn.signIn();
-        if (credential == null) return null;
-        final userCredential = await _auth.signInWithCredential(credential);
-        firebaseUser = userCredential.user;
-      } else if (kIsWeb) {
-        final result = await _auth.signInWithPopup(GoogleAuthProvider());
-        firebaseUser = result.user;
-      } else {
-        // Mobile (Android / iOS) & Web use native GoogleSignIn SDK
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.macOS)) {
+        // Native GoogleSignIn SDK on Android, iOS, & macOS (Darwin)
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-        if (googleUser == null) return null; // User membatalkan login
+        if (googleUser == null) return null; // Pengguna membatalkan login
 
         final GoogleSignInAuthentication googleAuth =
             await googleUser.authentication;
@@ -107,6 +100,14 @@ class AuthService {
         );
 
         final userCredential = await _auth.signInWithCredential(credential);
+        firebaseUser = userCredential.user;
+      } else if (kIsWeb) {
+        final result = await _auth.signInWithPopup(GoogleAuthProvider());
+        firebaseUser = result.user;
+      } else {
+        // Platform desktop lain (Windows/Linux) langsung via Firebase OAuth Provider
+        final provider = GoogleAuthProvider();
+        final userCredential = await _auth.signInWithProvider(provider);
         firebaseUser = userCredential.user;
       }
 

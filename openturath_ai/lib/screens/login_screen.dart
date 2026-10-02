@@ -78,23 +78,14 @@ class _LoginScreenState extends State<LoginScreen> {
       final message = e.toString().contains('network') ||
               e.toString().contains('SocketException')
           ? AppCopy.networkError
-          : (e is FirebaseAuthException &&
-                  (e.code.startsWith('desktop-') ||
-                      e.code == 'browser-unavailable')
+          : (e is FirebaseAuthException
               ? switch (e.code) {
-                  'desktop-listener-unavailable' =>
-                    AppCopy.desktopListenerError,
-                  'desktop-browser-unavailable' ||
-                  'browser-unavailable' =>
-                    AppCopy.desktopBrowserError,
-                  'desktop-login-timeout' => AppCopy.desktopTimeoutError,
+                  'keychain-error' => AppCopy.desktopKeychainError,
+                  'popup-closed-by-user' || 'canceled' => '',
                   _ => e.message ?? AppCopy.googleSignInFailed,
                 }
-              : e is FirebaseAuthException && AppPlatform.isDesktop
-                  ? e.code == 'keychain-error'
-                      ? AppCopy.desktopKeychainError
-                      : '${AppCopy.googleSignInFailed} (${e.code})'
-                  : AppCopy.googleSignInFailed);
+              : AppCopy.googleSignInFailed);
+      if (message.isEmpty) return;
       if (AppPlatform.isDesktop) {
         setState(() => _desktopError = message);
       } else {
@@ -247,16 +238,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ],
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                  if (AppPlatform.isDesktop) ...[
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      Loc.tr('desktopBrowserHelp'),
-                                      style: ScholarlyFonts.outfit(
-                                          fontSize: 12,
-                                          height: 1.5,
-                                          color: secondary),
                                     ),
                                   ],
                                   const SizedBox(height: 28),

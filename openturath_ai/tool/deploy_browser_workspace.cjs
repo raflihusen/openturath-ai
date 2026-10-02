@@ -39,7 +39,6 @@ async function main() {
   if (!Object.keys(files).length) throw new Error('Empty live manifest.');
   const publicRoot = path.join(__dirname, '../public');
   const changed = fs.readdirSync(path.join(publicRoot, 'workspace')).filter(name => !name.startsWith('.')).map(name => `/workspace/${name}`);
-  changed.push('/desktop-auth.html', '/desktop-auth.js');
   for (const asset of ['/brand-mark.svg', '/favicon.svg', '/icon-192.png', '/icon-512.png']) {
     if (!files[asset]) changed.push(asset);
   }
@@ -52,12 +51,11 @@ async function main() {
     uploads.set(hash, compressed);
   }
   const config = structuredClone(version.config || {});
-  config.headers = (config.headers || []).filter(item => !['/workspace/**', '/workspace/*.mjs', '/workspace/manifest.webmanifest', '/desktop-auth{.html,.js}'].includes(item.glob));
+  config.headers = (config.headers || []).filter(item => !['/workspace/**', '/workspace/*.mjs', '/workspace/manifest.webmanifest'].includes(item.glob));
   const security = { 'Cache-Control': 'no-cache', 'Referrer-Policy': 'no-referrer', 'X-Content-Type-Options': 'nosniff', 'X-Frame-Options': 'DENY' };
   config.headers.push({ glob: '/workspace/**', headers: security });
   config.headers.push({ glob: '/workspace/*.mjs', headers: { 'Content-Type': 'text/javascript; charset=utf-8' } });
   config.headers.push({ glob: '/workspace/manifest.webmanifest', headers: { 'Content-Type': 'application/manifest+json' } });
-  config.headers.push({ glob: '/desktop-auth{.html,.js}', headers: { ...security, 'Cache-Control': 'no-store' } });
   console.log(JSON.stringify({ previous, preservedFiles: preservedCount, changed, publish: process.argv.includes('--publish'), workspace: 'https://open-turath.firebaseapp.com/workspace/' }));
   if (!process.argv.includes('--publish')) return;
   const created = await api(`${site}/versions`, 'POST', { config, labels: { purpose: 'browser-workspace' } });
