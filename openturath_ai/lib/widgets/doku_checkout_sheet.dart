@@ -314,7 +314,11 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
     final host = uri.host.toLowerCase();
 
     // Domain aplikasi OpenTurath
-    if (host == 'openturath-ai.web.app' ||
+    if (host == 'openturath.id' ||
+        host.endsWith('.openturath.id') ||
+        host == 'openturath-ai.web.app' ||
+        host == 'open-turath.web.app' ||
+        host == 'open-turath.firebaseapp.com' ||
         host == 'openturath.ai' ||
         host.endsWith('.openturath.ai')) {
       return true;

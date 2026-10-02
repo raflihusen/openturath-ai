@@ -37,7 +37,7 @@ class DesktopGoogleSignIn {
   // Match the hosted page's Firebase authDomain. Redirect fallback must not
   // depend on cross-origin auth-helper storage blocked by modern browsers.
   static final page = Uri.parse(
-    'https://open-turath.firebaseapp.com/desktop-auth.html',
+    'https://openturath.id/desktop-auth.html',
   );
   static const browserCompanionEnabled = bool.fromEnvironment(
     'OPENTURATH_BROWSER_COMPANION',

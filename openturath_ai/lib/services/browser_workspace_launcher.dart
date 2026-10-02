@@ -18,6 +18,8 @@ class BrowserWorkspaceLauncher {
   static Uri workspaceUri({String? agentId, String base = configuredUrl}) {
     final uri = Uri.parse(base);
     final trustedHost = const {
+          'openturath.id',
+          'www.openturath.id',
           'open-turath.firebaseapp.com',
           'open-turath.web.app',
         }.contains(uri.host) ||

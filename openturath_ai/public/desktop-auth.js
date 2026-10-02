@@ -14,7 +14,7 @@ const callbackString = params.get('callback') || stored('ot_cb');
 const state = params.get('state') || stored('ot_st');
 let callback;
 try { callback = new URL(callbackString); } catch { /* Invalid callbacks remain disabled. */ }
-const valid = !embedded && ['https://open-turath.web.app', 'https://open-turath.firebaseapp.com'].includes(location.origin) &&
+const valid = !embedded && ['https://openturath.id', 'https://www.openturath.id', 'https://open-turath.web.app', 'https://open-turath.firebaseapp.com'].includes(location.origin) &&
   callback && callback.protocol === 'http:' && callback.hostname === '127.0.0.1' &&
   Number(callback.port) >= 1024 && Number(callback.port) <= 65535 &&
   callback.pathname === '/callback' && !callback.username && !callback.password &&

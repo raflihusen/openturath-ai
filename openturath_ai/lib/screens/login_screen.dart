@@ -35,9 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _termsRecognizer = TapGestureRecognizer()
-      ..onTap = () => _openLegalUrl('https://openturath.ai/terms');
+      ..onTap = () => _openLegalUrl('https://openturath.id/terms.html');
     _privacyRecognizer = TapGestureRecognizer()
-      ..onTap = () => _openLegalUrl('https://openturath.ai/privacy');
+      ..onTap = () => _openLegalUrl('https://openturath.id/privacy.html');
   }
 
   @override

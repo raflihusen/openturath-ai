@@ -15,6 +15,8 @@ class PlatformRelease {
   final String? sha256;
 
   static const allowedHosts = {
+    'openturath.id',
+    'www.openturath.id',
     'openturath.ai',
     'www.openturath.ai',
     'openturath.web.app',

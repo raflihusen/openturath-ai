@@ -77,7 +77,7 @@ if (canonical) {
   catalog = await response.json();
   if (!Array.isArray(catalog) || !catalog.length || catalog.some(item => !validAgentId(item.id) || !Array.isArray(item.aliases))) throw new Error('invalid-catalog');
   if (!catalog.some(item => item.aliases.includes(pendingAgent))) pendingAgent = null;
-  const hosted = location.hostname === 'open-turath.firebaseapp.com';
+  const hosted = ['openturath.id', 'www.openturath.id', 'open-turath.firebaseapp.com'].includes(location.hostname);
   const app = core.initializeApp({
     apiKey: 'AIzaSyC9b5YVceixZZL6AkLnsroBC9qvSt06bQ0',
     authDomain: hosted ? location.hostname : 'open-turath.firebaseapp.com',
