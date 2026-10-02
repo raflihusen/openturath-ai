@@ -1,19 +1,36 @@
 # OpenTurath promo film
 
-Editable 30-second vertical brand film built with Remotion and Three.js. The film combines a frame-animated 3D book, moving light and particles, kinetic typography, and the OpenTurath logo with real app screenshots in a perspective device frame.
+Film promosi 30 detik dengan teks kinetik dan motion graphics 3D, dibuat dengan Remotion dan three.js. Film ini tidak memakai tangkapan layar aplikasi. Lihat `storyboard.md` untuk timeline, copy, dan dasar setiap klaim.
 
-## Preview and render
+## Hasil
+
+| File | Isi |
+| --- | --- |
+| `deliverables/openturath-promo-vertical.mp4` | Versi utama, 1080 × 1920, 30 fps, 900 frame, H.264 + AAC |
+| `deliverables/openturath-promo-wide.mp4` | Versi 1920 × 1080 dengan scene yang sama |
+| `deliverables/openturath-poster-vertical.jpg` | Poster dari frame penutup (frame 880) |
+| `deliverables/openturath-thumb-book.jpg` | Thumbnail alternatif: kitab di depan kamera (frame 395) |
+| `deliverables/contact-*.jpg` | Contact sheet, satu frame per detik |
+
+## Edit dan render ulang
 
 ```sh
 npm install
-npm run dev
-npx remotion render src/index.ts OpenTurathPromo out/openturath-promo-vertical.mp4 --codec h264
+npm run dev                      # Remotion Studio
+npx remotion render src/index.ts OpenTurathVertical out/openturath-promo-vertical.mp4 --codec=h264 --crf=16 --gl=angle
+npx remotion render src/index.ts OpenTurathWide out/openturath-promo-wide.mp4 --codec=h264 --crf=16 --gl=angle
 ```
 
-Composition: 1080 × 1920, 30 fps, 900 frames. The cut introduces the brand, shows Beranda and Asisten, highlights Catatan, and closes with the OpenTurath wordmark and CTA. It is designed to read without sound; there is no music or voiceover track. The closing asks viewers to check AI answers against the cited book.
+Struktur source:
 
-## Assets
+- `src/theme.ts` berisi palet, font, dan timeline scene.
+- `src/Overlay.tsx` berisi semua copy di layar.
+- `src/Type.tsx` berisi animasi teks.
+- `src/world/World.tsx` berisi kamera, cahaya, kitab, catatan, dan logo 3D.
+- `src/world/library.ts` berisi rak, tekstur punggung kitab, dan sampul.
 
-The screenshots and logo are copies of files from the OpenTurath workspace. The included font license files are from the app's font assets. No third-party music or stock footage is used.
+Path logo disalin dari `openturath_ai/assets/images/OpenTurath_logo_transparent.svg`. Judul pada rak dibuat oleh `tools/make_titles.py` dari katalog JSON aplikasi. Musik dibuat oleh `tools/make_audio.py`. `tools/frame_check.py` dan `tools/ocr.swift` dipakai untuk pemeriksaan kecerahan dan OCR per frame.
 
-Remotion's licensing terms vary with team size and use. See [Remotion license and pricing](https://www.remotion.dev/docs/license/pricing).
+## Lisensi aset
+
+Font yang dipakai (Newsreader, Outfit, Inter, Scheherazade New) adalah font bawaan aplikasi dengan lisensi OFL. File lisensinya ada di `public/assets/fonts/`. Musiknya disintesis sendiri. Ketentuan lisensi Remotion tergantung ukuran tim: https://www.remotion.dev/docs/license/pricing
