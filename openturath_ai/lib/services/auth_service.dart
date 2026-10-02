@@ -99,8 +99,16 @@ class AuthService {
           idToken: googleAuth.idToken,
         );
 
-        final userCredential = await _auth.signInWithCredential(credential);
-        firebaseUser = userCredential.user;
+        try {
+          final userCredential = await _auth.signInWithCredential(credential);
+          firebaseUser = userCredential.user;
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'keychain-error' && _auth.currentUser != null) {
+            firebaseUser = _auth.currentUser;
+          } else {
+            rethrow;
+          }
+        }
       } else if (kIsWeb) {
         final result = await _auth.signInWithPopup(GoogleAuthProvider());
         firebaseUser = result.user;
