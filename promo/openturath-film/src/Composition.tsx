@@ -99,12 +99,12 @@ const BookModel = () => {
   const { fps } = useVideoConfig();
   const enter = springIn(frame, fps, 5);
   const frontness = interpolate(frame, [0, 120, 172, 628, 724, 840, 899], [1, 1, 0.29, 0.27, 0.82, 1, 1], OUT);
-  const scale = interpolate(enter, [0, 1], [0.62, 1.04]) * frontness;
-  const y = interpolate(frame, [0, 120, 172, 628, 724, 899], [-0.62, -0.72, -1.78, -1.78, -0.68, -0.62], { ...OUT, easing: EASE });
+  const scale = interpolate(enter, [0, 1], [0.34, 0.58]) * frontness;
+  const y = interpolate(frame, [0, 120, 172, 628, 724, 899], [-1.2, -1.28, -1.95, -1.95, -1.3, -1.3], { ...OUT, easing: EASE });
   const depth = interpolate(frame, [0, 120, 172, 628, 724, 899], [0, 0, -1.8, -1.8, 0, 0], OUT);
   const turn = interpolate(frame, [0, 70, 150, 350, 520, 700, 840, 899], [-0.31, 0.16, 0.52, 0.22, -0.18, -0.43, -0.12, 0.08], { ...OUT, easing: EASE });
   const bob = Math.sin(frame * 0.027) * 0.055;
-  const pageOpen = interpolate(frame, [0, 22, 82, 140, 176, 655, 740, 850], [0.25, 0.78, 1, 1, 0.92, 0.92, 1, 0.5], { ...OUT, easing: EASE });
+  const pageOpen = interpolate(frame, [0, 22, 82, 140, 176, 655, 740, 850], [0.25, 0.62, 0.68, 0.68, 0.58, 0.58, 0.68, 0.3], { ...OUT, easing: EASE });
 
   return (
     <group position={[Math.sin(frame * 0.012) * 0.06, y + bob, depth]} rotation={[0.45 + Math.sin(frame * 0.013) * 0.035, turn, -0.035]} scale={scale}>
@@ -114,16 +114,16 @@ const BookModel = () => {
       </mesh>
       <mesh position={[0, 0, -0.085]}>
         <boxGeometry args={[3.48, 2.36, 0.16]} />
-        <meshStandardMaterial color="#e7ddcb" roughness={0.86} />
+        <meshStandardMaterial color="#cbbb9f" roughness={0.86} />
       </mesh>
       <group position={[-0.035, 0, 0.01]} rotation={[0, -pageOpen * 0.19, 0]}>
         <mesh position={[-0.84, 0, 0.025]}>
           <boxGeometry args={[1.67, 2.28, 0.045]} />
-          <meshStandardMaterial color="#f6f0e5" roughness={0.78} />
+          <meshStandardMaterial color="#e4d7c2" roughness={0.78} />
         </mesh>
-        {Array.from({ length: 7 }, (_, index) => (
-          <mesh key={"l" + index} position={[-0.84, 0.73 - index * 0.23, 0.051]}>
-            <boxGeometry args={[index === 0 ? 0.52 : 1.08 - (index % 3) * 0.11, 0.009, 0.006]} />
+        {Array.from({ length: 8 }, (_, index) => (
+          <mesh key={"l" + index} position={[-0.84, 0.73 - index * 0.19, 0.051]}>
+            <boxGeometry args={[index === 0 ? 0.66 : 1.32 - (index % 3) * 0.12, 0.012, 0.006]} />
             <meshStandardMaterial color="#9e8667" transparent opacity={0.42} />
           </mesh>
         ))}
@@ -135,11 +135,11 @@ const BookModel = () => {
       <group position={[0.035, 0, 0.01]} rotation={[0, pageOpen * 0.19, 0]}>
         <mesh position={[0.84, 0, 0.025]}>
           <boxGeometry args={[1.67, 2.28, 0.045]} />
-          <meshStandardMaterial color="#f6f0e5" roughness={0.78} />
+          <meshStandardMaterial color="#e4d7c2" roughness={0.78} />
         </mesh>
-        {Array.from({ length: 7 }, (_, index) => (
-          <mesh key={"r" + index} position={[0.84, 0.73 - index * 0.23, 0.051]}>
-            <boxGeometry args={[index === 0 ? 0.52 : 1.08 - (index % 3) * 0.11, 0.009, 0.006]} />
+        {Array.from({ length: 8 }, (_, index) => (
+          <mesh key={"r" + index} position={[0.84, 0.73 - index * 0.19, 0.051]}>
+            <boxGeometry args={[index === 0 ? 0.66 : 1.32 - (index % 3) * 0.12, 0.012, 0.006]} />
             <meshStandardMaterial color="#9e8667" transparent opacity={0.42} />
           </mesh>
         ))}
@@ -264,9 +264,9 @@ const SceneFrame = ({ children, duration }: { children: ReactNode; duration: num
 const Phone = ({ src, frame, top = 500, width = 560, tilt = -1 }: { src: string; frame: number; top?: number; width?: number; tilt?: number }) => {
   const { fps } = useVideoConfig();
   const show = springIn(frame, fps, 4);
-  const tiltY = interpolate(frame, [0, 24, 80, 142, 190], [tilt * 1.8, tilt, tilt + 1.1, tilt - 1, tilt], OUT);
-  const tiltX = interpolate(frame, [0, 30, 92, 160], [7, 2, -1.5, 1], { ...OUT, easing: EASE });
-  const rotateZ = interpolate(frame, [0, 27, 90, 170], [-3.2, -0.5, 0.9, 0], OUT);
+  const tiltY = interpolate(frame, [0, 24, 80, 142, 190], [tilt * -5, tilt * 2, 0, tilt * 2, tilt * -4], OUT);
+  const tiltX = interpolate(frame, [0, 30, 92, 160, 190], [13, -1.5, 1, -4, 12], { ...OUT, easing: EASE });
+  const rotateZ = interpolate(frame, [0, 27, 90, 170, 190], [-5, -0.5, 1.2, -1, 4], OUT);
   const float = Math.sin(frame * 0.055) * 12;
   const scale = interpolate(show, [0, 1], [0.76, 1]);
 
@@ -290,7 +290,7 @@ const ProductScene = ({ duration, number, eyebrow, lines, src, label, top = 506 
       <Counter frame={frame} number={number} label="OPENTURATH" />
       <Eyebrow frame={frame} top={324}>{eyebrow}</Eyebrow>
       <KineticLines frame={frame} top={375} size={74} lines={lines} />
-      <Phone src={src} frame={frame} top={top} width={548} tilt={-3} />
+      <Phone src={src} frame={frame} top={top} width={500} tilt={-3} />
       <div style={{ position: "absolute", left: 78, bottom: 126, display: "flex", alignItems: "center", gap: 13, opacity: ease(frame, 30, 48) }}>
         <div style={{ width: 7, height: 7, borderRadius: 9, backgroundColor: GOLD, boxShadow: "0 0 18px rgba(201,156,97,.78)" }} />
         <div style={{ ...font(21, "rgba(244,237,226,.72)"), letterSpacing: "0.015em" }}>{label}</div>
@@ -342,8 +342,8 @@ const NotesScene = () => {
       <Counter frame={frame} number="04" label="JEJAK KAJIAN" />
       <Eyebrow frame={frame} top={324}>CATATAN PRIBADI</Eyebrow>
       <KineticLines frame={frame} top={375} size={74} lines={["Simpan yang penting.", "Lanjutkan kapan saja."]} />
-      <Phone src="home.jpg" frame={frame} top={512} width={520} tilt={-2} />
-      <div style={{ position: "absolute", left: "57.1%", top: 1658, width: 137, height: 93, border: "2px solid " + GOLD, borderRadius: 27, translate: "-50% 0px", opacity: ease(frame, 41, 56), boxShadow: "0 0 34px rgba(201,156,97,.36),0 0 0 11px rgba(201,156,97,.08)" }} />
+      <Phone src="home.jpg" frame={frame} top={560} width={475} tilt={-2} />
+      <div style={{ position: "absolute", left: "57.1%", top: 1514, width: 124, height: 84, border: "2px solid " + GOLD, borderRadius: 23, translate: "-50% 0px", opacity: ease(frame, 41, 56), boxShadow: "0 0 34px rgba(201,156,97,.36),0 0 0 11px rgba(201,156,97,.08)" }} />
       <NotesFeature frame={frame} />
       <div style={{ position: "absolute", left: 78, bottom: 126, ...font(20, "rgba(244,237,226,.70)"), opacity: ease(frame, 48, 64) }}>Simpan jawaban atau kutipan ke Catatan.</div>
     </SceneFrame>
