@@ -38,7 +38,7 @@ import 'browser_companion_chat_tab.dart';
 
 // Explicit local prototype opt-in; remains off in normal/release builds.
 const _backendChatPrototype =
-    bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE');
+    bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE', defaultValue: true);
 const _browserCompanionPrototype =
     bool.fromEnvironment('OPENTURATH_BROWSER_COMPANION');
 const _nativeChat = _backendChatPrototype || _browserCompanionPrototype;
