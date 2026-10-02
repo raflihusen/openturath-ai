@@ -1,6 +1,6 @@
 import { ThreeCanvas } from "@remotion/three";
 import { useEffect, useState } from "react";
-import { AbsoluteFill, cancelRender, continueRender, delayRender, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, cancelRender, continueRender, delayRender, staticFile, useCurrentFrame } from "remotion";
 import * as THREE from "three";
 import { fontsReady } from "./fonts";
 import { Overlay } from "./Overlay";
@@ -61,6 +61,7 @@ export const Film = () => {
   }, [handle]);
   return (
     <AbsoluteFill style={{ background: C.night }}>
+      <Audio src={staticFile("assets/audio/score.wav")} />
       {ready ? (
         <ThreeCanvas
           width={width}
