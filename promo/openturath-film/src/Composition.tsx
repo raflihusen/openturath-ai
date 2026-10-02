@@ -102,7 +102,7 @@ const BookModel = () => {
   const scale = interpolate(enter, [0, 1], [0.34, 0.58]) * frontness;
   const y = interpolate(frame, [0, 120, 172, 628, 724, 899], [-1.2, -1.28, -1.95, -1.95, -1.3, -1.3], { ...OUT, easing: EASE });
   const depth = interpolate(frame, [0, 120, 172, 628, 724, 899], [0, 0, -1.8, -1.8, 0, 0], OUT);
-  const turn = interpolate(frame, [0, 70, 150, 350, 520, 700, 840, 899], [-0.31, 0.16, 0.52, 0.22, -0.18, -0.43, -0.12, 0.08], { ...OUT, easing: EASE });
+  const turn = interpolate(frame, [0, 24, 66, 100, 140, 172, 360, 520, 680, 740, 840, 899], [-0.8, -0.45, 0.25, 0.6, 0.15, 0.5, -0.25, 0.4, -0.55, 0.3, -0.28, 0.1], { ...OUT, easing: EASE });
   const bob = Math.sin(frame * 0.027) * 0.055;
   const pageOpen = interpolate(frame, [0, 22, 82, 140, 176, 655, 740, 850], [0.25, 0.62, 0.68, 0.68, 0.58, 0.58, 0.68, 0.3], { ...OUT, easing: EASE });
 
@@ -116,7 +116,7 @@ const BookModel = () => {
         <boxGeometry args={[3.48, 2.36, 0.16]} />
         <meshStandardMaterial color="#cbbb9f" roughness={0.86} />
       </mesh>
-      <group position={[-0.035, 0, 0.01]} rotation={[0, -pageOpen * 0.19, 0]}>
+      <group position={[-0.035, 0, 0.01]} rotation={[0, -pageOpen * 0.65, 0]}>
         <mesh position={[-0.84, 0, 0.025]}>
           <boxGeometry args={[1.67, 2.28, 0.045]} />
           <meshStandardMaterial color="#e4d7c2" roughness={0.78} />
@@ -132,7 +132,7 @@ const BookModel = () => {
           <meshStandardMaterial color={GOLD} metalness={0.65} roughness={0.38} />
         </mesh>
       </group>
-      <group position={[0.035, 0, 0.01]} rotation={[0, pageOpen * 0.19, 0]}>
+      <group position={[0.035, 0, 0.01]} rotation={[0, pageOpen * 0.65, 0]}>
         <mesh position={[0.84, 0, 0.025]}>
           <boxGeometry args={[1.67, 2.28, 0.045]} />
           <meshStandardMaterial color="#e4d7c2" roughness={0.78} />
@@ -267,8 +267,9 @@ const Phone = ({ src, frame, top = 500, width = 560, tilt = -1 }: { src: string;
   const tiltY = interpolate(frame, [0, 24, 80, 142, 190], [tilt * -5, tilt * 2, 0, tilt * 2, tilt * -4], OUT);
   const tiltX = interpolate(frame, [0, 30, 92, 160, 190], [13, -1.5, 1, -4, 12], { ...OUT, easing: EASE });
   const rotateZ = interpolate(frame, [0, 27, 90, 170, 190], [-5, -0.5, 1.2, -1, 4], OUT);
-  const float = Math.sin(frame * 0.055) * 12;
+  const float = Math.sin(frame * 0.055) * 22;
   const scale = interpolate(show, [0, 1], [0.76, 1]);
+  const reflection = interpolate(frame, [18, 70, 108], [-125, 0, 125], OUT);
 
   return (
     <>
@@ -276,6 +277,7 @@ const Phone = ({ src, frame, top = 500, width = 560, tilt = -1 }: { src: string;
       <div style={{ position: "absolute", left: "50%", top: top + float, width, height: width * (src.includes("assistant") ? 760 / 360 : 801 / 360), padding: 9, boxSizing: "border-box", borderRadius: 62, background: "linear-gradient(135deg,#635742 0%,#232220 24%,#111214 58%,#78654b 100%)", border: "1px solid rgba(219,185,130,.62)", boxShadow: "0 62px 120px rgba(0,0,0,.76), 0 12px 34px rgba(177,127,68,.19), inset 0 0 0 2px rgba(255,245,225,.12)", opacity: show, scale, translate: "-50% 0px", transform: "perspective(1500px) rotateX(" + tiltX + "deg) rotateY(" + tiltY + "deg) rotateZ(" + rotateZ + "deg) translateZ(70px)", transformStyle: "preserve-3d", filter: "blur(" + interpolate(show, [0, 1], [8, 0]) + "px)" }}>
         <div style={{ position: "absolute", inset: 8, borderRadius: 52, overflow: "hidden", backgroundColor: "#09090a", boxShadow: "inset 0 0 0 1px rgba(255,255,255,.15)" }}>
           <Img src={staticFile("assets/" + src)} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
+          <div style={{ position: "absolute", inset: -120, background: "linear-gradient(112deg,transparent 43%,rgba(255,246,226,.17) 49%,rgba(255,246,226,.025) 53%,transparent 59%)", translate: reflection + "px 0px", opacity: ease(frame, 14, 31) * (1 - ease(frame, 104, 121)) }} />
         </div>
         <div style={{ position: "absolute", left: 18, top: 14, bottom: 14, width: 2, background: "linear-gradient(180deg,transparent,rgba(249,224,180,.36),transparent)", borderRadius: 2 }} />
       </div>
@@ -381,10 +383,10 @@ const OpenTurathFilm = () => {
       <ThreeWorld />
       <Sequence durationInFrames={126} premountFor={fps}><Opening /></Sequence>
       <Sequence from={112} durationInFrames={196} premountFor={fps}>
-        <ProductScene duration={196} number="02" eyebrow="MULAI DARI BIDANG ILMU" lines={["Pilih bidang ilmu", "yang ingin dikaji."]} src="home.jpg" label="Fikih · Hadis · Tafsir · Akidah" top={515} />
+        <ProductScene duration={196} number="02" eyebrow="MULAI DARI BIDANG ILMU" lines={["Pilih bidang ilmu", "yang ingin dikaji."]} src="home.jpg" label="Fikih · Hadis · Tafsir · Akidah" top={590} />
       </Sequence>
       <Sequence from={294} durationInFrames={202} premountFor={fps}>
-        <ProductScene duration={202} number="03" eyebrow="ASISTEN KAJIAN" lines={["Telusuri pembahasan.", "Temukan rujukan kitab."]} src="assistant.jpg" label="Asisten sesuai bidang kajian" top={520} />
+        <ProductScene duration={202} number="03" eyebrow="ASISTEN KAJIAN" lines={["Telusuri pembahasan.", "Temukan rujukan kitab."]} src="assistant.jpg" label="Asisten sesuai bidang kajian" top={590} />
       </Sequence>
       <Sequence from={482} durationInFrames={178} premountFor={fps}><NotesScene /></Sequence>
       <Sequence from={646} durationInFrames={254} premountFor={fps}><Closing /></Sequence>
