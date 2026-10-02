@@ -472,8 +472,8 @@ const NotesScene = () => {
       <div
         style={{
           position: "absolute",
-          left: "50%",
-          top: 1688,
+          left: "57.1%",
+          top: 1628,
           width: 146,
           height: 96,
           border: "2px solid " + ACCENT,
