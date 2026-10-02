@@ -19,13 +19,14 @@ import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/corpus_kind_control.dart';
-import '../widgets/specialist_card.dart';
 import '../widgets/assistant_dossier_card.dart';
 import '../widgets/scholars_coming_soon.dart';
 import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
+import '../widgets/digital_scholar_atm_card.dart';
+import '../widgets/numbered_assistant_list_card.dart';
 import 'main_shell_screen.dart';
 
 class SpecialistListScreen extends StatefulWidget {
@@ -433,62 +434,18 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                     ),
                                     const SizedBox(height: 22),
                                   ],
-                                  if (flagship != null && isGeneralTab &&
+                                  if (isGeneralTab &&
                                       _searchQuery.isEmpty &&
                                       (_selectedFieldId == null ||
                                           _selectedFieldId == 'all' ||
-                                          _selectedFieldId == flagship.fieldId)) ...[
-                                    Material(
-                                      color: OTColors.primaryContainer(isDark),
-                                      borderRadius: BorderRadius.circular(28),
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(28),
-                                        onTap: () => _selectAgent(flagship),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(21),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                Loc.tr('assistantFeatured'),
-                                                style: ScholarlyFonts.outfit(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: OTColors.onPrimaryContainer(isDark),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 11),
-                                              Text(
-                                                flagship.title,
-                                                style: ScholarlyFonts.newsreader(
-                                                  fontSize: 26,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: OTColors.onPrimaryContainer(isDark),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 6),
-                                              Text(
-                                                Loc.tr('assistantFeaturedDesc'),
-                                                style: ScholarlyFonts.outfit(
-                                                  fontSize: 13,
-                                                  height: 1.5,
-                                                  color: OTColors.onPrimaryContainer(isDark),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 11),
-                                              Text(
-                                                Loc.tr('assistantFeaturedAction'),
-                                                style: ScholarlyFonts.outfit(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: OTColors.onPrimaryContainer(isDark),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
+                                          (flagship != null && _selectedFieldId == flagship.fieldId))) ...[
+                                    DigitalScholarAtmCard(
+                                      user: _authService.cachedCurrentUser,
+                                      onTap: () {
+                                        if (flagship != null) {
+                                          _selectAgent(flagship);
+                                        }
+                                      },
                                     ),
                                     const SizedBox(height: 25),
                                   ],
@@ -527,24 +484,13 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                     const SizedBox(height: 26),
                                     _sectionLabel(Loc.tr('assistantMore'), '',
                                         textPrimary, textSecondary),
-                                    const SizedBox(height: 10),
-                                    ...others.map((agent) => Padding(
-                                      padding: const EdgeInsets.only(bottom: 8),
-                                      child: SpecialistCard(
-                                        title: agent.title,
-                                        titleArabic: agent.titleArabic,
-                                        fieldId: agent.fieldId,
-                                        emoji: agent.emoji,
-                                        scopeLabel: agent.subtitleAcademic,
-                                        statusLabel: agent.isComingSoon
-                                            ? AppCopy.comingSoon : null,
-                                        onOpen: () => _selectAgent(agent),
-                                        onOpenLibrary: agent.catalogId != null
-                                            ? () => showResearchLibrary(context,
-                                                agent: agent)
-                                            : null,
-                                      ),
-                                    )),
+                                    const SizedBox(height: 12),
+                                    NumberedAssistantListCard(
+                                      agents: others,
+                                      selectedAgentId: selected.id,
+                                      onSelect: (agent) => _selectAgent(agent),
+                                      isDark: isDark,
+                                    ),
                                   ],
                                 ],
                               );

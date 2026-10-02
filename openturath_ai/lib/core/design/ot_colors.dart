@@ -61,6 +61,7 @@ class OTColors {
   static Color surface(bool isDark) => isDark ? surfaceDark : surfaceLight;
   static Color surfaceSubtle(bool isDark) => isDark ? surfaceSubtleDark : surfaceSubtleLight;
   static Color border(bool isDark) => isDark ? borderDark : borderLight;
+  static Color borderSubtle(bool isDark) => isDark ? borderSubtleDark : borderSubtleLight;
   static Color borderStrong(bool isDark) => isDark ? borderStrongDark : borderStrongLight;
   static Color textPrimary(bool isDark) => isDark ? textPrimaryDark : textPrimaryLight;
   static Color textSecondary(bool isDark) => isDark ? textSecondaryDark : textSecondaryLight;
