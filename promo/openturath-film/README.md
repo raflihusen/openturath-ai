@@ -1,54 +1,19 @@
-# Remotion video
+# OpenTurath promo film
 
-<p align="center">
-  <a href="https://github.com/remotion-dev/logo">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-dark.apng">
-      <img alt="Animated Remotion Logo" src="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-light.gif">
-    </picture>
-  </a>
-</p>
+Editable 30-second vertical motion graphics film built with Remotion. The composition uses the OpenTurath logo, two existing app screenshots, and the Newsreader and Inter fonts already shipped with the app.
 
-Welcome to your Remotion project!
+## Preview and render
 
-## Commands
-
-**Install Dependencies**
-
-```console
-npm i --loglevel=error
-```
-
-**Start Preview**
-
-```console
+```sh
+npm install
 npm run dev
+npx remotion render src/index.ts OpenTurathPromo out/openturath-promo-vertical.mp4 --codec h264
 ```
 
-**Render video**
+Composition: 1080 × 1920, 30 fps, 900 frames. On-screen copy stays visible without audio. The ending asks viewers to check AI answers against the cited book.
 
-```console
-npx remotion render
-```
+## Assets
 
-**Upgrade Remotion**
+The screenshots and logo are copies of files from the OpenTurath workspace. The included font license files are from the app's font assets. No third-party music or stock footage is used.
 
-```console
-npx remotion upgrade
-```
-
-## Docs
-
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
-
-## Help
-
-We provide help on our [Discord server](https://discord.gg/6VzzNDwUwV).
-
-## Issues
-
-Found an issue with Remotion? [File an issue here](https://github.com/remotion-dev/remotion/issues/new).
-
-## License
-
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
+Remotion's licensing terms vary with team size and use. See [Remotion license and pricing](https://www.remotion.dev/docs/license/pricing).
