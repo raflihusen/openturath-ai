@@ -11,490 +11,341 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { ThreeCanvas } from "@remotion/three";
+import * as THREE from "three";
 
 const WIDTH = 1080;
 const HEIGHT = 1920;
 const FPS = 30;
 const DURATION = 900;
-const PAPER = "#eeece5";
-const INK = "#171716";
-const MUTED = "#77746d";
-const RULE = "#c9c4b9";
-const ACCENT = "#a87742";
+const INK = "#0b0b0c";
+const PAPER = "#f3eee5";
+const GOLD = "#c99c61";
 const OUT = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
-const EASE = Easing.bezier(0.22, 1, 0.36, 1);
+const EASE = Easing.bezier(0.16, 1, 0.3, 1);
 
-const progress = (frame: number, start: number, end: number) =>
-  interpolate(frame, [start, end], [0, 1], {
-    ...OUT,
-    easing: EASE,
-  });
+const ease = (frame: number, start: number, end: number) =>
+  interpolate(frame, [start, end], [0, 1], { ...OUT, easing: EASE });
 
-const arrive = (frame: number, fps: number, delay = 0) =>
+const springIn = (frame: number, fps: number, delay = 0) =>
   spring({
     frame: frame - delay,
     fps,
-    config: { damping: 200, mass: 0.9, stiffness: 105 },
+    config: { damping: 22, mass: 0.8, stiffness: 90 },
   });
 
-const textStyle = (
-  fontSize: number,
-  color = INK,
+const font = (
+  size: number,
+  color = PAPER,
   family = "OTInter",
 ): CSSProperties => ({
   color,
   fontFamily: family,
-  fontSize,
-  lineHeight: 1.12,
-  letterSpacing: family === "OTNewsreader" ? "-0.025em" : "-0.015em",
+  fontSize: size,
+  lineHeight: 1.04,
+  letterSpacing: family === "OTNewsreader" ? "-0.035em" : "-0.025em",
 });
 
-const SmallLabel = ({ children }: { children: ReactNode }) => (
-  <div
-    style={{
-      ...textStyle(23, MUTED),
-      letterSpacing: "0.16em",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    }}
-  >
-    {children}
+const FONT_FACES = (
+  <style>
+    {"@font-face{font-family:OTNewsreader;src:url(" +
+      staticFile("assets/fonts/Newsreader.ttf") +
+      ") format('truetype');font-weight:600;font-display:block}" +
+      "@font-face{font-family:OTInter;src:url(" +
+      staticFile("assets/fonts/Inter.ttf") +
+      ") format('truetype');font-weight:100 900;font-display:block}"}
+  </style>
+);
+
+const OUTER_ARCH = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-2.25, -2.2, -1.8), new THREE.Vector3(-2.25, 0.45, -1.8),
+  new THREE.Vector3(-2.1, 1.15, -1.8), new THREE.Vector3(-1.45, 1.8, -1.8),
+  new THREE.Vector3(0, 2.45, -1.8), new THREE.Vector3(1.45, 1.8, -1.8),
+  new THREE.Vector3(2.1, 1.15, -1.8), new THREE.Vector3(2.25, 0.45, -1.8),
+  new THREE.Vector3(2.25, -2.2, -1.8),
+]);
+const INNER_ARCH = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-1.7, -2.2, -1.95), new THREE.Vector3(-1.7, 0.35, -1.95),
+  new THREE.Vector3(-1.55, 0.95, -1.95), new THREE.Vector3(-1.05, 1.48, -1.95),
+  new THREE.Vector3(0, 1.95, -1.95), new THREE.Vector3(1.05, 1.48, -1.95),
+  new THREE.Vector3(1.55, 0.95, -1.95), new THREE.Vector3(1.7, 0.35, -1.95),
+  new THREE.Vector3(1.7, -2.2, -1.95),
+]);
+
+const Dust = () => {
+  const frame = useCurrentFrame();
+  return (
+    <>
+      {Array.from({ length: 42 }, (_, index) => {
+        const x = Math.sin(index * 12.9898) * 2.2;
+        const y = ((index * 73) % 190) / 42 - 2.25;
+        const z = -2.6 + ((index * 17) % 25) / 10;
+        const size = 0.009 + ((index * 13) % 9) / 1000;
+        const drift = Math.sin(frame * 0.021 + index * 1.7);
+        const lift = (frame * (0.003 + (index % 4) * 0.0007)) % 4.2;
+        return (
+          <mesh key={index} position={[x + drift * 0.08, ((y + lift + 2.1) % 4.2) - 2.1, z]}>
+            <sphereGeometry args={[size, 8, 8]} />
+            <meshBasicMaterial color={index % 3 === 0 ? GOLD : "#e7dfd2"} transparent opacity={0.4 + (index % 4) * 0.1} />
+          </mesh>
+        );
+      })}
+    </>
+  );
+};
+
+const BookModel = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const enter = springIn(frame, fps, 5);
+  const frontness = interpolate(frame, [0, 120, 172, 628, 724, 840, 899], [1, 1, 0.29, 0.27, 0.82, 1, 1], OUT);
+  const scale = interpolate(enter, [0, 1], [0.62, 1.04]) * frontness;
+  const y = interpolate(frame, [0, 120, 172, 628, 724, 899], [-0.62, -0.72, -1.78, -1.78, -0.68, -0.62], { ...OUT, easing: EASE });
+  const depth = interpolate(frame, [0, 120, 172, 628, 724, 899], [0, 0, -1.8, -1.8, 0, 0], OUT);
+  const turn = interpolate(frame, [0, 70, 150, 350, 520, 700, 840, 899], [-0.31, 0.16, 0.52, 0.22, -0.18, -0.43, -0.12, 0.08], { ...OUT, easing: EASE });
+  const bob = Math.sin(frame * 0.027) * 0.055;
+  const pageOpen = interpolate(frame, [0, 22, 82, 140, 176, 655, 740, 850], [0.25, 0.78, 1, 1, 0.92, 0.92, 1, 0.5], { ...OUT, easing: EASE });
+
+  return (
+    <group position={[Math.sin(frame * 0.012) * 0.06, y + bob, depth]} rotation={[0.45 + Math.sin(frame * 0.013) * 0.035, turn, -0.035]} scale={scale}>
+      <mesh position={[0, 0, -0.19]}>
+        <boxGeometry args={[3.62, 2.48, 0.17]} />
+        <meshStandardMaterial color="#49341f" roughness={0.44} metalness={0.36} />
+      </mesh>
+      <mesh position={[0, 0, -0.085]}>
+        <boxGeometry args={[3.48, 2.36, 0.16]} />
+        <meshStandardMaterial color="#e7ddcb" roughness={0.86} />
+      </mesh>
+      <group position={[-0.035, 0, 0.01]} rotation={[0, -pageOpen * 0.19, 0]}>
+        <mesh position={[-0.84, 0, 0.025]}>
+          <boxGeometry args={[1.67, 2.28, 0.045]} />
+          <meshStandardMaterial color="#f6f0e5" roughness={0.78} />
+        </mesh>
+        {Array.from({ length: 7 }, (_, index) => (
+          <mesh key={"l" + index} position={[-0.84, 0.73 - index * 0.23, 0.051]}>
+            <boxGeometry args={[index === 0 ? 0.52 : 1.08 - (index % 3) * 0.11, 0.009, 0.006]} />
+            <meshStandardMaterial color="#9e8667" transparent opacity={0.42} />
+          </mesh>
+        ))}
+        <mesh position={[-0.84, 0.86, 0.057]}>
+          <torusGeometry args={[0.12, 0.008, 6, 36]} />
+          <meshStandardMaterial color={GOLD} metalness={0.65} roughness={0.38} />
+        </mesh>
+      </group>
+      <group position={[0.035, 0, 0.01]} rotation={[0, pageOpen * 0.19, 0]}>
+        <mesh position={[0.84, 0, 0.025]}>
+          <boxGeometry args={[1.67, 2.28, 0.045]} />
+          <meshStandardMaterial color="#f6f0e5" roughness={0.78} />
+        </mesh>
+        {Array.from({ length: 7 }, (_, index) => (
+          <mesh key={"r" + index} position={[0.84, 0.73 - index * 0.23, 0.051]}>
+            <boxGeometry args={[index === 0 ? 0.52 : 1.08 - (index % 3) * 0.11, 0.009, 0.006]} />
+            <meshStandardMaterial color="#9e8667" transparent opacity={0.42} />
+          </mesh>
+        ))}
+        <mesh position={[0.84, 0.86, 0.057]}>
+          <torusGeometry args={[0.12, 0.008, 6, 36]} />
+          <meshStandardMaterial color={GOLD} metalness={0.65} roughness={0.38} />
+        </mesh>
+      </group>
+      <mesh position={[0, 0, 0.016]}>
+        <boxGeometry args={[0.075, 2.25, 0.055]} />
+        <meshStandardMaterial color="#b59163" metalness={0.72} roughness={0.32} />
+      </mesh>
+    </group>
+  );
+};
+
+const ThreeWorld = () => {
+  const frame = useCurrentFrame();
+  const { width, height } = useVideoConfig();
+  const canvasOpacity = interpolate(frame, [0, 12, 882, 899], [0, 1, 1, 0], OUT);
+  const orbit = frame * 0.0024;
+
+  return (
+    <AbsoluteFill style={{ opacity: canvasOpacity, pointerEvents: "none" }}>
+      <ThreeCanvas width={width} height={height} camera={{ position: [0, 0, 9], fov: 36 }} gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} style={{ position: "absolute", inset: 0 }}>
+        <ambientLight intensity={0.72} />
+        <directionalLight position={[3.5, 4.5, 7]} intensity={2.1} color="#f8ead0" />
+        <pointLight position={[-4, -1, 4]} intensity={4.4} color="#bd8950" />
+        <pointLight position={[4, 2, -1]} intensity={2.8} color="#877458" />
+        <mesh position={[0, 0, -4.5]} rotation={[0.14, Math.sin(frame * 0.005) * 0.12, orbit]}>
+          <torusGeometry args={[2.78, 0.008, 6, 180]} />
+          <meshBasicMaterial color="#a98559" transparent opacity={0.27} />
+        </mesh>
+        <mesh position={[0, 0, -4.2]} rotation={[0.24, -0.15, -orbit * 0.66]}>
+          <torusGeometry args={[2.34, 0.006, 6, 180]} />
+          <meshBasicMaterial color="#e4d7c4" transparent opacity={0.16} />
+        </mesh>
+        <mesh position={[0, 0, -2.3]}>
+          <tubeGeometry args={[OUTER_ARCH, 100, 0.011, 6, false]} />
+          <meshBasicMaterial color={GOLD} transparent opacity={0.34} />
+        </mesh>
+        <mesh position={[0, 0, -2.4]}>
+          <tubeGeometry args={[INNER_ARCH, 100, 0.007, 6, false]} />
+          <meshBasicMaterial color="#f0e8dc" transparent opacity={0.2} />
+        </mesh>
+        <Dust />
+        <BookModel />
+      </ThreeCanvas>
+    </AbsoluteFill>
+  );
+};
+
+const Atmosphere = () => (
+  <AbsoluteFill style={{ overflow: "hidden", backgroundColor: INK }}>
+    <AbsoluteFill style={{ background: "radial-gradient(ellipse at 50% 46%, rgba(96,68,39,.30) 0%, rgba(30,25,20,.23) 31%, rgba(11,11,12,.90) 78%), linear-gradient(135deg,#141311 0%,#090a0d 52%,#13100d 100%)" }} />
+    <AbsoluteFill style={{ opacity: 0.28, background: "linear-gradient(90deg, transparent 49.8%, rgba(214,183,136,.10) 50%, transparent 50.2%)" }} />
+    <div style={{ position: "absolute", inset: 76, border: "1px solid rgba(206,178,138,.12)", borderRadius: 4 }} />
+    <div style={{ position: "absolute", left: 76, top: 278, width: 928, height: 1, background: "linear-gradient(90deg,rgba(203,166,113,.36),rgba(203,166,113,.02))" }} />
+    <div style={{ position: "absolute", left: 76, bottom: 234, width: 928, height: 1, background: "linear-gradient(90deg,rgba(203,166,113,.02),rgba(203,166,113,.30))" }} />
+  </AbsoluteFill>
+);
+
+const Wordmark = ({ top, centered = false, size = 42 }: { top: number; centered?: boolean; size?: number }) => (
+  <div style={{ position: "absolute", top, left: centered ? "50%" : 156, translate: centered ? "-50% 0px" : "0px 0px", ...font(size, PAPER, "OTNewsreader"), fontWeight: 600, whiteSpace: "nowrap" }}>
+    OpenTurath
   </div>
 );
 
-const FilmBackground = () => {
-  const frame = useCurrentFrame();
-  const drift = interpolate(frame, [0, DURATION], [-36, 36], OUT);
-
-  return (
-    <AbsoluteFill style={{ overflow: "hidden", backgroundColor: PAPER }}>
-      <AbsoluteFill
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 38%, #f8f6f0 0%, #f0eee8 58%, #e7e3da 100%)",
-        }}
-      />
-      <svg
-        aria-hidden="true"
-        width={WIDTH}
-        height={HEIGHT}
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-        style={{ position: "absolute", inset: 0, opacity: 0.52 }}
-      >
-        <path
-          d="M 110 1810 L 110 700 C 110 390 310 195 540 195 C 770 195 970 390 970 700 L 970 1810"
-          fill="none"
-          stroke={RULE}
-          strokeWidth="1.5"
-        />
-        <path
-          d="M 176 1810 L 176 748 C 176 478 336 310 540 310 C 744 310 904 478 904 748 L 904 1810"
-          fill="none"
-          stroke={RULE}
-          strokeWidth="1"
-          opacity="0.68"
-        />
-        <path d="M 84 254 L 996 254" stroke={RULE} strokeWidth="1" />
-        <path d="M 84 1666 L 996 1666" stroke={RULE} strokeWidth="1" opacity="0.62" />
-      </svg>
-      <div
-        style={{
-          position: "absolute",
-          left: 86,
-          top: 254,
-          width: 1,
-          height: 1,
-          backgroundColor: ACCENT,
-          boxShadow: `0 0 0 4px ${PAPER}, 0 0 0 5px ${ACCENT}`,
-          translate: `${Math.round(drift)}px 0px`,
-          opacity: 0.65,
-        }}
-      />
-    </AbsoluteFill>
-  );
-};
-
-const FontFaces = () => (
-  <style>{
-    "@font-face{font-family:OTNewsreader;src:url(" +
-    staticFile("assets/fonts/Newsreader.ttf") +
-    ") format('truetype');font-weight:600;font-display:block}" +
-    "@font-face{font-family:OTInter;src:url(" +
-    staticFile("assets/fonts/Inter.ttf") +
-    ") format('truetype');font-weight:100 900;font-display:block}"
-  }</style>
+const BrandGlyph = ({ size = 56, left = 78, top = 150 }: { size?: number; left?: number; top?: number }) => (
+  <Img src={staticFile("assets/openturath-mark.svg")} style={{ position: "absolute", left, top, width: size, height: size, objectFit: "contain", filter: "brightness(0) saturate(100%) invert(83%) sepia(29%) saturate(382%) hue-rotate(352deg) brightness(88%) contrast(87%)" }} />
 );
 
-const SceneFrame = ({
-  children,
-  duration,
-}: {
-  children: ReactNode;
-  duration: number;
-}) => {
-  const frame = useCurrentFrame();
-  const fadeIn = progress(frame, 0, 18);
-  const fadeOut = interpolate(
-    frame,
-    [duration - 18, duration - 1],
-    [1, 0],
-    { ...OUT, easing: EASE },
-  );
+const BrandHeader = ({ top = 148 }: { top?: number }) => (
+  <>
+    <BrandGlyph top={top} />
+    <Wordmark top={top + 7} size={41} />
+    <div style={{ position: "absolute", left: 160, top: top + 56, ...font(13, "rgba(239,231,218,.50)"), letterSpacing: "0.31em", fontWeight: 600 }}>RUANG KAJIAN DIGITAL</div>
+  </>
+);
 
+const Eyebrow = ({ children, frame, top = 340 }: { children: ReactNode; frame: number; top?: number }) => {
+  const reveal = ease(frame, 0, 18);
   return (
-    <AbsoluteFill style={{ opacity: Math.min(fadeIn, fadeOut) }}>
-      {children}
-    </AbsoluteFill>
-  );
-};
-
-const BrandMark = ({
-  width,
-  top,
-  frame,
-  fps,
-}: {
-  width: number;
-  top: number;
-  frame: number;
-  fps: number;
-}) => {
-  const reveal = arrive(frame, fps, 7);
-  const scale = interpolate(reveal, [0, 1], [0.91, 1]);
-
-  return (
-    <Img
-      src={staticFile("assets/openturath-mark.svg")}
-      style={{
-        position: "absolute",
-        left: "50%",
-        top,
-        width,
-        height: width,
-        objectFit: "contain",
-        opacity: progress(frame, 0, 30),
-        scale,
-        translate: "-50% 0px",
-      }}
-    />
-  );
-};
-
-const Wordmark = ({
-  top,
-  size,
-  frame,
-  align = "center",
-}: {
-  top: number;
-  size: number;
-  frame: number;
-  align?: "center" | "left";
-}) => {
-  const reveal = arrive(frame, FPS, 22);
-  const y = interpolate(reveal, [0, 1], [22, 0]);
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top,
-        left: align === "center" ? "50%" : 84,
-        width: align === "center" ? "100%" : 900,
-        textAlign: align,
-        ...textStyle(size, INK, "OTNewsreader"),
-        fontWeight: 600,
-        opacity: reveal,
-        translate: (align === "center" ? "-50% " : "0px ") + y + "px",
-      }}
-    >
-      OpenTurath
+    <div style={{ position: "absolute", left: 78, top, display: "flex", alignItems: "center", gap: 16, opacity: reveal, translate: "0px " + interpolate(reveal, [0, 1], [14, 0]) + "px" }}>
+      <div style={{ width: 32, height: 2, backgroundColor: GOLD }} />
+      <div style={{ ...font(20, "#d0b58e"), letterSpacing: "0.2em", fontWeight: 600 }}>{children}</div>
     </div>
   );
 };
 
-const Title = ({
-  children,
-  top,
-  frame,
-  size = 70,
-  width = 900,
-}: {
-  children: ReactNode;
-  top: number;
-  frame: number;
-  size?: number;
-  width?: number;
-}) => {
-  const reveal = arrive(frame, FPS, 4);
-  const y = interpolate(reveal, [0, 1], [32, 0]);
+const KineticLines = ({ lines, frame, top, size = 81, left = 78, width = 920 }: { lines: string[]; frame: number; top: number; size?: number; left?: number; width?: number }) => (
+  <div style={{ position: "absolute", top, left, width, ...font(size, PAPER, "OTNewsreader"), fontWeight: 600 }}>
+    {lines.map((line, index) => {
+      const reveal = springIn(frame, FPS, 5 + index * 5);
+      const offset = interpolate(reveal, [0, 1], [size * 0.95, 0]);
+      return (
+        <div key={line + index} style={{ height: size * 1.09, overflow: "hidden" }}>
+          <div style={{ opacity: reveal, translate: "0px " + offset + "px", filter: "blur(" + interpolate(reveal, [0, 1], [9, 0]) + "px)" }}>{line}</div>
+        </div>
+      );
+    })}
+  </div>
+);
+
+const Counter = ({ frame, number, label }: { frame: number; number: string; label: string }) => {
+  const reveal = ease(frame, 4, 23);
   return (
-    <div
-      style={{
-        position: "absolute",
-        top,
-        left: 84,
-        width,
-        ...textStyle(size, INK, "OTNewsreader"),
-        fontWeight: 600,
-        opacity: reveal,
-        translate: "0px " + y + "px",
-      }}
-    >
-      {children}
+    <div style={{ position: "absolute", right: 78, top: 154, display: "flex", alignItems: "center", gap: 13, opacity: reveal }}>
+      <span style={{ ...font(15, "rgba(238,229,213,.55)"), letterSpacing: "0.13em" }}>{label}</span>
+      <span style={{ ...font(15, GOLD), letterSpacing: "0.1em" }}>{number}</span>
     </div>
   );
 };
 
-const Rule = ({
-  top,
-  frame,
-  width = 910,
-}: {
-  top: number;
-  frame: number;
-  width?: number;
-}) => (
-  <div
-    style={{
-      position: "absolute",
-      top,
-      left: 84,
-      width: width * progress(frame, 8, 32),
-      height: 1,
-      backgroundColor: RULE,
-      opacity: 0.9,
-    }}
-  />
-);
-
-const PhoneScreen = ({
-  src,
-  top,
-  width,
-  duration,
-  focus = 1,
-}: {
-  src: string;
-  top: number;
-  width: number;
-  duration: number;
-  focus?: number;
-}) => {
+const SceneFrame = ({ children, duration }: { children: ReactNode; duration: number }) => {
   const frame = useCurrentFrame();
+  const enter = ease(frame, 0, 10);
+  const leave = interpolate(frame, [duration - 13, duration - 1], [1, 0], { ...OUT, easing: EASE });
+  return <AbsoluteFill style={{ opacity: Math.min(enter, leave) }}>{children}</AbsoluteFill>;
+};
+
+const Phone = ({ src, frame, top = 500, width = 560, tilt = -1 }: { src: string; frame: number; top?: number; width?: number; tilt?: number }) => {
   const { fps } = useVideoConfig();
-  const show = arrive(frame, fps, 9);
-  const y = interpolate(show, [0, 1], [104, 0]);
-  const scale = interpolate(frame, [20, duration], [0.985, 1.025], OUT);
-  const height = width * (src.includes("assistant") ? 760 / 360 : 801 / 360);
+  const show = springIn(frame, fps, 4);
+  const tiltY = interpolate(frame, [0, 24, 80, 142, 190], [tilt * 1.8, tilt, tilt + 1.1, tilt - 1, tilt], OUT);
+  const tiltX = interpolate(frame, [0, 30, 92, 160], [7, 2, -1.5, 1], { ...OUT, easing: EASE });
+  const rotateZ = interpolate(frame, [0, 27, 90, 170], [-3.2, -0.5, 0.9, 0], OUT);
+  const float = Math.sin(frame * 0.055) * 12;
+  const scale = interpolate(show, [0, 1], [0.76, 1]);
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        left: "50%",
-        top,
-        width,
-        height,
-        overflow: "hidden",
-        borderRadius: 54,
-        backgroundColor: "#111110",
-        border: "7px solid #292825",
-        boxShadow:
-          "0 54px 130px rgba(30, 26, 18, 0.24), 0 10px 28px rgba(30, 26, 18, 0.12)",
-        opacity: show,
-        scale,
-        translate: "-50% " + y + "px",
-      }}
-    >
-      <Img
-        src={staticFile("assets/" + src)}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "center",
-          borderRadius: 47,
-          opacity: focus,
-        }}
-      />
-    </div>
+    <>
+      <div style={{ position: "absolute", left: "50%", top: top + 155, width: width * 1.18, height: width * 1.18, borderRadius: "50%", translate: "-50% 0px", background: "radial-gradient(circle,rgba(184,127,66,.16) 0%,rgba(184,127,66,.055) 38%,transparent 70%)", opacity: show }} />
+      <div style={{ position: "absolute", left: "50%", top: top + float, width, height: width * (src.includes("assistant") ? 760 / 360 : 801 / 360), padding: 9, boxSizing: "border-box", borderRadius: 62, background: "linear-gradient(135deg,#635742 0%,#232220 24%,#111214 58%,#78654b 100%)", border: "1px solid rgba(219,185,130,.62)", boxShadow: "0 62px 120px rgba(0,0,0,.76), 0 12px 34px rgba(177,127,68,.19), inset 0 0 0 2px rgba(255,245,225,.12)", opacity: show, scale, translate: "-50% 0px", transform: "perspective(1500px) rotateX(" + tiltX + "deg) rotateY(" + tiltY + "deg) rotateZ(" + rotateZ + "deg) translateZ(70px)", transformStyle: "preserve-3d", filter: "blur(" + interpolate(show, [0, 1], [8, 0]) + "px)" }}>
+        <div style={{ position: "absolute", inset: 8, borderRadius: 52, overflow: "hidden", backgroundColor: "#09090a", boxShadow: "inset 0 0 0 1px rgba(255,255,255,.15)" }}>
+          <Img src={staticFile("assets/" + src)} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
+        </div>
+        <div style={{ position: "absolute", left: 18, top: 14, bottom: 14, width: 2, background: "linear-gradient(180deg,transparent,rgba(249,224,180,.36),transparent)", borderRadius: 2 }} />
+      </div>
+    </>
   );
 };
 
-const SceneLabel = ({
-  children,
-  frame,
-  top = 106,
-}: {
-  children: ReactNode;
-  frame: number;
-  top?: number;
-}) => {
-  const show = progress(frame, 4, 24);
+const ProductScene = ({ duration, number, eyebrow, lines, src, label, top = 506 }: { duration: number; number: string; eyebrow: string; lines: string[]; src: string; label: string; top?: number }) => {
+  const frame = useCurrentFrame();
   return (
-    <div
-      style={{
-        position: "absolute",
-        top,
-        left: 84,
-        display: "flex",
-        alignItems: "center",
-        gap: 18,
-        opacity: show,
-      }}
-    >
-      <div style={{ width: 34, height: 2, backgroundColor: ACCENT }} />
-      <SmallLabel>{children}</SmallLabel>
-    </div>
+    <SceneFrame duration={duration}>
+      <Counter frame={frame} number={number} label="OPENTURATH" />
+      <Eyebrow frame={frame} top={324}>{eyebrow}</Eyebrow>
+      <KineticLines frame={frame} top={375} size={74} lines={lines} />
+      <Phone src={src} frame={frame} top={top} width={548} tilt={-3} />
+      <div style={{ position: "absolute", left: 78, bottom: 126, display: "flex", alignItems: "center", gap: 13, opacity: ease(frame, 30, 48) }}>
+        <div style={{ width: 7, height: 7, borderRadius: 9, backgroundColor: GOLD, boxShadow: "0 0 18px rgba(201,156,97,.78)" }} />
+        <div style={{ ...font(21, "rgba(244,237,226,.72)"), letterSpacing: "0.015em" }}>{label}</div>
+      </div>
+      <div style={{ position: "absolute", right: 78, bottom: 126, ...font(14, "rgba(240,230,213,.44)"), letterSpacing: "0.2em", opacity: ease(frame, 36, 55) }}>{number} / 04</div>
+    </SceneFrame>
   );
 };
 
 const Opening = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const tagline = arrive(frame, fps, 42);
-
+  const reveal = springIn(frame, fps, 44);
+  const flash = interpolate(frame, [32, 39, 54], [0, 0.44, 0], OUT);
   return (
     <SceneFrame duration={126}>
-      <SceneLabel frame={frame} top={300}>RUANG KAJIAN DIGITAL</SceneLabel>
-      <BrandMark width={390} top={405} frame={frame} fps={fps} />
-      <Wordmark top={810} size={112} frame={frame} />
-      <Rule top={960} frame={frame} width={370} />
-      <div
-        style={{
-          position: "absolute",
-          top: 1030,
-          left: 100,
-          right: 100,
-          textAlign: "center",
-          ...textStyle(67, INK, "OTNewsreader"),
-          fontWeight: 600,
-          opacity: tagline,
-          translate:
-            "0px " + interpolate(tagline, [0, 1], [25, 0]) + "px",
-        }}
-      >
-        Membaca kitab, menelusuri ibarah.
+      <BrandHeader top={145} />
+      <Counter frame={frame} number="01" label="SEBUAH RUANG UNTUK MENELUSURI ILMU" />
+      <Eyebrow frame={frame} top={376}>KITAB · IBARAH · RUJUKAN</Eyebrow>
+      <KineticLines frame={frame} top={425} size={88} lines={["Membaca kitab.", "Menelusuri ibarah."]} />
+      <div style={{ position: "absolute", left: 78, top: 666, width: 860, height: 1, background: "linear-gradient(90deg,rgba(201,156,97,.62),rgba(201,156,97,.04))", scale: interpolate(frame, [28, 56], [0.1, 1], OUT), transformOrigin: "left" }} />
+      <div style={{ position: "absolute", left: 78, top: 704, width: 840, ...font(23, "rgba(238,229,213,.65)"), letterSpacing: "0.015em", opacity: reveal, translate: "0px " + interpolate(reveal, [0, 1], [16, 0]) + "px" }}>
+        Ruang digital untuk menelusuri khazanah keilmuan Islam.
       </div>
-      <div
-        style={{
-          position: "absolute",
-          top: 1170,
-          left: 180,
-          right: 180,
-          textAlign: "center",
-          ...textStyle(29, MUTED),
-          opacity: progress(frame, 58, 82),
-        }}
-      >
-        Temukan pembahasan dan rujukan kitab.
-      </div>
+      <AbsoluteFill style={{ backgroundColor: "#f2d4a4", opacity: flash, mixBlendMode: "screen" }} />
     </SceneFrame>
   );
 };
 
-const HomeScene = () => {
-  const frame = useCurrentFrame();
+const NotesFeature = ({ frame }: { frame: number }) => {
+  const { fps } = useVideoConfig();
+  const pop = springIn(frame, fps, 42);
+  const rotate = interpolate(pop, [0, 1], [-13, 0]);
   return (
-    <SceneFrame duration={198}>
-      <SceneLabel frame={frame}>MULAI DARI BIDANG ILMU</SceneLabel>
-      <Title top={168} frame={frame} size={68}>
-        Pilih bidang ilmu
-        <br />
-        yang ingin dikaji.
-      </Title>
-      <Rule top={345} frame={frame} />
-      <PhoneScreen src="home.jpg" top={424} width={622} duration={198} />
-      <div
-        style={{
-          position: "absolute",
-          right: 85,
-          bottom: 74,
-          ...textStyle(24, MUTED),
-          letterSpacing: "0.12em",
-          opacity: progress(frame, 22, 44),
-        }}
-      >
-        BERANDA / 01
-      </div>
-    </SceneFrame>
-  );
-};
-
-const AssistantScene = () => {
-  const frame = useCurrentFrame();
-  return (
-    <SceneFrame duration={216}>
-      <SceneLabel frame={frame}>TELUSURI DENGAN BANTUAN AI</SceneLabel>
-      <Title top={168} frame={frame} size={66}>
-        Cari pembahasan
-        <br />
-        dan rujukan kitab.
-      </Title>
-      <Rule top={345} frame={frame} />
-      <PhoneScreen
-        src="assistant.jpg"
-        top={424}
-        width={622}
-        duration={216}
-      />
-      <div
-        style={{
-          position: "absolute",
-          left: 84,
-          bottom: 73,
-          ...textStyle(26, MUTED),
-          opacity: progress(frame, 36, 60),
-        }}
-      >
-        Pilih asisten sesuai bidang yang dipelajari.
-      </div>
-    </SceneFrame>
+    <div style={{ position: "absolute", right: 53, top: 1310, width: 298, minHeight: 198, padding: "24px 24px 27px", boxSizing: "border-box", borderRadius: 18, background: "linear-gradient(142deg,rgba(247,239,223,.98),rgba(215,201,179,.95))", color: INK, boxShadow: "0 30px 70px rgba(0,0,0,.54),0 1px 0 rgba(255,255,255,.72) inset", transform: "perspective(850px) rotateY(-15deg) rotateZ(" + rotate + "deg) translateZ(110px)", opacity: pop, scale: interpolate(pop, [0, 1], [0.62, 1]) }}>
+      <div style={{ ...font(14, "#765632"), letterSpacing: "0.18em", fontWeight: 700 }}>CATATAN</div>
+      <div style={{ marginTop: 17, height: 1, backgroundColor: "rgba(72,55,35,.2)" }} />
+      <div style={{ marginTop: 17, ...font(23, "#211d18", "OTNewsreader"), fontWeight: 600, lineHeight: 1.14 }}>Jawaban dan kutipan</div>
+      <div style={{ marginTop: 8, ...font(15, "#756b5b"), lineHeight: 1.32 }}>Tersimpan untuk dibaca kembali.</div>
+      <div style={{ position: "absolute", right: 19, bottom: 21, width: 24, height: 24, border: "1px solid rgba(125,91,53,.48)", borderRadius: "50%", color: "#765632", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15 }}>↗</div>
+    </div>
   );
 };
 
 const NotesScene = () => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const pulse = progress(frame, 72, 92);
-  const ringScale = interpolate(arrive(frame, fps, 46), [0, 1], [0.76, 1]);
-
   return (
-    <SceneFrame duration={198}>
-      <SceneLabel frame={frame}>CATATAN</SceneLabel>
-      <Title top={168} frame={frame} size={66}>
-        Simpan untuk
-        <br />
-        dibaca kembali.
-      </Title>
-      <Rule top={345} frame={frame} />
-      <PhoneScreen src="home.jpg" top={424} width={610} duration={198} />
-      <div
-        style={{
-          position: "absolute",
-          left: "57.1%",
-          top: 1628,
-          width: 146,
-          height: 96,
-          border: "2px solid " + ACCENT,
-          borderRadius: 30,
-          opacity: pulse * 0.92,
-          scale: ringScale,
-          translate: "-50% 0px",
-          boxShadow: "0 0 0 12px rgba(168, 119, 66, 0.08)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          left: 84,
-          bottom: 78,
-          ...textStyle(25, MUTED),
-          opacity: progress(frame, 36, 58),
-        }}
-      >
-        Simpan jawaban atau kutipan ke Catatan.
-      </div>
+    <SceneFrame duration={178}>
+      <Counter frame={frame} number="04" label="JEJAK KAJIAN" />
+      <Eyebrow frame={frame} top={324}>CATATAN PRIBADI</Eyebrow>
+      <KineticLines frame={frame} top={375} size={74} lines={["Simpan yang penting.", "Lanjutkan kapan saja."]} />
+      <Phone src="home.jpg" frame={frame} top={512} width={520} tilt={-2} />
+      <div style={{ position: "absolute", left: "57.1%", top: 1658, width: 137, height: 93, border: "2px solid " + GOLD, borderRadius: 27, translate: "-50% 0px", opacity: ease(frame, 41, 56), boxShadow: "0 0 34px rgba(201,156,97,.36),0 0 0 11px rgba(201,156,97,.08)" }} />
+      <NotesFeature frame={frame} />
+      <div style={{ position: "absolute", left: 78, bottom: 126, ...font(20, "rgba(244,237,226,.70)"), opacity: ease(frame, 48, 64) }}>Simpan jawaban atau kutipan ke Catatan.</div>
     </SceneFrame>
   );
 };
@@ -502,119 +353,45 @@ const NotesScene = () => {
 const Closing = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const reveal = arrive(frame, fps, 10);
-
+  const reveal = springIn(frame, fps, 28);
+  const line = ease(frame, 45, 78);
   return (
-    <SceneFrame duration={234}>
-      <SceneLabel frame={frame} top={300}>OPENTURATH</SceneLabel>
-      <BrandMark width={300} top={405} frame={frame} fps={fps} />
-      <Wordmark top={745} size={104} frame={frame} />
-      <div
-        style={{
-          position: "absolute",
-          top: 908,
-          left: 130,
-          right: 130,
-          textAlign: "center",
-          ...textStyle(62, INK, "OTNewsreader"),
-          fontWeight: 600,
-          opacity: reveal,
-        }}
-      >
-        Membaca kitab,
-        <br />
-        menelusuri ibarah.
+    <SceneFrame duration={254}>
+      <Counter frame={frame} number="05" label="OPEN TURATH" />
+      <div style={{ position: "absolute", left: "50%", top: 358, width: 158, height: 158, translate: "-50% 0px", borderRadius: "50%", border: "1px solid rgba(203,166,113,.35)", boxShadow: "0 0 80px rgba(201,156,97,.14), inset 0 0 42px rgba(201,156,97,.12)", opacity: reveal, scale: interpolate(reveal, [0, 1], [0.55, 1]) }} />
+      <BrandGlyph left={504} top={405} size={70} />
+      <div style={{ position: "absolute", top: 565, left: "50%", translate: "-50% 0px", ...font(88, PAPER, "OTNewsreader"), fontWeight: 600, opacity: reveal, scale: interpolate(reveal, [0, 1], [0.82, 1]) }}>OpenTurath</div>
+      <div style={{ position: "absolute", top: 716, left: 140, right: 140, textAlign: "center", ...font(30, "rgba(239,231,219,.72)"), letterSpacing: "0.025em", opacity: ease(frame, 46, 75) }}>Membaca kitab, menelusuri ibarah.</div>
+      <div style={{ position: "absolute", left: "50%", top: 880, width: 660, height: 1, translate: "-50% 0px", background: "linear-gradient(90deg,transparent,rgba(201,156,97,.72),transparent)", scale: line, transformOrigin: "center" }} />
+      <div style={{ position: "absolute", left: "50%", top: 926, width: 606, height: 102, border: "1px solid rgba(224,184,124,.7)", borderRadius: 52, translate: "-50% 0px", display: "flex", alignItems: "center", justifyContent: "center", gap: 22, background: "linear-gradient(110deg,rgba(201,156,97,.20),rgba(201,156,97,.04))", boxShadow: "0 0 42px rgba(201,156,97,.10),inset 0 0 24px rgba(255,255,255,.035)", ...font(27, PAPER), letterSpacing: "0.045em", opacity: reveal, scale: interpolate(reveal, [0, 1], [0.92, 1]) }}>
+        JELAJAHI OPENTURATH <span style={{ color: GOLD, fontSize: 32 }}>↗</span>
       </div>
-      <div
-        style={{
-          position: "absolute",
-          left: "50%",
-          top: 1180,
-          width: 620,
-          height: 102,
-          borderRadius: 51,
-          backgroundColor: INK,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 22,
-          color: PAPER,
-          ...textStyle(31, PAPER),
-          letterSpacing: "0.015em",
-          opacity: reveal,
-          scale: interpolate(reveal, [0, 1], [0.96, 1]),
-          translate: "-50% 0px",
-        }}
-      >
-        Jelajahi OpenTurath
-        <span style={{ fontSize: 34, color: "#d5b28a" }}>↗</span>
-      </div>
-      <Rule top={1395} frame={frame} width={450} />
-      <div
-        style={{
-          position: "absolute",
-          top: 1452,
-          left: 150,
-          right: 150,
-          textAlign: "center",
-          ...textStyle(26, MUTED),
-          lineHeight: 1.35,
-          opacity: progress(frame, 80, 105),
-        }}
-      >
-        Jawaban AI perlu diperiksa pada kitab yang dirujuk.
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          bottom: 86,
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          ...textStyle(22, MUTED),
-          letterSpacing: "0.16em",
-          opacity: progress(frame, 135, 160),
-        }}
-      >
-        OPEN TURATH / RUANG KAJIAN DIGITAL
-      </div>
+      <div style={{ position: "absolute", left: 154, right: 154, top: 1126, textAlign: "center", ...font(17, "rgba(236,226,211,.50)"), lineHeight: 1.4, opacity: ease(frame, 90, 116) }}>Jawaban AI tetap perlu diperiksa pada kitab yang dirujuk.</div>
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 111, textAlign: "center", ...font(13, "rgba(236,226,211,.42)"), letterSpacing: "0.25em", opacity: ease(frame, 150, 174) }}>ILMU · WARISAN · MANFAAT</div>
     </SceneFrame>
   );
 };
 
 const OpenTurathFilm = () => {
   const { fps } = useVideoConfig();
-
   return (
-    <AbsoluteFill style={{ color: INK, fontFamily: "OTInter" }}>
-      <FontFaces />
-      <FilmBackground />
-      <Sequence durationInFrames={126} premountFor={fps}>
-        <Opening />
+    <AbsoluteFill style={{ color: PAPER, fontFamily: "OTInter", backgroundColor: INK }}>
+      {FONT_FACES}
+      <Atmosphere />
+      <ThreeWorld />
+      <Sequence durationInFrames={126} premountFor={fps}><Opening /></Sequence>
+      <Sequence from={112} durationInFrames={196} premountFor={fps}>
+        <ProductScene duration={196} number="02" eyebrow="MULAI DARI BIDANG ILMU" lines={["Pilih bidang ilmu", "yang ingin dikaji."]} src="home.jpg" label="Fikih · Hadis · Tafsir · Akidah" top={515} />
       </Sequence>
-      <Sequence from={108} durationInFrames={198} premountFor={fps}>
-        <HomeScene />
+      <Sequence from={294} durationInFrames={202} premountFor={fps}>
+        <ProductScene duration={202} number="03" eyebrow="ASISTEN KAJIAN" lines={["Telusuri pembahasan.", "Temukan rujukan kitab."]} src="assistant.jpg" label="Asisten sesuai bidang kajian" top={520} />
       </Sequence>
-      <Sequence from={288} durationInFrames={216} premountFor={fps}>
-        <AssistantScene />
-      </Sequence>
-      <Sequence from={486} durationInFrames={198} premountFor={fps}>
-        <NotesScene />
-      </Sequence>
-      <Sequence from={666} durationInFrames={234} premountFor={fps}>
-        <Closing />
-      </Sequence>
+      <Sequence from={482} durationInFrames={178} premountFor={fps}><NotesScene /></Sequence>
+      <Sequence from={646} durationInFrames={254} premountFor={fps}><Closing /></Sequence>
     </AbsoluteFill>
   );
 };
 
 export const MyComposition = () => (
-  <Composition
-    id="OpenTurathPromo"
-    component={OpenTurathFilm}
-    durationInFrames={DURATION}
-    fps={FPS}
-    width={WIDTH}
-    height={HEIGHT}
-  />
+  <Composition id="OpenTurathPromo" component={OpenTurathFilm} durationInFrames={DURATION} fps={FPS} width={WIDTH} height={HEIGHT} />
 );
