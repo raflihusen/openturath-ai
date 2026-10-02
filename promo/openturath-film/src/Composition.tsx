@@ -589,7 +589,7 @@ const OpenTurathFilm = () => {
     <AbsoluteFill style={{ color: INK, fontFamily: "OTInter" }}>
       <FontFaces />
       <FilmBackground />
-      <Sequence from={0} durationInFrames={126} premountFor={fps}>
+      <Sequence durationInFrames={126} premountFor={fps}>
         <Opening />
       </Sequence>
       <Sequence from={108} durationInFrames={198} premountFor={fps}>
