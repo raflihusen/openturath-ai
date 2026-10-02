@@ -35,8 +35,8 @@ const CAM: Key[] = [
   [345, [0.25, -0.76, -4.15], [HERO.x, -0.86, -7.6]],
   [398, [0, -0.48, -2.55], [P.x, P.y, P.z]],
   [432, [0, -0.46, -2.4], [P.x, P.y, P.z]],
-  [492, [SPREAD.x, 0.7, -2.8], [SPREAD.x, P.y - 0.05, P.z]],
-  [640, [SPREAD.x, 0.6, -3.0], [SPREAD.x, P.y - 0.05, P.z]],
+  [492, [SPREAD.x, 1.05, -1.75], [SPREAD.x, P.y - 0.05, P.z]],
+  [640, [SPREAD.x, 0.95, -1.95], [SPREAD.x, P.y - 0.05, P.z]],
   [700, [0.15, 0.25, -1.55], [0.15, -0.25, -4.6]],
   [772, [0.1, 0.22, -1.25], [0.1, -0.22, -4.6]],
   [845, [0, 0.35, 3.1], [0, 0.35, 0]],
@@ -61,8 +61,8 @@ const LIFT: [number, number][] = [
   [300, 0.22],
   [398, 0.42],
   [432, 0.42],
-  [492, 0.32],
-  [640, 0.32],
+  [492, 0.75],
+  [640, 0.75],
   [700, 0.3],
   [772, 0.3],
   [845, 0],
@@ -88,10 +88,11 @@ const FOG: [number, number, number][] = [
   // frame, near, far
   [0, 1.5, 7.5],
   [110, 2.5, 9],
-  [150, 2.0, 7],
-  [180, 4.5, 8.5],
-  [242, 4.5, 8.5],
-  [275, 3.0, 9],
+  [140, 2.5, 9],
+  [180, 4.5, 9.5],
+  [242, 4.5, 9.5],
+  [262, 6, 15],
+  [282, 3.5, 11],
   [300, 2.5, 10],
   [430, 2.5, 9],
   [640, 2.2, 8],
@@ -188,8 +189,8 @@ const HeroBook = () => {
   const tex = useMemo(() => buildHeroTextures(), []);
   const mats = useMemo(() => {
     const cloth = new THREE.MeshStandardMaterial({ color: HERO.shade.bg, roughness: 0.62, metalness: 0.05 });
-    const paper = new THREE.MeshStandardMaterial({ color: "#d9d6cf", roughness: 0.95 });
-    const page = new THREE.MeshStandardMaterial({ map: tex.page, roughness: 0.9 });
+    const paper = new THREE.MeshStandardMaterial({ color: "#a9a7a2", roughness: 0.95 });
+    const page = new THREE.MeshStandardMaterial({ map: tex.page, color: "#9c9a96", roughness: 0.9 });
     const cover = new THREE.MeshStandardMaterial({ map: tex.cover, roughness: 0.55, metalness: 0.08 });
     const spine = new THREE.MeshStandardMaterial({ map: tex.spine, roughness: 0.6 });
     return { cloth, paper, page, cover, spine };
@@ -322,8 +323,8 @@ const Logo = ({ portrait }: { portrait: boolean }) => {
     [],
   );
   // brand entrance, fly-through exit, closing return
-  const inA = p(frame, 160, 215, EASE_IN_OUT);
-  const outA = p(frame, 246, 272);
+  const inA = p(frame, 132, 205, EASE_IN_OUT);
+  const outA = p(frame, 240, 268);
   const inB = p(frame, 792, 850, EASE_IN_OUT);
   const brandPhase = frame < 500;
   const opacity = brandPhase ? inA * (1 - outA) : inB;
@@ -331,7 +332,7 @@ const Logo = ({ portrait }: { portrait: boolean }) => {
   mat.depthWrite = opacity > 0.98;
   const wob = Math.sin(frame / 40) * 0.02;
   const ry = brandPhase ? mix(-1.05, 0, inA) + outA * 0.25 + wob : mix(0.9, 0, inB) + wob;
-  const y = brandPhase ? mix(-0.2, portrait ? 0.62 : 0.3, inA) : portrait ? mix(0.75, 0.86, inB) : mix(0.2, 0.35, inB);
+  const y = brandPhase ? mix(-0.2, portrait ? 0.62 : 0.3, inA) : portrait ? mix(0.52, 0.64, inB) : mix(0.2, 0.35, inB);
   const size = brandPhase ? 1.3 * mix(0.85, 1, inA) * (1 + outA * 0.6) : (portrait ? 0.62 : 0.66) * mix(0.88, 1, inB);
   const s = size / 1024;
   return (

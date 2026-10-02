@@ -30,7 +30,12 @@ export const Words = ({
       style={{
         display: "flex",
         flexWrap: "wrap",
-        justifyContent: align === "center" ? "center" : align === "right" ? "flex-end" : "flex-start",
+        justifyContent:
+          align === "center"
+            ? "center"
+            : (align === "right") !== (dir === "rtl")
+              ? "flex-end"
+              : "flex-start",
         columnGap: "0.24em",
         ...style,
       }}
