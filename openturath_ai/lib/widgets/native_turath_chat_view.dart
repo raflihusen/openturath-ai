@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/app_snackbar.dart';
 import '../core/copied_answer.dart';
 import '../core/design/ot_colors.dart';
@@ -12,6 +11,7 @@ import '../models/answer_citation.dart';
 import '../models/turath_chat_message.dart';
 import '../services/bookmark_service.dart';
 import '../core/localization.dart';
+import '../core/scholarly_fonts.dart';
 
 /// Antarmuka obrolan 100% native Flutter dengan estetika "The Quiet Islamic Scholar".
 class NativeTurathChatView extends StatefulWidget {
@@ -216,7 +216,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
             Text(
               widget.agent.title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -270,7 +270,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         ),
         child: Text(
           label,
-          style: GoogleFonts.outfit(
+          style: ScholarlyFonts.outfit(
             fontSize: 12.5,
             fontWeight: FontWeight.w500,
             color: textPrimary,
@@ -310,7 +310,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
             ),
             child: Text(
               msg.text,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 14.5,
                 height: 1.5,
                 color: textPrimary,
@@ -346,17 +346,17 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                     // Answers are untrusted display text. Do not fetch embedded image URLs.
                     sizedImageBuilder: (config) => Text(config.alt ?? ''),
                     styleSheet: MarkdownStyleSheet(
-                      p: GoogleFonts.outfit(
+                      p: ScholarlyFonts.outfit(
                         fontSize: 14.5,
                         height: 1.65,
                         color: textPrimary,
                       ),
-                      strong: GoogleFonts.outfit(
+                      strong: ScholarlyFonts.outfit(
                         fontSize: 14.5,
                         fontWeight: FontWeight.w700,
                         color: textPrimary,
                       ),
-                      blockquote: GoogleFonts.outfit(
+                      blockquote: ScholarlyFonts.outfit(
                         fontSize: 14,
                         fontStyle: FontStyle.italic,
                         height: 1.6,
@@ -431,7 +431,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
               trimmed,
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.right,
-              style: GoogleFonts.scheherazadeNew(
+              style: ScholarlyFonts.scheherazadeNew(
                 fontSize: 19,
                 height: 2.2,
                 fontWeight: FontWeight.w500,
@@ -444,7 +444,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: Text(
               trimmed,
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 14.5,
                 height: 1.6,
                 color: textPrimary,
@@ -465,7 +465,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
             'Menelaah rujukan & menyusun penjelasan ilmiah...',
-            style: GoogleFonts.outfit(
+            style: ScholarlyFonts.outfit(
               fontSize: 13,
               fontStyle: FontStyle.italic,
               color: textSecondary,
@@ -516,13 +516,13 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                   focusNode: _focusNode,
                   maxLines: 4,
                   minLines: 1,
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 14,
                     color: textPrimary,
                   ),
                   decoration: InputDecoration(
                     hintText: Loc.tr('askQuestionHint'),
-                    hintStyle: GoogleFonts.outfit(
+                    hintStyle: ScholarlyFonts.outfit(
                       fontSize: 13.5,
                       color: textSecondary.withAlpha(160),
                     ),

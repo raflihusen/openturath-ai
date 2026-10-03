@@ -6,7 +6,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/notebook_navigation.dart';
 import '../core/notebook_ui_script.dart';
@@ -1248,7 +1247,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     Expanded(
                       child: Text(
                         AppCopy.adabDialogTitle,
-                        style: GoogleFonts.newsreader(
+                        style: ScholarlyFonts.newsreader(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
@@ -1271,7 +1270,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 Text(
                   'التعلم بالتلقي عن الأشياخ هو الأصل',
                   textDirection: TextDirection.rtl,
-                  style: GoogleFonts.scheherazadeNew(
+                  style: ScholarlyFonts.scheherazadeNew(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -1280,7 +1279,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(height: 8),
                 Text(
                   AppCopy.adabDialogLead,
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 12.5,
                     height: 1.45,
                     color: textSecondary,
@@ -1334,7 +1333,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     ),
                     child: Text(
                       AppCopy.adabAcknowledgeButton,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1350,7 +1349,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     },
                     child: Text(
                       'Baca panduan rujukan selengkapnya',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                         decoration: TextDecoration.underline,
@@ -1389,7 +1388,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             children: [
               Text(
                 title,
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
@@ -1398,7 +1397,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               const SizedBox(height: 2),
               Text(
                 description,
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 12,
                   height: 1.35,
                   color: textSecondary,
@@ -1611,7 +1610,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     }
                   },
                   child: Text(Loc.tr('delete'),
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                           fontWeight: FontWeight.w600, color: Colors.white)),
                 ),
               ],

@@ -146,6 +146,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ),
+                // Ponsel: rak kitab tampil di atas formulir.
+                if (viewport.maxWidth < 900 && viewport.maxHeight >= 640)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: Container(
+                      height: viewport.maxHeight * 0.34,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: OTColors.inverseSurface(dark),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: dark
+                                ? OTColors.border(dark)
+                                : OTColors.inverseSurface(dark)),
+                      ),
+                      child: const ExcludeSemantics(
+                          child: LibraryCanvas(compact: true)),
+                    ),
+                  ),
                 Expanded(
                   child: Center(
                     child: SingleChildScrollView(
@@ -255,7 +274,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: secondary),
                                   children: [
                                     TextSpan(
-                                      text: AppCopy.termsOfService,
+                                      text: AppCopy.termsOfService
+                                          .replaceAll(' ', '\u00A0'),
                                       style: TextStyle(
                                         color: primary,
                                         decoration: TextDecoration.underline,
@@ -264,7 +284,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     const TextSpan(text: ' · '),
                                     TextSpan(
-                                      text: AppCopy.privacyPolicy,
+                                      text: AppCopy.privacyPolicy
+                                          .replaceAll(' ', '\u00A0'),
                                       style: TextStyle(
                                         color: primary,
                                         decoration: TextDecoration.underline,

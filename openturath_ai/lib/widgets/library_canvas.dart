@@ -11,7 +11,10 @@ import '../services/open_turath_catalog_repository.dart';
 /// lengkung logo. Judul yang melewati garis baca menyala dan digarisbawahi,
 /// dan [onFocus] menerima kitab itu agar keterangannya bisa ditampilkan.
 class LibraryCanvas extends StatefulWidget {
-  const LibraryCanvas({super.key, this.onFocus});
+  const LibraryCanvas({super.key, this.onFocus, this.compact = false});
+
+  /// Kanvas pendek (ponsel): lengkung mengisi hampir seluruh tinggi.
+  final bool compact;
 
   final ValueChanged<OpenTurathBook>? onFocus;
 
@@ -22,15 +25,15 @@ class LibraryCanvas extends StatefulWidget {
 class _LibraryCanvasState extends State<LibraryCanvas>
     with SingleTickerProviderStateMixin {
   static const _modules = ['fiqh_syafii', 'hadits', 'tafsir', 'ushul_fiqh'];
-  static const _columns = 3;
+  static const _columns = 2;
   static const _rowHeight = 46.0;
   static const _speed = 13.0; // px per detik
 
   late final AnimationController _clock = AnimationController(
       vsync: this, duration: const Duration(hours: 1));
   List<OpenTurathBook> _books = const [];
-  final List<List<TextPainter>> _painters = [[], [], []];
-  final List<List<OpenTurathBook>> _columnBooks = [[], [], []];
+  final List<List<TextPainter>> _painters = [[], []];
+  final List<List<OpenTurathBook>> _columnBooks = [[], []];
   int _focused = -1;
 
   bool get _underTest =>
@@ -50,7 +53,7 @@ class _LibraryCanvasState extends State<LibraryCanvas>
             .loadBooksForModule(module);
         // Judul pendek saja agar muat satu baris di kolom sempit.
         picked.addAll(books
-            .where((book) => book.title.length >= 3 && book.title.length <= 26)
+            .where((book) => book.title.length >= 3 && book.title.length <= 15)
             .take(10));
       } catch (_) {
         // Katalog belum termuat: kanvas tetap tampil tanpa judul.
@@ -71,14 +74,13 @@ class _LibraryCanvasState extends State<LibraryCanvas>
             text: picked[i].title,
             style: const TextStyle(
               fontFamily: 'NativeArabic',
-              fontSize: 21,
+              fontSize: 22,
               height: 1.5,
               color: Color(0xFFFFFFFF),
             ),
           ),
           textDirection: TextDirection.rtl,
           maxLines: 1,
-          ellipsis: '…',
         ));
       }
     });
@@ -109,7 +111,7 @@ class _LibraryCanvasState extends State<LibraryCanvas>
   void _reportFocus(int index) {
     if (index == _focused || index < 0) return;
     _focused = index;
-    final books = _columnBooks[1];
+    final books = _columnBooks[0];
     if (books.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) widget.onFocus?.call(books[index % books.length]);
@@ -129,6 +131,7 @@ class _LibraryCanvasState extends State<LibraryCanvas>
             ready: _books.isNotEmpty,
             rowHeight: _rowHeight,
             speed: _speed,
+            compact: widget.compact,
             onFocus: _reportFocus,
           ),
         ),
@@ -145,7 +148,10 @@ class _LibraryPainter extends CustomPainter {
     required this.rowHeight,
     required this.speed,
     required this.onFocus,
+    this.compact = false,
   });
+
+  final bool compact;
 
   final double seconds;
   final List<List<TextPainter>> painters;
@@ -173,7 +179,9 @@ class _LibraryPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final archWidth = math.min(size.width * 0.78, 420.0);
-    final archHeight = math.min(size.height * 0.62, archWidth * 1.25);
+    final archHeight = compact
+        ? size.height * 0.88
+        : math.min(size.height * 0.62, archWidth * 1.25);
     final arch = Rect.fromLTWH(
       (size.width - archWidth) / 2,
       size.height * 0.07,
@@ -204,12 +212,12 @@ class _LibraryPainter extends CustomPainter {
           var y = arch.bottom - ((drift + i * rowHeight) % loop);
           if (y < arch.top - rowHeight) y += loop;
           if (y > arch.bottom || y < arch.top - rowHeight) continue;
-          final painter = column[i]..layout(maxWidth: columnWidth - 8);
+          final painter = column[i]..layout();
           final distance = (y + rowHeight / 2 - readingLine).abs();
-          final glow = c == 1
+          final glow = c == 0
               ? (1 - (distance / rowHeight)).clamp(0.0, 1.0)
               : 0.0;
-          if (c == 1 && glow > 0.5) onFocus(i);
+          if (c == 0 && glow > 0.5) onFocus(i);
           // Memudar di tepi atas dan bawah jendela lengkung.
           final edge = math.min(
                   (y - arch.top) / 90, (arch.bottom - y - rowHeight) / 70)

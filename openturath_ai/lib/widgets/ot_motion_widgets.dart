@@ -299,3 +299,9 @@ class _OTFlipCardState extends State<OTFlipCard>
     );
   }
 }
+
+/// Panah serong yang mengikuti arah baca: ↗ di LTR, ↖ di RTL.
+IconData otOutwardIcon(BuildContext context) =>
+    Directionality.of(context) == TextDirection.rtl
+        ? Icons.north_west_rounded
+        : Icons.north_east_rounded;

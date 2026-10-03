@@ -1052,7 +1052,7 @@ class _MembershipPass extends StatelessWidget {
                 children: [
                   Icon(icon, size: 20, color: foreground),
                   const Spacer(),
-                  Icon(Icons.arrow_outward_rounded, size: 18, color: muted),
+                  Icon(otOutwardIcon(context), size: 18, color: muted),
                 ],
               ),
               const SizedBox(height: OTSpacing.md),

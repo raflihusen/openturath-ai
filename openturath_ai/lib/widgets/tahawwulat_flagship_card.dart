@@ -9,6 +9,7 @@ import 'apple_interactive_wrapper.dart';
 import 'tahawwulat_introduction_sheet.dart';
 import 'assistant_grid_card.dart';
 import '../services/open_turath_catalog_repository.dart';
+import 'ot_motion_widgets.dart';
 
 /// Kartu monokrom untuk paket utama OpenTurath.
 ///
@@ -140,17 +141,6 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 5),
-                if (!Loc.isArabic)
-                  Text(
-                    agent.titleArabic,
-                    textDirection: TextDirection.rtl,
-                    style: ScholarlyFonts.scheherazadeNew(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w500,
-                      height: 1.85,
-                      color: _silver,
-                    ),
-                  ),
                 const SizedBox(height: 8),
                 Text(
                   Loc.tr('flagshipPositioning'),
@@ -279,8 +269,8 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            const Icon(
-                              Icons.north_east_rounded,
+                            Icon(
+                              otOutwardIcon(context),
                               size: 16,
                               color: _silver,
                             ),
@@ -297,6 +287,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                 Container(height: 0.8, color: _hairline),
                 const SizedBox(height: 16),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Aksi sekunder: tombol bergaris selebar labelnya, bukan blok putih penuh.
                     Flexible(
@@ -354,7 +345,6 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                       ),
                     ),
                     if (onOpenLibrary != null) ...[
-                      const Spacer(),
                       const SizedBox(width: 10),
                       AppleInteractiveWrapper(
                         onTap: onOpenLibrary,

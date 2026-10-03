@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/turath_chat_message.dart';
 
@@ -282,7 +281,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 Row(
                   children: [
                     Text('A',
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: textSecondary)),
@@ -334,7 +333,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       ),
                     ),
                     Text('A',
-                        style: GoogleFonts.outfit(
+                        style: ScholarlyFonts.outfit(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: textPrimary)),
@@ -368,7 +367,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         size: 18, color: textPrimary),
                     label: Text(
                       'Ganti Bahasa Output (50+ Bahasa)',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                         color: textPrimary,
@@ -476,7 +475,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     }
                   },
                   child: Text(Loc.tr('delete'),
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                           fontWeight: FontWeight.w600, color: Colors.white)),
                 ),
               ],
@@ -625,7 +624,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         titleSpacing: 0,
         title: Text(
           activeTab.agent.title,
-          style: GoogleFonts.outfit(
+          style: ScholarlyFonts.outfit(
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: textPrimary,
@@ -832,7 +831,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                     Text(
                                       session.agent.title
                                           .replaceFirst('AI ', ''),
-                                      style: GoogleFonts.outfit(
+                                      style: ScholarlyFonts.outfit(
                                         fontSize: 12,
                                         fontWeight: isActive
                                             ? FontWeight.w600

@@ -13,7 +13,8 @@ import 'desktop_webview_runtime.dart';
 import 'browser_companion_chat_service.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Ditunda sampai dipakai, agar layar bisa dirender tanpa Firebase (pratinjau, tes).
+  late final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: (!kIsWeb &&
             (defaultTargetPlatform == TargetPlatform.iOS ||
@@ -23,7 +24,7 @@ class AuthService {
     serverClientId:
         '255541559800-jcip3mf8umtscgf5jm8khflm4u83rmcj.apps.googleusercontent.com',
   );
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  late final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Cached persistent userStream to prevent memory leak and listener churn (F10)
   Stream<UserModel?>? _cachedUserStream;

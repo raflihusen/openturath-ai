@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/theme.dart';
 import '../core/app_snackbar.dart';
 import '../core/app_copy.dart';
 import '../core/localization.dart';
+import '../core/scholarly_fonts.dart';
 
 class EvidenceBottomSheet extends StatelessWidget {
   final int citationNumber;
@@ -144,7 +144,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'Ibarah & rujukan',
-                          style: GoogleFonts.outfit(
+                          style: ScholarlyFonts.outfit(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
                             color: textPrimary,
@@ -175,7 +175,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                       0,
                       Text(
                         bookName,
-                        style: GoogleFonts.newsreader(
+                        style: ScholarlyFonts.newsreader(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
@@ -201,13 +201,13 @@ class EvidenceBottomSheet extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Loc.tr('authorLabel'), style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text(Loc.tr('authorLabel'), style: ScholarlyFonts.outfit(fontSize: 12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     author,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
+                                    style: ScholarlyFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
                                   ),
                                 ],
                               ),
@@ -217,13 +217,13 @@ class EvidenceBottomSheet extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Loc.tr('pageLabel'), style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text(Loc.tr('pageLabel'), style: ScholarlyFonts.outfit(fontSize: 12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     pageNumber,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
+                                    style: ScholarlyFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
                                   ),
                                 ],
                               ),
@@ -233,13 +233,13 @@ class EvidenceBottomSheet extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Loc.tr('disciplineLabel'), style: GoogleFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text(Loc.tr('disciplineLabel'), style: ScholarlyFonts.outfit(fontSize: 12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     category,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
+                                    style: ScholarlyFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
                                   ),
                                 ],
                               ),
@@ -263,7 +263,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                               const SizedBox(width: 6),
                               Text(
                                 'Naskah ibarah asli',
-                                style: GoogleFonts.outfit(
+                                style: ScholarlyFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                   color: textPrimary,
@@ -293,7 +293,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             child: SelectableText(
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
-                              style: GoogleFonts.scheherazadeNew(
+                              style: ScholarlyFonts.scheherazadeNew(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 height: 1.8,
@@ -315,7 +315,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         children: [
                           Text(
                             'Intisari & penjelasan',
-                            style: GoogleFonts.outfit(
+                            style: ScholarlyFonts.outfit(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: textPrimary,
@@ -324,7 +324,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             explanation,
-                            style: GoogleFonts.outfit(
+                            style: ScholarlyFonts.outfit(
                               fontSize: 13,
                               color: textSecondary,
                               height: 1.5,
@@ -353,7 +353,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                                 ),
-                                textStyle: GoogleFonts.outfit(
+                                textStyle: ScholarlyFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -375,7 +375,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                                 ),
-                                textStyle: GoogleFonts.outfit(
+                                textStyle: ScholarlyFonts.outfit(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                 ),

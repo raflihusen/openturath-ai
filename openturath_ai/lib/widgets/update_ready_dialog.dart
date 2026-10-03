@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
+import '../core/scholarly_fonts.dart';
 
 /// Modal dialog elegan yang muncul otomatis saat pembaruan selesai diunduh di latar belakang
 class UpdateReadyDialog extends StatelessWidget {
@@ -75,7 +75,7 @@ class UpdateReadyDialog extends StatelessWidget {
             // Judul Pembaruan
             Text(
               isDesktop ? 'Pembaruan Tersedia' : 'Pembaruan Telah Siap',
-              style: GoogleFonts.newsreader(
+              style: ScholarlyFonts.newsreader(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -94,7 +94,7 @@ class UpdateReadyDialog extends StatelessWidget {
               ),
               child: Text(
                 'Versi $version',
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: textSecondary,
@@ -109,7 +109,7 @@ class UpdateReadyDialog extends StatelessWidget {
               isDesktop
                   ? 'Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.'
                   : 'Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.',
-              style: GoogleFonts.outfit(
+              style: ScholarlyFonts.outfit(
                 fontSize: 13,
                 height: 1.5,
                 color: textSecondary,
@@ -135,7 +135,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   releaseNotes,
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 12,
                     color: textSecondary,
                     height: 1.4,
@@ -177,7 +177,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   isDesktop
                       ? 'Unduh Pembaruan'
                       : 'Pasang & Muat Ulang Sekarang',
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -200,7 +200,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 ),
                 child: Text(
                   'Nanti Saja',
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),

@@ -562,7 +562,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             ),
                                           ),
                                           Icon(
-                                            Icons.arrow_outward_rounded,
+                                            otOutwardIcon(context),
                                             size: 18,
                                             color: textSecondary,
                                           ),

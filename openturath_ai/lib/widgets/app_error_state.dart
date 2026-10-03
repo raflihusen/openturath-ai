@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
+import '../core/scholarly_fonts.dart';
 
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
 /// Menghindarkan aplikasi dari layar kosong atau error bisu tanpa pemulihan.
@@ -100,7 +100,7 @@ class AppErrorState extends StatelessWidget {
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
@@ -110,7 +110,7 @@ class AppErrorState extends StatelessWidget {
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 13,
                   height: 1.45,
                   color: textSecondary,
@@ -126,7 +126,7 @@ class AppErrorState extends StatelessWidget {
                     icon: const Icon(Icons.refresh_rounded, size: 18),
                     label: Text(
                       retryLabel,
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.w600),
+                      style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
                     ),
                     style: FilledButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -145,7 +145,7 @@ class AppErrorState extends StatelessWidget {
                     onPressed: onBack,
                     child: Text(
                       backLabel,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontWeight: FontWeight.w500,
                         color: textSecondary,
                       ),

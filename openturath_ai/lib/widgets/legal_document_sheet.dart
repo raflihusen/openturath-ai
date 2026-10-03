@@ -3,10 +3,10 @@ library;
 import '../widgets/adaptive_sheet.dart';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../core/design/ot_colors.dart';
 import '../core/legal_copy.dart';
+import '../core/scholarly_fonts.dart';
 
 /// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
 /// Mengadopsi prinsip desain "The Quiet Scholar" dengan keterbacaan tinggi,
@@ -138,7 +138,7 @@ class LegalDocumentSheet extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.newsreader(
+                      style: ScholarlyFonts.newsreader(
                         fontSize: 21,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.3,
@@ -148,7 +148,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w400,
                         color: textSecondary,
@@ -185,7 +185,7 @@ class LegalDocumentSheet extends StatelessWidget {
                   children: [
                     Text(
                       sec.title,
-                      style: GoogleFonts.newsreader(
+                      style: ScholarlyFonts.newsreader(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
@@ -195,7 +195,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       sec.content,
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w400,
                         height: 1.55,
@@ -225,7 +225,7 @@ class LegalDocumentSheet extends StatelessWidget {
               ),
               child: Text(
                 'Tutup',
-                style: GoogleFonts.outfit(
+                style: ScholarlyFonts.outfit(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: canvas,

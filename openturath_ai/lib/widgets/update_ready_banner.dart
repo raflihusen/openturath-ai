@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
 import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
+import '../core/scholarly_fonts.dart';
 
 class UpdateReadyBanner extends StatelessWidget {
   const UpdateReadyBanner({super.key});
@@ -69,7 +69,7 @@ class UpdateReadyBanner extends StatelessWidget {
                       isDesktop
                           ? 'Pembaruan v$version Tersedia'
                           : 'Pembaruan v$version Siap Dipasang',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
@@ -80,7 +80,7 @@ class UpdateReadyBanner extends StatelessWidget {
                       isDesktop
                           ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
                           : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
-                      style: GoogleFonts.outfit(
+                      style: ScholarlyFonts.outfit(
                         fontSize: 12,
                         color: textSecondary,
                       ),
@@ -114,7 +114,7 @@ class UpdateReadyBanner extends StatelessWidget {
                 ),
                 child: Text(
                   isDesktop ? 'Perbarui' : 'Pasang',
-                  style: GoogleFonts.outfit(
+                  style: ScholarlyFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                   ),
