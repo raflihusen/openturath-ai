@@ -58,7 +58,7 @@ class NativeSection extends StatelessWidget {
             ? NativeColors.collection(dark)
             : NativeColors.surface(dark),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
           side: BorderSide(color: NativeColors.border(dark), width: .8),
         ),
       ),

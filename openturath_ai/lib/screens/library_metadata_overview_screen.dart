@@ -258,7 +258,7 @@ class _HeroLibraryCard extends StatelessWidget {
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border, width: 0.8),
       ),
       child: Column(
@@ -390,7 +390,7 @@ class _StatsGrid extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
           decoration: BoxDecoration(
             color: OTColors.surfaceSubtle(dark),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Wrap(
             spacing: 20,

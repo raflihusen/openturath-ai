@@ -36,7 +36,7 @@ class NumberedAssistantListCard extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: border,
           width: 0.8,

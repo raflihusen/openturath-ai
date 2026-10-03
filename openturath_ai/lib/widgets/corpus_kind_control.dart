@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/design/ot_colors.dart';
+import '../core/localization.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
@@ -31,7 +32,7 @@ class CorpusKindControl extends StatelessWidget {
       child: Row(
         children: [
           _CorpusKindTab(
-            label: 'Bidang ilmu',
+            label: Loc.tr('corpusDisciplineTab'),
             selected: value == CorpusKind.discipline,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -39,7 +40,7 @@ class CorpusKindControl extends StatelessWidget {
           ),
           const SizedBox(width: 24),
           _CorpusKindTab(
-            label: 'Khazanah ulama',
+            label: Loc.tr('corpusScholarTab'),
             selected: value == CorpusKind.scholar,
             textPrimary: textPrimary,
             textSecondary: textSecondary,
@@ -68,15 +69,17 @@ class _CorpusKindTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
+    // Lebar mengikuti label: tab rata awal, tidak diregangkan selebar jendela.
+    return InkWell(
         onTap: () {
           OTMotion.selection();
           onTap();
         },
         borderRadius: BorderRadius.circular(8),
-        child: Column(
+        child: IntrinsicWidth(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               label,
@@ -91,12 +94,10 @@ class _CorpusKindTab extends StatelessWidget {
               duration: OTMotion.fast,
               curve: OTMotion.curve,
               height: 2,
-              width: selected ? 28 : 0,
               color: selected ? textPrimary : Colors.transparent,
             ),
           ],
-        ),
-      ),
+        )),
     );
   }
 }

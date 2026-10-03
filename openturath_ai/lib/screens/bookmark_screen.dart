@@ -880,12 +880,12 @@ class _BookmarkCardState extends State<_BookmarkCard> {
       curve: OTMotion.curve,
       child: InkWell(
         onTap: widget.onOpen,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           decoration: BoxDecoration(
             color: widget.surface,
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: _isExpanded
                   ? widget.accent.withValues(alpha: 0.4)

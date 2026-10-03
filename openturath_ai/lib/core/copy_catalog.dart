@@ -671,4 +671,6 @@ const copyCatalog = <String, List<String>>{
   "noteSyncPending": ["Belum tersinkron", "Not synced yet", "لم تُزامَن بعد"],
   "notesSyncPendingBanner": ["{0} catatan tersimpan di perangkat dan menunggu koneksi.", "{0} notes are saved on this device and waiting for a connection.", "الملاحظات المحفوظة على الجهاز بانتظار الاتصال: {0}"],
   "syncNow": ["Sinkronkan", "Sync now", "مزامنة"],
+  "corpusDisciplineTab": ["Bidang ilmu", "Disciplines", "الفنون"],
+  "corpusScholarTab": ["Khazanah ulama", "Scholars", "خزانة العلماء"],
 };

@@ -8,6 +8,7 @@ import '../core/arabic_utils.dart';
 import '../core/routes.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_motion.dart';
@@ -25,7 +26,6 @@ import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
-import '../widgets/digital_scholar_atm_card.dart';
 import '../widgets/numbered_assistant_list_card.dart';
 import 'main_shell_screen.dart';
 
@@ -223,8 +223,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         appBar: AppBar(
           title: Text(
             Loc.text(title),
-            style: OTTypography.corpusTitle(color: textPrimary)
-                .copyWith(fontSize: 20),
+            style: OTTypography.sectionTitle(color: textPrimary)
+                .copyWith(fontSize: 20, fontWeight: FontWeight.w700),
           ),
           centerTitle: false,
           backgroundColor: canvas,
@@ -258,11 +258,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 child: Column(
                   children: [
                     Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 44,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: OTRadius.inputBorder,
                         border: Border.all(color: border, width: 1.0),
                       ),
                       child: Row(
@@ -275,11 +275,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               controller: _searchCtrl,
                               onChanged: _onSearchChanged,
                               style: ScholarlyFonts.outfit(
-                                  fontSize: 13.5, color: textPrimary),
+                                  fontSize: 14, color: textPrimary),
                               decoration: InputDecoration(
                                 hintText: Loc.tr('assistantSearch'),
                                 hintStyle: ScholarlyFonts.outfit(
-                                    fontSize: 13.5, color: textSecondary),
+                                    fontSize: 14, color: textSecondary),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -324,7 +324,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               // Discipline Filter Chips (only in discipline mode)
               if (isGeneralTab && _corpusKind == CorpusKind.discipline) ...[
                 SizedBox(
-                  height: Loc.isArabic ? 60 : 48,
+                  height: Loc.isArabic ? 52 : 40,
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
@@ -412,9 +412,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               final others = sorted.where(
                                 (agent) => agent.id != selected.id,
                               ).toList();
-                              final flagship = _allAgents.where(
-                                (agent) => agent.id == 'fiqh_tahawwulat',
-                              ).firstOrNull;
 
                               return ListView(
                                 controller: _listScrollCtrl,
@@ -433,21 +430,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                       ),
                                     ),
                                     const SizedBox(height: 22),
-                                  ],
-                                  if (isGeneralTab &&
-                                      _searchQuery.isEmpty &&
-                                      (_selectedFieldId == null ||
-                                          _selectedFieldId == 'all' ||
-                                          (flagship != null && _selectedFieldId == flagship.fieldId))) ...[
-                                    DigitalScholarAtmCard(
-                                      user: _authService.cachedCurrentUser,
-                                      onTap: () {
-                                        if (flagship != null) {
-                                          _selectAgent(flagship);
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(height: 25),
                                   ],
                                   _sectionLabel(
                                     Loc.tr('assistantSelected'),
@@ -532,37 +514,36 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
     required Color textPrimary,
     required Color textSecondary,
   }) {
-    final activeBg = OTColors.primaryContainer(isDark);
-    final activeFg = OTColors.onPrimaryContainer(isDark);
-
-    return AppleInteractiveWrapper(
+    // Horizontal ListView meregangkan anak setinggi daftar; Center menjaga tinggi alami chip.
+    return Center(
+        child: AppleInteractiveWrapper(
       onTap: onTap,
-      pressedScale: 0.94,
+      pressedScale: 0.97,
       hapticType: HapticFeedbackType.selection,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: OTRadius.chipBorder,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: isSelected ? activeBg : surface,
-        borderRadius: BorderRadius.circular(16),
+          color: isSelected ? OTColors.accent(isDark) : Colors.transparent,
+          borderRadius: OTRadius.chipBorder,
           border: Border.all(
-            color: isSelected ? activeBg : border,
-            width: 0.8,
+            color: isSelected ? OTColors.accent(isDark) : border,
+            width: 1,
           ),
         ),
-        alignment: Alignment.center,
         child: Text(
           Loc.text(label),
           style:
-              OTTypography.caption(color: isSelected ? activeFg : textSecondary)
+              OTTypography.caption(
+                  color: isSelected ? OTColors.onAccent(isDark) : textSecondary)
                   .copyWith(
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 12,
+            fontSize: 13,
           ),
         ),
       ),
-    );
+    ));
   }
 }

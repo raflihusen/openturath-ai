@@ -1137,7 +1137,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                           foregroundColor: Colors.white,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(24),
+                                                BorderRadius.circular(16),
                                           ),
                                         ),
                                       ),

@@ -20,14 +20,14 @@ class TahawwulatFeature extends StatelessWidget {
 
     return Material(
       color: OTColors.surface(dark),
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onOpen,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(14),
         child: Container(
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(color: border, width: 1.0),
           ),
           child: Container(

@@ -2,7 +2,6 @@ import '../widgets/desktop_shortcuts.dart';
 import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../core/app_config.dart';
 import '../core/design/ot_colors.dart';
 import '../models/agent_model.dart';
 import '../models/field_model.dart';
@@ -157,7 +156,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
                         child: NavigationRail(
                           backgroundColor: surface,
                           indicatorColor: indicator,
-                          minWidth: 92,
+                          minWidth: 80,
                           minExtendedWidth: 208,
                           extended: expandedSidebar,
                           selectedIndex: _currentIndex,
@@ -165,9 +164,9 @@ class _MainShellScreenState extends State<MainShellScreen> {
                               ? NavigationRailLabelType.none
                               : NavigationRailLabelType.all,
                           leading: Padding(
-                            padding: const EdgeInsets.only(top: 16, bottom: 28),
+                            padding: const EdgeInsets.only(top: 16, bottom: 20),
                             child: Row(mainAxisSize: MainAxisSize.min, children: [
-                              OpenTurathMark(size: 30, color: accent),
+                              OpenTurathMark(size: 26, color: accent),
                               if (expandedSidebar) ...[
                                 const SizedBox(width: 10),
                                 Text('OpenTurath', style: Theme.of(context).textTheme.titleMedium),
@@ -203,17 +202,6 @@ class _MainShellScreenState extends State<MainShellScreen> {
                           ],
                         ),
                       ),
-                      IconButton(
-                        tooltip: isDark
-                            ? Loc.tr('ui_26894b3c65')
-                            : Loc.tr('ui_b16e7fe4e5'),
-                        icon: Icon(isDark
-                            ? Icons.light_mode_rounded
-                            : Icons.dark_mode_rounded),
-                        onPressed: () => AppConfig.setThemeMode(
-                            isDark ? ThemeMode.light : ThemeMode.dark),
-                      ),
-                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

@@ -175,7 +175,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       return Container(
         decoration: BoxDecoration(
           color: OTColors.primaryContainer(dark),
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(16),
         ),
         padding: const EdgeInsets.all(22),
         child: child,
@@ -184,7 +184,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border, width: 0.8),
       ),
       padding: const EdgeInsets.all(20),

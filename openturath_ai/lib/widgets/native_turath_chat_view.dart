@@ -260,12 +260,12 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         _textController.text = label;
         _handleSend();
       },
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: border, width: 0.8),
         ),
         child: Text(
@@ -495,7 +495,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: _focusNode.hasFocus ? accent.withAlpha(160) : border,
               width: 1.2,

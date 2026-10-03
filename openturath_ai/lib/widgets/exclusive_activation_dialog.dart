@@ -105,7 +105,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: const Color(0xFF161616),
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: const Color(0xFF939393).withValues(alpha: 0.42),
               width: 1.2,
@@ -124,7 +124,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(16),
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(28, 36, 28, 32),
               child: Column(
@@ -168,7 +168,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
                       color: const Color(0xFF939393).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: const Color(0xFF939393).withValues(alpha: 0.35),
                         width: 0.8,
@@ -228,7 +228,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFF1D1D1D),
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: const Color(0xFF373737),
                         width: 1,

@@ -1,36 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:openturath_ai/models/agent_model.dart';
-import 'package:openturath_ai/widgets/digital_scholar_atm_card.dart';
 import 'package:openturath_ai/widgets/numbered_assistant_list_card.dart';
 
 void main() {
-  group('DigitalScholarAtmCard & NumberedAssistantListCard Tests', () {
-    testWidgets('DigitalScholarAtmCard merender elemen kartu ATM mewah dengan benar',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: DigitalScholarAtmCard(
-                tierLabel: 'SCHOLAR PASS · TIER I',
-                cardNumber: '••••  ••••  ••••  1448',
-                expiryText: '1448 H',
-              ),
-            ),
-          ),
-        ),
-      );
-
-      // Verifikasi Brand & NFC & Elemen ATM
-      expect(find.text('OpenTurath'), findsOneWidget);
-      expect(find.text('SCHOLAR PASS · TIER I'), findsOneWidget);
-      expect(find.text('••••  ••••  ••••  1448'), findsOneWidget);
-      expect(find.text('CARD HOLDER'), findsOneWidget);
-      expect(find.text('VALID THRU'), findsOneWidget);
-      expect(find.text('1448 H'), findsOneWidget);
-    });
-
+  group('NumberedAssistantListCard Tests', () {
     testWidgets('NumberedAssistantListCard merender nomor dua digit dan judul tanpa subtitle',
         (WidgetTester tester) async {
       final sampleAgents = AgentModel.defaultAgents

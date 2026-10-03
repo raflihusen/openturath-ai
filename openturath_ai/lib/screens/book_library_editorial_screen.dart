@@ -372,13 +372,13 @@ class _BookEditorialItem extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(17),
         decoration: BoxDecoration(
           color: OTColors.surface(isDark),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: border, width: 0.8),
         ),
         child: Row(
@@ -623,7 +623,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(28),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: border),
                       ),
                       child: Column(
@@ -705,7 +705,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                     Container(
                       decoration: BoxDecoration(
                         color: surface,
-                        borderRadius: BorderRadius.circular(22),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: border),
                       ),
                       child: Builder(builder: (context) {

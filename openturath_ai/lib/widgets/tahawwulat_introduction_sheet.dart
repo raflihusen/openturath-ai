@@ -238,7 +238,7 @@ class _TahawwulatIntroductionSheetState
                       _scrollToTop();
                     },
                     pressedScale: 0.96,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(
@@ -249,7 +249,7 @@ class _TahawwulatIntroductionSheetState
                         color: isSelected
                             ? (isDark ? Colors.white : Colors.black)
                             : OTColors.surfaceSubtle(isDark),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isSelected
                               ? (isDark ? Colors.white : Colors.black)

@@ -1608,7 +1608,7 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
                           backgroundColor: OTColors.accent(isDark),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),

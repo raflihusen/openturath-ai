@@ -10,6 +10,7 @@ import '../core/app_copy.dart';
 import '../core/constants.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_radius.dart';
 import '../core/app_snackbar.dart';
 import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
@@ -299,15 +300,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           builder: (context, _) {
                             final isFocused = _searchFocusNode.hasFocus;
                             return Container(
-                              height: 54,
-                              padding:
-                                  const EdgeInsets.only(left: 16, right: 6),
+                              height: 44,
+                              padding: const EdgeInsetsDirectional.only(
+                                  start: 14, end: 6),
                               decoration: BoxDecoration(
-                                color: OTColors.surfaceSubtle(isDark),
-                                borderRadius: BorderRadius.circular(22),
-                                border: isFocused
-                                    ? Border.all(color: accent, width: 1.5)
-                                    : null,
+                                color: OTColors.surface(isDark),
+                                borderRadius: OTRadius.inputBorder,
+                                border: Border.all(
+                                    color: isFocused
+                                        ? accent
+                                        : OTColors.border(isDark)),
                               ),
                               child: Row(
                                 children: [
@@ -349,7 +351,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           _searchController.clear();
                                           setState(() => _searchQuery = '');
                                         },
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(16),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Icon(Icons.close_rounded,
@@ -996,13 +998,13 @@ class _DashboardAnnouncementCarouselState
                 final slide = _slides[index];
                 return InkWell(
                   onTap: () => _showDetailModal(slide),
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(14),
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: widget.surface,
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: widget.border,
                         width: 1.0,

@@ -37,7 +37,7 @@ class AssistantDossierCard extends StatelessWidget {
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

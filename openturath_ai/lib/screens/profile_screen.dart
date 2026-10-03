@@ -312,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             return Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1040),
+                constraints: const BoxConstraints(maxWidth: 720),
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   physics: const BouncingScrollPhysics(),
@@ -335,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: OTRadius.cardBorder,
                     border: Border.all(color: border, width: 1.0),
                   ),
                   child: Column(
@@ -435,99 +435,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // ── Card 4: Tentang OpenTurath ──
+                // ── Tentang & akun: satu kelompok baris ──
                 Container(
+                  clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     color: surface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: OTRadius.cardBorder,
                     border: Border.all(color: border, width: 1.0),
                   ),
-                  child: _SettingsTile(
-                    icon: Icons.info_outline_rounded,
-                    title: AppCopy.aboutTitle,
-                    subtitle: AppCopy.versionWithTagline(_appVersion),
-                    trailing: Icon(Icons.chevron_right_rounded,
-                        color: textSecondary, size: 20),
-                    onTap: () => _showAboutModal(
-                      context,
-                      isDark,
-                      textPrimary,
-                      textSecondary,
-                      surface,
-                      border,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                // ── Card 5: Log out ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(18),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(18),
-                      onTap: (_isLoggingOut || _isDeletingAccount)
-                          ? null
-                          : _logout,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 15),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.logout_rounded,
-                              color: OTColors.destructive(isDark),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 14),
-                            Text(
-                              _isLoggingOut
-                                  ? AppCopy.loggingOut
-                                  : AppCopy.logoutButton,
-                              style: ScholarlyFonts.outfit(
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w600,
-                                color: OTColors.destructive(isDark),
-                              ),
-                            ),
-                          ],
+                  child: Column(
+                    children: [
+                      _SettingsTile(
+                        icon: Icons.info_outline_rounded,
+                        title: AppCopy.aboutTitle,
+                        subtitle: AppCopy.versionWithTagline(_appVersion),
+                        trailing: Icon(Icons.chevron_right_rounded,
+                            color: textSecondary, size: 20),
+                        onTap: () => _showAboutModal(
+                          context,
+                          isDark,
+                          textPrimary,
+                          textSecondary,
+                          surface,
+                          border,
                         ),
                       ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // ── Quiet Google Play Compliance: Delete Account ──
-                Center(
-                  child: TextButton(
-                    onPressed: (_isLoggingOut || _isDeletingAccount)
-                        ? null
-                        : _deleteAccount,
-                    child: _isDeletingAccount
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: OTColors.destructive(isDark)),
-                          )
-                        : Text(
-                            AppCopy.deleteAccountButton,
-                            style: ScholarlyFonts.outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              color: OTColors.destructive(isDark),
-                            ),
-                          ),
+                      Divider(height: 1, color: border),
+                      _AccountActionRow(
+                        icon: Icons.logout_rounded,
+                        label: _isLoggingOut
+                            ? AppCopy.loggingOut
+                            : AppCopy.logoutButton,
+                        color: textPrimary,
+                        onTap: (_isLoggingOut || _isDeletingAccount)
+                            ? null
+                            : _logout,
+                      ),
+                      Divider(height: 1, color: border),
+                      _AccountActionRow(
+                        icon: Icons.delete_outline_rounded,
+                        label: AppCopy.deleteAccountButton,
+                        color: textSecondary,
+                        busy: _isDeletingAccount,
+                        onTap: (_isLoggingOut || _isDeletingAccount)
+                            ? null
+                            : _deleteAccount,
+                      ),
+                    ],
                   ),
                 ),
                 ],
@@ -730,8 +684,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required Color textSecondary,
     required VoidCallback onTap,
   }) {
-    final activeBg = isDark ? const Color(0xFF191919) : Colors.white;
-    final activeFg = isDark ? Colors.white : const Color(0xFF191919);
+    // Pilihan aktif harus lebih terang dari lintasannya di kedua mode.
+    final activeBg = isDark ? OTColors.border(isDark) : OTColors.surface(isDark);
+    final activeFg = textPrimary;
     final inactiveFg = textSecondary;
 
     return Expanded(
@@ -744,7 +699,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 9),
           decoration: BoxDecoration(
             color: isSelected ? activeBg : Colors.transparent,
             borderRadius: BorderRadius.circular(9),
@@ -767,7 +722,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 Loc.text(title),
                 style: ScholarlyFonts.outfit(
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected ? activeFg : inactiveFg,
                 ),
@@ -821,167 +776,214 @@ class _MembershipPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final cardColor = OTColors.primaryContainer(isDark);
-    final foreground = OTColors.onPrimaryContainer(isDark);
-    final muted = foreground.withValues(alpha: 0.78);
+    final surface = OTColors.surface(isDark);
+    final border = OTColors.border(isDark);
+    final foreground = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
     final isOpen = summary.isOpen;
+    final initial = holderName.trim().isEmpty
+        ? '?'
+        : holderName.trim().characters.first.toUpperCase();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Semantics(
-          label:
-              'OpenTurath. ${summary.badge}. ${summary.accessLabel}',
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
-            child: InkWell(
-              onTap: onViewAccess ?? onManage,
-              borderRadius: BorderRadius.circular(18),
-              child: Ink(
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(28),
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'OpenTurath',
-                                  style: ScholarlyFonts.newsreader(
-                                    color: foreground,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 21,
-                                    letterSpacing: -0.4,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: OTColors.surface(isDark).withValues(alpha: 0.7),
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        isOpen
-                                            ? Icons.workspace_premium_rounded
-                                            : Icons.lock_outline_rounded,
-                                        color: foreground,
-                                        size: 13,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        summary.badge,
-                                        style: ScholarlyFonts.outfit(
-                                          color: foreground,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 26),
-                            Text(
-                              Loc.tr('membershipFor'),
-                              style: ScholarlyFonts.outfit(
-                                color: muted,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              holderName,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                color: foreground,
-                                fontSize: 19,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.3,
-                              ),
-                            ),
-                            const SizedBox(height: 1),
-                            Text(
-                              email,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                  color: muted, fontSize: 11.5),
-                            ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: _PassMeta(
-                                    label: AppCopy.navStudies,
-                                    value: summary.accessLabel,
-                                    valueColor: foreground,
-                                    labelColor: muted,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  flex: 2,
-                                  child: _PassMeta(
-                                    label: summary.expiryLabel.isEmpty
-                                        ? AppCopy.validUntil
-                                        : summary.expiryLabel,
-                                    value: summary.expiresAt == null
-                                        ? '—'
-                                        : _expiryLabel(),
-                                    valueColor: foreground,
-                                    labelColor: muted,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+    return Semantics(
+      label: 'OpenTurath. ${summary.badge}. ${summary.accessLabel}',
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: OTRadius.cardBorder,
+          border: Border.all(color: border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(OTSpacing.base),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: OTColors.surfaceSubtle(isDark),
+                      shape: BoxShape.circle,
+                    ),
+                    child: ExcludeSemantics(
+                      child: Text(
+                        initial,
+                        style: ScholarlyFonts.outfit(
+                          color: foreground,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ],
+                    ),
                   ),
+                  const SizedBox(width: OTSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          holderName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: ScholarlyFonts.outfit(
+                            color: foreground,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (email.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            email,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: ScholarlyFonts.outfit(
+                                color: muted, fontSize: 13),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: OTSpacing.sm),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    decoration: BoxDecoration(
+                      borderRadius: OTRadius.chipBorder,
+                      border: Border.all(color: border),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!isOpen) ...[
+                          Icon(Icons.lock_outline_rounded,
+                              color: muted, size: 13),
+                          const SizedBox(width: 4),
+                        ],
+                        Text(
+                          summary.badge,
+                          style: ScholarlyFonts.outfit(
+                            color: foreground,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.6,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: border),
+            InkWell(
+              onTap: onViewAccess,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: OTSpacing.base, vertical: OTSpacing.md),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: _PassMeta(
+                        label: AppCopy.navStudies,
+                        value: summary.accessLabel,
+                        valueColor: foreground,
+                        labelColor: muted,
+                      ),
+                    ),
+                    const SizedBox(width: OTSpacing.md),
+                    Expanded(
+                      flex: 2,
+                      child: _PassMeta(
+                        label: summary.expiryLabel.isEmpty
+                            ? AppCopy.validUntil
+                            : summary.expiryLabel,
+                        value: summary.expiresAt == null
+                            ? '—'
+                            : _expiryLabel(),
+                        valueColor: foreground,
+                        labelColor: muted,
+                      ),
+                    ),
+                    if (onViewAccess != null)
+                      Icon(Icons.chevron_right_rounded,
+                          color: muted, size: 20),
+                  ],
                 ),
               ),
             ),
-          ),
+            Divider(height: 1, color: border),
+            InkWell(
+              onTap: onManage,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: OTSpacing.base, vertical: 14),
+                child: Row(
+                  children: [
+                    Icon(Icons.tune_rounded, size: 20, color: foreground),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        summary.ctaLabel,
+                        style: OTTypography.bodyMedium(color: foreground),
+                      ),
+                    ),
+                    Icon(Icons.chevron_right_rounded, color: muted, size: 20),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        OutlinedButton.icon(
-          onPressed: onManage,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: OTColors.textPrimary(isDark),
-            backgroundColor: OTColors.surface(isDark),
-            side: BorderSide(color: OTColors.border(isDark)),
-            minimumSize: const Size.fromHeight(44),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-          ),
-          icon: const Icon(Icons.tune_rounded, size: 18),
-          label: Text(
-            summary.ctaLabel,
-            style: OTTypography.button(),
-          ),
+      ),
+    );
+  }
+}
+
+class _AccountActionRow extends StatelessWidget {
+  const _AccountActionRow({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+    this.busy = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onTap;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: OTSpacing.base, vertical: 14),
+        child: Row(
+          children: [
+            if (busy)
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: color),
+              )
+            else
+              Icon(icon, size: 20, color: color),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(label, style: OTTypography.bodyMedium(color: color)),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -1008,19 +1010,18 @@ class _PassMeta extends StatelessWidget {
           label,
           style: ScholarlyFonts.outfit(
             color: labelColor,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.9,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 2),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: ScholarlyFonts.outfit(
             color: valueColor,
-            fontSize: 12.5,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
