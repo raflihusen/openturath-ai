@@ -27,6 +27,8 @@ import '../widgets/update_ready_dialog.dart';
 import '../widgets/specialist_card.dart';
 import '../widgets/library_bottom_sheet.dart';
 import 'main_shell_screen.dart';
+import '../services/bookmark_service.dart';
+import '../models/bookmark_model.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
@@ -569,6 +571,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               );
                             },
                           ),
+                          const SizedBox(height: 12),
+                          const _RecentNoteTile(),
                         ],
                       ],
                     ),
@@ -579,6 +583,86 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Catatan terakhir sebagai jalan pintas; tidak tampil bila belum ada catatan.
+class _RecentNoteTile extends StatefulWidget {
+  const _RecentNoteTile();
+
+  @override
+  State<_RecentNoteTile> createState() => _RecentNoteTileState();
+}
+
+class _RecentNoteTileState extends State<_RecentNoteTile> {
+  final BookmarkService _service = BookmarkService();
+  BookmarkModel? _latest;
+
+  @override
+  void initState() {
+    super.initState();
+    _service.addListener(_load);
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _service.removeListener(_load);
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    try {
+      final notes = await _service.getBookmarks();
+      if (mounted) setState(() => _latest = notes.firstOrNull);
+    } catch (_) {
+      // Penyimpanan lokal belum siap; ubin cukup tidak ditampilkan.
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Loc.watch(context);
+    final note = _latest;
+    if (note == null) return const SizedBox.shrink();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final secondary = OTColors.textSecondary(isDark);
+    final title = note.title.trim().isNotEmpty
+        ? note.title.trim()
+        : note.fullAnswer.trim();
+    return OTBentoTile(
+      semanticLabel: '${Loc.tr('recentNote')}: $title',
+      onTap: () => MainShellController.of(context)?.switchTab(2),
+      child: Row(
+        children: [
+          Icon(Icons.edit_note_rounded, size: 22, color: secondary),
+          const SizedBox(width: OTSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(Loc.tr('recentNote'),
+                    style:
+                        ScholarlyFonts.outfit(fontSize: 12, color: secondary)),
+                const SizedBox(height: 2),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: ScholarlyFonts.outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: OTColors.textPrimary(isDark),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: OTSpacing.sm),
+          Icon(Icons.arrow_forward_rounded, size: 18, color: secondary),
+        ],
+      ),
     );
   }
 }

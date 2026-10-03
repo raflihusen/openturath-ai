@@ -14,7 +14,7 @@ void main() {
 
     test('Canonical app name and tagline are concise and avoid superlatives', () {
       expect(AppCopy.appName, equals('OpenTurath'));
-      expect(AppCopy.appTagline, equals('Membaca kitab, menelusuri ibarah.'));
+      expect(AppCopy.appTagline, equals('AI for Islamic Scholarship'));
     });
 
     test('Success toasts never use exclamation marks (!)', () {

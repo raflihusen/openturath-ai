@@ -177,3 +177,125 @@ class _OTBentoTileState extends State<OTBentoTile> {
     );
   }
 }
+
+/// Kerangka statis saat data dimuat: menjaga tata letak tanpa indikator berputar.
+class OTSkeletonList extends StatelessWidget {
+  const OTSkeletonList({super.key, this.count = 4, this.tileHeight = 96});
+
+  final int count;
+  final double tileHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final block = OTColors.surfaceSubtle(isDark);
+    Widget bar(double width, double height) => Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+              color: block, borderRadius: BorderRadius.circular(6)),
+        );
+    return Semantics(
+      label: MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(OTSpacing.lg),
+        itemCount: count,
+        separatorBuilder: (_, __) => const SizedBox(height: OTSpacing.md),
+        itemBuilder: (context, index) => OTReveal(
+          index: index,
+          child: Container(
+            height: tileHeight,
+            padding: const EdgeInsets.all(OTSpacing.base),
+            decoration: BoxDecoration(
+              color: OTColors.surface(isDark),
+              borderRadius: BorderRadius.circular(OTBentoTile.radius),
+              border: Border.all(color: OTColors.border(isDark)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [bar(180, 16), bar(260, 10), bar(120, 10)],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Kartu dua sisi yang berbalik saat diketuk. Tanpa animasi bila gerak dikurangi.
+class OTFlipCard extends StatefulWidget {
+  const OTFlipCard({
+    super.key,
+    required this.front,
+    required this.back,
+    this.semanticLabel,
+  });
+
+  final Widget front;
+  final Widget back;
+  final String? semanticLabel;
+
+  @override
+  State<OTFlipCard> createState() => _OTFlipCardState();
+}
+
+class _OTFlipCardState extends State<OTFlipCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 420));
+  late final Animation<double> _turn =
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic);
+
+  void _toggle() {
+    OTMotion.selection();
+    final showBack = _controller.value < 0.5;
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _controller.value = showBack ? 1 : 0;
+    } else if (showBack) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: widget.semanticLabel,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _toggle,
+        child: AnimatedBuilder(
+          animation: _turn,
+          builder: (context, _) {
+            final angle = _turn.value * 3.141592653589793;
+            final showBack = _turn.value >= 0.5;
+            return Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.0012)
+                ..rotateY(angle),
+              child: showBack
+                  ? Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.identity()
+                        ..rotateY(3.141592653589793),
+                      child: widget.back,
+                    )
+                  : widget.front,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

@@ -158,13 +158,12 @@ class _MainShellScreenState extends State<MainShellScreen> {
                         child: NavigationRail(
                           backgroundColor: surface,
                           indicatorColor: indicator,
-                          minWidth: 80,
+                          minWidth: 68,
                           minExtendedWidth: 208,
                           extended: expandedSidebar,
                           selectedIndex: _currentIndex,
-                          labelType: expandedSidebar
-                              ? NavigationRailLabelType.none
-                              : NavigationRailLabelType.all,
+                          // Ikon saja; nama tujuan muncul sebagai tooltip.
+                          labelType: NavigationRailLabelType.none,
                           leading: Padding(
                             padding: const EdgeInsets.only(top: 16, bottom: 20),
                             child: Row(mainAxisSize: MainAxisSize.min, children: [

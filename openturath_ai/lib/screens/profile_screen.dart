@@ -775,6 +775,72 @@ class _MembershipPass extends StatelessWidget {
     return '${summary.expiresAt!.day.toString().padLeft(2, '0')} ${shortMonths[summary.expiresAt!.month - 1]} ${summary.expiresAt!.year}';
   }
 
+  Widget _back(Color cardColor, Color onCard, Color onCardMuted) {
+    final names = AgentModel.defaultAgents
+        .where((agent) => summary.agentIds.contains(agent.id))
+        .map((agent) => Loc.text(agent.title))
+        .toList();
+    return Container(
+      padding: const EdgeInsets.all(OTSpacing.lg),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: onCard.withValues(alpha: isDark ? 0.14 : 0)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppCopy.navStudies.toUpperCase(),
+            style: ScholarlyFonts.outfit(
+              color: onCardMuted,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: OTSpacing.sm),
+          Expanded(
+            child: names.isEmpty
+                ? Text(
+                    summary.accessLabel,
+                    style: ScholarlyFonts.outfit(
+                        color: onCard, fontSize: 15, height: 1.4),
+                  )
+                : ClipRect(
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        for (final name in names)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 9, vertical: 4),
+                            decoration: BoxDecoration(
+                              borderRadius: OTRadius.chipBorder,
+                              border: Border.all(
+                                  color: onCard.withValues(alpha: 0.28)),
+                            ),
+                            child: Text(
+                              name,
+                              style: ScholarlyFonts.outfit(
+                                  color: onCard, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+          ),
+          Text(
+            Loc.tr('cardFlipHint'),
+            style: ScholarlyFonts.outfit(color: onCardMuted, fontSize: 11),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
@@ -801,7 +867,10 @@ class _MembershipPass extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 440),
               child: AspectRatio(
                 aspectRatio: 1.586,
-                child: Container(
+                child: OTFlipCard(
+                  semanticLabel: Loc.tr('cardFlipHint'),
+                  back: _back(cardColor, onCard, onCardMuted),
+                  front: Container(
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     color: cardColor,
@@ -946,6 +1015,7 @@ class _MembershipPass extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
                 ),
               ),
             ),

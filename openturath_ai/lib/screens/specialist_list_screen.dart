@@ -28,6 +28,7 @@ import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 import '../widgets/numbered_assistant_list_card.dart';
 import 'main_shell_screen.dart';
+import '../widgets/ot_motion_widgets.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final FieldModel? field; // Nullable if opened as general Specialist tab
@@ -370,7 +371,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                 child: _corpusKind == CorpusKind.scholar
                     ? const ScholarsComingSoon()
                     : _isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const OTSkeletonList()
                     : filtered.isEmpty
                         ? Center(
                             child: Padding(

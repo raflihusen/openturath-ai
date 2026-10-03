@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../core/app_copy.dart';
 import '../core/routes.dart';
 import '../core/design/ot_colors.dart';
+import '../widgets/ot_motion_widgets.dart';
 import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../widgets/openturath_brand.dart';
@@ -116,191 +117,184 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         backgroundColor: canvas,
         body: SafeArea(
-          child: Stack(children: [
-            LayoutBuilder(
-              builder: (context, viewport) {
-                final bodyMinHeight =
-                    viewport.maxHeight > 80 ? viewport.maxHeight - 80 : 0.0;
-                final form = SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 440),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 48),
-                          ConstrainedBox(
-                            constraints:
-                                BoxConstraints(minHeight: bodyMinHeight),
-                            child: Center(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 24),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
+          child: LayoutBuilder(builder: (context, viewport) {
+            final formColumn = Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 12, 0),
+                  child: Row(
+                    children: [
+                      OpenTurathMark(size: 26, color: primary),
+                      const SizedBox(width: 10),
+                      Text(
+                        AppCopy.appName,
+                        style: ScholarlyFonts.newsreader(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.3,
+                          color: primary,
+                        ),
+                      ),
+                      const Spacer(),
+                      const LanguageSwitcher(),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 380),
+                        child: OTReveal(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                Loc.tr('loginTitle'),
+                                style: ScholarlyFonts.newsreader(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: -0.8,
+                                  height: 1.15,
+                                  color: primary,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                Loc.tr('loginSubtitle'),
+                                style: ScholarlyFonts.outfit(
+                                  fontSize: 15,
+                                  height: 1.5,
+                                  color: secondary,
+                                ),
+                              ),
+                              const SizedBox(height: 28),
+                              FilledButton.icon(
+                                onPressed: _isLoading ? null : _signIn,
+                                icon: _isLoading
+                                    ? SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2, color: secondary),
+                                      )
+                                    : _GoogleGVector(),
+                                label: Text(
+                                  _isLoading
+                                      ? Loc.tr('desktopConnectingGoogle')
+                                      : AppCopy.continueWithGoogle,
+                                  textAlign: TextAlign.center,
+                                  style: ScholarlyFonts.outfit(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: OTColors.accent(dark),
+                                  foregroundColor: OTColors.onAccent(dark),
+                                  disabledBackgroundColor:
+                                      OTColors.surfaceSubtle(dark),
+                                  disabledForegroundColor: secondary,
+                                  minimumSize: const Size(0, 48),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  elevation: 0,
+                                ),
+                              ),
+                              if (_desktopError != null) ...[
+                                const SizedBox(height: 16),
+                                Semantics(
+                                  liveRegion: true,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color: OTColors.surfaceSubtle(dark),
+                                      border: Border.all(
+                                          color: OTColors.border(dark)),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(Icons.error_outline_rounded,
+                                            size: 18, color: primary),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            _desktopError!,
+                                            style: ScholarlyFonts.outfit(
+                                                fontSize: 13,
+                                                height: 1.5,
+                                                color: primary),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 20),
+                              Text.rich(
+                                TextSpan(
+                                  text: '${AppCopy.termsAgreementPrefix} ',
+                                  style: ScholarlyFonts.outfit(
+                                      fontSize: 12,
+                                      height: 1.6,
+                                      color: secondary),
                                   children: [
-                                    Align(
-                                      alignment:
-                                          AlignmentDirectional.centerStart,
-                                      child: OpenTurathMark(
-                                          size: 44, color: primary),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Text(
-                                      AppCopy.appName,
-                                      style: ScholarlyFonts.newsreader(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.5,
-                                        height: 1.2,
+                                    TextSpan(
+                                      text: AppCopy.termsOfService,
+                                      style: TextStyle(
                                         color: primary,
+                                        decoration: TextDecoration.underline,
                                       ),
+                                      recognizer: _termsRecognizer,
                                     ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      AppCopy.appTagline,
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: 15,
-                                        height: 1.5,
-                                        color: secondary,
+                                    const TextSpan(text: ' · '),
+                                    TextSpan(
+                                      text: AppCopy.privacyPolicy,
+                                      style: TextStyle(
+                                        color: primary,
+                                        decoration: TextDecoration.underline,
                                       ),
-                                    ),
-                                    const SizedBox(height: 28),
-                                    FilledButton.icon(
-                                      onPressed: _isLoading ? null : _signIn,
-                                      icon: _isLoading
-                                          ? SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  color: secondary),
-                                            )
-                                          : _GoogleGVector(),
-                                      label: Text(
-                                        _isLoading
-                                            ? Loc.tr('desktopConnectingGoogle')
-                                            : AppCopy.continueWithGoogle,
-                                        textAlign: TextAlign.center,
-                                        style: ScholarlyFonts.outfit(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.4,
-                                        ),
-                                      ),
-                                      style: FilledButton.styleFrom(
-                                        backgroundColor: OTColors.accent(dark),
-                                        foregroundColor:
-                                            OTColors.onAccent(dark),
-                                        disabledBackgroundColor:
-                                            OTColors.surfaceSubtle(dark),
-                                        disabledForegroundColor: secondary,
-                                        minimumSize: const Size(0, 52),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 14),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        elevation: 0,
-                                      ),
-                                    ),
-                                    if (_desktopError != null) ...[
-                                      const SizedBox(height: 16),
-                                      Semantics(
-                                        liveRegion: true,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(14),
-                                          decoration: BoxDecoration(
-                                            color: OTColors.surfaceSubtle(dark),
-                                            border: Border.all(
-                                                color: OTColors.border(dark)),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Icon(Icons.error_outline_rounded,
-                                                  size: 18, color: primary),
-                                              const SizedBox(width: 10),
-                                              Expanded(
-                                                child: Text(
-                                                  _desktopError!,
-                                                  style: ScholarlyFonts.outfit(
-                                                      fontSize: 13,
-                                                      height: 1.5,
-                                                      color: primary),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    const SizedBox(height: 28),
-                                    Text.rich(
-                                      TextSpan(
-                                        text:
-                                            '${AppCopy.termsAgreementPrefix} ',
-                                        style: ScholarlyFonts.outfit(
-                                            fontSize: 12,
-                                            height: 1.6,
-                                            color: secondary),
-                                        children: [
-                                          TextSpan(
-                                            text: AppCopy.termsOfService,
-                                            style: TextStyle(
-                                              color: primary,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                            recognizer: _termsRecognizer,
-                                          ),
-                                          const TextSpan(text: ' · '),
-                                          TextSpan(
-                                            text: AppCopy.privacyPolicy,
-                                            style: TextStyle(
-                                              color: primary,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                            recognizer: _privacyRecognizer,
-                                          ),
-                                        ],
-                                      ),
+                                      recognizer: _privacyRecognizer,
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                );
-                if (viewport.maxWidth < 900) return form;
-                // Desktop: formulir di kiri, panel merek gelap di kanan.
-                return Row(
-                  children: [
-                    Expanded(child: form),
-                    const Expanded(child: _LoginAside()),
-                  ],
-                );
-              },
-            ),
-            const PositionedDirectional(
-              top: 8,
-              end: 12,
-              child: LanguageSwitcher(),
-            ),
-          ]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+                  child: Text(
+                    '© OpenTurath · ${AppCopy.appTagline}',
+                    style:
+                        ScholarlyFonts.outfit(fontSize: 12, color: secondary),
+                  ),
+                ),
+              ],
+            );
+            if (viewport.maxWidth < 900) return formColumn;
+            // Desktop: formulir di kiri, panel merek gelap di kanan.
+            return Row(
+              children: [
+                Expanded(flex: 5, child: formColumn),
+                const Expanded(flex: 6, child: _LoginAside()),
+              ],
+            );
+          }),
         ),
       ),
     );
@@ -312,54 +306,117 @@ class _LoginAside extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Loc.watch(context);
     final dark = Theme.of(context).brightness == Brightness.dark;
     const ink = OTColors.onInverseSurface;
+    final muted = ink.withValues(alpha: 0.66);
+    final line = ink.withValues(alpha: 0.14);
+
+    Widget feature(int index, IconData icon, String title, String body) =>
+        OTReveal(
+          index: index + 2,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: ink.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: line),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, size: 20, color: ink),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title,
+                          style: ScholarlyFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: ink)),
+                      const SizedBox(height: 2),
+                      Text(body,
+                          style: ScholarlyFonts.outfit(
+                              fontSize: 13, height: 1.45, color: muted)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: OTColors.inverseSurface(dark),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-              color: dark ? OTColors.border(dark) : OTColors.inverseSurface(dark)),
+              color:
+                  dark ? OTColors.border(dark) : OTColors.inverseSurface(dark)),
         ),
         child: Stack(
           children: [
             PositionedDirectional(
-              end: -60,
-              bottom: -70,
+              end: -80,
+              top: -60,
               child: ExcludeSemantics(
                 child: OpenTurathMark(
-                    size: 360, color: ink.withValues(alpha: 0.05)),
+                    size: 380, color: ink.withValues(alpha: 0.045)),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    AppCopy.academicSlogan,
-                    style: ScholarlyFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                      color: ink.withValues(alpha: 0.64),
+                  const Spacer(),
+                  OTReveal(
+                    child: Text(
+                      AppCopy.appTagline,
+                      style: ScholarlyFonts.newsreader(
+                        fontSize: 44,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: -1.2,
+                        height: 1.08,
+                        color: ink,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    AppCopy.appTagline,
-                    style: ScholarlyFonts.newsreader(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: -0.8,
-                      height: 1.18,
-                      color: ink,
+                  const SizedBox(height: 14),
+                  OTReveal(
+                    index: 1,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 440),
+                      child: Text(
+                        Loc.tr('loginAsideBody'),
+                        style: ScholarlyFonts.outfit(
+                            fontSize: 15, height: 1.55, color: muted),
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 32),
+                  feature(
+                      0,
+                      Icons.auto_stories_outlined,
+                      Loc.tr('loginFeatureAssistants'),
+                      Loc.tr('loginFeatureAssistantsBody')),
+                  const SizedBox(height: 10),
+                  feature(
+                      1,
+                      Icons.menu_book_outlined,
+                      Loc.tr('loginFeatureSources'),
+                      Loc.tr('loginFeatureSourcesBody')),
+                  const SizedBox(height: 10),
+                  feature(
+                      2,
+                      Icons.edit_note_rounded,
+                      Loc.tr('loginFeatureNotes'),
+                      Loc.tr('loginFeatureNotesBody')),
                 ],
               ),
             ),

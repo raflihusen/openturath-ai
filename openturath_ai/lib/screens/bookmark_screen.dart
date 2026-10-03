@@ -638,10 +638,15 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                 OTSpacing.lg,
                                 108,
                               ),
-                              itemCount: _filteredBookmarks.length,
+                              // Jendela lebar: dua kolom kartu; ponsel: satu kolom.
+                              itemCount:
+                                  MediaQuery.sizeOf(context).width >= 1000
+                                      ? (_filteredBookmarks.length + 1) ~/ 2
+                                      : _filteredBookmarks.length,
                               separatorBuilder: (_, __) =>
                                   const SizedBox(height: OTSpacing.md),
-                              itemBuilder: (context, index) {
+                              itemBuilder: (context, row) {
+                                Widget card(int index) {
                                 final item = _filteredBookmarks[index];
                                 return OTReveal(index: index % 6, child: _BookmarkCard(
                                   item: item,
@@ -661,6 +666,24 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   onShare: () => _shareBookmark(item),
                                   onDelete: () => _deleteBookmark(item),
                                 ));
+                                }
+
+                                if (MediaQuery.sizeOf(context).width < 1000) {
+                                  return card(row);
+                                }
+                                final second = row * 2 + 1;
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(child: card(row * 2)),
+                                    const SizedBox(width: OTSpacing.md),
+                                    Expanded(
+                                      child: second < _filteredBookmarks.length
+                                          ? card(second)
+                                          : const SizedBox.shrink(),
+                                    ),
+                                  ],
+                                );
                               },
                             ),
                     ),

@@ -1,7 +1,7 @@
 // Naskah kanonik ID, EN, AR. Setiap entri wajib memiliki tiga terjemahan.
 const copyCatalog = <String, List<String>>{
   "appName": ["OpenTurath", "OpenTurath", "أوبن تراث"],
-  "appTagline": ["Membaca kitab, menelusuri ibarah.", "Reading the classics, tracing the texts.", "قراءة التراث وتتبع العبارات."],
+  "appTagline": ["AI for Islamic Scholarship", "AI for Islamic Scholarship", "الذكاء الاصطناعي للعلوم الإسلامية"],
   "defaultFieldDesc": ["Pilih bidang untuk mulai menelusuri kitab.", "Choose a discipline to explore its books.", "اختر مجالًا للاطلاع على كتبه."],
   "aboutTitle": ["Tentang OpenTurath", "About OpenTurath", "عن أوبن تراث"],
   "aboutDescription": ["OpenTurath membantu Anda menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. Pilih bidang yang ingin dipelajari, ajukan pertanyaan, lalu baca kutipan dan keterangan kitab yang tersedia. Simpan jawaban atau kutipan ke Catatan untuk dipelajari kembali.", "OpenTurath helps you find passages and references in classical Islamic works with the aid of AI. Choose a discipline, submit a scholarly inquiry, and read the cited passages. Save useful extracts to your notes.", "يعينك أوبن تراث على تتبع العبارات والمراجع في كتب التراث بأدوات الذكاء الاصطناعي. اختر مجالًا واطرح مسألتك واقرأ النصوص المحالة إلى مصادرها، واحفظ ما تحتاج إليه في ملاحظاتك."],
@@ -673,4 +673,15 @@ const copyCatalog = <String, List<String>>{
   "syncNow": ["Sinkronkan", "Sync now", "مزامنة"],
   "corpusDisciplineTab": ["Bidang ilmu", "Disciplines", "الفنون"],
   "corpusScholarTab": ["Khazanah ulama", "Scholars", "خزانة العلماء"],
+  "loginTitle": ["Masuk ke OpenTurath", "Sign in to OpenTurath", "تسجيل الدخول إلى أوبن تراث"],
+  "loginSubtitle": ["Lanjutkan telaah kitab dengan akun Google Anda.", "Continue your study with your Google account.", "تابع مطالعتك بحساب Google."],
+  "loginAsideBody": ["Telusuri ibarah dan rujukan langsung dari kitab turats, dengan asisten untuk tiap bidang ilmu.", "Trace passages and references straight from the classical texts, with an assistant for each discipline.", "تتبّع العبارات والمراجع من كتب التراث مباشرة، مع مساعد لكل فنّ."],
+  "loginFeatureAssistants": ["Asisten per bidang ilmu", "An assistant for each discipline", "مساعد لكل فنّ"],
+  "loginFeatureAssistantsBody": ["Fikih, hadis, tafsir, akidah, usul fikih, dan bahasa Arab.", "Fiqh, hadith, tafsir, creed, legal theory, and Arabic.", "الفقه والحديث والتفسير والعقيدة وأصول الفقه والعربية."],
+  "loginFeatureSources": ["Berpijak pada kitab rujukan", "Grounded in reference works", "مستند إلى الكتب المرجعية"],
+  "loginFeatureSourcesBody": ["Setiap asisten punya pustaka kitab yang dapat Anda periksa.", "Every assistant has a library of works you can inspect.", "لكل مساعد مكتبة يمكنك مراجعتها."],
+  "loginFeatureNotes": ["Catatan telaah tersimpan", "Study notes, kept", "ملاحظات المطالعة محفوظة"],
+  "loginFeatureNotesBody": ["Simpan jawaban dan rujukan, tersinkron ke akun Anda.", "Save answers and references, synced to your account.", "احفظ الأجوبة والمراجع مع المزامنة إلى حسابك."],
+  "cardFlipHint": ["Ketuk kartu untuk membalik", "Tap the card to flip it", "اضغط على البطاقة لقلبها"],
+  "recentNote": ["Catatan terakhir", "Latest note", "آخر ملاحظة"],
 };

@@ -29,7 +29,7 @@ abstract final class LegalCopy {
 
   // ── Bab 1.2: Tentang OpenTurath untuk Aplikasi ─────────────────
   static const aboutAppTitle = 'Tentang OpenTurath';
-  static const aboutAppTagline = 'Membaca kitab, menelusuri ibarah.';
+  static const aboutAppTagline = 'AI for Islamic Scholarship';
 
   static const aboutAppParagraph1 =
       'OpenTurath membantu Anda menelusuri pembahasan dan rujukan dalam kitab-kitab Islam dengan bantuan AI. '

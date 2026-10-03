@@ -2,7 +2,7 @@ class AppConstants {
   // ── App Info ──────────────────────────────────────────────────
   static const String appName = 'OpenTurath AI';
   static const String appNameArabic = 'الذكاء الاصطناعي للعلوم الإسلامية';
-  static const String appTagline = 'Membaca kitab, menelusuri ibarah.';
+  static const String appTagline = 'AI for Islamic Scholarship';
 
   // ── User Agent Desktop Resmi (Safari macOS untuk WKWebView) ──
   static const String desktopSafariUserAgent =
