@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
               builder: (context, viewport) {
                 final bodyMinHeight =
                     viewport.maxHeight > 80 ? viewport.maxHeight - 80 : 0.0;
-                return SingleChildScrollView(
+                final form = SingleChildScrollView(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   child: Align(
@@ -285,6 +285,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 );
+                if (viewport.maxWidth < 900) return form;
+                // Desktop: formulir di kiri, panel merek gelap di kanan.
+                return Row(
+                  children: [
+                    Expanded(child: form),
+                    const Expanded(child: _LoginAside()),
+                  ],
+                );
               },
             ),
             const PositionedDirectional(
@@ -293,6 +301,69 @@ class _LoginScreenState extends State<LoginScreen> {
               child: LanguageSwitcher(),
             ),
           ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoginAside extends StatelessWidget {
+  const _LoginAside();
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    const ink = OTColors.onInverseSurface;
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: OTColors.inverseSurface(dark),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+              color: dark ? OTColors.border(dark) : OTColors.inverseSurface(dark)),
+        ),
+        child: Stack(
+          children: [
+            PositionedDirectional(
+              end: -60,
+              bottom: -70,
+              child: ExcludeSemantics(
+                child: OpenTurathMark(
+                    size: 360, color: ink.withValues(alpha: 0.05)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    AppCopy.academicSlogan,
+                    style: ScholarlyFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.2,
+                      color: ink.withValues(alpha: 0.64),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    AppCopy.appTagline,
+                    style: ScholarlyFonts.newsreader(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.8,
+                      height: 1.18,
+                      color: ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

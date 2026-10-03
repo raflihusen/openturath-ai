@@ -24,6 +24,7 @@ import '../services/bookmark_service.dart';
 import '../services/canonical_library_service.dart';
 import '../widgets/note_editor_sheet.dart';
 import 'note_reader_screen.dart';
+import '../widgets/ot_motion_widgets.dart';
 
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
@@ -298,9 +299,10 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         scrolledUnderElevation: 0,
         title: Text(
           AppCopy.savedCollection,
-          style: NativeTypography.corpusTitle(color: textPrimary).copyWith(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
+          style: NativeFonts.outfit(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: textPrimary,
           ),
         ),
         actions: [
@@ -641,7 +643,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   const SizedBox(height: OTSpacing.md),
                               itemBuilder: (context, index) {
                                 final item = _filteredBookmarks[index];
-                                return _BookmarkCard(
+                                return OTReveal(index: index % 6, child: _BookmarkCard(
                                   item: item,
                                   searchQuery: _searchQuery,
                                   surface: surface,
@@ -658,7 +660,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   onOpen: () => _openBookmarkItem(item),
                                   onShare: () => _shareBookmark(item),
                                   onDelete: () => _deleteBookmark(item),
-                                );
+                                ));
                               },
                             ),
                     ),

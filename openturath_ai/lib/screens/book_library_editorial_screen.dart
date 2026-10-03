@@ -146,11 +146,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     const SizedBox(height: 20),
                     Text(
                       Loc.tr('bookCatalog'),
-                      style: ScholarlyFonts.newsreader(
+                      style: ScholarlyFonts.outfit(
                         color: ink,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.6,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.3,
                       ),
                     ),
                     const SizedBox(height: 4),

@@ -37,9 +37,6 @@ class TahawwulatFlagshipCard extends StatelessWidget {
   static const _muted = Color(0xFFB8B8B8);
   static const _hairline = Color(0xFF454545);
 
-  String _numberForIndex(int index) {
-    return (index + 1).toString().padLeft(2, '0');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,48 +176,40 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                       color: _pearl,
                     ),
                   ),
-                  children: List.generate(subAgents.length, (index) {
+                  children: [
+                    // Lima asisten sebagai ubin: dua kolom bila lebar cukup.
+                    LayoutBuilder(builder: (context, box) {
+                      const gap = 8.0;
+                      final columns = box.maxWidth >= 520 ? 2 : 1;
+                      final tileWidth =
+                          (box.maxWidth - gap * (columns - 1)) / columns;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: Wrap(
+                          spacing: gap,
+                          runSpacing: gap,
+                          children: List.generate(subAgents.length, (index) {
                     final sub = subAgents[index];
-                    final number = _numberForIndex(index);
 
-                    return AppleInteractiveWrapper(
+                    return SizedBox(
+                        width: tileWidth,
+                        child: AppleInteractiveWrapper(
                       onTap: () => onOpenSubAgent(sub),
-                      pressedScale: 0.99,
+                      pressedScale: 0.985,
+                      borderRadius: BorderRadius.circular(12),
                       semanticLabel:
                           '${Loc.tr('startStudy')} ${Loc.isArabic ? sub.nameArabic : sub.name}',
                       child: Container(
                         constraints: const BoxConstraints(minHeight: 54),
                         decoration: BoxDecoration(
-                          border: index < subAgents.length - 1
-                              ? const Border(
-                                  bottom: BorderSide(
-                                    color: _hairline,
-                                    width: 0.8,
-                                  ),
-                                )
-                              : null,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.14)),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 10),
                         child: Row(
                           children: [
-                            SizedBox(
-                              width: 34,
-                              child: Text(
-                                number,
-                                style: ScholarlyFonts.jetBrainsMono(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.35,
-                                  color: _muted,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 1,
-                              height: 26,
-                              color: Colors.white.withValues(alpha: 0.12),
-                            ),
-                            const SizedBox(width: 14),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +234,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: ScholarlyFonts.outfit(
-                                      fontSize: 11.5,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       color: _muted,
                                     ),
@@ -262,8 +251,12 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                    );
-                  }),
+                    ));
+                          }),
+                        ),
+                      );
+                    }),
+                  ],
                 ),
                 Container(height: 0.8, color: _hairline),
                 const SizedBox(height: 16),

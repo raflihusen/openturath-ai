@@ -174,10 +174,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     if (flagship) {
       return Container(
         decoration: BoxDecoration(
-          color: OTColors.primaryContainer(dark),
+          color: OTColors.surface(dark),
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: OTColors.borderStrong(dark), width: 1.2),
         ),
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(20),
         child: child,
       );
     }
@@ -404,7 +405,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(Loc.tr('launchOffer'),
-                      style: OTTypography.pageTitle(color: ink)),
+                      style: OTTypography.sectionTitle(color: ink)
+                          .copyWith(fontSize: 22, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 8),
                   Text(AppCopy.manualRenewalNotice,
                       style: OTTypography.body(color: muted)),
@@ -424,7 +426,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 4.5),
                               decoration: BoxDecoration(
-                                color: OTColors.surface(dark).withValues(alpha: 0.6),
+                                color: OTColors.surfaceSubtle(dark),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -448,7 +450,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
-                                color: OTColors.surface(dark).withValues(alpha: 0.6),
+                                color: OTColors.surfaceSubtle(dark),
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               child: Text(
@@ -463,7 +465,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(AppCopy.planTahawwulat,
-                            style: OTTypography.pageTitle(color: featuredInk)),
+                            style: OTTypography.pageTitle(color: featuredInk)
+                                .copyWith(fontSize: 22)),
                         const SizedBox(height: 6),
                         Text(
                           Loc.tr('planFeaturedDescription'),
@@ -600,7 +603,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(Loc.tr('specialistAccess'),
-                            style: OTTypography.pageTitle(color: ink)),
+                            style: OTTypography.pageTitle(color: ink)
+                                .copyWith(fontSize: 22)),
                         const SizedBox(height: 6),
                         Text(
                           Loc.tr('planSingleDescription'),

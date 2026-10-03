@@ -193,11 +193,10 @@ class _TopBar extends StatelessWidget {
             Loc.tr('libraryOverview'),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: ScholarlyFonts.newsreader(
+            style: ScholarlyFonts.outfit(
               color: ink,
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              letterSpacing: -0.5,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),

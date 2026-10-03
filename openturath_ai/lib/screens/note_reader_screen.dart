@@ -78,8 +78,8 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
         backgroundColor: canvas,
         surfaceTintColor: Colors.transparent,
         title: Text(AppCopy.savedCollection,
-            style: NativeFonts.newsreader(
-                color: primary, fontWeight: FontWeight.w700)),
+            style: NativeFonts.outfit(
+                fontSize: 20, color: primary, fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
               icon: const Icon(Icons.copy_outlined),
