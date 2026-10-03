@@ -138,7 +138,7 @@ void main() {
 
     expect(find.text('Book reference'), findsOneWidget);
     expect(find.text('فضائل مكة والسكن فيها'), findsOneWidget);
-    expect(find.text('Reference record'), findsOneWidget);
+    expect(find.text('Edition details'), findsOneWidget);
     expect(find.text('Publisher'), findsOneWidget);
     expect(find.text('Source collection'), findsNothing);
     expect(tester.takeException(), isNull);

@@ -247,7 +247,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         ),
         body: SafeArea(
           top: false,
-          child: Center(
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1040),
               child: Column(
@@ -419,22 +420,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 physics: const BouncingScrollPhysics(
                                     parent: AlwaysScrollableScrollPhysics()),
                                 padding: const EdgeInsets.fromLTRB(
-                                    OTSpacing.lg, OTSpacing.xs, OTSpacing.lg, 28),
+                                    OTSpacing.lg, OTSpacing.md, OTSpacing.lg, 28),
                                 children: [
-                                  if (isGeneralTab && _searchQuery.isEmpty) ...[
-                                    Text(
-                                      Loc.tr('assistantIntro'),
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: 14,
-                                        height: 1.5,
-                                        color: textSecondary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 22),
-                                  ],
                                   _sectionLabel(
                                     Loc.tr('assistantSelected'),
-                                    Loc.tr('assistantSelectedHint'),
+                                    '',
                                     textPrimary,
                                     textSecondary,
                                   ),

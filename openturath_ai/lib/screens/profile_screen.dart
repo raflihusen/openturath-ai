@@ -311,9 +311,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 : (fbUser?.email ?? '');
             final membership = resolveMembershipPass(userModel);
 
-            return Center(
+            return Align(
+              alignment: AlignmentDirectional.topStart,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 720),
+                constraints: const BoxConstraints(maxWidth: 760),
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   physics: const BouncingScrollPhysics(),
@@ -844,8 +845,6 @@ class _MembershipPass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
     final foreground = OTColors.textPrimary(isDark);
     final muted = OTColors.textSecondary(isDark);
     final isOpen = summary.isOpen;
@@ -855,16 +854,13 @@ class _MembershipPass extends StatelessWidget {
     final onCardMuted = onCard.withValues(alpha: 0.64);
     final expiry = summary.expiresAt == null ? '—' : _expiryLabel();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Semantics(
+    final card = Semantics(
           label:
               'OpenTurath. ${summary.badge}. $holderName. ${summary.accessLabel}',
           child: Align(
             alignment: AlignmentDirectional.centerStart,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
+              constraints: const BoxConstraints(maxWidth: 520),
               child: AspectRatio(
                 aspectRatio: 1.586,
                 child: OTFlipCard(
@@ -941,18 +937,6 @@ class _MembershipPass extends StatelessWidget {
                               ],
                             ),
                             const Spacer(),
-                            Text(
-                              summary.accessLabel,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: ScholarlyFonts.outfit(
-                                color: onCard,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                height: 1.3,
-                              ),
-                            ),
-                            const Spacer(),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
@@ -1020,41 +1004,71 @@ class _MembershipPass extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        const SizedBox(height: OTSpacing.md),
-        Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: surface,
-            borderRadius: OTRadius.cardBorder,
-            border: Border.all(color: border),
-          ),
+        );
+
+    Widget action(IconData icon, String label, VoidCallback? onTap) =>
+        OTBentoTile(
+          onTap: onTap,
+          semanticLabel: label,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (onViewAccess != null) ...[
-                _AccountActionRow(
-                  icon: Icons.auto_stories_outlined,
-                  label: summary.accessLabel,
-                  color: foreground,
-                  onTap: onViewAccess,
-                  trailing:
-                      Icon(Icons.chevron_right_rounded, color: muted, size: 20),
+              Row(
+                children: [
+                  Icon(icon, size: 20, color: foreground),
+                  const Spacer(),
+                  Icon(Icons.arrow_outward_rounded, size: 18, color: muted),
+                ],
+              ),
+              const SizedBox(height: OTSpacing.md),
+              Text(label, style: OTTypography.bodyMedium(color: foreground)),
+            ],
+          ),
+        );
+    final actions = <Widget>[
+      if (onViewAccess != null)
+        action(Icons.auto_stories_outlined, Loc.tr('viewAccessList'),
+            onViewAccess),
+      action(Icons.tune_rounded, summary.ctaLabel, onManage),
+    ];
+
+    return LayoutBuilder(builder: (context, constraints) {
+      // Lebar: kartu di kiri, aksi sebagai ubin di kanan setinggi kartu.
+      if (constraints.maxWidth >= 620) {
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(flex: 5, child: card),
+              const SizedBox(width: OTSpacing.md),
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < actions.length; i++) ...[
+                      if (i > 0) const SizedBox(height: OTSpacing.md),
+                      Expanded(child: actions[i]),
+                    ],
+                  ],
                 ),
-                Divider(height: 1, color: border),
-              ],
-              _AccountActionRow(
-                icon: Icons.tune_rounded,
-                label: summary.ctaLabel,
-                color: foreground,
-                onTap: onManage,
-                trailing:
-                    Icon(Icons.chevron_right_rounded, color: muted, size: 20),
               ),
             ],
           ),
-        ),
-      ],
-    );
+        );
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          card,
+          for (final tile in actions) ...[
+            const SizedBox(height: OTSpacing.md),
+            tile,
+          ],
+        ],
+      );
+    });
   }
 }
 
@@ -1065,7 +1079,6 @@ class _AccountActionRow extends StatelessWidget {
     required this.color,
     required this.onTap,
     this.busy = false,
-    this.trailing,
   });
 
   final IconData icon;
@@ -1073,7 +1086,6 @@ class _AccountActionRow extends StatelessWidget {
   final Color color;
   final VoidCallback? onTap;
   final bool busy;
-  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -1096,7 +1108,6 @@ class _AccountActionRow extends StatelessWidget {
             Expanded(
               child: Text(label, style: OTTypography.bodyMedium(color: color)),
             ),
-            if (trailing != null) trailing!,
           ],
         ),
       ),

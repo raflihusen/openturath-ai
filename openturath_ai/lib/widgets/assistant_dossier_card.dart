@@ -56,8 +56,10 @@ class AssistantDossierCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Container(
+              // Hanya status yang perlu diketahui: asisten yang belum dibuka.
+              if (agent.isComingSoon) ...[
+                const SizedBox(width: 12),
+                Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                 decoration: BoxDecoration(
@@ -65,9 +67,7 @@ class AssistantDossierCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  agent.isComingSoon
-                      ? Loc.tr('comingSoon')
-                      : Loc.tr('assistantAvailable'),
+                  Loc.tr('comingSoon'),
                   style: ScholarlyFonts.outfit(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -75,6 +75,7 @@ class AssistantDossierCard extends StatelessWidget {
                   ),
                 ),
               ),
+              ],
             ],
           ),
           if (agent.titleArabic.isNotEmpty && !Loc.isArabic) ...[

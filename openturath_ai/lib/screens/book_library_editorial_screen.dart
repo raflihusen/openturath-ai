@@ -643,14 +643,19 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                             ),
                           ),
                           const SizedBox(height: 12),
-                          Text(
+                          SizedBox(
+                            width: double.infinity,
+                            child: Text(
                             book.author,
+                            textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.right,
                             style: ScholarlyFonts.scheherazadeNew(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: ink,
                               height: 1.85,
                             ),
+                          ),
                           ),
                         ],
                       ),
@@ -667,9 +672,9 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                     ),
                     const SizedBox(height: 12),
                     _BookBentoGrid(book: book),
-                    const SizedBox(height: 28),
-                    SizedBox(
-                      width: double.infinity,
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
                       child: OutlinedButton.icon(
                         onPressed: () => _handleCopyCitation(context),
                         icon: const Icon(Icons.content_copy_rounded, size: 18),
@@ -683,9 +688,10 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         style: OutlinedButton.styleFrom(
                           foregroundColor: ink,
                           side: BorderSide(color: border),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -710,6 +716,10 @@ class _BookBentoGrid extends StatelessWidget {
 
   static bool _has(String value) => value.trim().isNotEmpty && value != '-';
 
+  // Teks Arab atau panjang tidak muat sebagai angka besar di ubin kecil.
+  static bool _isLong(String value) =>
+      value.trim().length > 14 || RegExp(r'[\u0600-\u06FF]').hasMatch(value);
+
   @override
   Widget build(BuildContext context) {
     final facts = <_BentoTile>[
@@ -725,7 +735,7 @@ class _BookBentoGrid extends StatelessWidget {
           label: Loc.tr('bookPages'),
           value: book.pagesLabel,
         ),
-      if (_has(book.edition))
+      if (_has(book.edition) && !_isLong(book.edition))
         _BentoTile(
           icon: Icons.bookmark_border_rounded,
           label: Loc.tr('bookEdition'),
@@ -733,6 +743,13 @@ class _BookBentoGrid extends StatelessWidget {
         ),
     ];
     final wide = <_BentoTile>[
+      if (_has(book.edition) && _isLong(book.edition))
+        _BentoTile(
+          icon: Icons.bookmark_border_rounded,
+          label: Loc.tr('bookEdition'),
+          value: book.edition,
+          wide: true,
+        ),
       if (_has(book.editor))
         _BentoTile(
           icon: Icons.edit_outlined,
@@ -758,26 +775,42 @@ class _BookBentoGrid extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       const gap = OTSpacing.md;
       final width = constraints.maxWidth;
-      // Kolom fakta mengikuti lebar: 2 di ponsel, 3 bila ruang cukup.
-      final columns = facts.isEmpty
-          ? 1
-          : (width >= 560 ? facts.length.clamp(1, 3) : facts.length.clamp(1, 2));
-      final factWidth = (width - gap * (columns - 1)) / columns;
-      final wideColumns = width >= 560 && wide.length == 2 ? 2 : 1;
+      final stacked = width < 420;
+      final wideColumns = width >= 560 && wide.length.isEven ? 2 : 1;
       final wideWidth = (width - gap * (wideColumns - 1)) / wideColumns;
 
-      return Wrap(
-        spacing: gap,
-        runSpacing: gap,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (var i = 0; i < facts.length; i++)
-            SizedBox(
-                width: factWidth,
-                child: OTReveal(index: i, child: facts[i])),
-          for (var i = 0; i < wide.length; i++)
-            SizedBox(
-                width: wideWidth,
-                child: OTReveal(index: facts.length + i, child: wide[i])),
+          // Fakta singkat dalam satu baris dengan tinggi yang sama.
+          if (facts.isNotEmpty && !stacked)
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < facts.length; i++) ...[
+                    if (i > 0) const SizedBox(width: gap),
+                    Expanded(child: OTReveal(index: i, child: facts[i])),
+                  ],
+                ],
+              ),
+            ),
+          if (facts.isNotEmpty && stacked)
+            for (var i = 0; i < facts.length; i++) ...[
+              if (i > 0) const SizedBox(height: gap),
+              OTReveal(index: i, child: facts[i]),
+            ],
+          if (facts.isNotEmpty && wide.isNotEmpty) const SizedBox(height: gap),
+          Wrap(
+            spacing: gap,
+            runSpacing: gap,
+            children: [
+              for (var i = 0; i < wide.length; i++)
+                SizedBox(
+                    width: wideWidth,
+                    child: OTReveal(index: facts.length + i, child: wide[i])),
+            ],
+          ),
         ],
       );
     });
@@ -806,7 +839,7 @@ class _BentoTile extends StatelessWidget {
     final isArabic = RegExp(r'[؀-ۿ]').hasMatch(displayValue);
 
     return Container(
-      constraints: BoxConstraints(minHeight: wide ? 0 : 112),
+      constraints: BoxConstraints(minHeight: wide ? 0 : 96),
       padding: const EdgeInsets.all(OTSpacing.base),
       decoration: BoxDecoration(
         color: OTColors.surface(isDark),

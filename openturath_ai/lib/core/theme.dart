@@ -201,6 +201,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
+        titleSpacing: 20,
         titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -374,6 +375,7 @@ class AppTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
+        titleSpacing: 20,
         titleTextStyle: ScholarlyFonts.outfit(
           fontSize: 18,
           fontWeight: FontWeight.w600,

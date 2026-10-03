@@ -207,16 +207,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: RefreshIndicator(
               onRefresh: _loadData,
               color: accent,
-              child: Center(
+              // Rata atas-awal: konten pendek tidak lagi melayang di tengah layar.
+              child: Align(
+                alignment: AlignmentDirectional.topStart,
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 1040),
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics()),
-                    padding: EdgeInsets.fromLTRB(
-                      MediaQuery.sizeOf(context).width >= 768 ? 40 : 20,
-                      28,
-                      MediaQuery.sizeOf(context).width >= 768 ? 40 : 20,
+                    padding: const EdgeInsets.fromLTRB(
+                      20,
+                      20,
+                      20,
                       40,
                     ),
                     child: Column(
@@ -505,7 +507,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
                               mainAxisExtent:
-                                  MediaQuery.textScalerOf(context).scale(104),
+                                  MediaQuery.textScalerOf(context).scale(92),
                             ),
                             itemCount: _curatedDisciplines.length,
                             itemBuilder: (context, index) {
