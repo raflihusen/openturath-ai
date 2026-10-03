@@ -522,7 +522,6 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
     Loc.watch(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final border = OTColors.border(isDark);
@@ -581,121 +580,98 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                   child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Hero Card Kitab
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: border),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                    // Baris atas bento: judul dan pengarang di ubin lebar,
+                    // bidang ilmu dan wafat pengarang di ubin samping.
+                    LayoutBuilder(builder: (context, box) {
+                      final titleTile = OTBentoTile(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              book.title,
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.right,
+                              style: ScholarlyFonts.scheherazadeNew(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: ink,
+                                height: 1.6,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              book.author,
+                              textDirection: TextDirection.rtl,
+                              textAlign: TextAlign.right,
+                              style: ScholarlyFonts.scheherazadeNew(
+                                fontSize: 18,
+                                color: textSecondary,
+                                height: 1.7,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                      Widget fact(String label, String value) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Flexible(
-                                  child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: OTColors.primaryContainer(isDark),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  book.localizedSection,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                              Text(label,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: OTColors.onPrimaryContainer(isDark),
-                                  ),
-                                ),
-                              )),
-                              const SizedBox(width: 12),
-                              Text(
-                                book.deathLabel,
-                                style: ScholarlyFonts.outfit(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: textSecondary,
-                                ),
-                              ),
+                                      fontSize: 12, color: textSecondary)),
+                              const SizedBox(height: 2),
+                              Text(value,
+                                  style: ScholarlyFonts.outfit(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: ink)),
                             ],
-                          ),
-                          const SizedBox(height: 20),
-                          Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                book.title,
-                                textAlign: TextAlign.right,
-                                style: ScholarlyFonts.scheherazadeNew(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  color: ink,
-                                  height: 1.85,
-                                ),
+                          );
+                      final sideTile = OTBentoTile(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            fact(Loc.tr('bookScienceSection'),
+                                book.localizedSection),
+                            if (book.deathYear != null) ...[
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                child: Divider(height: 1, color: border),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: double.infinity,
-                            child: Text(
-                            book.author,
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                            style: ScholarlyFonts.scheherazadeNew(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: ink,
-                              height: 1.85,
-                            ),
-                          ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      Loc.tr('bookRecordMetadata'),
-                      style: ScholarlyFonts.outfit(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.0,
-                        color: textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+                              fact(Loc.tr('authorDeathLabel'),
+                                  book.deathLabel),
+                            ],
+                          ],
+                        ),
+                      );
+                      if (box.maxWidth < 560) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            OTReveal(child: titleTile),
+                            const SizedBox(height: OTSpacing.md),
+                            OTReveal(index: 1, child: sideTile),
+                          ],
+                        );
+                      }
+                      return IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                                flex: 2, child: OTReveal(child: titleTile)),
+                            const SizedBox(width: OTSpacing.md),
+                            Expanded(
+                                child: OTReveal(index: 1, child: sideTile)),
+                          ],
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: OTSpacing.md),
                     _BookBentoGrid(book: book),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: OutlinedButton.icon(
-                        onPressed: () => _handleCopyCitation(context),
-                        icon: const Icon(Icons.content_copy_rounded, size: 18),
-                        label: Text(
-                          Loc.tr('ui_3f42b695cf'),
-                          style: ScholarlyFonts.outfit(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: ink,
-                          side: BorderSide(color: border),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ))),
               ),
