@@ -120,6 +120,17 @@ def main():
     print("🚀 OTOMASI RILIS & BROADCAST PEMBARUAN OPENTURATH AI")
     print("=" * 65)
 
+    # 0. Gerbang kualitas: update tidak disiarkan bila analyzer atau tes gagal.
+    print("\n[0/5] Menjalankan analyzer dan tes sebelum rilis...")
+    for label, cmd in (
+        ("flutter analyze", ['flutter', 'analyze', '--no-pub']),
+        ("flutter test", ['flutter', 'test', '--no-pub']),
+    ):
+        if subprocess.run(cmd, cwd=FLUTTER_DIR).returncode != 0:
+            print(f"❌ {label} gagal. Rilis dibatalkan; tidak ada yang diunggah atau disiarkan.")
+            sys.exit(1)
+    print("   [OK] Analyzer dan tes lulus.")
+
     # 1. Build APK jika flag --build diberikan
     if args.build:
         print("\n[1/5] Mengompilasi APK rilis baru (flutter build apk --release)...")
