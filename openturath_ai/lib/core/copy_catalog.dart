@@ -691,4 +691,10 @@ const copyCatalog = <String, List<String>>{
   "unitLectures": ["muhadharah", "lectures", "محاضرة"],
   "flagshipPositioning": ["Asisten AI yang dibangun khusus untuk Fikih Tahawwulat.", "An AI assistant built specifically for Fiqh al-Tahawwulat.", "مساعد ذكي بُني خصيصًا لفقه التحولات."],
   "authorDeathLabel": ["Wafat pengarang", "Author died", "وفاة المؤلف"],
+  "searchFieldHint": ["Cari bidang…", "Search disciplines…", "ابحث عن فنّ…"],
+  "libraryShort": ["Pustaka", "Library", "المكتبة"],
+  "loginStatLibraries": ["pustaka bidang ilmu", "discipline libraries", "مكتبات الفنون"],
+  "loginStatEntries": ["entri kitab", "catalogued works", "مدخل في الفهارس"],
+  "loginStatPages": ["halaman (perkiraan)", "pages (estimated)", "صفحة (تقديرًا)"],
+  "unitMillion": ["juta", "million", "مليون"],
 };

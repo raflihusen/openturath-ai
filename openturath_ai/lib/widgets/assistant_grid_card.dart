@@ -36,7 +36,8 @@ class LibraryStat {
   }
 }
 
-/// Kartu asisten di grid: satu ketukan membuka asisten, ikon buku membuka pustaka.
+/// Kartu asisten di grid: nama dan angka pustaka di tengah; satu ketukan
+/// membuka asisten, tautan "Pustaka" membuka daftar kitabnya.
 class AssistantGridCard extends StatelessWidget {
   const AssistantGridCard({
     super.key,
@@ -59,79 +60,50 @@ class AssistantGridCard extends StatelessWidget {
     final muted = OTColors.textSecondary(dark);
     final border = OTColors.border(dark);
     final stats = LibraryStat.from(metadata);
-    final scope = agent.subtitleAcademic.trim();
-    final showScope =
-        scope.isNotEmpty && (Loc.language == 'id' || Loc.text(scope) != scope);
 
     return OTBentoTile(
       onTap: onOpen,
       semanticLabel: '${Loc.tr('startStudy')} ${agent.title}',
       padding: const EdgeInsets.fromLTRB(
-          OTSpacing.base, OTSpacing.base, OTSpacing.base, OTSpacing.sm),
+          OTSpacing.base, OTSpacing.lg, OTSpacing.base, OTSpacing.sm),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      Loc.text(agent.title),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.newsreader(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.3,
-                        height: 1.2,
-                        color: ink,
-                      ),
-                    ),
-                  ),
-                  if (agent.isComingSoon) ...[
-                    const SizedBox(width: OTSpacing.sm),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: OTColors.surfaceSubtle(dark),
-                        borderRadius: OTRadius.chipBorder,
-                      ),
-                      child: Text(
-                        Loc.tr('comingSoon'),
-                        style:
-                            ScholarlyFonts.outfit(fontSize: 11, color: muted),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              if (agent.titleArabic.isNotEmpty && !Loc.isArabic)
-                Text(
-                  agent.titleArabic,
-                  textDirection: TextDirection.rtl,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: ScholarlyFonts.scheherazadeNew(
-                      fontSize: 17, height: 1.7, color: muted),
+              Text(
+                Loc.text(agent.title),
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: ScholarlyFonts.newsreader(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.3,
+                  height: 1.2,
+                  color: ink,
                 ),
-              if (showScope) ...[
-                const SizedBox(height: 4),
-                Text(
-                  scope,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: ScholarlyFonts.outfit(
-                      fontSize: 13, height: 1.45, color: muted),
+              ),
+              if (agent.isComingSoon) ...[
+                const SizedBox(height: OTSpacing.sm),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: OTColors.surfaceSubtle(dark),
+                    borderRadius: OTRadius.chipBorder,
+                  ),
+                  child: Text(
+                    Loc.tr('comingSoon'),
+                    style: ScholarlyFonts.outfit(fontSize: 11, color: muted),
+                  ),
                 ),
               ],
               if (stats.isNotEmpty) ...[
                 const SizedBox(height: OTSpacing.md),
                 Wrap(
+                  alignment: WrapAlignment.center,
                   spacing: 6,
                   runSpacing: 6,
                   children: [
@@ -171,29 +143,31 @@ class AssistantGridCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: OTSpacing.md),
-            child: Row(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 4,
               children: [
-                Text(
-                  Loc.tr('startStudy'),
-                  style: ScholarlyFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: ink,
+                TextButton.icon(
+                  onPressed: onOpen,
+                  iconAlignment: IconAlignment.end,
+                  icon: const Icon(Icons.arrow_forward_rounded, size: 16),
+                  label: Text(Loc.tr('startStudy')),
+                  style: TextButton.styleFrom(
+                    foregroundColor: ink,
+                    textStyle: ScholarlyFonts.outfit(
+                        fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ),
-                const SizedBox(width: 4),
-                Icon(Icons.arrow_forward_rounded, size: 16, color: ink),
-                const Spacer(),
                 if (onOpenLibrary != null)
-                  IconButton(
+                  TextButton(
                     onPressed: onOpenLibrary,
-                    tooltip: Loc.tr('assistantLibrary'),
-                    visualDensity: VisualDensity.compact,
-                    icon: Icon(Icons.auto_stories_outlined,
-                        size: 19, color: muted),
-                  )
-                else
-                  const SizedBox(height: 40),
+                    style: TextButton.styleFrom(
+                      foregroundColor: muted,
+                      textStyle: ScholarlyFonts.outfit(fontSize: 13),
+                    ),
+                    child: Text(Loc.tr('libraryShort')),
+                  ),
               ],
             ),
           ),

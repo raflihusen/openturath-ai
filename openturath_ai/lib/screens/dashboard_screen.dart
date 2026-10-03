@@ -29,6 +29,8 @@ import '../widgets/library_bottom_sheet.dart';
 import 'main_shell_screen.dart';
 import '../services/bookmark_service.dart';
 import '../models/bookmark_model.dart';
+import '../widgets/assistant_grid_card.dart';
+import '../services/open_turath_catalog_repository.dart';
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
 /// Dilengkapi animasi Apple Interactive micro-compression, pantulan pegas halus,
@@ -177,8 +179,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final canvas = OTColors.canvas(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
     final accent = OTColors.accent(isDark);
@@ -262,14 +262,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 }
                               },
                             );
-                            final dates = _ScholarlyDatePanel(
-                              masehiDate: HijriDateUtils.formatMasehiOnly(),
-                              hijriDate: HijriDateUtils.formatHijriOnly(),
-                              surface: surface,
-                              border: border,
-                              textPrimary: textPrimary,
-                              textSecondary: textSecondary,
-                              accent: accent,
+                            final dates = _TahawwulatSpotlight(
+                              onOpen: () {
+                                final shell = MainShellController.of(context);
+                                if (shell != null) {
+                                  shell.switchTab(1,
+                                      fieldId: 'fiqh_tahawwulat');
+                                } else {
+                                  NavigationGuard.safePushNamed(
+                                    context,
+                                    AppRoutes.specialistList,
+                                    arguments: {'fieldId': 'fiqh_tahawwulat'},
+                                  );
+                                }
+                              },
                             );
                             return LayoutBuilder(
                                 builder: (context, constraints) {
@@ -507,11 +513,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
                               mainAxisExtent:
-                                  MediaQuery.textScalerOf(context).scale(92),
+                                  MediaQuery.textScalerOf(context).scale(108),
                             ),
                             itemCount: _curatedDisciplines.length,
                             itemBuilder: (context, index) {
                               final disc = _curatedDisciplines[index];
+                              // Jumlah dihitung dari daftar asisten, bukan angka tetap.
+                              final members = _agents
+                                  .where((agent) =>
+                                      agent.kind == CorpusKind.discipline &&
+                                      agent.fieldId == disc.fieldId)
+                                  .toList();
                               return OTReveal(
                                 index: index + 2,
                                 child: OTBentoTile(
@@ -559,14 +571,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       const Spacer(),
                                       Text(
                                         AppCopy.assistantsAvailableCount(
-                                            disc.specialistCount),
+                                            members.isEmpty
+                                                ? disc.specialistCount
+                                                : members.length),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: ScholarlyFonts.outfit(
                                           fontSize: 13,
-                                          color: textSecondary,
+                                          fontWeight: FontWeight.w600,
+                                          color: textPrimary,
                                         ),
                                       ),
+                                      if (members.isNotEmpty)
+                                        Text(
+                                          members
+                                              .map((agent) =>
+                                                  Loc.text(agent.title))
+                                              .join(' · '),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: ScholarlyFonts.outfit(
+                                            fontSize: 12,
+                                            color: textSecondary,
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -704,7 +732,11 @@ class _StudyEntryCard extends StatelessWidget {
                 ? AppCopy.ahlanDefault
                 : AppCopy.ahlanWithName(displayName),
             style: ScholarlyFonts.outfit(fontSize: 13, color: muted)),
-        const SizedBox(height: 12),
+        const SizedBox(height: 2),
+        Text(
+            '${HijriDateUtils.formatMasehiOnly()} · ${HijriDateUtils.formatHijriOnly()}',
+            style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+        const SizedBox(height: 14),
         Text(Loc.text(title),
             style: ScholarlyFonts.newsreader(
                 fontSize: MediaQuery.sizeOf(context).width >= 768 ? 30 : 26,
@@ -734,65 +766,87 @@ class _StudyEntryCard extends StatelessWidget {
   }
 }
 
-class _ScholarlyDatePanel extends StatelessWidget {
-  const _ScholarlyDatePanel({
-    required this.masehiDate,
-    required this.hijriDate,
-    required this.surface,
-    required this.border,
-    required this.textPrimary,
-    required this.textSecondary,
-    required this.accent,
-  });
+/// Sorotan koleksi utama: angka pustaka Fikih Tahawwulat dari metadata.
+class _TahawwulatSpotlight extends StatelessWidget {
+  const _TahawwulatSpotlight({required this.onOpen});
 
-  final String masehiDate;
-  final String hijriDate;
-  final Color surface;
-  final Color border;
-  final Color textPrimary;
-  final Color textSecondary;
-  final Color accent;
+  final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
     Loc.watch(context);
-    Widget entry(IconData icon, String label, String value) => Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 18, color: textSecondary),
-            const SizedBox(width: OTSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label,
-                      style: ScholarlyFonts.outfit(
-                          color: textSecondary, fontSize: 12)),
-                  const SizedBox(height: 2),
-                  Text(value,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: ScholarlyFonts.outfit(
-                          color: textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600)),
-                ],
-              ),
-            ),
-          ],
-        );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
     return OTBentoTile(
+      onTap: onOpen,
+      semanticLabel: Loc.text('Fikih Tahawwulat'),
       padding: const EdgeInsets.all(OTSpacing.lg),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          entry(Icons.calendar_today_outlined, AppCopy.today, masehiDate),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: OTSpacing.base),
-            child: Divider(height: 1, color: border),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(Loc.tr('planFeaturedLabel'),
+                  style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+              const SizedBox(height: 4),
+              Text(
+                Loc.text('Fikih Tahawwulat'),
+                style: ScholarlyFonts.newsreader(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.3,
+                  color: ink,
+                ),
+              ),
+            ],
           ),
-          entry(Icons.nightlight_outlined, AppCopy.hijriCalendar, hijriDate),
+          FutureBuilder<Map<String, AiLibraryMetadata>>(
+            future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
+            builder: (context, snapshot) {
+              final stats = LibraryStat.from(
+                  OpenTurathCatalogRepository.exactMetadata(
+                      snapshot.data ?? const {}, 'fiqh_tahawwulat'));
+              if (stats.isEmpty) return const SizedBox(height: OTSpacing.md);
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
+                child: Wrap(
+                  spacing: OTSpacing.lg,
+                  runSpacing: OTSpacing.sm,
+                  children: [
+                    for (final stat in stats)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(stat.value,
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: ink)),
+                          Text(stat.unit,
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: 12, color: muted)),
+                        ],
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+          Row(
+            children: [
+              Text(Loc.tr('flagshipExplore', ['5']),
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: ink)),
+              const SizedBox(width: 4),
+              Icon(Icons.arrow_forward_rounded, size: 16, color: ink),
+            ],
+          ),
         ],
       ),
     );

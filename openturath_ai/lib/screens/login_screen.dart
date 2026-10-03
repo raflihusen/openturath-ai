@@ -16,6 +16,11 @@ import '../core/app_snackbar.dart';
 import '../services/auth_service.dart';
 import '../widgets/openturath_brand.dart';
 import '../widgets/language_switcher.dart';
+import '../widgets/library_canvas.dart';
+import '../models/open_turath_book.dart';
+import '../services/open_turath_catalog_repository.dart';
+import '../core/design/ot_motion.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 /// A shared, theme-adaptive sign-in surface for mobile and desktop.
 class LoginScreen extends StatefulWidget {
@@ -276,14 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-                  child: Text(
-                    '© OpenTurath · ${AppCopy.appTagline}',
-                    style:
-                        ScholarlyFonts.outfit(fontSize: 12, color: secondary),
-                  ),
-                ),
+                const SizedBox(height: 20),
               ],
             );
             if (viewport.maxWidth < 900) return formColumn;
@@ -301,8 +299,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class _LoginAside extends StatelessWidget {
+class _LoginAside extends StatefulWidget {
   const _LoginAside();
+
+  @override
+  State<_LoginAside> createState() => _LoginAsideState();
+}
+
+class _LoginAsideState extends State<_LoginAside> {
+  final ValueNotifier<OpenTurathBook?> _focus = ValueNotifier(null);
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -311,42 +322,6 @@ class _LoginAside extends StatelessWidget {
     const ink = OTColors.onInverseSurface;
     final muted = ink.withValues(alpha: 0.66);
     final line = ink.withValues(alpha: 0.14);
-
-    Widget feature(int index, IconData icon, String title, String body) =>
-        OTReveal(
-          index: index + 2,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: ink.withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: line),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(icon, size: 20, color: ink),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title,
-                          style: ScholarlyFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: ink)),
-                      const SizedBox(height: 2),
-                      Text(body,
-                          style: ScholarlyFonts.outfit(
-                              fontSize: 13, height: 1.45, color: muted)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
 
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -361,33 +336,80 @@ class _LoginAside extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            PositionedDirectional(
-              end: -80,
-              top: -60,
+            // Rak kitab: judul asli dari katalog di dalam jendela lengkung.
+            Positioned.fill(
               child: ExcludeSemantics(
-                child: OpenTurathMark(
-                    size: 380, color: ink.withValues(alpha: 0.045)),
+                child: LibraryCanvas(onFocus: (book) => _focus.value = book),
+              ),
+            ),
+            // Gradasi bawah agar teks tetap terbaca di atas kanvas.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.5, 0.72],
+                      colors: [
+                        OTColors.inverseSurface(dark).withValues(alpha: 0),
+                        OTColors.inverseSurface(dark),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(40),
+              padding: const EdgeInsets.all(36),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Spacer(),
+                  // Kitab yang sedang menyala di kanvas: judul, pengarang, wafat.
+                  ValueListenableBuilder<OpenTurathBook?>(
+                    valueListenable: _focus,
+                    builder: (context, book, _) => AnimatedSwitcher(
+                      duration: OTMotion.normal,
+                      child: book == null
+                          ? const SizedBox(height: 20)
+                          : SizedBox(
+                              key: ValueKey(book.id),
+                              height: 20,
+                              width: double.infinity,
+                              child: Text(
+                                [
+                                  book.author,
+                                  if (book.deathYear != null)
+                                    'ت ${book.deathYear} هـ',
+                                ].join(' · '),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontFamily: 'NativeArabicUI',
+                                  fontSize: 13,
+                                  color: muted,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
                   OTReveal(
                     child: Text(
                       AppCopy.appTagline,
                       style: ScholarlyFonts.newsreader(
-                        fontSize: 44,
+                        fontSize: 40,
                         fontWeight: FontWeight.w500,
-                        letterSpacing: -1.2,
+                        letterSpacing: -1.1,
                         height: 1.08,
                         color: ink,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
                   OTReveal(
                     index: 1,
                     child: ConstrainedBox(
@@ -399,30 +421,73 @@ class _LoginAside extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  feature(
-                      0,
-                      Icons.auto_stories_outlined,
-                      Loc.tr('loginFeatureAssistants'),
-                      Loc.tr('loginFeatureAssistantsBody')),
-                  const SizedBox(height: 10),
-                  feature(
-                      1,
-                      Icons.menu_book_outlined,
-                      Loc.tr('loginFeatureSources'),
-                      Loc.tr('loginFeatureSourcesBody')),
-                  const SizedBox(height: 10),
-                  feature(
-                      2,
-                      Icons.edit_note_rounded,
-                      Loc.tr('loginFeatureNotes'),
-                      Loc.tr('loginFeatureNotesBody')),
+                  const SizedBox(height: 24),
+                  Divider(height: 1, color: line),
+                  const SizedBox(height: 16),
+                  // Angka pustaka dari metadata; tanpa ikon.
+                  OTReveal(
+                      index: 2, child: _LibraryTotals(ink: ink, muted: muted)),
                 ],
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _LibraryTotals extends StatelessWidget {
+  const _LibraryTotals({required this.ink, required this.muted});
+
+  final Color ink;
+  final Color muted;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, AiLibraryMetadata>>(
+      future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
+      builder: (context, snapshot) {
+        final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
+        if (all.isEmpty) return const SizedBox(height: 44);
+        final number = NumberFormat.decimalPattern(Loc.language);
+        final entries =
+            all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
+        final pages =
+            all.values.fold<int>(0, (sum, item) => sum + item.totalHalaman);
+        Widget stat(String value, String label) => Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: ScholarlyFonts.outfit(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.4,
+                      color: ink,
+                    ).copyWith(
+                        fontFeatures: const [FontFeature.tabularFigures()]),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(label,
+                      style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+                ],
+              ),
+            );
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            stat(number.format(all.length), Loc.tr('loginStatLibraries')),
+            // Dibulatkan ke bawah: sebagian angka halaman di metadata adalah perkiraan.
+            stat('${number.format(entries ~/ 100 * 100)}+',
+                Loc.tr('loginStatEntries')),
+            stat(
+                '${number.format(pages ~/ 100000 / 10)} ${Loc.tr('unitMillion')}+',
+                Loc.tr('loginStatPages')),
+          ],
+        );
+      },
     );
   }
 }

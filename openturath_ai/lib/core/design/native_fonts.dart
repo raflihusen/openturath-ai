@@ -16,15 +16,15 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: 'NativeOutfit',
-        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
+        fontFamilyFallback: const ['NativeArabicUI', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
-        height:
-            arabic ? (height == null || height < 1.85 ? 1.9 : height) : height,
+        // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
+        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -41,15 +41,15 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: 'NativeNewsreader',
-        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
+        fontFamilyFallback: const ['NativeArabicUI', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
-        height:
-            arabic ? (height == null || height < 1.85 ? 1.9 : height) : height,
+        // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
+        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -89,15 +89,15 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: arabic ? 'NativeArabic' : 'monospace',
-        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
+        fontFamilyFallback: const ['NativeArabicUI', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
-        height:
-            arabic ? (height == null || height < 1.85 ? 1.9 : height) : height,
+        // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
+        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -114,15 +114,15 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: arabic ? 'NativeArabic' : 'monospace',
-        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
+        fontFamilyFallback: const ['NativeArabicUI', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
-        height:
-            arabic ? (height == null || height < 1.85 ? 1.9 : height) : height,
+        // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
+        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 
@@ -139,15 +139,15 @@ abstract final class NativeFonts {
     final arabic = Loc.isArabic;
     return (textStyle ?? const TextStyle()).copyWith(
         fontFamily: arabic ? 'NativeArabic' : 'monospace',
-        fontFamilyFallback: const ['NativeArabic', 'NativeInter'],
+        fontFamilyFallback: const ['NativeArabicUI', 'NativeInter'],
         color: color,
         backgroundColor: backgroundColor,
         fontSize: fontSize,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: arabic ? 0 : letterSpacing,
-        height:
-            arabic ? (height == null || height < 1.85 ? 1.9 : height) : height,
+        // Teks antarmuka Arab memakai font UI dengan tinggi baris wajar.
+        height: arabic ? (height == null || height < 1.4 ? 1.5 : height) : height,
         decoration: decoration);
   }
 }

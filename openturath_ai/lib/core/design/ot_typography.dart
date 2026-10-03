@@ -22,11 +22,11 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: Loc.isArabic ? 'Scheherazade New' : 'Newsreader',
+        fontFamily: Loc.isArabic ? 'NativeArabicUI' : 'Newsreader',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+        height: Loc.isArabic && (height == null || height < 1.4) ? 1.5 : height,
         color: color,
       );
     }
@@ -34,7 +34,7 @@ class OTTypography {
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
-      height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+      height: Loc.isArabic && (height == null || height < 1.4) ? 1.5 : height,
       color: color,
     );
   }
@@ -49,11 +49,11 @@ class OTTypography {
   }) {
     if (useSystemFontFallback) {
       return TextStyle(
-        fontFamily: Loc.isArabic ? 'Scheherazade New' : 'Outfit',
+        fontFamily: Loc.isArabic ? 'NativeArabicUI' : 'Outfit',
         fontSize: fontSize,
         fontWeight: fontWeight,
         letterSpacing: letterSpacing,
-        height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+        height: Loc.isArabic && (height == null || height < 1.4) ? 1.5 : height,
         color: color,
       );
     }
@@ -61,7 +61,7 @@ class OTTypography {
       fontSize: fontSize,
       fontWeight: fontWeight,
       letterSpacing: letterSpacing,
-      height: Loc.isArabic && (height == null || height < 1.85) ? 1.85 : height,
+      height: Loc.isArabic && (height == null || height < 1.4) ? 1.5 : height,
       color: color,
     );
   }

@@ -323,6 +323,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: _MembershipPass(
                   holderName: displayName,
                   email: email,
+                  memberId: _memberIdFor(userModel?.uid ?? ''),
                   summary: membership,
                   isDark: isDark,
                   onManage: () => _openSubscription(userModel),
@@ -678,6 +679,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ));
   }
 
+  static String _memberIdFor(String uid) {
+    final clean = uid.replaceAll(RegExp(r'[^A-Za-z0-9]'), '').toUpperCase();
+    if (clean.length < 8 || uid.startsWith('guest_')) return '';
+    return 'OT  ${clean.substring(0, 4)}  ${clean.substring(clean.length - 4)}';
+  }
+
   Widget _buildThemeOption({
     required String title,
     required IconData icon,
@@ -748,6 +755,9 @@ class _MembershipPass extends StatelessWidget {
   final VoidCallback onManage;
   final VoidCallback? onViewAccess;
 
+  /// Nomor anggota yang diturunkan dari UID akun; bukan nomor kartu tiruan.
+  final String memberId;
+
   const _MembershipPass({
     required this.holderName,
     required this.email,
@@ -755,6 +765,7 @@ class _MembershipPass extends StatelessWidget {
     required this.isDark,
     required this.onManage,
     this.onViewAccess,
+    this.memberId = '',
   });
 
   String _expiryLabel() {
@@ -860,7 +871,7 @@ class _MembershipPass extends StatelessWidget {
           child: Align(
             alignment: AlignmentDirectional.centerStart,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 520),
+              constraints: const BoxConstraints(maxWidth: 360),
               child: AspectRatio(
                 aspectRatio: 1.586,
                 child: OTFlipCard(
@@ -869,10 +880,20 @@ class _MembershipPass extends StatelessWidget {
                   front: Container(
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
-                    color: cardColor,
+                    // Kilau halus dari kiri-atas; tetap satu warna tinta.
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color.lerp(cardColor, onCard, 0.09)!,
+                        cardColor,
+                        Color.lerp(cardColor, const Color(0xFF000000), 0.3)!,
+                      ],
+                      stops: const [0, 0.45, 1],
+                    ),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                        color: onCard.withValues(alpha: isDark ? 0.14 : 0)),
+                    border:
+                        Border.all(color: onCard.withValues(alpha: 0.14)),
                   ),
                   child: Stack(
                     children: [
@@ -937,6 +958,19 @@ class _MembershipPass extends StatelessWidget {
                               ],
                             ),
                             const Spacer(),
+                            if (memberId.isNotEmpty) ...[
+                              Text(
+                                memberId,
+                                textDirection: TextDirection.ltr,
+                                style: ScholarlyFonts.outfit(
+                                  color: onCard.withValues(alpha: 0.86),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 2.4,
+                                ),
+                              ),
+                              const SizedBox(height: OTSpacing.md),
+                            ],
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
@@ -1040,10 +1074,10 @@ class _MembershipPass extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(flex: 5, child: card),
+              // Ukuran alami kartu (rasio 1,586), bukan melebar mengikuti kolom.
+              SizedBox(width: 340, child: card),
               const SizedBox(width: OTSpacing.md),
               Expanded(
-                flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

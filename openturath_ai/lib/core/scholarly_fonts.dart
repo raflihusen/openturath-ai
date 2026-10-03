@@ -14,15 +14,17 @@ abstract final class ScholarlyFonts {
           double? height,
           TextDecoration? decoration}) =>
       Loc.isArabic
-          ? NativeFonts.scheherazadeNew(
-              textStyle: textStyle,
+          // Antarmuka Arab: font UI (bukan font kitab), tanpa jarak huruf.
+          ? (textStyle ?? const TextStyle()).copyWith(
+              fontFamily: 'NativeArabicUI',
+              fontFamilyFallback: const ['NativeInter'],
               color: color,
               backgroundColor: backgroundColor,
               fontSize: fontSize,
               fontWeight: fontWeight,
               fontStyle: fontStyle,
               letterSpacing: 0,
-              height: height == null || height < 1.85 ? 1.85 : height,
+              height: height == null || height < 1.4 ? 1.5 : height,
               decoration: decoration)
           : NativeFonts.outfit(
               textStyle: textStyle,
@@ -45,15 +47,17 @@ abstract final class ScholarlyFonts {
           double? height,
           TextDecoration? decoration}) =>
       Loc.isArabic
-          ? NativeFonts.scheherazadeNew(
-              textStyle: textStyle,
+          // Antarmuka Arab: font UI (bukan font kitab), tanpa jarak huruf.
+          ? (textStyle ?? const TextStyle()).copyWith(
+              fontFamily: 'NativeArabicUI',
+              fontFamilyFallback: const ['NativeInter'],
               color: color,
               backgroundColor: backgroundColor,
               fontSize: fontSize,
               fontWeight: fontWeight,
               fontStyle: fontStyle,
               letterSpacing: 0,
-              height: height == null || height < 1.85 ? 1.85 : height,
+              height: height == null || height < 1.4 ? 1.5 : height,
               decoration: decoration)
           : NativeFonts.newsreader(
               textStyle: textStyle,

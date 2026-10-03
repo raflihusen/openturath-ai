@@ -69,6 +69,9 @@ flutter:
     - family: NativeArabic
       fonts:
         - asset: assets/native_fonts/NativeArabic.ttf
+    - family: NativeArabicUI
+      fonts:
+        - asset: assets/native_fonts/NativeArabicUI.ttf
   assets:
     - assets/images/
     - assets/animations/
