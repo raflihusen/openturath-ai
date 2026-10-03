@@ -1436,7 +1436,10 @@ export const redeemCode = functions
       "Terlalu banyak percobaan penukaran kode redeem."
     );
 
-    const userEmail = (context.auth.token.email || "").trim().toLowerCase();
+    // Email yang belum diverifikasi tidak boleh tercatat sebagai identitas pemilik akses.
+    const userEmail = context.auth.token.email_verified === true
+      ? (context.auth.token.email || "").trim().toLowerCase()
+      : "";
 
     let redeemResult = {
       entitlementKey: "fiqh_syafii",
@@ -2332,7 +2335,8 @@ export const chatGate = functions
 async function handleLogin(req: functions.Request, res: functions.Response, secret: string, apiKey: string) {
   const idToken = (req.body.id_token as string || (req.headers.authorization ? req.headers.authorization.split("Bearer ")[1] : "") || "").trim();
   const csrfTokenForm = req.body.csrf_token as string || "";
-  const ref = req.body.ref as string || "fikih-tahawwulat-muhaqqiq";
+  // Hanya ID agen yang dikenal; nilai mentah dari body tidak boleh masuk ke URL redirect.
+  const ref = resolveAgentRef(req.body.ref);
 
   if (!verifyCsrfToken(csrfTokenForm, secret)) {
     res.redirect(`/login?ref=${ref}&error=invalid_request`);
@@ -2478,7 +2482,8 @@ export const syncAkalPurchases = functions
 
     const uid = context.auth.uid;
     const email = (context.auth.token.email || "").toLowerCase().trim();
-    if (!email) {
+    // Pembelian diklaim berdasarkan email, jadi email wajib sudah diverifikasi penyedia identitas.
+    if (!email || context.auth.token.email_verified !== true) {
       throw new functions.https.HttpsError("failed-precondition", "Akun Google Anda tidak memiliki alamat email yang valid.");
     }
 
@@ -2818,11 +2823,17 @@ export const akalWebhook = functions
     }
 
     const payload = req.body || {};
-    const akalSecret = process.env.AKAL_WEBHOOK_SECRET || "3b5e4d182c8e150efeae39c651d074e6a602f5e873e710a3604af9023fef3042";
+    // Fail-closed: tanpa secret terkonfigurasi, webhook menolak semua request.
+    const akalSecret = process.env.AKAL_WEBHOOK_SECRET || "";
+    if (akalSecret.length < 32) {
+      console.error("[Akal Webhook] AKAL_WEBHOOK_SECRET is not configured; rejecting request.");
+      res.status(503).json({ error: "Webhook not configured" });
+      return;
+    }
 
     // Verifikasi token dari Akal (di dalam body JSON payload.token atau payload.data.token)
     const token = payload.token || payload.data?.token || req.headers["x-akal-token"];
-    if (!token || token !== akalSecret) {
+    if (typeof token !== "string" || !safeTimingEqual(token, akalSecret)) {
       console.warn("[Akal Webhook] Signature verification failed or missing token.");
       res.status(401).json({ error: "Unauthorized" });
       return;
@@ -2843,8 +2854,14 @@ export const akalWebhook = functions
     const serviceTitle = (service.name || service.title || "").trim();
     const priceScheme = data.priceScheme || {};
     const priceSchemeTitle = (priceScheme.name || priceScheme.title || "").trim();
-    const txnId = (data.id || "").trim() || `akal_${Date.now()}`;
+    const rawTxnId = typeof data.id === "string" ? data.id.trim() : "";
     const amount = Number(data.amount) || 0;
+    // Tanpa ID dari Akal, turunkan ID deterministik agar retry webhook tetap idempoten.
+    const txnId = /^[A-Za-z0-9_-]{1,128}$/.test(rawTxnId)
+      ? rawTxnId
+      : `akal_${crypto.createHash("sha256")
+        .update(`${email}|${serviceTitle}|${priceSchemeTitle}|${data.paidAt || ""}|${amount}`)
+        .digest("hex").slice(0, 40)}`;
 
     if (!email) {
       res.status(400).json({ error: "Missing payer email" });
@@ -3014,7 +3031,7 @@ function verifyCsrfToken(token: string, secret: string): boolean {
   if (isNaN(tsNum) || Date.now() - tsNum > 3600 * 1000) return false; // 1 jam
 
   const expectedSig = crypto.createHmac("sha256", secret).update(ts).digest("base64url");
-  return signature === expectedSig;
+  return safeTimingEqual(signature, expectedSig);
 }
 
 function escapeHtml(str: string): string {
