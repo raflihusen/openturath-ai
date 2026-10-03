@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import '../models/agent_model.dart';
+import '../models/answer_citation.dart';
 import '../models/bookmark_model.dart';
 import 'bookmark_content.dart';
 
-BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
+BookmarkModel copiedAnswerBookmark(
+  String answer,
+  AgentModel agent, {
+  List<AnswerCitation> citations = const [],
+}) {
   final text = answer.trim();
   if (text.isEmpty || text.length > 200000) {
     throw ArgumentError('Invalid answer length');
@@ -23,5 +28,6 @@ BookmarkModel copiedAnswerBookmark(String answer, AgentModel agent) {
     createdAt: DateTime.now(),
     documentKind: BookmarkDocumentKind.aiAnswer,
     verificationStatus: BookmarkVerificationStatus.unverified,
+    citations: citations,
   );
 }

@@ -8,6 +8,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
+import '../models/answer_citation.dart';
 import '../models/turath_chat_message.dart';
 import '../services/bookmark_service.dart';
 
@@ -119,10 +120,14 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
     }
   }
 
-  Future<void> _bookmarkMessage(String answer) async {
+  Future<void> _bookmarkMessage(
+    String answer, {
+    List<AnswerCitation> citations = const [],
+  }) async {
     if (answer.trim().isEmpty) return;
     try {
-      final bookmark = copiedAnswerBookmark(answer.trim(), widget.agent);
+      final bookmark = copiedAnswerBookmark(answer.trim(), widget.agent,
+          citations: citations);
       await _bookmarkService.addBookmark(bookmark);
       if (mounted) {
         OTMotion.light();
@@ -393,7 +398,8 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                   tooltip: 'Simpan ke risalah',
                   visualDensity: VisualDensity.compact,
                   onPressed: () => _bookmarkMessage(
-                      [msg.text, ...msg.citations].join('\n\n')),
+                      [msg.text, ...msg.citations].join('\n\n'),
+                      citations: msg.references),
                 ),
               ],
             ),

@@ -1,3 +1,5 @@
+import 'answer_citation.dart';
+
 enum BookmarkDocumentKind { personalNote, aiAnswer, bookReference }
 
 enum BookmarkVerificationStatus {
@@ -27,6 +29,9 @@ class BookmarkModel {
   final BookmarkDocumentKind documentKind;
   final BookmarkVerificationStatus verificationStatus;
 
+  /// Locator sumber untuk jawaban asisten; kosong untuk catatan pribadi.
+  final List<AnswerCitation> citations;
+
   BookmarkModel({
     required this.id,
     required this.title,
@@ -44,6 +49,7 @@ class BookmarkModel {
     this.deletedAt,
     this.documentKind = BookmarkDocumentKind.aiAnswer,
     this.verificationStatus = BookmarkVerificationStatus.unverified,
+    this.citations = const [],
   });
 
   DateTime get effectiveTime => updatedAt ?? createdAt;
@@ -68,6 +74,8 @@ class BookmarkModel {
       'deletedAt': deletedAt?.toIso8601String(),
       'documentKind': documentKind.name,
       'verificationStatus': verificationStatus.name,
+      if (citations.isNotEmpty)
+        'citations': citations.map((citation) => citation.toJson()).toList(),
     };
   }
 
@@ -107,6 +115,7 @@ class BookmarkModel {
         json['verificationStatus'] as String?,
         kind,
       ),
+      citations: AnswerCitation.listFromJson(json['citations']),
     );
   }
 
@@ -127,6 +136,7 @@ class BookmarkModel {
     DateTime? deletedAt,
     BookmarkDocumentKind? documentKind,
     BookmarkVerificationStatus? verificationStatus,
+    List<AnswerCitation>? citations,
   }) {
     return BookmarkModel(
       id: id ?? this.id,
@@ -145,6 +155,7 @@ class BookmarkModel {
       deletedAt: deletedAt ?? this.deletedAt,
       documentKind: documentKind ?? this.documentKind,
       verificationStatus: verificationStatus ?? this.verificationStatus,
+      citations: citations ?? this.citations,
     );
   }
 

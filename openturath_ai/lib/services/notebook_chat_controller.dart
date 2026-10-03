@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
+import '../models/answer_citation.dart';
 import '../models/turath_chat_message.dart';
 import 'notebook_chat_service.dart';
 
@@ -72,7 +73,13 @@ class NotebookChatController extends ChangeNotifier {
           text: reply.answer,
           isUser: false,
           timestamp: DateTime.now(),
-          citations: reply.citations.map((ref) => ref.display).toList()));
+          citations: reply.citations.map((ref) => ref.display).toList(),
+          references: reply.citations
+              .map((ref) => AnswerCitation(
+                  sourceId: ref.sourceId,
+                  number: ref.number,
+                  excerpt: ref.excerpt))
+              .toList()));
     } on FirebaseFunctionsException catch (failure) {
       if (_disposed || epoch != _epoch || currentUid() != owner) return;
       error = switch (failure.code) {

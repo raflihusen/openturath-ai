@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'answer_citation.dart';
+
 /// Model representasi pesan obrolan mandiri untuk antarmuka native OpenTurath AI.
 @immutable
 class TurathChatMessage {
@@ -10,6 +12,9 @@ class TurathChatMessage {
   final bool isThinking;
   final List<String> citations;
 
+  /// Locator terstruktur untuk [citations]; ikut tersimpan saat jawaban diarsipkan.
+  final List<AnswerCitation> references;
+
   const TurathChatMessage({
     required this.id,
     required this.text,
@@ -17,6 +22,7 @@ class TurathChatMessage {
     required this.timestamp,
     this.isThinking = false,
     this.citations = const [],
+    this.references = const [],
   });
 
   TurathChatMessage copyWith({
@@ -26,6 +32,7 @@ class TurathChatMessage {
     DateTime? timestamp,
     bool? isThinking,
     List<String>? citations,
+    List<AnswerCitation>? references,
   }) {
     return TurathChatMessage(
       id: id ?? this.id,
@@ -34,6 +41,7 @@ class TurathChatMessage {
       timestamp: timestamp ?? this.timestamp,
       isThinking: isThinking ?? this.isThinking,
       citations: citations ?? this.citations,
+      references: references ?? this.references,
     );
   }
 

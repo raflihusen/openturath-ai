@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import '../models/bookmark_model.dart';
 import 'scoped_json_store.dart';
 
@@ -35,6 +35,13 @@ class BookmarkService extends ChangeNotifier {
   FirebaseAuth? _auth;
   bool _isSyncing = false;
   bool get isSyncing => _isSyncing;
+  bool _resyncRequested = false;
+
+  /// Catatan yang sudah tersimpan di perangkat tetapi belum sampai ke cloud.
+  final Set<String> _pendingPushIds = <String>{};
+  int get pendingSyncCount => _pendingPushIds.length;
+  bool get hasPendingSync => _pendingPushIds.isNotEmpty;
+  bool isPendingSync(String id) => _pendingPushIds.contains(id);
 
   FirebaseAuth? get _activeAuth {
     if (_auth != null) return _auth;
@@ -59,9 +66,18 @@ class BookmarkService extends ChangeNotifier {
       _activeAuth?.authStateChanges().listen((user) {
         if (user != null && user.uid.isNotEmpty) {
           syncWithCloud(userId: user.uid);
+        } else if (_pendingPushIds.isNotEmpty) {
+          _pendingPushIds.clear();
+          notifyListeners();
         }
       });
     } catch (_) {}
+    // Push yang gagal saat offline dicoba lagi ketika aplikasi kembali aktif.
+    try {
+      AppLifecycleListener(onResume: () => unawaited(syncWithCloud()));
+    } catch (_) {
+      // Binding belum tersedia (mis. unit test murni); sinkronisasi login tetap berjalan.
+    }
   }
 
   final _store = ScopedJsonListStore<BookmarkModel>(
@@ -148,9 +164,11 @@ class BookmarkService extends ChangeNotifier {
           .collection('bookmarks')
           .doc(bookmark.id)
           .set(bookmark.toJson(), SetOptions(merge: true));
+      if (_pendingPushIds.remove(bookmark.id)) notifyListeners();
     } catch (e) {
-      // Offline or network glitch; will be reconciled during next sync
+      // Offline or network glitch; retried on resume, login, or manual sync.
       debugPrint('[BookmarkService] Cloud push skipped/failed: $e');
+      if (_pendingPushIds.add(bookmark.id)) notifyListeners();
     }
   }
 
@@ -160,7 +178,11 @@ class BookmarkService extends ChangeNotifier {
     final effectiveUid = userId ?? _activeAuth?.currentUser?.uid;
     if (effectiveUid == null || effectiveUid.isEmpty) return;
 
-    if (_isSyncing) return;
+    if (_isSyncing) {
+      // Jangan buang permintaan: jalankan ulang setelah sinkronisasi berjalan selesai.
+      _resyncRequested = true;
+      return;
+    }
     _isSyncing = true;
 
     try {
@@ -235,14 +257,17 @@ class BookmarkService extends ChangeNotifier {
         return merged.values.toList()
           ..sort((a, b) => b.effectiveTime.compareTo(a.effectiveTime));
       });
-      for (final bookmark in toPush) {
-        unawaited(_pushToCloud(bookmark, effectiveUid));
-      }
+      await Future.wait(
+          toPush.map((bookmark) => _pushToCloud(bookmark, effectiveUid)));
       notifyListeners();
     } catch (e) {
       debugPrint('[BookmarkService] syncWithCloud failed: $e');
     } finally {
       _isSyncing = false;
+      if (_resyncRequested) {
+        _resyncRequested = false;
+        unawaited(syncWithCloud());
+      }
     }
   }
 }

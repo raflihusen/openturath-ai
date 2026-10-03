@@ -347,17 +347,6 @@ class AuthService {
     await _auth.signOut();
   }
 
-  // ── Increment Question Count ───────────────────────────────────
-  Future<void> incrementQuestionCount() async {
-    final user = currentUser;
-    if (user == null) return;
-    try {
-      await _db.collection(AppConstants.colUsers).doc(user.uid).update({
-        'questions_used': FieldValue.increment(1),
-      });
-    } catch (_) {}
-  }
-
   // ── Delete Account & User Data (Google Play Compliance & Orphan Cleanup, P0) ──
   Future<void> deleteAccount() async {
     final user = currentUser;
