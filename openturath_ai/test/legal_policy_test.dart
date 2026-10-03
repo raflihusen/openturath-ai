@@ -81,7 +81,7 @@ void main() {
       expect(LegalCopy.termsSections.length, equals(14));
       expect(LegalCopy.privacySections.length, equals(13));
       expect(LegalCopy.refundSections.length, equals(7));
-      expect(LegalCopy.aiGuidelineSections.length, equals(5));
+      expect(LegalCopy.aiGuidelineSections.length, equals(14));
       expect(LegalCopy.contactSections.length, equals(3));
 
       // Verifikasi saluran email resmi openturath@gmail.com
