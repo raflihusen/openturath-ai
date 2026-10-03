@@ -42,11 +42,8 @@ void main() {
 
     expect(find.text('Jelajahi 5 asisten'), findsOneWidget);
     expect(find.text('Mengenal Fikih Tahawwulat'), findsOneWidget);
-    expect(find.text('Al-Muhaqqiq'), findsNothing);
+    // Kelima asisten langsung terlihat tanpa perlu membuka daftar.
     expect(tester.takeException(), isNull);
-
-    await tester.tap(find.text('Jelajahi 5 asisten'));
-    await tester.pumpAndSettle();
     expect(find.text('Al-Muhaqqiq'), findsOneWidget);
     expect(find.text('Al-Khatib'), findsOneWidget);
 

@@ -7,6 +7,8 @@ import '../models/agent_model.dart';
 import '../models/sub_agent_model.dart';
 import 'apple_interactive_wrapper.dart';
 import 'tahawwulat_introduction_sheet.dart';
+import 'assistant_grid_card.dart';
+import '../services/open_turath_catalog_repository.dart';
 
 /// Kartu monokrom untuk paket utama OpenTurath.
 ///
@@ -20,6 +22,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
   final void Function(SubAgentModel subAgent) onOpenSubAgent;
   final VoidCallback? onOpenLibrary;
   final VoidCallback? onOpenIntroduction;
+  final AiLibraryMetadata? metadata;
 
   const TahawwulatFlagshipCard({
     super.key,
@@ -29,6 +32,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
     required this.onOpenSubAgent,
     this.onOpenLibrary,
     this.onOpenIntroduction,
+    this.metadata,
   });
 
   static const _obsidian = Color(0xFF111111);
@@ -51,16 +55,16 @@ class TahawwulatFlagshipCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: _obsidian,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.16),
             width: 0.8,
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+            padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -128,9 +132,9 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                 Text(
                   agent.title,
                   style: ScholarlyFonts.newsreader(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.55,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -0.8,
                     height: 1.05,
                     color: _pearl,
                   ),
@@ -149,19 +153,51 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                   ),
                 const SizedBox(height: 8),
                 Text(
-                  Loc.tr('assistantFeaturedDesc'),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  Loc.tr('flagshipPositioning'),
                   style: ScholarlyFonts.outfit(
-                    fontSize: 13,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: _silver,
-                    height: 1.55,
+                    height: 1.5,
                   ),
                 ),
+                // Angka pustaka tampil besar: bukti kerja di balik koleksi ini.
+                if (LibraryStat.from(metadata).isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  Wrap(
+                    spacing: 28,
+                    runSpacing: 12,
+                    children: [
+                      for (final stat in LibraryStat.from(metadata))
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              stat.value,
+                              style: ScholarlyFonts.newsreader(
+                                fontSize: 30,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: -0.8,
+                                height: 1.05,
+                                color: _pearl,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              stat.unit,
+                              style: ScholarlyFonts.outfit(
+                                  fontSize: 12, color: _muted),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 16),
                 Container(height: 0.8, color: _hairline),
                 ExpansionTile(
+                  initiallyExpanded: true,
                   tilePadding: EdgeInsets.zero,
                   childrenPadding: EdgeInsets.zero,
                   shape: const Border(),

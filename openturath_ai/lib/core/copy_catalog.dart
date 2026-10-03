@@ -685,4 +685,9 @@ const copyCatalog = <String, List<String>>{
   "cardFlipHint": ["Ketuk kartu untuk membalik", "Tap the card to flip it", "اضغط على البطاقة لقلبها"],
   "recentNote": ["Catatan terakhir", "Latest note", "آخر ملاحظة"],
   "viewAccessList": ["Daftar asisten aktif", "Active assistants", "المساعدون المفعّلون"],
+  "unitBooks": ["kitab", "works", "كتابًا"],
+  "unitVolumes": ["jilid", "volumes", "مجلدًا"],
+  "unitPages": ["halaman", "pages", "صفحة"],
+  "unitLectures": ["muhadharah", "lectures", "محاضرة"],
+  "flagshipPositioning": ["Asisten AI yang dibangun khusus untuk Fikih Tahawwulat.", "An AI assistant built specifically for Fiqh al-Tahawwulat.", "مساعد ذكي بُني خصيصًا لفقه التحولات."],
 };

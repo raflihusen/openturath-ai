@@ -142,6 +142,18 @@ class OpenTurathCatalogRepository {
     return const {};
   }
 
+  static const Map<String, String> _metadataAlias = {
+    'nahwu_sharaf': 'bahasa_arab',
+    'tarikh': 'tarikh_sirah',
+    'thabaqat_rijal': 'thabaqat_tarajim',
+  };
+
+  /// Metadata pustaka milik asisten itu sendiri. Mengembalikan null bila tidak
+  /// tercatat; angka pustaka lain tidak pernah dipinjam.
+  static AiLibraryMetadata? exactMetadata(
+          Map<String, AiLibraryMetadata> all, String agentId) =>
+      all[agentId] ?? all[_metadataAlias[agentId]];
+
   /// Mengambil metadata untuk modul atau asisten tertentu
   Future<AiLibraryMetadata?> getMetadataForModule(String key) async {
     final all = await loadAllMetadata();

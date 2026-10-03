@@ -20,15 +20,15 @@ import '../services/agent_session_manager.dart';
 import '../services/auth_service.dart';
 import '../core/navigation_guard.dart';
 import '../widgets/corpus_kind_control.dart';
-import '../widgets/assistant_dossier_card.dart';
 import '../widgets/scholars_coming_soon.dart';
 import '../widgets/tahawwulat_flagship_card.dart';
 import '../models/sub_agent_model.dart';
 import '../widgets/library_bottom_sheet.dart';
 import '../widgets/apple_interactive_wrapper.dart';
-import '../widgets/numbered_assistant_list_card.dart';
 import 'main_shell_screen.dart';
 import '../widgets/ot_motion_widgets.dart';
+import '../widgets/assistant_grid_card.dart';
+import '../services/open_turath_catalog_repository.dart';
 
 class SpecialistListScreen extends StatefulWidget {
   final FieldModel? field; // Nullable if opened as general Specialist tab
@@ -51,13 +51,16 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
   String _searchQuery = '';
   bool _isLoading = true;
   CorpusKind _corpusKind = CorpusKind.discipline;
-  String? _selectedAgentId = 'fiqh_syafii';
+  Map<String, AiLibraryMetadata> _libraryStats = const {};
 
   @override
   void initState() {
     super.initState();
     _selectedFieldId = widget.field?.id;
     _loadAgents();
+    OpenTurathCatalogRepository.instance.loadAllMetadata().then((all) {
+      if (mounted) setState(() => _libraryStats = all);
+    });
   }
 
   @override
@@ -119,16 +122,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           ArabicUtils.matches(agent.subtitleAcademic, _searchQuery) ||
           ArabicUtils.matches(agent.description, _searchQuery);
     }).toList();
-  }
-
-  void _selectAgent(AgentModel agent) {
-    setState(() => _selectedAgentId = agent.id);
-    OTMotion.light();
-    if (_listScrollCtrl.hasClients) {
-      _listScrollCtrl.animateTo(0,
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeOutCubic);
-    }
   }
 
   void _openAgent(AgentModel agent) {
@@ -408,12 +401,16 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 });
                               }
 
-                              final selected = sorted.where(
-                                (agent) => agent.id == _selectedAgentId,
-                              ).firstOrNull ?? sorted.first;
-                              final others = sorted.where(
-                                (agent) => agent.id != selected.id,
-                              ).toList();
+                              final flagship = sorted
+                                  .where((agent) =>
+                                      agent.id == 'fiqh_tahawwulat')
+                                  .firstOrNull;
+                              final others = sorted
+                                  .where((agent) => agent.id != flagship?.id)
+                                  .toList();
+                              AiLibraryMetadata? statsOf(AgentModel agent) =>
+                                  OpenTurathCatalogRepository.exactMetadata(
+                                      _libraryStats, agent.id);
 
                               return ListView(
                                 controller: _listScrollCtrl,
@@ -422,49 +419,89 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                                 padding: const EdgeInsets.fromLTRB(
                                     OTSpacing.lg, OTSpacing.md, OTSpacing.lg, 28),
                                 children: [
-                                  _sectionLabel(
-                                    Loc.tr('assistantSelected'),
-                                    '',
-                                    textPrimary,
-                                    textSecondary,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  if (selected.id == 'fiqh_tahawwulat')
-                                    TahawwulatFlagshipCard(
-                                      agent: selected,
-                                      isSubscribed: _authService.cachedCurrentUser
-                                              ?.hasAccessToAgent(selected.id) ?? false,
-                                      onOpenMain: () => _openAgent(selected),
-                                      onOpenSubAgent: (sub) =>
-                                          _openTahawwulatSubAgent(selected, sub),
-                                      onOpenLibrary: selected.catalogId != null
-                                          ? () => showResearchLibrary(context,
-                                              agent: selected)
-                                          : null,
-                                    )
-                                  else
-                                    AssistantDossierCard(
-                                      agent: selected,
-                                      position: sorted.indexOf(selected) + 1,
-                                      total: sorted.length,
-                                      onOpen: () => _openAgent(selected),
-                                      onOpenLibrary: selected.catalogId != null
-                                          ? () => showResearchLibrary(context,
-                                              agent: selected)
-                                          : null,
+                                  if (flagship != null) ...[
+                                    OTReveal(
+                                      child: TahawwulatFlagshipCard(
+                                        agent: flagship,
+                                        metadata: statsOf(flagship),
+                                        isSubscribed: _authService
+                                                .cachedCurrentUser
+                                                ?.hasAccessToAgent(
+                                                    flagship.id) ??
+                                            false,
+                                        onOpenMain: () => _openAgent(flagship),
+                                        onOpenSubAgent: (sub) =>
+                                            _openTahawwulatSubAgent(
+                                                flagship, sub),
+                                        onOpenLibrary: flagship.catalogId != null
+                                            ? () => showResearchLibrary(context,
+                                                agent: flagship)
+                                            : null,
+                                      ),
                                     ),
-                                  if (others.isNotEmpty) ...[
-                                    const SizedBox(height: 26),
-                                    _sectionLabel(Loc.tr('assistantMore'), '',
-                                        textPrimary, textSecondary),
-                                    const SizedBox(height: 12),
-                                    NumberedAssistantListCard(
-                                      agents: others,
-                                      selectedAgentId: selected.id,
-                                      onSelect: (agent) => _selectAgent(agent),
-                                      isDark: isDark,
-                                    ),
+                                    const SizedBox(height: OTSpacing.md),
                                   ],
+                                  // Grid seragam: satu ketukan langsung membuka asisten.
+                                  LayoutBuilder(builder: (context, box) {
+                                    final columns = box.maxWidth >= 900
+                                        ? 3
+                                        : box.maxWidth >= 560
+                                            ? 2
+                                            : 1;
+                                    Widget card(int index) {
+                                      final agent = others[index];
+                                      return OTReveal(
+                                        index: index % 6 + 1,
+                                        child: AssistantGridCard(
+                                          agent: agent,
+                                          metadata: statsOf(agent),
+                                          onOpen: () => _openAgent(agent),
+                                          onOpenLibrary: agent.catalogId != null
+                                              ? () => showResearchLibrary(
+                                                  context,
+                                                  agent: agent)
+                                              : null,
+                                        ),
+                                      );
+                                    }
+
+                                    return Column(
+                                      children: [
+                                        for (var start = 0;
+                                            start < others.length;
+                                            start += columns) ...[
+                                          if (start > 0)
+                                            const SizedBox(
+                                                height: OTSpacing.md),
+                                          if (columns == 1)
+                                            card(start)
+                                          else
+                                            IntrinsicHeight(
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
+                                                children: [
+                                                  for (var c = 0;
+                                                      c < columns;
+                                                      c++) ...[
+                                                    if (c > 0)
+                                                      const SizedBox(
+                                                          width: OTSpacing.md),
+                                                    Expanded(
+                                                      child: start + c <
+                                                              others.length
+                                                          ? card(start + c)
+                                                          : const SizedBox
+                                                              .shrink(),
+                                                    ),
+                                                  ],
+                                                ],
+                                              ),
+                                            ),
+                                        ],
+                                      ],
+                                    );
+                                  }),
                                 ],
                               );
                             },
@@ -477,22 +514,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       ),
     ),
   );
-  }
-
-  Widget _sectionLabel(String title, String hint, Color ink, Color muted) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(title, style: ScholarlyFonts.outfit(
-            fontSize: 18, fontWeight: FontWeight.w600, color: ink,
-          )),
-        ),
-        if (hint.isNotEmpty)
-          Text(hint, style: ScholarlyFonts.outfit(
-            fontSize: 11, color: muted,
-          )),
-      ],
-    );
   }
 
   Widget _filterChip({
