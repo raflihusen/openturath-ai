@@ -35,6 +35,7 @@ import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
 import 'notebook_backend_chat_tab.dart';
 import 'browser_companion_chat_tab.dart';
+import '../core/localization.dart';
 
 // Explicit local prototype opt-in; remains off in normal/release builds.
 const _backendChatPrototype =
@@ -160,7 +161,7 @@ class AgentMultiTabRoom extends StatefulWidget {
       await NativeAgentLauncher.setActiveNotebookEmail(newEmail);
       if (context.mounted) {
         final display = newEmail.isEmpty ? 'Akun Masuk Utama' : newEmail;
-        AppSnackBar.info(context, 'Akun Google asisten diatur ke: $display');
+        AppSnackBar.info(context, Loc.tr('assistantGoogleAccountSet', [display]));
       }
     }
   }
@@ -448,7 +449,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: Text('Batal',
+                  child: Text(Loc.tr('cancel'),
                       style: OTTypography.body(color: textSecondary)),
                 ),
                 const SizedBox(width: 12),
@@ -474,7 +475,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                           context, 'Riwayat obrolan telah dibersihkan.');
                     }
                   },
-                  child: Text('Hapus',
+                  child: Text(Loc.tr('delete'),
                       style: GoogleFonts.outfit(
                           fontWeight: FontWeight.w600, color: Colors.white)),
                 ),
@@ -564,7 +565,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                         trailing: IconButton(
                           icon: Icon(Icons.close_rounded,
                               size: 18, color: textSecondary),
-                          tooltip: 'Tutup sesi',
+                          tooltip: Loc.tr('closeSession'),
                           onPressed: () {
                             _sessionManager.closeTab(index);
                             setSheetState(() {});
@@ -615,7 +616,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         backgroundColor: canvas,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
-          tooltip: 'Kembali ke Beranda',
+          tooltip: Loc.tr('backToHomeTooltip'),
           onPressed: () {
             AppSnackBar.clear(context);
             _sessionManager.closeRoom();
@@ -711,7 +712,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       Icon(Icons.language_rounded,
                           color: textPrimary, size: 18),
                       const SizedBox(width: 12),
-                      Text('Bahasa Output',
+                      Text(Loc.tr('outputLanguage'),
                           style: OTTypography.body(color: textPrimary)),
                     ],
                   ),
@@ -724,7 +725,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       const Icon(Icons.delete_outline_rounded,
                           color: Colors.grey, size: 18),
                       const SizedBox(width: 12),
-                      Text('Hapus Riwayat Obrolan',
+                      Text(Loc.tr('clearChatHistory'),
                           style: OTTypography.body(color: Colors.grey)),
                     ],
                   ),
@@ -749,7 +750,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       Icon(Icons.format_size_rounded,
                           color: textPrimary, size: 18),
                       const SizedBox(width: 12),
-                      Text('Ukuran huruf',
+                      Text(Loc.tr('fontSizeLabel'),
                           style: OTTypography.body(color: textPrimary)),
                     ],
                   ),
@@ -761,7 +762,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     children: [
                       Icon(Icons.tab_rounded, color: textPrimary, size: 18),
                       const SizedBox(width: 12),
-                      Text('Sesi Asisten Terbuka (${sessions.length})',
+                      Text(Loc.tr('openAssistantSessions', ['${sessions.length}']),
                           style: OTTypography.body(color: textPrimary)),
                     ],
                   ),

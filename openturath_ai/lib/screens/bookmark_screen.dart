@@ -471,6 +471,45 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               ),
             ),
 
+            if (_bookmarkService.hasPendingSync)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    OTSpacing.base, 0, OTSpacing.base, OTSpacing.sm),
+                child: Semantics(
+                  liveRegion: true,
+                  child: Container(
+                    padding: const EdgeInsetsDirectional.only(
+                        start: OTSpacing.md, end: OTSpacing.xs),
+                    decoration: BoxDecoration(
+                      color: surfaceSubtle,
+                      borderRadius: OTRadius.cardBorder,
+                      border: Border.all(color: border),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.cloud_off_outlined,
+                            size: 18, color: textSecondary),
+                        const SizedBox(width: OTSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            Loc.tr('notesSyncPendingBanner',
+                                ['${_bookmarkService.pendingSyncCount}']),
+                            style: NativeFonts.outfit(
+                                fontSize: 13,
+                                height: 1.35,
+                                color: textSecondary),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: _syncBookmarks,
+                          child: Text(Loc.tr('syncNow')),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
             // ── List of Saved Bookmarks ──
             Expanded(
               child: _isLoading
@@ -888,7 +927,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     '•',
                     style: TextStyle(
                       color: widget.textSecondary.withValues(alpha: 0.4),
-                      fontSize: 10,
+                      fontSize: 11,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -1041,7 +1080,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                     OutlinedButton.icon(
                       onPressed: widget.onEdit,
                       icon: const Icon(Icons.edit_outlined, size: 14),
-                      label: const Text('Edit'),
+                      label: Text(Loc.tr('edit')),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: widget.textPrimary,
                         side: BorderSide(color: widget.border, width: 0.8),
@@ -1080,7 +1119,7 @@ class _BookmarkCardState extends State<_BookmarkCard> {
                       FilledButton.icon(
                         onPressed: widget.onOpen,
                         icon: const Icon(Icons.menu_book, size: 14),
-                        label: const Text('Lihat kitab'),
+                        label: Text(Loc.tr('viewBook')),
                         style: FilledButton.styleFrom(
                           backgroundColor: widget.surfaceSubtle,
                           foregroundColor: widget.textPrimary,

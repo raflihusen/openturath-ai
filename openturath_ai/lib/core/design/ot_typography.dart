@@ -191,7 +191,7 @@ class OTTypography {
       );
 
   static TextStyle metadataTag({Color? color}) => _outfit(
-        fontSize: 10,
+        fontSize: 11,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.8,
         color: color,

@@ -886,7 +886,7 @@ class _MembershipPass extends StatelessWidget {
                                         summary.badge,
                                         style: ScholarlyFonts.outfit(
                                           color: foreground,
-                                          fontSize: 10,
+                                          fontSize: 11,
                                           fontWeight: FontWeight.w700,
                                           letterSpacing: 1.0,
                                         ),
@@ -901,7 +901,7 @@ class _MembershipPass extends StatelessWidget {
                               Loc.tr('membershipFor'),
                               style: ScholarlyFonts.outfit(
                                 color: muted,
-                                fontSize: 9.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.1,
                               ),
@@ -1008,7 +1008,7 @@ class _PassMeta extends StatelessWidget {
           label,
           style: ScholarlyFonts.outfit(
             color: labelColor,
-            fontSize: 9.5,
+            fontSize: 11,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.9,
           ),

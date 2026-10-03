@@ -11,6 +11,7 @@ import '../models/agent_model.dart';
 import '../models/answer_citation.dart';
 import '../models/turath_chat_message.dart';
 import '../services/bookmark_service.dart';
+import '../core/localization.dart';
 
 /// Antarmuka obrolan 100% native Flutter dengan estetika "The Quiet Islamic Scholar".
 class NativeTurathChatView extends StatefulWidget {
@@ -116,7 +117,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
     await Clipboard.setData(ClipboardData(text: text.trim()));
     if (mounted) {
       OTMotion.light();
-      AppSnackBar.success(context, 'Teks berhasil disalin ke papan klip');
+      AppSnackBar.success(context, Loc.tr('textCopied'));
     }
   }
 
@@ -131,11 +132,11 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
       await _bookmarkService.addBookmark(bookmark);
       if (mounted) {
         OTMotion.light();
-        AppSnackBar.success(context, 'Tersimpan ke Koleksi Risalah Anda');
+        AppSnackBar.success(context, Loc.tr('savedSuccess'));
       }
     } catch (_) {
       if (mounted) {
-        AppSnackBar.warning(context, 'Gagal menyimpan bookmark');
+        AppSnackBar.warning(context, Loc.tr('saveFailed'));
       }
     }
   }
@@ -366,7 +367,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
 
             if (msg.citations.isNotEmpty)
               ExpansionTile(
-                title: const Text('Rujukan sumber'),
+                title: Text(Loc.tr('sourceReferences')),
                 tilePadding: EdgeInsets.zero,
                 children: [
                   for (final citation in msg.citations)
@@ -387,7 +388,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 IconButton(
                   icon: Icon(Icons.content_copy_rounded,
                       size: 16, color: textSecondary),
-                  tooltip: 'Salin jawaban',
+                  tooltip: Loc.tr('copyAnswerAction'),
                   visualDensity: VisualDensity.compact,
                   onPressed: () =>
                       _copyMessage([msg.text, ...msg.citations].join('\n\n')),
@@ -395,7 +396,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                 IconButton(
                   icon: Icon(Icons.bookmark_border_rounded,
                       size: 17, color: textSecondary),
-                  tooltip: 'Simpan ke risalah',
+                  tooltip: Loc.tr('saveAnswerMenu'),
                   visualDensity: VisualDensity.compact,
                   onPressed: () => _bookmarkMessage(
                       [msg.text, ...msg.citations].join('\n\n'),
@@ -520,7 +521,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                     color: textPrimary,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Ajukan pertanyaan atau masalah...',
+                    hintText: Loc.tr('askQuestionHint'),
                     hintStyle: GoogleFonts.outfit(
                       fontSize: 13.5,
                       color: textSecondary.withAlpha(160),

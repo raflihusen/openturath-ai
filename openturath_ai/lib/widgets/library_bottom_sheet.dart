@@ -12,6 +12,7 @@ import '../services/canonical_library_service.dart';
 import '../services/open_turath_catalog_repository.dart';
 import '../screens/library_metadata_overview_screen.dart';
 import 'apple_interactive_wrapper.dart';
+import '../core/localization.dart';
 
 /// Opens the Canonical Research Library as a dedicated full-screen scholarly catalog route.
 /// Eliminates sheet-on-sheet anti-pattern per Apple HIG.
@@ -195,7 +196,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Cari judul, pengarang, penerbit, atau tahkik...',
+                    hintText: Loc.tr('librarySearchHint'),
                     hintStyle: OTTypography.caption(color: textSecondary),
                     prefixIcon: Icon(Icons.search_rounded, size: 20, color: textSecondary),
                     suffixIcon: _searchController.text.isNotEmpty
@@ -242,7 +243,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                                   const SizedBox(height: OTSpacing.base),
                                   OutlinedButton(
                                     onPressed: _loadData,
-                                    child: const Text('Coba lagi'),
+                                    child: Text(Loc.tr('tryAgain')),
                                   ),
                                 ],
                               ),

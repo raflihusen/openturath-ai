@@ -280,7 +280,7 @@ class _HeroLibraryCard extends StatelessWidget {
                   Loc.tr('libraryOverview'),
                   style: ScholarlyFonts.outfit(
                     color: OTColors.onPrimaryContainer(isDark),
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.8,
                   ),

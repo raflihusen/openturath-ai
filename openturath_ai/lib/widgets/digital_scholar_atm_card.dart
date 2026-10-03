@@ -185,7 +185,7 @@ class DigitalScholarAtmCard extends StatelessWidget {
                             tier,
                             style: ScholarlyFonts.outfit(
                               color: const Color(0xFFE4E4E7),
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 1.0,
                             ),
@@ -232,7 +232,7 @@ class DigitalScholarAtmCard extends StatelessWidget {
                                 'CARD HOLDER',
                                 style: ScholarlyFonts.outfit(
                                   color: const Color(0xFFA1A1AA),
-                                  fontSize: 8.5,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 1.4,
                                 ),
@@ -261,7 +261,7 @@ class DigitalScholarAtmCard extends StatelessWidget {
                               'VALID THRU',
                               style: ScholarlyFonts.outfit(
                                 color: const Color(0xFFA1A1AA),
-                                fontSize: 8.5,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.4,
                               ),

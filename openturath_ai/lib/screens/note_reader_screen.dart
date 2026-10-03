@@ -188,6 +188,36 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                                           color: secondary, width: 3))),
                             ),
                           )),
+                      if (_item.citations.isNotEmpty) ...[
+                        const SizedBox(height: OTSpacing.xl),
+                        Divider(color: secondary.withValues(alpha: .25)),
+                        const SizedBox(height: OTSpacing.base),
+                        Text(Loc.tr('sourceReferences'),
+                            style: NativeFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: secondary,
+                                letterSpacing: .6)),
+                        const SizedBox(height: OTSpacing.sm),
+                        for (final citation in _item.citations)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: OTSpacing.sm),
+                            child: Directionality(
+                              textDirection: Bidi.detectRtlDirectionality(
+                                      citation.display)
+                                  ? TextDirection.rtl
+                                  : TextDirection.ltr,
+                              child: Text(citation.display,
+                                  style: (RegExp(r'[\u0600-\u06FF]')
+                                              .hasMatch(citation.display)
+                                          ? NativeFonts.scheherazadeNew
+                                          : NativeFonts.outfit)(
+                                      fontSize: 15,
+                                      height: 1.7,
+                                      color: primary)),
+                            ),
+                          ),
+                      ],
                     ],
                   ),
                 ))),

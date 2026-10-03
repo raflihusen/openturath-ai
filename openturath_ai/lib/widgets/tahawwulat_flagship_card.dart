@@ -75,7 +75,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                           color: _silver,
@@ -116,7 +116,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                 ? Loc.tr('flagshipActive')
                                 : Loc.tr('flagshipPremium'),
                             style: ScholarlyFonts.outfit(
-                              fontSize: 9.5,
+                              fontSize: 11,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.1,
                               color: _pearl,
@@ -208,7 +208,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                               child: Text(
                                 number,
                                 style: ScholarlyFonts.jetBrainsMono(
-                                  fontSize: 10.5,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.35,
                                   color: _muted,

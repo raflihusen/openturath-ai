@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/desktop_webview_runtime.dart';
+import '../core/localization.dart';
 
 class DesktopWebViewGate extends StatefulWidget {
   const DesktopWebViewGate(
@@ -38,16 +39,16 @@ class _DesktopWebViewGateState extends State<DesktopWebViewGate> {
                       } catch (_) {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
+                              SnackBar(
                                   content:
-                                      Text('Browser belum dapat dibuka.')));
+                                      Text(Loc.tr('browserOpenFailed'))));
                         }
                       }
                     },
-                    child: const Text('Lanjutkan di browser')),
+                    child: Text(Loc.tr('continueInBrowser'))),
               if (widget.onClose != null)
                 TextButton(
-                    onPressed: widget.onClose, child: const Text('Tutup')),
+                    onPressed: widget.onClose, child: Text(Loc.tr('close'))),
               const SizedBox(height: 16),
               FilledButton(
                   onPressed: () async {
@@ -61,13 +62,13 @@ class _DesktopWebViewGateState extends State<DesktopWebViewGate> {
                     } catch (_) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Browser belum dapat dibuka.')),
+                          SnackBar(
+                              content: Text(Loc.tr('browserOpenFailed'))),
                         );
                       }
                     }
                   },
-                  child: const Text('Unduh WebView2')),
+                  child: Text(Loc.tr('downloadWebView2'))),
               TextButton(
                   onPressed: _busy
                       ? null

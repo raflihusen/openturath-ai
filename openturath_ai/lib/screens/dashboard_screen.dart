@@ -914,7 +914,7 @@ class _DashboardAnnouncementCarouselState
                 child: Text(
                   Loc.text(slide.badge),
                   style: ScholarlyFonts.outfit(
-                    fontSize: 10.5,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.4,
                     color: widget.textSecondary,
@@ -1029,7 +1029,7 @@ class _DashboardAnnouncementCarouselState
                               child: Text(
                                 Loc.text(slide.badge),
                                 style: ScholarlyFonts.outfit(
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.3,
                                   color: widget.textSecondary,

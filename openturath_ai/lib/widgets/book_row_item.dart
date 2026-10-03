@@ -85,7 +85,7 @@ class BookRowItem extends StatelessWidget {
                       child: Text(
                         '#${book.editionId}',
                         style: ScholarlyFonts.firaCode(
-                          fontSize: 10.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: textSecondary,
                         ),
@@ -121,7 +121,7 @@ class BookRowItem extends StatelessWidget {
                         child: Text(
                           Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}']),
                           style: ScholarlyFonts.outfit(
-                            fontSize: 10.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
                           ),
@@ -199,7 +199,7 @@ class BookRowItem extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: ScholarlyFonts.outfit(
-                        fontSize: 10.5,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: textSecondary,
                       ),

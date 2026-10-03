@@ -172,7 +172,7 @@ class _TahawwulatIntroductionSheetState
                       child: Text(
                         "DISIPLIN ILMU",
                         style: GoogleFonts.outfit(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.2,
                           color: textPrimary,
@@ -736,7 +736,7 @@ class _TahawwulatIntroductionSheetState
                         child: Text(
                           "Peta Navigasi",
                           style: GoogleFonts.outfit(
-                            fontSize: 9.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
                           ),
@@ -795,7 +795,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "DUA ISYARAT KENABIAN ATAS KERUNTUHAN OTORITAS",
                 style: GoogleFonts.outfit(
-                  fontSize: 10.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.1,
                   color: textPrimary,
@@ -953,7 +953,7 @@ class _TahawwulatIntroductionSheetState
                       Text(
                         "• Menghakimi & mencaci\n• Menganggap masyarakat lawan\n• Mudah mengafirkan",
                         style: GoogleFonts.outfit(
-                          fontSize: 10.5,
+                          fontSize: 11,
                           color: textSecondary,
                           height: 1.35,
                         ),
@@ -997,7 +997,7 @@ class _TahawwulatIntroductionSheetState
                       Text(
                         "• Dokter penolong beradab\n• Memandang umat pasien\n• Inqāḏ mā yumkinu inqāḏuh",
                         style: GoogleFonts.outfit(
-                          fontSize: 10.5,
+                          fontSize: 11,
                           color: textSecondary,
                           height: 1.35,
                         ),
@@ -1070,7 +1070,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "EMPAT LAPIS PERTAHANAN MIKRO AL-KHUWAISHAH",
                 style: GoogleFonts.outfit(
-                  fontSize: 10.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.1,
                   color: textPrimary,
@@ -1202,7 +1202,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "KOMPARASI PERSPEKTIF KEHIDUPAN",
                 style: GoogleFonts.outfit(
-                  fontSize: 10.5,
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.1,
                   color: textPrimary,
@@ -1236,7 +1236,7 @@ class _TahawwulatIntroductionSheetState
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("❌ ", style: TextStyle(fontSize: 10)),
+                        const Text("❌ ", style: TextStyle(fontSize: 11)),
                         Expanded(
                           child: Text(
                             r.before,
@@ -1385,7 +1385,7 @@ class _TahawwulatIntroductionSheetState
                       child: Text(
                         "KATEGORI I",
                         style: GoogleFonts.outfit(
-                          fontSize: 9.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -1429,7 +1429,7 @@ class _TahawwulatIntroductionSheetState
                             child: Text(
                               book.level,
                               style: GoogleFonts.outfit(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: textSecondary,
                               ),
@@ -1453,7 +1453,7 @@ class _TahawwulatIntroductionSheetState
                                 Text(
                                   book.desc,
                                   style: GoogleFonts.outfit(
-                                    fontSize: 10.5,
+                                    fontSize: 11,
                                     color: textSecondary,
                                     height: 1.3,
                                   ),
@@ -1495,7 +1495,7 @@ class _TahawwulatIntroductionSheetState
                       child: Text(
                         "KATEGORI II",
                         style: GoogleFonts.outfit(
-                          fontSize: 9.5,
+                          fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -1710,7 +1710,7 @@ class _TahawwulatIntroductionSheetState
                     child: Text(
                       room.role,
                       style: GoogleFonts.outfit(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: OTColors.textSecondary(isDark),
                       ),
@@ -1868,7 +1868,7 @@ class _TahawwulatIntroductionSheetState
           child: Text(
             tag,
             style: GoogleFonts.outfit(
-              fontSize: 9.5,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.1,
               color: textPrimary,

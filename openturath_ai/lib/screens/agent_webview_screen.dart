@@ -33,6 +33,7 @@ import '../services/telemetry_service.dart';
 import '../widgets/app_error_state.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/library_bottom_sheet.dart';
+import '../core/localization.dart';
 
 /// AgentWebviewScreen: Tampilan Ruang Kajian NotebookLM
 /// Dilengkapi App Bar native yang bersih di bawah kamera notch/status bar,
@@ -773,7 +774,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           backgroundColor: canvas,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 22),
-            tooltip: 'Kembali',
+            tooltip: Loc.tr('back'),
             onPressed: _handleBackPress,
           ),
           titleSpacing: 0,
@@ -1456,7 +1457,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ListTile(
               leading:
                   Icon(Icons.language_rounded, color: textPrimary, size: 20),
-              title: Text('Bahasa Output',
+              title: Text(Loc.tr('outputLanguage'),
                   style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
@@ -1470,7 +1471,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ListTile(
               leading: const Icon(Icons.delete_outline_rounded,
                   color: Colors.redAccent, size: 20),
-              title: Text('Hapus Riwayat Obrolan',
+              title: Text(Loc.tr('clearChatHistory'),
                   style: OTTypography.bodyMedium(color: Colors.redAccent)),
               onTap: () {
                 Navigator.pop(ctx);
@@ -1481,7 +1482,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ListTile(
               leading:
                   Icon(Icons.format_size_rounded, color: textPrimary, size: 20),
-              title: Text('Ukuran teks (${(_fontScale * 100).round()}%)',
+              title: Text(Loc.tr('textSize', ['${(_fontScale * 100).round()}']),
                   style: OTTypography.bodyMedium(color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
@@ -1583,7 +1584,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: Text('Batal',
+                  child: Text(Loc.tr('cancel'),
                       style: OTTypography.body(color: textSecondary)),
                 ),
                 const SizedBox(width: 12),
@@ -1609,7 +1610,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                           context, 'Riwayat obrolan telah dibersihkan.');
                     }
                   },
-                  child: Text('Hapus',
+                  child: Text(Loc.tr('delete'),
                       style: GoogleFonts.outfit(
                           fontWeight: FontWeight.w600, color: Colors.white)),
                 ),

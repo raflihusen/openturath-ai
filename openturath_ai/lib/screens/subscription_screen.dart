@@ -436,7 +436,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                   Text(
                                     Loc.tr('planFeaturedLabel'),
                                     style: TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.w700,
                                       color: featuredInk,
                                     ),
@@ -455,7 +455,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 Loc.tr('planExclusive'),
                                 style: TextStyle(
                                     color: featuredInk,
-                                    fontSize: 10.5,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w500),
                               ),
                             ),

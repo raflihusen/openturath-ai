@@ -4,6 +4,7 @@ import '../models/agent_model.dart';
 import '../models/book_model.dart';
 import '../services/canonical_library_service.dart';
 import 'desktop_shortcuts.dart';
+import '../core/localization.dart';
 
 class DesktopReferencePanel extends StatefulWidget {
   const DesktopReferencePanel({super.key, required this.agent});
@@ -44,7 +45,7 @@ class _DesktopReferencePanelState extends State<DesktopReferencePanel> {
             Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(children: [
-                  Text('Marja’ kitab',
+                  Text(Loc.tr('marjaBooks'),
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 12),
                   TextField(
@@ -67,7 +68,7 @@ class _DesktopReferencePanelState extends State<DesktopReferencePanel> {
                                 _books =
                                     _service.loadCatalogForAgent(widget.agent);
                               }),
-                          child: const Text('Muat ulang daftar kitab')));
+                          child: Text(Loc.tr('reloadBookList'))));
                 }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
@@ -75,7 +76,7 @@ class _DesktopReferencePanelState extends State<DesktopReferencePanel> {
                 final books =
                     _service.filterBooks(snapshot.data!, _search.text);
                 if (books.isEmpty) {
-                  return const Center(child: Text('Kitab tidak ditemukan.'));
+                  return Center(child: Text(Loc.tr('bookNotFound')));
                 }
                 return ListView.separated(
                   primary: false,
