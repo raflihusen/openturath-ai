@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
 import '../core/product_pricing.dart';
@@ -412,6 +413,67 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       style: OTTypography.body(color: muted)),
                   const SizedBox(height: 20),
 
+                  // Satu pemilih masa akses untuk kedua paket.
+                  Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: OTColors.surfaceSubtle(dark),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        for (var i = 0;
+                            i < ProductPricing.tahawwulat.length;
+                            i++)
+                          Expanded(
+                            child: Semantics(
+                              button: true,
+                              selected: _tahawwulatIndex == i,
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: _processing
+                                    ? null
+                                    : () => setState(() {
+                                          _tahawwulatIndex = i;
+                                          _specialistIndex = i.clamp(
+                                              0,
+                                              ProductPricing
+                                                      .specialists.length -
+                                                  1);
+                                        }),
+                                child: AnimatedContainer(
+                                  duration: OTMotion.fast,
+                                  curve: OTMotion.curve,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: _tahawwulatIndex == i
+                                        ? (dark
+                                            ? OTColors.border(dark)
+                                            : OTColors.surface(dark))
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(9),
+                                  ),
+                                  child: Text(
+                                    ProductPricing.tahawwulat[i].title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: OTTypography.captionMedium(
+                                      color: _tahawwulatIndex == i
+                                          ? ink
+                                          : muted,
+                                    ).copyWith(fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
                   // ── 1. KARTU HITAM ELEGAN: SUPER AI FIKIH TAHAWWULAT (FLAGSHIP) ──
                   _card(
                     flagship: true,
@@ -476,71 +538,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 18),
 
-                        // Tier Selector Cards
-                        Row(
-                          children: [
-                            for (var i = 0;
-                                i < ProductPricing.tahawwulat.length;
-                                i++) ...[
-                              if (i > 0) const SizedBox(width: 8),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: _processing
-                                      ? null
-                                      : () =>
-                                          setState(() => _tahawwulatIndex = i),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    constraints: const BoxConstraints(minHeight: 72),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      color: _tahawwulatIndex == i
-                                          ? OTColors.surface(dark)
-                                          : OTColors.primaryContainer(dark),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: _tahawwulatIndex == i
-                                            ? OTColors.accent(dark)
-                                            : OTColors.border(dark),
-                                        width: _tahawwulatIndex == i ? 1.4 : 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          ProductPricing.tahawwulat[i].title,
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: OTTypography.captionMedium(
-                                            color: _tahawwulatIndex == i
-                                                ? ink
-                                                : featuredInk,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          ProductPricing.rupiah(ProductPricing
-                                              .tahawwulat[i].amount),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: _tahawwulatIndex == i
-                                                ? ink : featuredInk,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
                         const SizedBox(height: 18),
                         PromoPrice(
                             amount: offer.amount,
@@ -676,72 +673,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Tier Selector Cards Spesialis Per Bidang
-                        Row(
-                          children: [
-                            for (var i = 0;
-                                i < ProductPricing.specialists.length;
-                                i++) ...[
-                              if (i > 0) const SizedBox(width: 8),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: _processing
-                                      ? null
-                                      : () =>
-                                          setState(() => _specialistIndex = i),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    constraints: const BoxConstraints(minHeight: 72),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      color: _specialistIndex == i
-                                          ? OTColors.primaryContainer(dark)
-                                          : OTColors.surface(dark),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: _specialistIndex == i
-                                            ? OTColors.accent(dark)
-                                            : border,
-                                        width: _specialistIndex == i ? 1.4 : 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          ProductPricing.specialists[i].title,
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: OTTypography.captionMedium(
-                                            color: _specialistIndex == i
-                                                ? OTColors.onPrimaryContainer(dark)
-                                                : muted,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          ProductPricing.rupiah(ProductPricing
-                                              .specialists[i].amount),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: _specialistIndex == i
-                                                ? OTColors.onPrimaryContainer(dark)
-                                                : ink,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
                         const SizedBox(height: 20),
 
                         PromoPrice(
