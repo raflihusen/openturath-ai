@@ -188,6 +188,13 @@ SERVER_PORT = int(os.getenv("PORT", "8080"))
 # ─────────────────────────────────────────────────────────────
 # VERIFIKASI TOKEN AKAL
 # ─────────────────────────────────────────────────────────────
+def _secret_equal(provided, expected: str) -> bool:
+    """Perbandingan constant-time yang aman untuk input non-string/non-ASCII."""
+    if not isinstance(provided, str) or not isinstance(expected, str):
+        return False
+    return hmac.compare_digest(provided.encode("utf-8"), expected.encode("utf-8"))
+
+
 def verify_akal_token(payload: dict) -> bool:
     """
     Verifikasi bahwa webhook benar-benar dikirim oleh Akal.
@@ -204,10 +211,9 @@ def verify_akal_token(payload: dict) -> bool:
         logger.warning("🚨 Tidak ada 'token' field di payload webhook.")
         return False
 
-    is_valid = hmac.compare_digest(AKAL_WEBHOOK_SECRET, payload_token)
+    is_valid = _secret_equal(payload_token, AKAL_WEBHOOK_SECRET)
     if not is_valid:
-        logger.warning("🚨 Token tidak cocok! Expected: %s..., Got: %s...",
-                       AKAL_WEBHOOK_SECRET[:8], payload_token[:8])
+        logger.warning("🚨 Token webhook Akal tidak cocok.")
     return is_valid
 
 
@@ -984,6 +990,20 @@ class WebhookHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _authorize_cron(self, secret: str, route: str) -> bool:
+        """Fail-closed: tanpa secret terkonfigurasi, endpoint operasional ditolak."""
+        if not secret:
+            logger.error("🚨 %s ditolak: secret belum dikonfigurasi.", route)
+            self._send_json(503, {"error": "Endpoint not configured"})
+            return False
+        bearer = self.headers.get("Authorization", "")
+        header_secret = self.headers.get("X-Cron-Secret", "") or self.headers.get("X-Internal-Secret", "")
+        if _secret_equal(bearer, f"Bearer {secret}") or _secret_equal(header_secret, secret):
+            return True
+        logger.warning("🚨 Unauthorized %s attempt", route)
+        self._send_json(401, {"error": "Unauthorized"})
+        return False
+
     def do_GET(self):
         if self.path == "/health":
             configured = {k: bool(v) for k, v in PRODUCT_TO_NOTEBOOKS.items()}
@@ -994,13 +1014,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 "webhook_secret_set": bool(AKAL_WEBHOOK_SECRET),
             })
         elif self.path == "/keepalive":
-            cron_secret = os.getenv("CRON_SECRET", "")
-            if cron_secret:
-                auth_header = self.headers.get("Authorization", "")
-                param_secret = self.headers.get("X-Cron-Secret", "")
-                if not (auth_header == f"Bearer {cron_secret}" or param_secret == cron_secret):
-                    self._send_json(401, {"error": "Unauthorized keepalive trigger"})
-                    return
+            if not self._authorize_cron(os.getenv("CRON_SECRET", ""), "/keepalive"):
+                return
             try:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
@@ -1035,18 +1050,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
                 self._send_json(500, {"success": False, "error": str(e)})
         elif self.path.startswith("/cron/reap"):
             cron_secret = os.getenv("CRON_SECRET", "") or os.getenv("INTERNAL_SECRET", "")
-            if cron_secret:
-                auth_header = self.headers.get("Authorization", "")
-                param_secret = self.headers.get("X-Cron-Secret", "") or self.headers.get("X-Internal-Secret", "")
-                is_authorized = (
-                    auth_header == f"Bearer {cron_secret}" or 
-                    param_secret == cron_secret or
-                    hmac.compare_digest(param_secret, cron_secret)
-                )
-                if not is_authorized:
-                    logger.warning("🚨 Unauthorized /cron/reap attempt")
-                    self._send_json(401, {"error": "Unauthorized cron trigger"})
-                    return
+            if not self._authorize_cron(cron_secret, "/cron/reap"):
+                return
             try:
                 logger.info("⚡ Executing scheduled autonomous reaper cycle via /cron/reap...")
                 from autonomous_reaper import AutonomousReaper
@@ -1065,13 +1070,17 @@ class WebhookHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path == "/telegram":
+            # chat_id di body bisa dipalsukan; hanya secret header dari Telegram yang membuktikan pengirim.
             tg_secret = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
-            if tg_secret:
-                header_token = self.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
-                if not hmac.compare_digest(header_token, tg_secret):
-                    logger.warning("❌ Unauthorized Telegram webhook attempt (invalid secret token)")
-                    self._send_json(403, {"error": "Unauthorized"})
-                    return
+            if not tg_secret:
+                logger.error("🚨 /telegram ditolak: TELEGRAM_WEBHOOK_SECRET belum dikonfigurasi.")
+                self._send_json(503, {"error": "Endpoint not configured"})
+                return
+            header_token = self.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
+            if not _secret_equal(header_token, tg_secret):
+                logger.warning("❌ Unauthorized Telegram webhook attempt (invalid secret token)")
+                self._send_json(403, {"error": "Unauthorized"})
+                return
 
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length)
@@ -1111,7 +1120,7 @@ class WebhookHandler(BaseHTTPRequestHandler):
         EXPECTED_INTERNAL_SECRET = os.getenv("INTERNAL_SECRET", "")
         
         is_test_event = payload.get("event") == "test"
-        is_authorized_internal = EXPECTED_INTERNAL_SECRET and internal_secret == EXPECTED_INTERNAL_SECRET
+        is_authorized_internal = bool(EXPECTED_INTERNAL_SECRET) and _secret_equal(internal_secret, EXPECTED_INTERNAL_SECRET)
         
         if not is_test_event and not is_authorized_internal and not verify_akal_token(payload):
             logger.warning("🚨 Token tidak valid! Request ditolak dari %s. Event: %s",
@@ -1167,10 +1176,18 @@ def run_server():
     # Register Telegram Webhook if SERVICE_URL is configured
     service_url = os.getenv("SERVICE_URL")
     token = os.getenv("TELEGRAM_BOT_TOKEN")
-    if service_url and token:
+    tg_secret = os.getenv("TELEGRAM_WEBHOOK_SECRET", "")
+    if service_url and token and not tg_secret:
+        logger.warning("⚠️ TELEGRAM_WEBHOOK_SECRET belum diset — webhook Telegram tidak didaftarkan.")
+    if service_url and token and tg_secret:
         webhook_url = f"{service_url.rstrip('/')}/telegram"
         try:
-            register_url = f"https://api.telegram.org/bot{token}/setWebhook?url={urllib.parse.quote(webhook_url)}"
+            # secret_token membuat Telegram mengirim header X-Telegram-Bot-Api-Secret-Token.
+            register_url = (
+                f"https://api.telegram.org/bot{token}/setWebhook"
+                f"?url={urllib.parse.quote(webhook_url, safe='')}"
+                f"&secret_token={urllib.parse.quote(tg_secret, safe='')}"
+            )
             req = urllib.request.Request(register_url)
             with urllib.request.urlopen(req, timeout=10) as response:
                 res_data = json.loads(response.read().decode("utf-8"))

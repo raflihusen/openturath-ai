@@ -19,7 +19,8 @@ service cloud.firestore {
           'subscription_expiry', 'entitlements', 'pending_deletion', 'pending_deletion_at'
         ])
         && (
-          (request.auth.token.firebase.sign_in_provider != 'anonymous' && request.resource.data.email == request.auth.token.email) ||
+          // Email dipakai server untuk mencocokkan pembelian, jadi wajib sudah diverifikasi.
+          (request.auth.token.firebase.sign_in_provider != 'anonymous' && request.auth.token.email_verified == true && request.resource.data.email == request.auth.token.email) ||
           (request.auth.token.firebase.sign_in_provider == 'anonymous' && (!('email' in request.resource.data) || request.resource.data.email == null || request.resource.data.email == ''))
         )
         && request.resource.data.plan == 'trial'
@@ -62,6 +63,11 @@ service cloud.firestore {
       ])
       && request.resource.data.error is string
       && request.resource.data.error.size() <= 2500
+      // Batasi field lain agar koleksi publik ini tidak bisa dibanjiri payload besar.
+      && (!('stackTrace' in request.resource.data) || (request.resource.data.stackTrace is string && request.resource.data.stackTrace.size() <= 6000))
+      && (!('breadcrumbs' in request.resource.data) || (request.resource.data.breadcrumbs is list && request.resource.data.breadcrumbs.size() <= 100))
+      && (!('extra' in request.resource.data) || (request.resource.data.extra is map && request.resource.data.extra.size() <= 50))
+      && (!('context' in request.resource.data) || (request.resource.data.context is string && request.resource.data.context.size() <= 300))
       && request.resource.data.severity in ['info', 'warning', 'error', 'critical']
       && (
         (request.auth != null && request.resource.data.userId == request.auth.uid) ||

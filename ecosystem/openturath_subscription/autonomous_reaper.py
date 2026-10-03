@@ -31,10 +31,6 @@ def load_dotenv():
                         val = val[1:-1]
                     os.environ[key] = val
                     
-    if not os.getenv("TELEGRAM_BOT_TOKEN"):
-        os.environ["TELEGRAM_BOT_TOKEN"] = "8935430311:AAHajFoTtJBirH3DfyIh6za5-SVTQRBa_RI"
-    if not os.getenv("TELEGRAM_CHAT_ID"):
-        os.environ["TELEGRAM_CHAT_ID"] = "2015667548"
 
 load_dotenv()
 

@@ -1,0 +1,20 @@
+# Berkas yang tidak dibaca server saat runtime tidak boleh masuk image.
+env.yaml
+service-account*.json
+.env.example
+
+# Data pelanggan dan artefak lokal
+*_report.txt
+stress_test_report.json
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+.git
+.gitignore
+.storage_state.json*
+
+# BELUM dikecualikan karena masih dibaca dari /app saat runtime
+# (notebooklm_manager.py, autonomous_reaper.py, load_dotenv):
+#   .env, storage_state.json, master_token.json
+# Pindahkan ke Secret Manager / env Cloud Run, lalu tambahkan ke daftar di atas.
