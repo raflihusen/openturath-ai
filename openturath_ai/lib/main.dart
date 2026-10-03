@@ -224,7 +224,7 @@ class OpenTurathApp extends StatelessWidget {
                     settings: settings,
                     pageBuilder: (context, animation, secondaryAnimation) =>
                         page,
-                    transitionDuration: const Duration(milliseconds: 320),
+                    transitionDuration: const Duration(milliseconds: 240),
                     reverseTransitionDuration:
                         const Duration(milliseconds: 240),
                     transitionsBuilder:
@@ -236,7 +236,7 @@ class OpenTurathApp extends StatelessWidget {
                       );
                       return SlideTransition(
                         position: Tween<Offset>(
-                          begin: const Offset(0.0, 0.04),
+                          begin: const Offset(0.0, 0.015),
                           end: Offset.zero,
                         ).animate(curvedAnimation),
                         child: FadeTransition(

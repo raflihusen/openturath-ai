@@ -3,6 +3,7 @@ import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/design/ot_colors.dart';
+import '../widgets/ot_motion_widgets.dart';
 import '../models/agent_model.dart';
 import '../models/field_model.dart';
 import 'dashboard_screen.dart';
@@ -64,11 +65,8 @@ class _MainShellScreenState extends State<MainShellScreen> {
   void _onTabSelected(int index, {String? fieldId, CorpusKind? kind}) {
     AppSnackBar.clear(context);
     if (_pageController.hasClients && _currentIndex != index) {
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-      );
+      // Lompat lalu pudarkan: halaman tidak meluncur melewati tab di antaranya.
+      _pageController.jumpToPage(index);
     }
     setState(() {
       _currentIndex = index;
@@ -85,7 +83,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
           )
         : null;
 
-    return [
+    final pages = <Widget>[
       DashboardScreen(searchFocusNode: _dashboardSearchFocus),
       SpecialistListScreen(
         key: ValueKey('${_selectedFieldId}_${_selectedKind?.name}'),
@@ -93,6 +91,10 @@ class _MainShellScreenState extends State<MainShellScreen> {
       ),
       const BookmarkScreen(),
       const ProfileScreen(),
+    ];
+    return [
+      for (var i = 0; i < pages.length; i++)
+        OTActiveFade(active: i == _currentIndex, child: pages[i]),
     ];
   }
 

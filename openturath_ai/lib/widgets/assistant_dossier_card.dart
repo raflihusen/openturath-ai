@@ -28,37 +28,38 @@ class AssistantDossierCard extends StatelessWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
-    final accent = OTColors.accent(dark);
     final references = agent.referenceBooks ?? [];
     final scope = agent.subtitleAcademic.trim();
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: OTColors.border(dark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Directionality(
-                textDirection: TextDirection.ltr,
+              Expanded(
                 child: Text(
-                  '${position.toString().padLeft(2, '0')} / ${total.toString().padLeft(2, '0')}',
-                  style: ScholarlyFonts.outfit(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: accent,
+                  agent.title,
+                  style: ScholarlyFonts.newsreader(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.3,
+                    color: ink,
                   ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 12),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                 decoration: BoxDecoration(
                   color: OTColors.primaryContainer(dark),
                   borderRadius: BorderRadius.circular(10),
@@ -76,22 +77,13 @@ class AssistantDossierCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 18),
-          Text(
-            agent.title,
-            style: ScholarlyFonts.newsreader(
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              color: ink,
-            ),
-          ),
           if (agent.titleArabic.isNotEmpty && !Loc.isArabic) ...[
             const SizedBox(height: 2),
             Text(
               agent.titleArabic,
               textDirection: TextDirection.rtl,
               style: ScholarlyFonts.scheherazadeNew(
-                fontSize: 21,
+                fontSize: 18,
                 height: 1.6,
                 color: muted,
               ),

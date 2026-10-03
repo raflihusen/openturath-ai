@@ -146,6 +146,18 @@ class AppTheme {
   );
 
   // Dark Theme
+  // Satu transisi halaman untuk semua rute Material: pudar-maju yang singkat.
+  // iOS tetap memakai transisi Cupertino agar gestur geser-kembali bekerja.
+  static const PageTransitionsTheme _pageTransitions = PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.macOS: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+    },
+  );
+
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -209,6 +221,7 @@ class AppTheme {
         ),
         clipBehavior: Clip.antiAlias,
       ),
+      pageTransitionsTheme: _pageTransitions,
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: pillActionBgDark,
@@ -381,6 +394,7 @@ class AppTheme {
         ),
         clipBehavior: Clip.antiAlias,
       ),
+      pageTransitionsTheme: _pageTransitions,
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: pillActionBgLight,

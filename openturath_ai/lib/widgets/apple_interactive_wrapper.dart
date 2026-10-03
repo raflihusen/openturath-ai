@@ -63,7 +63,7 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOutCubic,
-        reverseCurve: Curves.easeOutBack,
+        reverseCurve: Curves.easeOutCubic,
       ),
     );
   }

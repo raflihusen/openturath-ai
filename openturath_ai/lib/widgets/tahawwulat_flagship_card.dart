@@ -269,7 +269,8 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(
+                    // Aksi sekunder: tombol bergaris selebar labelnya, bukan blok putih penuh.
+                    Flexible(
                       child: AppleInteractiveWrapper(
                         onTap: onOpenIntroduction ??
                             () => TahawwulatIntroductionSheet.show(
@@ -282,19 +283,21 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         semanticLabel: Loc.tr('flagshipIntroduction'),
                         child: Container(
-                          height: 50,
+                          height: 40,
                           decoration: BoxDecoration(
-                            color: _pearl,
                             borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.28),
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const Icon(
                                 Icons.auto_stories_rounded,
                                 size: 18,
-                                color: _obsidian,
+                                color: _pearl,
                               ),
                               const SizedBox(width: 8),
                               Flexible(
@@ -306,7 +309,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                                     fontSize: 13.5,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: -0.15,
-                                    color: _obsidian,
+                                    color: _pearl,
                                   ),
                                 ),
                               ),
@@ -314,7 +317,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                               const Icon(
                                 Icons.arrow_forward_rounded,
                                 size: 17,
-                                color: _obsidian,
+                                color: _pearl,
                               ),
                             ],
                           ),
@@ -322,6 +325,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                       ),
                     ),
                     if (onOpenLibrary != null) ...[
+                      const Spacer(),
                       const SizedBox(width: 10),
                       AppleInteractiveWrapper(
                         onTap: onOpenLibrary,
@@ -330,8 +334,8 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                         semanticLabel:
                             '${Loc.tr('assistantLibrary')} ${agent.title}',
                         child: Container(
-                          width: 50,
-                          height: 50,
+                          width: 40,
+                          height: 40,
                           decoration: BoxDecoration(
                             color: _obsidian,
                             borderRadius: BorderRadius.circular(10),

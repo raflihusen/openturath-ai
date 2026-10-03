@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
 import '../core/design/ot_colors.dart';
+import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
@@ -282,11 +283,21 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
             else
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-                sliver: SliverList(
+                // Grid kartu seragam: satu kolom di ponsel, dua atau tiga di layar lebar.
+                sliver: SliverGrid(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 420,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    mainAxisExtent:
+                        MediaQuery.textScalerOf(context).scale(220),
+                  ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final book = visibleBooks[index];
-                      return _BookEditorialItem(
+                      return OTReveal(
+                          index: index % 6,
+                          child: _BookEditorialItem(
                         book: book,
                         index: index + 1,
                         onTap: () {
@@ -301,7 +312,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                             ),
                           );
                         },
-                      );
+                      ));
                     },
                     childCount: visibleBooks.length,
                   ),
@@ -371,141 +382,90 @@ class _BookEditorialItem extends StatelessWidget {
     final textSecondary = OTColors.textSecondary(isDark);
     final border = OTColors.border(isDark);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(17),
-        decoration: BoxDecoration(
-          color: OTColors.surface(isDark),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: border, width: 0.8),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    Widget fact(IconData icon, String label) => Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: 30,
+            Icon(icon, size: 14, color: textSecondary),
+            const SizedBox(width: 4),
+            Flexible(
               child: Text(
-                index.toString().padLeft(2, '0'),
-                style: ScholarlyFonts.outfit(
-                  color: OTColors.accent(isDark),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    ScholarlyFonts.outfit(fontSize: 12, color: textSecondary),
+              ),
+            ),
+          ],
+        );
+
+    return OTBentoTile(
+      onTap: onTap,
+      semanticLabel: '${book.title}, ${book.author}',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  book.localizedSection,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: OTTypography.caption(color: textSecondary),
                 ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          book.deathLabel,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: OTTypography.caption(color: textSecondary),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          book.localizedSection,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: OTTypography.caption(color: textSecondary),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  // Judul Arab Asli
-                  Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        book.title,
-                        textAlign: TextAlign.right,
-                        style: ScholarlyFonts.scheherazadeNew(
-                          color: ink,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          height: 1.25,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    Loc.tr('authorCredit', [book.author]),
-                    style: ScholarlyFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      color: textSecondary,
-                    ),
-                  ),
-                  if (book.editor.isNotEmpty && book.editor != '-') ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      Loc.tr('editorCredit', [book.editor]),
-                      style: ScholarlyFonts.outfit(
-                        fontSize: 12,
-                        color: textSecondary,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 4,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.layers_outlined,
-                              size: 13, color: textSecondary),
-                          const SizedBox(width: 4),
-                          Flexible(
-                              child: Text(
-                            book.volumeLabel,
-                            style: ScholarlyFonts.outfit(
-                                fontSize: 11, color: textSecondary),
-                          )),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.format_list_numbered_rounded,
-                              size: 13, color: textSecondary),
-                          const SizedBox(width: 4),
-                          Flexible(
-                              child: Text(
-                            book.pagesLabel,
-                            style: ScholarlyFonts.outfit(
-                                fontSize: 11, color: textSecondary),
-                          )),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+              const SizedBox(width: 8),
+              Text(
+                book.deathLabel,
+                maxLines: 1,
+                style: OTTypography.caption(color: textSecondary),
               ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Judul Arab asli, maksimal dua baris agar tinggi kartu seragam.
+          Text(
+            book.title,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.right,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: ScholarlyFonts.scheherazadeNew(
+              color: ink,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              height: 1.35,
             ),
-            const SizedBox(width: 10),
-            Icon(Icons.chevron_right_rounded, color: textSecondary, size: 20),
-          ],
-        ),
+          ),
+          const Spacer(),
+          Text(
+            Loc.tr('authorCredit', [book.author]),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: ScholarlyFonts.outfit(fontSize: 13, color: textSecondary),
+          ),
+          const SizedBox(height: 8),
+          Divider(height: 1, color: border),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Flexible(child: fact(Icons.layers_outlined, book.volumeLabel)),
+              const SizedBox(width: 12),
+              Flexible(
+                  child:
+                      fact(Icons.description_outlined, book.pagesLabel)),
+              const Spacer(),
+              Icon(Icons.arrow_forward_rounded,
+                  color: textSecondary, size: 16),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
 
-/// Halaman Detail Kitab & Metadata Rujukan Ilmiah
 class OpenTurathBookDetailPage extends StatelessWidget {
   const OpenTurathBookDetailPage({
     super.key,
@@ -810,8 +770,14 @@ class _BookBentoGrid extends StatelessWidget {
         spacing: gap,
         runSpacing: gap,
         children: [
-          for (final tile in facts) SizedBox(width: factWidth, child: tile),
-          for (final tile in wide) SizedBox(width: wideWidth, child: tile),
+          for (var i = 0; i < facts.length; i++)
+            SizedBox(
+                width: factWidth,
+                child: OTReveal(index: i, child: facts[i])),
+          for (var i = 0; i < wide.length; i++)
+            SizedBox(
+                width: wideWidth,
+                child: OTReveal(index: facts.length + i, child: wide[i])),
         ],
       );
     });

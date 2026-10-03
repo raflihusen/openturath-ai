@@ -13,6 +13,7 @@ import '../core/hijri_date_utils.dart';
 import '../widgets/openturath_brand.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
+import '../widgets/ot_motion_widgets.dart';
 import '../core/design/ot_typography.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
@@ -317,7 +318,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   physics: const BouncingScrollPhysics(),
                   children: [
-                _MembershipPass(
+                OTReveal(
+                    child: _MembershipPass(
                   holderName: displayName,
                   email: email,
                   summary: membership,
@@ -327,7 +329,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       membership.isOpen && membership.agentIds.isNotEmpty
                           ? () => _showAccessPortfolio(userModel, membership)
                           : null,
-                ),
+                )),
 
                 const SizedBox(height: 18),
 
