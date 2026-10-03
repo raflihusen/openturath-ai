@@ -383,32 +383,57 @@ class _StatsGrid extends StatelessWidget {
     Loc.watch(context);
     final number = NumberFormat.decimalPattern(Loc.language);
     final dark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
-          decoration: BoxDecoration(
-            color: OTColors.surfaceSubtle(dark),
-            borderRadius: BorderRadius.circular(16),
+    Widget tile(IconData icon, String value, String label) => Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: OTColors.surface(dark),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: OTColors.border(dark), width: 0.8),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, size: 18, color: OTColors.textSecondary(dark)),
+                const SizedBox(height: 16),
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: ScholarlyFonts.outfit(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.5,
+                    color: OTColors.textPrimary(dark),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  style: ScholarlyFonts.outfit(
+                    fontSize: 13,
+                    color: OTColors.textSecondary(dark),
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Wrap(
-            spacing: 20,
-            runSpacing: 8,
+        );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                '${number.format(metadata.totalKitab)} ${Loc.tr('libraryWorks')}',
-                style: ScholarlyFonts.outfit(
-                  fontSize: 13, fontWeight: FontWeight.w600,
-                  color: OTColors.textPrimary(dark),
-                ),
-              ),
-              Text(
-                '${NumberFormat.compact(locale: Loc.language).format(metadata.totalKata)} ${Loc.tr('libraryWords')}',
-                style: ScholarlyFonts.outfit(
-                  fontSize: 13, color: OTColors.textSecondary(dark),
-                ),
-              ),
+              tile(Icons.menu_book_outlined,
+                  number.format(metadata.totalKitab), Loc.tr('libraryWorks')),
+              const SizedBox(width: 12),
+              tile(
+                  Icons.notes_rounded,
+                  NumberFormat.compact(locale: Loc.language)
+                      .format(metadata.totalKata),
+                  Loc.tr('libraryWords')),
             ],
           ),
         ),

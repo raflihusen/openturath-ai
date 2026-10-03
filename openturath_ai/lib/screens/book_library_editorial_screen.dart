@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../core/app_snackbar.dart';
 import '../core/arabic_utils.dart';
 import '../core/design/ot_colors.dart';
+import '../core/design/ot_spacing.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_typography.dart';
 import '../core/localization.dart';
@@ -613,8 +614,11 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 36),
-                child: Column(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 36),
+                child: Center(
+                    child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Hero Card Kitab
@@ -702,55 +706,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: border),
-                      ),
-                      child: Builder(builder: (context) {
-                        final rows = <({String label, String value})>[
-                          if (book.editor.isNotEmpty && book.editor != '-')
-                            (
-                              label: Loc.tr('ui_ad39f1c3af'),
-                              value: book.editor
-                            ),
-                          if (book.publisher.isNotEmpty &&
-                              book.publisher != '-')
-                            (
-                              label: Loc.tr('bookPublisher'),
-                              value: book.publisher
-                            ),
-                          if (book.edition.isNotEmpty && book.edition != '-')
-                            (label: Loc.tr('bookEdition'), value: book.edition),
-                          if (book.volumes.isNotEmpty && book.volumes != '-')
-                            (
-                              label: Loc.tr('bookVolumes'),
-                              value: book.volumeLabel
-                            ),
-                          if (book.pages.isNotEmpty && book.pages != '-')
-                            (
-                              label: Loc.tr('bookPages'),
-                              value: book.pagesLabel
-                            ),
-                        ];
-                        return Column(
-                          children: [
-                            for (var i = 0; i < rows.length; i++)
-                              _DetailRow(
-                                label: rows[i].label,
-                                value: rows[i].value,
-                                isLast: i == rows.length - 1,
-                              ),
-                            if (rows.isEmpty)
-                              Padding(
-                                padding: const EdgeInsets.all(18),
-                                child: Text(Loc.tr('unknownMetadata')),
-                              ),
-                          ],
-                        );
-                      }),
-                    ),
+                    _BookBentoGrid(book: book),
                     const SizedBox(height: 28),
                     SizedBox(
                       width: double.infinity,
@@ -775,7 +731,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                       ),
                     ),
                   ],
-                ),
+                ))),
               ),
             ),
           ],
@@ -785,53 +741,147 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
   }
 }
 
-class _DetailRow extends StatelessWidget {
-  const _DetailRow({
+/// Data edisi kitab sebagai bento: fakta singkat di ubin kecil, teks panjang
+/// (muhaqqiq, penerbit) di ubin lebar. Ubin tanpa data tidak ditampilkan.
+class _BookBentoGrid extends StatelessWidget {
+  const _BookBentoGrid({required this.book});
+
+  final OpenTurathBook book;
+
+  static bool _has(String value) => value.trim().isNotEmpty && value != '-';
+
+  @override
+  Widget build(BuildContext context) {
+    final facts = <_BentoTile>[
+      if (_has(book.volumes))
+        _BentoTile(
+          icon: Icons.layers_outlined,
+          label: Loc.tr('bookVolumes'),
+          value: book.volumeLabel,
+        ),
+      if (_has(book.pages))
+        _BentoTile(
+          icon: Icons.description_outlined,
+          label: Loc.tr('bookPages'),
+          value: book.pagesLabel,
+        ),
+      if (_has(book.edition))
+        _BentoTile(
+          icon: Icons.bookmark_border_rounded,
+          label: Loc.tr('bookEdition'),
+          value: book.edition,
+        ),
+    ];
+    final wide = <_BentoTile>[
+      if (_has(book.editor))
+        _BentoTile(
+          icon: Icons.edit_outlined,
+          label: Loc.tr('ui_ad39f1c3af'),
+          value: book.editor,
+          wide: true,
+        ),
+      if (_has(book.publisher))
+        _BentoTile(
+          icon: Icons.apartment_outlined,
+          label: Loc.tr('bookPublisher'),
+          value: book.publisher,
+          wide: true,
+        ),
+    ];
+    if (facts.isEmpty && wide.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: OTSpacing.md),
+        child: Text(Loc.tr('unknownMetadata')),
+      );
+    }
+
+    return LayoutBuilder(builder: (context, constraints) {
+      const gap = OTSpacing.md;
+      final width = constraints.maxWidth;
+      // Kolom fakta mengikuti lebar: 2 di ponsel, 3 bila ruang cukup.
+      final columns = facts.isEmpty
+          ? 1
+          : (width >= 560 ? facts.length.clamp(1, 3) : facts.length.clamp(1, 2));
+      final factWidth = (width - gap * (columns - 1)) / columns;
+      final wideColumns = width >= 560 && wide.length == 2 ? 2 : 1;
+      final wideWidth = (width - gap * (wideColumns - 1)) / wideColumns;
+
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        children: [
+          for (final tile in facts) SizedBox(width: factWidth, child: tile),
+          for (final tile in wide) SizedBox(width: wideWidth, child: tile),
+        ],
+      );
+    });
+  }
+}
+
+class _BentoTile extends StatelessWidget {
+  const _BentoTile({
+    required this.icon,
     required this.label,
     required this.value,
-    this.isLast = false,
+    this.wide = false,
   });
 
+  final IconData icon;
   final String label;
   final String value;
-  final bool isLast;
+  final bool wide;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
-    final border = OTColors.border(isDark);
-
-    final displayValue = value.trim().isEmpty ? '-' : value.trim();
+    final displayValue = value.trim();
+    final isArabic = RegExp(r'[؀-ۿ]').hasMatch(displayValue);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      constraints: BoxConstraints(minHeight: wide ? 0 : 112),
+      padding: const EdgeInsets.all(OTSpacing.base),
       decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: border, width: 0.8)),
+        color: OTColors.surface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: OTColors.border(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: ScholarlyFonts.outfit(
-              fontSize: 12,
-              color: textSecondary,
-            ),
+          Row(
+            children: [
+              Icon(icon, size: 18, color: textSecondary),
+              const SizedBox(width: OTSpacing.sm),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: ScholarlyFonts.outfit(
+                      fontSize: 12, color: textSecondary),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 5),
-          Text(
-            displayValue,
-            textDirection: RegExp(r'[\u0600-\u06FF]').hasMatch(displayValue)
-                ? TextDirection.rtl
-                : null,
-            style: ScholarlyFonts.outfit(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: ink,
+          SizedBox(height: wide ? OTSpacing.sm : OTSpacing.base),
+          SizedBox(
+            width: double.infinity,
+            child: Text(
+              displayValue,
+              textDirection: isArabic ? TextDirection.rtl : null,
+              style: isArabic
+                  ? ScholarlyFonts.scheherazadeNew(
+                      fontSize: wide ? 18 : 20,
+                      height: 1.7,
+                      fontWeight: FontWeight.w600,
+                      color: ink)
+                  : ScholarlyFonts.outfit(
+                      fontSize: wide ? 15 : 20,
+                      height: 1.3,
+                      fontWeight: FontWeight.w600,
+                      color: ink),
             ),
           ),
         ],

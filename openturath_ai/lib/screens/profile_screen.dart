@@ -781,166 +781,207 @@ class _MembershipPass extends StatelessWidget {
     final foreground = OTColors.textPrimary(isDark);
     final muted = OTColors.textSecondary(isDark);
     final isOpen = summary.isOpen;
-    final initial = holderName.trim().isEmpty
-        ? '?'
-        : holderName.trim().characters.first.toUpperCase();
+    // Kartu anggota: tinta gelap di kedua mode, tanpa emas dan tanpa nomor tiruan.
+    final cardColor = OTColors.inverseSurface(isDark);
+    const onCard = OTColors.onInverseSurface;
+    final onCardMuted = onCard.withValues(alpha: 0.64);
+    final expiry = summary.expiresAt == null ? '—' : _expiryLabel();
 
-    return Semantics(
-      label: 'OpenTurath. ${summary.badge}. ${summary.accessLabel}',
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: OTRadius.cardBorder,
-          border: Border.all(color: border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(OTSpacing.base),
-              child: Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: OTColors.surfaceSubtle(isDark),
-                      shape: BoxShape.circle,
-                    ),
-                    child: ExcludeSemantics(
-                      child: Text(
-                        initial,
-                        style: ScholarlyFonts.outfit(
-                          color: foreground,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          label:
+              'OpenTurath. ${summary.badge}. $holderName. ${summary.accessLabel}',
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: AspectRatio(
+                aspectRatio: 1.586,
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                        color: onCard.withValues(alpha: isDark ? 0.14 : 0)),
                   ),
-                  const SizedBox(width: OTSpacing.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          holderName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: ScholarlyFonts.outfit(
-                            color: foreground,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                  child: Stack(
+                    children: [
+                      PositionedDirectional(
+                        end: -36,
+                        bottom: -44,
+                        child: ExcludeSemantics(
+                          child: OpenTurathMark(
+                            size: 220,
+                            color: onCard.withValues(alpha: 0.05),
                           ),
                         ),
-                        if (email.isNotEmpty) ...[
-                          const SizedBox(height: 2),
-                          Text(
-                            email,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: ScholarlyFonts.outfit(
-                                color: muted, fontSize: 13),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: OTSpacing.sm),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: OTRadius.chipBorder,
-                      border: Border.all(color: border),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (!isOpen) ...[
-                          Icon(Icons.lock_outline_rounded,
-                              color: muted, size: 13),
-                          const SizedBox(width: 4),
-                        ],
-                        Text(
-                          summary.badge,
-                          style: ScholarlyFonts.outfit(
-                            color: foreground,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.6,
-                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(OTSpacing.lg),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const OpenTurathMark(size: 22, color: onCard),
+                                const SizedBox(width: OTSpacing.sm),
+                                Text(
+                                  'OpenTurath',
+                                  textDirection: TextDirection.ltr,
+                                  style: ScholarlyFonts.newsreader(
+                                    color: onCard,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: OTRadius.chipBorder,
+                                    border: Border.all(
+                                        color: onCard.withValues(alpha: 0.32)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (!isOpen) ...[
+                                        Icon(Icons.lock_outline_rounded,
+                                            color: onCardMuted, size: 13),
+                                        const SizedBox(width: 4),
+                                      ],
+                                      Text(
+                                        summary.badge,
+                                        style: ScholarlyFonts.outfit(
+                                          color: onCard,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Spacer(),
+                            Text(
+                              summary.accessLabel,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: ScholarlyFonts.outfit(
+                                color: onCard,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                height: 1.3,
+                              ),
+                            ),
+                            const Spacer(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        holderName.toUpperCase(),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: ScholarlyFonts.outfit(
+                                          color: onCard,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                      if (email.isNotEmpty) ...[
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          email,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: ScholarlyFonts.outfit(
+                                              color: onCardMuted, fontSize: 12),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: OTSpacing.md),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      summary.expiryLabel.isEmpty
+                                          ? AppCopy.validUntil
+                                          : summary.expiryLabel,
+                                      style: ScholarlyFonts.outfit(
+                                          color: onCardMuted, fontSize: 11),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      expiry,
+                                      style: ScholarlyFonts.outfit(
+                                        color: onCard,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.6,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            Divider(height: 1, color: border),
-            InkWell(
-              onTap: onViewAccess,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: OTSpacing.base, vertical: OTSpacing.md),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: _PassMeta(
-                        label: AppCopy.navStudies,
-                        value: summary.accessLabel,
-                        valueColor: foreground,
-                        labelColor: muted,
-                      ),
-                    ),
-                    const SizedBox(width: OTSpacing.md),
-                    Expanded(
-                      flex: 2,
-                      child: _PassMeta(
-                        label: summary.expiryLabel.isEmpty
-                            ? AppCopy.validUntil
-                            : summary.expiryLabel,
-                        value: summary.expiresAt == null
-                            ? '—'
-                            : _expiryLabel(),
-                        valueColor: foreground,
-                        labelColor: muted,
-                      ),
-                    ),
-                    if (onViewAccess != null)
-                      Icon(Icons.chevron_right_rounded,
-                          color: muted, size: 20),
-                  ],
                 ),
               ),
             ),
-            Divider(height: 1, color: border),
-            InkWell(
-              onTap: onManage,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: OTSpacing.base, vertical: 14),
-                child: Row(
-                  children: [
-                    Icon(Icons.tune_rounded, size: 20, color: foreground),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        summary.ctaLabel,
-                        style: OTTypography.bodyMedium(color: foreground),
-                      ),
-                    ),
+          ),
+        ),
+        const SizedBox(height: OTSpacing.md),
+        Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: surface,
+            borderRadius: OTRadius.cardBorder,
+            border: Border.all(color: border),
+          ),
+          child: Column(
+            children: [
+              if (onViewAccess != null) ...[
+                _AccountActionRow(
+                  icon: Icons.auto_stories_outlined,
+                  label: summary.accessLabel,
+                  color: foreground,
+                  onTap: onViewAccess,
+                  trailing:
+                      Icon(Icons.chevron_right_rounded, color: muted, size: 20),
+                ),
+                Divider(height: 1, color: border),
+              ],
+              _AccountActionRow(
+                icon: Icons.tune_rounded,
+                label: summary.ctaLabel,
+                color: foreground,
+                onTap: onManage,
+                trailing:
                     Icon(Icons.chevron_right_rounded, color: muted, size: 20),
-                  ],
-                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -952,6 +993,7 @@ class _AccountActionRow extends StatelessWidget {
     required this.color,
     required this.onTap,
     this.busy = false,
+    this.trailing,
   });
 
   final IconData icon;
@@ -959,6 +1001,7 @@ class _AccountActionRow extends StatelessWidget {
   final Color color;
   final VoidCallback? onTap;
   final bool busy;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -981,51 +1024,10 @@ class _AccountActionRow extends StatelessWidget {
             Expanded(
               child: Text(label, style: OTTypography.bodyMedium(color: color)),
             ),
+            if (trailing != null) trailing!,
           ],
         ),
       ),
-    );
-  }
-}
-
-class _PassMeta extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color valueColor;
-  final Color labelColor;
-
-  const _PassMeta({
-    required this.label,
-    required this.value,
-    required this.valueColor,
-    required this.labelColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: ScholarlyFonts.outfit(
-            color: labelColor,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: ScholarlyFonts.outfit(
-            color: valueColor,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
     );
   }
 }
