@@ -16,6 +16,7 @@ import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
 
 import 'package:openturath_ai/core/design/ot_typography.dart';
+import '../widgets/ot_components.dart';
 /// Halaman Katalog Kitab Editorial OpenTurath (Monochrome Editorial)
 class OpenTurathBookLibraryPage extends StatefulWidget {
   const OpenTurathBookLibraryPage({
@@ -310,31 +311,8 @@ class _FilterChip extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final ink = OTColors.textPrimary(isDark);
-    final surface = OTColors.surface(isDark);
-    final border = OTColors.border(isDark);
-
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) => onTap(),
-      showCheckmark: false,
-      backgroundColor: surface,
-      selectedColor: ink,
-      materialTapTargetSize: MaterialTapTargetSize.padded,
-      visualDensity: VisualDensity.standard,
-      shape: const StadiumBorder(),
-      side: BorderSide(color: isSelected ? ink : border),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      labelStyle: ScholarlyFonts.outfit(
-        color: isSelected ? OTColors.canvas(isDark) : ink,
-        fontSize: OTFontSize.s12,
-        fontWeight: FontWeight.w400,
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      OTChip(label: label, selected: isSelected, onSelected: onTap);
 }
 
 class _BookEditorialItem extends StatelessWidget {

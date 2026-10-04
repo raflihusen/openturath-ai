@@ -314,11 +314,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: false,
         title: Text(
           AppCopy.navSettings,
-          style: ScholarlyFonts.outfit(
-            fontSize: OTFontSize.s20,
-            fontWeight: FontWeight.w700,
-            color: textPrimary,
-          ),
         ),
       ),
       body: SafeArea(
@@ -1102,7 +1097,7 @@ class _MembershipPass extends StatelessWidget {
                 children: [
                   Icon(icon, size: 20, color: foreground),
                   const Spacer(),
-                  Icon(otOutwardIcon(context), size: 18, color: muted),
+                  Icon(otChevronIcon(context), size: 18, color: muted),
                 ],
               ),
               const SizedBox(height: OTSpacing.md),

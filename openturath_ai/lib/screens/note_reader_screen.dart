@@ -78,9 +78,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
       appBar: AppBar(
         backgroundColor: canvas,
         surfaceTintColor: Colors.transparent,
-        title: Text(AppCopy.savedCollection,
-            style: NativeFonts.outfit(
-                fontSize: OTFontSize.s20, color: primary, fontWeight: FontWeight.w700)),
+        title: Text(AppCopy.savedCollection),
         actions: [
           IconButton(
               icon: const Icon(Icons.copy_outlined),

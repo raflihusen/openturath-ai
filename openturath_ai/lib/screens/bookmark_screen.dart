@@ -28,6 +28,7 @@ import '../widgets/ot_motion_widgets.dart';
 import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:openturath_ai/core/design/ot_buttons.dart';
 
+import '../widgets/ot_components.dart';
 class BookmarkScreen extends StatefulWidget {
   const BookmarkScreen({super.key});
 
@@ -297,11 +298,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
         scrolledUnderElevation: 0,
         title: Text(
           AppCopy.savedCollection,
-          style: NativeFonts.outfit(
-            fontSize: OTFontSize.s20,
-            fontWeight: FontWeight.w700,
-            color: textPrimary,
-          ),
         ),
         actions: [
           IconButton(
@@ -425,50 +421,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       final cat = _categories[index];
                       final isSelected = _selectedCategory == cat;
 
-                      return GestureDetector(
-                        onTap: () {
-                          OTMotion.selection();
-                          setState(() {
+                      return Center(
+                        child: OTChip(
+                          label: Loc.text(cat),
+                          selected: isSelected,
+                          onSelected: () => setState(() {
                             _selectedCategory = cat;
                             _filter();
-                          });
-                        },
-                        child: AnimatedContainer(
-                          duration: MediaQuery.disableAnimationsOf(context)
-                              ? Duration.zero
-                              : OTMotion.fast,
-                          curve: OTMotion.curve,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: OTSpacing.md + 2,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? OTColors.primaryContainer(isDark)
-                                : surface,
-                            borderRadius: BorderRadius.circular(OTRadius.card),
-                            border: Border.all(
-                              color: isSelected
-                                  ? OTColors.primaryContainer(isDark)
-                                  : border.withValues(alpha: 0.7),
-                              width: 0.8,
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              Loc.text(cat),
-                              style: OTTypography.caption(
-                                color: isSelected
-                                    ? OTColors.onPrimaryContainer(isDark)
-                                    : textSecondary,
-                              ).copyWith(
-                                fontSize: OTFontSize.s12,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                              ),
-                            ),
-                          ),
+                          }),
                         ),
                       );
                     },

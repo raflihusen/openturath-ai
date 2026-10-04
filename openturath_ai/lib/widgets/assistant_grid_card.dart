@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:openturath_ai/core/design/ot_buttons.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 import '../core/design/ot_colors.dart';
 import '../core/design/ot_radius.dart';
 import '../core/design/ot_spacing.dart';
 import '../core/localization.dart';
-import '../core/scholarly_fonts.dart';
 import '../models/agent_model.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'ot_motion_widgets.dart';
@@ -59,114 +59,84 @@ class AssistantGridCard extends StatelessWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
-    final border = OTColors.border(dark);
     final stats = LibraryStat.from(metadata);
 
     return OTBentoTile(
       onTap: onOpen,
       semanticLabel: '${Loc.tr('startStudy')} ${agent.title}',
       padding: const EdgeInsets.fromLTRB(
-          OTSpacing.base, OTSpacing.lg, OTSpacing.base, OTSpacing.sm),
+          OTSpacing.lg, OTSpacing.lg, OTSpacing.sm, OTSpacing.sm),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 Loc.text(agent.title),
                 maxLines: 2,
-                textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
-                style: ScholarlyFonts.newsreader(
-                  fontSize: OTFontSize.s20,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.3,
-                  height: 1.2,
-                  color: ink,
-                ),
+                style: OTTypography.bookTitle(color: ink)
+                    .copyWith(height: 1.2),
               ),
               if (agent.isComingSoon) ...[
                 const SizedBox(height: OTSpacing.sm),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: OTSpacing.sm, vertical: OTSpacing.xs),
                   decoration: BoxDecoration(
                     color: OTColors.surfaceSubtle(dark),
                     borderRadius: OTRadius.chipBorder,
                   ),
                   child: Text(
                     Loc.tr('comingSoon'),
-                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s11, color: muted),
+                    style: OTTypography.metadataTag(color: muted),
                   ),
                 ),
               ],
+              // Satu baris metadata, bukan deretan pil: angka tetap terbaca
+              // tanpa membuat kartu terasa seperti kumpulan tombol.
               if (stats.isNotEmpty) ...[
-                const SizedBox(height: OTSpacing.md),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    for (final stat in stats)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: OTRadius.chipBorder,
-                          border: Border.all(color: border),
-                        ),
-                        child: Text.rich(
-                          TextSpan(
-                            text: stat.value,
-                            style: ScholarlyFonts.outfit(
-                              fontSize: OTFontSize.s12,
-                              fontWeight: FontWeight.w600,
-                              color: ink,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: ' ${stat.unit}',
-                                style: ScholarlyFonts.outfit(
-                                  fontSize: OTFontSize.s12,
-                                  fontWeight: FontWeight.w400,
-                                  color: muted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                const SizedBox(height: OTSpacing.sm),
+                Text.rich(
+                  TextSpan(children: [
+                    for (final (index, stat) in stats.indexed) ...[
+                      if (index > 0) const TextSpan(text: ' · '),
+                      TextSpan(
+                        text: stat.value,
+                        style: TextStyle(
+                            color: ink, fontWeight: FontWeight.w600),
                       ),
-                  ],
+                      TextSpan(text: ' ${stat.unit}'),
+                    ],
+                  ]),
+                  style: OTTypography.caption(color: muted),
                 ),
               ],
             ],
           ),
           Padding(
             padding: const EdgeInsets.only(top: OTSpacing.md),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 4,
+            child: Row(
               children: [
-                TextButton.icon(
-                  onPressed: onOpen,
-                  iconAlignment: IconAlignment.end,
-                  icon: const Icon(Icons.arrow_forward_rounded, size: 16),
-                  label: Text(Loc.tr('startStudy')),
-                  style: TextButton.styleFrom(
-                    foregroundColor: ink,
-                    textStyle: ScholarlyFonts.outfit(
-                        fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
-                  ),
+                Text(
+                  Loc.tr('startStudy'),
+                  style: OTTypography.button(color: ink),
                 ),
+                const SizedBox(width: OTSpacing.xs),
+                Icon(
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_back_rounded
+                      : Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: ink,
+                ),
+                const Spacer(),
                 if (onOpenLibrary != null)
                   TextButton(
                     onPressed: onOpenLibrary,
-                    style: TextButton.styleFrom(
-                      foregroundColor: muted,
-                      textStyle: ScholarlyFonts.outfit(fontSize: OTFontSize.s14),
-                    ),
+                    style: OTButtons.quiet(dark),
                     child: Text(Loc.tr('libraryShort')),
                   ),
               ],

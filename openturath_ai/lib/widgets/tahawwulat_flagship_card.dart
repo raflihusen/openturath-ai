@@ -273,7 +273,7 @@ class TahawwulatFlagshipCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 12),
                             Icon(
-                              otOutwardIcon(context),
+                              otChevronIcon(context),
                               size: 16,
                               color: _silver,
                             ),

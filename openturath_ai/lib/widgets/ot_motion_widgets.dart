@@ -328,11 +328,11 @@ class _OTFlipCardState extends State<OTFlipCard>
   }
 }
 
-/// Panah serong yang mengikuti arah baca: ↗ di LTR, ↖ di RTL.
-IconData otOutwardIcon(BuildContext context) =>
+/// Chevron "buka" yang mengikuti arah baca: › di LTR, ‹ di RTL.
+IconData otChevronIcon(BuildContext context) =>
     Directionality.of(context) == TextDirection.rtl
-        ? Icons.north_west_rounded
-        : Icons.north_east_rounded;
+        ? Icons.chevron_left_rounded
+        : Icons.chevron_right_rounded;
 
 /// Jarak judul [AppBar]: rapat ke tombol kembali; tanpa tombol kembali,
 /// judul sejajar dengan tepi isi halaman.

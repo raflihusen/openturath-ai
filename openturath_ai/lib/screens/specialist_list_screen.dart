@@ -217,8 +217,6 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
         appBar: AppBar(
           title: Text(
             Loc.text(title),
-            style: OTTypography.sectionTitle(color: textPrimary)
-                .copyWith(fontSize: OTFontSize.s20, fontWeight: FontWeight.w700),
           ),
           centerTitle: false,
           backgroundColor: canvas,
