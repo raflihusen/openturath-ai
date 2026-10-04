@@ -812,8 +812,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                 AppSnackBar.clear(context);
                                 _sessionManager.selectTab(index);
                               },
-                              borderRadius: const BorderRadius.horizontal(
-                                  left: Radius.circular(8)),
+                              borderRadius:
+                                  const BorderRadiusDirectional.horizontal(
+                                          start: Radius.circular(8))
+                                      .resolve(Directionality.of(context)),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 6),

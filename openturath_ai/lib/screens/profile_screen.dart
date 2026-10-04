@@ -318,179 +318,179 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   physics: const BouncingScrollPhysics(),
                   children: [
-                OTReveal(
-                    child: _MembershipPass(
-                  holderName: displayName,
-                  email: email,
-                  memberId: _memberIdFor(userModel?.uid ?? ''),
-                  summary: membership,
-                  isDark: isDark,
-                  onManage: () => _openSubscription(userModel),
-                  onViewAccess:
-                      membership.isOpen && membership.agentIds.isNotEmpty
+                    OTReveal(
+                        child: _MembershipPass(
+                      holderName: displayName,
+                      email: email,
+                      memberId: _memberIdFor(userModel?.uid ?? ''),
+                      summary: membership,
+                      isDark: isDark,
+                      onManage: () => _openSubscription(userModel),
+                      onViewAccess: membership.isOpen &&
+                              membership.agentIds.isNotEmpty
                           ? () => _showAccessPortfolio(userModel, membership)
                           : null,
-                )),
+                    )),
 
-                const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
-                Container(
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: OTRadius.cardBorder,
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Column(
-                    children: [
-                      ValueListenableBuilder<ThemeMode>(
-                        valueListenable: AppConfig.themeNotifier,
-                        builder: (context, currentMode, _) {
-                          return Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
+                    // ── Card 2: Mode Tampilan 3 Pilihan & Bahasa ──
+                    Container(
+                      decoration: BoxDecoration(
+                        color: surface,
+                        borderRadius: OTRadius.cardBorder,
+                        border: Border.all(color: border, width: 1.0),
+                      ),
+                      child: Column(
+                        children: [
+                          ValueListenableBuilder<ThemeMode>(
+                            valueListenable: AppConfig.themeNotifier,
+                            builder: (context, currentMode, _) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.palette_outlined,
-                                        size: 20, color: textSecondary),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      AppCopy.appearance,
-                                      style: ScholarlyFonts.outfit(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: textPrimary,
+                                    Row(
+                                      children: [
+                                        Icon(Icons.palette_outlined,
+                                            size: 20, color: textSecondary),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          AppCopy.appearance,
+                                          style: ScholarlyFonts.outfit(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: textPrimary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        color: OTColors.surfaceSubtle(isDark),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          _buildThemeOption(
+                                            title: AppCopy.modeSystem,
+                                            icon: Icons.brightness_auto_rounded,
+                                            isSelected:
+                                                currentMode == ThemeMode.system,
+                                            isDark: isDark,
+                                            textPrimary: textPrimary,
+                                            textSecondary: textSecondary,
+                                            onTap: () => AppConfig.setThemeMode(
+                                                ThemeMode.system),
+                                          ),
+                                          _buildThemeOption(
+                                            title: AppCopy.modeLight,
+                                            icon: Icons.light_mode_rounded,
+                                            isSelected:
+                                                currentMode == ThemeMode.light,
+                                            isDark: isDark,
+                                            textPrimary: textPrimary,
+                                            textSecondary: textSecondary,
+                                            onTap: () => AppConfig.setThemeMode(
+                                                ThemeMode.light),
+                                          ),
+                                          _buildThemeOption(
+                                            title: AppCopy.modeDark,
+                                            icon: Icons.dark_mode_rounded,
+                                            isSelected:
+                                                currentMode == ThemeMode.dark,
+                                            isDark: isDark,
+                                            textPrimary: textPrimary,
+                                            textSecondary: textSecondary,
+                                            onTap: () => AppConfig.setThemeMode(
+                                                ThemeMode.dark),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 12),
-                                Container(
-                                  padding: const EdgeInsets.all(3),
-                                  decoration: BoxDecoration(
-                                    color: OTColors.surfaceSubtle(isDark),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      _buildThemeOption(
-                                        title: AppCopy.modeSystem,
-                                        icon: Icons.brightness_auto_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.system,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.system),
-                                      ),
-                                      _buildThemeOption(
-                                        title: AppCopy.modeLight,
-                                        icon: Icons.light_mode_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.light,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.light),
-                                      ),
-                                      _buildThemeOption(
-                                        title: AppCopy.modeDark,
-                                        icon: Icons.dark_mode_rounded,
-                                        isSelected:
-                                            currentMode == ThemeMode.dark,
-                                        isDark: isDark,
-                                        textPrimary: textPrimary,
-                                        textSecondary: textSecondary,
-                                        onTap: () => AppConfig.setThemeMode(
-                                            ThemeMode.dark),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                              );
+                            },
+                          ),
+                          Divider(height: 1, color: border),
+                          _SettingsTile(
+                            icon: Icons.translate_rounded,
+                            title: AppCopy.language,
+                            subtitle: Loc.languageNames[Loc.language]!,
+                            trailing: Icon(Icons.chevron_right_rounded,
+                                color: textSecondary, size: 20),
+                            onTap: () => _showLanguageModal(
+                              context,
+                              isDark,
+                              textPrimary,
+                              textSecondary,
+                              surface,
+                              border,
                             ),
-                          );
-                        },
+                          ),
+                        ],
                       ),
-                      Divider(height: 1, color: border),
-                      _SettingsTile(
-                        icon: Icons.translate_rounded,
-                        title: AppCopy.language,
-                        subtitle: Loc.languageNames[Loc.language]!,
-                        trailing: Icon(Icons.chevron_right_rounded,
-                            color: textSecondary, size: 20),
-                        onTap: () => _showLanguageModal(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                // ── Tentang & akun: satu kelompok baris ──
-                Container(
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    color: surface,
-                    borderRadius: OTRadius.cardBorder,
-                    border: Border.all(color: border, width: 1.0),
-                  ),
-                  child: Column(
-                    children: [
-                      _SettingsTile(
-                        icon: Icons.info_outline_rounded,
-                        title: AppCopy.aboutTitle,
-                        subtitle: AppCopy.versionWithTagline(_appVersion),
-                        trailing: Icon(Icons.chevron_right_rounded,
-                            color: textSecondary, size: 20),
-                        onTap: () => _showAboutModal(
-                          context,
-                          isDark,
-                          textPrimary,
-                          textSecondary,
-                          surface,
-                          border,
-                        ),
+                    // ── Tentang & akun: satu kelompok baris ──
+                    Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        color: surface,
+                        borderRadius: OTRadius.cardBorder,
+                        border: Border.all(color: border, width: 1.0),
                       ),
-                      Divider(height: 1, color: border),
-                      _AccountActionRow(
-                        icon: Icons.logout_rounded,
-                        label: _isLoggingOut
-                            ? AppCopy.loggingOut
-                            : AppCopy.logoutButton,
-                        color: textPrimary,
-                        onTap: (_isLoggingOut || _isDeletingAccount)
-                            ? null
-                            : _logout,
+                      child: Column(
+                        children: [
+                          _SettingsTile(
+                            icon: Icons.info_outline_rounded,
+                            title: AppCopy.aboutTitle,
+                            subtitle: AppCopy.versionWithTagline(_appVersion),
+                            trailing: Icon(Icons.chevron_right_rounded,
+                                color: textSecondary, size: 20),
+                            onTap: () => _showAboutModal(
+                              context,
+                              isDark,
+                              textPrimary,
+                              textSecondary,
+                              surface,
+                              border,
+                            ),
+                          ),
+                          Divider(height: 1, color: border),
+                          _AccountActionRow(
+                            icon: Icons.logout_rounded,
+                            label: _isLoggingOut
+                                ? AppCopy.loggingOut
+                                : AppCopy.logoutButton,
+                            color: textPrimary,
+                            onTap: (_isLoggingOut || _isDeletingAccount)
+                                ? null
+                                : _logout,
+                          ),
+                          Divider(height: 1, color: border),
+                          _AccountActionRow(
+                            icon: Icons.delete_outline_rounded,
+                            label: AppCopy.deleteAccountButton,
+                            color: textSecondary,
+                            busy: _isDeletingAccount,
+                            onTap: (_isLoggingOut || _isDeletingAccount)
+                                ? null
+                                : _deleteAccount,
+                          ),
+                        ],
                       ),
-                      Divider(height: 1, color: border),
-                      _AccountActionRow(
-                        icon: Icons.delete_outline_rounded,
-                        label: AppCopy.deleteAccountButton,
-                        color: textSecondary,
-                        busy: _isDeletingAccount,
-                        onTap: (_isLoggingOut || _isDeletingAccount)
-                            ? null
-                            : _deleteAccount,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                ],
               ),
-            ),
-          );
+            );
           },
         ),
       ),
@@ -694,7 +694,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required VoidCallback onTap,
   }) {
     // Pilihan aktif harus lebih terang dari lintasannya di kedua mode.
-    final activeBg = isDark ? OTColors.border(isDark) : OTColors.surface(isDark);
+    final activeBg =
+        isDark ? OTColors.border(isDark) : OTColors.surface(isDark);
     final activeFg = textPrimary;
     final inactiveFg = textSecondary;
 
@@ -796,8 +797,7 @@ class _MembershipPass extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: onCard.withValues(alpha: isDark ? 0.14 : 0)),
+        border: Border.all(color: onCard.withValues(alpha: isDark ? 0.14 : 0)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -865,179 +865,179 @@ class _MembershipPass extends StatelessWidget {
     final expiry = summary.expiresAt == null ? '—' : _expiryLabel();
 
     final card = Semantics(
-          label:
-              'OpenTurath. ${summary.badge}. $holderName. ${summary.accessLabel}',
-          child: Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 360),
-              child: AspectRatio(
-                aspectRatio: 1.586,
-                child: OTFlipCard(
-                  semanticLabel: Loc.tr('cardFlipHint'),
-                  back: _back(cardColor, onCard, onCardMuted),
-                  front: Container(
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    // Kilau halus dari kiri-atas; tetap satu warna tinta.
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color.lerp(cardColor, onCard, 0.09)!,
-                        cardColor,
-                        Color.lerp(cardColor, const Color(0xFF000000), 0.3)!,
-                      ],
-                      stops: const [0, 0.45, 1],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border:
-                        Border.all(color: onCard.withValues(alpha: 0.14)),
+      label:
+          'OpenTurath. ${summary.badge}. $holderName. ${summary.accessLabel}',
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: AspectRatio(
+            aspectRatio: 1.586,
+            child: OTFlipCard(
+              semanticLabel: Loc.tr('cardFlipHint'),
+              back: _back(cardColor, onCard, onCardMuted),
+              front: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  // Kilau halus dari kiri-atas; tetap satu warna tinta.
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.lerp(cardColor, onCard, 0.09)!,
+                      cardColor,
+                      Color.lerp(cardColor, const Color(0xFF000000), 0.3)!,
+                    ],
+                    stops: const [0, 0.45, 1],
                   ),
-                  child: Stack(
-                    children: [
-                      PositionedDirectional(
-                        end: -36,
-                        bottom: -44,
-                        child: ExcludeSemantics(
-                          child: OpenTurathMark(
-                            size: 220,
-                            color: onCard.withValues(alpha: 0.05),
-                          ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: onCard.withValues(alpha: 0.14)),
+                ),
+                child: Stack(
+                  children: [
+                    PositionedDirectional(
+                      end: -36,
+                      bottom: -44,
+                      child: ExcludeSemantics(
+                        child: OpenTurathMark(
+                          size: 220,
+                          color: onCard.withValues(alpha: 0.05),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(OTSpacing.lg),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const OpenTurathMark(size: 22, color: onCard),
-                                const SizedBox(width: OTSpacing.sm),
-                                Text(
-                                  'OpenTurath',
-                                  textDirection: TextDirection.ltr,
-                                  style: ScholarlyFonts.newsreader(
-                                    color: onCard,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: -0.3,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    borderRadius: OTRadius.chipBorder,
-                                    border: Border.all(
-                                        color: onCard.withValues(alpha: 0.32)),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if (!isOpen) ...[
-                                        Icon(Icons.lock_outline_rounded,
-                                            color: onCardMuted, size: 13),
-                                        const SizedBox(width: 4),
-                                      ],
-                                      Text(
-                                        summary.badge,
-                                        style: ScholarlyFonts.outfit(
-                                          color: onCard,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 1.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            if (memberId.isNotEmpty) ...[
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(OTSpacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const OpenTurathMark(size: 22, color: onCard),
+                              const SizedBox(width: OTSpacing.sm),
                               Text(
-                                memberId,
+                                'OpenTurath',
                                 textDirection: TextDirection.ltr,
-                                style: ScholarlyFonts.outfit(
-                                  color: onCard.withValues(alpha: 0.86),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 2.4,
+                                style: ScholarlyFonts.newsreader(
+                                  color: onCard,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: -0.3,
                                 ),
                               ),
-                              const SizedBox(height: OTSpacing.md),
-                            ],
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        holderName.toUpperCase(),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: ScholarlyFonts.outfit(
-                                          color: onCard,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 1.2,
-                                        ),
-                                      ),
-                                      if (email.isNotEmpty) ...[
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          email,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: ScholarlyFonts.outfit(
-                                              color: onCardMuted, fontSize: 12),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  borderRadius: OTRadius.chipBorder,
+                                  border: Border.all(
+                                      color: onCard.withValues(alpha: 0.32)),
                                 ),
-                                const SizedBox(width: OTSpacing.md),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
+                                    if (!isOpen) ...[
+                                      Icon(Icons.lock_outline_rounded,
+                                          color: onCardMuted, size: 13),
+                                      const SizedBox(width: 4),
+                                    ],
                                     Text(
-                                      summary.expiryLabel.isEmpty
-                                          ? AppCopy.validUntil
-                                          : summary.expiryLabel,
-                                      style: ScholarlyFonts.outfit(
-                                          color: onCardMuted, fontSize: 11),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      expiry,
+                                      summary.badge == 'GRATIS'
+                                          ? Loc.tr('planFreeBadge')
+                                          : summary.badge,
                                       style: ScholarlyFonts.outfit(
                                         color: onCard,
-                                        fontSize: 14,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.6,
+                                        letterSpacing: 1.0,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          if (memberId.isNotEmpty) ...[
+                            Text(
+                              memberId,
+                              textDirection: TextDirection.ltr,
+                              style: ScholarlyFonts.outfit(
+                                color: onCard.withValues(alpha: 0.86),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 2.4,
+                              ),
                             ),
+                            const SizedBox(height: OTSpacing.md),
                           ],
-                        ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      holderName.toUpperCase(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: ScholarlyFonts.outfit(
+                                        color: onCard,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                    if (email.isNotEmpty) ...[
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        email,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: ScholarlyFonts.outfit(
+                                            color: onCardMuted, fontSize: 12),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: OTSpacing.md),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    summary.expiryLabel.isEmpty
+                                        ? AppCopy.validUntil
+                                        : summary.expiryLabel,
+                                    style: ScholarlyFonts.outfit(
+                                        color: onCardMuted, fontSize: 11),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    expiry,
+                                    style: ScholarlyFonts.outfit(
+                                      color: onCard,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.6,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        );
+        ),
+      ),
+    );
 
     Widget action(IconData icon, String label, VoidCallback? onTap) =>
         OTBentoTile(
@@ -1110,9 +1110,7 @@ class _MembershipPass extends StatelessWidget {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: ScholarlyFonts.outfit(
-                                      fontSize: 13,
-                                      height: 1.4,
-                                      color: muted)),
+                                      fontSize: 13, height: 1.4, color: muted)),
                             ],
                           ],
                         ),

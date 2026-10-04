@@ -535,8 +535,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     final shell =
                                         MainShellController.of(context);
                                     if (shell != null) {
-                                      shell.switchTab(1,
-                                          fieldId: disc.fieldId);
+                                      shell.switchTab(1, fieldId: disc.fieldId);
                                     } else {
                                       NavigationGuard.safePushNamed(
                                         context,
@@ -669,8 +668,8 @@ class _LibraryNumbersTile extends StatelessWidget {
               final all = snapshot.data ?? const <String, AiLibraryMetadata>{};
               if (all.isEmpty) return const SizedBox(height: 44);
               final number = NumberFormat.decimalPattern(Loc.language);
-              final entries = all.values
-                  .fold<int>(0, (sum, item) => sum + item.totalKitab);
+              final entries =
+                  all.values.fold<int>(0, (sum, item) => sum + item.totalKitab);
               final pages = all.values
                   .fold<int>(0, (sum, item) => sum + item.totalHalaman);
               Widget stat(String value, String label) => Expanded(
@@ -692,12 +691,12 @@ class _LibraryNumbersTile extends StatelessWidget {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  stat(number.format(all.length),
-                      Loc.tr('loginStatLibraries')),
-                  stat('${number.format(entries ~/ 100 * 100)}+',
+                  stat(number.format(all.length), Loc.tr('loginStatLibraries')),
+                  stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
                       Loc.tr('loginStatEntries')),
                   stat(
-                      '${number.format(pages ~/ 100000 / 10)} ${Loc.tr('unitMillion')}+',
+                      Loc.atLeast(number.format(pages ~/ 100000 / 10),
+                          Loc.tr('unitMillion')),
                       Loc.tr('loginStatPages')),
                 ],
               );
@@ -709,6 +708,71 @@ class _LibraryNumbersTile extends StatelessWidget {
   }
 }
 
+/// Ringkasan tujuh adab untuk bahasa selain Indonesia: (judul, satu kalimat).
+/// Urutannya mengikuti "Adab 1-7" di [LegalCopy.aiGuidelineSections].
+const Map<String, List<(String, String)>> _adabDigest = {
+  'en': [
+    (
+      'AI is a study aid, not a teacher',
+      'Use it to widen your reading and prepare questions for your teacher. It issues no fatwa and does not replace the study circle.'
+    ),
+    (
+      'Check the text and its context',
+      'Read what comes before and after a quotation, and confirm the edition, volume, and page in the book itself.'
+    ),
+    (
+      'Respect the schools and the specialists',
+      'Legal rulings and hadith grading belong to qualified scholars; AI only presents reports and opinions.'
+    ),
+    (
+      'Attribute honestly',
+      'Cite only sources you have checked yourself, not a book you know through an AI summary.'
+    ),
+    (
+      'Beware of confident but wrong answers',
+      'Fluent, assured wording proves nothing. Weigh every answer against the Qur\'an, the Sunnah, and the scholars.'
+    ),
+    (
+      'Keep the chain of transmission',
+      'AI has no sanad, no probity, and no ijazah. Treat it as a library, not as a bearer of knowledge.'
+    ),
+    (
+      'Guard your tongue and your hands',
+      'Do not use AI to disparage scholars or fellow Muslims, or to stir up hostility.'
+    ),
+  ],
+  'ar': [
+    (
+      'الذكاء الاصطناعي وسيلة لا شيخ',
+      'استعن به لتوسيع المطالعة وإعداد الأسئلة لشيخك؛ فهو لا يفتي ولا يغني عن مجالس العلم.'
+    ),
+    (
+      'تحقق من النص وسياقه',
+      'اقرأ ما قبل الاقتباس وما بعده، وراجع الطبعة والجزء والصفحة في الكتاب نفسه.'
+    ),
+    (
+      'احترم المذاهب وأهل الاختصاص',
+      'الحكم الشرعي وتصحيح الحديث لأهلهما، والذكاء الاصطناعي يعرض الروايات والأقوال فحسب.'
+    ),
+    (
+      'الأمانة في العزو',
+      'لا تعزُ إلا إلى مصدر راجعته بنفسك، لا إلى كتاب عرفته من تلخيص الآلة.'
+    ),
+    (
+      'احذر الجواب الواثق الخاطئ',
+      'فصاحة العبارة ليست دليلًا على الصواب؛ فاعرض كل جواب على الكتاب والسنة وكلام العلماء.'
+    ),
+    (
+      'حافظ على السند',
+      'الآلة لا سند لها ولا عدالة ولا إجازة؛ فعاملها معاملة المكتبة لا حامل العلم.'
+    ),
+    (
+      'احفظ لسانك ويدك',
+      'لا تستعملها في ذم العلماء أو المسلمين ولا في إثارة العداوة.'
+    ),
+  ],
+};
+
 /// Satu adab menggunakan AI per hari, diambil dari panduan.
 class _AdabOfDayTile extends StatelessWidget {
   const _AdabOfDayTile();
@@ -719,16 +783,23 @@ class _AdabOfDayTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final ink = OTColors.textPrimary(isDark);
     final muted = OTColors.textSecondary(isDark);
-    final adab = LegalCopy.aiGuidelineSections
-        .where((section) => section.title.startsWith('Adab '))
-        .toList();
-    // Naskah adab baru tersedia dalam bahasa Indonesia.
-    if (adab.isEmpty || Loc.language != 'id') return const SizedBox.shrink();
     final today = DateTime.now();
-    final section =
-        adab[today.difference(DateTime(today.year)).inDays % adab.length];
-    final title = section.title.split(' · ').last;
-    final body = section.content.split('\n').first;
+    final day = today.difference(DateTime(today.year)).inDays;
+    final String title;
+    final String body;
+    final digest = _adabDigest[Loc.language];
+    if (digest != null) {
+      (title, body) = digest[day % digest.length];
+    } else {
+      // Bahasa Indonesia: langsung dari naskah panduan.
+      final adab = LegalCopy.aiGuidelineSections
+          .where((section) => section.title.startsWith('Adab '))
+          .toList();
+      if (adab.isEmpty) return const SizedBox.shrink();
+      final section = adab[day % adab.length];
+      title = section.title.split(' · ').last;
+      body = section.content.split('\n').first;
+    }
     return OTBentoTile(
       onTap: () => LegalDocumentSheet.showAiGuideline(context),
       semanticLabel: '${Loc.tr('aiEtiquetteLabel')}: $title',
@@ -742,7 +813,8 @@ class _AdabOfDayTile extends StatelessWidget {
                 child: Text(Loc.tr('aiEtiquetteLabel'),
                     style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
               ),
-              Icon(Icons.arrow_forward_rounded, size: 16, color: muted),
+              Icon(Icons.adaptive.arrow_forward_rounded,
+                  size: 16, color: muted),
             ],
           ),
           const SizedBox(height: OTSpacing.sm),
@@ -984,9 +1056,7 @@ class _TahawwulatSpotlight extends StatelessWidget {
             children: [
               Text(Loc.tr('flagshipExplore', ['5']),
                   style: ScholarlyFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: ink)),
+                      fontSize: 13, fontWeight: FontWeight.w600, color: ink)),
               const SizedBox(width: 4),
               Icon(Icons.arrow_forward_rounded, size: 16, color: ink),
             ],

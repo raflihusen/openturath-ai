@@ -789,7 +789,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           actions: [
             if (_user != null && _user!.plan == 'trial')
               Padding(
-                padding: const EdgeInsets.only(right: 4),
+                padding: const EdgeInsetsDirectional.only(end: 4),
                 child: Center(
                   child: InkWell(
                     onTap: _navigateToSubscription,

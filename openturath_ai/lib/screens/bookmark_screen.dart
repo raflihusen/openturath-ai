@@ -398,7 +398,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
               padding:
                   const EdgeInsets.fromLTRB(OTSpacing.lg, 12, OTSpacing.lg, 8),
               child: Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   AppCopy.savedNotesCount(_filteredBookmarks.length),
                   style:

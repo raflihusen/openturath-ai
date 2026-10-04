@@ -459,10 +459,11 @@ class _LibraryTotals extends StatelessWidget {
           children: [
             stat(number.format(all.length), Loc.tr('loginStatLibraries')),
             // Dibulatkan ke bawah: sebagian angka halaman di metadata adalah perkiraan.
-            stat('${number.format(entries ~/ 100 * 100)}+',
+            stat(Loc.atLeast(number.format(entries ~/ 100 * 100)),
                 Loc.tr('loginStatEntries')),
             stat(
-                '${number.format(pages ~/ 100000 / 10)} ${Loc.tr('unitMillion')}+',
+                Loc.atLeast(
+                    number.format(pages ~/ 100000 / 10), Loc.tr('unitMillion')),
                 Loc.tr('loginStatPages')),
           ],
         );

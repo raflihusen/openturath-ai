@@ -1,6 +1,8 @@
 import '../widgets/adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import '../core/design/ot_motion.dart';
+import '../core/scholarly_fonts.dart';
 import '../core/app_copy.dart';
 import '../core/app_snackbar.dart';
 import '../core/design/ot_colors.dart';
@@ -71,8 +73,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             const SizedBox(width: 10),
             Expanded(
               child: Text(message,
-                  style: OTTypography.caption(
-                          color: OTColors.textPrimary(dark))
+                  style: OTTypography.caption(color: OTColors.textPrimary(dark))
                       .copyWith(height: 1.4)),
             ),
           ],
@@ -266,15 +267,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     if (AppPlatform.isDesktop)
                       const SizedBox(height: 8)
                     else
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: muted.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: muted.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
-                    ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
                       child: Column(
@@ -477,72 +478,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         const SizedBox(height: 6),
                         Text(
                           Loc.tr('planFeaturedDescription'),
-                          style:
-                              OTTypography.body(color: featuredInk)
-                                  .copyWith(fontSize: 13, height: 1.45),
+                          style: OTTypography.body(color: featuredInk)
+                              .copyWith(fontSize: 13, height: 1.45),
                         ),
                         const SizedBox(height: 18),
 
-                        // Tier Selector Cards
-                        Row(
-                          children: [
-                            for (var i = 0;
-                                i < ProductPricing.tahawwulat.length;
-                                i++) ...[
-                              if (i > 0) const SizedBox(width: 8),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: _processing
-                                      ? null
-                                      : () =>
-                                          setState(() => _tahawwulatIndex = i),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    constraints: const BoxConstraints(minHeight: 72),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      color: OTColors.surface(dark),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: _tahawwulatIndex == i
-                                            ? OTColors.accent(dark)
-                                            : OTColors.border(dark),
-                                        width: _tahawwulatIndex == i ? 1.6 : 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          ProductPricing.tahawwulat[i].title,
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: OTTypography.captionMedium(
-                                            color: _tahawwulatIndex == i ? ink : muted,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          ProductPricing.rupiah(ProductPricing
-                                              .tahawwulat[i].amount),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: _tahawwulatIndex == i
-                                                ? ink : featuredInk,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
+                        _TierSelector(
+                          offers: ProductPricing.tahawwulat,
+                          selected: _tahawwulatIndex,
+                          onSelect: _processing
+                              ? null
+                              : (i) => setState(() => _tahawwulatIndex = i),
                         ),
                         const SizedBox(height: 18),
                         PromoPrice(
@@ -679,65 +625,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Tier Selector Cards Spesialis Per Bidang
-                        Row(
-                          children: [
-                            for (var i = 0;
-                                i < ProductPricing.specialists.length;
-                                i++) ...[
-                              if (i > 0) const SizedBox(width: 8),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: _processing
-                                      ? null
-                                      : () =>
-                                          setState(() => _specialistIndex = i),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    constraints: const BoxConstraints(minHeight: 72),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      color: OTColors.surface(dark),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: _specialistIndex == i
-                                            ? OTColors.accent(dark)
-                                            : border,
-                                        width: _specialistIndex == i ? 1.6 : 1,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          ProductPricing.specialists[i].title,
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: OTTypography.captionMedium(
-                                            color: _specialistIndex == i ? ink : muted,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          ProductPricing.rupiah(ProductPricing
-                                              .specialists[i].amount),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: ink,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
+                        _TierSelector(
+                          offers: ProductPricing.specialists,
+                          selected: _specialistIndex,
+                          onSelect: _processing
+                              ? null
+                              : (i) => setState(() => _specialistIndex = i),
                         ),
                         const SizedBox(height: 20),
 
@@ -814,6 +707,96 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Pilihan masa akses satu paket: masa, harga, dan setara per bulan.
+class _TierSelector extends StatelessWidget {
+  const _TierSelector({
+    required this.offers,
+    required this.selected,
+    required this.onSelect,
+  });
+
+  final List<SubscriptionOffer> offers;
+  final int selected;
+  final ValueChanged<int>? onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ink = OTColors.textPrimary(dark);
+    final muted = OTColors.textSecondary(dark);
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < offers.length; i++) ...[
+            if (i > 0) const SizedBox(width: 8),
+            Expanded(
+              child: Semantics(
+                button: true,
+                selected: selected == i,
+                child: InkWell(
+                  onTap: onSelect == null ? null : () => onSelect!(i),
+                  borderRadius: BorderRadius.circular(14),
+                  child: AnimatedContainer(
+                    duration: OTMotion.fast,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: OTColors.surface(dark),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: selected == i ? ink : OTColors.border(dark),
+                        width: selected == i ? 1.6 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          offers[i].title,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: OTTypography.captionMedium(
+                              color: selected == i ? ink : muted),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          Loc.ltr(offers[i].priceLabel),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: ScholarlyFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: ink,
+                          ),
+                        ),
+                        // Setara per bulan, dibulatkan ke ribuan terdekat.
+                        if (offers[i].months > 1) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            '≈ ${Loc.ltr(ProductPricing.rupiah(((offers[i].amount / offers[i].months) / 1000).round() * 1000))}${Loc.tr('perMonth')}',
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: ScholarlyFonts.outfit(
+                                fontSize: 11.5, color: muted),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
