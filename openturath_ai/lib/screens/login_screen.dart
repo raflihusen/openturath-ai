@@ -19,6 +19,7 @@ import '../widgets/language_switcher.dart';
 import '../widgets/arch_echo_canvas.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'package:intl/intl.dart' show NumberFormat;
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// A shared, theme-adaptive sign-in surface for mobile and desktop.
 class LoginScreen extends StatefulWidget {
@@ -74,7 +75,17 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await _authService.signInWithGoogle();
 
       if (user != null && mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+        final prefs = await SharedPreferences.getInstance();
+        if (!mounted) return;
+        final sessionReady = prefs.getBool('google_session_ready') ?? false;
+        final sessionEmail = prefs.getString('google_session_email') ?? '';
+        final userEmail = user.email.trim().toLowerCase();
+
+        if (sessionReady && userEmail.isNotEmpty && sessionEmail == userEmail) {
+          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+        } else {
+          Navigator.pushReplacementNamed(context, AppRoutes.googleSessionAuth);
+        }
         return;
       }
     } catch (e) {

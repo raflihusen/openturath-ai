@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/routes.dart';
 import '../core/theme.dart';
 import '../widgets/app_loader.dart';
@@ -51,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
-  void _checkAuthAndNavigate() {
+  Future<void> _checkAuthAndNavigate() async {
     var targetRoute = AppRoutes.login;
     try {
       if (widget.resolveInitialRoute != null) {
@@ -59,7 +60,15 @@ class _SplashScreenState extends State<SplashScreen>
       } else {
         final user = FirebaseAuth.instance.currentUser;
         if (user != null && !user.isAnonymous) {
-          targetRoute = AppRoutes.dashboard;
+          final prefs = await SharedPreferences.getInstance();
+          final sessionReady = prefs.getBool('google_session_ready') ?? false;
+          final sessionEmail = prefs.getString('google_session_email') ?? '';
+          final currentEmail = user.email?.trim().toLowerCase() ?? '';
+          if (sessionReady && (currentEmail.isEmpty || sessionEmail == currentEmail)) {
+            targetRoute = AppRoutes.dashboard;
+          } else {
+            targetRoute = AppRoutes.googleSessionAuth;
+          }
         }
       }
     } catch (_) {
