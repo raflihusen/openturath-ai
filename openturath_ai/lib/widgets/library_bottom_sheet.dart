@@ -142,7 +142,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
         return Container(
           decoration: BoxDecoration(
             color: canvas,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
             border: Border.all(color: border, width: 0.8),
           ),
           child: Column(
@@ -161,7 +161,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
                         children: [
                           Text(
                             title,
-                            style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: 18),
+                            style: OTTypography.corpusTitle(color: textPrimary).copyWith(fontSize: OTFontSize.s18),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -320,11 +320,11 @@ class CanonicalBookTile extends StatelessWidget {
         onTap: onOpenEdition,
         pressedScale: 0.98,
         hapticType: HapticFeedbackType.light,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         child: Material(
           color: surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(OTRadius.card),
             side: BorderSide(color: border, width: 0.8),
           ),
           clipBehavior: Clip.antiAlias,
@@ -339,7 +339,7 @@ class CanonicalBookTile extends StatelessWidget {
                   textDirection: TextDirection.rtl,
                   textAlign: TextAlign.right,
                   style: OTTypography.arabicReading(color: textPrimary).copyWith(
-                    fontSize: 20,
+                    fontSize: OTFontSize.s20,
                     height: 1.6,
                     fontWeight: FontWeight.w700,
                   ),
@@ -359,7 +359,7 @@ class CanonicalBookTile extends StatelessWidget {
                   textDirection: latinAuthor == null ? TextDirection.rtl : TextDirection.ltr,
                   textAlign: latinAuthor == null ? TextAlign.right : TextAlign.left,
                   style: latinAuthor == null
-                      ? OTTypography.arabicReading(color: textSecondary).copyWith(fontSize: 15)
+                      ? OTTypography.arabicReading(color: textSecondary).copyWith(fontSize: OTFontSize.s16)
                       : OTTypography.caption(color: textSecondary),
                 ),
 
@@ -381,12 +381,12 @@ class CanonicalBookTile extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                         decoration: BoxDecoration(
                           color: OTColors.surfaceSubtle(isDark),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(OTRadius.xs),
                           border: Border.all(color: border.withValues(alpha: 0.5), width: 0.6),
                         ),
                         child: Text(
                           lbl,
-                          style: OTTypography.caption(color: textSecondary).copyWith(fontSize: 11),
+                          style: OTTypography.caption(color: textSecondary).copyWith(fontSize: OTFontSize.s11),
                         ),
                       );
                     }).toList(),
@@ -399,7 +399,7 @@ class CanonicalBookTile extends StatelessWidget {
                   children: [
                     Text(
                       'Keterangan kitab',
-                      style: OTTypography.button(color: accent).copyWith(fontSize: 12),
+                      style: OTTypography.button(color: accent).copyWith(fontSize: OTFontSize.s12),
                     ),
                     const SizedBox(width: 4),
                     Icon(Icons.arrow_forward_ios_rounded, size: 10, color: accent),

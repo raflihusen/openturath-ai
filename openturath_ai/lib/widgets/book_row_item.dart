@@ -7,6 +7,8 @@ import '../core/scholarly_fonts.dart';
 import '../models/book_model.dart';
 import 'apple_interactive_wrapper.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Item baris naskah kanonikal dengan desain minimalis terinspirasi dari lembar informasi Google Camera (Pixel EXIF card).
 /// Monokrom murni, tanpa aksen biru, dengan tipografi Arab proporsional dan strip metadata horizontal rapi.
 class BookRowItem extends StatelessWidget {
@@ -60,13 +62,13 @@ class BookRowItem extends StatelessWidget {
         onTap: onTap,
         pressedScale: 0.985,
         hapticType: HapticFeedbackType.light,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(OTRadius.card),
             border: Border.all(color: border),
           ),
           child: Column(
@@ -81,8 +83,8 @@ class BookRowItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
                   color: textPrimary,
-                  fontSize: 21,
-                  fontWeight: FontWeight.bold,
+                  fontSize: OTFontSize.s22,
+                  fontWeight: FontWeight.w700,
                   height: 1.4,
                 ),
               ),
@@ -95,7 +97,7 @@ class BookRowItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.scheherazadeNew(
                   color: textSecondary,
-                  fontSize: 15,
+                  fontSize: OTFontSize.s16,
                   height: 1.5,
                 ),
               ),
@@ -109,7 +111,7 @@ class BookRowItem extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
-                            fontSize: 12.5, color: textSecondary),
+                            fontSize: OTFontSize.s12, color: textSecondary),
                       ),
                     ),
                     if (hasDeathYear) ...[
@@ -118,7 +120,7 @@ class BookRowItem extends StatelessWidget {
                         Loc.tr('deathYear', ['${book.verifiedDeathYearHijri}']),
                         maxLines: 1,
                         style: ScholarlyFonts.outfit(
-                            fontSize: 12.5, color: textSecondary),
+                            fontSize: OTFontSize.s12, color: textSecondary),
                       ),
                     ],
                   ],

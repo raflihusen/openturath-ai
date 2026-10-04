@@ -15,6 +15,7 @@ import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../widgets/note_editor_sheet.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
 /// Focused reading surface: the archive list remains an index, not an editor.
 class NoteReaderScreen extends StatefulWidget {
   const NoteReaderScreen({super.key, required this.item});
@@ -79,7 +80,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
         surfaceTintColor: Colors.transparent,
         title: Text(AppCopy.savedCollection,
             style: NativeFonts.outfit(
-                fontSize: 20, color: primary, fontWeight: FontWeight.w700)),
+                fontSize: OTFontSize.s20, color: primary, fontWeight: FontWeight.w700)),
         actions: [
           IconButton(
               icon: const Icon(Icons.copy_outlined),
@@ -110,7 +111,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                     children: [
                       Text(_kindLabel(_item),
                           style: NativeFonts.outfit(
-                              fontSize: 11,
+                              fontSize: OTFontSize.s11,
                               fontWeight: FontWeight.w700,
                               color: secondary,
                               letterSpacing: .6)),
@@ -124,12 +125,12 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                           displayTitle,
                           style: Bidi.detectRtlDirectionality(displayTitle)
                               ? NativeFonts.scheherazadeNew(
-                                  fontSize: 29,
+                                  fontSize: OTFontSize.s26,
                                   height: 1.7,
                                   fontWeight: FontWeight.w600,
                                   color: primary)
                               : NativeFonts.newsreader(
-                                  fontSize: 29,
+                                  fontSize: OTFontSize.s26,
                                   height: 1.2,
                                   fontWeight: FontWeight.w700,
                                   color: primary),
@@ -146,7 +147,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                           _item.agentTitle.replaceFirst(
                               RegExp(r'^AI\s+', caseSensitive: false), ''),
                           style: NativeFonts.outfit(
-                              fontSize: 13, color: secondary),
+                              fontSize: OTFontSize.s14, color: secondary),
                         ),
                       ],
                       const SizedBox(height: 20),
@@ -165,19 +166,19 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                                           .hasMatch(displayContent)
                                       ? NativeFonts.scheherazadeNew
                                       : NativeFonts.outfit)(
-                                  fontSize: 18, height: 1.9, color: primary),
+                                  fontSize: OTFontSize.s18, height: 1.9, color: primary),
                               h1: NativeFonts.newsreader(
-                                  fontSize: 25,
+                                  fontSize: OTFontSize.s26,
                                   height: 1.2,
                                   fontWeight: FontWeight.w700,
                                   color: primary),
                               h2: NativeFonts.newsreader(
-                                  fontSize: 20,
+                                  fontSize: OTFontSize.s20,
                                   height: 1.25,
                                   fontWeight: FontWeight.w700,
                                   color: primary),
                               blockquote: NativeFonts.outfit(
-                                  fontSize: 15,
+                                  fontSize: OTFontSize.s16,
                                   height: 1.6,
                                   fontStyle: FontStyle.italic,
                                   color: secondary),
@@ -194,7 +195,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                         const SizedBox(height: OTSpacing.base),
                         Text(Loc.tr('sourceReferences'),
                             style: NativeFonts.outfit(
-                                fontSize: 12,
+                                fontSize: OTFontSize.s12,
                                 fontWeight: FontWeight.w700,
                                 color: secondary,
                                 letterSpacing: .6)),
@@ -212,7 +213,7 @@ class _NoteReaderScreenState extends State<NoteReaderScreen> {
                                               .hasMatch(citation.display)
                                           ? NativeFonts.scheherazadeNew
                                           : NativeFonts.outfit)(
-                                      fontSize: 15,
+                                      fontSize: OTFontSize.s16,
                                       height: 1.7,
                                       color: primary)),
                             ),

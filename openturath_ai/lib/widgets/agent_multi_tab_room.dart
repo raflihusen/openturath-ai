@@ -35,6 +35,7 @@ import 'notebook_backend_chat_tab.dart';
 import 'browser_companion_chat_tab.dart';
 import '../core/localization.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 // Explicit local prototype opt-in; remains off in normal/release builds.
 const _backendChatPrototype =
     bool.fromEnvironment('OPENTURATH_BACKEND_CHAT_PROTOTYPE');
@@ -59,8 +60,8 @@ class AgentMultiTabRoom extends StatefulWidget {
     final newEmail = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1F1F1F) : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: isDark ? OTColors.surfaceSubtleDark : OTColors.surfaceLight,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(OTRadius.card)),
         title: Row(
           children: [
             Icon(Icons.manage_accounts_rounded,
@@ -70,9 +71,9 @@ class AgentMultiTabRoom extends StatefulWidget {
               child: Text(
                 'Akun Google untuk Asisten',
                 style: ScholarlyFonts.outfit(
-                  fontSize: 16,
+                  fontSize: OTFontSize.s16,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white : const Color(0xFF191919),
+                  color: isDark ? OTColors.surfaceLight : OTColors.surfaceDark,
                 ),
               ),
             ),
@@ -85,9 +86,9 @@ class AgentMultiTabRoom extends StatefulWidget {
             Text(
               'Pastikan email ini sesuai dengan akun Google yang memiliki akses ke modul / notebook turats Anda. Browser akan langsung memilih akun ini tanpa salah masuk ke akun lain (/u/0/).',
               style: ScholarlyFonts.outfit(
-                fontSize: 12,
+                fontSize: OTFontSize.s12,
                 color:
-                    isDark ? const Color(0xFFA4A4A4) : const Color(0xFF747474),
+                    isDark ? OTColors.textSecondaryDark : OTColors.borderStrongLight,
               ),
             ),
             const SizedBox(height: 14),
@@ -96,21 +97,21 @@ class AgentMultiTabRoom extends StatefulWidget {
               keyboardType: TextInputType.emailAddress,
               autofocus: true,
               style: ScholarlyFonts.outfit(
-                fontSize: 14,
-                color: isDark ? Colors.white : const Color(0xFF191919),
+                fontSize: OTFontSize.s14,
+                color: isDark ? OTColors.surfaceLight : OTColors.surfaceDark,
               ),
               decoration: InputDecoration(
                 hintText: 'nama@gmail.com',
                 prefixIcon: const Icon(Icons.email_outlined, size: 18),
                 filled: true,
                 fillColor:
-                    isDark ? const Color(0xFF282828) : const Color(0xFFF4F4F4),
+                    isDark ? OTColors.surfaceSubtleDark : OTColors.surfaceSubtleLight,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(OTRadius.input),
                   borderSide: BorderSide(
                     color: isDark
-                        ? const Color(0xFF414141)
-                        : const Color(0xFFE5E5E5),
+                        ? OTColors.borderDark
+                        : OTColors.borderSubtleLight,
                   ),
                 ),
                 contentPadding:
@@ -125,7 +126,7 @@ class AgentMultiTabRoom extends StatefulWidget {
             child: Text(
               'Batal',
               style: ScholarlyFonts.outfit(
-                  color: isDark ? Colors.white70 : Colors.black87),
+                  color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.7) : OTColors.shadow.withValues(alpha: 0.87)),
             ),
           ),
           if (AuthService().currentUser?.email != null)
@@ -143,7 +144,7 @@ class AgentMultiTabRoom extends StatefulWidget {
             style: FilledButton.styleFrom(
               backgroundColor: OTColors.accent(isDark),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                  borderRadius: BorderRadius.circular(OTRadius.xs)),
             ),
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
             child: Text(
@@ -248,7 +249,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             decoration: BoxDecoration(
               color: surface,
               borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
+                  const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
               border: Border.all(color: border, width: 0.8),
             ),
             child: Column(
@@ -260,7 +261,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 Text(
                   AppCopy.studyOptions,
                   style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: 17),
+                      .copyWith(fontSize: OTFontSize.s16),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -272,8 +273,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   children: [
                     Text('A',
                         style: ScholarlyFonts.outfit(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+                            fontSize: OTFontSize.s14,
+                            fontWeight: FontWeight.w700,
                             color: textSecondary)),
                     Expanded(
                       child: Slider(
@@ -324,8 +325,8 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                     ),
                     Text('A',
                         style: ScholarlyFonts.outfit(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                            fontSize: OTFontSize.s22,
+                            fontWeight: FontWeight.w700,
                             color: textPrimary)),
                   ],
                 ),
@@ -335,7 +336,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 Text(
                   'Bahasa Output Jawaban',
                   style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: 15),
+                      .copyWith(fontSize: OTFontSize.s16),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -359,14 +360,14 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       'Ganti Bahasa Output (50+ Bahasa)',
                       style: ScholarlyFonts.outfit(
                         fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                        fontSize: OTFontSize.s14,
                         color: textPrimary,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: border, width: 1),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(OTRadius.input),
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
@@ -395,7 +396,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
           border: Border.all(color: border, width: 0.8),
         ),
         child: Column(
@@ -407,13 +408,13 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             Row(
               children: [
                 const Icon(Icons.delete_outline_rounded,
-                    color: Colors.grey, size: 22),
+                    color: OTColors.borderStrongDark, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     'Hapus Riwayat Obrolan?',
                     style: OTTypography.cardTitle(color: textPrimary)
-                        .copyWith(fontSize: 17),
+                        .copyWith(fontSize: OTFontSize.s16),
                   ),
                 ),
               ],
@@ -435,11 +436,11 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 const SizedBox(width: 12),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey,
-                    foregroundColor: Colors.white,
+                    backgroundColor: OTColors.borderStrongDark,
+                    foregroundColor: OTColors.surfaceLight,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(OTRadius.input),
                     ),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 10),
@@ -457,7 +458,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   },
                   child: Text(Loc.tr('delete'),
                       style: ScholarlyFonts.outfit(
-                          fontWeight: FontWeight.w600, color: Colors.white)),
+                          fontWeight: FontWeight.w600, color: OTColors.surfaceLight)),
                 ),
               ],
             ),
@@ -485,7 +486,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             decoration: BoxDecoration(
               color: surface,
               borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
+                  const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
               border: Border.all(color: border, width: 0.8),
             ),
             child: Column(
@@ -497,7 +498,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                 Text(
                   'Sesi Asisten Terbuka',
                   style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: 17),
+                      .copyWith(fontSize: OTFontSize.s16),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -597,7 +598,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
         title: Text(
           activeTab.agent.title,
           style: ScholarlyFonts.outfit(
-            fontSize: 16,
+            fontSize: OTFontSize.s16,
             fontWeight: FontWeight.w700,
             color: textPrimary,
             letterSpacing: -0.2,
@@ -616,7 +617,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
             tooltip: AppCopy.studyOptions,
             color: surface,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(OTRadius.input),
               side: BorderSide(color: border, width: 0.8),
             ),
             onOpened: () {
@@ -694,10 +695,10 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   child: Row(
                     children: [
                       const Icon(Icons.delete_outline_rounded,
-                          color: Colors.grey, size: 18),
+                          color: OTColors.borderStrongDark, size: 18),
                       const SizedBox(width: 12),
                       Text(Loc.tr('clearChatHistory'),
-                          style: OTTypography.body(color: Colors.grey)),
+                          style: OTTypography.body(color: OTColors.borderStrongDark)),
                     ],
                   ),
                 ),
@@ -759,7 +760,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     itemCount: sessions.length,
                     separatorBuilder: (_, __) => const SizedBox(width: 6),
                     itemBuilder: (context, index) {
@@ -769,7 +770,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                       return Container(
                         decoration: BoxDecoration(
                           color: isActive ? surface : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(OTRadius.xs),
                           border: Border.all(
                             color: isActive ? border : Colors.transparent,
                             width: 1.0,
@@ -786,7 +787,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                               },
                               borderRadius:
                                   const BorderRadiusDirectional.horizontal(
-                                          start: Radius.circular(8))
+                                          start: Radius.circular(OTRadius.xs))
                                       .resolve(Directionality.of(context)),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -806,7 +807,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                       session.agent.title
                                           .replaceFirst('AI ', ''),
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 12,
+                                        fontSize: OTFontSize.s12,
                                         fontWeight: isActive
                                             ? FontWeight.w600
                                             : FontWeight.w400,
@@ -831,7 +832,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
                                     _sessionManager.closeTab(index);
                                   },
                                   radius: 18,
-                                  borderRadius: BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(OTRadius.input),
                                   child: Container(
                                     width: 32,
                                     height: 32,
@@ -2098,7 +2099,7 @@ class _GoogleSignInBar extends StatelessWidget {
             Text(
               'accounts.google.com',
               style: ScholarlyFonts.outfit(
-                  fontSize: 13, fontWeight: FontWeight.w600, color: ink),
+                  fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: ink),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -2108,7 +2109,7 @@ class _GoogleSignInBar extends StatelessWidget {
                     : '${Loc.tr('roomAuthBarHint')}: $email',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: ScholarlyFonts.outfit(fontSize: 13, color: muted),
+                style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: muted),
               ),
             ),
             TextButton(

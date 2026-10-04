@@ -38,7 +38,7 @@ class OpenTurathBrand extends StatelessWidget {
       Flexible(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Latin wordmark is a brand asset, independent of interface direction.
         Text('OpenTurath', textDirection: TextDirection.ltr,
-          style: OTTypography.brandLogo(color: OTColors.textPrimary(dark)).copyWith(fontSize: compact ? 18 : 21)),
+          style: OTTypography.brandLogo(color: OTColors.textPrimary(dark)).copyWith(fontSize: compact ? OTFontSize.s18 : OTFontSize.s22)),
         if (showSlogan) Text(AppCopy.appTagline,
           style: OTTypography.caption(color: OTColors.textSecondary(dark))),
       ])),

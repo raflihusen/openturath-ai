@@ -6,6 +6,7 @@ import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
 class UpdateReadyBanner extends StatelessWidget {
   const UpdateReadyBanner({super.key});
 
@@ -70,7 +71,7 @@ class UpdateReadyBanner extends StatelessWidget {
                           ? 'Pembaruan v$version Tersedia'
                           : 'Pembaruan v$version Siap Dipasang',
                       style: ScholarlyFonts.outfit(
-                        fontSize: 14,
+                        fontSize: OTFontSize.s14,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
                       ),
@@ -81,7 +82,7 @@ class UpdateReadyBanner extends StatelessWidget {
                           ? 'Ketuk untuk membuka tautan pembaruan versi desktop terbaru.'
                           : 'Selesai diunduh di latar belakang. Ketuk pasang untuk menerapkan.',
                       style: ScholarlyFonts.outfit(
-                        fontSize: 12,
+                        fontSize: OTFontSize.s12,
                         color: textSecondary,
                       ),
                       maxLines: 2,
@@ -115,7 +116,7 @@ class UpdateReadyBanner extends StatelessWidget {
                 child: Text(
                   isDesktop ? 'Perbarui' : 'Pasang',
                   style: ScholarlyFonts.outfit(
-                    fontSize: 13,
+                    fontSize: OTFontSize.s14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

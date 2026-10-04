@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/design/native_design.dart';
 import '../core/localization.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Applied to native route content, never above the shell's AI overlay.
 class NativeTheme extends StatelessWidget {
   const NativeTheme({super.key, required this.child});
@@ -66,8 +67,8 @@ class NativeTheme extends StatelessWidget {
               surfaceTintColor: Colors.transparent,
               elevation: 0,
               shape: const RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(24)))),
+                  borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(OTRadius.sheet)))),
         ),
         child: child);
   }

@@ -18,6 +18,7 @@ import '../widgets/redeem_code_sheet.dart';
 import '../core/app_platform.dart';
 import '../services/auth_service.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Penawaran perdana. Hak akses tetap diputuskan oleh backend yang terverifikasi.
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -64,7 +65,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.09),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           border: Border.all(color: color.withValues(alpha: 0.35)),
         ),
         child: Row(
@@ -178,7 +179,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       return Container(
         decoration: BoxDecoration(
           color: OTColors.surface(dark),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(OTRadius.card),
           border: Border.all(color: OTColors.borderStrong(dark)),
         ),
         padding: const EdgeInsets.all(20),
@@ -188,7 +189,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Container(
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: border),
       ),
       padding: const EdgeInsets.all(20),
@@ -215,7 +216,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             child: Text(
               text,
               style: OTTypography.body(color: textColor).copyWith(
-                fontSize: 13,
+                fontSize: OTFontSize.s14,
                 height: 1.45,
               ),
             ),
@@ -238,7 +239,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       isScrollControlled: true,
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
       ),
       builder: (ctx) {
         var query = '';
@@ -320,10 +321,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               setState(() => _selectedAgentId = a.id);
                               Navigator.pop(modalCtx);
                             },
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(OTRadius.input),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 13),
+                                  horizontal: 12, vertical: 12),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -376,13 +377,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     Widget eyebrow(String text) => Text(
           text,
           style: ScholarlyFonts.outfit(
-              fontSize: 12.5, fontWeight: FontWeight.w500, color: muted),
+              fontSize: OTFontSize.s12, fontWeight: FontWeight.w400, color: muted),
         );
 
     Widget planTitle(String text) => Text(
           text,
           style: ScholarlyFonts.newsreader(
-            fontSize: 24,
+            fontSize: OTFontSize.s26,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.4,
             height: 1.2,
@@ -397,9 +398,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             onPressed: _processing ? null : onPressed,
             style: FilledButton.styleFrom(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(OTRadius.input)),
               textStyle: ScholarlyFonts.outfit(
-                  fontSize: 14.5, fontWeight: FontWeight.w600),
+                  fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
             ),
             child: Text(Loc.tr('continuePayment')),
           ),
@@ -431,7 +432,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             child: Text(
               description,
               style: OTTypography.body(color: muted)
-                  .copyWith(fontSize: 14, height: 1.5),
+                  .copyWith(fontSize: OTFontSize.s14, height: 1.5),
             ),
           ),
           const SizedBox(height: 16),
@@ -463,19 +464,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             .join(' · '),
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: ScholarlyFonts.outfit(fontSize: 13.5, height: 1.5, color: ink),
+        style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, height: 1.5, color: ink),
       ),
     );
 
     // Cakupan paket satu bidang: pemilih bidang.
     final fieldPicker = Material(
       color: OTColors.surfaceSubtle(dark),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(OTRadius.input),
       child: InkWell(
         onTap: _processing
             ? null
             : () => _showDisciplinePickerModal(context, specialists),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(OTRadius.input),
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(14, 0, 10, 0),
           child: Row(
@@ -487,7 +488,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   children: [
                     Text(Loc.tr('chooseField'),
                         style: ScholarlyFonts.outfit(
-                            fontSize: 11.5, color: muted)),
+                            fontSize: OTFontSize.s12, color: muted)),
                     const SizedBox(height: 1),
                     Text(
                       Loc.text(selected.title),
@@ -588,7 +589,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     Text(
                       Loc.tr('launchOffer'),
                       style: ScholarlyFonts.outfit(
-                        fontSize: 22,
+                        fontSize: OTFontSize.s22,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.4,
                         color: ink,
@@ -680,14 +681,14 @@ class _TierSelector extends StatelessWidget {
                 selected: selected == i,
                 child: InkWell(
                   onTap: onSelect == null ? null : () => onSelect!(i),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(OTRadius.input),
                   child: AnimatedContainer(
                     duration: OTMotion.fast,
                     padding:
                         const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                     decoration: BoxDecoration(
                       color: OTColors.surface(dark),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(OTRadius.input),
                       border: Border.all(
                         color: selected == i ? ink : OTColors.border(dark),
                         width: selected == i ? 1.6 : 1,
@@ -711,7 +712,7 @@ class _TierSelector extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: ScholarlyFonts.outfit(
-                            fontSize: 14,
+                            fontSize: OTFontSize.s14,
                             fontWeight: FontWeight.w600,
                             color: ink,
                           ),
@@ -725,7 +726,7 @@ class _TierSelector extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: ScholarlyFonts.outfit(
-                                fontSize: 11.5, color: muted),
+                                fontSize: OTFontSize.s12, color: muted),
                           ),
                         ],
                       ],

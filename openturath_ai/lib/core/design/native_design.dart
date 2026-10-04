@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../localization.dart';
 import 'native_fonts.dart';
 import 'ot_colors.dart';
+import 'ot_typography.dart';
 
 /// Native-only design vocabulary. The AI room keeps its original tokens.
 abstract final class NativeColors {
@@ -41,7 +42,7 @@ abstract final class NativeColors {
   static Color accent(bool dark) => dark ? accentDark : accentLight;
   static Color onAccent(bool dark) => OTColors.onAccent(dark);
   static Color actionFill(bool dark) => OTColors.accent(dark);
-  static Color destructiveFill(bool dark) => OTColors.accent(dark);
+  static Color destructiveFill(bool dark) => OTColors.destructive(dark);
   static Color inverseSurface(bool dark) =>
       dark ? surfaceLight : textPrimaryLight;
   static Color destructive(bool dark) =>
@@ -53,20 +54,31 @@ abstract final class NativeColors {
   static Color brass(bool dark) => accent(dark);
 }
 
+/// Pembungkus tipis di atas skala [OTFontSize]. Ukuran yang diminta selalu
+/// dibulatkan ke langkah skala terdekat, sehingga layar native tidak bisa
+/// keluar dari skala. Kode baru memakai [OTTypography] langsung.
 abstract final class NativeType {
-  static TextStyle title(bool dark, {double size = 24}) => NativeFonts.outfit(
-      fontSize: size,
-      fontWeight: FontWeight.w600,
-      letterSpacing: -.35,
-      height: 1.2,
-      color: NativeColors.textPrimary(dark));
-  static TextStyle body(bool dark, {double size = 17}) => NativeFonts.outfit(
-      fontSize: size, height: 1.5, color: NativeColors.textPrimary(dark));
+  static double _snap(double size) => OTFontSize.scale.reduce(
+      (a, b) => (a - size).abs() <= (b - size).abs() ? a : b);
+  static TextStyle title(bool dark, {double size = OTFontSize.s26}) =>
+      NativeFonts.outfit(
+          fontSize: _snap(size),
+          fontWeight: FontWeight.w600,
+          letterSpacing: -.35,
+          height: 1.2,
+          color: NativeColors.textPrimary(dark));
+  static TextStyle body(bool dark, {double size = OTFontSize.s16}) =>
+      NativeFonts.outfit(
+          fontSize: _snap(size),
+          height: 1.5,
+          color: NativeColors.textPrimary(dark));
   static TextStyle meta(bool dark) => NativeFonts.outfit(
-      fontSize: 14, height: 1.45, color: NativeColors.textSecondary(dark));
-  static TextStyle arabic(bool dark, {double size = 26}) =>
+      fontSize: OTFontSize.s14,
+      height: 1.45,
+      color: NativeColors.textSecondary(dark));
+  static TextStyle arabic(bool dark, {double size = OTFontSize.s26}) =>
       NativeFonts.scheherazadeNew(
-          fontSize: size,
+          fontSize: _snap(size),
           height: 1.9,
           fontWeight: FontWeight.w600,
           color: NativeColors.textPrimary(dark));

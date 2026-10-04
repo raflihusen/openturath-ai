@@ -15,6 +15,7 @@ import '../models/open_turath_book.dart';
 import '../services/auth_service.dart';
 import '../services/bookmark_service.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
 /// Halaman Katalog Kitab Editorial OpenTurath (Monochrome Editorial)
 class OpenTurathBookLibraryPage extends StatefulWidget {
   const OpenTurathBookLibraryPage({
@@ -140,11 +141,11 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     TextField(
                       controller: _searchController,
                       focusNode: _searchFocusNode,
-                      style: ScholarlyFonts.outfit(color: ink, fontSize: 14),
+                      style: ScholarlyFonts.outfit(color: ink, fontSize: OTFontSize.s14),
                       decoration: InputDecoration(
                         hintText: Loc.tr('ui_0ae09a2807'),
                         hintStyle: ScholarlyFonts.outfit(
-                            color: textSecondary, fontSize: 13),
+                            color: textSecondary, fontSize: OTFontSize.s14),
                         prefixIcon: Icon(Icons.search_rounded,
                             color: textSecondary, size: 20),
                         suffixIcon: _query.isNotEmpty
@@ -214,7 +215,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                         '${widget.books.length}',
                       ]),
                       style: ScholarlyFonts.outfit(
-                        fontSize: 12,
+                        fontSize: OTFontSize.s12,
                         color: textSecondary,
                       ),
                     ),
@@ -235,8 +236,8 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       Text(
                         Loc.tr('ui_54db73b3af'),
                         style: ScholarlyFonts.outfit(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
+                          fontSize: OTFontSize.s16,
+                          fontWeight: FontWeight.w400,
                           color: ink,
                         ),
                       ),
@@ -244,7 +245,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                       Text(
                         Loc.tr('ui_f7c779cb7d'),
                         style: ScholarlyFonts.outfit(
-                          fontSize: 12,
+                          fontSize: OTFontSize.s12,
                           color: textSecondary,
                         ),
                       ),
@@ -262,7 +263,7 @@ class _OpenTurathBookLibraryPageState extends State<OpenTurathBookLibraryPage> {
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                     mainAxisExtent:
-                        MediaQuery.textScalerOf(context).scale(156),
+                        MediaQuery.textScalerOf(context).scale(164),
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
@@ -326,11 +327,11 @@ class _FilterChip extends StatelessWidget {
       visualDensity: VisualDensity.standard,
       shape: const StadiumBorder(),
       side: BorderSide(color: isSelected ? ink : border),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       labelStyle: ScholarlyFonts.outfit(
         color: isSelected ? OTColors.canvas(isDark) : ink,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
+        fontSize: OTFontSize.s12,
+        fontWeight: FontWeight.w400,
       ),
     );
   }
@@ -374,8 +375,8 @@ class _BookEditorialItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: ScholarlyFonts.scheherazadeNew(
               color: ink,
-              fontSize: 21,
-              fontWeight: FontWeight.bold,
+              fontSize: OTFontSize.s22,
+              fontWeight: FontWeight.w700,
               height: 1.4,
             ),
           ),
@@ -388,7 +389,7 @@ class _BookEditorialItem extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: ScholarlyFonts.scheherazadeNew(
               color: textSecondary,
-              fontSize: 15,
+              fontSize: OTFontSize.s16,
               height: 1.5,
             ),
           ),
@@ -401,7 +402,7 @@ class _BookEditorialItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: ScholarlyFonts.outfit(
-                      fontSize: 12.5, color: textSecondary),
+                      fontSize: OTFontSize.s12, color: textSecondary),
                 ),
               ),
               if (book.deathYear != null)
@@ -409,7 +410,7 @@ class _BookEditorialItem extends StatelessWidget {
                   book.deathLabel,
                   maxLines: 1,
                   style: ScholarlyFonts.outfit(
-                      fontSize: 12.5, color: textSecondary),
+                      fontSize: OTFontSize.s12, color: textSecondary),
                 ),
             ],
           ),
@@ -504,7 +505,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
                           color: ink,
-                          fontSize: 18,
+                          fontSize: OTFontSize.s18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
                         ),
@@ -548,8 +549,8 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                               textDirection: TextDirection.rtl,
                               textAlign: TextAlign.right,
                               style: ScholarlyFonts.scheherazadeNew(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
+                                fontSize: OTFontSize.s36,
+                                fontWeight: FontWeight.w700,
                                 color: ink,
                                 height: 1.6,
                               ),
@@ -560,7 +561,7 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                               textDirection: TextDirection.rtl,
                               textAlign: TextAlign.right,
                               style: ScholarlyFonts.scheherazadeNew(
-                                fontSize: 18,
+                                fontSize: OTFontSize.s18,
                                 color: textSecondary,
                                 height: 1.7,
                               ),
@@ -573,11 +574,11 @@ ${Loc.tr('bookScienceSection')}: ${book.section}''';
                             children: [
                               Text(label,
                                   style: ScholarlyFonts.outfit(
-                                      fontSize: 12, color: textSecondary)),
+                                      fontSize: OTFontSize.s12, color: textSecondary)),
                               const SizedBox(height: 2),
                               Text(value,
                                   style: ScholarlyFonts.outfit(
-                                      fontSize: 15,
+                                      fontSize: OTFontSize.s16,
                                       fontWeight: FontWeight.w600,
                                       color: ink)),
                             ],
@@ -773,7 +774,7 @@ class _BentoTile extends StatelessWidget {
       padding: const EdgeInsets.all(OTSpacing.base),
       decoration: BoxDecoration(
         color: OTColors.surface(isDark),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: OTColors.border(isDark)),
       ),
       child: Column(
@@ -789,7 +790,7 @@ class _BentoTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: ScholarlyFonts.outfit(
-                      fontSize: 12, color: textSecondary),
+                      fontSize: OTFontSize.s12, color: textSecondary),
                 ),
               ),
             ],
@@ -802,12 +803,12 @@ class _BentoTile extends StatelessWidget {
               textDirection: isArabic ? TextDirection.rtl : null,
               style: isArabic
                   ? ScholarlyFonts.scheherazadeNew(
-                      fontSize: wide ? 18 : 20,
+                      fontSize: wide ? OTFontSize.s18 : OTFontSize.s20,
                       height: 1.7,
                       fontWeight: FontWeight.w600,
                       color: ink)
                   : ScholarlyFonts.outfit(
-                      fontSize: wide ? 15 : 20,
+                      fontSize: wide ? OTFontSize.s16 : OTFontSize.s20,
                       height: 1.3,
                       fontWeight: FontWeight.w600,
                       color: ink),

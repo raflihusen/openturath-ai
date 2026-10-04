@@ -31,7 +31,7 @@ class PromoPrice extends StatelessWidget {
           .copyWith(decoration: TextDecoration.lineThrough)),
       Wrap(crossAxisAlignment: WrapCrossAlignment.center, spacing: 6, children: [
         Directionality(textDirection: TextDirection.ltr, child: Text(ProductPricing.rupiah(amount),
-          style: OTTypography.price(color: foreground).copyWith(fontSize: compact ? 18 : 28))),
+          style: OTTypography.price(color: foreground).copyWith(fontSize: compact ? OTFontSize.s18 : OTFontSize.s26))),
         Text(period, style: OTTypography.caption(color: secondary)),
       ]),
       if (regularAmount > amount && !compact) Padding(

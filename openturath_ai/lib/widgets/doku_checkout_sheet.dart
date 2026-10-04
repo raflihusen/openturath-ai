@@ -21,6 +21,8 @@ import '../services/subscription_service.dart';
 import 'app_loader.dart';
 import 'promo_price.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// DokuCheckoutSheet: In-App Modal Pembayaran DOKU dengan Deteksi Otomatis
 /// Menampilkan halaman DOKU di dalam modal aplikasi tanpa perlu terlempar ke Chrome.
 /// Dilengkapi background status synchronization (inquiry real-time) yang otomatis
@@ -62,8 +64,8 @@ class DokuCheckoutSheet extends StatefulWidget {
           fullscreenDialog: true,
           builder: (context) => Scaffold(
             backgroundColor: Theme.of(context).brightness == Brightness.dark
-                ? const Color(0xFF1B1B1B)
-                : const Color(0xFFF5F5F5),
+                ? OTColors.surfaceDark
+                : OTColors.textPrimaryDark,
             body: SafeArea(
               child: Center(
                 child: Container(
@@ -71,10 +73,10 @@ class DokuCheckoutSheet extends StatefulWidget {
                       const BoxConstraints(maxWidth: 620, maxHeight: 850),
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(OTRadius.card),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withAlpha(50),
+                        color: OTColors.shadow.withAlpha(50),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),
@@ -268,7 +270,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
             content: Text(
               Loc.tr('ui_85f60bf7af'),
               style: ScholarlyFonts.outfit(
-                fontSize: 13,
+                fontSize: OTFontSize.s14,
                 color: isDark
                     ? AppTheme.textSecondaryDark
                     : AppTheme.textSecondaryLight,
@@ -449,7 +451,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                   top: Radius.circular(AppTheme.radiusCard)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(isDark ? 100 : 40),
+              color: OTColors.shadow.withAlpha(isDark ? 100 : 40),
               blurRadius: 24,
               offset: const Offset(0, -4),
             ),
@@ -484,14 +486,14 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF6E6E6E).withAlpha(30),
+                                color: OTColors.borderStrongLight.withAlpha(30),
                                 borderRadius:
                                     BorderRadius.circular(AppTheme.radiusXS),
                               ),
                               child: const Icon(
                                 Icons.lock_rounded,
                                 size: 18,
-                                color: Color(0xFF6E6E6E),
+                                color: OTColors.borderStrongLight,
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -506,7 +508,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                         : Loc.tr('ui_f0874594eb'),
                                     style: ScholarlyFonts.outfit(
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 15,
+                                      fontSize: OTFontSize.s16,
                                       color: textPrimary,
                                     ),
                                     maxLines: 1,
@@ -523,7 +525,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     Text(
                                       widget.invoiceNumber,
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 12,
+                                        fontSize: OTFontSize.s12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
                                       ),
@@ -533,7 +535,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     Text(
                                       'Rp ${widget.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]}.')}',
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 12,
+                                        fontSize: OTFontSize.s12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
                                       ),
@@ -542,7 +544,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                                     Text(
                                       Loc.tr('ui_9218f901c4'),
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 12,
+                                        fontSize: OTFontSize.s12,
                                         letterSpacing: 0.3,
                                         color: textSecondary,
                                       ),
@@ -818,15 +820,15 @@ class _CelebratorySuccessView extends StatelessWidget {
                             height: 88,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFF6E6E6E)
+                              color: OTColors.borderStrongLight
                                   .withValues(alpha: 0.16),
                               border: Border.all(
-                                color: const Color(0xFF6E6E6E),
+                                color: OTColors.borderStrongLight,
                                 width: 3,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF6E6E6E)
+                                  color: OTColors.borderStrongLight
                                       .withValues(alpha: 0.3),
                                   blurRadius: 28,
                                   spreadRadius: 4,
@@ -836,7 +838,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                             child: const Icon(
                               Icons.check_rounded,
                               size: 50,
-                              color: Color(0xFF6E6E6E),
+                              color: OTColors.borderStrongLight,
                             ),
                           ),
                         );
@@ -856,8 +858,8 @@ class _CelebratorySuccessView extends StatelessWidget {
                             child: Text(
                               Loc.tr('ui_28654608b2'),
                               style: ScholarlyFonts.outfit(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 26,
+                                fontWeight: FontWeight.w700,
+                                fontSize: OTFontSize.s26,
                                 letterSpacing: -0.5,
                                 color: textPrimary,
                               ),
@@ -881,8 +883,8 @@ class _CelebratorySuccessView extends StatelessWidget {
                               Loc.tr('ui_109055bfcd'),
                               style: ScholarlyFonts.outfit(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: const Color(0xFF6E6E6E),
+                                fontSize: OTFontSize.s16,
+                                color: OTColors.borderStrongLight,
                               ),
                             ),
                           ),
@@ -904,7 +906,7 @@ class _CelebratorySuccessView extends StatelessWidget {
                               Loc.tr('ui_1408872bee'),
                               textAlign: TextAlign.center,
                               style: ScholarlyFonts.outfit(
-                                fontSize: 13,
+                                fontSize: OTFontSize.s14,
                                 color: textSecondary,
                                 height: 1.45,
                               ),

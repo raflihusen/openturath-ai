@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/design/native_design.dart';
 import '../core/localization.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Opt-in controls for native pages; never used by the AI room.
 class NativePress extends StatefulWidget {
   const NativePress({super.key, required this.child, this.onTap, this.label});
@@ -30,7 +31,7 @@ class _NativePressState extends State<NativePress> {
           child: InkWell(
             onTap: widget.onTap,
             onHighlightChanged: (value) => setState(() => _pressed = value),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(OTRadius.card),
             child: widget.child,
           ),
         ),
@@ -58,7 +59,7 @@ class NativeSection extends StatelessWidget {
             ? NativeColors.collection(dark)
             : NativeColors.surface(dark),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           side: BorderSide(color: NativeColors.border(dark), width: .8),
         ),
       ),
@@ -107,10 +108,10 @@ class NativeSearch extends StatelessWidget {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
+            borderRadius: BorderRadius.circular(OTRadius.chip),
             borderSide: BorderSide(color: NativeColors.border(dark))),
         focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
+            borderRadius: BorderRadius.circular(OTRadius.chip),
             borderSide:
                 BorderSide(color: NativeColors.textPrimary(dark), width: 1.5)),
       ),

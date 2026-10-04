@@ -8,6 +8,8 @@ import '../core/hijri_date_utils.dart';
 import '../models/agent_model.dart';
 import '../services/agent_session_manager.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
+import 'package:openturath_ai/core/design/ot_colors.dart';
 /// Dialog aktivasi eksklusif berlayar penuh / luas untuk penukaran kode perdana atau voucher santri.
 /// Menampilkan piagam digital berestetika tinta monokrom dengan kontras tinggi.
 class ExclusiveActivationDialog extends StatelessWidget {
@@ -36,7 +38,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       barrierLabel: 'ExclusiveActivation',
-      barrierColor: Colors.black.withValues(alpha: 0.78),
+      barrierColor: OTColors.shadow.withValues(alpha: 0.78),
       transitionDuration: const Duration(milliseconds: 320),
       pageBuilder: (ctx, anim1, anim2) => ExclusiveActivationDialog(
         serviceTitle: serviceTitle,
@@ -104,27 +106,27 @@ class ExclusiveActivationDialog extends StatelessWidget {
             maxHeight: math.min(760.0, MediaQuery.of(context).size.height - 32),
           ),
           decoration: BoxDecoration(
-            color: const Color(0xFF161616),
-            borderRadius: BorderRadius.circular(16),
+            color: OTColors.surfaceDark,
+            borderRadius: BorderRadius.circular(OTRadius.card),
             border: Border.all(
-              color: const Color(0xFF939393).withValues(alpha: 0.42),
+              color: OTColors.borderStrongDark.withValues(alpha: 0.42),
               width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.65),
+                color: OTColors.shadow.withValues(alpha: 0.65),
                 blurRadius: 40,
                 offset: const Offset(0, 16),
               ),
               BoxShadow(
-                color: const Color(0xFF939393).withValues(alpha: 0.12),
+                color: OTColors.borderStrongDark.withValues(alpha: 0.12),
                 blurRadius: 50,
                 spreadRadius: 2,
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(OTRadius.card),
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(28, 36, 28, 32),
               child: Column(
@@ -138,15 +140,15 @@ class ExclusiveActivationDialog extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: const RadialGradient(
                         colors: [
-                          Color(0xFFD4D4D4),
-                          Color(0xFF939393),
-                          Color(0xFF5F5F5F),
+                          OTColors.borderLight,
+                          OTColors.borderStrongDark,
+                          OTColors.textSecondaryLight,
                         ],
                         radius: 0.85,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF939393).withValues(alpha: 0.45),
+                          color: OTColors.borderStrongDark.withValues(alpha: 0.45),
                           blurRadius: 28,
                           spreadRadius: 4,
                         ),
@@ -156,7 +158,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                       child: Icon(
                         Icons.workspace_premium_rounded,
                         size: 42,
-                        color: Color(0xFF161616),
+                        color: OTColors.surfaceDark,
                       ),
                     ),
                   ),
@@ -167,10 +169,10 @@ class ExclusiveActivationDialog extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF939393).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(16),
+                      color: OTColors.borderStrongDark.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(OTRadius.card),
                       border: Border.all(
-                        color: const Color(0xFF939393).withValues(alpha: 0.35),
+                        color: OTColors.borderStrongDark.withValues(alpha: 0.35),
                         width: 0.8,
                       ),
                     ),
@@ -180,14 +182,14 @@ class ExclusiveActivationDialog extends StatelessWidget {
                         Icon(
                           Icons.auto_awesome_rounded,
                           size: 13,
-                          color: Color(0xFFAEAEAE),
+                          color: OTColors.textSecondaryDark,
                         ),
                         SizedBox(width: 6),
                         Text(
                           'AKSES PERDANA TERVERIFIKASI',
                           style: TextStyle(
-                            color: Color(0xFFD6D6D6),
-                            fontSize: 11,
+                            color: OTColors.borderLight,
+                            fontSize: OTFontSize.s11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.4,
                           ),
@@ -203,9 +205,9 @@ class ExclusiveActivationDialog extends StatelessWidget {
                     'Akses Eksklusif Terbuka',
                     textAlign: TextAlign.center,
                     style: OTTypography.corpusTitle(
-                      color: const Color(0xFFFAFAFA),
+                      color: OTColors.canvasLight,
                     ).copyWith(
-                      fontSize: 26,
+                      fontSize: OTFontSize.s26,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
                       height: 1.25,
@@ -216,8 +218,8 @@ class ExclusiveActivationDialog extends StatelessWidget {
                     'Selamat! Hak istimewa telaah kitab turath berbasis AI telah aktif penuh pada akun Anda.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFFA5A5A5),
-                      fontSize: 13.5,
+                      color: OTColors.textSecondaryDark,
+                      fontSize: OTFontSize.s14,
                       height: 1.45,
                     ),
                   ),
@@ -227,10 +229,10 @@ class ExclusiveActivationDialog extends StatelessWidget {
                   // ── 4. Exclusive Digital Scholar Pass Card ──
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1D1D1D),
-                      borderRadius: BorderRadius.circular(14),
+                      color: OTColors.surfaceSubtleDark,
+                      borderRadius: BorderRadius.circular(OTRadius.input),
                       border: Border.all(
-                        color: const Color(0xFF373737),
+                        color: OTColors.borderDark,
                         width: 1,
                       ),
                     ),
@@ -244,12 +246,12 @@ class ExclusiveActivationDialog extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF939393).withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(10),
+                                color: OTColors.borderStrongDark.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(OTRadius.input),
                               ),
                               child: const Icon(
                                 Icons.menu_book_rounded,
-                                color: Color(0xFFAEAEAE),
+                                color: OTColors.textSecondaryDark,
                                 size: 20,
                               ),
                             ),
@@ -263,8 +265,8 @@ class ExclusiveActivationDialog extends StatelessWidget {
                                         ? serviceTitle
                                         : "Kajian Fikih Syafi'i: Al-Muhaqqiq",
                                     style: const TextStyle(
-                                      color: Color(0xFFFAFAFA),
-                                      fontSize: 15.5,
+                                      color: OTColors.canvasLight,
+                                      fontSize: OTFontSize.s16,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -272,9 +274,9 @@ class ExclusiveActivationDialog extends StatelessWidget {
                                   const Text(
                                     'Hak Istimewa Perdana',
                                     style: TextStyle(
-                                      color: Color(0xFF767676),
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.w500,
+                                      color: OTColors.textSecondaryDark,
+                                      fontSize: OTFontSize.s12,
+                                      fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                 ],
@@ -283,18 +285,18 @@ class ExclusiveActivationDialog extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1E1E1E),
-                                borderRadius: BorderRadius.circular(8),
+                                color: OTColors.surfaceSubtleDark,
+                                borderRadius: BorderRadius.circular(OTRadius.xs),
                                 border: Border.all(
-                                  color: const Color(0xFF434343),
+                                  color: OTColors.borderDark,
                                   width: 0.8,
                                 ),
                               ),
                               child: Text(
                                 'Aktif • $durationDays Hari',
                                 style: const TextStyle(
-                                  color: Color(0xFFAFAFAF),
-                                  fontSize: 11.5,
+                                  color: OTColors.textSecondaryDark,
+                                  fontSize: OTFontSize.s12,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -304,7 +306,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
 
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 14),
-                          child: Divider(color: Color(0xFF2E2E2E), height: 1),
+                          child: Divider(color: OTColors.borderSubtleDark, height: 1),
                         ),
 
                         // Privileges checklist
@@ -328,7 +330,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
 
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 14),
-                          child: Divider(color: Color(0xFF2E2E2E), height: 1),
+                          child: Divider(color: OTColors.borderSubtleDark, height: 1),
                         ),
 
                         // Expiry validity note
@@ -337,15 +339,15 @@ class ExclusiveActivationDialog extends StatelessWidget {
                             const Icon(
                               Icons.event_available_rounded,
                               size: 15,
-                              color: Color(0xFFA5A5A5),
+                              color: OTColors.textSecondaryDark,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'Berlaku hingga $expiryFormatted',
                               style: const TextStyle(
-                                color: Color(0xFFA5A5A5),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                                color: OTColors.textSecondaryDark,
+                                fontSize: OTFontSize.s12,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ],
@@ -363,12 +365,12 @@ class ExclusiveActivationDialog extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => _handleStartStudy(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF939393),
-                        foregroundColor: const Color(0xFF151515),
+                        backgroundColor: OTColors.borderStrongDark,
+                        foregroundColor: OTColors.surfaceDark,
                         elevation: 6,
-                        shadowColor: const Color(0xFF939393).withValues(alpha: 0.35),
+                        shadowColor: OTColors.borderStrongDark.withValues(alpha: 0.35),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(OTRadius.input),
                         ),
                       ),
                       child: const Row(
@@ -377,7 +379,7 @@ class ExclusiveActivationDialog extends StatelessWidget {
                           Text(
                             'Mulai Telaah Sekarang',
                             style: TextStyle(
-                              fontSize: 15.5,
+                              fontSize: OTFontSize.s16,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.2,
                             ),
@@ -395,13 +397,13 @@ class ExclusiveActivationDialog extends StatelessWidget {
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF767676),
+                      foregroundColor: OTColors.textSecondaryDark,
                     ),
                     child: const Text(
                       'Tutup',
                       style: TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w500,
+                        fontSize: OTFontSize.s14,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ),
@@ -424,12 +426,12 @@ class ExclusiveActivationDialog extends StatelessWidget {
       children: [
         Container(
           margin: const EdgeInsets.only(top: 2),
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFF292929),
-            borderRadius: BorderRadius.circular(7),
+            color: OTColors.surfaceSubtleDark,
+            borderRadius: BorderRadius.circular(OTRadius.xs),
           ),
-          child: Icon(icon, size: 14, color: const Color(0xFFAEAEAE)),
+          child: Icon(icon, size: 14, color: OTColors.textSecondaryDark),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -439,8 +441,8 @@ class ExclusiveActivationDialog extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  color: Color(0xFFF5F5F5),
-                  fontSize: 13,
+                  color: OTColors.textPrimaryDark,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -448,8 +450,8 @@ class ExclusiveActivationDialog extends StatelessWidget {
               Text(
                 subtitle,
                 style: const TextStyle(
-                  color: Color(0xFF767676),
-                  fontSize: 11.5,
+                  color: OTColors.textSecondaryDark,
+                  fontSize: OTFontSize.s12,
                   height: 1.35,
                 ),
               ),

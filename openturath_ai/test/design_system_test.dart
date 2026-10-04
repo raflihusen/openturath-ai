@@ -23,8 +23,7 @@ void main() {
         final neutral = [OTColors.canvas(dark), OTColors.surface(dark),
           OTColors.surfaceSubtle(dark), OTColors.textPrimary(dark),
           OTColors.textSecondary(dark), OTColors.accent(dark),
-          OTColors.primaryContainer(dark), OTColors.destructive(dark),
-          OTColors.marja(dark)];
+          OTColors.primaryContainer(dark), OTColors.marja(dark)];
         for (final color in neutral) {
           expect(color.r, color.g);
           expect(color.g, color.b);
@@ -32,6 +31,9 @@ void main() {
         for (final background in [OTColors.canvas(dark), OTColors.surface(dark)]) {
           expect(contrast(OTColors.textPrimary(dark), background), greaterThanOrEqualTo(4.5));
           expect(contrast(OTColors.textSecondary(dark), background), greaterThanOrEqualTo(4.5));
+          expect(contrast(OTColors.textTertiary(dark), background), greaterThanOrEqualTo(4.5));
+          // Merah galat adalah satu-satunya warna di luar tinta dan kertas.
+          expect(contrast(OTColors.destructive(dark), background), greaterThanOrEqualTo(4.5));
         }
         expect(contrast(OTColors.accent(dark), OTColors.onAccent(dark)), greaterThanOrEqualTo(4.5));
         expect(contrast(OTColors.primaryContainer(dark), OTColors.onPrimaryContainer(dark)), greaterThanOrEqualTo(4.5));
@@ -59,7 +61,7 @@ void main() {
       expect(screen.fontWeight, FontWeight.w600);
 
       final card = OTTypography.cardTitle();
-      expect(card.fontSize, 15);
+      expect(card.fontSize, 16);
       expect(card.fontWeight, FontWeight.w600);
 
       final body = OTTypography.body();
@@ -75,17 +77,17 @@ void main() {
 
       // 3. Arabic Scholarly layer (Tajawal)
       final arDisplay = OTTypography.arabicDisplay();
-      expect(arDisplay.fontSize, 24);
+      expect(arDisplay.fontSize, 26);
       expect(arDisplay.fontWeight, FontWeight.w700);
       expect(arDisplay.height, 1.85);
 
       final arReading = OTTypography.arabicReading();
       expect(arReading.fontSize, 18);
-      expect(arReading.fontWeight, FontWeight.w500);
+      expect(arReading.fontWeight, FontWeight.w400);
       expect(arReading.height, 1.85);
 
       final arQuote = OTTypography.arabicQuote();
-      expect(arQuote.fontSize, 15);
+      expect(arQuote.fontSize, 16);
       expect(arQuote.height, 1.85);
     });
 

@@ -782,7 +782,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: OTTypography.corpusTitle(color: textPrimary).copyWith(
-              fontSize: 16,
+              fontSize: OTFontSize.s16,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -811,7 +811,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                             '${_user!.questionsRemaining}',
                             style: OTTypography.caption(color: textPrimary)
                                 .copyWith(
-                              fontSize: 11,
+                              fontSize: OTFontSize.s11,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -844,8 +844,8 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               if (_agentUrl != null)
                 Container(
                   color: isDark
-                      ? const Color(0xFF0E0E10)
-                      : const Color(0xFFFFFFFF),
+                      ? OTColors.canvasDark
+                      : OTColors.surfaceLight,
                   child: InAppWebView(
                     webViewEnvironment: DesktopWebViewRuntime.environment,
                     initialUrlRequest: URLRequest(url: WebUri(_agentUrl!)),
@@ -1098,7 +1098,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                       'Akses Langganan Diperlukan',
                                       textAlign: TextAlign.center,
                                       style: ScholarlyFonts.newsreader(
-                                        fontSize: 20,
+                                        fontSize: OTFontSize.s20,
                                         fontWeight: FontWeight.w700,
                                         color: textPrimary,
                                       ),
@@ -1109,7 +1109,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                           'Untuk membuka dan menelaah kitab bersama ${_agent?.title ?? 'asisten ini'}, silakan aktifkan paket langganan Anda.',
                                       textAlign: TextAlign.center,
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 13.5,
+                                        fontSize: OTFontSize.s14,
                                         height: 1.45,
                                         color: textSecondary,
                                       ),
@@ -1127,16 +1127,16 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                           'Langganan Sekarang',
                                           style: ScholarlyFonts.outfit(
                                             fontWeight: FontWeight.w600,
-                                            fontSize: 14.5,
+                                            fontSize: OTFontSize.s14,
                                           ),
                                         ),
                                         style: FilledButton.styleFrom(
                                           backgroundColor:
                                               OTColors.accent(isDark),
-                                          foregroundColor: Colors.white,
+                                          foregroundColor: OTColors.surfaceLight,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(16),
+                                                BorderRadius.circular(OTRadius.card),
                                           ),
                                         ),
                                       ),
@@ -1150,7 +1150,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                                         child: Text(
                                           AppCopy.backToHome,
                                           style: ScholarlyFonts.outfit(
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.w400,
                                             color: textSecondary,
                                           ),
                                         ),
@@ -1248,7 +1248,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                       child: Text(
                         AppCopy.adabDialogTitle,
                         style: ScholarlyFonts.newsreader(
-                          fontSize: 18,
+                          fontSize: OTFontSize.s18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.2,
                           color: textPrimary,
@@ -1271,7 +1271,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   'التعلم بالتلقي عن الأشياخ هو الأصل',
                   textDirection: TextDirection.rtl,
                   style: ScholarlyFonts.scheherazadeNew(
-                    fontSize: 17,
+                    fontSize: OTFontSize.s16,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
                   ),
@@ -1280,7 +1280,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 Text(
                   AppCopy.adabDialogLead,
                   style: ScholarlyFonts.outfit(
-                    fontSize: 12.5,
+                    fontSize: OTFontSize.s12,
                     height: 1.45,
                     color: textSecondary,
                   ),
@@ -1321,9 +1321,9 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     onPressed: () => Navigator.pop(dialogCtx),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                          isDark ? Colors.white : const Color(0xFF18181B),
+                          isDark ? OTColors.surfaceLight : OTColors.surfaceDark,
                       foregroundColor:
-                          isDark ? const Color(0xFF0E0E10) : Colors.white,
+                          isDark ? OTColors.canvasDark : OTColors.surfaceLight,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -1334,7 +1334,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     child: Text(
                       AppCopy.adabAcknowledgeButton,
                       style: ScholarlyFonts.outfit(
-                        fontSize: 13,
+                        fontSize: OTFontSize.s14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1350,7 +1350,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                     child: Text(
                       'Baca panduan rujukan selengkapnya',
                       style: ScholarlyFonts.outfit(
-                        fontSize: 12,
+                        fontSize: OTFontSize.s12,
                         color: textSecondary,
                         decoration: TextDecoration.underline,
                       ),
@@ -1379,7 +1379,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 2),
           child: Icon(icon,
-              size: 16, color: isDark ? Colors.white : const Color(0xFF18181B)),
+              size: 16, color: isDark ? OTColors.surfaceLight : OTColors.surfaceDark),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -1389,7 +1389,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               Text(
                 title,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 13,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -1398,7 +1398,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
               Text(
                 description,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 12,
+                  fontSize: OTFontSize.s12,
                   height: 1.35,
                   color: textSecondary,
                 ),
@@ -1439,7 +1439,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Text(
               AppCopy.studyOptions,
               style: OTTypography.corpusTitle(color: textPrimary)
-                  .copyWith(fontSize: 18),
+                  .copyWith(fontSize: OTFontSize.s18),
             ),
             const SizedBox(height: 12),
             ListTile(
@@ -1457,10 +1457,10 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             ),
             Divider(height: 1, color: border.withValues(alpha: 0.5)),
             ListTile(
-              leading: const Icon(Icons.delete_outline_rounded,
-                  color: Colors.redAccent, size: 20),
+              leading: Icon(Icons.delete_outline_rounded,
+                  color: OTColors.error(isDark), size: 20),
               title: Text(Loc.tr('clearChatHistory'),
-                  style: OTTypography.bodyMedium(color: Colors.redAccent)),
+                  style: OTTypography.bodyMedium(color: OTColors.error(isDark))),
               onTap: () {
                 Navigator.pop(ctx);
                 _confirmDeleteChatHistory();
@@ -1529,7 +1529,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
         padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
           border: Border.all(color: border, width: 0.8),
         ),
         child: Column(
@@ -1541,13 +1541,13 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
             Row(
               children: [
                 const Icon(Icons.delete_outline_rounded,
-                    color: Colors.redAccent, size: 22),
+                    color: OTColors.errorDark, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     'Hapus Riwayat Obrolan?',
                     style: OTTypography.cardTitle(color: textPrimary)
-                        .copyWith(fontSize: 17),
+                        .copyWith(fontSize: OTFontSize.s16),
                   ),
                 ),
               ],
@@ -1569,11 +1569,11 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 const SizedBox(width: 12),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                    foregroundColor: Colors.white,
+                    backgroundColor: OTColors.error(isDark),
+                    foregroundColor: OTColors.onAccent(isDark),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(OTRadius.input),
                     ),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 10),
@@ -1591,7 +1591,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   },
                   child: Text(Loc.tr('delete'),
                       style: ScholarlyFonts.outfit(
-                          fontWeight: FontWeight.w600, color: Colors.white)),
+                          fontWeight: FontWeight.w600, color: OTColors.surfaceLight)),
                 ),
               ],
             ),
@@ -1631,7 +1631,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                   Text(
                     AppCopy.studyOptions,
                     style: OTTypography.corpusTitle(color: textPrimary)
-                        .copyWith(fontSize: 17),
+                        .copyWith(fontSize: OTFontSize.s16),
                   ),
                   const SizedBox(height: 4),
                   Text(

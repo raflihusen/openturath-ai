@@ -218,7 +218,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
           title: Text(
             Loc.text(title),
             style: OTTypography.sectionTitle(color: textPrimary)
-                .copyWith(fontSize: 20, fontWeight: FontWeight.w700),
+                .copyWith(fontSize: OTFontSize.s20, fontWeight: FontWeight.w700),
           ),
           centerTitle: false,
           backgroundColor: canvas,
@@ -270,11 +270,11 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
                               controller: _searchCtrl,
                               onChanged: _onSearchChanged,
                               style: ScholarlyFonts.outfit(
-                                  fontSize: 14, color: textPrimary),
+                                  fontSize: OTFontSize.s14, color: textPrimary),
                               decoration: InputDecoration(
                                 hintText: Loc.tr('assistantSearch'),
                                 hintStyle: ScholarlyFonts.outfit(
-                                    fontSize: 14, color: textSecondary),
+                                    fontSize: OTFontSize.s14, color: textSecondary),
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
                                 focusedBorder: InputBorder.none,
@@ -536,7 +536,7 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? OTColors.accent(isDark) : Colors.transparent,
           borderRadius: OTRadius.chipBorder,
@@ -551,8 +551,8 @@ class _SpecialistListScreenState extends State<SpecialistListScreen> {
               OTTypography.caption(
                   color: isSelected ? OTColors.onAccent(isDark) : textSecondary)
                   .copyWith(
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            fontSize: OTFontSize.s14,
           ),
         ),
       ),

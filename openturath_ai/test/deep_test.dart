@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 import 'package:openturath_ai/core/arabic_utils.dart';
 import 'package:openturath_ai/core/design/ot_colors.dart';
 import 'package:openturath_ai/core/localization.dart';
@@ -81,13 +82,13 @@ void main() {
       expect(AppTheme.citationBgDark, equals(OTColors.surfaceSubtleDark));
     });
 
-    test('Radius tokens conform to Apple HIG 3-token system', () {
-      expect(AppTheme.radiusPill, equals(10.0));
-      expect(AppTheme.radiusFull, equals(100.0));
-      expect(AppTheme.radiusXS, equals(8.0));
-      expect(AppTheme.radiusCard, equals(12.0));
-      expect(AppTheme.radiusM, equals(12.0));
-      expect(AppTheme.radiusS, equals(8.0));
+    test('Radius AppTheme adalah alias token OTRadius', () {
+      expect(AppTheme.radiusPill, equals(OTRadius.button));
+      expect(AppTheme.radiusFull, equals(OTRadius.chip));
+      expect(AppTheme.radiusXS, equals(OTRadius.xs));
+      expect(AppTheme.radiusCard, equals(OTRadius.card));
+      expect(AppTheme.radiusM, equals(OTRadius.card));
+      expect(AppTheme.radiusS, equals(OTRadius.xs));
     });
   });
 

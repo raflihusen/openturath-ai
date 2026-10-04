@@ -13,6 +13,7 @@ import '../services/bookmark_service.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Antarmuka obrolan 100% native Flutter dengan estetika "The Quiet Islamic Scholar".
 class NativeTurathChatView extends StatefulWidget {
   final AgentModel agent;
@@ -217,7 +218,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
               widget.agent.title,
               textAlign: TextAlign.center,
               style: ScholarlyFonts.outfit(
-                fontSize: 22,
+                fontSize: OTFontSize.s22,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
                 letterSpacing: -0.3,
@@ -260,19 +261,19 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
         _textController.text = label;
         _handleSend();
       },
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(OTRadius.card),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(OTRadius.card),
           border: Border.all(color: border, width: 0.8),
         ),
         child: Text(
           label,
           style: ScholarlyFonts.outfit(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w500,
+            fontSize: OTFontSize.s12,
+            fontWeight: FontWeight.w400,
             color: textPrimary,
           ),
         ),
@@ -301,17 +302,17 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
             decoration: BoxDecoration(
               color: bg,
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18),
-                topRight: Radius.circular(18),
-                bottomLeft: Radius.circular(18),
-                bottomRight: Radius.circular(4),
+                topLeft: Radius.circular(OTRadius.card),
+                topRight: Radius.circular(OTRadius.card),
+                bottomLeft: Radius.circular(OTRadius.card),
+                bottomRight: Radius.circular(OTRadius.xs),
               ),
               border: Border.all(color: border, width: 0.8),
             ),
             child: Text(
               msg.text,
               style: ScholarlyFonts.outfit(
-                fontSize: 14.5,
+                fontSize: OTFontSize.s14,
                 height: 1.5,
                 color: textPrimary,
               ),
@@ -347,17 +348,17 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                     sizedImageBuilder: (config) => Text(config.alt ?? ''),
                     styleSheet: MarkdownStyleSheet(
                       p: ScholarlyFonts.outfit(
-                        fontSize: 14.5,
+                        fontSize: OTFontSize.s14,
                         height: 1.65,
                         color: textPrimary,
                       ),
                       strong: ScholarlyFonts.outfit(
-                        fontSize: 14.5,
+                        fontSize: OTFontSize.s14,
                         fontWeight: FontWeight.w700,
                         color: textPrimary,
                       ),
                       blockquote: ScholarlyFonts.outfit(
-                        fontSize: 14,
+                        fontSize: OTFontSize.s14,
                         fontStyle: FontStyle.italic,
                         height: 1.6,
                         color: textSecondary,
@@ -432,9 +433,9 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.right,
               style: ScholarlyFonts.scheherazadeNew(
-                fontSize: 19,
+                fontSize: OTFontSize.s18,
                 height: 2.2,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
                 color: textPrimary,
               ),
             ),
@@ -445,7 +446,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
             child: Text(
               trimmed,
               style: ScholarlyFonts.outfit(
-                fontSize: 14.5,
+                fontSize: OTFontSize.s14,
                 height: 1.6,
                 color: textPrimary,
               ),
@@ -466,7 +467,7 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           child: Text(
             'Menelaah rujukan & menyusun penjelasan ilmiah...',
             style: ScholarlyFonts.outfit(
-              fontSize: 13,
+              fontSize: OTFontSize.s14,
               fontStyle: FontStyle.italic,
               color: textSecondary,
               letterSpacing: -0.1,
@@ -495,14 +496,14 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(OTRadius.card),
             border: Border.all(
               color: _focusNode.hasFocus ? accent.withAlpha(160) : border,
               width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(isDark ? 50 : 12),
+                color: OTColors.shadow.withAlpha(isDark ? 50 : 12),
                 blurRadius: 18,
                 offset: const Offset(0, 4),
               ),
@@ -517,13 +518,13 @@ class _NativeTurathChatViewState extends State<NativeTurathChatView>
                   maxLines: 4,
                   minLines: 1,
                   style: ScholarlyFonts.outfit(
-                    fontSize: 14,
+                    fontSize: OTFontSize.s14,
                     color: textPrimary,
                   ),
                   decoration: InputDecoration(
                     hintText: Loc.tr('askQuestionHint'),
                     hintStyle: ScholarlyFonts.outfit(
-                      fontSize: 13.5,
+                      fontSize: OTFontSize.s14,
                       color: textSecondary.withAlpha(160),
                     ),
                     border: InputBorder.none,

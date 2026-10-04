@@ -7,6 +7,7 @@ import '../core/theme.dart';
 import '../widgets/app_loader.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key, this.resolveInitialRoute});
 
@@ -105,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen>
                   Text(
                     'OpenTurath',
                     style: ScholarlyFonts.newsreader(
-                      fontSize: 32,
+                      fontSize: OTFontSize.s36,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.6,
                       color: textPrimary,

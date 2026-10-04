@@ -8,6 +8,8 @@ import '../core/design/ot_colors.dart';
 import '../core/legal_copy.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// LegalDocumentSheet: Modal lembar kebijakan hukum dan identitas OpenTurath.
 /// Mengadopsi prinsip desain "The Quiet Scholar" dengan keterbacaan tinggi,
 /// tipografi terpadu, dan pembagian pasal yang lapang.
@@ -108,7 +110,7 @@ class LegalDocumentSheet extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
         border: Border.all(color: border, width: 0.8),
       ),
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -129,7 +131,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     Text(
                       title,
                       style: ScholarlyFonts.newsreader(
-                        fontSize: 21,
+                        fontSize: OTFontSize.s22,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.3,
                         color: textPrimary,
@@ -139,7 +141,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     Text(
                       subtitle,
                       style: ScholarlyFonts.outfit(
-                        fontSize: 12.5,
+                        fontSize: OTFontSize.s12,
                         fontWeight: FontWeight.w400,
                         color: textSecondary,
                       ),
@@ -176,7 +178,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     Text(
                       sec.title,
                       style: ScholarlyFonts.newsreader(
-                        fontSize: 16,
+                        fontSize: OTFontSize.s16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.2,
                         color: textPrimary,
@@ -186,7 +188,7 @@ class LegalDocumentSheet extends StatelessWidget {
                     Text(
                       sec.content,
                       style: ScholarlyFonts.outfit(
-                        fontSize: 13.5,
+                        fontSize: OTFontSize.s14,
                         fontWeight: FontWeight.w400,
                         height: 1.55,
                         color: textSecondary,
@@ -210,13 +212,13 @@ class LegalDocumentSheet extends StatelessWidget {
                 backgroundColor: textPrimary,
                 foregroundColor: canvas,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(OTRadius.input),
                 ),
               ),
               child: Text(
                 'Tutup',
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: canvas,
                 ),

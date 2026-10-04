@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'scholarly_fonts.dart';
 import 'design/ot_colors.dart';
+import 'design/ot_radius.dart';
 import 'design/ot_typography.dart';
 
 // OpenTurath AI: Monochrome Editorial Theme (Quiet Scholar Adaptive)
@@ -116,15 +117,15 @@ class AppTheme {
   static const Color lightTextSecondary = textSecondaryLight;
 
   // ── 4. Geometri & Radius Apple HIG (3 Nilai Baku: 8, 16, 100) ───────────────
-  static const double radiusXS = 8.0; // Kecil: chip / badge / tag
-  static const double radiusCard = 12.0; // Sedang: card / dialog / bottom sheet
-  static const double radiusM = 12.0; // Alias untuk kompatibilitas
-  static const double radiusS = 8.0; // Diharmonisasi ke 8.0
-  static const double radiusL = 12.0; // Diharmonisasi ke 16.0
-  static const double radiusXL = 12.0; // Diharmonisasi ke 16.0
-  static const double radiusFull = 100.0; // Bulat: pill / button / avatar
-  static const double radiusPill = 10.0; // Stadium Pills & Buttons
-  static const double radiusQuery = 14.0; // Chat Query Stadium Pill
+  static const double radiusXS = OTRadius.xs; // Kecil: tag, tooltip
+  static const double radiusCard = OTRadius.card; // Kartu
+  static const double radiusM = OTRadius.card; // Alias untuk kompatibilitas
+  static const double radiusS = OTRadius.xs;
+  static const double radiusL = OTRadius.card;
+  static const double radiusXL = OTRadius.card;
+  static const double radiusFull = OTRadius.chip; // Pil: chip, avatar
+  static const double radiusPill = OTRadius.button; // Tombol pil
+  static const double radiusQuery = OTRadius.input; // Chat Query Stadium Pill
 
   // ── 5. Gradients ──────────────────────────────────────────────────────────
   static const LinearGradient bgGradient = LinearGradient(
@@ -178,7 +179,7 @@ class AppTheme {
         onTertiaryContainer: textPrimaryDark,
         error: OTColors.destructiveDark,
         onError: OTColors.onAccentDark,
-        errorContainer: pillSecondaryBgDark,
+        errorContainer: OTColors.errorContainerDark,
         onErrorContainer: OTColors.destructiveDark,
         surface: canvasDark,
         onSurface: textPrimaryDark,
@@ -208,7 +209,7 @@ class AppTheme {
         centerTitle: false,
         titleSpacing: 20,
         titleTextStyle: ScholarlyFonts.outfit(
-          fontSize: 18,
+          fontSize: OTFontSize.s18,
           fontWeight: FontWeight.w600,
           color: textPrimaryDark,
           letterSpacing: -0.3,
@@ -237,7 +238,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
-            fontSize: 14,
+            fontSize: OTFontSize.s14,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.2,
           ),
@@ -251,7 +252,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
-            fontSize: 14,
+            fontSize: OTFontSize.s14,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -266,18 +267,19 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: surfaceElevated,
         contentTextStyle: ScholarlyFonts.outfit(
           color: textPrimaryDark,
-          fontSize: 13,
+          fontSize: OTFontSize.s14,
           fontWeight: FontWeight.w400,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           side: const BorderSide(color: borderDark, width: 1),
         ),
         behavior: SnackBarBehavior.floating,
@@ -287,20 +289,20 @@ class AppTheme {
         fillColor: queryBoxBgDark,
         hintStyle: ScholarlyFonts.outfit(
           color: textTertiaryDark,
-          fontSize: 14,
+          fontSize: OTFontSize.s14,
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           borderSide: const BorderSide(color: OTColors.borderStrongDark, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           borderSide: const BorderSide(color: OTColors.borderStrongDark, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           borderSide: const BorderSide(color: accentDark, width: 1.5),
         ),
       ),
@@ -312,7 +314,7 @@ class AppTheme {
         ),
         textStyle: ScholarlyFonts.outfit(
           color: textPrimaryDark,
-          fontSize: 12,
+          fontSize: OTFontSize.s12,
         ),
       ),
       dialogTheme: DialogThemeData(
@@ -320,16 +322,16 @@ class AppTheme {
         backgroundColor: surfaceCardDark,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: ScholarlyFonts.outfit(
-          fontSize: 18,
+          fontSize: OTFontSize.s18,
           fontWeight: FontWeight.w600,
           color: textPrimaryDark,
         ),
         contentTextStyle: ScholarlyFonts.outfit(
-          fontSize: 14,
+          fontSize: OTFontSize.s14,
           color: textSecondaryDark,
         ),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(radiusCard)),
+          borderRadius: BorderRadius.all(Radius.circular(OTRadius.dialog)),
           side: BorderSide(color: borderDark, width: 1),
         ),
       ),
@@ -356,8 +358,8 @@ class AppTheme {
         tertiaryContainer: pillSecondaryBgLight,
         onTertiaryContainer: textPrimaryLight,
         error: error,
-        onError: Colors.white,
-        errorContainer: pillSecondaryBgLight,
+        onError: OTColors.surfaceLight,
+        errorContainer: OTColors.errorContainerLight,
         onErrorContainer: OTColors.destructiveLight,
         surface: canvasLight,
         onSurface: textPrimaryLight,
@@ -387,7 +389,7 @@ class AppTheme {
         centerTitle: false,
         titleSpacing: 20,
         titleTextStyle: ScholarlyFonts.outfit(
-          fontSize: 18,
+          fontSize: OTFontSize.s18,
           fontWeight: FontWeight.w600,
           color: textPrimaryLight,
           letterSpacing: -0.3,
@@ -416,7 +418,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
-            fontSize: 14,
+            fontSize: OTFontSize.s14,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.2,
           ),
@@ -430,7 +432,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radiusPill)),
           textStyle: ScholarlyFonts.outfit(
-            fontSize: 14,
+            fontSize: OTFontSize.s14,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -445,18 +447,19 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(radiusCard)),
+          borderRadius:
+              BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: textPrimaryLight,
         contentTextStyle: ScholarlyFonts.outfit(
           color: Colors.white,
-          fontSize: 13,
+          fontSize: OTFontSize.s14,
           fontWeight: FontWeight.w400,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
         ),
         behavior: SnackBarBehavior.floating,
       ),
@@ -465,20 +468,20 @@ class AppTheme {
         fillColor: queryBoxBgLight,
         hintStyle: ScholarlyFonts.outfit(
           color: textTertiaryLight,
-          fontSize: 14,
+          fontSize: OTFontSize.s14,
         ),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           borderSide: const BorderSide(color: OTColors.borderStrongLight, width: 1),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           borderSide: const BorderSide(color: OTColors.borderStrongLight, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusCard),
+          borderRadius: BorderRadius.circular(OTRadius.input),
           borderSide: const BorderSide(color: accentLight, width: 1.5),
         ),
       ),
@@ -489,7 +492,7 @@ class AppTheme {
         ),
         textStyle: ScholarlyFonts.outfit(
           color: Colors.white,
-          fontSize: 12,
+          fontSize: OTFontSize.s12,
         ),
       ),
       dialogTheme: DialogThemeData(
@@ -497,16 +500,16 @@ class AppTheme {
         backgroundColor: surfaceCardLight,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: ScholarlyFonts.outfit(
-          fontSize: 18,
+          fontSize: OTFontSize.s18,
           fontWeight: FontWeight.w600,
           color: textPrimaryLight,
         ),
         contentTextStyle: ScholarlyFonts.outfit(
-          fontSize: 14,
+          fontSize: OTFontSize.s14,
           color: textSecondaryLight,
         ),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(radiusCard)),
+          borderRadius: BorderRadius.all(Radius.circular(OTRadius.dialog)),
           side: BorderSide(color: borderLight, width: 1),
         ),
       ),
@@ -574,53 +577,53 @@ class AppTheme {
 
     return TextTheme(
       displayLarge: _fontNewsreader(
-          fontSize: 34,
+          fontSize: OTFontSize.s36,
           fontWeight: FontWeight.w700,
           color: primary,
           letterSpacing: -0.6),
       displayMedium: _fontNewsreader(
-          fontSize: 28,
+          fontSize: OTFontSize.s26,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.4),
       headlineLarge: _fontNewsreader(
-          fontSize: 24,
+          fontSize: OTFontSize.s26,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.3),
       headlineMedium: _fontNewsreader(
-          fontSize: 20,
+          fontSize: OTFontSize.s20,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.2),
       titleLarge: _fontNewsreader(
-          fontSize: 17,
+          fontSize: OTFontSize.s16,
           fontWeight: FontWeight.w600,
           color: primary,
           letterSpacing: -0.1),
       titleMedium: _fontOutfit(
-          fontSize: 15, fontWeight: FontWeight.w600, color: primary),
+          fontSize: OTFontSize.s16, fontWeight: FontWeight.w600, color: primary),
       titleSmall: _fontOutfit(
-          fontSize: 13, fontWeight: FontWeight.w600, color: secondary),
+          fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: secondary),
       bodyLarge: _fontOutfit(
-          fontSize: 15,
+          fontSize: OTFontSize.s16,
           fontWeight: FontWeight.w400,
           color: primary,
           height: 1.55),
       bodyMedium: _fontOutfit(
-          fontSize: 13,
+          fontSize: OTFontSize.s14,
           fontWeight: FontWeight.w400,
           color: secondary,
           height: 1.45),
       bodySmall: _fontOutfit(
-          fontSize: 12,
+          fontSize: OTFontSize.s12,
           fontWeight: FontWeight.w400,
           color: tertiary,
           height: 1.4),
       labelLarge: _fontOutfit(
-          fontSize: 13, fontWeight: FontWeight.w600, color: primary),
+          fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: primary),
       labelSmall: _fontOutfit(
-          fontSize: 11,
+          fontSize: OTFontSize.s11,
           fontWeight: FontWeight.w500,
           color: tertiary,
           letterSpacing: 0.2),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/scholarly_fonts.dart';
 import '../services/browser_workspace_launcher.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
 class BrowserWorkspaceScreen extends StatefulWidget {
   const BrowserWorkspaceScreen({super.key});
   @override
@@ -44,7 +45,7 @@ class _BrowserWorkspaceScreenState extends State<BrowserWorkspaceScreen> {
                 children: [
                   Text('OpenTurath',
                       style: ScholarlyFonts.newsreader(
-                          fontSize: 34, color: colors.onSurface)),
+                          fontSize: OTFontSize.s36, color: colors.onSurface)),
                   const SizedBox(height: 24),
                   Text('Satu ruang untuk kajian Anda.',
                       style: Theme.of(context).textTheme.titleLarge),

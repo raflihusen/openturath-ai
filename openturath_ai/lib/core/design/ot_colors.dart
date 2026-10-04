@@ -14,7 +14,7 @@ class OTColors {
   static const Color surfaceSubtleLight = Color(0xFFF2F2F2); // Kontainer tonal sekunder
   static const Color textPrimaryLight = Color(0xFF171717);
   static const Color textSecondaryLight = Color(0xFF606060);
-  static const Color textTertiaryLight = Color(0xFF606060);
+  static const Color textTertiaryLight = Color(0xFF6B6B6B); // Placeholder, hint
   static const Color borderLight = Color(0xFFDADADA);
   static const Color borderSubtleLight = Color(0xFFEBEBEB);
   static const Color borderStrongLight = Color(0xFF767676);
@@ -28,7 +28,7 @@ class OTColors {
   static const Color surfaceSubtleDark = Color(0xFF242424);
   static const Color textPrimaryDark = Color(0xFFF5F5F5);
   static const Color textSecondaryDark = Color(0xFFB8B8B8);
-  static const Color textTertiaryDark = Color(0xFFB8B8B8);
+  static const Color textTertiaryDark = Color(0xFF9A9A9A); // Placeholder, hint
   static const Color borderDark = Color(0xFF454545);
   static const Color borderSubtleDark = Color(0xFF2D2D2D);
   static const Color borderStrongDark = Color(0xFF808080);
@@ -52,9 +52,17 @@ class OTColors {
   static const Color marjaLight = Color(0xFF4A4A4A); // Tinta status
   static const Color marjaDark = Color(0xFFC4C4C4); // Tinta status di mode gelap
 
-  // ── 6. Status kritis — monokrom dengan ikon dan pesan eksplisit ──
-  static const Color destructiveLight = Color(0xFF171717);
-  static const Color destructiveDark = Color(0xFFF5F5F5);
+  // ── 6. Status kritis — satu-satunya warna di luar tinta dan kertas ──
+  // Merah hanya untuk galat dan aksi permanen, selalu bersama ikon dan pesan.
+  static const Color errorLight = Color(0xFFB91C1C);
+  static const Color errorDark = Color(0xFFF87171);
+  static const Color errorContainerLight = Color(0xFFFEF2F2);
+  static const Color errorContainerDark = Color(0xFF2F1616);
+  static const Color destructiveLight = errorLight;
+  static const Color destructiveDark = errorDark;
+
+  // ── 6b. Dasar bayangan dan scrim; selalu dipakai dengan alpha ──
+  static const Color shadow = Color(0xFF000000);
 
   // ── 7. Context-Aware Adaptive Helpers ──
   static Color canvas(bool isDark) => isDark ? canvasDark : canvasLight;
@@ -75,4 +83,7 @@ class OTColors {
   static Color inverseSurface(bool isDark) => isDark ? inverseSurfaceDark : inverseSurfaceLight;
   static Color marja(bool isDark) => isDark ? marjaDark : marjaLight;
   static Color destructive(bool isDark) => isDark ? destructiveDark : destructiveLight;
+  static Color error(bool isDark) => isDark ? errorDark : errorLight;
+  static Color errorContainer(bool isDark) =>
+      isDark ? errorContainerDark : errorContainerLight;
 }

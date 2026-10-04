@@ -6,6 +6,8 @@ import '../core/design/ot_colors.dart';
 import '../services/update_service.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Modal dialog elegan yang muncul otomatis saat pembaruan selesai diunduh di latar belakang
 class UpdateReadyDialog extends StatelessWidget {
   final UpdateService updateService;
@@ -20,7 +22,7 @@ class UpdateReadyDialog extends StatelessWidget {
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.65),
+      barrierColor: OTColors.shadow.withValues(alpha: 0.65),
       builder: (ctx) => UpdateReadyDialog(updateService: updateService),
     );
   }
@@ -76,7 +78,7 @@ class UpdateReadyDialog extends StatelessWidget {
             Text(
               isDesktop ? 'Pembaruan Tersedia' : 'Pembaruan Telah Siap',
               style: ScholarlyFonts.newsreader(
-                fontSize: 20,
+                fontSize: OTFontSize.s20,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
               ),
@@ -89,13 +91,13 @@ class UpdateReadyDialog extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color:
-                    isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE9E9E9),
+                    isDark ? OTColors.surfaceSubtleDark : OTColors.borderSubtleLight,
                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
               ),
               child: Text(
                 'Versi $version',
                 style: ScholarlyFonts.outfit(
-                  fontSize: 12,
+                  fontSize: OTFontSize.s12,
                   fontWeight: FontWeight.w600,
                   color: textSecondary,
                   letterSpacing: 0.2,
@@ -110,7 +112,7 @@ class UpdateReadyDialog extends StatelessWidget {
                   ? 'Tersedia versi desktop terbaru dengan peningkatan keilmuan dan stabilitas. Buka tautan untuk memperbarui.'
                   : 'Aplikasi telah selesai mengunduh pembaruan di latar belakang secara senyap. Ketuk tombol di bawah untuk memasang dan memuat ulang aplikasi.',
               style: ScholarlyFonts.outfit(
-                fontSize: 13,
+                fontSize: OTFontSize.s14,
                 height: 1.5,
                 color: textSecondary,
               ),
@@ -125,9 +127,9 @@ class UpdateReadyDialog extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? const Color(0xFF161616)
-                      : const Color(0xFFF1F1F1),
-                  borderRadius: BorderRadius.circular(10),
+                      ? OTColors.surfaceDark
+                      : OTColors.surfaceSubtleLight,
+                  borderRadius: BorderRadius.circular(OTRadius.input),
                   border: Border.all(
                     color: border.withValues(alpha: 0.5),
                     width: 0.5,
@@ -136,7 +138,7 @@ class UpdateReadyDialog extends StatelessWidget {
                 child: Text(
                   releaseNotes,
                   style: ScholarlyFonts.outfit(
-                    fontSize: 12,
+                    fontSize: OTFontSize.s12,
                     color: textSecondary,
                     height: 1.4,
                   ),
@@ -178,7 +180,7 @@ class UpdateReadyDialog extends StatelessWidget {
                       ? 'Unduh Pembaruan'
                       : 'Pasang & Muat Ulang Sekarang',
                   style: ScholarlyFonts.outfit(
-                    fontSize: 14,
+                    fontSize: OTFontSize.s14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -201,8 +203,8 @@ class UpdateReadyDialog extends StatelessWidget {
                 child: Text(
                   'Nanti Saja',
                   style: ScholarlyFonts.outfit(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontSize: OTFontSize.s14,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ),

@@ -6,6 +6,7 @@ import '../core/design/ot_motion.dart';
 import '../core/design/ot_typography.dart';
 import '../models/agent_model.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Pengalih direktori yang sengaja datar: ini navigasi, bukan kartu.
 class CorpusKindControl extends StatelessWidget {
   const CorpusKindControl({
@@ -75,7 +76,7 @@ class _CorpusKindTab extends StatelessWidget {
           OTMotion.selection();
           onTap();
         },
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(OTRadius.xs),
         child: IntrinsicWidth(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.end,

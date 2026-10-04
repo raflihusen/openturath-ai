@@ -5,6 +5,7 @@ import '../core/design/ot_motion.dart';
 import '../core/design/ot_spacing.dart';
 import 'apple_interactive_wrapper.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Animasi masuk yang tenang: memudar sambil naik beberapa piksel.
 /// [index] memberi jeda berurutan antar-ubin. Tanpa timer, jadi aman di tes,
 /// dan otomatis nonaktif bila pengguna meminta gerak dikurangi.
@@ -193,7 +194,7 @@ class OTSkeletonList extends StatelessWidget {
           width: width,
           height: height,
           decoration: BoxDecoration(
-              color: block, borderRadius: BorderRadius.circular(6)),
+              color: block, borderRadius: BorderRadius.circular(OTRadius.xs)),
         );
     return Semantics(
       label: MaterialLocalizations.of(context).refreshIndicatorSemanticLabel,

@@ -8,6 +8,8 @@ import '../core/app_copy.dart';
 import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_colors.dart';
 class EvidenceBottomSheet extends StatelessWidget {
   final int citationNumber;
   final String bookName;
@@ -112,7 +114,7 @@ class EvidenceBottomSheet extends StatelessWidget {
             border: Border.all(color: border, width: 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.4),
+                color: OTColors.shadow.withValues(alpha: 0.4),
                 blurRadius: 30,
                 offset: const Offset(0, -4),
               ),
@@ -136,7 +138,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                         Text(
                           'Ibarah & rujukan',
                           style: ScholarlyFonts.outfit(
-                            fontSize: 17,
+                            fontSize: OTFontSize.s16,
                             fontWeight: FontWeight.w700,
                             color: textPrimary,
                           ),
@@ -167,7 +169,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                       Text(
                         bookName,
                         style: ScholarlyFonts.newsreader(
-                          fontSize: 20,
+                          fontSize: OTFontSize.s20,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
                           letterSpacing: -0.3,
@@ -192,13 +194,13 @@ class EvidenceBottomSheet extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Loc.tr('authorLabel'), style: ScholarlyFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text(Loc.tr('authorLabel'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     author,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: ScholarlyFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
+                                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: textPrimary),
                                   ),
                                 ],
                               ),
@@ -208,13 +210,13 @@ class EvidenceBottomSheet extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Loc.tr('pageLabel'), style: ScholarlyFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text(Loc.tr('pageLabel'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     pageNumber,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: ScholarlyFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary),
+                                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: textPrimary),
                                   ),
                                 ],
                               ),
@@ -224,13 +226,13 @@ class EvidenceBottomSheet extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(Loc.tr('disciplineLabel'), style: ScholarlyFonts.outfit(fontSize: 12, color: textSecondary)),
+                                  Text(Loc.tr('disciplineLabel'), style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: textSecondary)),
                                   const SizedBox(height: 2),
                                   Text(
                                     category,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: ScholarlyFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: accent),
+                                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: accent),
                                   ),
                                 ],
                               ),
@@ -255,7 +257,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                               Text(
                                 'Naskah ibarah asli',
                                 style: ScholarlyFonts.outfit(
-                                  fontSize: 13,
+                                  fontSize: OTFontSize.s14,
                                   fontWeight: FontWeight.w600,
                                   color: textPrimary,
                                 ),
@@ -285,7 +287,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                               arabicExcerpt,
                               textDirection: TextDirection.rtl,
                               style: ScholarlyFonts.scheherazadeNew(
-                                fontSize: 20,
+                                fontSize: OTFontSize.s20,
                                 fontWeight: FontWeight.w700,
                                 height: 1.8,
                                 color: textPrimary,
@@ -307,7 +309,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           Text(
                             'Intisari & penjelasan',
                             style: ScholarlyFonts.outfit(
-                              fontSize: 13,
+                              fontSize: OTFontSize.s14,
                               fontWeight: FontWeight.w600,
                               color: textPrimary,
                             ),
@@ -316,7 +318,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                           Text(
                             explanation,
                             style: ScholarlyFonts.outfit(
-                              fontSize: 13,
+                              fontSize: OTFontSize.s14,
                               color: textSecondary,
                               height: 1.5,
                             ),
@@ -340,12 +342,12 @@ class EvidenceBottomSheet extends StatelessWidget {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: accent,
                                 side: BorderSide(color: accent.withValues(alpha: 0.6)),
-                                padding: const EdgeInsets.symmetric(vertical: 13),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                                 ),
                                 textStyle: ScholarlyFonts.outfit(
-                                  fontSize: 13,
+                                  fontSize: OTFontSize.s14,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -361,13 +363,13 @@ class EvidenceBottomSheet extends StatelessWidget {
                                 backgroundColor: accent,
                                 foregroundColor: isDark
                                     ? AppTheme.canvasDark
-                                    : Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 13),
+                                    : OTColors.surfaceLight,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                                 ),
                                 textStyle: ScholarlyFonts.outfit(
-                                  fontSize: 13,
+                                  fontSize: OTFontSize.s14,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -379,7 +381,7 @@ class EvidenceBottomSheet extends StatelessWidget {
                             icon: const Icon(Icons.share_outlined, size: 18),
                             tooltip: Loc.tr('copyScholarlyCitation'),
                             style: IconButton.styleFrom(
-                              padding: const EdgeInsets.all(13),
+                              padding: const EdgeInsets.all(12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                               ),

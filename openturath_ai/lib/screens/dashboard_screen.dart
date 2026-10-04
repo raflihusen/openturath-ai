@@ -3,6 +3,7 @@ import '../widgets/adaptive_sheet.dart';
 import '../core/localization.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../core/design/native_design.dart';
 import '../core/scholarly_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,6 +34,7 @@ import '../widgets/assistant_grid_card.dart';
 import '../services/open_turath_catalog_repository.dart';
 import '../core/legal_copy.dart';
 import '../widgets/legal_document_sheet.dart';
+import 'package:openturath_ai/core/design/ot_typography.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// Beranda OpenTurath AI (Tactile Scholarly Research Desk)
@@ -347,11 +349,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       onChanged: (val) => setState(
                                           () => _searchQuery = val.trim()),
                                       style: ScholarlyFonts.outfit(
-                                          fontSize: 13.5, color: textPrimary),
+                                          fontSize: OTFontSize.s14, color: textPrimary),
                                       decoration: InputDecoration(
                                         hintText: AppCopy.dashboardSearchHint,
                                         hintStyle: ScholarlyFonts.outfit(
-                                            fontSize: 13.5,
+                                            fontSize: OTFontSize.s14,
                                             color: textSecondary),
                                         border: InputBorder.none,
                                         enabledBorder: InputBorder.none,
@@ -373,7 +375,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           _searchController.clear();
                                           setState(() => _searchQuery = '');
                                         },
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(OTRadius.card),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Icon(Icons.close_rounded,
@@ -394,7 +396,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             AppCopy.searchResults,
                             style: ScholarlyFonts.outfit(
-                              fontSize: 16,
+                              fontSize: OTFontSize.s16,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.2,
                               color: textPrimary,
@@ -429,7 +431,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     child: Text(
                                       AppCopy.noAssistantsFound,
                                       style: ScholarlyFonts.outfit(
-                                          fontSize: 13.5, color: textSecondary),
+                                          fontSize: OTFontSize.s14, color: textSecondary),
                                     ),
                                   ),
                                 );
@@ -470,7 +472,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               Text(
                                 AppCopy.chooseField,
                                 style: ScholarlyFonts.outfit(
-                                  fontSize: 16,
+                                  fontSize: OTFontSize.s16,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.2,
                                   color: textPrimary,
@@ -492,7 +494,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     Text(
                                       AppCopy.seeAll,
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 12.5,
+                                        fontSize: OTFontSize.s12,
                                         fontWeight: FontWeight.w600,
                                         color: textPrimary,
                                       ),
@@ -518,7 +520,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
                               mainAxisExtent:
-                                  MediaQuery.textScalerOf(context).scale(108),
+                                  MediaQuery.textScalerOf(context).scale(124),
                             ),
                             itemCount: _curatedDisciplines.length,
                             itemBuilder: (context, index) {
@@ -558,17 +560,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: ScholarlyFonts.newsreader(
-                                                fontSize: 20,
+                                                fontSize: OTFontSize.s20,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: -0.25,
                                                 color: textPrimary,
                                               ),
                                             ),
-                                          ),
-                                          Icon(
-                                            otOutwardIcon(context),
-                                            size: 18,
-                                            color: textSecondary,
                                           ),
                                         ],
                                       ),
@@ -581,12 +578,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: ScholarlyFonts.outfit(
-                                          fontSize: 13,
+                                          fontSize: OTFontSize.s14,
                                           fontWeight: FontWeight.w600,
                                           color: textPrimary,
                                         ),
                                       ),
-                                      if (members.isNotEmpty)
+                                      // Nama Arab bidang ilmu adalah wajah kartu;
+                                      // di antarmuka Arab judulnya sudah Arab.
+                                      if (!Loc.isArabic &&
+                                          NativeCopy.values[
+                                                  'field_${disc.fieldId}'] !=
+                                              null)
+                                        Text(
+                                          NativeCopy.values[
+                                              'field_${disc.fieldId}']![2],
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          textDirection: TextDirection.rtl,
+                                          style: ScholarlyFonts.scheherazadeNew(
+                                            fontSize: OTFontSize.s16,
+                                            color: textSecondary,
+                                          ),
+                                        )
+                                      else if (members.isNotEmpty)
                                         Text(
                                           members
                                               .map((agent) =>
@@ -595,7 +609,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: ScholarlyFonts.outfit(
-                                            fontSize: 12,
+                                            fontSize: OTFontSize.s12,
                                             color: textSecondary,
                                           ),
                                         ),
@@ -662,7 +676,7 @@ class _LibraryNumbersTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(Loc.tr('libraryInNumbers'),
-              style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+              style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
           const SizedBox(height: OTSpacing.md),
           FutureBuilder<Map<String, AiLibraryMetadata>>(
             future: OpenTurathCatalogRepository.instance.loadAllMetadata(),
@@ -680,13 +694,13 @@ class _LibraryNumbersTile extends StatelessWidget {
                       children: [
                         Text(value,
                             style: ScholarlyFonts.outfit(
-                                fontSize: 20,
+                                fontSize: OTFontSize.s20,
                                 fontWeight: FontWeight.w600,
                                 color: ink)),
                         Text(label,
                             maxLines: 2,
                             style: ScholarlyFonts.outfit(
-                                fontSize: 12, color: muted)),
+                                fontSize: OTFontSize.s12, color: muted)),
                       ],
                     ),
                   );
@@ -813,7 +827,7 @@ class _AdabOfDayTile extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(Loc.tr('aiEtiquetteLabel'),
-                    style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
               ),
               Icon(Icons.arrow_forward_rounded,
                   size: 16, color: muted),
@@ -822,13 +836,13 @@ class _AdabOfDayTile extends StatelessWidget {
           const SizedBox(height: OTSpacing.sm),
           Text(title,
               style: ScholarlyFonts.outfit(
-                  fontSize: 16, fontWeight: FontWeight.w600, color: ink)),
+                  fontSize: OTFontSize.s16, fontWeight: FontWeight.w600, color: ink)),
           const SizedBox(height: 4),
           Text(body,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: ScholarlyFonts.outfit(
-                  fontSize: 13, height: 1.5, color: muted)),
+                  fontSize: OTFontSize.s14, height: 1.5, color: muted)),
         ],
       ),
     );
@@ -892,14 +906,14 @@ class _RecentNoteTileState extends State<_RecentNoteTile> {
               children: [
                 Text(Loc.tr('recentNote'),
                     style:
-                        ScholarlyFonts.outfit(fontSize: 12, color: secondary)),
+                        ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: secondary)),
                 const SizedBox(height: 2),
                 Text(
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: ScholarlyFonts.outfit(
-                    fontSize: 15,
+                    fontSize: OTFontSize.s16,
                     fontWeight: FontWeight.w600,
                     color: OTColors.textPrimary(isDark),
                   ),
@@ -949,12 +963,12 @@ class _StudyEntryCard extends StatelessWidget {
             displayName == null
                 ? AppCopy.ahlanDefault
                 : AppCopy.ahlanWithName(displayName),
-            style: ScholarlyFonts.outfit(fontSize: 13, color: muted)),
+            style: ScholarlyFonts.outfit(fontSize: OTFontSize.s14, color: muted)),
         const SizedBox(height: 14),
         Text(Loc.text(title),
             style: ScholarlyFonts.newsreader(
-                fontSize: MediaQuery.sizeOf(context).width >= 768 ? 30 : 26,
-                fontWeight: FontWeight.w500,
+                fontSize: MediaQuery.sizeOf(context).width >= 768 ? OTFontSize.s26 : OTFontSize.s26,
+                fontWeight: FontWeight.w400,
                 letterSpacing: -.6,
                 height: 1.18,
                 color: ink)),
@@ -963,7 +977,7 @@ class _StudyEntryCard extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 520),
             child: Text(subtitle,
                 style: ScholarlyFonts.outfit(
-                    fontSize: 14, height: 1.55, color: muted))),
+                    fontSize: OTFontSize.s14, height: 1.55, color: muted))),
         const SizedBox(height: 20),
         FilledButton.icon(
             onPressed: onPrimary,
@@ -1004,12 +1018,12 @@ class _TahawwulatSpotlight extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(Loc.tr('planFeaturedLabel'),
-                  style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+                  style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
               const SizedBox(height: 4),
               Text(
                 Loc.text('Fikih Tahawwulat'),
                 style: ScholarlyFonts.newsreader(
-                  fontSize: 22,
+                  fontSize: OTFontSize.s22,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.3,
                   color: ink,
@@ -1037,12 +1051,12 @@ class _TahawwulatSpotlight extends StatelessWidget {
                         children: [
                           Text(stat.value,
                               style: ScholarlyFonts.outfit(
-                                  fontSize: 18,
+                                  fontSize: OTFontSize.s18,
                                   fontWeight: FontWeight.w600,
                                   color: ink)),
                           Text(stat.unit,
                               style: ScholarlyFonts.outfit(
-                                  fontSize: 12, color: muted)),
+                                  fontSize: OTFontSize.s12, color: muted)),
                         ],
                       ),
                   ],
@@ -1054,7 +1068,7 @@ class _TahawwulatSpotlight extends StatelessWidget {
             children: [
               Text(Loc.tr('flagshipExplore', ['5']),
                   style: ScholarlyFonts.outfit(
-                      fontSize: 13, fontWeight: FontWeight.w600, color: ink)),
+                      fontSize: OTFontSize.s14, fontWeight: FontWeight.w600, color: ink)),
               const SizedBox(width: 4),
               Icon(Icons.arrow_forward_rounded, size: 16, color: ink),
             ],
@@ -1168,7 +1182,7 @@ class _DashboardAnnouncementCarouselState
         return Container(
           decoration: BoxDecoration(
             color: widget.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
             border: Border.all(color: widget.border, width: 1.0),
           ),
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -1182,7 +1196,7 @@ class _DashboardAnnouncementCarouselState
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(widget.isDark),
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: BorderRadius.circular(OTRadius.chip),
                   border: Border.all(
                     color: OTColors.border(widget.isDark),
                     width: 0.8,
@@ -1191,7 +1205,7 @@ class _DashboardAnnouncementCarouselState
                 child: Text(
                   Loc.text(slide.badge),
                   style: ScholarlyFonts.outfit(
-                    fontSize: 11,
+                    fontSize: OTFontSize.s11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.4,
                     color: widget.textSecondary,
@@ -1202,7 +1216,7 @@ class _DashboardAnnouncementCarouselState
               Text(
                 Loc.text(slide.title),
                 style: ScholarlyFonts.newsreader(
-                  fontSize: 22,
+                  fontSize: OTFontSize.s22,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.3,
                   color: widget.textPrimary,
@@ -1212,7 +1226,7 @@ class _DashboardAnnouncementCarouselState
               Text(
                 Loc.text(slide.detailedContent),
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   height: 1.55,
                   color: widget.textSecondary,
                 ),
@@ -1227,13 +1241,13 @@ class _DashboardAnnouncementCarouselState
                     backgroundColor: OTColors.textPrimary(widget.isDark),
                     foregroundColor: OTColors.surface(widget.isDark),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(OTRadius.chip),
                     ),
                   ),
                   child: Text(
                     AppCopy.close,
                     style: ScholarlyFonts.outfit(
-                      fontSize: 14,
+                      fontSize: OTFontSize.s14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1273,13 +1287,13 @@ class _DashboardAnnouncementCarouselState
                 final slide = _slides[index];
                 return InkWell(
                   onTap: () => _showDetailModal(slide),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(OTRadius.input),
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 2),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: widget.surface,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(OTRadius.input),
                       border: Border.all(
                         color: widget.border,
                         width: 1.0,
@@ -1297,7 +1311,7 @@ class _DashboardAnnouncementCarouselState
                                   horizontal: 8, vertical: 2.5),
                               decoration: BoxDecoration(
                                 color: OTColors.surfaceSubtle(widget.isDark),
-                                borderRadius: BorderRadius.circular(100),
+                                borderRadius: BorderRadius.circular(OTRadius.chip),
                                 border: Border.all(
                                   color: OTColors.border(widget.isDark),
                                   width: 0.8,
@@ -1306,7 +1320,7 @@ class _DashboardAnnouncementCarouselState
                               child: Text(
                                 Loc.text(slide.badge),
                                 style: ScholarlyFonts.outfit(
-                                  fontSize: 11,
+                                  fontSize: OTFontSize.s11,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.3,
                                   color: widget.textSecondary,
@@ -1319,8 +1333,8 @@ class _DashboardAnnouncementCarouselState
                                 Text(
                                   AppCopy.readMore,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: OTFontSize.s11,
+                                    fontWeight: FontWeight.w400,
                                     color: widget.textSecondary,
                                   ),
                                 ),
@@ -1337,7 +1351,7 @@ class _DashboardAnnouncementCarouselState
                         Text(
                           Loc.text(slide.title),
                           style: ScholarlyFonts.newsreader(
-                            fontSize: 17,
+                            fontSize: OTFontSize.s16,
                             fontWeight: FontWeight.w600,
                             letterSpacing: -0.2,
                             color: widget.textPrimary,
@@ -1348,7 +1362,7 @@ class _DashboardAnnouncementCarouselState
                         Text(
                           slide.summary,
                           style: ScholarlyFonts.outfit(
-                            fontSize: 12,
+                            fontSize: OTFontSize.s12,
                             color: widget.textSecondary,
                             height: 1.35,
                           ),
@@ -1370,14 +1384,14 @@ class _DashboardAnnouncementCarouselState
             _slides.length,
             (i) => AnimatedContainer(
               duration: const Duration(milliseconds: 250),
-              margin: const EdgeInsets.symmetric(horizontal: 3),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
               width: _currentPage == i ? 18 : 5,
               height: 5,
               decoration: BoxDecoration(
                 color: _currentPage == i
                     ? OTColors.textPrimary(widget.isDark)
                     : widget.border,
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(OTRadius.chip),
               ),
             ),
           ),
@@ -1421,7 +1435,7 @@ class _DateHeader extends StatelessWidget {
           Text(
             HijriDateUtils.formatHijriOnly(),
             style: ScholarlyFonts.newsreader(
-              fontSize: 22,
+              fontSize: OTFontSize.s22,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.3,
               height: 1.2,
@@ -1433,7 +1447,7 @@ class _DateHeader extends StatelessWidget {
             child: Text(
               HijriDateUtils.formatMasehiOnly(),
               style: ScholarlyFonts.outfit(
-                  fontSize: 14, color: OTColors.textSecondary(isDark)),
+                  fontSize: OTFontSize.s14, color: OTColors.textSecondary(isDark)),
             ),
           ),
         ],

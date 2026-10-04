@@ -8,6 +8,23 @@ import '../localization.dart';
 /// 3. Arabic & Turats Layer: Scheherazade New (Naskh murni teks Arab, matan, syarah, ibarah)
 ///
 /// Hapus total ketergantungan pada font Amiri dan Tajawal.
+
+/// Skala ukuran huruf tertutup. `screens/` dan `widgets/` tidak boleh menulis
+/// angka `fontSize` sendiri; pilih salah satu dari sembilan langkah ini.
+abstract final class OTFontSize {
+  static const double s11 = 11; // Kepala seksi kapital, micro-pill
+  static const double s12 = 12; // Keterangan, metadata
+  static const double s14 = 14; // Teks antarmuka, tombol
+  static const double s16 = 16; // Teks baca Latin, judul kartu
+  static const double s18 = 18; // Judul seksi, Arab di daftar
+  static const double s20 = 20; // Judul kitab Latin
+  static const double s22 = 22; // Arab syarah, wordmark
+  static const double s26 = 26; // Judul halaman, Arab matan
+  static const double s36 = 36; // Display, satu kali per layar
+
+  static const List<double> scale = [s11, s12, s14, s16, s18, s20, s22, s26, s36];
+}
+
 class OTTypography {
   /// Flag to bypass runtime font loading in test and air-gapped environments.
   static bool useSystemFontFallback = false;
@@ -95,25 +112,25 @@ class OTTypography {
 
   // ── Editorial & Heading Styles ──
   static TextStyle brandLogo({Color? color}) => useSystemFontFallback
-      ? TextStyle(fontFamily: 'Newsreader', fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color)
-      : ScholarlyFonts.newsreader(fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color);
+      ? TextStyle(fontFamily: 'Newsreader', fontSize: OTFontSize.s22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color)
+      : ScholarlyFonts.newsreader(fontSize: OTFontSize.s22, fontWeight: FontWeight.w600, letterSpacing: -.4, color: color);
 
   static TextStyle displayLarge({Color? color}) => _newsreader(
-        fontSize: 36,
-        fontWeight: FontWeight.w500,
+        fontSize: OTFontSize.s36,
+        fontWeight: FontWeight.w600,
         letterSpacing: -1.0,
         color: color,
       );
 
   static TextStyle pageTitle({Color? color}) => _newsreader(
-        fontSize: 26,
+        fontSize: OTFontSize.s26,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.6,
         color: color,
       );
 
   static TextStyle editorialHero({Color? color}) => _newsreader(
-        fontSize: 26,
+        fontSize: OTFontSize.s26,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.4,
         height: 1.25,
@@ -121,21 +138,21 @@ class OTTypography {
       );
 
   static TextStyle bookTitle({Color? color}) => _newsreader(
-        fontSize: 20,
+        fontSize: OTFontSize.s20,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.3,
         color: color,
       );
 
   static TextStyle screenTitle({Color? color}) => _newsreader(
-        fontSize: 20,
+        fontSize: OTFontSize.s20,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.3,
         color: color,
       );
 
   static TextStyle corpusTitle({Color? color}) => _newsreader(
-        fontSize: 18,
+        fontSize: OTFontSize.s18,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.2,
         color: color,
@@ -143,69 +160,69 @@ class OTTypography {
 
   // ── Interface & Body Styles ──
   static TextStyle sectionTitle({Color? color}) => _outfit(
-        fontSize: 18,
+        fontSize: OTFontSize.s18,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.2,
         color: color,
       );
 
   static TextStyle sectionHeading({Color? color}) => _outfit(
-        fontSize: 11,
+        fontSize: OTFontSize.s11,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.8,
         color: color,
       );
 
   static TextStyle cardTitle({Color? color}) => _outfit(
-        fontSize: 15,
+        fontSize: OTFontSize.s16,
         fontWeight: FontWeight.w600,
         letterSpacing: -0.1,
         color: color,
       );
 
   static TextStyle body({Color? color}) => _outfit(
-        fontSize: 14,
+        fontSize: OTFontSize.s14,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: color,
       );
 
   static TextStyle bodyMedium({Color? color}) => _outfit(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontSize: OTFontSize.s14,
+        fontWeight: FontWeight.w600,
         height: 1.4,
         color: color,
       );
 
   static TextStyle caption({Color? color}) => _outfit(
-        fontSize: 12,
+        fontSize: OTFontSize.s12,
         fontWeight: FontWeight.w400,
         height: 1.35,
         color: color,
       );
 
   static TextStyle captionMedium({Color? color}) => _outfit(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
+        fontSize: OTFontSize.s12,
+        fontWeight: FontWeight.w600,
         color: color,
       );
 
   static TextStyle metadataTag({Color? color}) => _outfit(
-        fontSize: 11,
+        fontSize: OTFontSize.s11,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.8,
         color: color,
       );
 
   static TextStyle button({Color? color}) => _outfit(
-        fontSize: 14,
+        fontSize: OTFontSize.s14,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.1,
         color: color,
       );
 
   static TextStyle price({Color? color}) => _outfit(
-        fontSize: 24,
+        fontSize: OTFontSize.s26,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.5,
         color: color,
@@ -213,28 +230,28 @@ class OTTypography {
 
   // ── Arabic Scholarly Layer (Scheherazade New) ──
   static TextStyle arabicDisplay({Color? color, double height = 1.85}) => _scheherazadeNew(
-        fontSize: 24,
+        fontSize: OTFontSize.s26,
         fontWeight: FontWeight.w700,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
   static TextStyle arabicReading({Color? color, double height = 1.85}) => _scheherazadeNew(
-        fontSize: 18,
-        fontWeight: FontWeight.w500,
+        fontSize: OTFontSize.s18,
+        fontWeight: FontWeight.w400,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
   static TextStyle arabicIbarah({Color? color, double height = 1.85}) => _scheherazadeNew(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
+        fontSize: OTFontSize.s26,
+        fontWeight: FontWeight.w700,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,
       );
 
   static TextStyle arabicQuote({Color? color, double height = 1.85}) => _scheherazadeNew(
-        fontSize: 15,
+        fontSize: OTFontSize.s16,
         fontWeight: FontWeight.w400,
         height: Loc.isArabic && height < 1.85 ? 1.85 : height,
         color: color,

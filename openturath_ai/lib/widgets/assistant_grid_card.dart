@@ -10,6 +10,7 @@ import '../models/agent_model.dart';
 import '../services/open_turath_catalog_repository.dart';
 import 'ot_motion_widgets.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
 /// Satu angka pustaka sebagai pil: angka tegas, satuan redup.
 class LibraryStat {
   const LibraryStat(this.value, this.unit);
@@ -78,7 +79,7 @@ class AssistantGridCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: ScholarlyFonts.newsreader(
-                  fontSize: 20,
+                  fontSize: OTFontSize.s20,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.3,
                   height: 1.2,
@@ -89,14 +90,14 @@ class AssistantGridCard extends StatelessWidget {
                 const SizedBox(height: OTSpacing.sm),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: OTColors.surfaceSubtle(dark),
                     borderRadius: OTRadius.chipBorder,
                   ),
                   child: Text(
                     Loc.tr('comingSoon'),
-                    style: ScholarlyFonts.outfit(fontSize: 11, color: muted),
+                    style: ScholarlyFonts.outfit(fontSize: OTFontSize.s11, color: muted),
                   ),
                 ),
               ],
@@ -110,7 +111,7 @@ class AssistantGridCard extends StatelessWidget {
                     for (final stat in stats)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
+                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           borderRadius: OTRadius.chipBorder,
                           border: Border.all(color: border),
@@ -119,7 +120,7 @@ class AssistantGridCard extends StatelessWidget {
                           TextSpan(
                             text: stat.value,
                             style: ScholarlyFonts.outfit(
-                              fontSize: 12,
+                              fontSize: OTFontSize.s12,
                               fontWeight: FontWeight.w600,
                               color: ink,
                             ),
@@ -127,7 +128,7 @@ class AssistantGridCard extends StatelessWidget {
                               TextSpan(
                                 text: ' ${stat.unit}',
                                 style: ScholarlyFonts.outfit(
-                                  fontSize: 12,
+                                  fontSize: OTFontSize.s12,
                                   fontWeight: FontWeight.w400,
                                   color: muted,
                                 ),
@@ -156,7 +157,7 @@ class AssistantGridCard extends StatelessWidget {
                   style: TextButton.styleFrom(
                     foregroundColor: ink,
                     textStyle: ScholarlyFonts.outfit(
-                        fontSize: 13, fontWeight: FontWeight.w600),
+                        fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
                   ),
                 ),
                 if (onOpenLibrary != null)
@@ -164,7 +165,7 @@ class AssistantGridCard extends StatelessWidget {
                     onPressed: onOpenLibrary,
                     style: TextButton.styleFrom(
                       foregroundColor: muted,
-                      textStyle: ScholarlyFonts.outfit(fontSize: 13),
+                      textStyle: ScholarlyFonts.outfit(fontSize: OTFontSize.s14),
                     ),
                     child: Text(Loc.tr('libraryShort')),
                   ),

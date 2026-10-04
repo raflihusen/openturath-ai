@@ -4,6 +4,8 @@ import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import 'openturath_brand.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// AppLoader: Komponen visual baku tiga titik berdenyut (Three-Dots Pulse Loader).
 /// Menyatukan 4 implementasi loader berbeda menjadi satu komponen berstandar Apple HIG.
 class AppLoader extends StatefulWidget {
@@ -83,7 +85,7 @@ class _AppLoaderState extends State<AppLoader>
           const SizedBox(height: 22),
           // Garis tipis dengan ruas yang meluncur: memuat tanpa durasi pasti.
           ClipRRect(
-            borderRadius: BorderRadius.circular(1),
+            borderRadius: BorderRadius.circular(OTRadius.xs),
             child: SizedBox(
               width: 132,
               height: 2,
@@ -143,13 +145,13 @@ class _AppLoaderState extends State<AppLoader>
             textAlign: TextAlign.center,
             style: widget.isFullscreen
                 ? ScholarlyFonts.newsreader(
-                    fontSize: 20,
+                    fontSize: OTFontSize.s20,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.3,
                     color: textPrimary,
                   )
                 : ScholarlyFonts.outfit(
-                    fontSize: 16,
+                    fontSize: OTFontSize.s16,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
@@ -161,7 +163,7 @@ class _AppLoaderState extends State<AppLoader>
             widget.subtitle!,
             textAlign: TextAlign.center,
             style: ScholarlyFonts.outfit(
-              fontSize: 13,
+              fontSize: OTFontSize.s14,
               color: textSecondary,
             ),
           ),
@@ -179,8 +181,8 @@ class _AppLoaderState extends State<AppLoader>
             child: Text(
               widget.cancelLabel ?? Loc.tr('cancel'),
               style: ScholarlyFonts.outfit(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+                fontSize: OTFontSize.s14,
+                fontWeight: FontWeight.w400,
                 color: textSecondary,
               ),
             ),

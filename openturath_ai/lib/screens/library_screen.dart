@@ -96,7 +96,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       useRootNavigator: true,
       backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(OTRadius.dialog)),
       ),
       builder: (ctx) {
         return SafeArea(
@@ -128,7 +128,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     textAlign: TextAlign.right,
                     style:
                         OTTypography.arabicReading(color: textPrimary).copyWith(
-                      fontSize: 22,
+                      fontSize: OTFontSize.s22,
                       height: 1.85,
                       fontWeight: FontWeight.w700,
                     ),
@@ -140,7 +140,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     textAlign: TextAlign.right,
                     style: OTTypography.arabicReading(color: textSecondary)
                         .copyWith(
-                      fontSize: 16,
+                      fontSize: OTFontSize.s16,
                       height: 1.85,
                     ),
                   ),
@@ -241,13 +241,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
             Text(
               Loc.text(title),
               style: OTTypography.corpusTitle(color: textPrimary)
-                  .copyWith(fontSize: 18),
+                  .copyWith(fontSize: OTFontSize.s18),
             ),
             if (_allBooks != null)
               Text(
                 Loc.tr('bookCount', ['${_filteredBooks?.length ?? 0}']),
                 style: OTTypography.caption(color: textSecondary)
-                    .copyWith(fontSize: 11),
+                    .copyWith(fontSize: OTFontSize.s11),
               ),
           ],
         ),

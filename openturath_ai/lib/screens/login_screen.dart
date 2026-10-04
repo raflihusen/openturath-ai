@@ -21,6 +21,8 @@ import '../services/open_turath_catalog_repository.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// A shared, theme-adaptive sign-in surface for mobile and desktop.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -144,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         AppCopy.appName,
                         style: ScholarlyFonts.newsreader(
-                          fontSize: 19,
+                          fontSize: OTFontSize.s18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.3,
                           color: primary,
@@ -164,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
                         color: OTColors.inverseSurface(dark),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(OTRadius.dialog),
                         border: Border.all(
                             color: dark
                                 ? OTColors.border(dark)
@@ -188,8 +190,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               Text(
                                 Loc.tr('loginTitle'),
                                 style: ScholarlyFonts.newsreader(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: OTFontSize.s36,
+                                  fontWeight: FontWeight.w400,
                                   letterSpacing: -0.8,
                                   height: 1.15,
                                   color: primary,
@@ -199,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Text(
                                 Loc.tr('loginSubtitle'),
                                 style: ScholarlyFonts.outfit(
-                                  fontSize: 15,
+                                  fontSize: OTFontSize.s16,
                                   height: 1.5,
                                   color: secondary,
                                 ),
@@ -221,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       : AppCopy.continueWithGoogle,
                                   textAlign: TextAlign.center,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: 15,
+                                    fontSize: OTFontSize.s16,
                                     fontWeight: FontWeight.w600,
                                     height: 1.4,
                                   ),
@@ -236,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 14),
                                   shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
+                                      borderRadius: BorderRadius.circular(OTRadius.input)),
                                   elevation: 0,
                                 ),
                               ),
@@ -250,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: OTColors.surfaceSubtle(dark),
                                       border: Border.all(
                                           color: OTColors.border(dark)),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(OTRadius.xs),
                                     ),
                                     child: Row(
                                       crossAxisAlignment:
@@ -263,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           child: Text(
                                             _desktopError!,
                                             style: ScholarlyFonts.outfit(
-                                                fontSize: 13,
+                                                fontSize: OTFontSize.s14,
                                                 height: 1.5,
                                                 color: primary),
                                           ),
@@ -278,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 TextSpan(
                                   text: '${AppCopy.termsAgreementPrefix} ',
                                   style: ScholarlyFonts.outfit(
-                                      fontSize: 12,
+                                      fontSize: OTFontSize.s12,
                                       height: 1.6,
                                       color: secondary),
                                   children: [
@@ -352,7 +354,7 @@ class _LoginAside extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: OTColors.inverseSurface(dark),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(OTRadius.dialog),
           border: Border.all(
               color:
                   dark ? OTColors.border(dark) : OTColors.inverseSurface(dark)),
@@ -391,8 +393,8 @@ class _LoginAside extends StatelessWidget {
                     child: Text(
                       AppCopy.appTagline,
                       style: ScholarlyFonts.newsreader(
-                        fontSize: 40,
-                        fontWeight: FontWeight.w500,
+                        fontSize: OTFontSize.s36,
+                        fontWeight: FontWeight.w400,
                         letterSpacing: -1.1,
                         height: 1.08,
                         color: ink,
@@ -407,7 +409,7 @@ class _LoginAside extends StatelessWidget {
                       child: Text(
                         Loc.tr('loginAsideBody'),
                         style: ScholarlyFonts.outfit(
-                            fontSize: 15, height: 1.55, color: muted),
+                            fontSize: OTFontSize.s16, height: 1.55, color: muted),
                       ),
                     ),
                   ),
@@ -452,7 +454,7 @@ class _LibraryTotals extends StatelessWidget {
                   Text(
                     value,
                     style: ScholarlyFonts.outfit(
-                      fontSize: 22,
+                      fontSize: OTFontSize.s22,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.4,
                       color: ink,
@@ -461,7 +463,7 @@ class _LibraryTotals extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(label,
-                      style: ScholarlyFonts.outfit(fontSize: 12, color: muted)),
+                      style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted)),
                 ],
               ),
             );

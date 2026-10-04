@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: Text(
             AppCopy.logoutDialogTitle,
             style: OTTypography.cardTitle(color: textPrimary)
-                .copyWith(fontSize: 18),
+                .copyWith(fontSize: OTFontSize.s18),
           ),
           content: Text(
             AppCopy.logoutDialogBody,
@@ -128,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   AppCopy.deleteAccountTitle,
                   style: OTTypography.cardTitle(
                           color: OTColors.destructive(isDark))
-                      .copyWith(fontSize: 18),
+                      .copyWith(fontSize: OTFontSize.s18),
                 ),
               ),
             ],
@@ -242,14 +242,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Text(Loc.tr('ui_6a2b35b4ca'),
                           style: OTTypography.cardTitle(color: textPrimary)
-                              .copyWith(fontSize: 19)),
+                              .copyWith(fontSize: OTFontSize.s18)),
                       const SizedBox(height: 4),
                       Text(
                         allAccess
                             ? '${Loc.tr('ui_b236ca6182')} · ${summary.supportingLabel}'
                             : Loc.tr('ui_b92aed18d1'),
                         style: OTTypography.caption(color: textSecondary)
-                            .copyWith(fontSize: 13),
+                            .copyWith(fontSize: OTFontSize.s14),
                       ),
                     ],
                   ),
@@ -321,7 +321,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           AppCopy.navSettings,
           style: ScholarlyFonts.outfit(
-            fontSize: 20,
+            fontSize: OTFontSize.s20,
             fontWeight: FontWeight.w700,
             color: textPrimary,
           ),
@@ -392,7 +392,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         Text(
                                           AppCopy.appearance,
                                           style: ScholarlyFonts.outfit(
-                                            fontSize: 14,
+                                            fontSize: OTFontSize.s14,
                                             fontWeight: FontWeight.w600,
                                             color: textPrimary,
                                           ),
@@ -401,10 +401,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                     const SizedBox(height: 12),
                                     Container(
-                                      padding: const EdgeInsets.all(3),
+                                      padding: const EdgeInsets.all(4),
                                       decoration: BoxDecoration(
                                         color: OTColors.surfaceSubtle(isDark),
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(OTRadius.input),
                                       ),
                                       child: Row(
                                         children: [
@@ -549,7 +549,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           AppCopy.aboutTitle,
           style: OTTypography.corpusTitle(color: textPrimary)
-              .copyWith(fontSize: 20),
+              .copyWith(fontSize: OTFontSize.s20),
         ),
         content: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -640,7 +640,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () => Navigator.pop(ctx),
             style: FilledButton.styleFrom(
               backgroundColor: textPrimary,
-              foregroundColor: isDark ? const Color(0xFF191919) : Colors.white,
+              foregroundColor: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
               shape:
                   RoundedRectangleBorder(borderRadius: OTRadius.buttonBorder),
             ),
@@ -660,7 +660,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(OTRadius.xs),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         child: Row(
@@ -699,7 +699,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   for (final entry in Loc.languageNames.entries)
                     ListTile(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(OTRadius.input)),
                         title: Text(
                           entry.value,
                           maxLines: 1,
@@ -758,15 +758,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(vertical: 9),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color: isSelected ? activeBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(9),
+            borderRadius: BorderRadius.circular(OTRadius.xs),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
                       color:
-                          Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
+                          OTColors.shadow.withValues(alpha: isDark ? 0.35 : 0.06),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),
@@ -781,8 +781,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 Loc.text(title),
                 style: ScholarlyFonts.outfit(
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  fontSize: OTFontSize.s14,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected ? activeFg : inactiveFg,
                 ),
               ),
@@ -845,7 +845,7 @@ class _MembershipPass extends StatelessWidget {
       padding: const EdgeInsets.all(OTSpacing.lg),
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: onCard.withValues(alpha: isDark ? 0.14 : 0)),
       ),
       child: Column(
@@ -855,7 +855,7 @@ class _MembershipPass extends StatelessWidget {
             AppCopy.navStudies.toUpperCase(),
             style: ScholarlyFonts.outfit(
               color: onCardMuted,
-              fontSize: 11,
+              fontSize: OTFontSize.s11,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),
@@ -866,7 +866,7 @@ class _MembershipPass extends StatelessWidget {
                 ? Text(
                     summary.accessLabel,
                     style: ScholarlyFonts.outfit(
-                        color: onCard, fontSize: 15, height: 1.4),
+                        color: onCard, fontSize: OTFontSize.s16, height: 1.4),
                   )
                 : ClipRect(
                     child: Wrap(
@@ -876,7 +876,7 @@ class _MembershipPass extends StatelessWidget {
                         for (final name in names)
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 9, vertical: 4),
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               borderRadius: OTRadius.chipBorder,
                               border: Border.all(
@@ -885,7 +885,7 @@ class _MembershipPass extends StatelessWidget {
                             child: Text(
                               name,
                               style: ScholarlyFonts.outfit(
-                                  color: onCard, fontSize: 12),
+                                  color: onCard, fontSize: OTFontSize.s12),
                             ),
                           ),
                       ],
@@ -894,7 +894,7 @@ class _MembershipPass extends StatelessWidget {
           ),
           Text(
             Loc.tr('cardFlipHint'),
-            style: ScholarlyFonts.outfit(color: onCardMuted, fontSize: 11),
+            style: ScholarlyFonts.outfit(color: onCardMuted, fontSize: OTFontSize.s11),
           ),
         ],
       ),
@@ -941,11 +941,11 @@ class _MembershipPass extends StatelessWidget {
                     colors: [
                       Color.lerp(cardColor, onCard, 0.09)!,
                       cardColor,
-                      Color.lerp(cardColor, const Color(0xFF000000), 0.3)!,
+                      Color.lerp(cardColor, OTColors.shadow, 0.3)!,
                     ],
                     stops: const [0, 0.45, 1],
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(OTRadius.card),
                   border: Border.all(color: onCard.withValues(alpha: 0.14)),
                 ),
                 child: Stack(
@@ -974,7 +974,7 @@ class _MembershipPass extends StatelessWidget {
                                 textDirection: TextDirection.ltr,
                                 style: ScholarlyFonts.newsreader(
                                   color: onCard,
-                                  fontSize: 18,
+                                  fontSize: OTFontSize.s18,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: -0.3,
                                 ),
@@ -1002,7 +1002,7 @@ class _MembershipPass extends StatelessWidget {
                                           : summary.badge,
                                       style: ScholarlyFonts.outfit(
                                         color: onCard,
-                                        fontSize: 11,
+                                        fontSize: OTFontSize.s11,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 1.0,
                                       ),
@@ -1019,8 +1019,8 @@ class _MembershipPass extends StatelessWidget {
                               textDirection: TextDirection.ltr,
                               style: ScholarlyFonts.outfit(
                                 color: onCard.withValues(alpha: 0.86),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
+                                fontSize: OTFontSize.s16,
+                                fontWeight: FontWeight.w400,
                                 letterSpacing: 2.4,
                               ),
                             ),
@@ -1039,7 +1039,7 @@ class _MembershipPass extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: ScholarlyFonts.outfit(
                                         color: onCard,
-                                        fontSize: 14,
+                                        fontSize: OTFontSize.s14,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 1.2,
                                       ),
@@ -1051,7 +1051,7 @@ class _MembershipPass extends StatelessWidget {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: ScholarlyFonts.outfit(
-                                            color: onCardMuted, fontSize: 12),
+                                            color: onCardMuted, fontSize: OTFontSize.s12),
                                       ),
                                     ],
                                   ],
@@ -1069,14 +1069,14 @@ class _MembershipPass extends StatelessWidget {
                                               ? AppCopy.validUntil
                                               : summary.expiryLabel,
                                       style: ScholarlyFonts.outfit(
-                                          color: onCardMuted, fontSize: 11),
+                                          color: onCardMuted, fontSize: OTFontSize.s11),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       expiry,
                                       style: ScholarlyFonts.outfit(
                                         color: onCard,
-                                        fontSize: 14,
+                                        fontSize: OTFontSize.s14,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0.6,
                                       ),
@@ -1153,13 +1153,13 @@ class _MembershipPass extends StatelessWidget {
                           children: [
                             Text(Loc.tr('planLabel'),
                                 style: ScholarlyFonts.outfit(
-                                    fontSize: 12, color: muted)),
+                                    fontSize: OTFontSize.s12, color: muted)),
                             const SizedBox(height: 2),
                             Text(summary.accessLabel,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: ScholarlyFonts.outfit(
-                                    fontSize: 16,
+                                    fontSize: OTFontSize.s16,
                                     fontWeight: FontWeight.w600,
                                     color: foreground)),
                             if (summary.supportingLabel.isNotEmpty) ...[
@@ -1168,7 +1168,7 @@ class _MembershipPass extends StatelessWidget {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: ScholarlyFonts.outfit(
-                                      fontSize: 13, height: 1.4, color: muted)),
+                                      fontSize: OTFontSize.s14, height: 1.4, color: muted)),
                             ],
                           ],
                         ),
@@ -1273,7 +1273,7 @@ class _AccessPortfolioRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 11),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(children: [
           Icon(Icons.check_rounded, color: color, size: 18),
           const SizedBox(width: 12),
@@ -1312,7 +1312,7 @@ class _SettingsTile extends StatelessWidget {
       onTap: onTap,
       pressedScale: 0.985,
       hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(OTRadius.input),
       child: ListTile(
         onTap: onTap,
         contentPadding:

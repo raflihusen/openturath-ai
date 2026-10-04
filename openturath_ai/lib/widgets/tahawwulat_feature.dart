@@ -6,6 +6,7 @@ import '../core/design/ot_colors.dart';
 import '../core/design/ot_typography.dart';
 import 'openturath_brand.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 class TahawwulatFeature extends StatelessWidget {
   const TahawwulatFeature({super.key, required this.onOpen});
   final VoidCallback onOpen;
@@ -20,20 +21,20 @@ class TahawwulatFeature extends StatelessWidget {
 
     return Material(
       color: OTColors.surface(dark),
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(OTRadius.input),
       child: InkWell(
         onTap: onOpen,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(OTRadius.input),
         child: Container(
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(OTRadius.input),
             border: Border.all(color: border, width: 1.0),
           ),
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(OTRadius.input),
               border: Border.all(color: border.withValues(alpha: 0.6), width: 0.8),
             ),
             child: Column(
@@ -50,20 +51,20 @@ class TahawwulatFeature extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: border.withValues(alpha: 0.25),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(OTRadius.xs),
                             ),
                             child: Text(
                               Loc.tr('tahawwulatHonor'),
-                              style: OTTypography.captionMedium(color: ink).copyWith(fontSize: 11),
+                              style: OTTypography.captionMedium(color: ink).copyWith(fontSize: OTFontSize.s11),
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Manhaj Al-Allamah Al-Habib Abu Bakr al-Masyhur',
-                            style: OTTypography.caption(color: muted).copyWith(fontSize: 11),
+                            style: OTTypography.caption(color: muted).copyWith(fontSize: OTFontSize.s11),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -83,7 +84,7 @@ class TahawwulatFeature extends StatelessWidget {
                     Text(
                       AppCopy.planTahawwulat,
                       style: ScholarlyFonts.newsreader(
-                        fontSize: 22,
+                        fontSize: OTFontSize.s22,
                         fontWeight: FontWeight.w700,
                         color: ink,
                         letterSpacing: -0.3,
@@ -93,7 +94,7 @@ class TahawwulatFeature extends StatelessWidget {
                       'فقه التحولات',
                       textDirection: TextDirection.rtl,
                       style: ScholarlyFonts.scheherazadeNew(
-                        fontSize: 20,
+                        fontSize: OTFontSize.s20,
                         fontWeight: FontWeight.w700,
                         color: ink,
                         height: 1.85,
@@ -105,7 +106,7 @@ class TahawwulatFeature extends StatelessWidget {
 
                 Text(
                   Loc.tr('tahawwulatBenefit'),
-                  style: OTTypography.body(color: muted).copyWith(fontSize: 13, height: 1.4),
+                  style: OTTypography.body(color: muted).copyWith(fontSize: OTFontSize.s14, height: 1.4),
                 ),
                 const SizedBox(height: 16),
 
@@ -158,12 +159,12 @@ class _FeaturePill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: OTColors.canvas(isDark),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(OTRadius.xs),
         border: Border.all(color: border.withValues(alpha: 0.7), width: 0.6),
       ),
       child: Text(
         label,
-        style: ScholarlyFonts.outfit(fontSize: 11, fontWeight: FontWeight.w500, color: textSecondary),
+        style: ScholarlyFonts.outfit(fontSize: OTFontSize.s11, fontWeight: FontWeight.w400, color: textSecondary),
       ),
     );
   }

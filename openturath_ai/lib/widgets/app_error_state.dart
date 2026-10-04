@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../core/design/ot_colors.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
 /// Menghindarkan aplikasi dari layar kosong atau error bisu tanpa pemulihan.
 class AppErrorState extends StatelessWidget {
@@ -110,7 +112,7 @@ class AppErrorState extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 18,
+                  fontSize: OTFontSize.s18,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.2,
                   color: ink,
@@ -121,7 +123,7 @@ class AppErrorState extends StatelessWidget {
                 message,
                 textAlign: TextAlign.center,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   height: 1.55,
                   color: muted,
                 ),
@@ -136,9 +138,9 @@ class AppErrorState extends StatelessWidget {
                     minimumSize: const Size(200, 44),
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     textStyle: ScholarlyFonts.outfit(
-                        fontSize: 14, fontWeight: FontWeight.w600),
+                        fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(OTRadius.input),
                     ),
                   ),
                 ),
@@ -152,9 +154,9 @@ class AppErrorState extends StatelessWidget {
                     foregroundColor: ink,
                     side: BorderSide(color: OTColors.border(isDark)),
                     textStyle: ScholarlyFonts.outfit(
-                        fontSize: 14, fontWeight: FontWeight.w500),
+                        fontSize: OTFontSize.s14, fontWeight: FontWeight.w400),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(OTRadius.input),
                     ),
                   ),
                   child: Text(secondaryLabel),
@@ -168,7 +170,7 @@ class AppErrorState extends StatelessWidget {
                     minimumSize: const Size(120, 44),
                     foregroundColor: muted,
                     textStyle: ScholarlyFonts.outfit(
-                        fontSize: 14, fontWeight: FontWeight.w500),
+                        fontSize: OTFontSize.s14, fontWeight: FontWeight.w400),
                   ),
                   child: Text(backLabel),
                 ),

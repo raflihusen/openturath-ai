@@ -10,6 +10,8 @@ import 'apple_interactive_wrapper.dart';
 import 'arch_echo_canvas.dart';
 import '../core/scholarly_fonts.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Item pembantu untuk data 6 Kitab Qawa'id
 class _QawaidBook {
   final String level;
@@ -163,7 +165,7 @@ class _TahawwulatIntroductionSheetState
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: ScholarlyFonts.newsreader(
-            fontSize: page ? 22 : 19,
+            fontSize: page ? OTFontSize.s22 : OTFontSize.s18,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.3,
             color: textPrimary,
@@ -175,7 +177,7 @@ class _TahawwulatIntroductionSheetState
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: ScholarlyFonts.outfit(
-            fontSize: page ? 13 : 11.5,
+            fontSize: page ? OTFontSize.s14 : OTFontSize.s12,
             fontWeight: FontWeight.w400,
             color: textSecondary,
           ),
@@ -200,15 +202,15 @@ class _TahawwulatIntroductionSheetState
             child: AppleInteractiveWrapper(
               onTap: () => select(idx),
               pressedScale: 0.96,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(OTRadius.card),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color:
                       isSelected ? textPrimary : OTColors.surfaceSubtle(isDark),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(OTRadius.card),
                   border: Border.all(
                     color: isSelected ? textPrimary : borderColor,
                     width: 0.8,
@@ -217,8 +219,8 @@ class _TahawwulatIntroductionSheetState
                 child: Text(
                   _tabs[idx],
                   style: ScholarlyFonts.outfit(
-                    fontSize: 12.5,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    fontSize: OTFontSize.s12,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     color: isSelected ? surfaceColor : textSecondary,
                   ),
                 ),
@@ -283,7 +285,7 @@ class _TahawwulatIntroductionSheetState
                       Text(
                         "Pengantar · ${_chapters.length} bagian",
                         style: ScholarlyFonts.outfit(
-                          fontSize: 13,
+                          fontSize: OTFontSize.s14,
                           color: onCover.withValues(alpha: 0.6),
                         ),
                       ),
@@ -292,8 +294,8 @@ class _TahawwulatIntroductionSheetState
                         "Mengenal\nFikih Tahawwulat",
                         style: ScholarlyFonts.newsreader(
                           fontSize:
-                              viewport.width >= 1100 ? 64 : (roomy ? 46 : 40),
-                          fontWeight: FontWeight.w500,
+                              viewport.width >= 1100 ? 64 : (roomy ? OTFontSize.s36 : OTFontSize.s36),
+                          fontWeight: FontWeight.w400,
                           letterSpacing: roomy ? -2 : -1.2,
                           height: 1.02,
                           color: onCover,
@@ -304,7 +306,7 @@ class _TahawwulatIntroductionSheetState
                         "فِقْهُ التَّحَوُّلَاتِ",
                         textDirection: TextDirection.rtl,
                         style: ScholarlyFonts.scheherazadeNew(
-                          fontSize: roomy ? 30 : 24,
+                          fontSize: roomy ? OTFontSize.s26 : OTFontSize.s26,
                           height: 1.5,
                           color: onCover.withValues(alpha: 0.72),
                         ),
@@ -314,7 +316,7 @@ class _TahawwulatIntroductionSheetState
                         "Ilmu membaca perubahan zaman dengan petunjuk Nabi ﷺ, "
                         "disusun Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur.",
                         style: ScholarlyFonts.outfit(
-                          fontSize: roomy ? 17 : 15,
+                          fontSize: roomy ? OTFontSize.s16 : OTFontSize.s16,
                           height: 1.55,
                           color: onCover.withValues(alpha: 0.72),
                         ),
@@ -343,7 +345,7 @@ class _TahawwulatIntroductionSheetState
             );
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 13),
+            padding: const EdgeInsets.symmetric(vertical: 12),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
@@ -353,15 +355,15 @@ class _TahawwulatIntroductionSheetState
                   child: Text(
                     (index + 1).toString().padLeft(2, '0'),
                     style: ScholarlyFonts.newsreader(
-                        fontSize: 18, color: textTertiary),
+                        fontSize: OTFontSize.s18, color: textTertiary),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     chapter.$2,
                     style: ScholarlyFonts.newsreader(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w500,
+                      fontSize: OTFontSize.s18,
+                      fontWeight: FontWeight.w400,
                       letterSpacing: -0.2,
                       height: 1.25,
                       color: textPrimary,
@@ -406,7 +408,7 @@ class _TahawwulatIntroductionSheetState
                             Text(
                               "Daftar isi",
                               style: ScholarlyFonts.outfit(
-                                  fontSize: 13, color: textTertiary),
+                                  fontSize: OTFontSize.s14, color: textTertiary),
                             ),
                             const SizedBox(height: 10),
                             Divider(height: 1, color: borderColor),
@@ -497,7 +499,7 @@ class _TahawwulatIntroductionSheetState
       height: MediaQuery.of(context).size.height * 0.92,
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(OTRadius.sheet)),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       child: Column(
@@ -785,7 +787,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -797,7 +799,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "Empat rukun agama dalam Hadis Jibril",
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -846,10 +848,10 @@ class _TahawwulatIntroductionSheetState
           ),
           const SizedBox(height: 14),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF151515) : Colors.white,
-              borderRadius: BorderRadius.circular(8),
+              color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+              borderRadius: BorderRadius.circular(OTRadius.xs),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Row(
@@ -860,8 +862,8 @@ class _TahawwulatIntroductionSheetState
                   child: Text(
                     "Disatukan oleh Nabi ﷺ dalam satu kalimat: «يُعَلِّمُكُمْ دِينَكُمْ» (\"Mengajarkan Agama Kalian\").",
                     style: ScholarlyFonts.outfit(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                      fontSize: OTFontSize.s14,
+                      fontWeight: FontWeight.w400,
                       color: textSecondary,
                     ),
                   ),
@@ -883,11 +885,11 @@ class _TahawwulatIntroductionSheetState
     required bool isHighlight,
   }) {
     final borderColor = isHighlight
-        ? (isDark ? const Color(0xFF4F4F4F) : const Color(0xFFC5C5C5))
+        ? (isDark ? OTColors.borderDark : OTColors.borderLight)
         : OTColors.border(isDark);
     final bgColor = isHighlight
-        ? (isDark ? const Color(0xFF212121) : const Color(0xFFF5F5F5))
-        : (isDark ? const Color(0xFF171717) : Colors.white);
+        ? (isDark ? OTColors.surfaceSubtleDark : OTColors.textPrimaryDark)
+        : (isDark ? OTColors.surfaceDark : OTColors.surfaceLight);
     final textPrimary = OTColors.textPrimary(isDark);
     final textSecondary = OTColors.textSecondary(isDark);
 
@@ -895,7 +897,7 @@ class _TahawwulatIntroductionSheetState
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(OTRadius.input),
         border: Border.all(color: borderColor, width: isHighlight ? 1.2 : 0.8),
       ),
       child: Row(
@@ -905,14 +907,14 @@ class _TahawwulatIntroductionSheetState
             width: 26,
             height: 26,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2B2B2B) : const Color(0xFFE5E5E5),
-              borderRadius: BorderRadius.circular(6),
+              color: isDark ? OTColors.borderSubtleDark : OTColors.borderSubtleLight,
+              borderRadius: BorderRadius.circular(OTRadius.xs),
             ),
             alignment: Alignment.center,
             child: Text(
               number,
               style: ScholarlyFonts.jetBrainsMono(
-                fontSize: 12.5,
+                fontSize: OTFontSize.s12,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
               ),
@@ -929,7 +931,7 @@ class _TahawwulatIntroductionSheetState
                     Text(
                       title,
                       style: ScholarlyFonts.newsreader(
-                        fontSize: 14.5,
+                        fontSize: OTFontSize.s14,
                         fontWeight: FontWeight.w600,
                         color: textPrimary,
                       ),
@@ -939,7 +941,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   discipline,
                   style: ScholarlyFonts.outfit(
-                    fontSize: 13,
+                    fontSize: OTFontSize.s14,
                     fontWeight: FontWeight.w600,
                     color: textSecondary,
                   ),
@@ -948,7 +950,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   desc,
                   style: ScholarlyFonts.outfit(
-                    fontSize: 12.5,
+                    fontSize: OTFontSize.s12,
                     color: textSecondary,
                     height: 1.5,
                   ),
@@ -973,7 +975,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -985,7 +987,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "Dua tanda runtuhnya otoritas",
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -998,8 +1000,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF171717) : Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+              borderRadius: BorderRadius.circular(OTRadius.input),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -1008,7 +1010,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   "«أَنْ تَلِدَ الأَمَةُ رَبَّتَهَا»",
                   style: ScholarlyFonts.scheherazadeNew(
-                    fontSize: 17,
+                    fontSize: OTFontSize.s16,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
                   ),
@@ -1017,7 +1019,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   "1. Keruntuhan Otoritas Ilmu & Akidah (Naqḍ Qarār al-`Ilm wal-I'tiqād)",
                   style: ScholarlyFonts.outfit(
-                    fontSize: 12.5,
+                    fontSize: OTFontSize.s12,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
@@ -1026,7 +1028,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   "Runtuhnya tradisi talaqqi dan adab berguru. Anak menindas orang tua, murid tidak menghormati ulama bersanad, dan ilmu dicari murni demi keuntungan duniawi.",
                   style: ScholarlyFonts.outfit(
-                    fontSize: 13,
+                    fontSize: OTFontSize.s14,
                     color: textSecondary,
                     height: 1.5,
                   ),
@@ -1041,8 +1043,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF171717) : Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+              borderRadius: BorderRadius.circular(OTRadius.input),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -1051,7 +1053,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   "«أَنْ تَرَى الحُفَاةَ العُرَاةَ يَتَطَاوَلُونَ فِي البُنْيَانِ»",
                   style: ScholarlyFonts.scheherazadeNew(
-                    fontSize: 17,
+                    fontSize: OTFontSize.s16,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
                   ),
@@ -1060,7 +1062,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   "2. Keruntuhan Otoritas Kepemimpinan & Ekonomi (Naqḍ Qarār al-Ḥukm wal-Iqtiṣād)",
                   style: ScholarlyFonts.outfit(
-                    fontSize: 12.5,
+                    fontSize: OTFontSize.s12,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
@@ -1069,7 +1071,7 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   "Tatanan kepemimpinan dunia jatuh ke tangan orang yang tidak amanah, ekonomi global dikuasai sistem ribawi, dan kemuliaan diukur murni dari kemegahan material.",
                   style: ScholarlyFonts.outfit(
-                    fontSize: 13,
+                    fontSize: OTFontSize.s14,
                     color: textSecondary,
                     height: 1.5,
                   ),
@@ -1094,7 +1096,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -1106,7 +1108,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "Perubahan bahasa dakwah",
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -1118,10 +1120,10 @@ class _TahawwulatIntroductionSheetState
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(11),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1B1B1B) : Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                    color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(OTRadius.input),
                     border: Border.all(color: borderColor, width: 0.8),
                   ),
                   child: Column(
@@ -1130,7 +1132,7 @@ class _TahawwulatIntroductionSheetState
                       Text(
                         "Lughatut-Takfīr",
                         style: ScholarlyFonts.newsreader(
-                          fontSize: 13.5,
+                          fontSize: OTFontSize.s14,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
                         ),
@@ -1139,7 +1141,7 @@ class _TahawwulatIntroductionSheetState
                       Text(
                         "• Menghakimi & mencaci\n• Menganggap masyarakat lawan\n• Mudah mengafirkan",
                         style: ScholarlyFonts.outfit(
-                          fontSize: 12.5,
+                          fontSize: OTFontSize.s12,
                           color: textSecondary,
                           height: 1.5,
                         ),
@@ -1155,16 +1157,16 @@ class _TahawwulatIntroductionSheetState
               ),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(11),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? const Color(0xFF232323)
-                        : const Color(0xFFF4F4F4),
-                    borderRadius: BorderRadius.circular(10),
+                        ? OTColors.surfaceSubtleDark
+                        : OTColors.surfaceSubtleLight,
+                    borderRadius: BorderRadius.circular(OTRadius.input),
                     border: Border.all(
                       color: isDark
-                          ? const Color(0xFF434343)
-                          : const Color(0xFFDBDBDB),
+                          ? OTColors.borderDark
+                          : OTColors.borderLight,
                       width: 1.0,
                     ),
                   ),
@@ -1174,7 +1176,7 @@ class _TahawwulatIntroductionSheetState
                       Text(
                         "Lughatut-Ṭibb",
                         style: ScholarlyFonts.newsreader(
-                          fontSize: 13.5,
+                          fontSize: OTFontSize.s14,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
                         ),
@@ -1183,7 +1185,7 @@ class _TahawwulatIntroductionSheetState
                       Text(
                         "• Dokter penolong beradab\n• Memandang umat pasien\n• Inqāḏ mā yumkinu inqāḏuh",
                         style: ScholarlyFonts.outfit(
-                          fontSize: 12.5,
+                          fontSize: OTFontSize.s12,
                           color: textSecondary,
                           height: 1.5,
                         ),
@@ -1242,7 +1244,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -1254,7 +1256,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "Empat lapis penjagaan diri (al-khuwaishah)",
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -1268,8 +1270,8 @@ class _TahawwulatIntroductionSheetState
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF171717) : Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(OTRadius.input),
                   border: Border.all(color: borderColor, width: 0.8),
                 ),
                 child: Column(
@@ -1281,7 +1283,7 @@ class _TahawwulatIntroductionSheetState
                         Text(
                           l.title,
                           style: ScholarlyFonts.outfit(
-                            fontSize: 12.5,
+                            fontSize: OTFontSize.s12,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
                           ),
@@ -1289,7 +1291,7 @@ class _TahawwulatIntroductionSheetState
                         Text(
                           l.arabic,
                           style: ScholarlyFonts.scheherazadeNew(
-                            fontSize: 15,
+                            fontSize: OTFontSize.s16,
                             color: textSecondary,
                           ),
                         ),
@@ -1299,7 +1301,7 @@ class _TahawwulatIntroductionSheetState
                     Text(
                       l.desc,
                       style: ScholarlyFonts.outfit(
-                        fontSize: 12.5,
+                        fontSize: OTFontSize.s12,
                         color: textSecondary,
                         height: 1.5,
                       ),
@@ -1370,7 +1372,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(14),
@@ -1382,7 +1384,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "Perbandingan cara pandang",
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -1396,8 +1398,8 @@ class _TahawwulatIntroductionSheetState
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF171717) : Colors.white,
-                  borderRadius: BorderRadius.circular(8),
+                  color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(OTRadius.xs),
                   border: Border.all(color: borderColor, width: 0.7),
                 ),
                 child: Column(
@@ -1406,7 +1408,7 @@ class _TahawwulatIntroductionSheetState
                     Text(
                       r.aspect,
                       style: ScholarlyFonts.outfit(
-                        fontSize: 13,
+                        fontSize: OTFontSize.s14,
                         fontWeight: FontWeight.w700,
                         color: textPrimary,
                       ),
@@ -1415,12 +1417,12 @@ class _TahawwulatIntroductionSheetState
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("❌ ", style: TextStyle(fontSize: 11)),
+                        const Text("❌ ", style: TextStyle(fontSize: OTFontSize.s11)),
                         Expanded(
                           child: Text(
                             r.before,
                             style: ScholarlyFonts.outfit(
-                              fontSize: 12.5,
+                              fontSize: OTFontSize.s12,
                               color: textSecondary,
                               height: 1.3,
                             ),
@@ -1434,15 +1436,15 @@ class _TahawwulatIntroductionSheetState
                       children: [
                         Text("✓ ",
                             style: TextStyle(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.bold,
+                                fontSize: OTFontSize.s12,
+                                fontWeight: FontWeight.w700,
                                 color: textPrimary)),
                         Expanded(
                           child: Text(
                             r.after,
                             style: ScholarlyFonts.outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
+                              fontSize: OTFontSize.s12,
+                              fontWeight: FontWeight.w400,
                               color: textPrimary,
                               height: 1.3,
                             ),
@@ -1517,7 +1519,7 @@ class _TahawwulatIntroductionSheetState
     return Container(
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: borderColor, width: 0.8),
       ),
       padding: const EdgeInsets.all(16),
@@ -1529,7 +1531,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "Dua kelompok kitab",
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -1542,8 +1544,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF171717) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+              borderRadius: BorderRadius.circular(OTRadius.input),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -1553,17 +1555,17 @@ class _TahawwulatIntroductionSheetState
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 3),
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white24 : Colors.black87,
-                        borderRadius: BorderRadius.circular(5),
+                        color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.24) : OTColors.shadow.withValues(alpha: 0.87),
+                        borderRadius: BorderRadius.circular(OTRadius.xs),
                       ),
                       child: Text(
                         "KATEGORI I",
                         style: ScholarlyFonts.outfit(
-                          fontSize: 12.5,
+                          fontSize: OTFontSize.s12,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: OTColors.surfaceLight,
                         ),
                       ),
                     ),
@@ -1572,7 +1574,7 @@ class _TahawwulatIntroductionSheetState
                       child: Text(
                         "Al-Qawā'id (القواعد) — 6 Kitab Kaidah Pokok",
                         style: ScholarlyFonts.newsreader(
-                          fontSize: 14.5,
+                          fontSize: OTFontSize.s14,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
                         ),
@@ -1585,12 +1587,12 @@ class _TahawwulatIntroductionSheetState
                   children: qawaidBooks.map((book) {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 6),
-                      padding: const EdgeInsets.all(9),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: isDark
-                            ? const Color(0xFF212121)
-                            : const Color(0xFFF7F7F7),
-                        borderRadius: BorderRadius.circular(8),
+                            ? OTColors.surfaceSubtleDark
+                            : OTColors.surfaceSubtleLight,
+                        borderRadius: BorderRadius.circular(OTRadius.xs),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1599,13 +1601,13 @@ class _TahawwulatIntroductionSheetState
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white12 : Colors.black12,
-                              borderRadius: BorderRadius.circular(4),
+                              color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.12) : OTColors.shadow.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(OTRadius.xs),
                             ),
                             child: Text(
                               book.level,
                               style: ScholarlyFonts.outfit(
-                                fontSize: 12.5,
+                                fontSize: OTFontSize.s12,
                                 fontWeight: FontWeight.w600,
                                 color: textSecondary,
                               ),
@@ -1621,7 +1623,7 @@ class _TahawwulatIntroductionSheetState
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: 13,
+                                    fontSize: OTFontSize.s14,
                                     fontWeight: FontWeight.w600,
                                     color: textPrimary,
                                   ),
@@ -1629,7 +1631,7 @@ class _TahawwulatIntroductionSheetState
                                 Text(
                                   book.desc,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: 12.5,
+                                    fontSize: OTFontSize.s12,
                                     color: textSecondary,
                                     height: 1.3,
                                   ),
@@ -1652,8 +1654,8 @@ class _TahawwulatIntroductionSheetState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF171717) : Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+              borderRadius: BorderRadius.circular(OTRadius.input),
               border: Border.all(color: borderColor, width: 0.8),
             ),
             child: Column(
@@ -1663,17 +1665,17 @@ class _TahawwulatIntroductionSheetState
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 3),
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white24 : Colors.black87,
-                        borderRadius: BorderRadius.circular(5),
+                        color: isDark ? OTColors.surfaceLight.withValues(alpha: 0.24) : OTColors.shadow.withValues(alpha: 0.87),
+                        borderRadius: BorderRadius.circular(OTRadius.xs),
                       ),
                       child: Text(
                         "KATEGORI II",
                         style: ScholarlyFonts.outfit(
-                          fontSize: 12.5,
+                          fontSize: OTFontSize.s12,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: OTColors.surfaceLight,
                         ),
                       ),
                     ),
@@ -1682,7 +1684,7 @@ class _TahawwulatIntroductionSheetState
                       child: Text(
                         "At-Taṭbīqāt (التطبيقات) — Terapan & Sastra",
                         style: ScholarlyFonts.newsreader(
-                          fontSize: 14.5,
+                          fontSize: OTFontSize.s14,
                           fontWeight: FontWeight.w600,
                           color: textPrimary,
                         ),
@@ -1732,7 +1734,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 title,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 13,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: OTColors.textPrimary(isDark),
                 ),
@@ -1741,7 +1743,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 desc,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 12.5,
+                  fontSize: OTFontSize.s12,
                   color: OTColors.textSecondary(isDark),
                   height: 1.3,
                 ),
@@ -1826,7 +1828,7 @@ class _TahawwulatIntroductionSheetState
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
             color: OTColors.surfaceSubtle(isDark),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(OTRadius.input),
             border: Border.all(color: OTColors.border(isDark), width: 0.8),
           ),
           padding: const EdgeInsets.all(14),
@@ -1840,15 +1842,15 @@ class _TahawwulatIntroductionSheetState
                     height: 26,
                     decoration: BoxDecoration(
                       color: isDark
-                          ? const Color(0xFF2B2B2B)
-                          : const Color(0xFFE5E5E5),
-                      borderRadius: BorderRadius.circular(6),
+                          ? OTColors.borderSubtleDark
+                          : OTColors.borderSubtleLight,
+                      borderRadius: BorderRadius.circular(OTRadius.xs),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       room.number,
                       style: ScholarlyFonts.jetBrainsMono(
-                        fontSize: 12.5,
+                        fontSize: OTFontSize.s12,
                         fontWeight: FontWeight.w700,
                         color: OTColors.textPrimary(isDark),
                       ),
@@ -1858,7 +1860,7 @@ class _TahawwulatIntroductionSheetState
                   Text(
                     room.name,
                     style: ScholarlyFonts.newsreader(
-                      fontSize: 16,
+                      fontSize: OTFontSize.s16,
                       fontWeight: FontWeight.w600,
                       color: OTColors.textPrimary(isDark),
                     ),
@@ -1867,26 +1869,26 @@ class _TahawwulatIntroductionSheetState
                   Text(
                     "(${room.arabic})",
                     style: ScholarlyFonts.scheherazadeNew(
-                      fontSize: 15,
+                      fontSize: OTFontSize.s16,
                       color: OTColors.textSecondary(isDark),
                     ),
                   ),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 3,
+                      horizontal: 8,
+                      vertical: 4,
                     ),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? Colors.white10
-                          : Colors.black.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(4),
+                          ? OTColors.surfaceLight.withValues(alpha: 0.1)
+                          : OTColors.shadow.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(OTRadius.xs),
                     ),
                     child: Text(
                       room.role,
                       style: ScholarlyFonts.outfit(
-                        fontSize: 12.5,
+                        fontSize: OTFontSize.s12,
                         fontWeight: FontWeight.w600,
                         color: OTColors.textSecondary(isDark),
                       ),
@@ -1898,7 +1900,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 room.desc,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 13,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w400,
                   color: OTColors.textSecondary(isDark),
                   height: 1.4,
@@ -1915,15 +1917,15 @@ class _TahawwulatIntroductionSheetState
                     }
                   },
                   pressedScale: 0.96,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(OTRadius.xs),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
-                      vertical: 5,
+                      vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
-                      borderRadius: BorderRadius.circular(6),
+                      color: isDark ? OTColors.surfaceLight : OTColors.shadow,
+                      borderRadius: BorderRadius.circular(OTRadius.xs),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -1931,16 +1933,16 @@ class _TahawwulatIntroductionSheetState
                         Text(
                           "Buka ${room.name}",
                           style: ScholarlyFonts.outfit(
-                            fontSize: 12.5,
+                            fontSize: OTFontSize.s12,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: isDark ? OTColors.shadow : OTColors.surfaceLight,
                           ),
                         ),
                         const SizedBox(width: 4),
                         Icon(
                           Icons.arrow_forward_rounded,
                           size: 12,
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? OTColors.shadow : OTColors.surfaceLight,
                         ),
                       ],
                     ),
@@ -1965,8 +1967,8 @@ class _TahawwulatIntroductionSheetState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF151515) : Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        color: isDark ? OTColors.surfaceDark : OTColors.surfaceLight,
+        borderRadius: BorderRadius.circular(OTRadius.input),
         border: Border.all(
           color: borderColor,
           width: 0.8,
@@ -1980,7 +1982,7 @@ class _TahawwulatIntroductionSheetState
               Text(
                 "Harapan dan doa penutup",
                 style: ScholarlyFonts.outfit(
-                  fontSize: 14,
+                  fontSize: OTFontSize.s14,
                   fontWeight: FontWeight.w600,
                   color: textPrimary,
                 ),
@@ -1991,7 +1993,7 @@ class _TahawwulatIntroductionSheetState
           Text(
             "Teknologi di OpenTurath hadir sebagai khadim, pelayan ilmu: memudahkan istilah yang sulit dan membuka akses, agar warisan ini dapat dipelajari dengan mudah, jernih, dan beradab.",
             style: ScholarlyFonts.outfit(
-              fontSize: 13,
+              fontSize: OTFontSize.s14,
               fontWeight: FontWeight.w400,
               color: textSecondary,
               height: 1.45,
@@ -2002,7 +2004,7 @@ class _TahawwulatIntroductionSheetState
             "Semoga setiap huruf ibarah yang dikaji menjadi amal jariyah yang pahalanya mengalir tanpa putus ke haribaan mualif: "
             "Al-Musnid Al-`Allāmah Al-Habib Abu Bakar Al-Adni bin Ali Al-Masyhur, para guru beliau, dan seluruh kaum Muslimin hingga hari Kiamat. Āmīn.",
             style: ScholarlyFonts.outfit(
-              fontSize: 13,
+              fontSize: OTFontSize.s14,
               fontStyle: FontStyle.italic,
               color: textPrimary,
               height: 1.4,
@@ -2042,8 +2044,8 @@ class _TahawwulatIntroductionSheetState
                 Text(
                   number,
                   style: ScholarlyFonts.newsreader(
-                    fontSize: 64,
-                    fontWeight: FontWeight.w300,
+                    fontSize: OTFontSize.s36,
+                    fontWeight: FontWeight.w400,
                     letterSpacing: -2,
                     height: 1,
                     color: OTColors.textTertiary(isDark),
@@ -2055,7 +2057,7 @@ class _TahawwulatIntroductionSheetState
                   Text(
                     tag,
                     style: ScholarlyFonts.outfit(
-                        fontSize: 13, color: OTColors.textTertiary(isDark)),
+                        fontSize: OTFontSize.s14, color: OTColors.textTertiary(isDark)),
                   ),
               ],
             ),
@@ -2063,8 +2065,8 @@ class _TahawwulatIntroductionSheetState
             Text(
               title,
               style: ScholarlyFonts.newsreader(
-                fontSize: 36,
-                fontWeight: FontWeight.w500,
+                fontSize: OTFontSize.s36,
+                fontWeight: FontWeight.w400,
                 letterSpacing: -0.9,
                 height: 1.12,
                 color: textPrimary,
@@ -2075,7 +2077,7 @@ class _TahawwulatIntroductionSheetState
               arabic,
               textDirection: TextDirection.rtl,
               style: ScholarlyFonts.scheherazadeNew(
-                fontSize: 22,
+                fontSize: OTFontSize.s22,
                 height: 1.6,
                 color: textSecondary,
               ),
@@ -2095,8 +2097,8 @@ class _TahawwulatIntroductionSheetState
           Text(
             tag,
             style: ScholarlyFonts.outfit(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w500,
+              fontSize: OTFontSize.s12,
+              fontWeight: FontWeight.w400,
               color: OTColors.textTertiary(isDark),
             ),
           ),
@@ -2104,7 +2106,7 @@ class _TahawwulatIntroductionSheetState
           Text(
             title,
             style: ScholarlyFonts.newsreader(
-              fontSize: widget.asPage ? 26 : 21,
+              fontSize: widget.asPage ? OTFontSize.s26 : OTFontSize.s22,
               fontWeight: FontWeight.w600,
               letterSpacing: -0.4,
               height: 1.2,
@@ -2116,7 +2118,7 @@ class _TahawwulatIntroductionSheetState
             arabic,
             textDirection: TextDirection.rtl,
             style: ScholarlyFonts.scheherazadeNew(
-              fontSize: widget.asPage ? 18 : 16,
+              fontSize: widget.asPage ? OTFontSize.s18 : OTFontSize.s16,
               color: textSecondary,
             ),
           ),
@@ -2129,7 +2131,7 @@ class _TahawwulatIntroductionSheetState
     return Text(
       text,
       style: ScholarlyFonts.outfit(
-        fontSize: widget.asPage ? 17 : 14,
+        fontSize: widget.asPage ? OTFontSize.s16 : OTFontSize.s14,
         fontWeight: FontWeight.w400,
         height: widget.asPage ? 1.75 : 1.6,
         color: OTColors.textPrimary(isDark).withValues(alpha: 0.84),
@@ -2149,8 +2151,8 @@ class _TahawwulatIntroductionSheetState
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1C) : const Color(0xFFF9F9F9),
-        borderRadius: BorderRadius.circular(10),
+        color: isDark ? OTColors.surfaceDark : OTColors.canvasLight,
+        borderRadius: BorderRadius.circular(OTRadius.input),
         // Garis di sisi kanan: sisi awal teks Arab.
         border: Border(
           right: BorderSide(color: textPrimary, width: 2.5),
@@ -2164,7 +2166,7 @@ class _TahawwulatIntroductionSheetState
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.right,
             style: ScholarlyFonts.scheherazadeNew(
-              fontSize: widget.asPage ? 21 : 18,
+              fontSize: widget.asPage ? OTFontSize.s22 : OTFontSize.s18,
               fontWeight: FontWeight.w600,
               height: 1.8,
               color: textPrimary,
@@ -2174,8 +2176,8 @@ class _TahawwulatIntroductionSheetState
           Text(
             "— $source",
             style: ScholarlyFonts.outfit(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w500,
+              fontSize: OTFontSize.s12,
+              fontWeight: FontWeight.w400,
               color: textTertiary,
             ),
           ),

@@ -13,6 +13,7 @@ import '../models/bookmark_model.dart';
 import '../services/bookmark_service.dart';
 import '../services/research_notes_service.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Halaman Detail Edisi Kitab Mandiri (Full-Screen Route).
 /// Chrome follows the app locale; source titles and names retain Arabic RTL.
 class BookDetailScreen extends StatefulWidget {
@@ -262,7 +263,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           title: Text(
             Loc.tr('bookDetails'),
             style: ScholarlyFonts.outfit(color: textPrimary).copyWith(
-              fontSize: 18,
+              fontSize: OTFontSize.s18,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -314,7 +315,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: OTColors.primaryContainer(isDark),
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(OTRadius.input),
                               ),
                               child: Text(
                                 widget.book.sectionArabic == null
@@ -328,7 +329,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                             OTColors.onPrimaryContainer(isDark))
                                     .copyWith(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 11,
+                                  fontSize: OTFontSize.s11,
                                 ),
                               ),
                             ),
@@ -346,7 +347,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     OTTypography.caption(color: textSecondary)
                                         .copyWith(
                                   fontFamily: 'Courier',
-                                  fontSize: 11,
+                                  fontSize: OTFontSize.s11,
                                 ),
                               ),
                             ),
@@ -361,7 +362,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           textAlign: TextAlign.start,
                           style: OTTypography.arabicDisplay(color: textPrimary)
                               .copyWith(
-                            fontSize: 24,
+                            fontSize: OTFontSize.s26,
                             fontWeight: FontWeight.w700,
                             height: 1.85,
                           ),
@@ -380,8 +381,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             style:
                                 OTTypography.arabicReading(color: textSecondary)
                                     .copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontSize: OTFontSize.s14,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -397,7 +398,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             style: OTTypography.body(color: textSecondary)
                                 .copyWith(
                               fontStyle: FontStyle.italic,
-                              fontSize: 13,
+                              fontSize: OTFontSize.s14,
                             ),
                           ),
                         ),
@@ -440,7 +441,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     style: OTTypography.arabicReading(
                                             color: textPrimary)
                                         .copyWith(
-                                      fontSize: 18,
+                                      fontSize: OTFontSize.s18,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -460,11 +461,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 10,
-                                    vertical: 3,
+                                    vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
                                     color: surfaceSubtle,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(OTRadius.input),
                                   ),
                                   child: Text(
                                     widget.book.verifiedDeathYearHijri != null
@@ -475,7 +476,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     style: ScholarlyFonts.outfit(
                                             color: textSecondary)
                                         .copyWith(
-                                      fontSize: 12.5,
+                                      fontSize: OTFontSize.s12,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -636,7 +637,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return Text(
       title,
       style: ScholarlyFonts.outfit(color: color).copyWith(
-        fontSize: 13,
+        fontSize: OTFontSize.s14,
         fontWeight: FontWeight.w700,
       ),
     );
@@ -659,8 +660,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               child: Text(
             label,
             style: ScholarlyFonts.outfit(color: textSecondary).copyWith(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontSize: OTFontSize.s12,
+              fontWeight: FontWeight.w400,
             ),
           )),
         ]),
@@ -677,7 +678,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               style: (RegExp(r'[\u0600-\u06FF]').hasMatch(value)
                       ? OTTypography.arabicReading(color: textPrimary)
                       : ScholarlyFonts.outfit(color: textPrimary))
-                  .copyWith(fontSize: 14, fontWeight: FontWeight.w600),
+                  .copyWith(fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
             ),
           ),
         ),

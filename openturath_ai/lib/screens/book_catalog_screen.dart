@@ -20,6 +20,7 @@ import '../services/canonical_library_service.dart';
 import '../widgets/book_row_item.dart';
 import '../widgets/apple_interactive_wrapper.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Halaman Katalog Kitab (Full-Screen Route).
 /// Mendukung 2.226 Kitab Induk lintas 6 disiplin ilmu kanonikal dengan pencarian Arab toleran harakat,
 /// filter hierarki disiplin (القسم), abad keilmuan, dan kartu kitab minimalis bergaya turath.
@@ -256,7 +257,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             Text(
               _resolveSubtitle(),
               style: OTTypography.caption(color: textSecondary)
-                  .copyWith(fontSize: 12),
+                  .copyWith(fontSize: OTFontSize.s12),
             ),
           ],
         ),
@@ -267,7 +268,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
               child: Text(
                 Loc.tr('ui_ae4f9663d7'),
                 style: OTTypography.button(color: primaryAccent)
-                    .copyWith(fontSize: 13),
+                    .copyWith(fontSize: OTFontSize.s14),
               ),
             ),
           const SizedBox(width: 8),
@@ -288,7 +289,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: surface,
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: BorderRadius.circular(OTRadius.chip),
                   border: Border.all(color: border, width: 0.8),
                 ),
                 child: Row(
@@ -301,11 +302,11 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         focusNode: _searchFocusNode,
                         onChanged: _onSearchChanged,
                         style: ScholarlyFonts.outfit(
-                            fontSize: 13.5, color: textPrimary),
+                            fontSize: OTFontSize.s14, color: textPrimary),
                         decoration: InputDecoration(
                           hintText: Loc.tr('ui_214d016291'),
                           hintStyle: ScholarlyFonts.outfit(
-                            fontSize: 13.5,
+                            fontSize: OTFontSize.s14,
                             color: textSecondary.withValues(alpha: 0.7),
                           ),
                           border: InputBorder.none,
@@ -360,8 +361,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       ]),
                       style:
                           OTTypography.caption(color: textSecondary).copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                        fontSize: OTFontSize.s12,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     const Spacer(),
@@ -375,7 +376,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         decoration: BoxDecoration(
                           color: primaryAccent.withValues(
                               alpha: isDark ? 0.12 : 0.06),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(OTRadius.xs),
                         ),
                         child: Text(
                           [
@@ -387,7 +388,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                           ].join(' · '),
                           style: OTTypography.caption(color: primaryAccent)
                               .copyWith(
-                            fontSize: 11,
+                            fontSize: OTFontSize.s11,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -767,7 +768,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   decoration: BoxDecoration(
                     color: primaryAccent,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(OTRadius.input),
                   ),
                   child: Text(
                     AppCopy.tryAgain,
@@ -812,12 +813,12 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
                         const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: border),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(OTRadius.xs),
                     ),
                     child: Text(
                       Loc.tr('ui_ae4f9663d7'),
                       style: OTTypography.button(color: textPrimary)
-                          .copyWith(fontSize: 13),
+                          .copyWith(fontSize: OTFontSize.s14),
                     ),
                   ),
                 ),
@@ -857,7 +858,7 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
       height: 72,
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         border: Border.all(color: border, width: 0.8),
       ),
     );
@@ -882,14 +883,14 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
         onTap: onTap,
         pressedScale: 0.94,
         hapticType: HapticFeedbackType.selection,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(OTRadius.card),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: isSelected ? activeBg : surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(OTRadius.card),
             border: Border.all(
               color: isSelected ? activeBg : border,
               width: 0.8,
@@ -901,8 +902,8 @@ class _BookCatalogScreenState extends State<BookCatalogScreen> {
             style: OTTypography.caption(
                     color: isSelected ? activeFg : textSecondary)
                 .copyWith(
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              fontSize: OTFontSize.s12,
             ),
           ),
         ),

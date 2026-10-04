@@ -5,6 +5,8 @@ import '../core/localization.dart';
 import '../core/scholarly_fonts.dart';
 import 'apple_interactive_wrapper.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Each entry describes the assistant's scholarly remit and source material.
 class SpecialistCard extends StatelessWidget {
   const SpecialistCard({
@@ -62,11 +64,11 @@ class SpecialistCard extends StatelessWidget {
       onTap: onOpen,
       pressedScale: 0.99,
       hapticType: HapticFeedbackType.light,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(OTRadius.card),
       child: Material(
         color: OTColors.surface(isDark),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(OTRadius.card),
           side: BorderSide(color: border),
         ),
         clipBehavior: Clip.antiAlias,
@@ -80,7 +82,7 @@ class SpecialistCard extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: OTColors.surfaceSubtle(isDark),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(OTRadius.input),
                   border: Border.all(color: border),
                 ),
                 child: Icon(_disciplineIcon, size: 21, color: ink),
@@ -96,7 +98,7 @@ class SpecialistCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: ScholarlyFonts.newsreader(
-                        fontSize: 19,
+                        fontSize: OTFontSize.s18,
                         fontWeight: FontWeight.w600,
                         color: ink,
                       ),
@@ -108,7 +110,7 @@ class SpecialistCard extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
-                          fontSize: 12,
+                          fontSize: OTFontSize.s12,
                           height: 1.35,
                           color: muted,
                         ),
@@ -122,7 +124,7 @@ class SpecialistCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: ScholarlyFonts.outfit(
-                          fontSize: 11,
+                          fontSize: OTFontSize.s11,
                           color: muted,
                         ),
                       ),
@@ -131,7 +133,7 @@ class SpecialistCard extends StatelessWidget {
                       const SizedBox(height: 5),
                       Text(statusLabel!,
                           style: ScholarlyFonts.outfit(
-                              fontSize: 11, color: muted)),
+                              fontSize: OTFontSize.s11, color: muted)),
                     ],
                   ],
                 ),

@@ -11,6 +11,8 @@ import '../services/open_turath_catalog_repository.dart';
 import '../widgets/assistant_grid_card.dart';
 import 'book_library_editorial_screen.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 String _readerTitle(String value) {
   return value
       .replaceFirst(RegExp(r'^(Super\s+)?AI\s+', caseSensitive: false), '')
@@ -167,7 +169,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: OTColors.surface(isDark),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(OTRadius.card),
                       border: Border.all(color: border),
                     ),
                     child: Column(
@@ -178,13 +180,13 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                           style: Loc.isArabic
                               ? ScholarlyFonts.scheherazadeNew(
                                   color: ink,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: OTFontSize.s26,
+                                  fontWeight: FontWeight.w700,
                                   height: 1.6,
                                 )
                               : ScholarlyFonts.newsreader(
                                   color: ink,
-                                  fontSize: 28,
+                                  fontSize: OTFontSize.s26,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: -0.5,
                                   height: 1.2,
@@ -197,7 +199,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                             textDirection: TextDirection.rtl,
                             style: ScholarlyFonts.scheherazadeNew(
                               color: muted,
-                              fontSize: 20,
+                              fontSize: OTFontSize.s20,
                               height: 1.6,
                             ),
                           ),
@@ -206,7 +208,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                         Text(
                           Loc.tr('librarySummary'),
                           style: ScholarlyFonts.outfit(
-                              color: muted, fontSize: 14, height: 1.55),
+                              color: muted, fontSize: OTFontSize.s14, height: 1.55),
                         ),
                         if (stats.isNotEmpty) ...[
                           const SizedBox(height: 20),
@@ -224,7 +226,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                                     Text(
                                       stat.value,
                                       style: ScholarlyFonts.outfit(
-                                        fontSize: 24,
+                                        fontSize: OTFontSize.s26,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: -0.5,
                                         color: ink,
@@ -235,7 +237,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                                     Text(
                                       stat.unit,
                                       style: ScholarlyFonts.outfit(
-                                          fontSize: 13, color: muted),
+                                          fontSize: OTFontSize.s14, color: muted),
                                     ),
                                   ],
                                 ),
@@ -263,9 +265,9 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 20),
                             textStyle: ScholarlyFonts.outfit(
-                                fontSize: 14, fontWeight: FontWeight.w600),
+                                fontSize: OTFontSize.s14, fontWeight: FontWeight.w600),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                                borderRadius: BorderRadius.circular(OTRadius.input)),
                           ),
                         ),
                       ],
@@ -276,7 +278,7 @@ class _AiLibraryOverviewPageState extends State<AiLibraryOverviewPage> {
                     padding: const EdgeInsetsDirectional.only(start: 4),
                     child: Text(
                       Loc.tr('libraryDataNote'),
-                      style: ScholarlyFonts.outfit(fontSize: 12, color: muted),
+                      style: ScholarlyFonts.outfit(fontSize: OTFontSize.s12, color: muted),
                     ),
                   ),
                 ],

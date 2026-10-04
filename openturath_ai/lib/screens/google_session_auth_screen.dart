@@ -19,6 +19,8 @@ import '../services/auth_service.dart';
 import '../services/desktop_webview_runtime.dart';
 import '../widgets/app_loader.dart';
 
+import 'package:openturath_ai/core/design/ot_typography.dart';
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Layar Autentikasi Sesi Google (Langkah 2 dari 2)
 /// Menghubungkan sesi Google / NotebookLM di WebView secara langsung setelah login Firebase,
 /// dengan disclaimer jelas bahwa pengguna wajib masuk dengan akun Google yang sama.
@@ -173,7 +175,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
         content: Text(
           Loc.tr('googleSessionSignInSameAccountDesc'),
           style: ScholarlyFonts.outfit(
-            fontSize: 13,
+            fontSize: OTFontSize.s14,
             color: secondary,
           ),
         ),
@@ -193,13 +195,13 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: OTColors.destructive(isDark),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(OTRadius.xs),
               ),
             ),
             child: Text(
               Loc.tr('exit'),
               style: ScholarlyFonts.outfit(
-                color: Colors.white,
+                color: OTColors.surfaceLight,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -287,7 +289,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
             title: Text(
               Loc.tr('googleSessionConnectTitle'),
               style: ScholarlyFonts.newsreader(
-                fontSize: 18,
+                fontSize: OTFontSize.s18,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
                 letterSpacing: -0.2,
@@ -347,7 +349,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: textPrimary.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(OTRadius.xs),
                               border: Border.all(
                                 color: border,
                                 width: 0.6,
@@ -356,8 +358,8 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                             child: Text(
                               'LANGKAH 2 DARI 2',
                               style: ScholarlyFonts.outfit(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.bold,
+                                fontSize: OTFontSize.s11,
+                                fontWeight: FontWeight.w700,
                                 letterSpacing: 0.6,
                                 color: textPrimary,
                               ),
@@ -370,7 +372,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: ScholarlyFonts.outfit(
-                                fontSize: 13,
+                                fontSize: OTFontSize.s14,
                                 fontWeight: FontWeight.w600,
                                 color: textPrimary,
                               ),
@@ -387,7 +389,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                               : Loc.tr('roomAuthSameAccount')
                         ]),
                         style: ScholarlyFonts.outfit(
-                          fontSize: 12,
+                          fontSize: OTFontSize.s12,
                           height: 1.4,
                           color: textSecondary,
                         ),
@@ -399,7 +401,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                               horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
                             color: canvas,
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(OTRadius.xs),
                             border: Border.all(color: border, width: 0.8),
                           ),
                           child: Row(
@@ -414,7 +416,7 @@ class _GoogleSessionAuthScreenState extends State<GoogleSessionAuthScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: ScholarlyFonts.outfit(
-                                    fontSize: 12,
+                                    fontSize: OTFontSize.s12,
                                     fontWeight: FontWeight.w600,
                                     color: textPrimary,
                                   ),

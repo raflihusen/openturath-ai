@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:openturath_ai/core/design/ot_colors.dart';
 /// "Gema lengkung": lengkung runcing logo diulang sebagai lapisan bersarang,
 /// seperti pintu yang makin dalam. Cahaya di dasar bernapas pelan dan
 /// merambat dari lapisan terdalam ke luar. Tanpa teks, tanpa ikon.
@@ -143,7 +144,7 @@ class _ArchEchoPainter extends CustomPainter {
           glowRadius,
           [
             Color.fromRGBO(255, 255, 255, 0.06 + 0.06 * glow),
-            const Color(0x00FFFFFF),
+            OTColors.surfaceLight.withValues(alpha: 0.00),
           ],
         ),
     );
@@ -168,7 +169,7 @@ class _ArchEchoPainter extends CustomPainter {
             [
               Color.fromRGBO(255, 255, 255, alpha),
               Color.fromRGBO(255, 255, 255, alpha),
-              const Color(0x00FFFFFF),
+              OTColors.surfaceLight.withValues(alpha: 0.00),
             ],
             const [0.0, 0.5, 1.0],
           );

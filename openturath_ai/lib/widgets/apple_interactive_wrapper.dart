@@ -3,6 +3,7 @@ import '../core/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:openturath_ai/core/design/ot_radius.dart';
 /// Wrapper interaktif bergaya Apple iOS dengan animasi kompresi mikro
 /// (press-down scale), pantulan pegas halus, dan getaran haptic feedback taktil.
 class AppleInteractiveWrapper extends StatefulWidget {
@@ -144,7 +145,7 @@ class _AppleInteractiveWrapperState extends State<AppleInteractiveWrapper>
         child: AnimatedContainer(
           duration: reduceMotion ? Duration.zero : widget.duration,
           foregroundDecoration: BoxDecoration(
-            borderRadius: widget.borderRadius ?? BorderRadius.circular(12),
+            borderRadius: widget.borderRadius ?? BorderRadius.circular(OTRadius.input),
             color: _hovered
                 ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.05)
                 : null,
