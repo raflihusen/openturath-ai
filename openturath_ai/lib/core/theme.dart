@@ -196,6 +196,11 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: canvasDark,
       textTheme: _buildTextTheme(Brightness.dark),
+      // Satu ikon kembali di semua platform: panah, bukan chevron iOS.
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (_) =>
+            const Icon(Icons.arrow_back_rounded, size: 22),
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: canvasDark,
         elevation: 0,
@@ -370,6 +375,11 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: canvasLight,
       textTheme: _buildTextTheme(Brightness.light),
+      // Satu ikon kembali di semua platform: panah, bukan chevron iOS.
+      actionIconTheme: ActionIconThemeData(
+        backButtonIconBuilder: (_) =>
+            const Icon(Icons.arrow_back_rounded, size: 22),
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: canvasLight,
         elevation: 0,

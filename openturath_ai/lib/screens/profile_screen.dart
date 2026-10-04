@@ -204,52 +204,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const <MapEntry<String, ModuleEntitlement>>[])
         .where((entry) => summary.agentIds.contains(entry.key))
         .toList();
+    final allAccess = summary.agentIds.contains('all_access') ||
+        summary.agentIds.contains('all_ai');
+    // Akses penuh: tampilkan nama asisten yang benar-benar terbuka.
+    final rows = allAccess
+        ? [
+            for (final agent in AgentModel.defaultAgents)
+              if (!agent.isComingSoon) (Loc.text(agent.title), ''),
+          ]
+        : [
+            for (final entry in entries)
+              (
+                _entitlementTitle(entry.key),
+                entry.value.expiry == null
+                    ? Loc.tr('activeSubscription')
+                    : Loc.tr(
+                        'expiryDate', [_formatAccessDate(entry.value.expiry!)]),
+              ),
+          ];
     showAdaptiveSheet<void>(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => Container(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
-        decoration: BoxDecoration(
-          color: surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
+      isScrollControlled: rows.length > 6,
+      backgroundColor: surface,
+      builder: (sheetContext) => Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 12, 20),
         child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                  child: Container(
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                          color: textSecondary.withValues(alpha: .35),
-                          borderRadius: BorderRadius.circular(99)))),
-              const SizedBox(height: 18),
-              Text(Loc.tr('ui_6a2b35b4ca'),
-                  style: OTTypography.cardTitle(color: textPrimary)
-                      .copyWith(fontSize: 19)),
-              const SizedBox(height: 5),
-              Text(Loc.tr('ui_b92aed18d1'),
-                  style: OTTypography.caption(color: textSecondary)),
-              const SizedBox(height: 16),
-              if (summary.agentIds.contains('all_access') ||
-                  summary.agentIds.contains('all_ai'))
-                _AccessPortfolioRow(
-                    title: Loc.tr('ui_b236ca6182'),
-                    subtitle: summary.supportingLabel,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Center(child: SheetGrabber(bottom: 12)),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(Loc.tr('ui_6a2b35b4ca'),
+                          style: OTTypography.cardTitle(color: textPrimary)
+                              .copyWith(fontSize: 19)),
+                      const SizedBox(height: 4),
+                      Text(
+                        allAccess
+                            ? '${Loc.tr('ui_b236ca6182')} · ${summary.supportingLabel}'
+                            : Loc.tr('ui_b92aed18d1'),
+                        style: OTTypography.caption(color: textSecondary)
+                            .copyWith(fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  tooltip:
+                      MaterialLocalizations.of(sheetContext).closeButtonTooltip,
+                  icon:
+                      Icon(Icons.close_rounded, size: 20, color: textSecondary),
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsetsDirectional.only(end: 12),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: rows.length,
+                  separatorBuilder: (_, __) =>
+                      Divider(height: 1, color: OTColors.border(isDark)),
+                  itemBuilder: (_, index) => _AccessPortfolioRow(
+                    title: rows[index].$1,
+                    subtitle: rows[index].$2,
                     color: textPrimary,
-                    muted: textSecondary)
-              else
-                ...entries.map((entry) => _AccessPortfolioRow(
-                      title: _entitlementTitle(entry.key),
-                      subtitle: entry.value.expiry == null
-                          ? Loc.tr('activeSubscription')
-                          : Loc.tr('expiryDate',
-                              [_formatAccessDate(entry.value.expiry!)]),
-                      color: textPrimary,
-                      muted: textSecondary,
-                    )),
-            ]),
+                    muted: textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -659,22 +692,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context: context,
         builder: (ctx) => AlertDialog(
               title: Text(AppCopy.language),
-              content: Column(mainAxisSize: MainAxisSize.min, children: [
-                for (final entry in Loc.languageNames.entries)
-                  ListTile(
-                      title: Text(entry.value),
-                      trailing: entry.key == Loc.language
-                          ? const Icon(Icons.check_rounded)
-                          : null,
-                      onTap: () async {
-                        Navigator.of(ctx).pop();
-                        try {
-                          await AppConfig.setLocale(entry.key);
-                        } catch (_) {
-                          // The in-memory preference is still applied.
-                        }
-                      }),
-              ]),
+              contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
+              content: SizedBox(
+                width: 320,
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  for (final entry in Loc.languageNames.entries)
+                    ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        title: Text(
+                          entry.value,
+                          maxLines: 1,
+                          style: OTTypography.bodyMedium(color: textPrimary)
+                              .copyWith(
+                            fontWeight: entry.key == Loc.language
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                        trailing: entry.key == Loc.language
+                            ? Icon(Icons.check_rounded,
+                                size: 20, color: textPrimary)
+                            : null,
+                        onTap: () async {
+                          Navigator.of(ctx).pop();
+                          try {
+                            await AppConfig.setLocale(entry.key);
+                          } catch (_) {
+                            // The in-memory preference is still applied.
+                          }
+                        }),
+                ]),
+              ),
             ));
   }
 
@@ -1215,27 +1264,15 @@ class _AccessPortfolioRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(vertical: 11),
         child: Row(children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: muted.withValues(alpha: .10),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.auto_awesome_rounded, color: color, size: 18),
-          ),
+          Icon(Icons.check_rounded, color: color, size: 18),
           const SizedBox(width: 12),
           Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(Loc.text(title),
-                    style: OTTypography.bodyMedium(color: color)),
-                const SizedBox(height: 2),
-                Text(subtitle, style: OTTypography.caption(color: muted)),
-              ])),
+            child: Text(title, style: OTTypography.bodyMedium(color: color)),
+          ),
+          if (subtitle.isNotEmpty)
+            Text(subtitle, style: OTTypography.caption(color: muted)),
         ]),
       );
 }

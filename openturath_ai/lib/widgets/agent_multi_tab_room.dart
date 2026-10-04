@@ -256,16 +256,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: border,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
+                const Center(child: SheetGrabber()),
                 const SizedBox(height: 18),
                 Text(
                   AppCopy.studyOptions,
@@ -412,16 +403,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
+            const Center(child: SheetGrabber()),
             const SizedBox(height: 18),
             Row(
               children: [
@@ -511,16 +493,7 @@ class _AgentMultiTabRoomState extends State<AgentMultiTabRoom> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: border,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
+                const Center(child: SheetGrabber()),
                 const SizedBox(height: 16),
                 Text(
                   'Sesi Asisten Terbuka',
@@ -1527,173 +1500,88 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
     }
 
     if (session.errorMessage != null) {
-      final isGoogleErr = session.isGooglePermissionError;
-      final isPaywall = session.isPaywallRequired;
-      final isTimeout = session.isTimeoutError;
+      void close() => AgentSessionManager.instance.closeRoom();
 
-      if (isPaywall) {
-        final textPrimary = OTColors.textPrimary(isDark);
-        final textSecondary = OTColors.textSecondary(isDark);
-        return Container(
-          color: canvas,
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        color: OTColors.surface(isDark),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: OTColors.border(isDark), width: 1.2),
-                      ),
-                      child: Icon(
-                        Icons.workspace_premium_outlined,
-                        size: 34,
-                        color: OTColors.accent(isDark),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Akses Langganan Diperlukan',
-                      textAlign: TextAlign.center,
-                      style: ScholarlyFonts.newsreader(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      session.errorMessage ??
-                          'Untuk membuka dan menelaah kitab bersama ${session.agent.title}, silakan aktifkan paket langganan Anda.',
-                      textAlign: TextAlign.center,
-                      style: ScholarlyFonts.outfit(
-                        fontSize: 13.5,
-                        height: 1.45,
-                        color: textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
-                      child: FilledButton.icon(
-                        onPressed: () {
-                          NavigationGuard.safePushNamed(
-                            context,
-                            AppRoutes.subscription,
-                            arguments: {
-                              'user': _authService.cachedCurrentUser,
-                              'agent': session.agent,
-                            },
-                          );
-                        },
-                        icon:
-                            const Icon(Icons.card_membership_rounded, size: 18),
-                        label: Text(
-                          'Langganan Sekarang',
-                          style: ScholarlyFonts.outfit(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14.5,
-                          ),
-                        ),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: OTColors.accent(isDark),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 44,
-                      child: TextButton(
-                        onPressed: () =>
-                            AgentSessionManager.instance.closeRoom(),
-                        child: Text(
-                          'Kembali ke Beranda',
-                          style: ScholarlyFonts.outfit(
-                            fontWeight: FontWeight.w500,
-                            color: textSecondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
+      Future<void> openInBrowser() async {
+        final url = session.resolvedUrl;
+        if (url == null) return;
+        final email = await NativeAgentLauncher.getActiveNotebookEmail();
+        await NativeAgentLauncher.launchNotebook(url,
+            email: email.isNotEmpty ? email : null);
       }
 
-      final needsGoogleLogin =
-          isGoogleErr && session.errorMessage!.startsWith('Sesi akun Google');
-      final title = session.isGoogleAuthPage
-          ? 'Koneksi asisten belum tersedia'
-          : isGoogleErr
-              ? (needsGoogleLogin
-                  ? 'Hubungkan akun Google'
-                  : 'Akun Google belum memiliki izin')
-              : (isTimeout
-                  ? 'Asisten belum berhasil dibuka'
-                  : 'Asisten Belum Bisa Dibuka');
+      void retry() {
+        setState(() {
+          session.errorMessage = null;
+          session.isTimeoutError = false;
+          session.isGooglePermissionError = false;
+          session.isWebLoading = true;
+          session.isSessionReady = false;
+        });
+        if (session.webController != null) {
+          session.webController!.reload();
+          _startReadinessCheck();
+        } else {
+          _fetchUrl();
+        }
+      }
 
-      final icon = isGoogleErr
-          ? Icons.account_circle_outlined
-          : (isTimeout ? Icons.wifi_off_rounded : Icons.info_outline_rounded);
-
-      final retryLabel = isGoogleErr ? 'Buka di Browser Asli' : 'Coba lagi';
-
-      return Container(
-        color: canvas,
-        child: AppErrorState(
-          title: title,
-          message: session.errorMessage!,
-          icon: icon,
-          retryLabel: retryLabel,
-          onRetry: session.isGoogleAuthPage
-              ? null
-              : () async {
-                  if (isGoogleErr) {
-                    final url = session.resolvedUrl;
-                    if (url != null) {
-                      final email =
-                          await NativeAgentLauncher.getActiveNotebookEmail();
-                      await NativeAgentLauncher.launchNotebook(url,
-                          email: email.isNotEmpty ? email : null);
-                    }
-                  } else {
-                    setState(() {
-                      session.errorMessage = null;
-                      session.isTimeoutError = false;
-                      session.isGooglePermissionError = false;
-                      session.isWebLoading = true;
-                      session.isSessionReady = false;
-                    });
-                    if (session.webController != null) {
-                      session.webController!.reload();
-                      _startReadinessCheck();
-                    } else {
-                      _fetchUrl();
-                    }
-                  }
-                },
-          onBack: () => AgentSessionManager.instance.closeRoom(),
-          backLabel: 'Kembali ke Beranda',
-        ),
-      );
+      // Satu tampilan untuk empat keadaan; naskahnya mengikuti penyebab,
+      // bukan pesan teknis dari WebView.
+      final AppErrorState state;
+      if (session.isPaywallRequired) {
+        state = AppErrorState(
+          icon: Icons.lock_outline_rounded,
+          title: Loc.tr('roomPaywallTitle'),
+          message:
+              Loc.tr('roomPaywallBody', [Loc.text(session.agent.title)]),
+          retryLabel: Loc.tr('roomSeePlans'),
+          retryIcon: Icons.arrow_forward_rounded,
+          onRetry: () => NavigationGuard.safePushNamed(
+            context,
+            AppRoutes.subscription,
+            arguments: {
+              'user': _authService.cachedCurrentUser,
+              'agent': session.agent,
+            },
+          ),
+          onBack: close,
+          backLabel: Loc.tr('back'),
+        );
+      } else if (session.isGoogleAuthPage) {
+        state = AppErrorState(
+          icon: Icons.link_off_rounded,
+          title: Loc.tr('roomAuthTitle'),
+          message: Loc.tr('roomAuthBody'),
+          retryLabel: Loc.tr('roomOpenInBrowser'),
+          retryIcon: Icons.open_in_new_rounded,
+          onRetry: session.resolvedUrl == null ? null : openInBrowser,
+          onBack: close,
+          backLabel: Loc.tr('back'),
+        );
+      } else if (session.isGooglePermissionError) {
+        state = AppErrorState(
+          icon: Icons.account_circle_outlined,
+          title: Loc.tr('roomPermissionTitle'),
+          message: Loc.tr('roomPermissionBody'),
+          retryLabel: Loc.tr('roomOpenInBrowser'),
+          retryIcon: Icons.open_in_new_rounded,
+          onRetry: session.resolvedUrl == null ? null : openInBrowser,
+          onBack: close,
+          backLabel: Loc.tr('back'),
+        );
+      } else {
+        state = AppErrorState(
+          icon: Icons.wifi_off_rounded,
+          title: Loc.tr('roomLoadFailTitle'),
+          message: Loc.tr('roomLoadFailBody'),
+          retryLabel: Loc.tr('tryAgain'),
+          onRetry: retry,
+          onBack: close,
+          backLabel: Loc.tr('back'),
+        );
+      }
+      return ColoredBox(color: canvas, child: state);
     }
 
     final initialUri = WebUri(session.resolvedUrl!);
@@ -1751,16 +1639,25 @@ class _SingleAgentTabWebViewState extends State<_SingleAgentTabWebView>
               return false;
             },
             onReceivedError: (controller, request, error) {
-              if (request.isForMainFrame == true && mounted) {
-                _readinessTimer?.cancel();
-                setState(() {
-                  session.isWebLoading = false;
-                  session.isSessionReady = false;
-                  session.isTimeoutError = true;
-                  session.errorMessage =
-                      'Gagal memuat asisten turats (${error.description}). Silakan periksa koneksi internet Anda.';
-                });
+              if (request.isForMainFrame != true || !mounted) return;
+              // Navigasi yang kita batalkan sendiri (mis. ke halaman masuk
+              // Google) dilaporkan WebKit sebagai "frame load interrupted";
+              // itu bukan gangguan jaringan dan keadaannya sudah ditangani.
+              final detail = error.description.toLowerCase();
+              if (session.isGoogleAuthPage ||
+                  error.type == WebResourceErrorType.CANCELLED ||
+                  detail.contains('interrupted') ||
+                  detail.contains('cancel')) {
+                return;
               }
+              debugPrint('[OpenTurath] WebView error: ${error.description}');
+              _readinessTimer?.cancel();
+              setState(() {
+                session.isWebLoading = false;
+                session.isSessionReady = false;
+                session.isTimeoutError = true;
+                session.errorMessage = Loc.tr('roomLoadFailBody');
+              });
             },
             onReceivedHttpError: (controller, request, errorResponse) {
               final code = errorResponse.statusCode;

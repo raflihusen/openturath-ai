@@ -139,16 +139,7 @@ class _RedeemCodeSheetState extends State<RedeemCodeSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: borderColor,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
+            const Center(child: SheetGrabber()),
             const SizedBox(height: OTSpacing.base),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

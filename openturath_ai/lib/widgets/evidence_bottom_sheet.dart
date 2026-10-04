@@ -1,3 +1,4 @@
+import 'adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -120,17 +121,7 @@ class EvidenceBottomSheet extends StatelessWidget {
           child: Column(
             children: [
               // ── Drag Handle ──
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: border,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                  ),
-                ),
-              ),
+              const Center(child: SheetGrabber()),
 
               // ── Header Bar (Figma Screen 10) ──
               Padding(

@@ -178,7 +178,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         decoration: BoxDecoration(
           color: OTColors.surface(dark),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: OTColors.borderStrong(dark), width: 1.2),
+          border: Border.all(color: OTColors.borderStrong(dark)),
         ),
         padding: const EdgeInsets.all(20),
         child: child,
@@ -188,7 +188,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       decoration: BoxDecoration(
         color: OTColors.surface(dark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border, width: 0.8),
+        border: Border.all(color: border),
       ),
       padding: const EdgeInsets.all(20),
       child: child,
@@ -267,15 +267,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     if (AppPlatform.isDesktop)
                       const SizedBox(height: 8)
                     else
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: muted.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
+                      const SheetGrabber(top: 10, bottom: 10),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
                       child: Column(
@@ -313,9 +305,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     Expanded(
                       child: ListView.separated(
                         controller: scrollController,
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
                         itemCount: filtered.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        separatorBuilder: (_, __) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Divider(height: 1, color: border),
+                        ),
                         itemBuilder: (_, i) {
                           final a = filtered[i];
                           final isSelected = a.id == _selectedAgentId;
@@ -324,46 +319,26 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               setState(() => _selectedAgentId = a.id);
                               Navigator.pop(modalCtx);
                             },
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? OTColors.accent(dark)
-                                        .withValues(alpha: 0.1)
-                                    : surface,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? OTColors.accent(dark)
-                                      : border,
-                                  width: isSelected ? 1.5 : 1,
-                                ),
-                              ),
+                                  horizontal: 12, vertical: 13),
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          a.title,
-                                          style: OTTypography.bodyMedium(
-                                                  color: ink)
-                                              .copyWith(
-                                            fontWeight: isSelected
-                                                ? FontWeight.w700
-                                                : FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      Loc.text(a.title),
+                                      style: OTTypography.bodyMedium(color: ink)
+                                          .copyWith(
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                      ),
                                     ),
                                   ),
                                   if (isSelected)
-                                    Icon(Icons.check_circle_rounded,
-                                        color: OTColors.accent(dark), size: 20),
+                                    Icon(Icons.check_rounded,
+                                        color: ink, size: 20),
                                 ],
                               ),
                             ),
@@ -388,7 +363,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final ink = OTColors.textPrimary(dark);
     final muted = OTColors.textSecondary(dark);
     final border = OTColors.border(dark);
-    final featuredInk = OTColors.onPrimaryContainer(dark);
     final flagship =
         AgentModel.defaultAgents.firstWhere((a) => a.id == 'fiqh_tahawwulat');
     final offer = ProductPricing.tahawwulat[_tahawwulatIndex];
@@ -396,317 +370,282 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     final selected = specialists.firstWhere((a) => a.id == _selectedAgentId,
         orElse: () => specialists.first);
 
+    final single = ProductPricing.specialists[_specialistIndex];
+
+    Widget eyebrow(String text) => Text(
+          text,
+          style: ScholarlyFonts.outfit(
+              fontSize: 12.5, fontWeight: FontWeight.w500, color: muted),
+        );
+
+    Widget planTitle(String text) => Text(
+          text,
+          style: ScholarlyFonts.newsreader(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.4,
+            height: 1.2,
+            color: ink,
+          ),
+        );
+
+    Widget cta(VoidCallback onPressed) => SizedBox(
+          width: double.infinity,
+          height: 48,
+          child: FilledButton(
+            onPressed: _processing ? null : onPressed,
+            style: FilledButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              textStyle: ScholarlyFonts.outfit(
+                  fontSize: 14.5, fontWeight: FontWeight.w600),
+            ),
+            child: Text(Loc.tr('continuePayment')),
+          ),
+        );
+
+    // Dua kartu memakai urutan bagian yang sama agar sejajar saat
+    // berdampingan: label, judul, keterangan, cakupan, masa akses, harga,
+    // manfaat, tombol.
+    List<Widget> planBody({
+      required bool wide,
+      required String label,
+      required String title,
+      required String description,
+      required Widget scope,
+      required Widget tiers,
+      required SubscriptionOffer price,
+      required List<String> benefits,
+      required VoidCallback onCheckout,
+      required String agentId,
+    }) =>
+        [
+          eyebrow(label),
+          const SizedBox(height: 6),
+          planTitle(title),
+          const SizedBox(height: 6),
+          ConstrainedBox(
+            // Dua baris: tinggi keterangan sama di kedua kartu.
+            constraints: BoxConstraints(minHeight: wide ? 44 : 0),
+            child: Text(
+              description,
+              style: OTTypography.body(color: muted)
+                  .copyWith(fontSize: 14, height: 1.5),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(height: 56, child: scope),
+          const SizedBox(height: 16),
+          tiers,
+          const SizedBox(height: 20),
+          PromoPrice(
+            amount: price.amount,
+            regularAmount: price.regularAmount,
+            period: price.period,
+          ),
+          const SizedBox(height: 16),
+          Divider(color: border, height: 1),
+          const SizedBox(height: 16),
+          for (final benefit in benefits) _benefitRow(benefit, ink),
+          if (wide) const Spacer() else const SizedBox(height: 8),
+          const SizedBox(height: 8),
+          cta(onCheckout),
+          _checkoutNotice(agentId),
+        ];
+
+    // Cakupan paket utama: lima asisten, sebagai teks.
+    final flagshipScope = Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Text(
+        (flagship.subAgents ?? const [])
+            .map((sub) => sub.name)
+            .join(' · '),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: ScholarlyFonts.outfit(fontSize: 13.5, height: 1.5, color: ink),
+      ),
+    );
+
+    // Cakupan paket satu bidang: pemilih bidang.
+    final fieldPicker = Material(
+      color: OTColors.surfaceSubtle(dark),
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: _processing
+            ? null
+            : () => _showDisciplinePickerModal(context, specialists),
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(14, 0, 10, 0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(Loc.tr('chooseField'),
+                        style: ScholarlyFonts.outfit(
+                            fontSize: 11.5, color: muted)),
+                    const SizedBox(height: 1),
+                    Text(
+                      Loc.text(selected.title),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: OTTypography.bodyMedium(color: ink),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.unfold_more_rounded, size: 18, color: muted),
+            ],
+          ),
+        ),
+      ),
+    );
+
     return Scaffold(
       backgroundColor: OTColors.canvas(dark),
       appBar: AppBar(
-          title: Text(AppCopy.subscription),
-          backgroundColor: OTColors.canvas(dark)),
+        // Rapat ke tombol kembali; tanpa tombol kembali sejajar isi halaman.
+        titleSpacing: (ModalRoute.of(context)?.canPop ?? false) ? 0 : 20,
+        title: Text(AppCopy.subscription),
+        backgroundColor: OTColors.canvas(dark),
+      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 48),
-          // Rata awal, sejajar dengan judul halaman.
-          child: Align(
-            alignment: AlignmentDirectional.topStart,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 760),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(Loc.tr('launchOffer'),
-                      style: OTTypography.sectionTitle(color: ink)
-                          .copyWith(fontSize: 22, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 8),
-                  Text(AppCopy.manualRenewalNotice,
-                      style: OTTypography.body(color: muted)),
-                  const SizedBox(height: 20),
+        child: LayoutBuilder(builder: (context, viewport) {
+          final wide = viewport.maxWidth >= 1000;
 
-                  // ── 1. KARTU HITAM ELEGAN: SUPER AI FIKIH TAHAWWULAT (FLAGSHIP) ──
-                  _card(
-                    flagship: true,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4.5),
-                              decoration: BoxDecoration(
-                                color: OTColors.surfaceSubtle(dark),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.workspace_premium_rounded,
-                                      size: 14, color: featuredInk),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    Loc.tr('planFeaturedLabel'),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: featuredInk,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: OTColors.surfaceSubtle(dark),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: Text(
-                                Loc.tr('planExclusive'),
-                                style: TextStyle(
-                                    color: featuredInk,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(AppCopy.planTahawwulat,
-                            style: OTTypography.pageTitle(color: featuredInk)
-                                .copyWith(fontSize: 22)),
-                        const SizedBox(height: 6),
-                        Text(
-                          Loc.tr('planFeaturedDescription'),
-                          style: OTTypography.body(color: featuredInk)
-                              .copyWith(fontSize: 13, height: 1.45),
-                        ),
-                        const SizedBox(height: 18),
+          Widget plan({required bool featured, required List<Widget> body}) =>
+              _card(
+                flagship: featured,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: body,
+                ),
+              );
 
-                        _TierSelector(
-                          offers: ProductPricing.tahawwulat,
-                          selected: _tahawwulatIndex,
-                          onSelect: _processing
-                              ? null
-                              : (i) => setState(() => _tahawwulatIndex = i),
-                        ),
-                        const SizedBox(height: 18),
-                        PromoPrice(
-                            amount: offer.amount,
-                            regularAmount: offer.regularAmount,
-                            period: offer.period,
-                            foregroundColor: featuredInk,
-                            secondaryColor: featuredInk),
-                        const SizedBox(height: 16),
-                        Divider(color: OTColors.border(dark), height: 1),
-                        const SizedBox(height: 16),
+          final featuredPlan = plan(
+            featured: true,
+            body: planBody(
+              wide: wide,
+              label: Loc.tr('planFeaturedLabel'),
+              title: AppCopy.planTahawwulat,
+              description: Loc.tr('planFeaturedDescription'),
+              scope: flagshipScope,
+              tiers: _TierSelector(
+                offers: ProductPricing.tahawwulat,
+                selected: _tahawwulatIndex,
+                onSelect: _processing
+                    ? null
+                    : (i) => setState(() => _tahawwulatIndex = i),
+              ),
+              price: offer,
+              benefits: [
+                Loc.tr('planFeaturedBenefit1'),
+                Loc.tr('planFeaturedBenefit3'),
+                Loc.tr('planFeaturedBenefit4'),
+              ],
+              onCheckout: () => _checkout(flagship, offer),
+              agentId: flagship.id,
+            ),
+          );
 
-                        // Daftar Benefit Fikih Tahawwulat
-                        _benefitRow(
-                          Loc.tr('planFeaturedBenefit1'),
-                          featuredInk,
-                        ),
-                        _benefitRow(
-                          Loc.tr('planFeaturedBenefit2'),
-                          featuredInk,
-                        ),
-                        _benefitRow(
-                          Loc.tr('planFeaturedBenefit3'),
-                          featuredInk,
-                        ),
-                        _benefitRow(
-                          Loc.tr('planFeaturedBenefit4'),
-                          featuredInk,
-                        ),
+          final singlePlan = plan(
+            featured: false,
+            body: planBody(
+              wide: wide,
+              label: Loc.tr('planSingleLabel'),
+              title: Loc.tr('specialistAccess'),
+              description: Loc.tr('planSingleDescription'),
+              scope: fieldPicker,
+              tiers: _TierSelector(
+                offers: ProductPricing.specialists,
+                selected: _specialistIndex,
+                onSelect: _processing
+                    ? null
+                    : (i) => setState(() => _specialistIndex = i),
+              ),
+              price: single,
+              benefits: [
+                Loc.tr('planSingleBenefit1', [Loc.text(selected.title)]),
+                Loc.tr('planSingleBenefit2'),
+                Loc.tr('planSingleBenefit3'),
+              ],
+              onCheckout: () => _checkout(selected, single),
+              agentId: selected.id,
+            ),
+          );
 
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: _processing
-                                ? null
-                                : () => _checkout(flagship, offer),
-                            style: FilledButton.styleFrom(
-                              backgroundColor: OTColors.accent(dark),
-                              foregroundColor: OTColors.onAccent(dark),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: Text(
-                              Loc.tr('planChoose', [offer.title]),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ),
-                        _checkoutNotice(flagship.id),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // ── 2. KARTU SPESIALIS PER BIDANG LAINNYA ──
-                  _card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(Loc.tr('specialistAccess'),
-                            style: OTTypography.pageTitle(color: ink)
-                                .copyWith(fontSize: 22)),
-                        const SizedBox(height: 6),
-                        Text(
-                          Loc.tr('planSingleDescription'),
-                          style: OTTypography.body(color: muted)
-                              .copyWith(fontSize: 13),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Interactive Tactile Discipline Card
-                        InkWell(
-                          onTap: _processing
-                              ? null
-                              : () => _showDisciplinePickerModal(
-                                  context, specialists),
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: dark
-                                  ? Colors.white.withValues(alpha: 0.04)
-                                  : Colors.black.withValues(alpha: 0.02),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: border),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        selected.title,
-                                        style:
-                                            OTTypography.bodyMedium(color: ink),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: OTColors.surfaceSubtle(dark),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: border),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        Loc.tr('chooseField'),
-                                        style: OTTypography.captionMedium(
-                                                color: ink)
-                                            .copyWith(fontSize: 12),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Icon(Icons.unfold_more_rounded,
-                                          size: 16, color: muted),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        _TierSelector(
-                          offers: ProductPricing.specialists,
-                          selected: _specialistIndex,
-                          onSelect: _processing
-                              ? null
-                              : (i) => setState(() => _specialistIndex = i),
-                        ),
-                        const SizedBox(height: 20),
-
-                        PromoPrice(
-                          amount: ProductPricing
-                              .specialists[_specialistIndex].amount,
-                          regularAmount: ProductPricing
-                              .specialists[_specialistIndex].regularAmount,
-                          period: ProductPricing
-                              .specialists[_specialistIndex].period,
-                        ),
-                        const SizedBox(height: 16),
-                        Divider(
-                            color: border.withValues(alpha: 0.6), height: 1),
-                        const SizedBox(height: 16),
-
-                        // Daftar Benefit Spesialis Per Bidang
-                        _benefitRow(
-                          Loc.tr('planSingleBenefit1', [selected.title]),
-                          ink,
-                        ),
-                        _benefitRow(
-                          Loc.tr('planSingleBenefit2'),
-                          ink,
-                        ),
-                        _benefitRow(
-                          Loc.tr('planSingleBenefit3'),
-                          ink,
-                        ),
-                        _benefitRow(
-                          Loc.tr('planSingleBenefit4'),
-                          ink,
-                        ),
-
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: _processing
-                                ? null
-                                : () => _checkout(
-                                    selected,
-                                    ProductPricing
-                                        .specialists[_specialistIndex]),
-                            style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16)),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: Text(Loc.tr('continuePayment')),
-                          ),
-                        ),
-                        _checkoutNotice(selected.id),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  if (_processing)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: CircularProgressIndicator(),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 48),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: wide ? 1040 : 640),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      Loc.tr('launchOffer'),
+                      style: ScholarlyFonts.outfit(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.4,
+                        color: ink,
                       ),
                     ),
-                  TextButton.icon(
-                    onPressed: _processing
-                        ? null
-                        : () => RedeemCodeSheet.show(context),
-                    icon: const Icon(Icons.confirmation_number_outlined),
-                    label: Text(Loc.tr('redeemAccess')),
-                  ),
-                ],
+                    const SizedBox(height: 6),
+                    Text(AppCopy.manualRenewalNotice,
+                        style: OTTypography.body(color: muted)),
+                    const SizedBox(height: 20),
+                    if (wide)
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(child: featuredPlan),
+                            const SizedBox(width: 16),
+                            Expanded(child: singlePlan),
+                          ],
+                        ),
+                      )
+                    else ...[
+                      featuredPlan,
+                      const SizedBox(height: 16),
+                      singlePlan,
+                    ],
+                    const SizedBox(height: 12),
+                    if (_processing)
+                      const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Center(
+                          child: SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      ),
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: _processing
+                            ? null
+                            : () => RedeemCodeSheet.show(context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: muted,
+                          minimumSize: const Size(0, 44),
+                        ),
+                        icon: const Icon(Icons.confirmation_number_outlined,
+                            size: 18),
+                        label: Text(Loc.tr('redeemAccess')),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }

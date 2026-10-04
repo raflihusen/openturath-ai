@@ -46,14 +46,44 @@ Future<T?> showAdaptiveSheet<T>({
           data: media.copyWith(size: Size(width, height)),
           child: Builder(builder: builder),
         );
-        return SizedBox(
-          width: width,
-          height: isScrollControlled ? height : null,
-          child: isScrollControlled
-              ? content
-              : SingleChildScrollView(child: content),
+        // Tinggi mengikuti isi sampai batas jendela: lembar pendek tidak
+        // menyisakan ruang kosong, lembar panjang tetap bisa digulir.
+        return ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: height),
+          child: SizedBox(
+            width: width,
+            child: isScrollControlled
+                ? content
+                : SingleChildScrollView(child: content),
+          ),
         );
       }),
     ),
   );
+}
+
+/// Pegangan seret di puncak lembar bawah. Di desktop lembar tampil sebagai
+/// dialog yang tidak bisa diseret, jadi pegangan tidak digambar.
+class SheetGrabber extends StatelessWidget {
+  const SheetGrabber({super.key, this.top = 0, this.bottom = 0});
+
+  final double top;
+  final double bottom;
+
+  @override
+  Widget build(BuildContext context) {
+    if (AppPlatform.isDesktop) return const SizedBox.shrink();
+    return Container(
+      width: 36,
+      height: 4,
+      margin: EdgeInsets.only(top: top, bottom: bottom),
+      decoration: BoxDecoration(
+        color: Theme.of(context)
+            .colorScheme
+            .onSurfaceVariant
+            .withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(2),
+      ),
+    );
+  }
 }

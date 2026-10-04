@@ -1420,7 +1420,6 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
     final surface = OTColors.surface(isDark);
     final border = OTColors.border(isDark);
     final textPrimary = OTColors.textPrimary(isDark);
-    final textSecondary = OTColors.textSecondary(isDark);
 
     showAdaptiveSheet<void>(
       context: context,
@@ -1436,17 +1435,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: textSecondary.withValues(alpha: 0.3),
-                  borderRadius: OTRadius.chipBorder,
-                ),
-              ),
-            ),
+            const Center(child: SheetGrabber(bottom: 16)),
             Text(
               AppCopy.studyOptions,
               style: OTTypography.corpusTitle(color: textPrimary)
@@ -1547,16 +1536,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
+            const Center(child: SheetGrabber()),
             const SizedBox(height: 18),
             Row(
               children: [
@@ -1646,16 +1626,7 @@ class _AgentWebviewScreenState extends State<AgentWebviewScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Container(
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: border,
-                        borderRadius: OTRadius.chipBorder,
-                      ),
-                    ),
-                  ),
+                  const Center(child: SheetGrabber()),
                   const SizedBox(height: 16),
                   Text(
                     AppCopy.studyOptions,

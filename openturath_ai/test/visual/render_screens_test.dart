@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +18,7 @@ import 'package:openturath_ai/models/user_model.dart';
 import 'package:openturath_ai/screens/dashboard_screen.dart';
 import 'package:openturath_ai/screens/bookmark_screen.dart';
 import 'package:openturath_ai/screens/login_screen.dart';
+import 'package:openturath_ai/widgets/app_error_state.dart';
 import 'package:openturath_ai/widgets/app_loader.dart';
 import 'package:openturath_ai/screens/profile_screen.dart';
 import 'package:openturath_ai/screens/subscription_screen.dart';
@@ -54,13 +56,20 @@ Future<void> _loadFonts() async {
 Future<void> _shot(WidgetTester tester, String name, Widget child,
     {Size size = const Size(950, 900),
     String locale = 'id',
-    bool dark = false}) async {
+    bool dark = false,
+    String? tap}) async {
+  // Jendela lebar dirender sebagai macOS, jendela sempit sebagai Android,
+  // supaya lembar dan dialog adaptif tampil seperti di perangkat aslinya.
+  debugDefaultTargetPlatformOverride =
+      size.width >= 700 ? TargetPlatform.macOS : TargetPlatform.android;
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   AppConfig.localeNotifier.value = locale;
   await tester.pumpWidget(RepaintBoundary(
     key: _key,
     child: MaterialApp(
+      // Kunci per tangkapan: navigator dan dialog tidak terbawa dari sebelumnya.
+      key: ValueKey(name),
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -76,6 +85,19 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
   await tester.pump(const Duration(milliseconds: 900));
   await tester.pump(const Duration(milliseconds: 900));
+  if (tap != null && find.text(tap).evaluate().isEmpty) {
+    // ignore: avoid_print
+    print('RENDER NOTE in $name: "$tap" tidak ditemukan');
+  } else if (tap != null) {
+    // Buka dialog atau lembar dengan mengetuk teks pemicunya.
+    await tester.ensureVisible(find.text(tap).first);
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text(tap).first, warnIfMissed: false);
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester
+        .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+    await tester.pump(const Duration(milliseconds: 900));
+  }
   final boundary =
       _key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
   await tester.runAsync(() async {
@@ -85,6 +107,7 @@ Future<void> _shot(WidgetTester tester, String name, Widget child,
       ..createSync(recursive: true)
       ..writeAsBytesSync(bytes!.buffer.asUint8List());
   });
+  debugDefaultTargetPlatformOverride = null;
   final error = tester.takeException();
   if (error != null) {
     // ignore: avoid_print
@@ -194,6 +217,72 @@ void main() {
     await _shot(tester, 'dashboard_dark', const DashboardScreen(), dark: true);
     await _shot(tester, 'dashboard_phone', const DashboardScreen(),
         size: const Size(390, 844));
+    // Ukuran jendela yang dipakai pengguna (sekitar 850 x 860) dan jendela lebar.
+    await _shot(tester, 'subscription_window', const SubscriptionScreen(),
+        size: const Size(850, 1500));
+    await _shot(tester, 'subscription_wide', const SubscriptionScreen(),
+        size: const Size(1280, 900));
+    await _shot(tester, 'subscription_dark', const SubscriptionScreen(),
+        size: const Size(1280, 900), dark: true);
+    await _shot(tester, 'profile_window', const ProfileScreen(),
+        size: const Size(850, 860));
+    for (final state in <(String, AppErrorState)>[
+      (
+        'auth',
+        AppErrorState(
+          icon: Icons.link_off_rounded,
+          title: Loc.tr('roomAuthTitle'),
+          message: Loc.tr('roomAuthBody'),
+          retryLabel: Loc.tr('roomOpenInBrowser'),
+          retryIcon: Icons.open_in_new_rounded,
+          onRetry: () {},
+          onBack: () {},
+          backLabel: Loc.tr('back'),
+        )
+      ),
+      (
+        'loadfail',
+        AppErrorState(
+          icon: Icons.wifi_off_rounded,
+          title: Loc.tr('roomLoadFailTitle'),
+          message: Loc.tr('roomLoadFailBody'),
+          retryLabel: Loc.tr('tryAgain'),
+          onRetry: () {},
+          onBack: () {},
+          backLabel: Loc.tr('back'),
+        )
+      ),
+    ]) {
+      await _shot(tester, 'room_${state.$1}', Scaffold(body: state.$2),
+          size: const Size(850, 700));
+    }
+    const win = Size(850, 860);
+    await _shot(tester, 'dlg_field', const SubscriptionScreen(),
+        size: win, tap: 'Pilih bidang');
+    await _shot(tester, 'dlg_redeem', const SubscriptionScreen(),
+        size: const Size(850, 1500), tap: 'Gunakan voucher');
+    await _shot(tester, 'dlg_language', const ProfileScreen(),
+        size: win, tap: 'Bahasa');
+    await _shot(tester, 'dlg_about', const ProfileScreen(),
+        size: win, tap: 'Tentang OpenTurath');
+    await _shot(tester, 'dlg_delete', const ProfileScreen(),
+        size: win, tap: 'Hapus akun');
+    AuthService.previewUser = UserModel(
+      uid: 'Qx7Zp2LmN8vRt4Kc',
+      name: 'Rafli Husen',
+      email: 'contoh@openturath.id',
+      photoUrl: '',
+      plan: AppConstants.planTholib1m,
+      questionsUsed: 0,
+      subscriptionExpiry: DateTime(2027, 1, 1),
+      entitlements: const {
+        'all_access': ModuleEntitlement(plan: 'permanent', status: 'active'),
+      },
+    );
+    await _shot(tester, 'dlg_access', const ProfileScreen(),
+        size: win, tap: 'Daftar asisten aktif');
+    await _shot(tester, 'dlg_access_dark', const ProfileScreen(),
+        size: win, tap: 'Daftar asisten aktif', dark: true);
     await _shot(tester, 'notes_id', const BookmarkScreen());
     await _shot(
         tester,

@@ -321,16 +321,7 @@ class _TahawwulatIntroductionSheetState
             padding: const EdgeInsetsDirectional.fromSTEB(20, 12, 12, 8),
             child: Column(
               children: [
-                Center(
-                  child: Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: textTertiary.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
+                const Center(child: SheetGrabber()),
                 const SizedBox(height: 12),
                 Row(
                   children: [

@@ -1,3 +1,4 @@
+import 'adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import '../core/app_copy.dart';
 import '../core/design/ot_colors.dart';
@@ -147,17 +148,7 @@ class _ResearchLibrarySheetState extends State<ResearchLibrarySheet> {
           child: Column(
             children: [
               // Drag handle
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 10, bottom: 8),
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: border,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
+              const Center(child: SheetGrabber()),
 
               // Header
               Padding(

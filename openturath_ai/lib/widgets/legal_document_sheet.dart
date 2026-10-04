@@ -116,17 +116,7 @@ class LegalDocumentSheet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Drag Handle
-          Center(
-            child: Container(
-              width: 36,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: textSecondary.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
+          const Center(child: SheetGrabber(bottom: 16)),
 
           // Header Row
           Row(

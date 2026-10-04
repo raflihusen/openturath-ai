@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'adaptive_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import '../core/scholarly_fonts.dart';
@@ -477,18 +478,7 @@ class _DokuCheckoutSheetState extends State<DokuCheckoutSheet> {
                     child: Column(
                       children: [
                         // Drag Indicator
-                        Center(
-                          child: Container(
-                            width: 36,
-                            height: 4,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: border,
-                              borderRadius:
-                                  BorderRadius.circular(AppTheme.radiusPill),
-                            ),
-                          ),
-                        ),
+                        const Center(child: SheetGrabber(bottom: 12)),
                         Row(
                           children: [
                             Container(

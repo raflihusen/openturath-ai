@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/theme.dart';
+import '../core/design/ot_colors.dart';
 import '../core/scholarly_fonts.dart';
 
 /// AppErrorState: Komponen visual baku penanganan galat dan koneksi terputus.
@@ -10,6 +10,7 @@ class AppErrorState extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onRetry;
   final String retryLabel;
+  final IconData retryIcon;
   final VoidCallback? onBack;
   final String backLabel;
 
@@ -20,6 +21,7 @@ class AppErrorState extends StatelessWidget {
     this.icon = Icons.wifi_off_rounded,
     this.onRetry,
     this.retryLabel = 'Coba lagi',
+    this.retryIcon = Icons.refresh_rounded,
     this.onBack,
     this.backLabel = 'Kembali',
   });
@@ -33,7 +35,7 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Coba lagi',
     this.onBack,
     this.backLabel = 'Kembali',
-  });
+  }) : retryIcon = Icons.refresh_rounded;
 
   const AppErrorState.unauthorized({
     super.key,
@@ -44,7 +46,7 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Lihat langganan',
     this.onBack,
     this.backLabel = 'Kembali',
-  });
+  }) : retryIcon = Icons.refresh_rounded;
 
   const AppErrorState.empty({
     super.key,
@@ -55,7 +57,7 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Atur ulang pencarian',
     this.onBack,
     this.backLabel = 'Kembali',
-  });
+  }) : retryIcon = Icons.refresh_rounded;
 
   const AppErrorState.generic({
     super.key,
@@ -66,35 +68,30 @@ class AppErrorState extends StatelessWidget {
     this.retryLabel = 'Muat ulang',
     this.onBack,
     this.backLabel = 'Kembali',
-  });
+  }) : retryIcon = Icons.refresh_rounded;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? AppTheme.textPrimaryDark : AppTheme.textPrimaryLight;
-    final textSecondary = isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight;
-    final accent = isDark ? AppTheme.accentDark : AppTheme.accentLight;
-    final surface = isDark ? AppTheme.surfaceCardDark : AppTheme.surfaceCardLight;
-    final border = isDark ? AppTheme.borderDark : AppTheme.borderLight;
+    final ink = OTColors.textPrimary(isDark);
+    final muted = OTColors.textSecondary(isDark);
 
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 400),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 72,
-                height: 72,
+                width: 56,
+                height: 56,
                 decoration: BoxDecoration(
-                  color: surface,
+                  color: OTColors.surfaceSubtle(isDark),
                   shape: BoxShape.circle,
-                  border: Border.all(color: border, width: 1.2),
                 ),
-                child: Icon(icon, size: 32, color: accent),
+                child: Icon(icon, size: 24, color: ink),
               ),
               const SizedBox(height: 20),
               Text(
@@ -102,8 +99,9 @@ class AppErrorState extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: ScholarlyFonts.outfit(
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: textPrimary,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.2,
+                  color: ink,
                 ),
               ),
               const SizedBox(height: 8),
@@ -111,46 +109,39 @@ class AppErrorState extends StatelessWidget {
                 message,
                 textAlign: TextAlign.center,
                 style: ScholarlyFonts.outfit(
-                  fontSize: 13,
-                  height: 1.45,
-                  color: textSecondary,
+                  fontSize: 14,
+                  height: 1.55,
+                  color: muted,
                 ),
               ),
               if (onRetry != null) ...[
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 46,
-                  child: FilledButton.icon(
-                    onPressed: onRetry,
-                    icon: const Icon(Icons.refresh_rounded, size: 18),
-                    label: Text(
-                      retryLabel,
-                      style: ScholarlyFonts.outfit(fontWeight: FontWeight.w600),
-                    ),
-                    style: FilledButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                      ),
+                FilledButton.icon(
+                  onPressed: onRetry,
+                  icon: Icon(retryIcon, size: 18),
+                  label: Text(retryLabel),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(200, 44),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    textStyle: ScholarlyFonts.outfit(
+                        fontSize: 14, fontWeight: FontWeight.w600),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
               ],
               if (onBack != null) ...[
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: TextButton(
-                    onPressed: onBack,
-                    child: Text(
-                      backLabel,
-                      style: ScholarlyFonts.outfit(
-                        fontWeight: FontWeight.w500,
-                        color: textSecondary,
-                      ),
-                    ),
+                SizedBox(height: onRetry != null ? 6 : 20),
+                TextButton(
+                  onPressed: onBack,
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(120, 44),
+                    foregroundColor: muted,
+                    textStyle: ScholarlyFonts.outfit(
+                        fontSize: 14, fontWeight: FontWeight.w500),
                   ),
+                  child: Text(backLabel),
                 ),
               ],
             ],
