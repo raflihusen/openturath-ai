@@ -103,7 +103,14 @@ html[lang="ar"] .btn { font-family: var(--arabic-ui); }
 .hero-copy { display: grid; gap: 20px; justify-items: start; }
 .hero-art { aspect-ratio: 52 / 44; border-radius: var(--r-dialog); background: var(--ink-panel); border: 1px solid var(--border-subtle); overflow: hidden; }
 .arch { display: block; width: 100%; height: 100%; }
-.echo { transform-origin: 50% 60%; transform-box: view-box; animation: echo-in 420ms cubic-bezier(.33,1,.68,1) both; animation-delay: calc(var(--i) * 60ms); }
+.echo { transform-origin: 50% 60%; transform-box: view-box; animation: echo-in 420ms cubic-bezier(.33,1,.68,1) both; }
+/* Jeda antarlapisan 60ms; ditulis sebagai kelas karena CSP melarang style sebaris. */
+.d1 { animation-delay: 60ms; }
+.d2 { animation-delay: 120ms; }
+.d3 { animation-delay: 180ms; }
+.d4 { animation-delay: 240ms; }
+.d5 { animation-delay: 300ms; }
+.d6 { animation-delay: 360ms; }
 .glow { animation: glow-in 900ms cubic-bezier(.33,1,.68,1) both; }
 @keyframes echo-in { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
 @keyframes glow-in { from { opacity: 0; } to { opacity: 1; } }

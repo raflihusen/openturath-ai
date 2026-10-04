@@ -79,6 +79,7 @@ test('build menghasilkan halaman yang utuh dan tautan internal yang hidup', asyn
 test('halaman tanpa skrip sebaris dan tanpa sumber pihak ketiga', () => {
   const html = page('id', '', data);
   assert.ok(!/<script(?![^>]*(src=|application\/ld\+json))/.test(html));
+  assert.ok(!/ style="/.test(html), 'CSP melarang style sebaris');
   assert.ok(!/(src|href)="https?:\/\/(?!openturath\.id)/.test(html.replace(/<link rel="(canonical|alternate)"[^>]*>/g, '')));
 });
 

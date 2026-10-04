@@ -26,7 +26,7 @@ function archEcho() {
   const paths = Array.from({length: layers}, (_, i) => {
     const depth = i / (layers - 1), scale = 1 - depth * 0.74, w = width * scale;
     const y = vanish - (vanish - top) * scale, h = vanish + (bottom - vanish) * scale - y;
-    return `<g class="echo" style="--i:${layers - 1 - i}"><path d="${arch(cx - w / 2, y, w, h)}" fill="url(#fade)" fill-opacity="${(0.02 + depth * 0.012).toFixed(3)}"/>` +
+    return `<g class="echo d${layers - 1 - i}"><path d="${arch(cx - w / 2, y, w, h)}" fill="url(#fade)" fill-opacity="${(0.02 + depth * 0.012).toFixed(3)}"/>` +
       `<path d="${arch(cx - w / 2, y, w, h, true)}" fill="none" stroke="url(#fade)" stroke-opacity="${(0.1 + 0.05 * depth).toFixed(3)}"/></g>`;
   }).join('');
   return `<svg class="arch" viewBox="0 0 ${W} ${H}" aria-hidden="true" focusable="false"><defs>` +
